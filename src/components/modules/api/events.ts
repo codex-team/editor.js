@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Events} from '../../../../types/api';
+import { Events } from '../../../../types/api';
 
 /**
  * @class EventsAPI
@@ -44,5 +44,4 @@ export default class EventsAPI extends Module {
   public off(eventName, callback): void {
     this.Editor.Events.off(eventName, callback);
   }
-
 }

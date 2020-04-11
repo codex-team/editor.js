@@ -19,14 +19,13 @@ import * as _ from '../utils';
  * @typedef {Caret} Caret
  */
 export default class Caret extends Module {
-
   /**
    * Allowed caret positions in input
    *
    * @static
    * @returns {{START: string, END: string, DEFAULT: string}}
    */
-  public get positions(): {START: string, END: string, DEFAULT: string} {
+  public get positions(): {START: string; END: string; DEFAULT: string} {
     return {
       START: 'start',
       END: 'end',
@@ -84,6 +83,7 @@ export default class Caret extends Module {
      * So we use child with focusOffset index as new anchorNode.
      */
     let focusOffset = selection.focusOffset;
+
     if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
       if (focusNode.childNodes[focusOffset]) {
         focusNode = focusNode.childNodes[focusOffset];
@@ -161,6 +161,7 @@ export default class Caret extends Module {
      * So we use child with anchofocusOffset - 1 as new focusNode.
      */
     let focusOffset = selection.focusOffset;
+
     if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
       if (focusNode.childNodes[focusOffset - 1]) {
         focusNode = focusNode.childNodes[focusOffset - 1];
@@ -220,8 +221,8 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {Number} offset - caret offset regarding to the text node
    */
-  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset: number = 0): void {
-    const {BlockManager} = this.Editor;
+  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
+    const { BlockManager } = this.Editor;
     let element;
 
     switch (position) {
@@ -255,7 +256,7 @@ export default class Caret extends Module {
     /**
      * @todo try to fix via Promises or use querySelectorAll to not to use timeout
      */
-    _.delay( () => {
+    _.delay(() => {
       this.set(nodeToSet as HTMLElement, offset);
     }, 20)();
 
@@ -271,8 +272,8 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset: number = 0): void {
-    const {currentBlock} = this.Editor.BlockManager;
+  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset = 0): void {
+    const { currentBlock } = this.Editor.BlockManager;
     const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
@@ -300,9 +301,9 @@ export default class Caret extends Module {
    * @param {HTMLElement} element - target node.
    * @param {Number} offset - offset
    */
-  public set(element: HTMLElement, offset: number = 0): void {
+  public set(element: HTMLElement, offset = 0): void {
     const range = document.createRange(),
-      selection = Selection.get();
+        selection = Selection.get();
 
     /** if found deepest node is native input */
     if ($.isNativeInput(element)) {
@@ -312,6 +313,7 @@ export default class Caret extends Module {
 
       element.focus();
       (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = offset;
+
       return;
     }
 
@@ -322,14 +324,19 @@ export default class Caret extends Module {
     selection.addRange(range);
 
     /** If new cursor position is not visible, scroll to it */
-    const {top, bottom} = element.nodeType === Node.ELEMENT_NODE
+    const { top, bottom } = element.nodeType === Node.ELEMENT_NODE
       ? element.getBoundingClientRect()
       : range.getBoundingClientRect();
-    const {innerHeight} = window;
+    const { innerHeight } = window;
 
-    if (top < 0) { window.scrollBy(0, top); }
-    if (bottom > innerHeight) { window.scrollBy(0, bottom - innerHeight); }
+    if (top < 0) {
+      window.scrollBy(0, top);
+    }
+    if (bottom > innerHeight) {
+      window.scrollBy(0, bottom - innerHeight);
+    }
   }
+
   /**
    * Set Caret to the last Block
    * If last block is not empty, append another empty block
@@ -371,6 +378,7 @@ export default class Caret extends Module {
 
         range.selectNodeContents(currentBlockInput);
         range.setStart(selectRange.endContainer, selectRange.endOffset);
+
         return range.extractContents();
       }
     }
@@ -385,9 +393,9 @@ export default class Caret extends Module {
    *
    * @return {Boolean}
    */
-  public navigateNext(force: boolean = false): boolean {
-    const {currentBlock, nextContentfulBlock} = this.Editor.BlockManager;
-    const {nextInput} = currentBlock;
+  public navigateNext(force = false): boolean {
+    const { currentBlock, nextContentfulBlock } = this.Editor.BlockManager;
+    const { nextInput } = currentBlock;
 
     if (!nextContentfulBlock && !nextInput) {
       return false;
@@ -416,14 +424,14 @@ export default class Caret extends Module {
    *
    * @return {Boolean}
    */
-  public navigatePrevious(force: boolean = false): boolean {
-    const {currentBlock, previousContentfulBlock} = this.Editor.BlockManager;
+  public navigatePrevious(force = false): boolean {
+    const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
 
     if (!currentBlock) {
       return false;
     }
 
-    const {previousInput} = currentBlock;
+    const { previousInput } = currentBlock;
 
     if (!previousContentfulBlock && !previousInput) {
       return false;
@@ -432,10 +440,11 @@ export default class Caret extends Module {
     if (force || this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
-        this.setToBlock( previousContentfulBlock, this.positions.END );
+        this.setToBlock(previousContentfulBlock, this.positions.END);
       } else {
         this.setToInput(previousInput, this.positions.END);
       }
+
       return true;
     }
 

@@ -1,9 +1,9 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import {BlockToolConstructable} from '../../../../types';
+import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
-import {BlockToolAPI} from '../../block';
+import { BlockToolAPI } from '../../block';
 
 /**
  * @class Toolbox
@@ -16,17 +16,16 @@ import {BlockToolAPI} from '../../block';
  *
  */
 export default class Toolbox extends Module {
-
   /**
    * CSS styles
    * @return {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
    * toolboxOpened: string, tooltip: string, tooltipShown: string, tooltipShortcut: string}}
    */
   get CSS() {
-    return  {
+    return {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
-      toolboxButtonActive : 'ce-toolbox__button--active',
+      toolboxButtonActive: 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
 
@@ -47,14 +46,14 @@ export default class Toolbox extends Module {
    * Opening state
    * @type {boolean}
    */
-  public opened: boolean = false;
+  public opened = false;
 
   /**
    * HTMLElements used for Toolbox UI
    */
   public nodes: {
-    toolbox: HTMLElement,
-    buttons: HTMLElement[],
+    toolbox: HTMLElement;
+    buttons: HTMLElement[];
   } = {
     toolbox: null,
     buttons: [],
@@ -64,7 +63,7 @@ export default class Toolbox extends Module {
    * How many tools displayed in Toolbox
    * @type {number}
    */
-  private displayedToolsCount: number = 0;
+  private displayedToolsCount = 0;
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
@@ -140,7 +139,7 @@ export default class Toolbox extends Module {
 
     for (const toolName in tools) {
       if (tools.hasOwnProperty(toolName)) {
-        this.addTool(toolName, tools[toolName]  as BlockToolConstructable);
+        this.addTool(toolName, tools[toolName] as BlockToolConstructable);
       }
     }
   }
@@ -166,6 +165,7 @@ export default class Toolbox extends Module {
 
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
       _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+
       return;
     }
 
@@ -270,6 +270,7 @@ export default class Toolbox extends Module {
    */
   private enableFlipper(): void {
     const tools = Array.from(this.nodes.toolbox.childNodes) as HTMLElement[];
+
     this.flipper = new Flipper({
       items: tools,
       focusedItemClass: this.CSS.toolboxButtonActive,
@@ -284,11 +285,11 @@ export default class Toolbox extends Module {
    * @param {String} toolName - Tool name
    */
   private insertNewBlock(tool: BlockToolConstructable, toolName: string) {
-    const {BlockManager, Caret} = this.Editor;
+    const { BlockManager, Caret } = this.Editor;
     /**
      * @type {Block}
      */
-    const {currentBlock} = BlockManager;
+    const { currentBlock } = BlockManager;
 
     let newBlock;
 

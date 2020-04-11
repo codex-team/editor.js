@@ -52,9 +52,9 @@ export default class Dom {
   public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
-    if ( Array.isArray(classNames) ) {
+    if (Array.isArray(classNames)) {
       el.classList.add(...classNames);
-    } else if ( classNames ) {
+    } else if (classNames) {
       el.classList.add(classNames);
     }
 
@@ -83,7 +83,7 @@ export default class Dom {
    * @param {number} height
    * @return {SVGElement}
    */
-  public static svg(name: string, width: number = 14, height: number = 14): SVGElement {
+  public static svg(name: string, width = 14, height = 14): SVGElement {
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     icon.classList.add('icon', 'icon--' + name);
@@ -102,10 +102,10 @@ export default class Dom {
    */
   public static append(
     parent: Element|DocumentFragment,
-    elements: Element|Element[]|DocumentFragment|Text|Text[],
+    elements: Element|Element[]|DocumentFragment|Text|Text[]
   ): void {
-    if ( Array.isArray(elements) ) {
-      elements.forEach( (el) => parent.appendChild(el) );
+    if (Array.isArray(elements)) {
+      elements.forEach((el) => parent.appendChild(el));
     } else {
       parent.appendChild(elements);
     }
@@ -118,9 +118,9 @@ export default class Dom {
    * @param {Element|Element[]} elements - element or elements list
    */
   public static prepend(parent: Element, elements: Element|Element[]): void {
-    if ( Array.isArray(elements) ) {
+    if (Array.isArray(elements)) {
       elements = elements.reverse();
-      elements.forEach( (el) => parent.prepend(el) );
+      elements.forEach((el) => parent.prepend(el));
     } else {
       parent.prepend(elements);
     }
@@ -135,7 +135,7 @@ export default class Dom {
   public static swap(el1: HTMLElement, el2: HTMLElement): void {
     // create marker element and insert it where el1 is
     const temp = document.createElement('div'),
-      parent = el1.parentNode;
+        parent = el1.parentNode;
 
     parent.insertBefore(temp, el1);
 
@@ -197,7 +197,7 @@ export default class Dom {
    * @param {Boolean} atLast - find last text node
    * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
    */
-  public static getDeepestNode(node: Node, atLast: boolean = false): Node {
+  public static getDeepestNode(node: Node, atLast = false): Node {
     /**
      * Current function have two directions:
      *  - starts from first child and every time gets first or nextSibling in special cases
@@ -205,7 +205,7 @@ export default class Dom {
      * @type {string}
      */
     const child = atLast ? 'lastChild' : 'firstChild',
-      sibling = atLast ? 'previousSibling' : 'nextSibling';
+        sibling = atLast ? 'previousSibling' : 'nextSibling';
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
       let nodeChild = node[child] as Node;
@@ -292,8 +292,10 @@ export default class Dom {
    */
   public static canSetCaret(target: HTMLElement): boolean {
     let result = true;
+
     if (Dom.isNativeInput(target)) {
       const inputElement = target as HTMLInputElement;
+
       switch (inputElement.type) {
         case 'file':
         case 'checkbox':
@@ -309,6 +311,7 @@ export default class Dom {
     } else {
       result = Dom.isContentEditable(target);
     }
+
     return result;
   }
 
@@ -328,7 +331,7 @@ export default class Dom {
       return false;
     }
 
-    if ( this.isElement(node) && this.isNativeInput(node) ) {
+    if (this.isElement(node) && this.isNativeInput(node)) {
       nodeText = (node as HTMLInputElement).value;
     } else {
       nodeText = node.textContent.replace('\u200B', '');
@@ -361,7 +364,7 @@ export default class Dom {
    */
   public static isEmpty(node: Node): boolean {
     const treeWalker = [],
-      leafs = [];
+        leafs = [];
 
     if (!node) {
       return true;
@@ -378,21 +381,25 @@ export default class Dom {
 
     treeWalker.push(node.firstChild);
 
-    while ( treeWalker.length > 0 ) {
+    while (treeWalker.length > 0) {
       node = treeWalker.shift();
 
-      if (!node) { continue; }
+      if (!node) {
+        continue;
+      }
 
-      if ( this.isLeaf(node) ) {
+      if (this.isLeaf(node)) {
         leafs.push(node);
       } else {
         treeWalker.push(node.firstChild);
       }
 
-      while ( node && node.nextSibling ) {
+      while (node && node.nextSibling) {
         node = node.nextSibling;
 
-        if (!node) { continue; }
+        if (!node) {
+          continue;
+        }
 
         treeWalker.push(node);
       }
@@ -405,7 +412,7 @@ export default class Dom {
       }
     }
 
-    return leafs.every( (leaf) => this.isNodeEmpty(leaf) );
+    return leafs.every((leaf) => this.isNodeEmpty(leaf));
   }
 
   /**
@@ -504,8 +511,8 @@ export default class Dom {
     }
 
     const check = (element: HTMLElement) => {
-      return !Dom.blockElements.includes(element.tagName.toLowerCase())
-        && Array.from(element.children).every(check);
+      return !Dom.blockElements.includes(element.tagName.toLowerCase()) &&
+        Array.from(element.children).every(check);
     };
 
     return Array.from(wrapper.children).every(check);
@@ -520,7 +527,7 @@ export default class Dom {
    */
   public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
     if (Dom.containsOnlyInlineElements(parent)) {
-      return [parent];
+      return [ parent ];
     }
 
     return Array.from(parent.children).reduce((result, element) => {
@@ -528,12 +535,13 @@ export default class Dom {
     }, []);
   }
 
-  /*
-   * Helper for get holder from {string} or return HTMLElement
-   * @param element
-   */
+  // Helper for get holder from {string} or return HTMLElement
+  // @param element
   public static getHolder(element: string | HTMLElement): HTMLElement {
-    if (typeof element === 'string') { return document.getElementById(element); }
+    if (typeof element === 'string') {
+      return document.getElementById(element);
+    }
+
     return element;
   }
 

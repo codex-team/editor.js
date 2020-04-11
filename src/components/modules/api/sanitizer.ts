@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Sanitizer} from '../../../../types/api';
+import { Sanitizer } from '../../../../types/api';
 
 /**
  * @class SanitizerAPI
@@ -19,5 +19,4 @@ export default class SanitizerAPI extends Module {
   public clean(taintString, config) {
     return this.Editor.Sanitizer.clean(taintString, config);
   }
-
 }

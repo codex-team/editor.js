@@ -30,7 +30,7 @@ export default class RectangleSelection extends Module {
    * Using the selection rectangle
    * @type {boolean}
    */
-  private isRectSelectionActivated: boolean = false;
+  private isRectSelectionActivated = false;
 
   /**
    *  Speed of Scrolling
@@ -56,12 +56,12 @@ export default class RectangleSelection extends Module {
   /**
    *  Mouse is clamped
    */
-  private mousedown: boolean = false;
+  private mousedown = false;
 
   /**
    *  Is scrolling now
    */
-  private isScrolling: boolean = false;
+  private isScrolling = false;
 
   /**
    *  Mouse is in scroll zone
@@ -71,10 +71,10 @@ export default class RectangleSelection extends Module {
   /**
    *  Coords of rect
    */
-  private startX: number = 0;
-  private startY: number = 0;
-  private mouseX: number = 0;
-  private mouseY: number = 0;
+  private startX = 0;
+  private startY = 0;
+  private mouseX = 0;
+  private mouseY = 0;
 
   /**
    * Selected blocks
@@ -96,8 +96,8 @@ export default class RectangleSelection extends Module {
    * Creating rect and hang handlers
    */
   public prepare(): void {
-    const {Listeners} = this.Editor;
-    const {container} = this.genHTML();
+    const { Listeners } = this.Editor;
+    const { container } = this.genHTML();
 
     Listeners.on(container, 'mousedown', (event: MouseEvent) => {
       if (event.button !== this.MAIN_MOUSE_BUTTON) {
@@ -152,7 +152,7 @@ export default class RectangleSelection extends Module {
     ];
 
     const startsInsideEditor = elemWhereSelectionStart.closest('.' + this.Editor.UI.CSS.editorWrapper);
-    const startsInSelectorToAvoid = selectorsToAvoid.some(((selector) => !!elemWhereSelectionStart.closest(selector)));
+    const startsInSelectorToAvoid = selectorsToAvoid.some((selector) => !!elemWhereSelectionStart.closest(selector));
 
     /**
      * If selection starts outside of the editor or inside the blocks or on Editor UI elements, do not handle it
@@ -205,6 +205,7 @@ export default class RectangleSelection extends Module {
 
     if (!this.inScrollZone) {
       this.isScrolling = false;
+
       return;
     }
 
@@ -215,7 +216,7 @@ export default class RectangleSelection extends Module {
   }
 
   private genHTML() {
-    const {UI} = this.Editor;
+    const { UI } = this.Editor;
 
     const container = UI.nodes.holder.querySelector('.' + UI.CSS.editorWrapper);
     const overlay = $.make('div', RectangleSelection.CSS.overlay, {});
@@ -227,6 +228,7 @@ export default class RectangleSelection extends Module {
     container.appendChild(overlay);
 
     this.overlayRectangle = overlayRectangle as HTMLDivElement;
+
     return {
       container,
       overlay,
@@ -242,6 +244,7 @@ export default class RectangleSelection extends Module {
       return;
     }
     const lastOffset = window.pageYOffset;
+
     window.scrollBy(0, speed);
     this.mouseY += window.pageYOffset - lastOffset;
     setTimeout(() => {
@@ -263,11 +266,12 @@ export default class RectangleSelection extends Module {
       this.mouseY = event.pageY;
     }
 
-    const {rightPos, leftPos, index} = this.genInfoForMouseSelection();
+    const { rightPos, leftPos, index } = this.genInfoForMouseSelection();
     // There is not new block in selection
 
     const rectIsOnRighSideOfredactor = this.startX > rightPos && this.mouseX > rightPos;
     const rectISOnLeftSideOfRedactor = this.startX < leftPos && this.mouseX < leftPos;
+
     this.rectCrossesBlocks = !(rectIsOnRighSideOfredactor || rectISOnLeftSideOfRedactor);
 
     if (!this.isRectSelectionActivated) {
@@ -355,6 +359,7 @@ export default class RectangleSelection extends Module {
     const elementUnderMouse = document.elementFromPoint(centerOfRedactor, Y);
     const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderMouse);
     let index;
+
     if (blockInCurrentPos !== undefined) {
       index = this.Editor.BlockManager.blocks.findIndex((block) => block.holder === blockInCurrentPos.holder);
     }
@@ -409,6 +414,7 @@ export default class RectangleSelection extends Module {
       for (ind; ind <= index; ind++) {
         this.addBlockInSelection(ind);
       }
+
       return;
     }
 
@@ -417,6 +423,7 @@ export default class RectangleSelection extends Module {
       for (let ind = this.stackOfSelected[sizeStack - 1] - 1; ind >= index; ind--) {
         this.addBlockInSelection(ind);
       }
+
       return;
     }
 
@@ -443,6 +450,5 @@ export default class RectangleSelection extends Module {
       this.stackOfSelected.pop();
       i--;
     }
-    return;
   }
 }

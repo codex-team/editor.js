@@ -6,7 +6,7 @@
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
-import {API as APIInterfaces} from '../../../../types';
+import { API as APIInterfaces } from '../../../../types';
 
 /**
  * @class API

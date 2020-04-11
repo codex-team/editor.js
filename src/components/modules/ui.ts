@@ -35,22 +35,21 @@ import Flipper from '../flipper';
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module {
-
   /**
    * Editor.js UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
-    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
-    editorLoader: string, editorEmpty: string,
-  } {
+    editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
+    editorLoader: string; editorEmpty: string;
+    } {
     return {
-      editorWrapper    : 'codex-editor',
-      editorWrapperNarrow : 'codex-editor--narrow',
-      editorZone       : 'codex-editor__redactor',
-      editorZoneHidden : 'codex-editor__redactor--hidden',
-      editorLoader     : 'codex-editor__loader',
-      editorEmpty      : 'codex-editor--empty',
+      editorWrapper: 'codex-editor',
+      editorWrapperNarrow: 'codex-editor--narrow',
+      editorZone: 'codex-editor__redactor',
+      editorZoneHidden: 'codex-editor__redactor--hidden',
+      editorLoader: 'codex-editor__loader',
+      editorEmpty: 'codex-editor--empty',
     };
   }
 
@@ -85,7 +84,7 @@ export default class UI extends Module {
    * Flag that became true on mobile viewport
    * @type {boolean}
    */
-  public isMobile: boolean = false;
+  public isMobile = false;
 
   /**
    * HTML Elements used for UI
@@ -177,7 +176,7 @@ export default class UI extends Module {
    * Check if Editor is empty and set CSS class to wrapper
    */
   public checkEmptiness(): void {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
   }
@@ -199,9 +198,10 @@ export default class UI extends Module {
   public get someFlipperButtonFocused(): boolean {
     return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
       return moduleClass.flipper instanceof Flipper;
-    }).some(([moduleName, moduleClass]) => {
-      return moduleClass.flipper.currentItem;
-    });
+    })
+      .some(([moduleName, moduleClass]) => {
+        return moduleClass.flipper.currentItem;
+      });
   }
 
   /**
@@ -244,7 +244,7 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**
@@ -261,7 +261,6 @@ export default class UI extends Module {
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
-
   }
 
   /**
@@ -294,17 +293,17 @@ export default class UI extends Module {
       this.nodes.redactor,
       'click',
       (event) => this.redactorClicked(event as MouseEvent),
-      false,
+      false
     );
     this.Editor.Listeners.on(this.nodes.redactor,
       'mousedown',
       (event) => this.documentTouched(event as MouseEvent),
-      true,
+      true
     );
     this.Editor.Listeners.on(this.nodes.redactor,
       'touchstart',
       (event) => this.documentTouched(event as MouseEvent),
-      true,
+      true
     );
 
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
@@ -363,7 +362,7 @@ export default class UI extends Module {
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
-    const {currentBlock} = this.Editor.BlockManager;
+    const { currentBlock } = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
@@ -388,10 +387,11 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
@@ -418,6 +418,7 @@ export default class UI extends Module {
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
@@ -431,6 +432,7 @@ export default class UI extends Module {
       event.preventDefault();
       event.stopImmediatePropagation();
       event.stopPropagation();
+
       return;
     }
 
@@ -596,6 +598,7 @@ export default class UI extends Module {
       const validUrl = _.getValidUrl(href);
 
       _.openTab(validUrl);
+
       return;
     }
 
@@ -635,7 +638,6 @@ export default class UI extends Module {
      * We need to skip such firings
      */
     if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
-
       /**
        * If new selection is not on Inline Toolbar, we need to close it
        */

@@ -10,7 +10,6 @@ import * as _ from '../utils';
 import Block from '../block';
 
 export default class ModificationsObserver extends Module {
-
   /**
    * Debounce Timer
    * @type {number}
@@ -31,7 +30,7 @@ export default class ModificationsObserver extends Module {
    * Used to prevent several mutation callback execution
    * @type {Function}
    */
-  private mutationDebouncer = _.debounce( () => {
+  private mutationDebouncer = _.debounce(() => {
     this.updateNativeInputs();
     this.config.onChange(this.Editor.API.methods);
   }, ModificationsObserver.DebounceTimer);
@@ -62,7 +61,7 @@ export default class ModificationsObserver extends Module {
     /**
      * wait till Browser render Editor's Blocks
      */
-    window.setTimeout( () => {
+    window.setTimeout(() => {
       this.setObserver();
     }, 1000);
   }
@@ -90,7 +89,7 @@ export default class ModificationsObserver extends Module {
    * so that User can handle outside from API
    */
   private setObserver(): void {
-    const {UI} = this.Editor;
+    const { UI } = this.Editor;
     const observerOptions = {
       childList: true,
       attributes: true,
@@ -141,7 +140,6 @@ export default class ModificationsObserver extends Module {
            */
           if (!mutatedTarget.classList.contains(Block.CSS.wrapper)) {
             contentMutated = true;
-            return;
           }
           break;
       }

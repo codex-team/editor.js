@@ -2,7 +2,6 @@ import SelectionUtils from '../selection';
 
 import Module from '../__module';
 export default class DragNDrop extends Module {
-
   /**
    * If drag has been started at editor, we save it
    *
@@ -28,7 +27,6 @@ export default class DragNDrop extends Module {
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', (dragEvent: DragEvent) => {
-
       if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
         this.isStartedAtEditor = true;
       }

@@ -59,16 +59,16 @@ export default class Toolbar extends Module {
    * HTML Elements used for Toolbar UI
    */
   public nodes: {[key: string]: HTMLElement} = {
-    wrapper : null,
-    content : null,
-    actions : null,
+    wrapper: null,
+    content: null,
+    actions: null,
 
     // Content Zone
-    plusButton : null,
+    plusButton: null,
 
     // Actions Zone
     blockActionsButtons: null,
-    settingsToggler : null,
+    settingsToggler: null,
   };
 
   /**
@@ -104,7 +104,7 @@ export default class Toolbar extends Module {
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content',  'actions'].forEach( (el) => {
+    ['content', 'actions'].forEach((el) => {
       this.nodes[el] = $.make('div', this.CSS[el]);
     });
 
@@ -149,7 +149,7 @@ export default class Toolbar extends Module {
      *  - Settings Panel
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
-    this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
+    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
     const settingsIcon = $.svg('dots', 8, 8);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
@@ -181,7 +181,7 @@ export default class Toolbar extends Module {
    * Move Toolbar to the Current Block
    * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
    */
-  public move(forceClose: boolean = true): void {
+  public move(forceClose = true): void {
     if (forceClose) {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
@@ -229,7 +229,7 @@ export default class Toolbar extends Module {
    *                                      with closing Toolbox and Block Settings
    *                                      This flag allows to open Toolbar with Toolbox
    */
-  public open(withBlockActions: boolean = true, needToCloseToolbox: boolean = true): void {
+  public open(withBlockActions = true, needToCloseToolbox = true): void {
     _.delay(() => {
       this.move(needToCloseToolbox);
       this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
@@ -266,7 +266,7 @@ export default class Toolbar extends Module {
    * Plus Button public methods
    * @return {{hide: function(): void, show: function(): void}}
    */
-  public get plusButton(): {hide: () => void, show: () => void} {
+  public get plusButton(): {hide: () => void; show: () => void} {
     return {
       hide: () => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: () => {
@@ -282,12 +282,12 @@ export default class Toolbar extends Module {
    * Block actions appearance manipulations
    * @return {{hide: function(): void, show: function(): void}}
    */
-  private get blockActions(): {hide: () => void, show: () => void} {
+  private get blockActions(): {hide: () => void; show: () => void} {
     return {
       hide: () => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
       },
-      show : () => {
+      show: () => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
       },
     };

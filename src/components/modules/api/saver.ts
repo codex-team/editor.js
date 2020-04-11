@@ -1,6 +1,6 @@
 import Module from '../../__module';
-import {Saver} from '../../../../types/api';
-import {OutputData} from '../../../../types';
+import { Saver } from '../../../../types/api';
+import { OutputData } from '../../../../types';
 
 /**
  * @class SaverAPI

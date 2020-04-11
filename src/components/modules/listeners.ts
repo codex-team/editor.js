@@ -43,7 +43,6 @@ export interface ListenerData {
  * @property {Array} allListeners
  */
 export default class Listeners extends Module {
-
   /**
    * Stores all listeners data to find/remove/process it
    * @type {ListenerData[]}
@@ -62,7 +61,7 @@ export default class Listeners extends Module {
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,
-    options: boolean | AddEventListenerOptions = false,
+    options: boolean | AddEventListenerOptions = false
   ): void {
     const assignedEventData = {
       element,
@@ -73,7 +72,9 @@ export default class Listeners extends Module {
 
     const alreadyExist = this.findOne(element, eventType, handler);
 
-    if (alreadyExist) { return; }
+    if (alreadyExist) {
+      return;
+    }
 
     this.allListeners.push(assignedEventData);
     element.addEventListener(eventType, handler, options);
@@ -91,7 +92,7 @@ export default class Listeners extends Module {
     element: EventTarget,
     eventType: string,
     handler?: (event: Event) => void,
-    options?: boolean | AddEventListenerOptions,
+    options?: boolean | AddEventListenerOptions
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
 
@@ -104,7 +105,6 @@ export default class Listeners extends Module {
         listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
     });
-
   }
 
   /**
@@ -130,9 +130,9 @@ export default class Listeners extends Module {
     const foundByEventTargets = element ? this.findByEventTarget(element) : [];
 
     if (element && eventType && handler) {
-      found = foundByEventTargets.filter( (event) => event.eventType === eventType && event.handler === handler );
+      found = foundByEventTargets.filter((event) => event.eventType === eventType && event.handler === handler);
     } else if (element && eventType) {
-      found = foundByEventTargets.filter( (event) => event.eventType === eventType);
+      found = foundByEventTargets.filter((event) => event.eventType === eventType);
     } else {
       found = foundByEventTargets;
     }
@@ -144,7 +144,7 @@ export default class Listeners extends Module {
    * Removes all listeners
    */
   public removeAll(): void {
-    this.allListeners.map( (current) => {
+    this.allListeners.map((current) => {
       current.element.removeEventListener(current.eventType, current.handler, current.options);
     });
 

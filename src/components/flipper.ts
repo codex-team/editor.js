@@ -36,7 +36,6 @@ export interface FlipperOptions {
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
-
   /**
    * Instance of flipper iterator
    * @type {DomIterator|null}
@@ -47,7 +46,7 @@ export default class Flipper {
    * Flag that defines activation status
    * @type {boolean}
    */
-  private activated: boolean = false;
+  private activated = false;
 
   /**
    * Flag that allows arrows usage to flip items
@@ -188,7 +187,7 @@ export default class Flipper {
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
         _.keyCodes.UP,
-        _.keyCodes.DOWN,
+        _.keyCodes.DOWN
       );
     }
 
@@ -206,7 +205,7 @@ export default class Flipper {
   private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
     const shiftKey = event.shiftKey,
-      direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
+        direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
 
     switch (direction) {
       case DomIterator.directions.RIGHT:

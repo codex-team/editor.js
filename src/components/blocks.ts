@@ -1,7 +1,7 @@
 import * as _ from './utils';
 import $ from './dom';
 import Block, { BlockToolAPI } from './block';
-import {MoveEvent, MoveEventDetail} from '../../types/tools';
+import { MoveEvent, MoveEventDetail } from '../../types/tools';
 
 /**
  * @class Blocks
@@ -52,12 +52,12 @@ export default class Blocks {
    * @returns {Boolean}
    */
   public static set(instance: Blocks, property: number | string, value: Block | any) {
-
     /**
      * If property name is not a number (method or other property, access it via reflect
      */
     if (isNaN(Number(property))) {
       Reflect.set(instance, property, value);
+
       return true;
     }
 
@@ -80,7 +80,6 @@ export default class Blocks {
    * @returns {Block|*}
    */
   public static get(instance: Blocks, property: any | number) {
-
     /**
      * If property is not a number, get it via Reflect object
      */
@@ -188,9 +187,10 @@ export default class Blocks {
    * @param {Block} block — Block to insert
    * @param {Boolean} replace — it true, replace block on given index
    */
-  public insert(index: number, block: Block, replace: boolean = false): void {
+  public insert(index: number, block: Block, replace = false): void {
     if (!this.length) {
       this.push(block);
+
       return;
     }
 
@@ -308,8 +308,8 @@ export default class Blocks {
    */
   private composeBlockEvent(type: string, detail: MoveEventDetail): MoveEvent {
     return new CustomEvent(type, {
-        detail,
-      },
+      detail,
+    }
     ) as MoveEvent;
   }
 }

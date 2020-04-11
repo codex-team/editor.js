@@ -6,10 +6,10 @@ import {
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
-  ToolConfig,
+  ToolConfig
 } from '../../types';
 
-import {SavedData} from '../types-internal/block-data';
+import { SavedData } from '../types-internal/block-data';
 import $ from './dom';
 import * as _ from './utils';
 
@@ -53,7 +53,6 @@ export enum BlockToolAPI {
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
-
   /**
    * CSS classes for the Block
    * @return {{wrapper: string, content: string}}
@@ -85,8 +84,8 @@ export default class Block {
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const selector = '[contenteditable], textarea, input:not([type]), '
-      + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
+    const selector = '[contenteditable], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
     let inputs = _.array(content.querySelectorAll(selector));
 
@@ -399,7 +398,7 @@ export default class Block {
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
-    apiMethods: API,
+    apiMethods: API
   ) {
     this.name = toolName;
     this.tool = toolInstance;
@@ -444,6 +443,7 @@ export default class Block {
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.tool.merge(data);
   }
+
   /**
    * Extracts data from Block
    * Groups Tool's save processing time
@@ -502,7 +502,7 @@ export default class Block {
     const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map( (tune: BlockTuneConstructable) => {
+    return tunesList.map((tune: BlockTuneConstructable) => {
       return new tune({
         api: this.api,
         settings: this.settings,
@@ -517,7 +517,7 @@ export default class Block {
   public renderTunes(): DocumentFragment {
     const tunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach( (tune) => {
+    this.tunes.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
 
@@ -545,7 +545,7 @@ export default class Block {
         subtree: true,
         characterData: true,
         attributes: true,
-      },
+      }
     );
   }
 
@@ -562,11 +562,12 @@ export default class Block {
    */
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-      contentNode = $.make('div', Block.CSS.content),
-      pluginsContent = this.tool.render();
+        contentNode = $.make('div', Block.CSS.content),
+        pluginsContent = this.tool.render();
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
+
     return wrapper;
   }
 }

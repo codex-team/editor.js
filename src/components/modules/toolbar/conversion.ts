@@ -1,8 +1,8 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import {BlockToolConstructable} from '../../../../types';
+import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
-import {SavedData} from '../../../types-internal/block-data';
+import { SavedData } from '../../../types-internal/block-data';
 import Block from '../../block';
 import Flipper from '../../flipper';
 
@@ -23,8 +23,8 @@ export default class ConversionToolbar extends Module {
       conversionToolHidden: 'ce-conversion-tool--hidden',
       conversionToolIcon: 'ce-conversion-tool__icon',
 
-      conversionToolFocused : 'ce-conversion-tool--focused',
-      conversionToolActive : 'ce-conversion-tool--active',
+      conversionToolFocused: 'ce-conversion-tool--focused',
+      conversionToolActive: 'ce-conversion-tool--active',
     };
   }
 
@@ -40,7 +40,7 @@ export default class ConversionToolbar extends Module {
    * Conversion Toolbar open/close state
    * @type {boolean}
    */
-  public opened: boolean = false;
+  public opened = false;
 
   /**
    * Available tools
@@ -186,7 +186,7 @@ export default class ConversionToolbar extends Module {
      *
      * In both cases returning value must be a string
      */
-    let exportData: string = '';
+    let exportData = '';
     const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
 
     if (typeof exportProp === 'function') {
@@ -196,6 +196,7 @@ export default class ConversionToolbar extends Module {
     } else {
       _.log('Conversion «export» property must be a string or function. ' +
         'String means key of saved data object to export. Function should export processed string to export.');
+
       return;
     }
 
@@ -204,7 +205,7 @@ export default class ConversionToolbar extends Module {
      */
     const cleaned: string = this.Editor.Sanitizer.clean(
       exportData,
-      replacingTool.sanitize,
+      replacingTool.sanitize
     );
 
     /**
@@ -222,6 +223,7 @@ export default class ConversionToolbar extends Module {
     } else {
       _.log('Conversion «import» property must be a string or function. ' +
         'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
+
       return;
     }
 

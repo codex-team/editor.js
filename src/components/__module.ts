@@ -1,6 +1,6 @@
-import {EditorModules} from '../types-internal/editor-modules';
-import {EditorConfig} from '../../types';
-import {ModuleConfig} from '../types-internal/module-config';
+import { EditorModules } from '../types-internal/editor-modules';
+import { EditorConfig } from '../../types';
+import { ModuleConfig } from '../types-internal/module-config';
 
 /**
  * @abstract
@@ -12,7 +12,6 @@ import {ModuleConfig} from '../types-internal/module-config';
  * @property {EditorModules} Editor - List of Editor modules
  */
 export default class Module {
-
   /**
    * Editor modules list
    * @type {EditorModules}
@@ -29,7 +28,7 @@ export default class Module {
    * @constructor
    * @param {EditorConfig}
    */
-  constructor({config}: ModuleConfig) {
+  constructor({ config }: ModuleConfig) {
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
     }

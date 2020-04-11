@@ -1,8 +1,8 @@
 import Module from '../__module';
 import * as _ from '../utils';
-import {ChainData} from '../utils';
-import {BlockToolData} from '../../../types';
-import {BlockToolConstructable} from '../../../types/tools';
+import { ChainData } from '../utils';
+import { BlockToolData } from '../../../types';
+import { BlockToolConstructable } from '../../../types/tools';
 
 /**
  * Editor.js Renderer Module
@@ -44,7 +44,7 @@ export default class Renderer extends Module {
    * @param {RendererBlocks[]} blocks
    */
   public async render(blocks: BlockToolData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
+    const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
@@ -76,7 +76,6 @@ export default class Renderer extends Module {
         throw Error(error);
       }
     } else {
-
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {

@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Styles} from '../../../../types/api';
+import { Styles } from '../../../../types/api';
 
 /**
  *

@@ -1,6 +1,6 @@
 import Module from '../../__module';
 import SelectionUtils from '../../selection';
-import {Selection as SelectionAPIInterface} from '../../../../types/api';
+import { Selection as SelectionAPIInterface } from '../../../../types/api';
 
 /**
  * @class SelectionAPI
@@ -35,5 +35,4 @@ export default class SelectionAPI extends Module {
   public expandToTag(node: HTMLElement): void {
     new SelectionUtils().expandToTag(node);
   }
-
 }

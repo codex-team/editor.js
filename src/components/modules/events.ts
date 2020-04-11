@@ -14,7 +14,6 @@ import Module from '../__module';
  * @property {Object} subscribers - all subscribers grouped by event name
  */
 export default class Events extends Module {
-
   /**
    * Object with events` names as key and array of callback functions as value
    * @type {{}}
@@ -77,7 +76,7 @@ export default class Events extends Module {
     this.subscribers[eventName].reduce((previousData, currentHandler) => {
       const newData = currentHandler(previousData);
 
-      return newData ? newData : previousData;
+      return newData || previousData;
     }, data);
   }
 

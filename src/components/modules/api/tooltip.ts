@@ -1,6 +1,6 @@
 import Module from '../../__module';
 import { Tooltip } from '../../../../types/api';
-import {TooltipContent, TooltipOptions} from 'codex-tooltip';
+import { TooltipContent, TooltipOptions } from 'codex-tooltip';
 
 /**
  * @class TooltipAPI
@@ -13,13 +13,13 @@ export default class TooltipAPI extends Module {
   get methods(): Tooltip {
     return {
       show: (element: HTMLElement,
-             content: TooltipContent,
-             options?: TooltipOptions,
+        content: TooltipContent,
+        options?: TooltipOptions
       ) => this.show(element, content, options),
       hide: () => this.hide(),
       onHover: (element: HTMLElement,
-                content: TooltipContent,
-                options?: TooltipOptions,
+        content: TooltipContent,
+        options?: TooltipOptions
       ) => this.onHover(element, content, options),
     };
   }

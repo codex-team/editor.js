@@ -1,5 +1,5 @@
 import $ from '../dom';
-import {API, InlineTool, SanitizerConfig} from '../../../types';
+import { API, InlineTool, SanitizerConfig } from '../../../types';
 
 /**
  * Bold Tool
@@ -9,7 +9,6 @@ import {API, InlineTool, SanitizerConfig} from '../../../types';
  * Makes selected text bolder
  */
 export default class BoldInlineTool implements InlineTool {
-
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
@@ -20,7 +19,7 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Title for hover-tooltip
    */
-  public static title: string = 'Bold';
+  public static title = 'Bold';
 
   /**
    * Sanitizer Rule
@@ -62,6 +61,7 @@ export default class BoldInlineTool implements InlineTool {
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('bold', 12, 14));
+
     return this.nodes.button;
   }
 
@@ -81,6 +81,7 @@ export default class BoldInlineTool implements InlineTool {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
+
     return isActive;
   }
 

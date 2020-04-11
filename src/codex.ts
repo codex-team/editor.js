@@ -1,7 +1,6 @@
 'use strict';
-import {EditorConfig} from '../types';
 
-declare const VERSION: string;
+import { EditorConfig } from '../types';
 
 /**
  * Apply polyfills
@@ -10,6 +9,8 @@ import '@babel/register';
 
 import 'components/polyfills';
 import Core from './components/core';
+
+declare const VERSION: string;
 
 /**
  * Editor.js
@@ -42,7 +43,7 @@ export default class EditorJS {
    *
    * @param {EditorConfig|String|undefined} [configuration] - user configuration
    */
-  public constructor(configuration?: EditorConfig|string) {
+  constructor(configuration?: EditorConfig|string) {
     /**
      * Set default onReady function
      */

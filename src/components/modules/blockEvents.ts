@@ -7,7 +7,6 @@ import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
-
   /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
@@ -94,7 +93,6 @@ export default class BlockEvents extends Module {
    * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
-
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
      */
@@ -339,7 +337,7 @@ export default class BlockEvents extends Module {
 
       Caret.setToBlock(
         BlockManager.currentBlock,
-        index ? Caret.positions.END : Caret.positions.START,
+        index ? Caret.positions.END : Caret.positions.START
       );
 
       /** Close Toolbar */
@@ -347,6 +345,7 @@ export default class BlockEvents extends Module {
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
+
       return;
     }
 
@@ -401,6 +400,7 @@ export default class BlockEvents extends Module {
 
         Caret.setToBlock(BlockManager.currentBlock);
         Toolbar.close();
+
         return;
       }
 
@@ -413,7 +413,7 @@ export default class BlockEvents extends Module {
 
     Caret.createShadow(targetBlock.pluginsContent);
     BlockManager.mergeBlocks(targetBlock, blockToMerge)
-      .then( () => {
+      .then(() => {
         /** Restore caret position after merge */
         Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
         targetBlock.pluginsContent.normalize();
@@ -446,6 +446,7 @@ export default class BlockEvents extends Module {
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState();
+
       return;
     }
 
@@ -498,6 +499,7 @@ export default class BlockEvents extends Module {
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
+
       return;
     }
 
@@ -534,10 +536,10 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
-      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
-      inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
-      conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
-      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
+        blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+        inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
+        conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
+        flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
     /**
      * Do not close Toolbar in cases:
@@ -545,12 +547,12 @@ export default class BlockEvents extends Module {
      * 2. When Toolbar is opened and Tab leafs its Tools
      * 3. When Toolbar's component is opened and some its item selected
      */
-    return !(event.shiftKey
-      || flippingToolbarItems
-      || toolboxItemSelected
-      || blockSettingsItemSelected
-      || inlineToolbarItemSelected
-      || conversionToolbarItemSelected
+    return !(event.shiftKey ||
+      flippingToolbarItems ||
+      toolboxItemSelected ||
+      blockSettingsItemSelected ||
+      inlineToolbarItemSelected ||
+      conversionToolbarItemSelected
     );
   }
 
@@ -559,7 +561,7 @@ export default class BlockEvents extends Module {
    */
   private activateToolbox(): void {
     if (!this.Editor.Toolbar.opened) {
-      this.Editor.Toolbar.open(false , false);
+      this.Editor.Toolbar.open(false, false);
       this.Editor.Toolbar.plusButton.show();
     }
 

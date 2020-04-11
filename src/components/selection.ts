@@ -33,12 +33,11 @@ interface Document {
  * @typedef {SelectionUtils} SelectionUtils
  */
 export default class SelectionUtils {
-
   /**
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  static get CSS(): { editorWrapper: string, editorZone: string } {
+  static get CSS(): { editorWrapper: string; editorZone: string } {
     return {
       editorWrapper: 'codex-editor',
       editorZone: 'codex-editor__redactor',
@@ -118,6 +117,7 @@ export default class SelectionUtils {
     }
 
     let editorZone = null;
+
     if (selectedNode) {
       editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
     }
@@ -144,7 +144,7 @@ export default class SelectionUtils {
    */
   static get rect(): DOMRect | ClientRect {
     let sel: Selection | MSSelection = (document as Document).selection,
-      range: TextRange | Range;
+        range: TextRange | Range;
 
     let rect = {
       x: 0,
@@ -166,6 +166,7 @@ export default class SelectionUtils {
 
     if (!window.getSelection) {
       _.log('Method window.getSelection is not supported', 'warn');
+
       return rect;
     }
 
@@ -173,6 +174,7 @@ export default class SelectionUtils {
 
     if (sel.rangeCount === null || isNaN(sel.rangeCount)) {
       _.log('Method SelectionUtils.rangeCount is not supported', 'warn');
+
       return rect;
     }
 

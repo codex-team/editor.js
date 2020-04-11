@@ -7,7 +7,7 @@ import {
   InlineToolConstructable, Tool,
   ToolConfig,
   ToolConstructable,
-  ToolSettings,
+  ToolSettings
 } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
@@ -31,7 +31,6 @@ import Stub from '../tools/stub';
  * @property {EditorConfig} config - Editor config
  */
 export default class Tools extends Module {
-
   /**
    * Name of Stub Tool
    * Stub Tool is used to substitute unavailable block Tools and store their data
@@ -64,7 +63,7 @@ export default class Tools extends Module {
       return this._inlineTools;
     }
 
-    const tools = Object.entries(this.available).filter( ([name, tool]) => {
+    const tools = Object.entries(this.available).filter(([name, tool]) => {
       if (!tool[this.INTERNAL_SETTINGS.IS_INLINE]) {
         return false;
       }
@@ -73,14 +72,15 @@ export default class Tools extends Module {
        * Some Tools validation
        */
       const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter( (method) => !this.constructInline(tool)[method]);
+      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !this.constructInline(tool)[method]);
 
       if (notImplementedMethods.length) {
         _.log(
           `Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`,
           'warn',
-          notImplementedMethods,
+          notImplementedMethods
         );
+
         return false;
       }
 
@@ -107,7 +107,7 @@ export default class Tools extends Module {
    */
   public get blockTools(): {[name: string]: BlockToolConstructable} {
     // eslint-disable-next-line no-unused-vars
-    const tools = Object.entries(this.available).filter( ([name, tool]) => {
+    const tools = Object.entries(this.available).filter(([name, tool]) => {
       return !tool[this.INTERNAL_SETTINGS.IS_INLINE];
     });
 
@@ -187,8 +187,8 @@ export default class Tools extends Module {
    *
    * @param {EditorConfig} config
    */
-  constructor({config}) {
-    super({config});
+  constructor({ config }) {
+    super({ config });
 
     this.toolsClasses = {};
 
@@ -263,7 +263,7 @@ export default class Tools extends Module {
          * Set empty settings for Block by default
          * @type {{}}
          */
-        this.toolsSettings[toolName] = {class: this.config.tools[toolName] as ToolConstructable};
+        this.toolsSettings[toolName] = { class: this.config.tools[toolName] as ToolConstructable };
       }
     }
 
@@ -377,12 +377,12 @@ export default class Tools extends Module {
    * @return {Array} list of functions that needs to be fired sequentially
    */
   private getListOfPrepareFunctions(): Array<{
-    function: (data: {toolName: string, config: ToolConfig}) => void,
-    data: {toolName: string, config: ToolConfig},
+    function: (data: {toolName: string; config: ToolConfig}) => void;
+    data: {toolName: string; config: ToolConfig};
   }> {
     const toolPreparationList: Array<{
-      function: (data: {toolName: string, config: ToolConfig}) => void,
-      data: {toolName: string, config: ToolConfig}}
+      function: (data: {toolName: string; config: ToolConfig}) => void;
+      data: {toolName: string; config: ToolConfig};}
       > = [];
 
     for (const toolName in this.toolsClasses) {
@@ -426,7 +426,7 @@ export default class Tools extends Module {
 
         if (!_.isFunction(tool) && !_.isFunction((tool as ToolSettings).class)) {
           throw Error(
-            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
+            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`
           );
         }
       }
@@ -439,14 +439,14 @@ export default class Tools extends Module {
    */
   get internalTools() {
     return {
-      bold: {class: BoldInlineTool},
-      italic: {class: ItalicInlineTool},
-      link: {class: LinkInlineTool},
+      bold: { class: BoldInlineTool },
+      italic: { class: ItalicInlineTool },
+      link: { class: LinkInlineTool },
       paragraph: {
         class: Paragraph,
         inlineToolbar: true,
       },
-      stub: {class: Stub},
+      stub: { class: Stub },
     };
   }
 }

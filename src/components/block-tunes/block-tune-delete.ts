@@ -4,11 +4,10 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import {API, BlockTune} from '../../../types';
+import { API, BlockTune } from '../../../types';
 import $ from '../dom';
 
 export default class DeleteTune implements BlockTune {
-
   /**
    * Property that contains Editor.js API methods
    * @see {docs/api.md}
@@ -46,7 +45,7 @@ export default class DeleteTune implements BlockTune {
    *
    * @param {{api: API}} api
    */
-  constructor({api}) {
+  constructor({ api }) {
     this.api = api;
 
     this.resetConfirmation = () => {
@@ -76,7 +75,6 @@ export default class DeleteTune implements BlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
-
     /**
      * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
      * otherwise delete block
@@ -90,9 +88,7 @@ export default class DeleteTune implements BlockTune {
        * then reset confirmation state
        */
       this.api.events.on('block-settings-closed', this.resetConfirmation);
-
     } else {
-
       /**
        * Unsubscribe from block-settings closing event
        */
@@ -116,5 +112,4 @@ export default class DeleteTune implements BlockTune {
     this.needConfirmation = state;
     this.nodes.button.classList.add(this.CSS.buttonConfirm);
   }
-
 }

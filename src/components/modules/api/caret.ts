@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Caret} from '../../../../types/api';
+import { Caret } from '../../../../types/api';
 
 /**
  * @class CaretAPI
@@ -29,12 +29,13 @@ export default class CaretAPI extends Module {
    *
    * @return {boolean}
    */
-  private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.firstBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.firstBlock, position, offset);
+
     return true;
   }
 
@@ -46,12 +47,13 @@ export default class CaretAPI extends Module {
    *
    * @return {boolean}
    */
-  private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.lastBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.lastBlock, position, offset);
+
     return true;
   }
 
@@ -65,13 +67,14 @@ export default class CaretAPI extends Module {
    */
   private setToPreviousBlock = (
     position: string = this.Editor.Caret.positions.DEFAULT,
-    offset: number = 0,
+    offset = 0
   ): boolean => {
     if (!this.Editor.BlockManager.previousBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.previousBlock, position, offset);
+
     return true;
   }
 
@@ -83,12 +86,13 @@ export default class CaretAPI extends Module {
    *
    * @return {boolean}
    */
-  private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.nextBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.nextBlock, position, offset);
+
     return true;
   }
 
@@ -104,13 +108,14 @@ export default class CaretAPI extends Module {
   private setToBlock = (
     index: number,
     position: string = this.Editor.Caret.positions.DEFAULT,
-    offset: number = 0,
+    offset = 0
   ): boolean => {
     if (!this.Editor.BlockManager.blocks[index]) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.blocks[index], position, offset);
+
     return true;
   }
 
@@ -121,7 +126,7 @@ export default class CaretAPI extends Module {
    *
    * @return {boolean}
    */
-  private focus = (atEnd: boolean = false) => {
+  private focus = (atEnd = false) => {
     if (atEnd) {
       return this.setToLastBlock(this.Editor.Caret.positions.END);
     }

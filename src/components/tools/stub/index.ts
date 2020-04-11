@@ -1,5 +1,5 @@
 import $ from '../../dom';
-import {BlockTool, BlockToolData} from '../../../../types';
+import { BlockTool, BlockToolData } from '../../../../types';
 
 export default class Stub implements BlockTool {
   /**
@@ -33,7 +33,7 @@ export default class Stub implements BlockTool {
    */
   private readonly savedData: BlockToolData;
 
-  constructor({data, config, api}) {
+  constructor({ data, config, api }) {
     this.title = data.title || 'Error';
     this.subtitle = 'The block can not be displayed correctly.';
     this.savedData = data.savedData;

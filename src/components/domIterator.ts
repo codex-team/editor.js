@@ -24,7 +24,7 @@ export default class DomIterator {
    * Default is -1 which means nothing is active
    * @type {number}
    */
-  private cursor: number = -1;
+  private cursor = -1;
 
   /**
    * Items to flip
@@ -37,7 +37,7 @@ export default class DomIterator {
    */
   constructor(
     nodeList: HTMLElement[],
-    focusedCssClass: string,
+    focusedCssClass: string
   ) {
     this.items = nodeList || [];
     this.focusedCssClass = focusedCssClass;

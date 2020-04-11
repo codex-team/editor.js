@@ -6,12 +6,12 @@
  *
  * @version 2.0.0
  */
-import Block, {BlockToolAPI} from '../block';
+import Block, { BlockToolAPI } from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
+import { BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -19,7 +19,6 @@ import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
 export default class BlockManager extends Module {
-
   /**
    * Returns current Block index
    * @return {number}
@@ -142,7 +141,7 @@ export default class BlockManager extends Module {
    *
    * @type {number}
    */
-  private _currentBlockIndex: number = -1;
+  private _currentBlockIndex = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
@@ -185,14 +184,14 @@ export default class BlockManager extends Module {
     Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
 
     /** Copy and cut */
     Listeners.on(
       document,
       'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
     );
   }
 
@@ -231,7 +230,7 @@ export default class BlockManager extends Module {
     data: BlockToolData = {},
     settings: ToolConfig = {},
     index: number = this.currentBlockIndex + 1,
-    needToFocus: boolean = true,
+    needToFocus = true
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -254,7 +253,7 @@ export default class BlockManager extends Module {
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace: boolean = false,
+    replace = false
   ): Block {
     let block;
 
@@ -269,6 +268,7 @@ export default class BlockManager extends Module {
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
+
     return block;
   }
 
@@ -282,7 +282,7 @@ export default class BlockManager extends Module {
    *
    * @return {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus: boolean = false) {
+  public insertInitialBlockAtIndex(index: number, needToFocus = false) {
     const block = this.composeBlock(this.config.initialBlock, {}, {});
 
     this._blocks[index] = block;
@@ -356,7 +356,6 @@ export default class BlockManager extends Module {
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
       this.insert();
-      return;
     } else if (index === 0) {
       this.currentBlockIndex = 0;
     }
@@ -439,7 +438,7 @@ export default class BlockManager extends Module {
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
-    settings: ToolConfig = {},
+    settings: ToolConfig = {}
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -468,8 +467,8 @@ export default class BlockManager extends Module {
     }
 
     const nodes = this._blocks.nodes,
-      firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
-      index = nodes.indexOf(firstLevelBlock as HTMLElement);
+        firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
+        index = nodes.indexOf(firstLevelBlock as HTMLElement);
 
     if (index >= 0) {
       return this._blocks[index];
@@ -496,7 +495,7 @@ export default class BlockManager extends Module {
    * Remove selection from all Blocks
    */
   public clearFocused(): void {
-    this.blocks.forEach( (block) => block.focused = false);
+    this.blocks.forEach((block) => block.focused = false);
   }
 
   /**
@@ -523,6 +522,7 @@ export default class BlockManager extends Module {
        * @type {number}
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
@@ -571,11 +571,13 @@ export default class BlockManager extends Module {
     // make sure indexes are valid and within a valid range
     if (isNaN(toIndex) || isNaN(fromIndex)) {
       _.log(`Warning during 'move' call: incorrect indices provided.`, 'warn');
+
       return;
     }
 
     if (!this.validateIndex(toIndex) || !this.validateIndex(fromIndex)) {
       _.log(`Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`, 'warn');
+
       return;
     }
 
@@ -601,7 +603,7 @@ export default class BlockManager extends Module {
    *                                        we don't need to add empty initial block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needAddInitialBlock: boolean = false): void {
+  public clear(needAddInitialBlock = false): void {
     this._blocks.removeAll();
     this.dropPointer();
 
@@ -620,7 +622,7 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   private bindEvents(block: Block): void {
-    const {BlockEvents, Listeners} = this.Editor;
+    const { BlockEvents, Listeners } = this.Editor;
 
     Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
     Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp());

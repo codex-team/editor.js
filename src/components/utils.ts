@@ -78,12 +78,11 @@ export const mouseButtons = {
 function _log(
   labeled: boolean,
   msg: string,
-  type: string = 'log',
+  type = 'log',
   args?: any,
-  style: string = 'color: inherit',
+  style = 'color: inherit'
 ): void {
-
-  if ( !('console' in window) || !window.console[ type ] ) {
+  if (!('console' in window) || !window.console[type]) {
     return;
   }
 
@@ -175,13 +174,13 @@ export const logLabeled = _log.bind(window, true);
  * @param {number} keyCode
  * @return {boolean}
  */
-export function isPrintableKey( keyCode: number ): boolean {
-  return (keyCode > 47 && keyCode < 58)   || // number keys
-    keyCode === 32 || keyCode === 13   || // Spacebar & return key(s)
-    (keyCode > 64 && keyCode < 91)   || // letter keys
-    (keyCode > 95 && keyCode < 112)  || // Numpad keys
+export function isPrintableKey(keyCode: number): boolean {
+  return (keyCode > 47 && keyCode < 58) || // number keys
+    keyCode === 32 || keyCode === 13 || // Spacebar & return key(s)
+    (keyCode > 64 && keyCode < 91) || // letter keys
+    (keyCode > 95 && keyCode < 112) || // Numpad keys
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
-    (keyCode > 218 && keyCode < 223);   // [\]' (in order)
+    (keyCode > 218 && keyCode < 223); // [\]' (in order)
 }
 
 /**
@@ -196,7 +195,7 @@ export function isPrintableKey( keyCode: number ): boolean {
 export async function sequence(
   chains: ChainData[],
   success: (data: any) => void = () => {},
-  fallback: (data: any) => void = () => {},
+  fallback: (data: any) => void = () => {}
 ): Promise<void> {
   /**
    * Decorator
@@ -211,7 +210,7 @@ export async function sequence(
   async function waitNextBlock(
     chainData: ChainData,
     successCallback: (data: any) => void,
-    fallbackCallback: (data: any) => void,
+    fallbackCallback: (data: any) => void
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
@@ -230,6 +229,7 @@ export async function sequence(
    */
   return await chains.reduce(async (previousValue, currentValue) => {
     await previousValue;
+
     return waitNextBlock(currentValue, success, fallback);
   }, Promise.resolve());
 }
@@ -293,9 +293,9 @@ export function isPromise(object: any): boolean {
  * @param {Number} timeout
  */
 export function delay(method: (...args: any[]) => any, timeout: number) {
-  return function() {
+  return function () {
     const context = this,
-      args = arguments;
+        args = arguments;
 
     window.setTimeout(() => method.apply(context, args), timeout);
   };
@@ -332,12 +332,12 @@ export function isValidMimeType(type: string): boolean {
  * @param {Boolean} immediate - call now
  * @return {Function}
  */
-export function debounce(func: () => void, wait?: number , immediate?: boolean): () => void {
+export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
   return () => {
     const context = this,
-      args = arguments;
+        args = arguments;
 
     const later = () => {
       timeout = null;
@@ -369,6 +369,7 @@ export function copyTextToClipboard(text) {
 
   const selection = window.getSelection();
   const range = document.createRange();
+
   range.selectNode(el);
 
   window.getSelection().removeAllRanges();
@@ -395,6 +396,7 @@ export function getUserOS(): {[key: string]: boolean} {
 
   if (userOS) {
     OS[userOS] = true;
+
     return OS;
   }
 
@@ -419,7 +421,9 @@ export function capitalize(text: string): string {
 export function deepMerge(target, ...sources) {
   const isObject = (item) => item && typeOf(item) === 'object';
 
-  if (!sources.length) { return target; }
+  if (!sources.length) {
+    return target;
+  }
   const source = sources.shift();
 
   if (isObject(target) && isObject(source)) {

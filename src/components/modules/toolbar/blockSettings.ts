@@ -1,6 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import Flipper, {FlipperOptions} from '../../flipper';
+import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 
 /**
@@ -15,12 +15,11 @@ import * as _ from '../../utils';
  *  |________________________|
  */
 export default class BlockSettings extends Module {
-
   /**
    * Module Events
    * @return {{opened: string, closed: string}}
    */
-  public get events(): {opened: string, closed: string} {
+  public get events(): {opened: string; closed: string} {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -41,7 +40,7 @@ export default class BlockSettings extends Module {
 
       button: 'ce-settings__button',
 
-      focusedButton : 'ce-settings__button--focused',
+      focusedButton: 'ce-settings__button--focused',
       focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
@@ -198,7 +197,7 @@ export default class BlockSettings extends Module {
          * Restoring focus on current Block after settings clicked.
          * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
          */
-        _.delay( () => {
+        _.delay(() => {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
         }, 10)();
       },

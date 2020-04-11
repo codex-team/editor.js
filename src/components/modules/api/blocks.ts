@@ -1,7 +1,7 @@
 import Module from '../../__module';
 
-import {Blocks} from '../../../../types/api';
-import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
+import { Blocks } from '../../../../types/api';
+import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 
 /**
@@ -24,7 +24,7 @@ export default class BlocksAPI extends Module {
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
-      stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
+      stretchBlock: (index: number, status = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
       insert: this.insert,
     };
@@ -54,6 +54,7 @@ export default class BlocksAPI extends Module {
    */
   public getBlockByIndex(index: number): HTMLElement {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
+
     return block.holder;
   }
 
@@ -125,6 +126,7 @@ export default class BlocksAPI extends Module {
    */
   public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Renderer.render(data.blocks);
   }
 
@@ -135,6 +137,7 @@ export default class BlocksAPI extends Module {
    */
   public renderFromHTML(data: string): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Paste.processText(data, true);
   }
 
@@ -143,7 +146,7 @@ export default class BlocksAPI extends Module {
    * @param {number} index
    * @param {boolean} status - true to enable, false to disable
    */
-  public stretchBlock(index: number, status: boolean = true): void {
+  public stretchBlock(index: number, status = true): void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {
@@ -167,14 +170,14 @@ export default class BlocksAPI extends Module {
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean,
+    needToFocus?: boolean
   ): void => {
     this.Editor.BlockManager.insert(
       type,
       data,
       config,
       index,
-      needToFocus,
+      needToFocus
     );
   }
 
