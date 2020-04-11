@@ -181,28 +181,14 @@ export default class Sanitizer extends Module {
     return toolConfig;
   }
 
-  //
-  // Returns Sanitizer config
-  // When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-  // otherwise get only enabled
-  //
-  // @param name
-  //
-  public getInlineToolsConfig/**
-                              *
-                              *//**
-                                 *
-                                 *//**
-                                    *
-                                    *//**
-                                       *
-                                       *//**
-                                          *
-                                          *//**
-                                             *
-                                             *//**
- *
- */(name: string): SanitizerConfig {
+  /**
+   * Returns Sanitizer config
+   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
+   * otherwise get only enabled
+   *
+   * @param name
+   */
+  public getInlineToolsConfig(name: string): SanitizerConfig {
     const { Tools } = this.Editor;
     const toolsConfig = Tools.getToolSettings(name);
     const enableInlineTools = toolsConfig.inlineToolbar || [];

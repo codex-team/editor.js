@@ -529,39 +529,25 @@ export default class Caret extends Module {
     selection.addRange(newRange);
   }
 
-  //
-  // Get all first-level (first child of [contenteditabel]) siblings from passed node
-  // Then you can check it for emptiness
-  //
-  // @example
-  // <div contenteditable>
-  // <p></p>                            |
-  // <p></p>                            | left first-level siblings
-  // <p></p>                            |
-  // <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
-  // <p></p>                            |
-  // <p></p>                            | right first-level siblings
-  // <p></p>                            |
-  // </div>
-  // @return {Element[]}
-  // @param from
-  // @param direction
-  //
-  private getHigherLevelSiblings/**
-                                 *
-                                 *//**
-                                    *
-                                    *//**
-                                       *
-                                       *//**
-                                          *
-                                          *//**
-                                             *
-                                             *//**
-                                                *
-                                                *//**
- *
- */(from: HTMLElement, direction?: string): HTMLElement[] {
+  /**
+   * Get all first-level (first child of [contenteditabel]) siblings from passed node
+   * Then you can check it for emptiness
+   *
+   * @example
+   * <div contenteditable>
+   * <p></p>                            |
+   * <p></p>                            | left first-level siblings
+   * <p></p>                            |
+   * <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+   * <p></p>                            |
+   * <p></p>                            | right first-level siblings
+   * <p></p>                            |
+   * </div>
+   * @returns {Element[]}
+   * @param from
+   * @param direction
+   */
+  private getHigherLevelSiblings(from: HTMLElement, direction?: string): HTMLElement[] {
     let current = from;
     const siblings = [];
 
