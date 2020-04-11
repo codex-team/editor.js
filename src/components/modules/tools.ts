@@ -96,7 +96,9 @@ export default class Tools extends Module {
      */
     const result = {};
 
-    tools.forEach(([name, tool]) => result[name] = tool);
+    tools.forEach(([name, tool]) => {
+      result[name] = tool;
+    });
 
     /**
      * Cache prepared Tools
@@ -120,7 +122,9 @@ export default class Tools extends Module {
      */
     const result = {};
 
-    tools.forEach(([name, tool]) => result[name] = tool);
+    tools.forEach(([name, tool]) => {
+      result[name] = tool;
+    });
 
     return result;
   }
@@ -325,7 +329,7 @@ export default class Tools extends Module {
    * @returns {BlockTool}
    */
   public construct(tool, data) {
-    const plugin = this.toolsClasses[tool];
+    const Plugin = this.toolsClasses[tool];
 
     /**
      * Configuration to be passed to the Tool's constructor
@@ -346,7 +350,7 @@ export default class Tools extends Module {
       data,
     };
 
-    return new plugin(constructorOptions);
+    return new Plugin(constructorOptions);
   }
 
   /**
@@ -365,6 +369,7 @@ export default class Tools extends Module {
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
     };
 
+    // eslint-disable-next-line new-cap
     return new tool(constructorOptions) as InlineTool;
   }
 

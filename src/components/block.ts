@@ -446,6 +446,7 @@ export default class Block {
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
       try {
+        // eslint-disable-next-line no-useless-call
         this.tool[methodName].call(this.tool, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
@@ -522,8 +523,8 @@ export default class Block {
     const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map((tune: BlockTuneConstructable) => {
-      return new tune({
+    return tunesList.map((Tune: BlockTuneConstructable) => {
+      return new Tune({
         api: this.api,
         settings: this.settings,
       });

@@ -50,9 +50,6 @@ export default class BlockEvents extends Module {
       case _.keyCodes.ESC:
         this.escapePressed(event);
         break;
-      default:
-        this.defaultHandler();
-        break;
     }
   }
 
@@ -112,12 +109,6 @@ export default class BlockEvents extends Module {
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
     this.Editor.UI.checkEmptiness();
-  }
-
-  /**
-   * Mouse up on Block:
-   */
-  public mouseUp(): void {
   }
 
   /**
@@ -541,11 +532,6 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
   }
-
-  /**
-   * Default keydown handler
-   */
-  private defaultHandler(): void {}
 
   /**
    * Cases when we need to close Toolbar

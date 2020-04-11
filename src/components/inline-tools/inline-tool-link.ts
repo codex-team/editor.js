@@ -361,9 +361,9 @@ export default class LinkInlineTool implements InlineTool {
      *     2) Anchors looks like "#results"
      *     3) Protocol-relative URLs like "//google.com"
      */
-    const isInternal = /^\/[^\/\s]/.test(link),
+    const isInternal = /^\/[^/\s]/.test(link),
         isAnchor = link.substring(0, 1) === '#',
-        isProtocolRelative = /^\/\/[^\/\s]/.test(link);
+        isProtocolRelative = /^\/\/[^/\s]/.test(link);
 
     if (!isInternal && !isAnchor && !isProtocolRelative) {
       link = 'http://' + link;

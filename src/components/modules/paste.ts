@@ -420,8 +420,7 @@ export default class Paste extends Module {
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !BlockManager.currentBlock ||
-      this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
+      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
       return;
     }
@@ -647,13 +646,11 @@ export default class Paste extends Module {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
-        let insertedBlock;
-
         const needToReplaceCurrentBlock = BlockManager.currentBlock &&
           Tools.isInitial(BlockManager.currentBlock.tool) &&
           BlockManager.currentBlock.isEmpty;
 
-        insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
+        const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
         Caret.setToBlock(insertedBlock, Caret.positions.END);
 

@@ -17,6 +17,7 @@
     "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
     "lint": "eslint src/ --ext .ts",
+    "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",

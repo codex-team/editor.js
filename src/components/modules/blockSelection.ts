@@ -67,7 +67,9 @@ export default class BlockSelection extends Module {
   public set allBlocksSelected(state: boolean) {
     const { BlockManager } = this.Editor;
 
-    BlockManager.blocks.forEach((block) => block.selected = state);
+    BlockManager.blocks.forEach((block) => {
+      block.selected = state;
+    });
   }
 
   /**

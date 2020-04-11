@@ -509,7 +509,9 @@ export default class BlockManager extends Module {
    * Remove selection from all Blocks
    */
   public clearFocused(): void {
-    this.blocks.forEach((block) => block.focused = false);
+    this.blocks.forEach((block) => {
+      block.focused = false;
+    });
   }
 
   /**
@@ -644,7 +646,6 @@ export default class BlockManager extends Module {
     const { BlockEvents, Listeners } = this.Editor;
 
     Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
-    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp());
     Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));

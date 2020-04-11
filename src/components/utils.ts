@@ -155,7 +155,7 @@ _log.logLevel = LogLevels.VERBOSE;
  *
  * @param {LogLevels} logLevel - log level to set
  */
-export function setLogLevel(logLevel: LogLevels) {
+export function setLogLevel(logLevel: LogLevels): void {
   _log.logLevel = logLevel;
 }
 
@@ -185,7 +185,7 @@ export function isPrintableKey(keyCode: number): boolean {
 }
 
 /**
- * Fires a promise sequence asyncronically
+ * Fires a promise sequence asynchronously
  *
  * @param {ChainData[]} chains - list or ChainData's
  * @param {Function} success - success callback
@@ -195,8 +195,10 @@ export function isPrintableKey(keyCode: number): boolean {
  */
 export async function sequence(
   chains: ChainData[],
-  success: (data: any) => void = () => {},
-  fallback: (data: any) => void = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  success: (data: any) => void = (): void => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  fallback: (data: any) => void = (): void => {},
 ): Promise<void> {
   /**
    * Decorator
@@ -228,7 +230,7 @@ export async function sequence(
    * reduce current element will not be able to continue while can't get
    * a resolved Promise
    */
-  return await chains.reduce(async (previousValue, currentValue) => {
+  return chains.reduce(async (previousValue, currentValue) => {
     await previousValue;
 
     return waitNextBlock(currentValue, success, fallback);
@@ -297,8 +299,10 @@ export function isPromise(object: any): boolean {
  * @param {number} timeout
  */
 export function delay(method: (...args: any[]) => any, timeout: number) {
-  return function () {
+  return function() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
+        // eslint-disable-next-line prefer-rest-params
         args = arguments;
 
     window.setTimeout(() => method.apply(context, args), timeout);
@@ -339,10 +343,13 @@ export function isValidMimeType(type: string): boolean {
 export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
-  return () => {
+  return (): void => {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
+        // eslint-disable-next-line prefer-rest-params
         args = arguments;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const later = () => {
       timeout = null;
       if (!immediate) {
@@ -363,9 +370,9 @@ export function debounce(func: () => void, wait?: number, immediate?: boolean): 
 /**
  * Copies passed text to the clipboard
  *
- * @param text
+ * @param text - text to copy
  */
-export function copyTextToClipboard(text) {
+export function copyTextToClipboard(text): void {
   const el = Dom.make('div', 'codex-editor-clipboard', {
     innerHTML: text,
   });
@@ -386,8 +393,6 @@ export function copyTextToClipboard(text) {
 
 /**
  * Returns object with os name as key and boolean as value. Shows current user OS
- *
- * @returns {[key: string]: boolean}
  */
 export function getUserOS(): {[key: string]: boolean} {
   const OS = {
@@ -425,7 +430,7 @@ export function capitalize(text: string): string {
  * @param {object[]} sources
  * @returns {object}
  */
-export function deepMerge(target, ...sources) {
+export function deepMerge(target, ...sources): {[key: string]: any} {
   const isObject = (item) => item && typeOf(item) === 'object';
 
   if (!sources.length) {

@@ -1,5 +1,18 @@
 {
   "extends": [
     "codex"
-  ]
+  ],
+  "rules": {
+    /**
+     * Temporary suppress some errors. We need to fix them partially in next patches
+     */
+    "@typescript-eslint/explicit-function-return-type": ["warn"],
+    "@typescript-eslint/explicit-member-accessibility": ["warn"],
+    "@typescript-eslint/member-ordering": ["warn"],
+    "@typescript-eslint/no-empty-function": ["warn"],
+    "no-prototype-builtins": ["warn"],
+    "no-mixed-operators": ["warn"],
+    "import/no-duplicates": ["warn"],
+    "no-case-declarations": ["warn"]
+  }
 }

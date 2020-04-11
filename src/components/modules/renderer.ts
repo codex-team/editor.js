@@ -1,4 +1,5 @@
 import Module from '../__module';
+/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
 import { ChainData } from '../utils';
 import { BlockToolData } from '../../../types';
