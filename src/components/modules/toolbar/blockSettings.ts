@@ -103,6 +103,11 @@ export default class BlockSettings extends Module {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
+     * Highlight content of a Block we are working with
+     */
+    this.Editor.BlockManager.currentBlock.selected = true;
+
+    /**
      * Fill Tool's settings
      */
     this.addToolSettings();

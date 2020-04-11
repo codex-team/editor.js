@@ -170,6 +170,7 @@ export default class BlockManager extends Module {
    */
   public async prepare() {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
+    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -189,6 +190,20 @@ export default class BlockManager extends Module {
       set: Blocks.set,
       get: Blocks.get,
     });
+
+    /** Copy event */
+    Listeners.on(
+      document,
+      'copy',
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+    );
+
+    /** Copy and cut */
+    Listeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+    );
 
     this.readOnlyEnabled = this.config.readOnly;
   }
@@ -462,15 +477,17 @@ export default class BlockManager extends Module {
    * Replace current working block
    *
    * @param {String} toolName — plugin name
-   * @param {Object} data — plugin data
+   * @param {BlockToolData} data — plugin data
+   * @param {ToolConfig} settings — plugin config
    *
    * @return {Block}
    */
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
+    settings: ToolConfig = {},
   ): Block {
-    const block = this.composeBlock(toolName, data);
+    const block = this.composeBlock(toolName, data, settings);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
 
@@ -580,12 +597,37 @@ export default class BlockManager extends Module {
    * Swap Blocks Position
    * @param {Number} fromIndex
    * @param {Number} toIndex
+   * @deprecated — use 'move' instead
    */
   public swap(fromIndex, toIndex): void {
     /** Move up current Block */
     this._blocks.swap(fromIndex, toIndex);
 
     /** Now actual block moved up so that current block index decreased */
+    this.currentBlockIndex = toIndex;
+  }
+
+  /**
+   * Move a block to a new index
+   * @param {Number} toIndex
+   * @param {Number} fromIndex
+   */
+  public move(toIndex, fromIndex = this.currentBlockIndex): void {
+    // make sure indexes are valid and within a valid range
+    if (isNaN(toIndex) || isNaN(fromIndex)) {
+      _.log(`Warning during 'move' call: incorrect indices provided.`, 'warn');
+      return;
+    }
+
+    if (!this.validateIndex(toIndex) || !this.validateIndex(fromIndex)) {
+      _.log(`Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`, 'warn');
+      return;
+    }
+
+    /** Move up current Block */
+    this._blocks.move(toIndex, fromIndex);
+
+    /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
   }
 
@@ -675,5 +717,17 @@ export default class BlockManager extends Module {
     }
 
     this.listenerIds = [];
+  }
+
+  /**
+   * Validates that the given index is not lower than 0 or higher than the amount of blocks
+   * @param {number} index - index of blocks array to validate
+   */
+  private validateIndex(index: number): boolean {
+    if (index < 0 || index >= this._blocks.length) {
+      return false;
+    }
+
+    return true;
   }
 }

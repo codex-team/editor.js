@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {LogLevels, OutputData} from '../index';
+import {LogLevels, OutputData, API} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 
 export interface EditorConfig {
@@ -74,6 +74,7 @@ export interface EditorConfig {
 
   /**
    * Fires when something changed in DOM
+   * @param {API} api - editor.js api
    */
-  onChange?(): void;
+  onChange?(api: API): void;
 }

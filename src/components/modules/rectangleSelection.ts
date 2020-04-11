@@ -123,11 +123,19 @@ export default class RectangleSelection extends Module {
    * @param {number} pageY - Y coord of mouse
    */
   public startSelection(pageX, pageY) {
-    this.Editor.BlockSelection.allBlocksSelected = false;
-    this.clearSelection();
-    this.stackOfSelected = [];
-
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
+
+    /**
+     * Don't clear selected block by clicks on the Block settings
+     * because we need to keep highlighting working block
+     */
+    const startsInsideToolbar = elemWhereSelectionStart.closest(`.${this.Editor.Toolbar.CSS.toolbar}`);
+
+    if (!startsInsideToolbar) {
+      this.Editor.BlockSelection.allBlocksSelected = false;
+      this.clearSelection();
+      this.stackOfSelected = [];
+    }
 
     const selectorsToAvoid = [
       `.${Block.CSS.content}`,

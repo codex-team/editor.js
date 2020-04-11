@@ -623,6 +623,21 @@ export default class UI extends Module {
     event.stopImmediatePropagation();
     event.stopPropagation();
 
+    /**
+     * case when user clicks on anchor element
+     * if it is clicked via ctrl key, then we open new window with url
+     */
+    const element = event.target as Element;
+    const ctrlKey = event.metaKey || event.ctrlKey;
+
+    if ($.isAnchor(element) && ctrlKey) {
+      const href = element.getAttribute('href');
+      const validUrl = _.getValidUrl(href);
+
+      _.openTab(validUrl);
+      return;
+    }
+
     if (!this.Editor.BlockManager.currentBlock) {
       this.Editor.BlockManager.insert();
     }
