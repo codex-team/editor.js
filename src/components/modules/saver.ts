@@ -6,8 +6,8 @@
  * @version 2.0.0
  */
 import Module from '../__module';
-import {OutputData} from '../../../types';
-import {ValidatedData} from '../../types-internal/block-data';
+import { OutputData } from '../../../types';
+import { ValidatedData } from '../../types-internal/block-data';
 import Block from '../block';
 import * as _ from '../utils';
 
@@ -18,17 +18,18 @@ declare const VERSION: string;
  *
  * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
- * @property {String} json - Editor JSON output
+ * @property {string} json - Editor JSON output
  */
 export default class Saver extends Module {
   /**
    * Composes new chain of Promises to fire them alternatelly
-   * @return {OutputData}
+   *
+   * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const {BlockManager, Sanitizer, ModificationsObserver} = this.Editor;
+    const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
     const blocks = BlockManager.blocks,
-      chainData = [];
+        chainData = [];
 
     /**
      * Disable modifications observe while saving
@@ -36,7 +37,7 @@ export default class Saver extends Module {
     ModificationsObserver.disable();
 
     blocks.forEach((block: Block) => {
-     chainData.push(this.getSavedData(block));
+      chainData.push(this.getSavedData(block));
     });
 
     const extractedData = await Promise.all(chainData);
@@ -49,20 +50,25 @@ export default class Saver extends Module {
 
   /**
    * Saves and validates
+   *
    * @param {Block} block - Editor's Tool
-   * @return {ValidatedData} - Tool's validated data
+   * @returns {ValidatedData} - Tool's validated data
    */
   private async getSavedData(block: Block): Promise<ValidatedData> {
-      const blockData = await block.save();
-      const isValid = blockData && await block.validate(blockData.data);
+    const blockData = await block.save();
+    const isValid = blockData && await block.validate(blockData.data);
 
-      return {...blockData, isValid};
+    return {
+      ...blockData,
+      isValid,
+    };
   }
 
   /**
    * Creates output object with saved data, time and version of editor
+   *
    * @param {ValidatedData} allExtractedData
-   * @return {OutputData}
+   * @returns {OutputData}
    */
   private makeOutput(allExtractedData): OutputData {
     let totalTime = 0;
@@ -70,7 +76,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({tool, data, time, isValid}) => {
+    allExtractedData.forEach(({ tool, data, time, isValid }) => {
       totalTime += time;
 
       /**
@@ -85,12 +91,14 @@ export default class Saver extends Module {
       } else {
         _.log(`Block «${tool}» skipped because saved data is invalid`);
         _.log(undefined, 'groupEnd');
+
         return;
       }
 
       /** If it was stub Block, get original data */
       if (tool === this.Editor.Tools.stubTool) {
         blocks.push(data);
+
         return;
       }
 

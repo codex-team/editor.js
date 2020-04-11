@@ -20,8 +20,8 @@ export enum LogLevels {
 declare const VERSION: string;
 
 /**
- * @typedef {Object} ChainData
- * @property {Object} data - data that will be passed to the success or fallback
+ * @typedef {object} ChainData
+ * @property {object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronically
  */
 export interface ChainData {
@@ -35,7 +35,8 @@ export interface ChainData {
 
 /**
  * Returns basic keycodes as constants
- * @return {{}}
+ *
+ * @returns {{}}
  */
 export const keyCodes = {
   BACKSPACE: 8,
@@ -73,17 +74,15 @@ export const mouseButtons = {
  * @param {string} type - logging type 'log'|'warn'|'error'|'info'
  * @param {*} [args]      - argument to log with a message
  * @param {string} style  - additional styling to message
- * @param labeled
  */
 function _log(
   labeled: boolean,
   msg: string,
-  type: string = 'log',
+  type = 'log',
   args?: any,
-  style: string = 'color: inherit',
+  style = 'color: inherit'
 ): void {
-
-  if ( !('console' in window) || !window.console[ type ] ) {
+  if (!('console' in window) || !window.console[type]) {
     return;
   }
 
@@ -156,7 +155,7 @@ _log.logLevel = LogLevels.VERBOSE;
  *
  * @param {LogLevels} logLevel - log level to set
  */
-export function setLogLevel(logLevel: LogLevels) {
+export function setLogLevel(logLevel: LogLevels): void {
   _log.logLevel = logLevel;
 }
 
@@ -172,31 +171,34 @@ export const logLabeled = _log.bind(window, true);
 
 /**
  * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
+ *
  * @param {number} keyCode
- * @return {boolean}
+ * @returns {boolean}
  */
-export function isPrintableKey( keyCode: number ): boolean {
-  return (keyCode > 47 && keyCode < 58)   || // number keys
-    keyCode === 32 || keyCode === 13   || // Spacebar & return key(s)
-    (keyCode > 64 && keyCode < 91)   || // letter keys
-    (keyCode > 95 && keyCode < 112)  || // Numpad keys
+export function isPrintableKey(keyCode: number): boolean {
+  return (keyCode > 47 && keyCode < 58) || // number keys
+    keyCode === 32 || keyCode === 13 || // Spacebar & return key(s)
+    (keyCode > 64 && keyCode < 91) || // letter keys
+    (keyCode > 95 && keyCode < 112) || // Numpad keys
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
-    (keyCode > 218 && keyCode < 223);   // [\]' (in order)
+    (keyCode > 218 && keyCode < 223); // [\]' (in order)
 }
 
 /**
- * Fires a promise sequence asyncronically
+ * Fires a promise sequence asynchronously
  *
  * @param {ChainData[]} chains - list or ChainData's
  * @param {Function} success - success callback
  * @param {Function} fallback - callback that fires in case of errors
  *
- * @return {Promise}
+ * @returns {Promise}
  */
 export async function sequence(
   chains: ChainData[],
-  success: (data: any) => void = () => {},
-  fallback: (data: any) => void = () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  success: (data: any) => void = (): void => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  fallback: (data: any) => void = (): void => {},
 ): Promise<void> {
   /**
    * Decorator
@@ -206,12 +208,12 @@ export async function sequence(
    * @param {Function} successCallback
    * @param {Function} fallbackCallback
    *
-   * @return {Promise}
+   * @returns {Promise}
    */
   async function waitNextBlock(
     chainData: ChainData,
     successCallback: (data: any) => void,
-    fallbackCallback: (data: any) => void,
+    fallbackCallback: (data: any) => void
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
@@ -228,8 +230,9 @@ export async function sequence(
    * reduce current element will not be able to continue while can't get
    * a resolved Promise
    */
-  return await chains.reduce(async (previousValue, currentValue) => {
+  return chains.reduce(async (previousValue, currentValue) => {
     await previousValue;
+
     return waitNextBlock(currentValue, success, fallback);
   }, Promise.resolve());
 }
@@ -239,7 +242,7 @@ export async function sequence(
  *
  * @param {ArrayLike} collection
  *
- * @return {Array}
+ * @returns {Array}
  */
 export function array(collection: ArrayLike<any>): any[] {
   return Array.prototype.slice.call(collection);
@@ -247,8 +250,9 @@ export function array(collection: ArrayLike<any>): any[] {
 
 /**
  * Check if passed variable is a function
+ *
  * @param {*} fn
- * @return {boolean}
+ * @returns {boolean}
  */
 export function isFunction(fn: any): boolean {
   return typeof fn === 'function';
@@ -256,8 +260,9 @@ export function isFunction(fn: any): boolean {
 
 /**
  * Check if passed function is a class
- * @param {function} fn
- * @return {boolean}
+ *
+ * @param {Function} fn
+ * @returns {boolean}
  */
 export function isClass(fn: any): boolean {
   return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
@@ -266,8 +271,8 @@ export function isClass(fn: any): boolean {
 /**
  * Checks if object is empty
  *
- * @param {Object} object
- * @return {boolean}
+ * @param {object} object
+ * @returns {boolean}
  */
 export function isEmpty(object: object): boolean {
   if (!object) {
@@ -279,8 +284,9 @@ export function isEmpty(object: object): boolean {
 
 /**
  * Check if passed object is a Promise
+ *
  * @param  {*}  object - object to check
- * @return {Boolean}
+ * @returns {boolean}
  */
 export function isPromise(object: any): boolean {
   return Promise.resolve(object) === object;
@@ -290,12 +296,14 @@ export function isPromise(object: any): boolean {
  * Delays method execution
  *
  * @param {Function} method
- * @param {Number} timeout
+ * @param {number} timeout
  */
 export function delay(method: (...args: any[]) => any, timeout: number) {
   return function() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
-      args = arguments;
+        // eslint-disable-next-line prefer-rest-params
+        args = arguments;
 
     window.setTimeout(() => method.apply(context, args), timeout);
   };
@@ -305,7 +313,7 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
  * Get file extension
  *
  * @param {File} file
- * @return string
+ * @returns string
  */
 export function getFileExtension(file: File): string {
   return file.name.split('.').pop();
@@ -315,7 +323,7 @@ export function getFileExtension(file: File): string {
  * Check if string is MIME type
  *
  * @param {string} type
- * @return boolean
+ * @returns boolean
  */
 export function isValidMimeType(type: string): boolean {
   return /^[-\w]+\/([-+\w]+|\*)$/.test(type);
@@ -328,17 +336,20 @@ export function isValidMimeType(type: string): boolean {
  * Note that this method returns Function and declared variable need to be called
  *
  * @param {Function} func - function that we're throttling
- * @param {Number} wait - time in milliseconds
- * @param {Boolean} immediate - call now
- * @return {Function}
+ * @param {number} wait - time in milliseconds
+ * @param {boolean} immediate - call now
+ * @returns {Function}
  */
-export function debounce(func: () => void, wait?: number , immediate?: boolean): () => void {
+export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
-  return () => {
+  return (): void => {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
-      args = arguments;
+        // eslint-disable-next-line prefer-rest-params
+        args = arguments;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const later = () => {
       timeout = null;
       if (!immediate) {
@@ -358,9 +369,10 @@ export function debounce(func: () => void, wait?: number , immediate?: boolean):
 
 /**
  * Copies passed text to the clipboard
- * @param text
+ *
+ * @param text - text to copy
  */
-export function copyTextToClipboard(text) {
+export function copyTextToClipboard(text): void {
   const el = Dom.make('div', 'codex-editor-clipboard', {
     innerHTML: text,
   });
@@ -369,6 +381,7 @@ export function copyTextToClipboard(text) {
 
   const selection = window.getSelection();
   const range = document.createRange();
+
   range.selectNode(el);
 
   window.getSelection().removeAllRanges();
@@ -380,8 +393,6 @@ export function copyTextToClipboard(text) {
 
 /**
  * Returns object with os name as key and boolean as value. Shows current user OS
- *
- * @return {[key: string]: boolean}
  */
 export function getUserOS(): {[key: string]: boolean} {
   const OS = {
@@ -395,6 +406,7 @@ export function getUserOS(): {[key: string]: boolean} {
 
   if (userOS) {
     OS[userOS] = true;
+
     return OS;
   }
 
@@ -403,8 +415,9 @@ export function getUserOS(): {[key: string]: boolean} {
 
 /**
  * Capitalizes first letter of the string
+ *
  * @param {string} text
- * @return {string}
+ * @returns {string}
  */
 export function capitalize(text: string): string {
   return text[0].toUpperCase() + text.slice(1);
@@ -412,14 +425,17 @@ export function capitalize(text: string): string {
 
 /**
  * Merge to objects recursively
+ *
  * @param {object} target
  * @param {object[]} sources
- * @return {object}
+ * @returns {object}
  */
-export function deepMerge(target, ...sources) {
+export function deepMerge(target, ...sources): {[key: string]: any} {
   const isObject = (item) => item && typeOf(item) === 'object';
 
-  if (!sources.length) { return target; }
+  if (!sources.length) {
+    return target;
+  }
   const source = sources.shift();
 
   if (isObject(target) && isObject(source)) {
@@ -444,9 +460,10 @@ export function deepMerge(target, ...sources) {
  *
  * Note! This is a simple solution, it can give false-positive results.
  * To detect touch devices more carefully, use 'touchstart' event listener
+ *
  * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 export const isTouchSupported: boolean = 'ontouchstart' in document.documentElement;
 
@@ -461,6 +478,7 @@ export function typeOf(object: any): string {
 
 /**
  * Make shortcut command more human-readable
+ *
  * @param {string} shortcut — string like 'CMD+B'
  */
 export function beautifyShortcut(shortcut: string): string {
@@ -493,7 +511,7 @@ export function beautifyShortcut(shortcut: string): string {
  * If url has `one slash`, then it concatenates with window location origin
  * or when url has `two lack` it appends only protocol
  *
- * @param {String} url
+ * @param {string} url
  */
 export function getValidUrl(url: string): string {
   try {
@@ -514,7 +532,7 @@ export function getValidUrl(url: string): string {
 /**
  * Opens new Tab with passed URL
  *
- * @param {String} url - URL address to redirect
+ * @param {string} url - URL address to redirect
  */
 export function openTab(url: string): void {
   window.open(url, '_blank');

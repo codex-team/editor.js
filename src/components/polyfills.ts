@@ -26,7 +26,7 @@ if (!Element.prototype.matches) {
     Element.prototype.msMatchesSelector ||
     Element.prototype.oMatchesSelector ||
     Element.prototype.webkitMatchesSelector ||
-    function(s) {
+    function (s) {
       const matches = (this.document || this.ownerDocument).querySelectorAll(s);
       let i = matches.length;
 
@@ -46,7 +46,8 @@ if (!Element.prototype.matches) {
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
  */
 if (!Element.prototype.closest) {
-  Element.prototype.closest = function(s) {
+  Element.prototype.closest = function (s) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let el = this;
 
     if (!document.documentElement.contains(el)) {

@@ -1,6 +1,11 @@
 import Shortcut from '@codexteam/shortcuts';
 
 /**
+ * Contains keyboard and mouse events binded on each Block by Block Manager
+ */
+import Module from '../__module';
+
+/**
  * ShortcutData interface
  * Each shortcut must have name and handler
  * `name` is a shortcut, like 'CMD+K', 'CMD+B' etc
@@ -21,11 +26,6 @@ export interface ShortcutData {
 }
 
 /**
- * Contains keyboard and mouse events binded on each Block by Block Manager
- */
-import Module from '../__module';
-
-/**
  * @class Shortcut
  * @classdesc Allows to register new shortcut
  *
@@ -34,12 +34,14 @@ import Module from '../__module';
 export default class Shortcuts extends Module {
   /**
    * All registered shortcuts
+   *
    * @type {Shortcut[]}
    */
   private registeredShortcuts: Shortcut[] = [];
 
   /**
    * Register shortcut
+   *
    * @param {ShortcutData} shortcut
    */
   public add(shortcut: ShortcutData): void {
@@ -54,6 +56,7 @@ export default class Shortcuts extends Module {
 
   /**
    * Remove shortcut
+   *
    * @param {ShortcutData} shortcut
    */
   public remove(shortcut: string): void {

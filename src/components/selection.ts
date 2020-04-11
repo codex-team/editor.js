@@ -30,15 +30,16 @@ interface Document {
 
 /**
  * Working with selection
+ *
  * @typedef {SelectionUtils} SelectionUtils
  */
 export default class SelectionUtils {
-
   /**
    * Editor styles
-   * @return {{editorWrapper: string, editorZone: string}}
+   *
+   * @returns {{editorWrapper: string, editorZone: string}}
    */
-  static get CSS(): { editorWrapper: string, editorZone: string } {
+  static get CSS(): { editorWrapper: string; editorZone: string } {
     return {
       editorWrapper: 'codex-editor',
       editorZone: 'codex-editor__redactor',
@@ -48,7 +49,8 @@ export default class SelectionUtils {
   /**
    * Returns selected anchor
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-   * @return {Node|null}
+   *
+   * @returns {Node|null}
    */
   static get anchorNode(): Node | null {
     const selection = window.getSelection();
@@ -58,7 +60,8 @@ export default class SelectionUtils {
 
   /**
    * Returns selected anchor element
-   * @return {Element|null}
+   *
+   * @returns {Element|null}
    */
   static get anchorElement(): Element | null {
     const selection = window.getSelection();
@@ -83,7 +86,8 @@ export default class SelectionUtils {
   /**
    * Returns selection offset according to the anchor node
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-   * @return {Number|null}
+   *
+   * @returns {number|null}
    */
   static get anchorOffset(): number | null {
     const selection = window.getSelection();
@@ -93,7 +97,8 @@ export default class SelectionUtils {
 
   /**
    * Is current selection range collapsed
-   * @return {boolean|null}
+   *
+   * @returns {boolean|null}
    */
   static get isCollapsed(): boolean | null {
     const selection = window.getSelection();
@@ -103,7 +108,8 @@ export default class SelectionUtils {
 
   /**
    * Check current selection if it is at Editor's zone
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   static get isAtEditor(): boolean {
     const selection = SelectionUtils.get();
@@ -118,6 +124,7 @@ export default class SelectionUtils {
     }
 
     let editorZone = null;
+
     if (selectedNode) {
       editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
     }
@@ -130,7 +137,8 @@ export default class SelectionUtils {
 
   /**
    * Return first range
-   * @return {Range|null}
+   *
+   * @returns {Range|null}
    */
   static get range(): Range {
     const selection = window.getSelection();
@@ -140,11 +148,12 @@ export default class SelectionUtils {
 
   /**
    * Calculates position and size of selected text
-   * @return {{x, y, width, height, top?, left?, bottom?, right?}}
+   *
+   * @returns {{x, y, width, height, top?, left?, bottom?, right?}}
    */
   static get rect(): DOMRect | ClientRect {
     let sel: Selection | MSSelection = (document as Document).selection,
-      range: TextRange | Range;
+        range: TextRange | Range;
 
     let rect = {
       x: 0,
@@ -166,6 +175,7 @@ export default class SelectionUtils {
 
     if (!window.getSelection) {
       _.log('Method window.getSelection is not supported', 'warn');
+
       return rect;
     }
 
@@ -173,6 +183,7 @@ export default class SelectionUtils {
 
     if (sel.rangeCount === null || isNaN(sel.rangeCount)) {
       _.log('Method SelectionUtils.rangeCount is not supported', 'warn');
+
       return rect;
     }
 
@@ -210,6 +221,7 @@ export default class SelectionUtils {
 
   /**
    * Returns selected text as String
+   *
    * @returns {string}
    */
   static get text(): string {
@@ -219,7 +231,8 @@ export default class SelectionUtils {
   /**
    * Returns window SelectionUtils
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
+   *
+   * @returns {Selection}
    */
   public static get(): Selection {
     return window.getSelection();
@@ -230,6 +243,7 @@ export default class SelectionUtils {
 
   /**
    * This property can store SelectionUtils's range for restoring later
+   *
    * @type {Range|null}
    */
   public savedSelectionRange: Range = null;
@@ -237,7 +251,7 @@ export default class SelectionUtils {
   /**
    * Fake background is active
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public isFakeBackgroundEnabled = false;
 
@@ -312,10 +326,10 @@ export default class SelectionUtils {
   /**
    * Looks ahead to find passed tag from current selection
    *
-   * @param  {String} tagName       - tag to found
-   * @param  {String} [className]   - tag's class name
-   * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
-   * @return {HTMLElement|null}
+   * @param  {string} tagName       - tag to found
+   * @param  {string} [className]   - tag's class name
+   * @param  {number} [searchDepth] - count of tags that can be included. For better performance.
+   * @returns {HTMLElement|null}
    */
   public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement | null {
     const selection = window.getSelection();

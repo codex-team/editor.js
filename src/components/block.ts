@@ -6,10 +6,10 @@ import {
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
-  ToolConfig,
+  ToolConfig
 } from '../../types';
 
-import {SavedData} from '../types-internal/block-data';
+import { SavedData } from '../types-internal/block-data';
 import $ from './dom';
 import * as _ from './utils';
 
@@ -18,7 +18,7 @@ import * as _ from './utils';
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
  *
  * @property {BlockTool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
+ * @property {object} CSS — block`s css classes
  *
  */
 
@@ -53,10 +53,10 @@ export enum BlockToolAPI {
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
-
   /**
    * CSS classes for the Block
-   * @return {{wrapper: string, content: string}}
+   *
+   * @returns {{wrapper: string, content: string}}
    */
   static get CSS() {
     return {
@@ -85,8 +85,8 @@ export default class Block {
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const selector = '[contenteditable], textarea, input:not([type]), '
-      + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
+    const selector = '[contenteditable], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
     let inputs = _.array(content.querySelectorAll(selector));
 
@@ -178,7 +178,8 @@ export default class Block {
 
   /**
    * Returns Plugins content
-   * @return {HTMLElement}
+   *
+   * @returns {HTMLElement}
    */
   get pluginsContent(): HTMLElement {
     const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
@@ -202,7 +203,8 @@ export default class Block {
 
   /**
    * Get Block's JSON data
-   * @return {Object}
+   *
+   * @returns {object}
    */
   get data(): BlockToolData {
     return this.save().then((savedObject) => {
@@ -216,7 +218,8 @@ export default class Block {
 
   /**
    * Returns tool's sanitizer config
-   * @return {object}
+   *
+   * @returns {object}
    */
   get sanitize(): SanitizerConfig {
     return this.tool.sanitize;
@@ -225,7 +228,8 @@ export default class Block {
   /**
    * is block mergeable
    * We plugin have merge function then we call it mergable
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   get mergeable(): boolean {
     return typeof this.tool.merge === 'function';
@@ -233,7 +237,8 @@ export default class Block {
 
   /**
    * Check block for emptiness
-   * @return {Boolean}
+   *
+   * @returns {boolean}
    */
   get isEmpty(): boolean {
     const emptyText = $.isEmpty(this.pluginsContent);
@@ -244,11 +249,13 @@ export default class Block {
 
   /**
    * Check if block has a media content such as images, iframes and other
-   * @return {Boolean}
+   *
+   * @returns {boolean}
    */
   get hasMedia(): boolean {
     /**
      * This tags represents media-content
+     *
      * @type {string[]}
      */
     const mediaTags = [
@@ -267,7 +274,8 @@ export default class Block {
 
   /**
    * Set focused state
-   * @param {Boolean} state - 'true' to select, 'false' to remove selection
+   *
+   * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
   set focused(state: boolean) {
     this.holder.classList.toggle(Block.CSS.focused, state);
@@ -276,7 +284,8 @@ export default class Block {
   /**
    * Set selected state
    * We don't need to mark Block as Selected when it is empty
-   * @param {Boolean} state - 'true' to select, 'false' to remove selection
+   *
+   * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
   set selected(state: boolean) {
     if (state) {
@@ -288,7 +297,8 @@ export default class Block {
 
   /**
    * Returns True if it is Selected
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   get selected(): boolean {
     return this.holder.classList.contains(Block.CSS.selected);
@@ -296,7 +306,8 @@ export default class Block {
 
   /**
    * Set stretched state
-   * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
+   *
+   * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
    */
   set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
@@ -304,6 +315,7 @@ export default class Block {
 
   /**
    * Toggle drop target state
+   *
    * @param {boolean} state
    */
   public set dropTarget(state) {
@@ -342,6 +354,7 @@ export default class Block {
 
   /**
    * Cached inputs
+   *
    * @type {HTMLElement[]}
    */
   private cachedInputs: HTMLElement[] = [];
@@ -353,18 +366,21 @@ export default class Block {
 
   /**
    * Focused input index
+   *
    * @type {number}
    */
   private inputIndex = 0;
 
   /**
    * Mutation observer to handle DOM mutations
+   *
    * @type {MutationObserver}
    */
   private mutationObserver: MutationObserver;
 
   /**
    * Debounce Timer
+   *
    * @type {number}
    */
   private readonly modificationDebounceTimer = 450;
@@ -387,19 +403,19 @@ export default class Block {
   }, this.modificationDebounceTimer);
 
   /**
-   * @constructor
-   * @param {String} toolName - Tool name that passed on initialization
-   * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-   * @param {Object} toolClass — Tool's class
-   * @param {Object} settings - default settings
-   * @param {Object} apiMethods - Editor API
+   * @class
+   * @param {string} toolName - Tool name that passed on initialization
+   * @param {object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {object} toolClass — Tool's class
+   * @param {object} settings - default settings
+   * @param {object} apiMethods - Editor API
    */
   constructor(
     toolName: string,
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
-    apiMethods: API,
+    apiMethods: API
   ) {
     this.name = toolName;
     this.tool = toolInstance;
@@ -421,8 +437,8 @@ export default class Block {
    *
    * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
    *
-   * @param {String} methodName
-   * @param {Object} params
+   * @param {string} methodName
+   * @param {object} params
    */
   public call(methodName: string, params?: object) {
     /**
@@ -430,6 +446,7 @@ export default class Block {
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
       try {
+        // eslint-disable-next-line no-useless-call
         this.tool[methodName].call(this.tool, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
@@ -439,15 +456,18 @@ export default class Block {
 
   /**
    * Call plugins merge method
-   * @param {Object} data
+   *
+   * @param {object} data
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.tool.merge(data);
   }
+
   /**
    * Extracts data from Block
    * Groups Tool's save processing time
-   * @return {Object}
+   *
+   * @returns {object}
    */
   public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
@@ -496,14 +516,15 @@ export default class Block {
   /**
    * Make an array with default settings
    * Each block has default tune instance that have states
-   * @return {BlockTune[]}
+   *
+   * @returns {BlockTune[]}
    */
   public makeTunes(): BlockTune[] {
     const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map( (tune: BlockTuneConstructable) => {
-      return new tune({
+    return tunesList.map((Tune: BlockTuneConstructable) => {
+      return new Tune({
         api: this.api,
         settings: this.settings,
       });
@@ -512,12 +533,13 @@ export default class Block {
 
   /**
    * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-   * @return {DocumentFragment}
+   *
+   * @returns {DocumentFragment}
    */
   public renderTunes(): DocumentFragment {
     const tunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach( (tune) => {
+    this.tunes.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
 
@@ -545,7 +567,7 @@ export default class Block {
         subtree: true,
         characterData: true,
         attributes: true,
-      },
+      }
     );
   }
 
@@ -558,15 +580,17 @@ export default class Block {
 
   /**
    * Make default Block wrappers and put Tool`s content there
+   *
    * @returns {HTMLDivElement}
    */
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-      contentNode = $.make('div', Block.CSS.content),
-      pluginsContent = this.tool.render();
+        contentNode = $.make('div', Block.CSS.content),
+        pluginsContent = this.tool.render();
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
+
     return wrapper;
   }
 }
