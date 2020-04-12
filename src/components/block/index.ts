@@ -1,5 +1,6 @@
 import {
   API,
+  BlockAPI as BlockAPIInterface,
   BlockTool,
   BlockToolConstructable,
   BlockToolData,
@@ -7,6 +8,7 @@ import {
   BlockTuneConstructable,
   SanitizerConfig,
   ToolConfig,
+  ToolSettings,
 } from '../../../types';
 
 import {SavedData} from '../../types-internal/block-data';
@@ -27,6 +29,15 @@ import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
 import SelectionUtils from '../selection';
+import BlockAPI from './api';
+
+interface BlockConstructorOptions {
+  name: string;
+  data: BlockToolData;
+  Tool: BlockToolConstructable;
+  settings: ToolSettings;
+  api: API;
+}
 
 /**
  * Available Block Tool API methods
@@ -318,20 +329,19 @@ export default class Block {
   public class: BlockToolConstructable;
 
   /**
+   * Tool settings object
+   */
+  public settings: ToolSettings;
+
+  /**
    * User Tool configuration
    */
-  public settings: ToolConfig;
+  public config: ToolConfig;
 
   /**
    * Wrapper for Block`s content
    */
   public holder: HTMLDivElement;
-
-  /**
-   * Returns Plugins content
-   * @return {HTMLElement}
-   */
-  public pluginsContent: HTMLElement = null;
 
   /**
    * Tunes used by Tool
@@ -348,6 +358,11 @@ export default class Block {
    * Editor`s API
    */
   private readonly api: API;
+
+  /**
+   * Current block API interface
+   */
+  private readonly blockAPI: BlockAPIInterface;
 
   /**
    * Focused input index
@@ -386,28 +401,36 @@ export default class Block {
 
   /**
    * @constructor
-   * @param {String} toolName - Tool name that passed on initialization
-   * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-   * @param {Object} toolClass — Tool's class
-   * @param {Object} settings - default settings
-   * @param {Object} apiMethods - Editor API
+   * @param {string} tool - Tool name that passed on initialization
+   * @param {BlockToolData} data - Tool's initial data
+   * @param {BlockToolConstructable} Tool — Tool's class
+   * @param {ToolSettings} settings - default tool's config
+   * @param {API} api - Editor API
    */
-  constructor(
-    toolName: string,
-    toolInstance: BlockTool,
-    toolClass: BlockToolConstructable,
-    settings: ToolConfig,
-    apiMethods: API,
-  ) {
-    this.name = toolName;
-    this.tool = toolInstance;
-    this.class = toolClass;
+  constructor({
+    name,
+    data,
+    Tool,
+    settings,
+    api,
+  }: BlockConstructorOptions) {
+    this.name = name;
+    this.class = Tool;
     this.settings = settings;
-    this.api = apiMethods;
-    this.holder = this.compose();
+    this.config = settings.config || {};
+    this.api = api;
+    this.blockAPI = new BlockAPI(this);
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
+    this.tool = new Tool({
+      data,
+      config: this.config,
+      api,
+      block: this.blockAPI,
+    });
+
+    this.holder = this.compose();
     /**
      * @type {BlockTune[]}
      */
@@ -503,7 +526,7 @@ export default class Block {
     return tunesList.map( (tune: BlockTuneConstructable) => {
       return new tune({
         api: this.api,
-        settings: this.settings,
+        settings: this.config,
       });
     });
   }
@@ -555,17 +578,38 @@ export default class Block {
   }
 
   /**
+   * Returns Plugins content
+   * @return {HTMLElement}
+   */
+  get pluginsContent(): HTMLElement {
+    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
+
+    if (blockContentNodes && blockContentNodes.childNodes.length) {
+      /**
+       * Editors Block content can contain different Nodes from extensions
+       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
+       */
+      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+        const contentNode = blockContentNodes.childNodes[child];
+
+        if (!$.isExtensionNode(contentNode)) {
+          return contentNode as HTMLElement;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Make default Block wrappers and put Tool`s content there
    * @returns {HTMLDivElement}
    */
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-      contentNode = $.make('div', Block.CSS.content),
-      pluginsContent = this.tool.render();
+      contentNode = $.make('div', Block.CSS.content);
 
-    this.pluginsContent = pluginsContent;
-
-    contentNode.appendChild(pluginsContent);
+    contentNode.appendChild(this.tool.render());
     wrapper.appendChild(contentNode);
     return wrapper;
   }

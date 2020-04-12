@@ -55,11 +55,11 @@ export default class Sanitizer extends Module {
    *
    * Enumerate blocks and clean data
    *
-   * @param {Array<Omit<SavedData, 'time'>>} blocksData[]
+   * @param {Array<Pick<SavedData, 'data' | 'tool'>>} blocksData[]
    */
   public sanitizeBlocks(
-    blocksData: Array<Omit<SavedData, 'time'>>,
-  ): Array<Omit<SavedData, 'time'>> {
+    blocksData: Array<Pick<SavedData, 'data' | 'tool'>>,
+  ): Array<Pick<SavedData, 'data' | 'tool'>> {
 
     return blocksData.map((block) => {
       const toolConfig = this.composeToolConfig(block.tool);

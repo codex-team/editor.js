@@ -19,8 +19,8 @@ function BlockAPI(block: Block) {
      *
      * @return {ToolConfig}
      */
-    get settings(): ToolConfig {
-      return block.settings;
+    get config(): ToolConfig {
+      return block.config;
     },
 
     /**
@@ -33,33 +33,6 @@ function BlockAPI(block: Block) {
     },
 
     /**
-     * Tool contents holder, returned from Tool's render() method
-     *
-     * @return {HTMLElement}
-     */
-    get pluginsContent(): HTMLElement {
-      return block.pluginsContent;
-    },
-
-    /**
-     * Saved Block data
-     *
-     * @return {BlockToolData}
-     */
-    get data(): Promise<BlockToolData> {
-      return block.data;
-    },
-
-    /**
-     * True if Tool has merge method
-     *
-     * @return {boolean}
-     */
-    get mergeable(): boolean {
-      return block.mergeable;
-    },
-
-    /**
      * True if Block content is empty
      *
      * @return {boolean}
@@ -69,30 +42,12 @@ function BlockAPI(block: Block) {
     },
 
     /**
-     * True if Block has media
-     *
-     * @return {boolean}
-     */
-    get hasMedia(): boolean {
-      return block.hasMedia;
-    },
-
-    /**
      * True if Block is selected with Cross-Block selection
      *
      * @return {boolean}
      */
     get selected(): boolean {
       return block.selected;
-    },
-
-    /**
-     * True if caret at Block
-     *
-     * @return {boolean}
-     */
-    get focused(): boolean {
-      return block.focused;
     },
 
     /**

@@ -2,7 +2,7 @@ import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
 import { BlockToolData } from './block-tool-data';
 import { BaseTool, BaseToolConstructable } from './tool';
 import { ToolConfig } from './tool-config';
-import { API } from '../index';
+import {API, BlockAPI} from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
 /**
@@ -103,5 +103,5 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * @constructor
    * @return {BlockTool}
    */
-  new(config: { api: API, config: ToolConfig, data: BlockToolData }): BlockTool;
+  new(config: { api: API, config: ToolConfig, data: BlockToolData, block?: BlockAPI }): BlockTool;
 }

@@ -13,27 +13,12 @@ export interface BlockAPI {
   /**
    * Tool config passed on Editor's initialization
    */
-  readonly settings: ToolConfig;
+  readonly config: ToolConfig;
 
   /**
-   * .ce-block element, that wraps plugin contents
+   * Wrapper of Tool's HTML element
    */
   readonly holder: HTMLElement;
-
-  /**
-   * Tool contents holder, returned from Tool's render() method
-   */
-  readonly pluginsContent: HTMLElement;
-
-  /**
-   * Saved Block data
-   */
-  readonly data: Promise<BlockToolData>;
-
-  /**
-   * True if Tool has merge method
-   */
-  readonly mergeable: boolean;
 
   /**
    * True if Block content is empty
@@ -41,19 +26,9 @@ export interface BlockAPI {
   readonly isEmpty: boolean;
 
   /**
-   * True if Block has media
-   */
-  readonly hasMedia: boolean;
-
-  /**
    * True if Block is selected with Cross-Block selection
    */
   readonly selected: boolean;
-
-  /**
-   * True if caret at Block
-   */
-  readonly focused: boolean;
 
   /**
    * Setter sets Block's stretch state

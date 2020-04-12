@@ -48,7 +48,7 @@ export {
 } from './tools';
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {EditorConfig, SanitizerConfig, PasteConfig, LogLevels, ConversionConfig} from './configs';
-export {OutputData} from './data-formats/output-data';
+export {OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockAPI } from './api';
 
 /**

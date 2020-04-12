@@ -710,11 +710,11 @@ export default class Paste extends Module {
   /**
    * Insert data passed as application/x-editor-js JSON
    *
-   * @param {Array<Omit<SavedData, 'time'>>} blocks — Blocks' data to insert
+   * @param {Array<Pick<SavedData, 'data' | 'tool'>>} blocks — Blocks' data to insert
    *
    * @return {void}
    */
-  private insertEditorJSData(blocks: Array<Omit<SavedData, 'time'>>): void {
+  private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
     const { BlockManager, Tools } = this.Editor;
 
     blocks.forEach(({ tool, data }, i) => {
@@ -728,11 +728,7 @@ export default class Paste extends Module {
         needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
       }
 
-      if (needToReplaceCurrentBlock) {
-        BlockManager.replace(tool, data, settings);
-      } else {
-        BlockManager.insert(tool, data, settings);
-      }
+      BlockManager.insert({tool, data, replace: needToReplaceCurrentBlock});
     });
   }
 
