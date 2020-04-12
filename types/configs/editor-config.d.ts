@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {LogLevels, OutputData, API} from '../index';
+import {API, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 
 export interface EditorConfig {

@@ -12,11 +12,14 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 
+/**
+ *
+ */
 export default class BlockSelection extends Module {
-
   /**
    * Sanitizer Config
-   * @return {SanitizerConfig}
+   *
+   * @returns {SanitizerConfig}
    */
   private get sanitizerConfig() {
     return {
@@ -47,37 +50,43 @@ export default class BlockSelection extends Module {
 
   /**
    * Flag that identifies all Blocks selection
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get allBlocksSelected(): boolean {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     return BlockManager.blocks.every((block) => block.selected === true);
   }
 
   /**
    * Set selected all blocks
+   *
    * @param {boolean} state
    */
   public set allBlocksSelected(state: boolean) {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
-    BlockManager.blocks.forEach((block) => block.selected = state);
+    BlockManager.blocks.forEach((block) => {
+      block.selected = state;
+    });
   }
 
   /**
    * Flag that identifies any Block selection
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get anyBlockSelected(): boolean {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     return BlockManager.blocks.some((block) => block.selected === true);
   }
 
   /**
    * Return selected Blocks array
-   * @return {Block[]}
+   *
+   * @returns {Block[]}
    */
   public get selectedBlocks(): Block[] {
     return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
@@ -86,26 +95,30 @@ export default class BlockSelection extends Module {
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
+   *
    * @type {boolean}
    */
-  private needToSelectAll: boolean = false;
+  private needToSelectAll = false;
 
   /**
    * Flag used to define native input selection
    * In this case we allow double CMD+A to select Block
+   *
    * @type {boolean}
    */
-  private nativeInputSelected: boolean = false;
+  private nativeInputSelected = false;
 
   /**
    * Flag identifies any input selection
    * That means we can select whole Block
+   *
    * @type {boolean}
    */
-  private readyToBlockSelection: boolean = false;
+  private readyToBlockSelection = false;
 
   /**
    * SelectionUtils instance
+   *
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
@@ -116,13 +129,14 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const {Shortcuts} = this.Editor;
+    const { Shortcuts } = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
       name: 'CMD+A',
       handler: (event) => {
-        const {BlockManager} = this.Editor;
+        const { BlockManager } = this.Editor;
+
         /**
          * When one page consist of two or more EditorJS instances
          * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
@@ -143,10 +157,11 @@ export default class BlockSelection extends Module {
 
   /**
    * Remove selection of Block
+   *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   public unSelectBlockByIndex(index?) {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     let block;
 
@@ -166,7 +181,7 @@ export default class BlockSelection extends Module {
    * @param {boolean} restoreSelection - if true, restore saved selection
    */
   public clearSelection(reason?: Event, restoreSelection = false) {
-    const {BlockManager, Caret, RectangleSelection} = this.Editor;
+    const { BlockManager, Caret, RectangleSelection } = this.Editor;
 
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
@@ -190,6 +205,7 @@ export default class BlockSelection extends Module {
 
     if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
+
       return;
     }
 
@@ -210,7 +226,7 @@ export default class BlockSelection extends Module {
    *
    * @param {ClipboardEvent} e - copy/cut event
    *
-   * @return Promise<void>
+   * @returns Promise<void>
    */
   public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
@@ -221,19 +237,20 @@ export default class BlockSelection extends Module {
     const fakeClipboard = $.make('div');
 
     this.selectedBlocks.forEach((block) => {
-        /**
-         * Make <p> tag that holds clean HTML
-         */
-        const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('p');
+      /**
+       * Make <p> tag that holds clean HTML
+       */
+      const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const fragment = $.make('p');
 
-        fragment.innerHTML = cleanHTML;
-        fakeClipboard.appendChild(fragment);
+      fragment.innerHTML = cleanHTML;
+      fakeClipboard.appendChild(fragment);
     });
 
     const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
 
-    const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent).join('\n\n');
+    const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
+      .join('\n\n');
     const textHTML = fakeClipboard.innerHTML;
 
     e.clipboardData.setData('text/plain', textPlain);
@@ -243,10 +260,11 @@ export default class BlockSelection extends Module {
 
   /**
    * select Block
+   *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   public selectBlockByIndex(index?) {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     /**
      * Remove previous focused Block's state
@@ -284,6 +302,7 @@ export default class BlockSelection extends Module {
     /** allow default selection on native inputs */
     if ($.isNativeInput(event.target) && !this.readyToBlockSelection) {
       this.readyToBlockSelection = true;
+
       return;
     }
 
@@ -296,11 +315,13 @@ export default class BlockSelection extends Module {
      */
     if (inputs.length > 1 && !this.readyToBlockSelection) {
       this.readyToBlockSelection = true;
+
       return;
     }
 
     if (inputs.length === 1 && !this.needToSelectAll) {
       this.needToSelectAll = true;
+
       return;
     }
 

@@ -1,14 +1,17 @@
 import Block from './index';
-import {BlockToolData, ToolConfig} from '../../../types/tools';
-import {SavedData} from '../../types-internal/block-data';
-import {BlockAPI as BlockAPIInterface} from '../../../types/api';
+import { BlockToolData, ToolConfig } from '../../../types/tools';
+import { SavedData } from '../../types-internal/block-data';
+import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
+/**
+ * @param block
+ */
 function BlockAPI(block: Block) {
-  const blockAPI: BlockAPIInterface =  {
+  const blockAPI: BlockAPIInterface = {
     /**
      * Tool name
      *
-     * @return {string}
+     * @returns {string}
      */
     get name(): string {
       return block.name;
@@ -17,82 +20,37 @@ function BlockAPI(block: Block) {
     /**
      * Tool config passed on Editor's initialization
      *
-     * @return {ToolConfig}
+     * @returns {ToolConfig}
      */
-    get settings(): ToolConfig {
-      return block.settings;
+    get config(): ToolConfig {
+      return block.config;
     },
 
     /**
      * .ce-block element, that wraps plugin contents
      *
-     * @return {HTMLElement}
+     * @returns {HTMLElement}
      */
     get holder(): HTMLElement {
       return block.holder;
     },
 
     /**
-     * Tool contents holder, returned from Tool's render() method
-     *
-     * @return {HTMLElement}
-     */
-    get pluginsContent(): HTMLElement {
-      return block.pluginsContent;
-    },
-
-    /**
-     * Saved Block data
-     *
-     * @return {BlockToolData}
-     */
-    get data(): Promise<BlockToolData> {
-      return block.data;
-    },
-
-    /**
-     * True if Tool has merge method
-     *
-     * @return {boolean}
-     */
-    get mergeable(): boolean {
-      return block.mergeable;
-    },
-
-    /**
      * True if Block content is empty
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     get isEmpty(): boolean {
       return block.isEmpty;
     },
 
     /**
-     * True if Block has media
-     *
-     * @return {boolean}
-     */
-    get hasMedia(): boolean {
-      return block.hasMedia;
-    },
-
-    /**
      * True if Block is selected with Cross-Block selection
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     get selected(): boolean {
       return block.selected;
-    },
-
-    /**
-     * True if caret at Block
-     *
-     * @return {boolean}
-     */
-    get focused(): boolean {
-      return block.focused;
     },
 
     /**
@@ -107,7 +65,7 @@ function BlockAPI(block: Block) {
     /**
      * True if Block is stretched
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     get stretched(): boolean {
       return block.stretched;
@@ -119,7 +77,7 @@ function BlockAPI(block: Block) {
      * @param {string} methodName - method to call
      * @param {object} param - object with parameters
      *
-     * @return {void}
+     * @returns {void}
      */
     call(methodName: string, param?: object): void {
       block.call(methodName, param);
@@ -128,7 +86,7 @@ function BlockAPI(block: Block) {
     /**
      * Save Block content
      *
-     * @return {Promise<void|SavedData>}
+     * @returns {Promise<void|SavedData>}
      */
     save(): Promise<void|SavedData> {
       return block.save();
@@ -139,7 +97,7 @@ function BlockAPI(block: Block) {
      *
      * @param {BlockToolData} data
      *
-     * @return {Promise<boolean>}
+     * @returns {Promise<boolean>}
      */
     validate(data: BlockToolData): Promise<boolean> {
       return block.validate(data);

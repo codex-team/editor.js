@@ -1,8 +1,8 @@
 import Module from '../__module';
+/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
-import {ChainData} from '../utils';
-import {BlockToolData, BlockTuneData} from '../../../types';
-import {BlockToolConstructable} from '../../../types/tools';
+import { ChainData } from '../utils';
+import { BlockToolConstructable, BlockToolData, BlockTuneData, OutputBlockData } from '../../../types';
 
 /**
  * Editor.js Renderer Module
@@ -14,9 +14,9 @@ import {BlockToolConstructable} from '../../../types/tools';
  */
 export default class Renderer extends Module {
   /**
-   * @typedef {Object} RendererBlocks
-   * @property {String} type - tool name
-   * @property {Object} data - tool data
+   * @typedef {object} RendererBlocks
+   * @property {string} type - tool name
+   * @property {object} data - tool data
    */
 
   /**
@@ -41,10 +41,11 @@ export default class Renderer extends Module {
 
   /**
    * Make plugin blocks from array of plugin`s data
-   * @param {RendererBlocks[]} blocks
+   *
+   * @param {OutputBlockData[]} blocks
    */
-  public async render(blocks: BlockToolData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
+  public async render(blocks: OutputBlockData[]): Promise<void> {
+    const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
@@ -58,11 +59,11 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {Object} item
+   * @param {object} item
    * @returns {Promise<void>}
    * @private
    */
-  public async insertBlock(item): Promise<void> {
+  public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
@@ -70,8 +71,13 @@ export default class Renderer extends Module {
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert({tool, data, tunes});
+        BlockManager.insert({
+          tool,
+          data,
+          tunes,
+        });
       } catch (error) {
+        console.log(error);
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
       }
@@ -107,7 +113,10 @@ export default class Renderer extends Module {
       stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
     }
 
-    const stub = BlockManager.insert({tool: Tools.stubTool, data: stubData});
+    const stub = BlockManager.insert({
+      tool: Tools.stubTool,
+      data: stubData,
+    });
 
     stub.stretched = true;
 

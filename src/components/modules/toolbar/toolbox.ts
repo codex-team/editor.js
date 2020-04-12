@@ -1,32 +1,32 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import {BlockToolConstructable} from '../../../../types';
+import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
-import {BlockToolAPI} from '../../block';
+import { BlockToolAPI } from '../../block';
 
 /**
  * @class Toolbox
  * @classdesc Holder for Tools
  *
  * @typedef {Toolbox} Toolbox
- * @property {Boolean} opened - opening state
- * @property {Object} nodes   - Toolbox nodes
- * @property {Object} CSS     - CSS class names
+ * @property {boolean} opened - opening state
+ * @property {object} nodes   - Toolbox nodes
+ * @property {object} CSS     - CSS class names
  *
  */
 export default class Toolbox extends Module {
-
   /**
    * CSS styles
-   * @return {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
+   *
+   * @returns {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
    * toolboxOpened: string, tooltip: string, tooltipShown: string, tooltipShortcut: string}}
    */
   get CSS() {
-    return  {
+    return {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
-      toolboxButtonActive : 'ce-toolbox__button--active',
+      toolboxButtonActive: 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
 
@@ -37,7 +37,8 @@ export default class Toolbox extends Module {
 
   /**
    * Returns True if Toolbox is Empty and nothing to show
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get isEmpty(): boolean {
     return this.displayedToolsCount === 0;
@@ -45,16 +46,17 @@ export default class Toolbox extends Module {
 
   /**
    * Opening state
+   *
    * @type {boolean}
    */
-  public opened: boolean = false;
+  public opened = false;
 
   /**
    * HTMLElements used for Toolbox UI
    */
   public nodes: {
-    toolbox: HTMLElement,
-    buttons: HTMLElement[],
+    toolbox: HTMLElement;
+    buttons: HTMLElement[];
   } = {
     toolbox: null,
     buttons: [],
@@ -62,12 +64,14 @@ export default class Toolbox extends Module {
 
   /**
    * How many tools displayed in Toolbox
+   *
    * @type {number}
    */
-  private displayedToolsCount: number = 0;
+  private displayedToolsCount = 0;
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -140,7 +144,7 @@ export default class Toolbox extends Module {
 
     for (const toolName in tools) {
       if (tools.hasOwnProperty(toolName)) {
-        this.addTool(toolName, tools[toolName]  as BlockToolConstructable);
+        this.addTool(toolName, tools[toolName] as BlockToolConstructable);
       }
     }
   }
@@ -166,6 +170,7 @@ export default class Toolbox extends Module {
 
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
       _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+
       return;
     }
 
@@ -222,8 +227,8 @@ export default class Toolbox extends Module {
   /**
    * Draw tooltip for toolbox tools
    *
-   * @param {String} toolName - toolbox tool name
-   * @return { HTMLElement }
+   * @param {string} toolName - toolbox tool name
+   * @returns { HTMLElement }
    */
   private drawTooltip(toolName: string): HTMLElement {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
@@ -251,9 +256,10 @@ export default class Toolbox extends Module {
 
   /**
    * Enable shortcut Block Tool implemented shortcut
+   *
    * @param {BlockToolConstructable} tool - Tool class
-   * @param {String} toolName - Tool name
-   * @param {String} shortcut - shortcut according to the ShortcutData Module format
+   * @param {string} toolName - Tool name
+   * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
   private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string) {
     this.Editor.Shortcuts.add({
@@ -270,6 +276,7 @@ export default class Toolbox extends Module {
    */
   private enableFlipper(): void {
     const tools = Array.from(this.nodes.toolbox.childNodes) as HTMLElement[];
+
     this.flipper = new Flipper({
       items: tools,
       focusedItemClass: this.CSS.toolboxButtonActive,
@@ -281,16 +288,19 @@ export default class Toolbox extends Module {
    * Can be called when button clicked on Toolbox or by ShortcutData
    *
    * @param {BlockToolConstructable} tool - Tool Class
-   * @param {String} toolName - Tool name
+   * @param {string} toolName - Tool name
    */
   private insertNewBlock(tool: BlockToolConstructable, toolName: string) {
-    const {BlockManager, Caret} = this.Editor;
+    const { BlockManager, Caret } = this.Editor;
     /**
      * @type {Block}
      */
-    const {currentBlock} = BlockManager;
+    const { currentBlock } = BlockManager;
 
-    const newBlock = BlockManager.insert({tool: toolName, replace: currentBlock.isEmpty});
+    const newBlock = BlockManager.insert({
+      tool: toolName,
+      replace: currentBlock.isEmpty,
+    });
 
     /**
      * Apply callback before inserting html

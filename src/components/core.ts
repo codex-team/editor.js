@@ -1,8 +1,8 @@
 import $ from './dom';
 import * as _ from './utils';
-import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
-import {EditorModules} from '../types-internal/editor-modules';
-import {LogLevels} from './utils';
+import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
+import { EditorModules } from '../types-internal/editor-modules';
+import { LogLevels } from './utils';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -37,7 +37,6 @@ contextRequire.keys().forEach((filename) => {
  * @type {Core}
  */
 export default class Core {
-
   /**
    * Editor configuration passed by user to the constructor
    */
@@ -82,7 +81,7 @@ export default class Core {
           await this.render();
 
           if ((this.configuration as EditorConfig).autofocus) {
-            const {BlockManager, Caret} = this.moduleInstances;
+            const { BlockManager, Caret } = this.moduleInstances;
 
             Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
           }
@@ -110,6 +109,7 @@ export default class Core {
 
   /**
    * Setting for configuration
+   *
    * @param {EditorConfig|string|undefined} config
    */
   set configuration(config: EditorConfig|string) {
@@ -134,6 +134,7 @@ export default class Core {
 
     /**
      * Place config into the class property
+     *
      * @type {EditorConfig}
      */
     this.config = config;
@@ -158,18 +159,20 @@ export default class Core {
 
     /**
      * Height of Editor's bottom area that allows to set focus on the last Block
+     *
      * @type {number}
      */
-    this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300 ;
+    this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     /**
      * Initial block type
      * Uses in case when there is no blocks passed
+     *
      * @type {{type: (*), data: {text: null}}}
      */
     const initialBlockData = {
-      type : this.config.initialBlock,
-      data : {},
+      type: this.config.initialBlock,
+      data: {},
     };
 
     this.config.placeholder = this.config.placeholder || false;
@@ -200,6 +203,7 @@ export default class Core {
 
   /**
    * Returns private property
+   *
    * @returns {EditorConfig}
    */
   get configuration(): EditorConfig|string {
@@ -208,6 +212,7 @@ export default class Core {
 
   /**
    * Checks for required fields in Editor's config
+   *
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
@@ -250,7 +255,8 @@ export default class Core {
    * Start Editor!
    *
    * Get list of modules that needs to be prepared and return a sequence (Promise)
-   * @return {Promise}
+   *
+   * @returns {Promise}
    */
   public async start() {
     const modulesToPrepare = [
@@ -275,7 +281,7 @@ export default class Core {
         }
         // _.log(`Preparing ${module} module`, 'timeEnd');
       }),
-      Promise.resolve(),
+      Promise.resolve()
     );
   }
 
@@ -290,26 +296,26 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach( (module) => {
+    modules.forEach((module) => {
       /**
        * If module has non-default exports, passed object contains them all and default export as 'default' property
        */
       const Module = typeof module === 'function' ? module : module.default;
 
       try {
-
         /**
          * We use class name provided by displayName property
          *
          * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
          * To prevent this, we use 'babel-plugin-class-display-name' plugin
+         *
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
         this.moduleInstances[Module.displayName] = new Module({
-          config : this.configuration,
+          config: this.configuration,
         });
-      } catch ( e ) {
-        _.log(`Module ${Module.displayName} skipped because`, 'warn',  e);
+      } catch (e) {
+        _.log(`Module ${Module.displayName} skipped because`, 'warn', e);
       }
     });
   }
@@ -332,6 +338,7 @@ export default class Core {
 
   /**
    * Return modules without passed name
+   *
    * @param {string} name - module for witch modules difference should be calculated
    */
   private getModulesDiff(name: string): EditorModules {

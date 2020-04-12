@@ -6,27 +6,17 @@ can use Editor\`s API as they want.
 
 ## Block API
 
-API for certain Block methods and properties. You can access it through `editor.api.block.getBlockByIndex` method.
+API for certain Block methods and properties. You can access it through `editor.api.block.getBlockByIndex` method or get it form `block` property of [Tool constructor](../types/tools/block-tool.d.ts) argument.
 
 `name: string` — Block's Tool name
 
-`settings: ToolConfig` — Tool settings passed on Editor initialization
+`config: ToolConfig` — Tool config passed on Editor initialization
 
-`holder: HTMLElement` — `.ce-block` wrapper for Block content
-
-`pluginsContent: HTMLElement` — Tool content returned by `render()` method
-
-`data: Promise<BlockToolData>` — data extracted from current Block state
-
-`mergeable: boolean` - `true` if Tool has `merge` method
+`holder: HTMLElement` — HTML Element that wraps Tool's HTML content
 
 `isEmpty: boolean` — `true` if Block has any editable content
 
-`hasMedia: boolean` - `true` if Block contains images or videos
-
 `selected: boolean` - `true` if Block is selected with Cross-Block Selection
-
-`focused: boolean` - `true` if caret at Block
 
 `set stretched(state: boolean)` — set Block's stretch state
 
