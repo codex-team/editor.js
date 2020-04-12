@@ -1,7 +1,8 @@
 import Module from '../__module';
+/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
-import {ChainData} from '../utils';
-import {BlockToolConstructable, OutputBlockData} from '../../../types';
+import { ChainData } from '../utils';
+import { BlockToolConstructable, OutputBlockData } from '../../../types';
 
 /**
  * Editor.js Renderer Module
@@ -13,9 +14,9 @@ import {BlockToolConstructable, OutputBlockData} from '../../../types';
  */
 export default class Renderer extends Module {
   /**
-   * @typedef {Object} RendererBlocks
-   * @property {String} type - tool name
-   * @property {Object} data - tool data
+   * @typedef {object} RendererBlocks
+   * @property {string} type - tool name
+   * @property {object} data - tool data
    */
 
   /**
@@ -40,10 +41,11 @@ export default class Renderer extends Module {
 
   /**
    * Make plugin blocks from array of plugin`s data
-   * @param {RendererBlocks[]} blocks
+   *
+   * @param {OutputBlockData[]} blocks
    */
   public async render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
+    const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
@@ -57,7 +59,7 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {Object} item
+   * @param {object} item
    * @returns {Promise<void>}
    * @private
    */
@@ -68,13 +70,15 @@ export default class Renderer extends Module {
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert({tool, data});
+        BlockManager.insert({
+          tool,
+          data,
+        });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
       }
     } else {
-
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {
@@ -91,7 +95,10 @@ export default class Renderer extends Module {
         stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
       }
 
-      const stub = BlockManager.insert({tool: Tools.stubTool, data: stubData});
+      const stub = BlockManager.insert({
+        tool: Tools.stubTool,
+        data: stubData,
+      });
 
       stub.stretched = true;
 

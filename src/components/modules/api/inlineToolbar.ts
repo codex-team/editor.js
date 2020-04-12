@@ -8,7 +8,8 @@ import { InlineToolbar } from '../../../../types/api/inline-toolbar';
 export default class InlineToolbarAPI extends Module {
   /**
    * Available methods
-   * @return {InlineToolbar}
+   *
+   * @returns {InlineToolbar}
    */
   get methods(): InlineToolbar {
     return {

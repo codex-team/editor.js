@@ -6,17 +6,22 @@
  */
 
 import $ from '../dom';
-import {API, BlockTune} from '../../../types';
+import { API, BlockTune } from '../../../types';
 
+/**
+ *
+ */
 export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
+   *
    * @see {api.md}
    */
   private readonly api: API;
 
   /**
    * Styles
+   *
    * @type {{wrapper: string}}
    */
   private CSS = {
@@ -30,7 +35,7 @@ export default class MoveDownTune implements BlockTune {
    *
    * @param {{api: API}} api
    */
-  public constructor({api}) {
+  constructor({ api }) {
     this.api = api;
   }
 
@@ -39,12 +44,13 @@ export default class MoveDownTune implements BlockTune {
    */
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
+
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
     this.api.listeners.on(
       moveDownButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveDownButton),
-      false,
+      false
     );
 
     /**
@@ -57,20 +63,21 @@ export default class MoveDownTune implements BlockTune {
 
   /**
    * Handle clicks on 'move down' button
+   *
    * @param {MouseEvent} event
    * @param {HTMLElement} button
    */
   public handleClick(event: MouseEvent, button: HTMLElement) {
-
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     // If Block is last do nothing
     if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
       button.classList.add(this.CSS.animation);
 
-      window.setTimeout( () => {
+      window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
       }, 500);
+
       return;
     }
 
@@ -85,9 +92,7 @@ export default class MoveDownTune implements BlockTune {
      * Increment scroll by next block's height to save element onscreen-position
      */
     if (nextBlockCoords.top < window.innerHeight) {
-
       scrollOffset = window.scrollY + nextBlockElement.offsetHeight;
-
     }
 
     window.scrollTo(0, scrollOffset);

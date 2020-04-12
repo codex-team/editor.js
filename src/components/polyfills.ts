@@ -13,20 +13,22 @@ interface Element {
   append: (...nodes: Array<string | Node>) => void;
 }
 
-/**
- * The Element.matches() method returns true if the element
- * would be selected by the specified selector string;
- * otherwise, returns false.
- *
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
- */
+//
+// The Element.matches() method returns true if the element
+// would be selected by the specified selector string;
+// otherwise, returns false.
+//
+// {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
+//
+// @param s
+//
 if (!Element.prototype.matches) {
   Element.prototype.matches = Element.prototype.matchesSelector ||
     Element.prototype.mozMatchesSelector ||
     Element.prototype.msMatchesSelector ||
     Element.prototype.oMatchesSelector ||
     Element.prototype.webkitMatchesSelector ||
-    function(s) {
+    function (s) {
       const matches = (this.document || this.ownerDocument).querySelectorAll(s);
       let i = matches.length;
 
@@ -37,16 +39,19 @@ if (!Element.prototype.matches) {
     };
 }
 
-/**
- * The Element.closest() method returns the closest ancestor
- * of the current element (or the current element itself) which
- * matches the selectors given in parameter.
- * If there isn't such an ancestor, it returns null.
- *
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
- */
+//
+// The Element.closest() method returns the closest ancestor
+// of the current element (or the current element itself) which
+// matches the selectors given in parameter.
+// If there isn't such an ancestor, it returns null.
+//
+// {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
+//
+// @param s
+//
 if (!Element.prototype.closest) {
-  Element.prototype.closest = function(s) {
+  Element.prototype.closest = function (s) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let el = this;
 
     if (!document.documentElement.contains(el)) {
@@ -65,13 +70,15 @@ if (!Element.prototype.closest) {
   };
 }
 
-/**
- * The ParentNode.prepend method inserts a set of Node objects
- * or DOMString objects before the first child of the ParentNode.
- * DOMString objects are inserted as equivalent Text nodes.
- *
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
- */
+//
+// The ParentNode.prepend method inserts a set of Node objects
+// or DOMString objects before the first child of the ParentNode.
+// DOMString objects are inserted as equivalent Text nodes.
+//
+// {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
+//
+// @param nodes
+//
 if (!Element.prototype.prepend) {
   Element.prototype.prepend = function prepend(nodes: Node|Node[]|any) {
     const docFrag = document.createDocumentFragment();

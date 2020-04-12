@@ -36,21 +36,23 @@ export interface FlipperOptions {
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
-
   /**
    * Instance of flipper iterator
+   *
    * @type {DomIterator|null}
    */
   private readonly iterator: DomIterator = null;
 
   /**
    * Flag that defines activation status
+   *
    * @type {boolean}
    */
-  private activated: boolean = false;
+  private activated = false;
 
   /**
    * Flag that allows arrows usage to flip items
+   *
    * @type {boolean}
    */
   private readonly allowArrows: boolean = true;
@@ -61,7 +63,7 @@ export default class Flipper {
   private readonly activateCallback: () => void;
 
   /**
-   * @constructor
+   * @class
    *
    * @param {FlipperOptions} options - different constructing settings
    * @
@@ -129,6 +131,7 @@ export default class Flipper {
 
   /**
    * Active tab/arrows handling by flipper
+   *
    * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
    */
   public activate(items?: HTMLElement[]): void {
@@ -149,7 +152,8 @@ export default class Flipper {
 
   /**
    * Return current focused button
-   * @return {HTMLElement|null}
+   *
+   * @returns {HTMLElement|null}
    */
   public get currentItem(): HTMLElement|null {
     return this.iterator.currentItem;
@@ -165,6 +169,7 @@ export default class Flipper {
 
   /**
    * Drops flipper's iterator cursor
+   *
    * @see DomIterator#dropCursor
    */
   private dropCursor(): void {
@@ -174,8 +179,9 @@ export default class Flipper {
   /**
    * This function is fired before handling flipper keycodes
    * The result of this function defines if it is need to be handled or not
+   *
    * @param {KeyboardEvent} event
-   * @return {boolean}
+   * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
     const handlingKeyCodeList = [
@@ -188,7 +194,7 @@ export default class Flipper {
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
         _.keyCodes.UP,
-        _.keyCodes.DOWN,
+        _.keyCodes.DOWN
       );
     }
 
@@ -201,12 +207,13 @@ export default class Flipper {
 
   /**
    * When flipper is activated tab press will leaf the items
+   *
    * @param {KeyboardEvent} event
    */
   private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
     const shiftKey = event.shiftKey,
-      direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
+        direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
 
     switch (direction) {
       case DomIterator.directions.RIGHT:
@@ -234,6 +241,7 @@ export default class Flipper {
 
   /**
    * Enter press will click current item if flipper is activated
+   *
    * @param {KeyboardEvent} event
    */
   private handleEnterPress(event: KeyboardEvent): void {
