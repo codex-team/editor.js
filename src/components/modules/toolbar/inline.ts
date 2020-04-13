@@ -5,6 +5,7 @@ import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
 import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
 import Flipper from '../../flipper';
+import i18n from '../../i18n';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -453,7 +454,9 @@ export default class InlineToolbar extends Module {
       });
     });
 
-    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, 'Convert to', {
+
+
+    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, i18n.t('inlineToolbar.converter', 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });

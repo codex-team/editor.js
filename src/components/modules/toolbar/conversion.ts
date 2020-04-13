@@ -3,8 +3,8 @@ import $ from '../../dom';
 import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../types-internal/block-data';
-import Block from '../../block';
 import Flipper from '../../flipper';
+import i18n from '../../i18n';
 
 /**
  * Block Converter
@@ -68,7 +68,7 @@ export default class ConversionToolbar extends Module {
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-      textContent: 'Convert to',
+      textContent: i18n.t('inlineToolbar.converter', 'Convert to'),
     });
 
     /**

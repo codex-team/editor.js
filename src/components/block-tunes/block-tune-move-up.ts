@@ -6,6 +6,7 @@
  */
 import $ from '../dom';
 import { API, BlockTune } from '../../../types';
+import i18n from './../i18n';
 
 /**
  *
@@ -57,7 +58,7 @@ export default class MoveUpTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveUpButton, 'Move up');
+    this.api.tooltip.onHover(moveUpButton, i18n.t('blockTunes.moveUpTune', 'Move up'));
 
     return moveUpButton;
   }

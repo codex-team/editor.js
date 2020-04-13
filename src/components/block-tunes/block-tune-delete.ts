@@ -6,6 +6,7 @@
  */
 import { API, BlockTune } from '../../../types';
 import $ from '../dom';
+import i18n from '../i18n';
 
 /**
  *
@@ -70,7 +71,7 @@ export default class DeleteTune implements BlockTune {
     /**
      * Enable tooltip module
      */
-    this.api.tooltip.onHover(this.nodes.button, 'Delete');
+    this.api.tooltip.onHover(this.nodes.button, i18n.t('blockTunes.deleteTune', 'Delete'));
 
     return this.nodes.button;
   }
