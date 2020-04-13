@@ -1,6 +1,11 @@
 import $ from '../../dom';
 import { BlockTool, BlockToolData } from '../../../../types';
 
+export interface StubData extends BlockToolData{
+  title: string;
+  savedData: BlockToolData;
+}
+
 /**
  *
  */
@@ -38,11 +43,9 @@ export default class Stub implements BlockTool {
   private readonly savedData: BlockToolData;
 
   /**
-   * @param data
-   * @param config
-   * @param api
+   * @param {BlockToolData} data - stub tool data
    */
-  constructor({ data, config, api }) {
+  constructor({ data }: {data: StubData}) {
     this.title = data.title || 'Error';
     this.subtitle = 'The block can not be displayed correctly.';
     this.savedData = data.savedData;

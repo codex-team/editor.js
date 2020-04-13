@@ -27,7 +27,7 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    const { BlockManager, UI, Listeners } = this.Editor;
+    const { BlockManager, Listeners } = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;
@@ -86,7 +86,7 @@ export default class CrossBlockSelection extends Module {
    *
    * @param {Event} reason - event caused clear of selection
    */
-  public clear(reason?: Event) {
+  public clear(reason?: Event): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
     const lIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock);
@@ -135,7 +135,7 @@ export default class CrossBlockSelection extends Module {
    * Mouse over event handler
    * Gets target and related blocks and change selected state for blocks in between
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - mouse over event
    */
   private onMouseOver = (event: MouseEvent): void => {
     const { BlockManager } = this.Editor;
@@ -176,8 +176,8 @@ export default class CrossBlockSelection extends Module {
   /**
    * Change blocks selection state between passed two blocks.
    *
-   * @param {Block} firstBlock
-   * @param {Block} lastBlock
+   * @param {Block} firstBlock - first block in range
+   * @param {Block} lastBlock - last block in range
    */
   private toggleBlocksSelectedState(firstBlock: Block, lastBlock: Block): void {
     const { BlockManager } = this.Editor;

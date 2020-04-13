@@ -19,7 +19,7 @@ export default class Events extends Module {
    *
    * @type {{}}
    */
-  private subscribers: {[name: string]: Array<(data?: any) => any>} = {};
+  private subscribers: {[name: string]: Array<(data?: object) => object>} = {};
 
   /**
    * Subscribe any event on callback
@@ -27,7 +27,7 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: string, callback: (data: any) => any) {
+  public on(eventName: string, callback: (data: object) => object): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -42,12 +42,12 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public once(eventName: string, callback: (data: any) => any) {
+  public once(eventName: string, callback: (data: object) => object): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
 
-    const wrappedCallback = (data: any) => {
+    const wrappedCallback = (data: object): object => {
       const result = callback(data);
 
       const indexOfHandler = this.subscribers[eventName].indexOf(wrappedCallback);
@@ -69,7 +69,7 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {object} data - subscribers get this data when they were fired
    */
-  public emit(eventName: string, data?: any): void {
+  public emit(eventName: string, data?: object): void {
     if (!this.subscribers[eventName]) {
       return;
     }
@@ -82,12 +82,12 @@ export default class Events extends Module {
   }
 
   /**
-   * Unsubsribe callback from event
+   * Unsubscribe callback from event
    *
-   * @param eventName
-   * @param callback
+   * @param {string} eventName - event name
+   * @param {Function} callback - event handler
    */
-  public off(eventName: string, callback: (data: any) => void): void {
+  public off(eventName: string, callback: (data: object) => object): void {
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];

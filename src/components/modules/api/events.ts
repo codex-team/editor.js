@@ -11,19 +11,19 @@ export default class EventsAPI extends Module {
    *
    * @returns {Events}
    */
-  get methods(): Events {
+  public get methods(): Events {
     return {
-      emit: (eventName: string, data: object) => this.emit(eventName, data),
-      off: (eventName: string, callback: () => void) => this.off(eventName, callback),
-      on: (eventName: string, callback: () => void) => this.on(eventName, callback),
+      emit: (eventName: string, data: object): void => this.emit(eventName, data),
+      off: (eventName: string, callback: () => void): void => this.off(eventName, callback),
+      on: (eventName: string, callback: () => void): void => this.on(eventName, callback),
     };
   }
 
   /**
    * Subscribe on Events
    *
-   * @param {string} eventName
-   * @param {Function} callback
+   * @param {string} eventName - event name to subscribe
+   * @param {Function} callback - event handler
    */
   public on(eventName, callback): void {
     this.Editor.Events.on(eventName, callback);
@@ -32,8 +32,8 @@ export default class EventsAPI extends Module {
   /**
    * Emit event with data
    *
-   * @param {string} eventName
-   * @param {object} data
+   * @param {string} eventName - event to emit
+   * @param {object} data - event's data
    */
   public emit(eventName, data): void {
     this.Editor.Events.emit(eventName, data);
@@ -42,8 +42,8 @@ export default class EventsAPI extends Module {
   /**
    * Unsubscribe from Event
    *
-   * @param {string} eventName
-   * @param {Function} callback
+   * @param {string} eventName - event to unsubscribe
+   * @param {Function} callback - event handler
    */
   public off(eventName, callback): void {
     this.Editor.Events.off(eventName, callback);

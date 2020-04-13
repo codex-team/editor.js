@@ -11,10 +11,10 @@ export default class ToolbarAPI extends Module {
    *
    * @returns {Toolbar}
    */
-  get methods(): Toolbar {
+  public get methods(): Toolbar {
     return {
-      close: () => this.close(),
-      open: () => this.open(),
+      close: (): void => this.close(),
+      open: (): void => this.open(),
     };
   }
 

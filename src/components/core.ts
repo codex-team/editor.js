@@ -1,8 +1,10 @@
 import $ from './dom';
+// eslint-disable-next-line import/no-duplicates
 import * as _ from './utils';
+// eslint-disable-next-line import/no-duplicates
+import { LogLevels } from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
-import { LogLevels } from './utils';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -31,8 +33,8 @@ contextRequire.keys().forEach((filename) => {
  *
  * @classdesc Editor.js core class
  *
- * @property this.config - all settings
- * @property this.moduleInstances - constructed editor components
+ * @property {EditorConfig} config - all settings
+ * @property {EditorModules} moduleInstances - constructed editor components
  *
  * @type {Core}
  */
@@ -110,9 +112,9 @@ export default class Core {
   /**
    * Setting for configuration
    *
-   * @param {EditorConfig|string|undefined} config
+   * @param {EditorConfig|string} config - Editor's config to set
    */
-  set configuration(config: EditorConfig|string) {
+  public set configuration(config: EditorConfig|string) {
     /**
      * Process zero-configuration or with only holderId
      * Make config object
@@ -185,8 +187,10 @@ export default class Core {
     this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
     this.config.tools = this.config.tools || {};
     this.config.data = this.config.data || {} as OutputData;
-    this.config.onReady = this.config.onReady || (() => {});
-    this.config.onChange = this.config.onChange || (() => {});
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.config.onReady = this.config.onReady || ((): void => {});
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.config.onChange = this.config.onChange || ((): void => {});
 
     /**
      * Initialize Blocks to pass data to the Renderer
@@ -206,7 +210,7 @@ export default class Core {
    *
    * @returns {EditorConfig}
    */
-  get configuration(): EditorConfig|string {
+  public get configuration(): EditorConfig|string {
     return this.config;
   }
 
@@ -239,7 +243,7 @@ export default class Core {
    *  - make and save instances
    *  - configure
    */
-  public init() {
+  public init(): void {
     /**
      * Make modules instances and save it to the @property this.moduleInstances
      */
@@ -256,9 +260,9 @@ export default class Core {
    *
    * Get list of modules that needs to be prepared and return a sequence (Promise)
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
-  public async start() {
+  public async start(): Promise<void> {
     const modulesToPrepare = [
       'Tools',
       'UI',
@@ -327,7 +331,7 @@ export default class Core {
    */
   private configureModules(): void {
     for (const name in this.moduleInstances) {
-      if (this.moduleInstances.hasOwnProperty(name)) {
+      if (Object.prototype.hasOwnProperty.call(this.moduleInstances, name)) {
         /**
          * Module does not need self-instance
          */

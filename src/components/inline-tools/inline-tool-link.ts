@@ -31,7 +31,7 @@ export default class LinkInlineTool implements InlineTool {
    *
    * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       a: {
         href: true,
@@ -101,7 +101,7 @@ export default class LinkInlineTool implements InlineTool {
   private notifier: Notifier;
 
   /**
-   * @param {{api: API}} - Editor.js API
+   * @param {API} api - Editor.js API
    */
   constructor({ api }) {
     this.toolbar = api.toolbar;
@@ -142,7 +142,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Handle clicks on the Inline Toolbar icon
    *
-   * @param {Range} range
+   * @param {Range} range - range to wrap with link
    */
   public surround(range: Range): void {
     /**
@@ -182,7 +182,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Check selection and set activated state to button if there are <a> tag
    *
-   * @param {Selection} selection
+   * @param {Selection} selection - selection to check
    */
   public checkState(selection?: Selection): boolean {
     const anchorTag = this.selection.findParentTag('A');
@@ -275,7 +275,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Enter pressed on input
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - enter keydown event
    */
   private enterPressed(event: KeyboardEvent): void {
     let value = this.nodes.input.value || '';
@@ -318,7 +318,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Detects if passed string is URL
    *
-   * @param  {string}  str
+   * @param {string} str - string to validate
    * @returns {boolean}
    */
   private validateURL(str: string): boolean {
@@ -345,7 +345,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Add 'http' protocol to the links like 'vc.ru', 'google.com'
    *
-   * @param {string} link
+   * @param {string} link - string to process
    */
   private addProtocol(link: string): string {
     /**

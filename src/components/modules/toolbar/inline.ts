@@ -94,15 +94,15 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar Tools
    *
-   * @returns Map<string, InlineTool>
+   * @returns {Map<string, InlineTool>}
    */
-  get tools(): Map<string, InlineTool> {
+  public get tools(): Map<string, InlineTool> {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
       const allTools = this.inlineTools;
 
       this.toolsInstances = new Map();
       for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
+        if (Object.prototype.hasOwnProperty.call(allTools, tool)) {
           this.toolsInstances.set(tool, allTools[tool]);
         }
       }
@@ -114,7 +114,7 @@ export default class InlineToolbar extends Module {
   /**
    * Making DOM
    */
-  public make() {
+  public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -516,8 +516,8 @@ export default class InlineToolbar extends Module {
   /**
    * Add tool button and activate clicks
    *
-   * @param toolName
-   * @param tool
+   * @param {string} toolName - name of Tool to add
+   * @param {InlineTool} tool - Tool class instance
    */
   private addTool(toolName: string, tool: InlineTool): void {
     const {
@@ -561,7 +561,7 @@ export default class InlineToolbar extends Module {
      */
     const internalTools: string[] = Object
       .entries(Tools.internalTools)
-      .filter(([name, toolClass]: [string, ToolConstructable | ToolSettings]) => {
+      .filter(([, toolClass]: [string, ToolConstructable | ToolSettings]) => {
         if (_.isFunction(toolClass)) {
           return toolClass[Tools.INTERNAL_SETTINGS.IS_INLINE];
         }
@@ -671,7 +671,7 @@ export default class InlineToolbar extends Module {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {
-      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+      if (Object.prototype.hasOwnProperty.call(this.Editor.Tools.inline, tool)) {
         const toolSettings = this.Editor.Tools.getToolSettings(tool);
 
         result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);

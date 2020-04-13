@@ -11,7 +11,7 @@ export default class CaretAPI extends Module {
    *
    * @returns {Caret}
    */
-  get methods(): Caret {
+  public get methods(): Caret {
     return {
       setToFirstBlock: this.setToFirstBlock,
       setToLastBlock: this.setToLastBlock,
@@ -127,7 +127,7 @@ export default class CaretAPI extends Module {
    *
    * @returns {boolean}
    */
-  private focus = (atEnd = false) => {
+  private focus = (atEnd = false): boolean => {
     if (atEnd) {
       return this.setToLastBlock(this.Editor.Caret.positions.END);
     }

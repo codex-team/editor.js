@@ -20,7 +20,7 @@ export default class RectangleSelection extends Module {
    *
    * @returns {{wrapper: string, content: string}}
    */
-  static get CSS() {
+  public static get CSS(): {[name: string]: string} {
     return {
       overlay: 'codex-editor-overlay',
       overlayContainer: 'codex-editor-overlay__container',
@@ -136,7 +136,7 @@ export default class RectangleSelection extends Module {
    * @param {number} pageX - X coord of mouse
    * @param {number} pageY - Y coord of mouse
    */
-  public startSelection(pageX, pageY) {
+  public startSelection(pageX, pageY): void {
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
 
     /**
@@ -175,7 +175,7 @@ export default class RectangleSelection extends Module {
   /**
    * Clear all params to end selection
    */
-  public endSelection() {
+  public endSelection(): void {
     this.mousedown = false;
     this.startX = 0;
     this.startY = 0;
@@ -185,14 +185,14 @@ export default class RectangleSelection extends Module {
   /**
    * is RectSelection Activated
    */
-  public isRectActivated() {
+  public isRectActivated(): boolean {
     return this.isRectSelectionActivated;
   }
 
   /**
    * Mark that selection is end
    */
-  public clearSelection() {
+  public clearSelection(): void {
     this.isRectSelectionActivated = false;
   }
 
@@ -201,7 +201,7 @@ export default class RectangleSelection extends Module {
    *
    * @param {number} clientY - Y coord of mouse
    */
-  private scrollByZones(clientY) {
+  private scrollByZones(clientY): void {
     this.inScrollZone = null;
     if (clientY <= this.HEIGHT_OF_SCROLL_ZONE) {
       this.inScrollZone = this.TOP_SCROLL_ZONE;
@@ -223,9 +223,11 @@ export default class RectangleSelection extends Module {
   }
 
   /**
+   * Generates required HTML elements
    *
+   * @returns {object<string, Element>}
    */
-  private genHTML() {
+  private genHTML(): {container: Element; overlay: Element} {
     const { UI } = this.Editor;
 
     const container = UI.nodes.holder.querySelector('.' + UI.CSS.editorWrapper);
@@ -250,7 +252,7 @@ export default class RectangleSelection extends Module {
    *
    * @param {number} speed - speed of scrolling
    */
-  private scrollVertical(speed) {
+  private scrollVertical(speed): void {
     if (!(this.inScrollZone && this.mousedown)) {
       return;
     }
@@ -266,9 +268,9 @@ export default class RectangleSelection extends Module {
   /**
    * Handles the change in the rectangle and its effect
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - mouse event
    */
-  private changingRectangle(event) {
+  private changingRectangle(event): void {
     if (!this.mousedown) {
       return;
     }
@@ -310,7 +312,7 @@ export default class RectangleSelection extends Module {
   /**
    * Shrink rect to singular point
    */
-  private shrinkRectangleToPoint() {
+  private shrinkRectangleToPoint(): void {
     this.overlayRectangle.style.left = `${this.startX - window.pageXOffset}px`;
     this.overlayRectangle.style.top = `${this.startY - window.pageYOffset}px`;
     this.overlayRectangle.style.bottom = `calc(100% - ${this.startY - window.pageYOffset}px`;
@@ -320,17 +322,17 @@ export default class RectangleSelection extends Module {
   /**
    * Select or unselect all of blocks in array if rect is out or in selectable area
    */
-  private inverseSelection() {
+  private inverseSelection(): void {
     const firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stackOfSelected[0]);
-    const isSelecteMode = firstBlockInStack.selected;
+    const isSelectedMode = firstBlockInStack.selected;
 
-    if (this.rectCrossesBlocks && !isSelecteMode) {
+    if (this.rectCrossesBlocks && !isSelectedMode) {
       for (const it of this.stackOfSelected) {
         this.Editor.BlockSelection.selectBlockByIndex(it);
       }
     }
 
-    if (!this.rectCrossesBlocks && isSelecteMode) {
+    if (!this.rectCrossesBlocks && isSelectedMode) {
       for (const it of this.stackOfSelected) {
         this.Editor.BlockSelection.unSelectBlockByIndex(it);
       }
@@ -340,7 +342,7 @@ export default class RectangleSelection extends Module {
   /**
    * Updates size of rectangle
    */
-  private updateRectangleSize() {
+  private updateRectangleSize(): void {
     // Depending on the position of the mouse relative to the starting point,
     // change this.e distance from the desired edge of the screen*/
     if (this.mouseY >= this.startY) {
@@ -363,9 +365,9 @@ export default class RectangleSelection extends Module {
   /**
    * Collects information needed to determine the behavior of the rectangle
    *
-   * @returns {number} index - index next Block, leftPos - start of left border of Block, rightPos - right border
+   * @returns {object} index - index next Block, leftPos - start of left border of Block, rightPos - right border
    */
-  private genInfoForMouseSelection() {
+  private genInfoForMouseSelection(): {index: number; leftPos: number; rightPos: number} {
     const widthOfRedactor = document.body.offsetWidth;
     const centerOfRedactor = widthOfRedactor / 2;
     const Y = this.mouseY - window.pageYOffset;
@@ -393,7 +395,7 @@ export default class RectangleSelection extends Module {
    *
    * @param index - index of block in redactor
    */
-  private addBlockInSelection(index) {
+  private addBlockInSelection(index): void {
     if (this.rectCrossesBlocks) {
       this.Editor.BlockSelection.selectBlockByIndex(index);
     }
@@ -405,7 +407,7 @@ export default class RectangleSelection extends Module {
    *
    * @param {object} index - index of new block in the reactor
    */
-  private trySelectNextBlock(index) {
+  private trySelectNextBlock(index): void {
     const sameBlock = this.stackOfSelected[this.stackOfSelected.length - 1] === index;
     const sizeStack = this.stackOfSelected.length;
     const down = 1, up = -1, undef = 0;
@@ -415,10 +417,16 @@ export default class RectangleSelection extends Module {
     }
 
     const blockNumbersIncrease = this.stackOfSelected[sizeStack - 1] - this.stackOfSelected[sizeStack - 2] > 0;
-    const direction = sizeStack <= 1 ? undef : blockNumbersIncrease ? down : up;
-    const selectionInDownDurection = index > this.stackOfSelected[sizeStack - 1] && direction === down;
+
+    let direction = undef;
+
+    if (sizeStack > 1) {
+      direction = blockNumbersIncrease ? down : up;
+    }
+
+    const selectionInDownDirection = index > this.stackOfSelected[sizeStack - 1] && direction === down;
     const selectionInUpDirection = index < this.stackOfSelected[sizeStack - 1] && direction === up;
-    const generalSelection = selectionInDownDurection || selectionInUpDirection || direction === undef;
+    const generalSelection = selectionInDownDirection || selectionInUpDirection || direction === undef;
     const reduction = !generalSelection;
 
     // When the selection is too fast, some blocks do not have time to be noticed. Fix it.
@@ -451,9 +459,9 @@ export default class RectangleSelection extends Module {
 
     // cmp for different directions
     if (index > this.stackOfSelected[sizeStack - 1]) {
-      cmp = () => index > this.stackOfSelected[i];
+      cmp = (): boolean => index > this.stackOfSelected[i];
     } else {
-      cmp = () => index < this.stackOfSelected[i];
+      cmp = (): boolean => index < this.stackOfSelected[i];
     }
 
     // Remove blocks missed due to speed.

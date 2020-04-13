@@ -12,9 +12,9 @@ export default class SaverAPI extends Module {
    *
    * @returns {Saver}
    */
-  get methods(): Saver {
+  public get methods(): Saver {
     return {
-      save: () => this.save(),
+      save: (): Promise<OutputData> => this.save(),
     };
   }
 
