@@ -91,7 +91,7 @@ export default class Toolbox extends Module {
    */
   public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
     const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
-
+    tool.toolItemClicked && tool.toolItemClicked(event);
     this.insertNewBlock(tool, toolName);
   }
 

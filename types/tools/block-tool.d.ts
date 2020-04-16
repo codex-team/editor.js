@@ -93,7 +93,13 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Paste substitutions configuration
    */
   pasteConfig?: PasteConfig | false;
-
+ 
+  /** 
+   * When a tool item is clicked its corresponding class is notified to handle any callbacks
+   *
+  */
+ toolItemClicked(event: MouseEvent|KeyboardEvent): void;
+  
   /**
    * Rules that specified how this Tool can be converted into/from another Tool
    */
