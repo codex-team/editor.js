@@ -22,10 +22,13 @@ declare const VERSION: string;
 /**
  * @typedef {object} ChainData
  * @property {object} data - data that will be passed to the success or fallback
- * @property {Function} function - function's that must be called asynchronically
+ * @property {Function} function - function's that must be called asynchronously
+ *
+ * @interface ChainData
  */
 export interface ChainData {
-  data?: any;
+  data?: object;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function: (...args: any[]) => any;
 }
 
@@ -79,6 +82,7 @@ function _log(
   labeled: boolean,
   msg: string,
   type = 'log',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args?: any,
   style = 'color: inherit'
 ): void {
@@ -172,7 +176,8 @@ export const logLabeled = _log.bind(window, true);
 /**
  * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
  *
- * @param {number} keyCode
+ * @param {number} keyCode - key code
+ *
  * @returns {boolean}
  */
 export function isPrintableKey(keyCode: number): boolean {
@@ -196,24 +201,24 @@ export function isPrintableKey(keyCode: number): boolean {
 export async function sequence(
   chains: ChainData[],
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  success: (data: any) => void = (): void => {},
+  success: (data: object) => void = (): void => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fallback: (data: any) => void = (): void => {},
+  fallback: (data: object) => void = (): void => {}
 ): Promise<void> {
   /**
    * Decorator
    *
-   * @param {ChainData} chainData
+   * @param {ChainData} chainData - Chain data
    *
-   * @param {Function} successCallback
-   * @param {Function} fallbackCallback
+   * @param {Function} successCallback - success callback
+   * @param {Function} fallbackCallback - fail callback
    *
    * @returns {Promise}
    */
   async function waitNextBlock(
     chainData: ChainData,
-    successCallback: (data: any) => void,
-    fallbackCallback: (data: any) => void
+    successCallback: (data: object) => void,
+    fallbackCallback: (data: object) => void
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
@@ -240,10 +245,11 @@ export async function sequence(
 /**
  * Make array from array-like collection
  *
- * @param {ArrayLike} collection
+ * @param {ArrayLike} collection - collection to convert to array
  *
  * @returns {Array}
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function array(collection: ArrayLike<any>): any[] {
   return Array.prototype.slice.call(collection);
 }
@@ -251,19 +257,23 @@ export function array(collection: ArrayLike<any>): any[] {
 /**
  * Check if passed variable is a function
  *
- * @param {*} fn
+ * @param {*} fn - function to check
+ *
  * @returns {boolean}
  */
-export function isFunction(fn: any): boolean {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isFunction(fn: any): fn is Function {
   return typeof fn === 'function';
 }
 
 /**
  * Check if passed function is a class
  *
- * @param {Function} fn
+ * @param {Function} fn - function to check
+ *
  * @returns {boolean}
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isClass(fn: any): boolean {
   return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
 }
@@ -271,7 +281,8 @@ export function isClass(fn: any): boolean {
 /**
  * Checks if object is empty
  *
- * @param {object} object
+ * @param {object} object - object to check
+ *
  * @returns {boolean}
  */
 export function isEmpty(object: object): boolean {
@@ -288,18 +299,20 @@ export function isEmpty(object: object): boolean {
  * @param  {*}  object - object to check
  * @returns {boolean}
  */
-export function isPromise(object: any): boolean {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isPromise(object: any): object is Promise<any> {
   return Promise.resolve(object) === object;
 }
 
 /**
  * Delays method execution
  *
- * @param {Function} method
- * @param {number} timeout
+ * @param {Function} method - method to execute
+ * @param {number} timeout - timeout in ms
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function delay(method: (...args: any[]) => any, timeout: number) {
-  return function() {
+  return function (): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
         // eslint-disable-next-line prefer-rest-params
@@ -312,8 +325,9 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
 /**
  * Get file extension
  *
- * @param {File} file
- * @returns string
+ * @param {File} file - file
+ *
+ * @returns {string}
  */
 export function getFileExtension(file: File): string {
   return file.name.split('.').pop();
@@ -322,8 +336,9 @@ export function getFileExtension(file: File): string {
 /**
  * Check if string is MIME type
  *
- * @param {string} type
- * @returns boolean
+ * @param {string} type - string to check
+ *
+ * @returns {boolean}
  */
 export function isValidMimeType(type: string): boolean {
   return /^[-\w]+\/([-+\w]+|\*)$/.test(type);
@@ -416,7 +431,8 @@ export function getUserOS(): {[key: string]: boolean} {
 /**
  * Capitalizes first letter of the string
  *
- * @param {string} text
+ * @param {string} text - text to capitalize
+ *
  * @returns {string}
  */
 export function capitalize(text: string): string {
@@ -424,14 +440,26 @@ export function capitalize(text: string): string {
 }
 
 /**
+ * Return string representation of the object type
+ *
+ * @param {*} object - object to get type
+ *
+ * @returns {string}
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function typeOf(object: any): string {
+  return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+}
+
+/**
  * Merge to objects recursively
  *
- * @param {object} target
- * @param {object[]} sources
+ * @param {object} target - merge target
+ * @param {object[]} sources - merge sources
  * @returns {object}
  */
-export function deepMerge(target, ...sources): {[key: string]: any} {
-  const isObject = (item) => item && typeOf(item) === 'object';
+export function deepMerge<T extends object>(target, ...sources): T {
+  const isObject = (item): item is object => item && typeOf(item) === 'object';
 
   if (!sources.length) {
     return target;
@@ -468,15 +496,6 @@ export function deepMerge(target, ...sources): {[key: string]: any} {
 export const isTouchSupported: boolean = 'ontouchstart' in document.documentElement;
 
 /**
- * Return string representation of the object type
- *
- * @param {any} object
- */
-export function typeOf(object: any): string {
-  return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
-}
-
-/**
  * Make shortcut command more human-readable
  *
  * @param {string} shortcut — string like 'CMD+B'
@@ -511,7 +530,7 @@ export function beautifyShortcut(shortcut: string): string {
  * If url has `one slash`, then it concatenates with window location origin
  * or when url has `two lack` it appends only protocol
  *
- * @param {string} url
+ * @param {string} url - url to prettify
  */
 export function getValidUrl(url: string): string {
   try {

@@ -2,6 +2,8 @@ import Module from '../__module';
 
 /**
  * Event listener information
+ *
+ * @interface ListenerData
  */
 export interface ListenerData {
   /**
@@ -17,7 +19,7 @@ export interface ListenerData {
   /**
    * Event handler
    *
-   * @param {Event} event
+   * @param {Event} event - event object
    */
   handler: (event: Event) => void;
 
@@ -40,7 +42,7 @@ export interface ListenerData {
 
 /**
  * @typedef {Listeners} Listeners
- * @property {Array} allListeners
+ * @property {ListenerData[]} allListeners - listeners store
  */
 export default class Listeners extends Module {
   /**
@@ -109,9 +111,12 @@ export default class Listeners extends Module {
   }
 
   /**
-   * @param {EventTarget} element
-   * @param {string} eventType
-   * @param {Function} handler
+   * Finds and returns first listener by passed params
+   *
+   * @param {EventTarget} element - event target
+   * @param {string} [eventType] - event type
+   * @param {Function} [handler] - event handler
+   *
    * @returns {ListenerData|null}
    */
   public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
@@ -121,9 +126,12 @@ export default class Listeners extends Module {
   }
 
   /**
-   * @param {EventTarget} element
-   * @param {string} eventType
-   * @param {Function} handler
+   * Return all stored listeners by passed params
+   *
+   * @param {EventTarget} element - event target
+   * @param {string} eventType - event type
+   * @param {Function} handler - event handler
+   *
    * @returns {ListenerData[]}
    */
   public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
@@ -156,6 +164,7 @@ export default class Listeners extends Module {
    * Search method: looks for listener by passed element
    *
    * @param {EventTarget} element - searching element
+   *
    * @returns {Array} listeners that found on element
    */
   private findByEventTarget(element: EventTarget): ListenerData[] {
@@ -169,8 +178,9 @@ export default class Listeners extends Module {
   /**
    * Search method: looks for listener by passed event type
    *
-   * @param {string} eventType
-   * @returns {Array} listeners that found on element
+   * @param {string} eventType - event type
+   *
+   * @returns {ListenerData[]} listeners that found on element
    */
   private findByType(eventType: string): ListenerData[] {
     return this.allListeners.filter((listener) => {
@@ -183,8 +193,9 @@ export default class Listeners extends Module {
   /**
    * Search method: looks for listener by passed handler
    *
-   * @param {Function} handler
-   * @returns {Array} listeners that found on element
+   * @param {Function} handler - event handler
+   *
+   * @returns {ListenerData[]} listeners that found on element
    */
   private findByHandler(handler: (event: Event) => void): ListenerData[] {
     return this.allListeners.filter((listener) => {

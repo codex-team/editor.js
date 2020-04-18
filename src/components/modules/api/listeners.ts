@@ -11,20 +11,20 @@ export default class ListenersAPI extends Module {
    *
    * @returns {Listeners}
    */
-  get methods(): Listeners {
+  public get methods(): Listeners {
     return {
-      on: (element: HTMLElement, eventType, handler, useCapture) => this.on(element, eventType, handler, useCapture),
-      off: (element, eventType, handler) => this.off(element, eventType, handler),
+      on: (element: HTMLElement, eventType, handler, useCapture): void => this.on(element, eventType, handler, useCapture),
+      off: (element, eventType, handler, useCapture): void => this.off(element, eventType, handler, useCapture),
     };
   }
 
   /**
    * adds DOM event listener
    *
-   * @param {HTMLElement} element
-   * @param {string} eventType
-   * @param {() => void} handler
-   * @param {boolean} useCapture
+   * @param {HTMLElement} element - Element to set handler to
+   * @param {string} eventType - event type
+   * @param {() => void} handler - event handler
+   * @param {boolean} useCapture - capture event or not
    */
   public on(element: HTMLElement, eventType: string, handler: () => void, useCapture?: boolean): void {
     this.Editor.Listeners.on(element, eventType, handler, useCapture);
@@ -33,11 +33,12 @@ export default class ListenersAPI extends Module {
   /**
    * Removes DOM listener from element
    *
-   * @param element
-   * @param eventType
-   * @param handler
+   * @param {Element} element - Element to remove handler from
+   * @param eventType - event type
+   * @param handler - event handler
+   * @param {boolean} useCapture - capture event or not
    */
-  public off(element, eventType, handler): void {
-    this.Editor.Listeners.off(element, eventType, handler);
+  public off(element: Element, eventType: string, handler: () => void, useCapture?: boolean): void {
+    this.Editor.Listeners.off(element, eventType, handler, useCapture);
   }
 }

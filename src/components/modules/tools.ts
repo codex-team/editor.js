@@ -2,7 +2,8 @@ import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
 import {
-  BlockToolConstructable,
+  BlockTool,
+  BlockToolConstructable, BlockToolData, EditorConfig,
   InlineTool,
   InlineToolConstructable, Tool,
   ToolConfig,
@@ -67,7 +68,7 @@ export default class Tools extends Module {
       return this._inlineTools;
     }
 
-    const tools = Object.entries(this.available).filter(([name, tool]) => {
+    const tools = Object.entries(this.available).filter(([, tool]) => {
       if (!tool[this.INTERNAL_SETTINGS.IS_INLINE]) {
         return false;
       }
@@ -112,8 +113,7 @@ export default class Tools extends Module {
    * Return editor block tools
    */
   public get blockTools(): {[name: string]: BlockToolConstructable} {
-    // eslint-disable-next-line no-unused-vars
-    const tools = Object.entries(this.available).filter(([name, tool]) => {
+    const tools = Object.entries(this.available).filter(([, tool]) => {
       return !tool[this.INTERNAL_SETTINGS.IS_INLINE];
     });
 
@@ -134,7 +134,7 @@ export default class Tools extends Module {
    *
    * @returns {object}
    */
-  public get INTERNAL_SETTINGS() {
+  public get INTERNAL_SETTINGS(): {[name: string]: string} {
     return {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
@@ -151,7 +151,7 @@ export default class Tools extends Module {
    *
    * return {object}
    */
-  public get USER_SETTINGS() {
+  public get USER_SETTINGS(): {[name: string]: string} {
     return {
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
@@ -196,7 +196,7 @@ export default class Tools extends Module {
   /**
    * @class
    *
-   * @param {EditorConfig} config
+   * @param {EditorConfig} config - Editor's configuration
    */
   constructor({ config }) {
     super({ config });
@@ -227,9 +227,9 @@ export default class Tools extends Module {
   /**
    * Creates instances via passed or default configuration
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
-  public prepare() {
+  public prepare(): Promise<void> {
     this.validateTools();
 
     /**
@@ -237,7 +237,7 @@ export default class Tools extends Module {
      */
     this.config.tools = _.deepMerge({}, this.internalTools, this.config.tools);
 
-    if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
+    if (!Object.prototype.hasOwnProperty.call(this.config, 'tools') || Object.keys(this.config.tools).length === 0) {
       throw Error('Can\'t start without tools');
     }
 
@@ -298,26 +298,30 @@ export default class Tools extends Module {
     }
 
     /**
-     * to see how it works {@link Util#sequence}
+     * to see how it works {@link '../utils.ts#sequence'}
      */
-    return _.sequence(sequenceData, (data: any) => {
+    return _.sequence(sequenceData, (data: {toolName: string}) => {
       this.success(data);
-    }, (data) => {
+    }, (data: {toolName: string}) => {
       this.fallback(data);
     });
   }
 
   /**
-   * @param {ChainData.data} data - append tool to available list
+   * Success callback
+   *
+   * @param {object} data - append tool to available list
    */
-  public success(data) {
+  public success(data: {toolName: string}): void {
     this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
   /**
-   * @param {ChainData.data} data - append tool to unavailable list
+   * Fail callback
+   *
+   * @param {object} data - append tool to unavailable list
    */
-  public fallback(data) {
+  public fallback(data: {toolName: string}): void {
     this.toolsUnavailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
@@ -325,11 +329,12 @@ export default class Tools extends Module {
    * Return Tool`s instance
    *
    * @param {string} tool — tool name
-   * @param {BlockToolData} data — initial data
+   * @param {object} data — initial data
+   *
    * @returns {BlockTool}
    */
-  public construct(tool, data) {
-    const Plugin = this.toolsClasses[tool];
+  public construct(tool: string, data: BlockToolData): BlockTool {
+    const Plugin = this.toolsClasses[tool] as BlockToolConstructable;
 
     /**
      * Configuration to be passed to the Tool's constructor
@@ -341,9 +346,6 @@ export default class Tools extends Module {
       config.placeholder = this.config.placeholder;
     }
 
-    /**
-     * @type {{api: API, config: ({}), data: BlockToolData}}
-     */
     const constructorOptions = {
       api: this.Editor.API.methods,
       config,
@@ -356,14 +358,12 @@ export default class Tools extends Module {
   /**
    * Return Inline Tool's instance
    *
-   * @param {InlineTool} tool
-   * @param {ToolSettings} toolSettings
+   * @param {InlineTool} tool - Inline Tool instance
+   * @param {ToolSettings} toolSettings - tool settings
+   *
    * @returns {InlineTool} — instance
    */
   public constructInline(tool: InlineToolConstructable, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
-    /**
-     * @type {{api: API}}
-     */
     const constructorOptions = {
       api: this.Editor.API.methods,
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
@@ -377,20 +377,39 @@ export default class Tools extends Module {
    * Check if passed Tool is an instance of Initial Block Tool
    *
    * @param {Tool} tool - Tool to check
+   *
    * @returns {boolean}
    */
-  public isInitial(tool) {
+  public isInitial(tool): boolean {
     return tool instanceof this.available[this.config.initialBlock];
   }
 
   /**
    * Return Tool's config by name
    *
-   * @param {string} toolName
+   * @param {string} toolName - name of tool
+   *
    * @returns {ToolSettings}
    */
   public getToolSettings(toolName): ToolSettings {
     return this.toolsSettings[toolName];
+  }
+
+  /**
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
+   */
+  public get internalTools(): {[toolName: string]: ToolConstructable|ToolSettings} {
+    return {
+      bold: { class: BoldInlineTool },
+      italic: { class: ItalicInlineTool },
+      link: { class: LinkInlineTool },
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+      },
+      stub: { class: Stub },
+    };
   }
 
   /**
@@ -408,7 +427,7 @@ export default class Tools extends Module {
       > = [];
 
     for (const toolName in this.toolsClasses) {
-      if (this.toolsClasses.hasOwnProperty(toolName)) {
+      if (Object.prototype.hasOwnProperty.call(this.toolsClasses, toolName)) {
         const toolClass = this.toolsClasses[toolName];
 
         if (typeof toolClass.prepare === 'function') {
@@ -434,12 +453,12 @@ export default class Tools extends Module {
   /**
    * Validate Tools configuration objects and throw Error for user if it is invalid
    */
-  private validateTools() {
+  private validateTools(): void {
     /**
      * Check Tools for a class containing
      */
     for (const toolName in this.config.tools) {
-      if (this.config.tools.hasOwnProperty(toolName)) {
+      if (Object.prototype.hasOwnProperty.call(this.config.tools, toolName)) {
         if (toolName in this.internalTools) {
           return;
         }
@@ -453,22 +472,5 @@ export default class Tools extends Module {
         }
       }
     }
-  }
-
-  /**
-   * Returns internal tools
-   * Includes Bold, Italic, Link and Paragraph
-   */
-  get internalTools() {
-    return {
-      bold: { class: BoldInlineTool },
-      italic: { class: ItalicInlineTool },
-      link: { class: LinkInlineTool },
-      paragraph: {
-        class: Paragraph,
-        inlineToolbar: true,
-      },
-      stub: { class: Stub },
-    };
   }
 }

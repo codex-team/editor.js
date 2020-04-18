@@ -19,10 +19,9 @@ export default class Toolbox extends Module {
   /**
    * CSS styles
    *
-   * @returns {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
-   * toolboxOpened: string, tooltip: string, tooltipShown: string, tooltipShortcut: string}}
+   * @returns {object.<string, string>}
    */
-  get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
@@ -90,8 +89,8 @@ export default class Toolbox extends Module {
   /**
    * Toolbox Tool's button click handler
    *
-   * @param {MouseEvent|KeyboardEvent} event
-   * @param {string} toolName
+   * @param {MouseEvent|KeyboardEvent} event - event that activates toolbox button
+   * @param {string} toolName - button to activate
    */
   public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
     const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
@@ -143,7 +142,7 @@ export default class Toolbox extends Module {
     const tools = this.Editor.Tools.available;
 
     for (const toolName in tools) {
-      if (tools.hasOwnProperty(toolName)) {
+      if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
         this.addTool(toolName, tools[toolName] as BlockToolConstructable);
       }
     }
@@ -228,7 +227,7 @@ export default class Toolbox extends Module {
    * Draw tooltip for toolbox tools
    *
    * @param {string} toolName - toolbox tool name
-   * @returns { HTMLElement }
+   * @returns {HTMLElement}
    */
   private drawTooltip(toolName: string): HTMLElement {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
@@ -261,7 +260,7 @@ export default class Toolbox extends Module {
    * @param {string} toolName - Tool name
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string) {
+  private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string): void {
     this.Editor.Shortcuts.add({
       name: shortcut,
       handler: (event: KeyboardEvent) => {
@@ -290,11 +289,8 @@ export default class Toolbox extends Module {
    * @param {BlockToolConstructable} tool - Tool Class
    * @param {string} toolName - Tool name
    */
-  private insertNewBlock(tool: BlockToolConstructable, toolName: string) {
+  private insertNewBlock(tool: BlockToolConstructable, toolName: string): void {
     const { BlockManager, Caret } = this.Editor;
-    /**
-     * @type {Block}
-     */
     const { currentBlock } = BlockManager;
 
     let newBlock;

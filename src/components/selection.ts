@@ -39,7 +39,7 @@ export default class SelectionUtils {
    *
    * @returns {{editorWrapper: string, editorZone: string}}
    */
-  static get CSS(): { editorWrapper: string; editorZone: string } {
+  public static get CSS(): { editorWrapper: string; editorZone: string } {
     return {
       editorWrapper: 'codex-editor',
       editorZone: 'codex-editor__redactor',
@@ -52,7 +52,7 @@ export default class SelectionUtils {
    *
    * @returns {Node|null}
    */
-  static get anchorNode(): Node | null {
+  public static get anchorNode(): Node | null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
@@ -63,7 +63,7 @@ export default class SelectionUtils {
    *
    * @returns {Element|null}
    */
-  static get anchorElement(): Element | null {
+  public static get anchorElement(): Element | null {
     const selection = window.getSelection();
 
     if (!selection) {
@@ -89,7 +89,7 @@ export default class SelectionUtils {
    *
    * @returns {number|null}
    */
-  static get anchorOffset(): number | null {
+  public static get anchorOffset(): number | null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorOffset : null;
@@ -100,7 +100,7 @@ export default class SelectionUtils {
    *
    * @returns {boolean|null}
    */
-  static get isCollapsed(): boolean | null {
+  public static get isCollapsed(): boolean | null {
     const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
@@ -111,7 +111,7 @@ export default class SelectionUtils {
    *
    * @returns {boolean}
    */
-  static get isAtEditor(): boolean {
+  public static get isAtEditor(): boolean {
     const selection = SelectionUtils.get();
 
     /**
@@ -140,7 +140,7 @@ export default class SelectionUtils {
    *
    * @returns {Range|null}
    */
-  static get range(): Range {
+  public static get range(): Range | null {
     const selection = window.getSelection();
 
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
@@ -149,9 +149,9 @@ export default class SelectionUtils {
   /**
    * Calculates position and size of selected text
    *
-   * @returns {{x, y, width, height, top?, left?, bottom?, right?}}
+   * @returns {DOMRect | ClientRect}
    */
-  static get rect(): DOMRect | ClientRect {
+  public static get rect(): DOMRect | ClientRect {
     let sel: Selection | MSSelection = (document as Document).selection,
         range: TextRange | Range;
 
@@ -224,20 +224,15 @@ export default class SelectionUtils {
    *
    * @returns {string}
    */
-  static get text(): string {
+  public static get text(): string {
     return window.getSelection ? window.getSelection().toString() : '';
   }
 
   /**
-   * Returns window SelectionUtils
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * Selection instances
    *
-   * @returns {Selection}
+   * @todo Check if this is still relevant
    */
-  public static get(): Selection {
-    return window.getSelection();
-  }
-
   public instance: Selection = null;
   public selection: Selection = null;
 
@@ -262,9 +257,19 @@ export default class SelectionUtils {
   private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
+   * Returns window SelectionUtils
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   *
+   * @returns {Selection}
+   */
+  public static get(): Selection {
+    return window.getSelection();
+  }
+
+  /**
    * Removes fake background
    */
-  public removeFakeBackground() {
+  public removeFakeBackground(): void {
     if (!this.isFakeBackgroundEnabled) {
       return;
     }
@@ -276,7 +281,7 @@ export default class SelectionUtils {
   /**
    * Sets fake background
    */
-  public setFakeBackground() {
+  public setFakeBackground(): void {
     document.execCommand(this.commandBackground, false, '#a8d6ff');
 
     this.isFakeBackgroundEnabled = true;
@@ -329,6 +334,7 @@ export default class SelectionUtils {
    * @param  {string} tagName       - tag to found
    * @param  {string} [className]   - tag's class name
    * @param  {number} [searchDepth] - count of tags that can be included. For better performance.
+   *
    * @returns {HTMLElement|null}
    */
   public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement | null {
@@ -402,7 +408,7 @@ export default class SelectionUtils {
   /**
    * Expands selection range to the passed parent node
    *
-   * @param {HTMLElement} element
+   * @param {HTMLElement} element - element which contents should be selcted
    */
   public expandToTag(element: HTMLElement): void {
     const selection = window.getSelection();
