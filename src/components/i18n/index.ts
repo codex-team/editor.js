@@ -1,4 +1,5 @@
 import defaultDictionary from './locales/en/messages.json';
+import * as _ from '../utils';
 
 /**
  * This class will responsible for the translation through the language dictionary
@@ -18,6 +19,10 @@ export default class I18n {
    */
   public static t(namespace: string, dictKey: string): string {
     const section = I18n.getSection(namespace);
+
+    if (_.isEmpty(section)) {
+      _.log('I18n: section %o was not found in current dictionary', 'warn', namespace);
+    }
 
     if (!section || !section[dictKey]) {
       return dictKey;

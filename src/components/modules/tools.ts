@@ -473,3 +473,22 @@ export default class Tools extends Module {
     };
   }
 }
+
+/**
+ * What kind of plugins developers can create
+ */
+export enum toolTypes {
+  /**
+   * Block tool
+   */
+  BLOCK,
+  /**
+   * Inline tool
+   */
+  INLINE,
+
+  /**
+   * Block tune
+   */
+  TUNE,
+}

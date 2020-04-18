@@ -1,5 +1,4 @@
 import {
-  API,
   BlockTool,
   BlockToolConstructable,
   BlockToolData,
@@ -9,10 +8,16 @@ import {
   ToolConfig
 } from '../../types';
 
-import { SavedData } from '../types-internal/block-data';
+import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
 import * as _ from './utils';
 import ApiModule from './../components/modules/api';
+/** Import default tunes */
+import MoveUpTune from './block-tunes/block-tune-move-up';
+import DeleteTune from './block-tunes/block-tune-delete';
+import MoveDownTune from './block-tunes/block-tune-move-down';
+import SelectionUtils from './selection';
+import { toolTypes } from './modules/tools';
 
 /**
  * @class Block
@@ -22,12 +27,6 @@ import ApiModule from './../components/modules/api';
  * @property {object} CSS — block`s css classes
  *
  */
-
-/** Import default tunes */
-import MoveUpTune from './block-tunes/block-tune-move-up';
-import DeleteTune from './block-tunes/block-tune-delete';
-import MoveDownTune from './block-tunes/block-tune-move-down';
-import SelectionUtils from './selection';
 
 /**
  * Available Block Tool API methods
@@ -539,7 +538,7 @@ export default class Block {
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
       return new Tune({
-        api: this.api.getMethodsForTool(name, 'tune'),
+        api: this.api.getMethodsForTool(name, toolTypes.TUNE),
         settings: this.settings,
       });
     });
