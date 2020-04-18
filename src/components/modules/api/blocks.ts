@@ -18,7 +18,7 @@ export default class BlocksAPI extends Module {
       clear: () => this.clear(),
       render: (data: OutputData) => this.render(data),
       renderFromHTML: (data: string) => this.renderFromHTML(data),
-      delete: () => this.delete(),
+      delete: (index: number) => this.delete(index),
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number) => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),

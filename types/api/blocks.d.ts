@@ -26,8 +26,9 @@ export interface Blocks {
 
   /**
    * Removes current Block
+   * @param {number} index
    */
-  delete(): void;
+  delete(index: number): void;
 
   /**
    * Swaps two Blocks
