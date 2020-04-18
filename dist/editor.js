@@ -12833,8 +12833,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
 
-        if (config.i18n && config.i18n.locale) {
-          _i18n["default"].setLocale(config.i18n.locale);
+        if (config.i18n && config.i18n.messages) {
+          _i18n["default"].setDictionary(config.i18n.messages);
         }
       }
       /**
@@ -14025,6 +14025,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(I18n, null, [{
       key: "t",
+
+      /**
+       * Perform translation of the string by namespace and a key
+       * If there is no translation found, returns passed key as a translated message
+       *
+       * @param namespace - path to translated string in dictionary
+       * @param dictKey - dictionary key. Better to use default locale original text
+       */
       value: function t(namespace, dictKey) {
         var section = I18n.getSection(namespace);
 
@@ -14034,17 +14042,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         return section[dictKey];
       }
+      /**
+       * Adjust module for using external dictionary
+       *
+       * @param dictionary - new messages list to override default
+       */
+
     }, {
-      key: "has",
-      value: function has(namespace, dictKey) {
-        var section = I18n.getSection(namespace);
-        return section && section[dictKey];
+      key: "setDictionary",
+      value: function setDictionary(dictionary) {
+        I18n.currentDictionary = dictionary;
       }
-    }, {
-      key: "setLocale",
-      value: function setLocale(locale) {
-        I18n.currentLocale = locale;
-      }
+      /**
+       * Find messages section by namespace path
+       *
+       * @param namespace - path to section
+       */
+
     }, {
       key: "getSection",
       value: function getSection(namespace) {
@@ -14055,15 +14069,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
 
           return key[part];
-        }, I18n.currentLocale);
+        }, I18n.currentDictionary);
       }
     }]);
     return I18n;
   }();
+  /**
+   * Property that stores messages dictionary
+   */
+
 
   _exports["default"] = I18n;
   I18n.displayName = "I18n";
-  I18n.currentLocale = _messages["default"];
+  I18n.currentDictionary = _messages["default"];
   module.exports = exports.default;
 });
 
@@ -14456,6 +14474,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       this.toolbar = api.toolbar;
       this.inlineToolbar = api.inlineToolbar;
       this.notifier = api.notifier;
+      this.i18n = api.i18n;
       this.selection = new _selection["default"]();
     }
     /**
@@ -14490,7 +14509,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this = this;
 
         this.nodes.input = document.createElement('input');
-        this.nodes.input.placeholder = 'Add a link';
+        this.nodes.input.placeholder = this.i18n.tn('Add a link');
         this.nodes.input.classList.add(this.CSS.input);
         this.nodes.input.addEventListener('keydown', function (event) {
           if (event.keyCode === _this.ENTER_KEY) {
@@ -15596,15 +15615,33 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Return I18n API methods with tool namespaced dictionary
+       *
        * @param toolName - name of tool. Used to provide dictionary only for this tool
        */
       value: function getMethodsForTool(toolName) {
         return {
-          t: function t(dictKey) {
-            return _i18n["default"].t("tools.".concat(toolName), dictKey);
+          t: function t(namespace, dictKey) {
+            return _i18n["default"].t(namespace, dictKey);
           },
-          has: function has(dictKey) {
-            return _i18n["default"].has("tools.".concat(toolName), dictKey);
+          tn: function tn(dictKey) {
+            return _i18n["default"].t("tools.".concat(toolName), dictKey);
+          }
+        };
+      }
+    }, {
+      key: "methods",
+
+      /**
+       * Return I18n API methods with global dictionary access
+       */
+      get: function get() {
+        return {
+          t: function t(namespace, dictKey) {
+            return _i18n["default"].t(namespace, dictKey);
+          },
+          tn: function tn() {
+            console.warn('I18n.tn method can be accessed only from Tools');
+            return undefined;
           }
         };
       }
@@ -15688,7 +15725,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Editor.js Core API modules
-       * @deprecated use getMethodsForTool instead
        */
       get: function get() {
         return {
@@ -15703,7 +15739,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           styles: this.Editor.StylesAPI.classes,
           toolbar: this.Editor.ToolbarAPI.methods,
           inlineToolbar: this.Editor.InlineToolbarAPI.methods,
-          tooltip: this.Editor.TooltipAPI.methods
+          tooltip: this.Editor.TooltipAPI.methods,
+          i18n: this.Editor.I18nAPI.methods
         };
       }
     }]);
@@ -23637,7 +23674,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _dom["default"].append(tool, icon);
 
-        _dom["default"].append(tool, _dom["default"].text(title || _.capitalize(toolName)));
+        _dom["default"].append(tool, _dom["default"].text(_i18n["default"].t('toolbox', title || _.capitalize(toolName))));
 
         _dom["default"].append(this.nodes.tools, tool);
 
@@ -24787,7 +24824,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tooltipContent = _dom["default"].make('div');
 
-        var toolTitle = Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName);
+        var toolTitle = _i18n["default"].t("inlineTools", Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName));
 
         tooltipContent.appendChild(_dom["default"].text(toolTitle));
 
@@ -24911,7 +24948,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         for (var tool in this.Editor.Tools.inline) {
           if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
             var toolSettings = this.Editor.Tools.getToolSettings(tool);
-            result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
+            result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], tool, toolSettings);
           }
         }
 
@@ -25626,20 +25663,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Return Inline Tool's instance
        *
        * @param {InlineTool} tool
+       * @param {string} name - tool name
        * @param {ToolSettings} toolSettings
        * @returns {InlineTool} — instance
        */
 
     }, {
       key: "constructInline",
-      value: function constructInline(tool) {
-        var toolSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      value: function constructInline(tool, name) {
+        var toolSettings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
         /**
          * @type {{api: API}}
          */
         var constructorOptions = {
-          api: this.Editor.API.methods,
+          api: this.Editor.API.getMethodsForTool(name),
           config: toolSettings[this.USER_SETTINGS.CONFIG] || {}
         }; // eslint-disable-next-line new-cap
 
@@ -25778,7 +25816,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           var inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
           var notImplementedMethods = inlineToolRequiredMethods.filter(function (method) {
-            return !_this3.constructInline(tool)[method];
+            return !_this3.constructInline(tool, name)[method];
           });
 
           if (notImplementedMethods.length) {

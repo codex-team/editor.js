@@ -1,9 +1,21 @@
-import defaultLocale from './locales/en/messages.json';
+import defaultDictionary from './locales/en/messages.json';
 
 /**
  * This class will responsible for the translation through the language dictionary
  */
 export default class I18n {
+  /**
+   * Property that stores messages dictionary
+   */
+  private static currentDictionary: {[key: string]: object} = defaultDictionary;
+
+  /**
+   * Perform translation of the string by namespace and a key
+   * If there is no translation found, returns passed key as a translated message
+   *
+   * @param namespace - path to translated string in dictionary
+   * @param dictKey - dictionary key. Better to use default locale original text
+   */
   public static t(namespace: string, dictKey: string): string {
     const section = I18n.getSection(namespace);
 
@@ -14,19 +26,21 @@ export default class I18n {
     return section[dictKey];
   }
 
-  public static has(namespace: string, dictKey: string): boolean {
-    const section = I18n.getSection(namespace);
-
-    return section && section[dictKey];
+  /**
+   * Adjust module for using external dictionary
+   *
+   * @param dictionary - new messages list to override default
+   */
+  public static setDictionary(dictionary: {[key: string]: any}): void {
+    I18n.currentDictionary = dictionary;
   }
 
-  public static setLocale(locale: {[key: string]: any}) {
-    I18n.currentLocale = locale;
-  }
-
-  private static currentLocale: {[key: string]: any} = defaultLocale;
-
-  private static getSection(namespace: string) {
+  /**
+   * Find messages section by namespace path
+   *
+   * @param namespace - path to section
+   */
+  private static getSection(namespace: string): object|undefined {
     const parts = namespace.split('.');
 
     return parts.reduce((key, part) => {
@@ -35,6 +49,6 @@ export default class I18n {
       }
 
       return key[part];
-    }, I18n.currentLocale);
+    }, I18n.currentDictionary);
   }
 }

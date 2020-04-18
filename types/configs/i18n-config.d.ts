@@ -1,3 +1,9 @@
+/**
+ * Available options of i18n config property
+ */
 export interface I18nConfig {
-  locale: object;
+  /**
+   * Dictionary used for translation
+   */
+  messages: object;
 }

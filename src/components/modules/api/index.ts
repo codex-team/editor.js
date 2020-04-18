@@ -14,7 +14,6 @@ import { API as APIInterfaces } from '../../../../types';
 export default class API extends Module {
   /**
    * Editor.js Core API modules
-   * @deprecated use getMethodsForTool instead
    */
   public get methods(): APIInterfaces {
     return {
@@ -30,6 +29,7 @@ export default class API extends Module {
       toolbar: this.Editor.ToolbarAPI.methods,
       inlineToolbar: this.Editor.InlineToolbarAPI.methods,
       tooltip: this.Editor.TooltipAPI.methods,
+      i18n: this.Editor.I18nAPI.methods,
     } as APIInterfaces;
   }
 

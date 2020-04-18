@@ -4,7 +4,7 @@ import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../types-internal/block-data';
 import Flipper from '../../flipper';
-import i18n from '../../i18n';
+import I18n from '../../i18n';
 
 /**
  * Block Converter
@@ -68,7 +68,7 @@ export default class ConversionToolbar extends Module {
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-      textContent: i18n.t('inlineToolbar.converter', 'Convert to'),
+      textContent: I18n.t('inlineToolbar.converter', 'Convert to'),
     });
 
     /**
@@ -293,7 +293,7 @@ export default class ConversionToolbar extends Module {
     icon.innerHTML = toolIcon;
 
     $.append(tool, icon);
-    $.append(tool, $.text(title || _.capitalize(toolName)));
+    $.append(tool, $.text(I18n.t('toolbox', title || _.capitalize(toolName))));
 
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;

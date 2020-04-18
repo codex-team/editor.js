@@ -201,8 +201,8 @@ export default class Core {
       }
     }
 
-    if (config.i18n && config.i18n.locale) {
-      I18n.setLocale(config.i18n.locale);
+    if (config.i18n && config.i18n.messages) {
+      I18n.setDictionary(config.i18n.messages);
     }
   }
 

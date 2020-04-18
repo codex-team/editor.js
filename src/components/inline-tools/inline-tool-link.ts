@@ -3,7 +3,8 @@ import SelectionUtils from '../selection';
 import $ from '../dom';
 import * as _ from '../utils';
 import { API, InlineTool, SanitizerConfig } from '../../../types';
-import { Notifier, Toolbar } from '../../../types/api';
+import { Notifier, Toolbar, I18n } from '../../../types/api';
+import i18n from "../modules/api/i18n";
 
 /**
  * Link Tool
@@ -101,12 +102,18 @@ export default class LinkInlineTool implements InlineTool {
   private notifier: Notifier;
 
   /**
+   * I18n API
+   */
+  private i18n: I18n;
+
+  /**
    * @param {{api: API}} - Editor.js API
    */
   constructor({ api }) {
     this.toolbar = api.toolbar;
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
+    this.i18n = api.i18n;
     this.selection = new SelectionUtils();
   }
 
@@ -128,7 +135,7 @@ export default class LinkInlineTool implements InlineTool {
    */
   public renderActions(): HTMLElement {
     this.nodes.input = document.createElement('input') as HTMLInputElement;
-    this.nodes.input.placeholder = 'Add a link';
+    this.nodes.input.placeholder = this.i18n.tn('Add a link');
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY) {

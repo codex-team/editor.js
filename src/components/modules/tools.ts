@@ -76,7 +76,7 @@ export default class Tools extends Module {
        * Some Tools validation
        */
       const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !this.constructInline(tool)[method]);
+      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !this.constructInline(tool, name)[method]);
 
       if (notImplementedMethods.length) {
         _.log(
@@ -357,15 +357,16 @@ export default class Tools extends Module {
    * Return Inline Tool's instance
    *
    * @param {InlineTool} tool
+   * @param {string} name - tool name
    * @param {ToolSettings} toolSettings
    * @returns {InlineTool} — instance
    */
-  public constructInline(tool: InlineToolConstructable, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
+  public constructInline(tool: InlineToolConstructable, name: string, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
     /**
      * @type {{api: API}}
      */
     const constructorOptions = {
-      api: this.Editor.API.methods,
+      api: this.Editor.API.getMethodsForTool(name),
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
     };
 
