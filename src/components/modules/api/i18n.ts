@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
-import { toolTypes } from '../tools';
+import { ToolType } from '../tools';
 import { log } from '../../utils';
 
 /**
@@ -14,12 +14,12 @@ export default class I18nAPI extends Module {
    * @param toolName - name of tool. Used to provide dictionary only for this tool
    * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
    */
-  private static getNamespace(toolName: string, toolType: toolTypes): string {
+  private static getNamespace(toolName: string, toolType: ToolType): string {
     switch (toolType) {
-      case toolTypes.BLOCK:
-      case toolTypes.INLINE:
+      case ToolType.Block:
+      case ToolType.Inline:
         return `tools.${toolName}`;
-      case toolTypes.TUNE:
+      case ToolType.Tune:
         return `blockTunes.${toolName}`;
     }
   }
@@ -44,7 +44,7 @@ export default class I18nAPI extends Module {
    * @param toolName - name of tool. Used to provide dictionary only for this tool
    * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
    */
-  public getMethodsForTool(toolName: string, toolType: toolTypes): I18n {
+  public getMethodsForTool(toolName: string, toolType: ToolType): I18n {
     return Object.assign(
       this.methods,
       {

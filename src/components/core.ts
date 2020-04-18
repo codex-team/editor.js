@@ -201,6 +201,9 @@ export default class Core {
       }
     }
 
+    /**
+     * Adjust i18n
+     */
     if (config.i18n && config.i18n.messages) {
       I18n.setDictionary(config.i18n.messages);
     }

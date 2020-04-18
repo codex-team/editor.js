@@ -7,7 +7,7 @@
  */
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
-import { toolTypes } from "../tools";
+import { ToolType } from "../tools";
 
 /**
  * @class API
@@ -41,7 +41,7 @@ export default class API extends Module {
    *
    * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
    */
-  public getMethodsForTool(toolName: string, toolType = toolTypes.BLOCK): APIInterfaces {
+  public getMethodsForTool(toolName: string, toolType = ToolType.Block): APIInterfaces {
     return Object.assign(
       this.methods,
       {

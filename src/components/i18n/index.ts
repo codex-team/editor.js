@@ -1,5 +1,6 @@
 import defaultDictionary from './locales/en/messages.json';
 import * as _ from '../utils';
+import { I18nDictionary, Dictionary, DictValue } from '../../../types/configs/i18n-dictionary';
 
 /**
  * This class will responsible for the translation through the language dictionary
@@ -8,7 +9,7 @@ export default class I18n {
   /**
    * Property that stores messages dictionary
    */
-  private static currentDictionary: {[key: string]: object} = defaultDictionary;
+  private static currentDictionary: I18nDictionary = defaultDictionary;
 
   /**
    * Perform translation of the string by namespace and a key
@@ -18,7 +19,7 @@ export default class I18n {
    * @param dictKey - dictionary key. Better to use default locale original text
    */
   public static t(namespace: string, dictKey: string): string {
-    const section = I18n.getSection(namespace);
+    const section = I18n.getNamespace(namespace);
 
     if (_.isEmpty(section)) {
       _.log('I18n: section %o was not found in current dictionary', 'warn', namespace);
@@ -28,7 +29,7 @@ export default class I18n {
       return dictKey;
     }
 
-    return section[dictKey];
+    return section[dictKey] as string;
   }
 
   /**
@@ -36,7 +37,7 @@ export default class I18n {
    *
    * @param dictionary - new messages list to override default
    */
-  public static setDictionary(dictionary: {[key: string]: any}): void {
+  public static setDictionary(dictionary: I18nDictionary): void {
     I18n.currentDictionary = dictionary;
   }
 
@@ -45,7 +46,7 @@ export default class I18n {
    *
    * @param namespace - path to section
    */
-  private static getSection(namespace: string): object|undefined {
+  private static getNamespace(namespace: string): Dictionary {
     const parts = namespace.split('.');
 
     return parts.reduce((key, part) => {

@@ -477,18 +477,18 @@ export default class Tools extends Module {
 /**
  * What kind of plugins developers can create
  */
-export enum toolTypes {
+export enum ToolType {
   /**
    * Block tool
    */
-  BLOCK,
+  Block,
   /**
    * Inline tool
    */
-  INLINE,
+  Inline,
 
   /**
    * Block tune
    */
-  TUNE,
+  Tune,
 }

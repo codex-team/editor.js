@@ -17,7 +17,7 @@ import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
 import SelectionUtils from './selection';
-import { toolTypes } from './modules/tools';
+import { ToolType } from './modules/tools';
 
 /**
  * @class Block
@@ -538,7 +538,7 @@ export default class Block {
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
       return new Tune({
-        api: this.api.getMethodsForTool(name, toolTypes.TUNE),
+        api: this.api.getMethodsForTool(name, ToolType.Tune),
         settings: this.settings,
       });
     });
