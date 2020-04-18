@@ -1,8 +1,9 @@
 import $ from '../../dom';
-import { BlockTool, BlockToolData } from '../../../../types';
+import { API, BlockTool, BlockToolData } from '../../../../types';
 
 /**
- *
+ * This tool will be shown in place of a block without corresponding plugin
+ * It will store its data inside and pass it back with article saving
  */
 export default class Stub implements BlockTool {
   /**
@@ -21,6 +22,11 @@ export default class Stub implements BlockTool {
    * Main stub wrapper
    */
   private readonly wrapper: HTMLElement;
+
+  /**
+   * Editor.js API
+   */
+  private readonly api: API;
 
   /**
    * Stub title — tool name
@@ -43,8 +49,9 @@ export default class Stub implements BlockTool {
    * @param api
    */
   constructor({ data, config, api }) {
-    this.title = data.title || 'Error';
-    this.subtitle = 'The block can not be displayed correctly.';
+    this.api = api;
+    this.title = data.title || this.api.i18n.tn('Error');
+    this.subtitle = this.api.i18n.tn('The block can not be displayed correctly.');
     this.savedData = data.savedData;
 
     this.wrapper = this.make();

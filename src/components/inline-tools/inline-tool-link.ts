@@ -4,7 +4,6 @@ import $ from '../dom';
 import * as _ from '../utils';
 import { API, InlineTool, SanitizerConfig } from '../../../types';
 import { Notifier, Toolbar, I18n } from '../../../types/api';
-import i18n from "../modules/api/i18n";
 
 /**
  * Link Tool
