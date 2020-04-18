@@ -6,12 +6,13 @@ import I18nInternal from '../../i18n';
  */
 export default class I18nAPI extends Module {
   /**
-   * Available methods
+   * Return I18n API methods with tool namespaced dictionary
+   * @param toolName - name of tool. Used to provide dictionary only for this tool
    */
-  public get methods(): I18n {
+  public getMethodsForTool(toolName: string): I18n {
     return {
-      t: (namespace: string, dictKey: string): string => I18nInternal.t(namespace, dictKey),
-      has: (namespace: string, dictKey: string): boolean => I18nInternal.has(namespace, dictKey),
+      t: (dictKey: string): string => I18nInternal.t(`tools.${toolName}`, dictKey),
+      has: (dictKey: string): boolean => I18nInternal.has(`tools.${toolName}`, dictKey),
     };
   }
 }

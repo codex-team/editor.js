@@ -1,6 +1,6 @@
 /**
  * @module API
- * @copyright <CodeX Team> 2018
+ * @copyright <CodeX> 2018
  *
  * Each block has an Editor API instance to use provided public methods
  * if you cant to read more about how API works, please see docs
@@ -14,6 +14,7 @@ import { API as APIInterfaces } from '../../../../types';
 export default class API extends Module {
   /**
    * Editor.js Core API modules
+   * @deprecated use getMethodsForTool instead
    */
   public get methods(): APIInterfaces {
     return {
@@ -29,7 +30,20 @@ export default class API extends Module {
       toolbar: this.Editor.ToolbarAPI.methods,
       inlineToolbar: this.Editor.InlineToolbarAPI.methods,
       tooltip: this.Editor.TooltipAPI.methods,
-      i18n: this.Editor.I18nAPI.methods,
     } as APIInterfaces;
+  }
+
+  /**
+   * Returns Editor.js Core API methods for passed tool
+   * @param toolName - how user name tool. It can be used in some API logic,
+   *                   for example in i18n to provide namespaced dictionary
+   */
+  public getMethodsForTool(toolName: string): APIInterfaces {
+    return Object.assign(
+      this.methods,
+      {
+        i18n: this.Editor.I18nAPI.getMethodsForTool(toolName),
+      },
+    ) as APIInterfaces;
   }
 }

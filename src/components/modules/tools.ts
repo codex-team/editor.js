@@ -345,7 +345,7 @@ export default class Tools extends Module {
      * @type {{api: API, config: ({}), data: BlockToolData}}
      */
     const constructorOptions = {
-      api: this.Editor.API.methods,
+      api: this.Editor.API.getMethodsForTool(tool),
       config,
       data,
     };

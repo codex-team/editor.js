@@ -235,11 +235,7 @@ export default class Toolbox extends Module {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
-    let name = userToolboxSettings.title || toolboxSettings.title || toolName;
-
-    if (I18n.has('toolbox', name)) {
-      name = I18n.t('toolbox', name);
-    }
+    const name = I18n.t('toolbox', userToolboxSettings.title || toolboxSettings.title || toolName);
 
     let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
 
