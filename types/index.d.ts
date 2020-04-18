@@ -18,6 +18,7 @@ import {
   Styles,
   Toolbar,
   Tooltip,
+  I18n,
 } from './api';
 import {OutputData} from './data-formats/output-data';
 
@@ -67,6 +68,7 @@ export interface API {
   toolbar: Toolbar;
   inlineToolbar: InlineToolbar;
   tooltip: Tooltip;
+  i18n: I18n;
 }
 
 /**

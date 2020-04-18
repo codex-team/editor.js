@@ -3,6 +3,7 @@ import * as _ from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import { LogLevels } from './utils';
+import I18n from "./i18n";
 
 /**
  * @typedef {Core} Core - editor core class
@@ -198,6 +199,10 @@ export default class Core {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
         this.config.data.blocks = [ initialBlockData ];
       }
+    }
+
+    if (config.i18n && config.i18n.locale) {
+      I18n.setLocale(config.i18n.locale);
     }
   }
 

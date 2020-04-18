@@ -4,6 +4,7 @@ import * as _ from '../../utils';
 import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
+import I18n from '../../i18n';
 
 /**
  * @class Toolbox
@@ -234,7 +235,11 @@ export default class Toolbox extends Module {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
-    const name = userToolboxSettings.title || toolboxSettings.title || toolName;
+    let name = userToolboxSettings.title || toolboxSettings.title || toolName;
+
+    if (I18n.has('toolbox', name)) {
+      name = I18n.t('toolbox', name);
+    }
 
     let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
 

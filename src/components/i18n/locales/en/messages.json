@@ -1,27 +1,27 @@
 {
   "blockTunes": {
     "toggler": {
-      "Click to tune": "Нажмите, чтобы настроить",
-      "or drag to move": "или перетащите"
+      "Click to tune": "",
+      "or drag to move": ""
     },
     "deleteTune": {
-      "Delete": "Удалить"
+      "Delete": ""
     },
     "moveUpTune": {
-      "Move up": "Переместить вверх"
+      "Move up": ""
     },
     "moveDownTune": {
-      "Move down": "Переместить вниз"
+      "Move down": ""
     }
   },
   "inlineToolbar": {
     "converter": {
-      "Convert to": "Конвертировать в"
+      "Convert to": ""
     }
   },
   "toolbar": {
     "toolbox": {
-      "Add": "Добавить"
+      "Add": ""
     }
   }
 }

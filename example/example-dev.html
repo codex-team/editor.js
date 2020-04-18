@@ -277,15 +277,46 @@
       onChange: function() {
         console.log('something changed');
       },
-      // lang: 'ru_RU',
-      // i18n: {
-      //   ru_RU: [coreDict, tool1Dict, tool2Dic, tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic],
-      //   fr_FR: [coreDict, tool1Dict, tool2Dic, tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic]
-      // }
-      // i18n: [coreDict, tool1Dict, tool2Dic, tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic,tool1Dict, tool2Dic],
       i18n: {
-        header: {
-          'Heading': 'Заголовок'
+        rtl: true,
+        locale: {
+          "toolbox": {
+            "Text": "Параграф",
+            "Heading": "Заголовок",
+            "List": "Список",
+            "Warning": "Замечание"
+          },
+          "tools": {
+            "warning": {
+              "Title": "Название",
+              "Message": "Сообщение",
+            }
+          },
+          "blockTunes": {
+            "toggler": {
+              "Click to tune": "Нажмите, чтобы настроить",
+              "or drag to move": "или перетащите"
+            },
+            "deleteTune": {
+              "Delete": "Удалить"
+            },
+            "moveUpTune": {
+              "Move up": "Переместить вверх"
+            },
+            "moveDownTune": {
+              "Move down": "Переместить вниз"
+            }
+          },
+          "inlineToolbar": {
+            "converter": {
+              "Convert to": "Конвертировать в"
+            }
+          },
+          "toolbar": {
+            "toolbox": {
+              "Add": "Добавить"
+            }
+          }
         }
       },
     });
