@@ -1,6 +1,6 @@
 # Changelog
 
-### 2.17.1
+### 2.18
 
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
