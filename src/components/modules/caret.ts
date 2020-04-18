@@ -19,14 +19,13 @@ import * as _ from '../utils';
  * @typedef {Caret} Caret
  */
 export default class Caret extends Module {
-
   /**
    * Allowed caret positions in input
    *
    * @static
    * @returns {{START: string, END: string, DEFAULT: string}}
    */
-  public get positions(): {START: string, END: string, DEFAULT: string} {
+  public get positions(): {START: string; END: string; DEFAULT: string} {
     return {
       START: 'start',
       END: 'end',
@@ -45,7 +44,8 @@ export default class Caret extends Module {
 
   /**
    * Get's deepest first node and checks if offset is zero
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get isAtStart(): boolean {
     const selection = Selection.get();
@@ -65,6 +65,7 @@ export default class Caret extends Module {
     /**
      * Workaround case when caret in the text like " |Hello!"
      * selection.anchorOffset is 1, but real caret visible position is 0
+     *
      * @type {number}
      */
 
@@ -84,6 +85,7 @@ export default class Caret extends Module {
      * So we use child with focusOffset index as new anchorNode.
      */
     let focusOffset = selection.focusOffset;
+
     if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
       if (focusNode.childNodes[focusOffset]) {
         focusNode = focusNode.childNodes[focusOffset];
@@ -106,6 +108,7 @@ export default class Caret extends Module {
       const nothingAtLeft = leftSiblings.every((node) => {
         /**
          * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
+         *
          * @see https://github.com/codex-team/editor.js/issues/726
          * We need to allow to delete such linebreaks, so in this case caret IS NOT AT START
          */
@@ -133,7 +136,8 @@ export default class Caret extends Module {
 
   /**
    * Get's deepest last node and checks if offset is last node text length
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get isAtEnd(): boolean {
     const selection = Selection.get();
@@ -161,6 +165,7 @@ export default class Caret extends Module {
      * So we use child with anchofocusOffset - 1 as new focusNode.
      */
     let focusOffset = selection.focusOffset;
+
     if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
       if (focusNode.childNodes[focusOffset - 1]) {
         focusNode = focusNode.childNodes[focusOffset - 1];
@@ -216,12 +221,12 @@ export default class Caret extends Module {
    *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
    *
    * @param {Block} block - Block class
-   * @param {String} position - position where to set caret.
+   * @param {string} position - position where to set caret.
    *                            If default - leave default behaviour and apply offset if it's passed
-   * @param {Number} offset - caret offset regarding to the text node
+   * @param {number} offset - caret offset regarding to the text node
    */
-  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset: number = 0): void {
-    const {BlockManager} = this.Editor;
+  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
+    const { BlockManager } = this.Editor;
     let element;
 
     switch (position) {
@@ -255,7 +260,7 @@ export default class Caret extends Module {
     /**
      * @todo try to fix via Promises or use querySelectorAll to not to use timeout
      */
-    _.delay( () => {
+    _.delay(() => {
       this.set(nodeToSet as HTMLElement, offset);
     }, 20)();
 
@@ -267,12 +272,12 @@ export default class Caret extends Module {
    * Set caret to the current input of current Block.
    *
    * @param {HTMLElement} input - input where caret should be set
-   * @param {String} position - position of the caret.
+   * @param {string} position - position of the caret.
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset: number = 0): void {
-    const {currentBlock} = this.Editor.BlockManager;
+  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset = 0): void {
+    const { currentBlock } = this.Editor.BlockManager;
     const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
@@ -297,12 +302,13 @@ export default class Caret extends Module {
 
   /**
    * Creates Document Range and sets caret to the element with offset
+   *
    * @param {HTMLElement} element - target node.
-   * @param {Number} offset - offset
+   * @param {number} offset - offset
    */
-  public set(element: HTMLElement, offset: number = 0): void {
+  public set(element: HTMLElement, offset = 0): void {
     const range = document.createRange(),
-      selection = Selection.get();
+        selection = Selection.get();
 
     /** if found deepest node is native input */
     if ($.isNativeInput(element)) {
@@ -312,6 +318,7 @@ export default class Caret extends Module {
 
       element.focus();
       (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = offset;
+
       return;
     }
 
@@ -322,14 +329,19 @@ export default class Caret extends Module {
     selection.addRange(range);
 
     /** If new cursor position is not visible, scroll to it */
-    const {top, bottom} = element.nodeType === Node.ELEMENT_NODE
+    const { top, bottom } = element.nodeType === Node.ELEMENT_NODE
       ? element.getBoundingClientRect()
       : range.getBoundingClientRect();
-    const {innerHeight} = window;
+    const { innerHeight } = window;
 
-    if (top < 0) { window.scrollBy(0, top); }
-    if (bottom > innerHeight) { window.scrollBy(0, bottom - innerHeight); }
+    if (top < 0) {
+      window.scrollBy(0, top);
+    }
+    if (bottom > innerHeight) {
+      window.scrollBy(0, bottom - innerHeight);
+    }
   }
+
   /**
    * Set Caret to the last Block
    * If last block is not empty, append another empty block
@@ -371,6 +383,7 @@ export default class Caret extends Module {
 
         range.selectNodeContents(currentBlockInput);
         range.setStart(selectRange.endContainer, selectRange.endOffset);
+
         return range.extractContents();
       }
     }
@@ -381,13 +394,13 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation even if caret is not at the end
+   * @param {boolean} force - force navigation even if caret is not at the end
    *
-   * @return {Boolean}
+   * @returns {boolean}
    */
-  public navigateNext(force: boolean = false): boolean {
-    const {currentBlock, nextContentfulBlock} = this.Editor.BlockManager;
-    const {nextInput} = currentBlock;
+  public navigateNext(force = false): boolean {
+    const { currentBlock, nextContentfulBlock } = this.Editor.BlockManager;
+    const { nextInput } = currentBlock;
 
     if (!nextContentfulBlock && !nextInput) {
       return false;
@@ -412,18 +425,18 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation even if caret is not at the start
+   * @param {boolean} force - force navigation even if caret is not at the start
    *
-   * @return {Boolean}
+   * @returns {boolean}
    */
-  public navigatePrevious(force: boolean = false): boolean {
-    const {currentBlock, previousContentfulBlock} = this.Editor.BlockManager;
+  public navigatePrevious(force = false): boolean {
+    const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
 
     if (!currentBlock) {
       return false;
     }
 
-    const {previousInput} = currentBlock;
+    const { previousInput } = currentBlock;
 
     if (!previousContentfulBlock && !previousInput) {
       return false;
@@ -432,10 +445,11 @@ export default class Caret extends Module {
     if (force || this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
-        this.setToBlock( previousContentfulBlock, this.positions.END );
+        this.setToBlock(previousContentfulBlock, this.positions.END);
       } else {
         this.setToInput(previousInput, this.positions.END);
       }
+
       return true;
     }
 
@@ -444,6 +458,7 @@ export default class Caret extends Module {
 
   /**
    * Inserts shadow element after passed element where caret can be placed
+   *
    * @param {Node} element
    */
   public createShadow(element): void {
@@ -455,6 +470,7 @@ export default class Caret extends Module {
 
   /**
    * Restores caret position
+   *
    * @param {HTMLElement} element
    */
   public restoreCaret(element: HTMLElement): void {
@@ -519,16 +535,17 @@ export default class Caret extends Module {
    *
    * @example
    * <div contenteditable>
-   *     <p></p>                            |
-   *     <p></p>                            | left first-level siblings
-   *     <p></p>                            |
-   *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
-   *     <p></p>                            |
-   *     <p></p>                            | right first-level siblings
-   *     <p></p>                            |
+   * <p></p>                            |
+   * <p></p>                            | left first-level siblings
+   * <p></p>                            |
+   * <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+   * <p></p>                            |
+   * <p></p>                            | right first-level siblings
+   * <p></p>                            |
    * </div>
-   *
-   * @return {Element[]}
+   * @returns {Element[]}
+   * @param from
+   * @param direction
    */
   private getHigherLevelSiblings(from: HTMLElement, direction?: string): HTMLElement[] {
     let current = from;

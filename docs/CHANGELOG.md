@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.18
+
+- `Improvements` - Deprecated TSLint replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
+- `Improvements` - Adjusted GitHub action for ESLint.
+
 ### 2.17
 
 - `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter

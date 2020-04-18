@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Toolbar} from '../../../../types/api';
+import { Toolbar } from '../../../../types/api';
 
 /**
  * @class ToolbarAPI
@@ -8,7 +8,8 @@ import {Toolbar} from '../../../../types/api';
 export default class ToolbarAPI extends Module {
   /**
    * Available methods
-   * @return {Toolbar}
+   *
+   * @returns {Toolbar}
    */
   get methods(): Toolbar {
     return {
@@ -30,5 +31,4 @@ export default class ToolbarAPI extends Module {
   public close(): void {
     this.Editor.Toolbar.close();
   }
-
 }

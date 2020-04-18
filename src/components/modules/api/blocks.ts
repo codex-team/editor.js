@@ -1,7 +1,7 @@
 import Module from '../../__module';
 
-import {Blocks} from '../../../../types/api';
-import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
+import { Blocks } from '../../../../types/api';
+import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 
 /**
@@ -11,7 +11,8 @@ import * as _ from './../../utils';
 export default class BlocksAPI extends Module {
   /**
    * Available methods
-   * @return {Blocks}
+   *
+   * @returns {Blocks}
    */
   get methods(): Blocks {
     return {
@@ -24,7 +25,7 @@ export default class BlocksAPI extends Module {
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
-      stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
+      stretchBlock: (index: number, status = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
       insert: this.insert,
     };
@@ -32,7 +33,8 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns Blocks count
-   * @return {number}
+   *
+   * @returns {number}
    */
   public getBlocksCount(): number {
     return this.Editor.BlockManager.blocks.length;
@@ -40,7 +42,8 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns current block index
-   * @return {number}
+   *
+   * @returns {number}
    */
   public getCurrentBlockIndex(): number {
     return this.Editor.BlockManager.currentBlockIndex;
@@ -48,17 +51,20 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns Block holder by Block index
-   * @param {Number} index
    *
-   * @return {HTMLElement}
+   * @param {number} index
+   *
+   * @returns {HTMLElement}
    */
   public getBlockByIndex(index: number): HTMLElement {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
+
     return block.holder;
   }
 
   /**
    * Call Block Manager method that swap Blocks
+   *
    * @param {number} fromIndex - position of first Block
    * @param {number} toIndex - position of second Block
    * @deprecated — use 'move' instead
@@ -75,7 +81,8 @@ export default class BlocksAPI extends Module {
 
   /**
    * Move block from one index to another
-   * @param {Number} toIndex
+   *
+   * @param {number} toIndex
    * @param {number} fromIndex
    */
   public move(toIndex: number, fromIndex?: number): void {
@@ -90,6 +97,7 @@ export default class BlocksAPI extends Module {
 
   /**
    * Deletes Block
+   *
    * @param blockIndex
    */
   public delete(blockIndex?: number): void {
@@ -121,29 +129,34 @@ export default class BlocksAPI extends Module {
 
   /**
    * Fills Editor with Blocks data
+   *
    * @param {OutputData} data — Saved Editor data
    */
   public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Renderer.render(data.blocks);
   }
 
   /**
    * Render passed HTML string
+   *
    * @param {string} data
-   * @return {Promise<void>}
+   * @returns {Promise<void>}
    */
   public renderFromHTML(data: string): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Paste.processText(data, true);
   }
 
   /**
    * Stretch Block's content
+   *
    * @param {number} index
    * @param {boolean} status - true to enable, false to disable
    */
-  public stretchBlock(index: number, status: boolean = true): void {
+  public stretchBlock(index: number, status = true): void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {
@@ -167,14 +180,14 @@ export default class BlocksAPI extends Module {
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean,
+    needToFocus?: boolean
   ): void => {
     this.Editor.BlockManager.insert(
       type,
       data,
       config,
       index,
-      needToFocus,
+      needToFocus
     );
   }
 

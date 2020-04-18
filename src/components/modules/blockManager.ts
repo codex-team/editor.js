@@ -6,23 +6,23 @@
  *
  * @version 2.0.0
  */
-import Block, {BlockToolAPI} from '../block';
+import Block, { BlockToolAPI } from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
+import { BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
- * @property {Number} currentBlockIndex - Index of current working block
+ * @property {number} currentBlockIndex - Index of current working block
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
 export default class BlockManager extends Module {
-
   /**
    * Returns current Block index
-   * @return {number}
+   *
+   * @returns {number}
    */
   public get currentBlockIndex(): number {
     return this._currentBlockIndex;
@@ -30,6 +30,7 @@ export default class BlockManager extends Module {
 
   /**
    * Set current Block index and fire Block lifecycle callbacks
+   *
    * @param newIndex
    */
   public set currentBlockIndex(newIndex: number) {
@@ -46,7 +47,8 @@ export default class BlockManager extends Module {
 
   /**
    * returns first Block
-   * @return {Block}
+   *
+   * @returns {Block}
    */
   public get firstBlock(): Block {
     return this._blocks[0];
@@ -54,7 +56,8 @@ export default class BlockManager extends Module {
 
   /**
    * returns last Block
-   * @return {Block}
+   *
+   * @returns {Block}
    */
   public get lastBlock(): Block {
     return this._blocks[this._blocks.length - 1];
@@ -63,7 +66,7 @@ export default class BlockManager extends Module {
   /**
    * Get current Block instance
    *
-   * @return {Block}
+   * @returns {Block}
    */
   public get currentBlock(): Block {
     return this._blocks[this.currentBlockIndex];
@@ -71,7 +74,8 @@ export default class BlockManager extends Module {
 
   /**
    * Returns next Block instance
-   * @return {Block|null}
+   *
+   * @returns {Block|null}
    */
   public get nextBlock(): Block {
     const isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
@@ -107,7 +111,8 @@ export default class BlockManager extends Module {
 
   /**
    * Returns previous Block instance
-   * @return {Block|null}
+   *
+   * @returns {Block|null}
    */
   public get previousBlock(): Block {
     const isFirstBlock = this.currentBlockIndex === 0;
@@ -142,7 +147,7 @@ export default class BlockManager extends Module {
    *
    * @type {number}
    */
-  private _currentBlockIndex: number = -1;
+  private _currentBlockIndex = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
@@ -185,25 +190,25 @@ export default class BlockManager extends Module {
     Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
 
     /** Copy and cut */
     Listeners.on(
       document,
       'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
     );
   }
 
   /**
    * Creates Block instance by tool name
    *
-   * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
-   * @param {Object} data - constructor params
-   * @param {Object} settings - block settings
+   * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
+   * @param {object} data - constructor params
+   * @param {object} settings - block settings
    *
-   * @return {Block}
+   * @returns {Block}
    */
   public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
@@ -218,20 +223,20 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {String} toolName — plugin name, by default method inserts initial block type
-   * @param {Object} data — plugin data
-   * @param {Object} settings - default settings
+   * @param {string} toolName — plugin name, by default method inserts initial block type
+   * @param {object} data — plugin data
+   * @param {object} settings - default settings
    * @param {number} index - index where to insert new Block
    * @param {boolean} needToFocus - flag shows if needed to update current Block index
    *
-   * @return {Block}
+   * @returns {Block}
    */
   public insert(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
     settings: ToolConfig = {},
     index: number = this.currentBlockIndex + 1,
-    needToFocus: boolean = true,
+    needToFocus = true
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -254,7 +259,7 @@ export default class BlockManager extends Module {
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace: boolean = false,
+    replace = false
   ): Block {
     let block;
 
@@ -269,6 +274,7 @@ export default class BlockManager extends Module {
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
+
     return block;
   }
 
@@ -280,9 +286,9 @@ export default class BlockManager extends Module {
    *
    * TODO: Remove method and use insert() with index instead (?)
    *
-   * @return {Block} inserted Block
+   * @returns {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus: boolean = false) {
+  public insertInitialBlockAtIndex(index: number, needToFocus = false) {
     const block = this.composeBlock(this.config.initialBlock, {}, {});
 
     this._blocks[index] = block;
@@ -298,7 +304,8 @@ export default class BlockManager extends Module {
 
   /**
    * Always inserts at the end
-   * @return {Block}
+   *
+   * @returns {Block}
    */
   public insertAtEnd(): Block {
     /**
@@ -314,10 +321,11 @@ export default class BlockManager extends Module {
 
   /**
    * Merge two blocks
+   *
    * @param {Block} targetBlock - previous block will be append to this block
    * @param {Block} blockToMerge - block that will be merged with target block
    *
-   * @return {Promise} - the sequence that can be continued
+   * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
     const blockToMergeIndex = this._blocks.indexOf(blockToMerge);
@@ -338,7 +346,8 @@ export default class BlockManager extends Module {
 
   /**
    * Remove block with passed index or remove last
-   * @param {Number|null} index
+   *
+   * @param {number|null} index
    */
   public removeBlock(index?: number): void {
     if (index === undefined) {
@@ -356,7 +365,6 @@ export default class BlockManager extends Module {
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
       this.insert();
-      return;
     } else if (index === 0) {
       this.currentBlockIndex = 0;
     }
@@ -365,7 +373,8 @@ export default class BlockManager extends Module {
   /**
    * Remove only selected Blocks
    * and returns first Block index where started removing...
-   * @return number|undefined
+   *
+   * @returns number|undefined
    */
   public removeSelectedBlocks(): number|undefined {
     let firstSelectedBlockIndex;
@@ -405,7 +414,7 @@ export default class BlockManager extends Module {
    * 1. Extract content from Caret position to the Block`s end
    * 2. Insert a new Block below current one with extracted content
    *
-   * @return {Block}
+   * @returns {Block}
    */
   public split(): Block {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
@@ -422,6 +431,7 @@ export default class BlockManager extends Module {
 
     /**
      * Renew current Block
+     *
      * @type {Block}
      */
     return this.insert(this.config.initialBlock, data);
@@ -430,16 +440,16 @@ export default class BlockManager extends Module {
   /**
    * Replace current working block
    *
-   * @param {String} toolName — plugin name
+   * @param {string} toolName — plugin name
    * @param {BlockToolData} data — plugin data
    * @param {ToolConfig} settings — plugin config
    *
-   * @return {Block}
+   * @returns {Block}
    */
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
-    settings: ToolConfig = {},
+    settings: ToolConfig = {}
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -450,8 +460,9 @@ export default class BlockManager extends Module {
 
   /**
    * Returns Block by passed index
-   * @param {Number} index
-   * @return {Block}
+   *
+   * @param {number} index
+   * @returns {Block}
    */
   public getBlockByIndex(index): Block {
     return this._blocks[index];
@@ -459,6 +470,7 @@ export default class BlockManager extends Module {
 
   /**
    * Get Block instance by html element
+   *
    * @param {Node} element
    * @returns {Block}
    */
@@ -468,8 +480,8 @@ export default class BlockManager extends Module {
     }
 
     const nodes = this._blocks.nodes,
-      firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
-      index = nodes.indexOf(firstLevelBlock as HTMLElement);
+        firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
+        index = nodes.indexOf(firstLevelBlock as HTMLElement);
 
     if (index >= 0) {
       return this._blocks[index];
@@ -487,6 +499,7 @@ export default class BlockManager extends Module {
 
     /**
      * Mark current Block as selected
+     *
      * @type {boolean}
      */
     this.currentBlock.focused = true;
@@ -496,7 +509,9 @@ export default class BlockManager extends Module {
    * Remove selection from all Blocks
    */
   public clearFocused(): void {
-    this.blocks.forEach( (block) => block.focused = false);
+    this.blocks.forEach((block) => {
+      block.focused = false;
+    });
   }
 
   /**
@@ -520,9 +535,11 @@ export default class BlockManager extends Module {
     if (parentFirstLevelBlock) {
       /**
        * Update current Block's index
+       *
        * @type {number}
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
@@ -533,7 +550,7 @@ export default class BlockManager extends Module {
    * Return block which contents passed node
    *
    * @param {Node} childNode
-   * @return {Block}
+   * @returns {Block}
    */
   public getBlockByChildNode(childNode: Node): Block {
     /**
@@ -550,8 +567,9 @@ export default class BlockManager extends Module {
 
   /**
    * Swap Blocks Position
-   * @param {Number} fromIndex
-   * @param {Number} toIndex
+   *
+   * @param {number} fromIndex
+   * @param {number} toIndex
    * @deprecated — use 'move' instead
    */
   public swap(fromIndex, toIndex): void {
@@ -564,18 +582,21 @@ export default class BlockManager extends Module {
 
   /**
    * Move a block to a new index
-   * @param {Number} toIndex
-   * @param {Number} fromIndex
+   *
+   * @param {number} toIndex
+   * @param {number} fromIndex
    */
   public move(toIndex, fromIndex = this.currentBlockIndex): void {
     // make sure indexes are valid and within a valid range
     if (isNaN(toIndex) || isNaN(fromIndex)) {
       _.log(`Warning during 'move' call: incorrect indices provided.`, 'warn');
+
       return;
     }
 
     if (!this.validateIndex(toIndex) || !this.validateIndex(fromIndex)) {
       _.log(`Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`, 'warn');
+
       return;
     }
 
@@ -597,11 +618,12 @@ export default class BlockManager extends Module {
 
   /**
    * Clears Editor
+   *
    * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
    *                                        we don't need to add empty initial block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needAddInitialBlock: boolean = false): void {
+  public clear(needAddInitialBlock = false): void {
     this._blocks.removeAll();
     this.dropPointer();
 
@@ -617,13 +639,13 @@ export default class BlockManager extends Module {
 
   /**
    * Bind Events
-   * @param {Object} block
+   *
+   * @param {object} block
    */
   private bindEvents(block: Block): void {
-    const {BlockEvents, Listeners} = this.Editor;
+    const { BlockEvents, Listeners } = this.Editor;
 
     Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
-    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp());
     Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
@@ -632,6 +654,7 @@ export default class BlockManager extends Module {
 
   /**
    * Validates that the given index is not lower than 0 or higher than the amount of blocks
+   *
    * @param {number} index - index of blocks array to validate
    */
   private validateIndex(index: number): boolean {

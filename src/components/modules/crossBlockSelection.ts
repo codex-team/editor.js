@@ -3,6 +3,9 @@ import Block from '../block';
 import SelectionUtils from '../selection';
 import * as _ from '../utils';
 
+/**
+ *
+ */
 export default class CrossBlockSelection extends Module {
   /**
    * Block where selection is started
@@ -24,7 +27,7 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    const {BlockManager, UI, Listeners} = this.Editor;
+    const { BlockManager, UI, Listeners } = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;
@@ -37,8 +40,8 @@ export default class CrossBlockSelection extends Module {
    * return boolean is cross block selection started
    */
   public get isCrossBlockSelectionStarted(): boolean {
-    return !!this.firstSelectedBlock
-      && !!this.lastSelectedBlock;
+    return !!this.firstSelectedBlock &&
+      !!this.lastSelectedBlock;
   }
 
   /**
@@ -47,8 +50,8 @@ export default class CrossBlockSelection extends Module {
    *
    * @param {boolean} next - if true, toggle next block. Previous otherwise
    */
-  public toggleBlockSelectedState(next: boolean = true): void {
-    const {BlockManager} = this.Editor;
+  public toggleBlockSelectedState(next = true): void {
+    const { BlockManager } = this.Editor;
 
     if (!this.lastSelectedBlock) {
       this.lastSelectedBlock = this.firstSelectedBlock = BlockManager.currentBlock;
@@ -84,7 +87,7 @@ export default class CrossBlockSelection extends Module {
    * @param {Event} reason - event caused clear of selection
    */
   public clear(reason?: Event) {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
     const lIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock);
 
@@ -121,8 +124,8 @@ export default class CrossBlockSelection extends Module {
    * Mouse up event handler.
    * Removes the listeners
    */
-  private onMouseUp  = (): void => {
-    const {Listeners} = this.Editor;
+  private onMouseUp = (): void => {
+    const { Listeners } = this.Editor;
 
     Listeners.off(document, 'mouseover', this.onMouseOver);
     Listeners.off(document, 'mouseup', this.onMouseUp);
@@ -135,7 +138,7 @@ export default class CrossBlockSelection extends Module {
    * @param {MouseEvent} event
    */
   private onMouseOver = (event: MouseEvent): void => {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node) || this.lastSelectedBlock;
     const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
@@ -153,12 +156,14 @@ export default class CrossBlockSelection extends Module {
 
       relatedBlock.selected = true;
       targetBlock.selected = true;
+
       return;
     }
 
     if (targetBlock === this.firstSelectedBlock) {
       relatedBlock.selected = false;
       targetBlock.selected = false;
+
       return;
     }
 
@@ -175,7 +180,7 @@ export default class CrossBlockSelection extends Module {
    * @param {Block} lastBlock
    */
   private toggleBlocksSelectedState(firstBlock: Block, lastBlock: Block): void {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);
 
