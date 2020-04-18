@@ -456,7 +456,7 @@ export default class InlineToolbar extends Module {
 
 
 
-    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, I18n.t('inlineToolbar.converter', 'Convert to'), {
+    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, I18n.t('ui.inlineToolbar.converter', 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });
@@ -592,7 +592,7 @@ export default class InlineToolbar extends Module {
      */
     const tooltipContent = $.make('div');
     const toolTitle = I18n.t(
-      `inlineTools`,
+      `toolNames`,
       Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName)
     );
 

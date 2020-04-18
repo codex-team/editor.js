@@ -14099,10 +14099,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*!******************************************************!*\
   !*** ./src/components/i18n/locales/en/messages.json ***!
   \******************************************************/
-/*! exports provided: blockTunes, inlineToolbar, toolbar, default */
+/*! exports provided: ui, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"blockTunes\":{\"toggler\":{\"Click to tune\":\"\",\"or drag to move\":\"\"}},\"inlineToolbar\":{\"converter\":{\"Convert to\":\"\"}},\"toolbar\":{\"toolbox\":{\"Add\":\"\"}}}");
+module.exports = JSON.parse("{\"ui\":{\"blockTunes\":{\"toggler\":{\"Click to tune\":\"\",\"or drag to move\":\"\"}},\"inlineToolbar\":{\"converter\":{\"Convert to\":\"\"}},\"toolbar\":{\"toolbox\":{\"Add\":\"\"}}}}");
 
 /***/ }),
 
@@ -23705,7 +23705,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _dom["default"].append(tool, icon);
 
-        _dom["default"].append(tool, _dom["default"].text(_i18n["default"].t('toolbox', title || _.capitalize(toolName))));
+        _dom["default"].append(tool, _dom["default"].text(_i18n["default"].t('toolNames', title || _.capitalize(toolName))));
 
         _dom["default"].append(this.nodes.tools, tool);
 
@@ -24708,7 +24708,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
           });
         });
-        this.Editor.Tooltip.onHover(this.nodes.conversionToggler, _i18n["default"].t('inlineToolbar.converter', 'Convert to'), {
+        this.Editor.Tooltip.onHover(this.nodes.conversionToggler, _i18n["default"].t('ui.inlineToolbar.converter', 'Convert to'), {
           placement: 'top',
           hidingDelay: 100
         });
@@ -24855,7 +24855,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tooltipContent = _dom["default"].make('div');
 
-        var toolTitle = _i18n["default"].t("inlineTools", Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName));
+        var toolTitle = _i18n["default"].t("toolNames", Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName));
 
         tooltipContent.appendChild(_dom["default"].text(toolTitle));
 
@@ -25266,7 +25266,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
         var userToolboxSettings = toolSettings.toolbox || {};
 
-        var name = _i18n["default"].t('toolbox', userToolboxSettings.title || toolboxSettings.title || toolName);
+        var name = _i18n["default"].t('toolNames', userToolboxSettings.title || toolboxSettings.title || toolName);
 
         var shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
 

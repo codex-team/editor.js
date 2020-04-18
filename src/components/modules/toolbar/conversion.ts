@@ -293,7 +293,7 @@ export default class ConversionToolbar extends Module {
     icon.innerHTML = toolIcon;
 
     $.append(tool, icon);
-    $.append(tool, $.text(I18n.t('toolbox', title || _.capitalize(toolName))));
+    $.append(tool, $.text(I18n.t('toolNames', title || _.capitalize(toolName))));
 
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;

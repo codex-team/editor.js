@@ -1,18 +1,20 @@
 {
-  "blockTunes": {
-    "toggler": {
-      "Click to tune": "",
-      "or drag to move": ""
-    }
-  },
-  "inlineToolbar": {
-    "converter": {
-      "Convert to": ""
-    }
-  },
-  "toolbar": {
-    "toolbox": {
-      "Add": ""
+  "ui": {
+    "blockTunes": {
+      "toggler": {
+        "Click to tune": "",
+        "or drag to move": ""
+      }
+    },
+    "inlineToolbar": {
+      "converter": {
+        "Convert to": ""
+      }
+    },
+    "toolbar": {
+      "toolbox": {
+        "Add": ""
+      }
     }
   }
 }
