@@ -3,15 +3,6 @@
     "toggler": {
       "Click to tune": "",
       "or drag to move": ""
-    },
-    "deleteTune": {
-      "Delete": ""
-    },
-    "moveUpTune": {
-      "Move up": ""
-    },
-    "moveDownTune": {
-      "Move down": ""
     }
   },
   "inlineToolbar": {

@@ -68,7 +68,7 @@ export default class ConversionToolbar extends Module {
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-      textContent: I18n.t('inlineToolbar.converter', 'Convert to'),
+      textContent: I18n.t('ui.inlineToolbar.converter', 'Convert to'),
     });
 
     /**

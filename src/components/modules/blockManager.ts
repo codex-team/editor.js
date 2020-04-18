@@ -213,7 +213,7 @@ export default class BlockManager extends Module {
   public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.getMethodsForTool(toolName));
+    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
 
     this.bindEvents(block);
 

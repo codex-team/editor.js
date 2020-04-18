@@ -10895,12 +10895,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../i18n */ "./src/components/i18n/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom, _i18n) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -10912,7 +10912,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
-  _i18n = _interopRequireDefault(_i18n);
 
   /**
    *
@@ -10973,7 +10972,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module
          */
 
-        this.api.tooltip.onHover(this.nodes.button, _i18n["default"].t('blockTunes.deleteTune', 'Delete'));
+        this.api.tooltip.onHover(this.nodes.button, this.api.i18n.tn('Delete'));
         return this.nodes.button;
       }
       /**
@@ -11045,12 +11044,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./../i18n */ "./src/components/i18n/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom, _i18n) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -11062,7 +11061,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
-  _i18n = _interopRequireDefault(_i18n);
 
   /**
    * @class MoveDownTune
@@ -11118,7 +11116,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module on button
          */
 
-        this.api.tooltip.onHover(moveDownButton, _i18n["default"].t('blockTunes.moveDownTune', 'Move down'));
+        this.api.tooltip.onHover(moveDownButton, this.api.i18n.tn('Move down'));
         return moveDownButton;
       }
       /**
@@ -11183,12 +11181,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./../i18n */ "./src/components/i18n/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom, _i18n) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -11200,7 +11198,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
-  _i18n = _interopRequireDefault(_i18n);
 
   /**
    * @class MoveUpTune
@@ -11258,7 +11255,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module on button
          */
 
-        this.api.tooltip.onHover(moveUpButton, _i18n["default"].t('blockTunes.moveUpTune', 'Move up'));
+        this.api.tooltip.onHover(moveUpButton, this.api.i18n.tn('Move up'));
         return moveUpButton;
       }
       /**
@@ -11407,9 +11404,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @param {object} toolInstance — passed Tool`s instance that rendered the Block
      * @param {object} toolClass — Tool's class
      * @param {object} settings - default settings
-     * @param {object} apiMethods - Editor API
+     * @param {ApiModule} apiModule - Editor API module for pass it to the Block Tunes
      */
-    function Block(toolName, toolInstance, toolClass, settings, apiMethods) {
+    function Block(toolName, toolInstance, toolClass, settings, apiModule) {
       var _this = this;
 
       (0, _classCallCheck2["default"])(this, Block);
@@ -11455,7 +11452,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       this.tool = toolInstance;
       this["class"] = toolClass;
       this.settings = settings;
-      this.api = apiMethods;
+      this.api = apiModule;
       this.holder = this.compose();
       this.mutationObserver = new MutationObserver(this.didMutated);
       /**
@@ -11617,11 +11614,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function makeTunes() {
         var _this3 = this;
 
-        var tunesList = [_blockTuneMoveUp["default"], _blockTuneDelete["default"], _blockTuneMoveDown["default"]]; // Pluck tunes list and return tune instances with passed Editor API and settings
+        var tunesList = [{
+          name: 'moveUp',
+          Tune: _blockTuneMoveUp["default"]
+        }, {
+          name: 'delete',
+          Tune: _blockTuneDelete["default"]
+        }, {
+          name: 'moveDown',
+          Tune: _blockTuneMoveDown["default"]
+        }]; // Pluck tunes list and return tune instances with passed Editor API and settings
 
-        return tunesList.map(function (Tune) {
+        return tunesList.map(function (_ref) {
+          var name = _ref.name,
+              Tune = _ref.Tune;
           return new Tune({
-            api: _this3.api,
+            api: _this3.api.getMethodsForTool(name, 'tune'),
             settings: _this3.settings
           });
         });
@@ -14094,7 +14102,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! exports provided: blockTunes, inlineToolbar, toolbar, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"blockTunes\":{\"toggler\":{\"Click to tune\":\"\",\"or drag to move\":\"\"},\"deleteTune\":{\"Delete\":\"\"},\"moveUpTune\":{\"Move up\":\"\"},\"moveDownTune\":{\"Move down\":\"\"}},\"inlineToolbar\":{\"converter\":{\"Convert to\":\"\"}},\"toolbar\":{\"toolbox\":{\"Add\":\"\"}}}");
+module.exports = JSON.parse("{\"blockTunes\":{\"toggler\":{\"Click to tune\":\"\",\"or drag to move\":\"\"}},\"inlineToolbar\":{\"converter\":{\"Convert to\":\"\"}},\"toolbar\":{\"toolbox\":{\"Add\":\"\"}}}");
 
 /***/ }),
 
@@ -15617,14 +15625,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Return I18n API methods with tool namespaced dictionary
        *
        * @param toolName - name of tool. Used to provide dictionary only for this tool
+       * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
        */
-      value: function getMethodsForTool(toolName) {
+      value: function getMethodsForTool(toolName, toolType) {
         return {
           t: function t(namespace, dictKey) {
             return _i18n["default"].t(namespace, dictKey);
           },
           tn: function tn(dictKey) {
-            return _i18n["default"].t("tools.".concat(toolName), dictKey);
+            return _i18n["default"].t(I18nAPI.getNamespace(toolName, toolType), dictKey);
           }
         };
       }
@@ -15644,6 +15653,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             return undefined;
           }
         };
+      }
+    }], [{
+      key: "getNamespace",
+
+      /**
+       * Return namespace section for tool or block tune
+       *
+       * @param toolName - name of tool. Used to provide dictionary only for this tool
+       * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
+       */
+      value: function getNamespace(toolName, toolType) {
+        switch (toolType) {
+          case 'block':
+          case 'inline':
+            return "tools.".concat(toolName);
+
+          case 'tune':
+            return "blockTunes.".concat(toolName);
+        }
       }
     }]);
     return I18nAPI;
@@ -15714,10 +15742,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Returns Editor.js Core API methods for passed tool
        * @param toolName - how user name tool. It can be used in some API logic,
        *                   for example in i18n to provide namespaced dictionary
+       *
+       * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
        */
       value: function getMethodsForTool(toolName) {
+        var toolType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'block';
         return Object.assign(this.methods, {
-          i18n: this.Editor.I18nAPI.getMethodsForTool(toolName)
+          i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, toolType)
         });
       }
     }, {
@@ -17425,7 +17456,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
         var toolInstance = this.Editor.Tools.construct(toolName, data);
         var toolClass = this.Editor.Tools.available[toolName];
-        var block = new _block["default"](toolName, toolInstance, toolClass, settings, this.Editor.API.getMethodsForTool(toolName));
+        var block = new _block["default"](toolName, toolInstance, toolClass, settings, this.Editor.API);
         this.bindEvents(block);
         return block;
       }
@@ -23383,7 +23414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nodes.tools = _dom["default"].make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
         var label = _dom["default"].make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-          textContent: _i18n["default"].t('inlineToolbar.converter', 'Convert to')
+          textContent: _i18n["default"].t('ui.inlineToolbar.converter', 'Convert to')
         });
         /**
          * Add Tools that has 'import' method
@@ -23919,7 +23950,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tooltipContent = _dom["default"].make('div');
 
-        tooltipContent.appendChild(document.createTextNode(_i18n["default"].t('toolbar.toolbox', 'Add')));
+        tooltipContent.appendChild(document.createTextNode(_i18n["default"].t('ui.toolbar.toolbox', 'Add')));
         tooltipContent.appendChild(_dom["default"].make('div', this.CSS.plusButtonShortcut, {
           textContent: '⇥ Tab'
         }));
@@ -23947,7 +23978,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _dom["default"].append(this.nodes.actions, this.nodes.blockActionsButtons);
 
-        this.Editor.Tooltip.onHover(this.nodes.settingsToggler, _i18n["default"].t('blockTunes.toggler', 'Click to tune'), {
+        this.Editor.Tooltip.onHover(this.nodes.settingsToggler, _i18n["default"].t('ui.blockTunes.toggler', 'Click to tune'), {
           placement: 'top'
         });
         /**

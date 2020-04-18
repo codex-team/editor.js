@@ -6,15 +6,15 @@ export interface I18n {
    * Only in Tools
    * Perform translation with automatically added namespace like `tools.${toolName}`
    *
-   * @param dictKet - what to translate
+   * @param dictKey - what to translate
    */
-  tn(dictKet: string): string;
+  tn(dictKey: string): string;
 
   /**
    * Perform translation with global dictionary
    *
    * @param namespace - path to section
-   * @param dictKet - what to translate
+   * @param dictKey - what to translate
    */
-  t(namespace: string, dictKet: string): string;
+  t(namespace: string, dictKey: string): string;
 }
