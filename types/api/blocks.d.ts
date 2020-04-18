@@ -26,7 +26,7 @@ export interface Blocks {
 
   /**
    * Removes current Block
-   * @param {number} index
+   * @param {number} index - block to delete
    */
   delete(index?: number): void;
 
