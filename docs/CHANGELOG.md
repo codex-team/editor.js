@@ -4,6 +4,7 @@
 
 - `Improvements` - Deprecated TSLint replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - Allow deletion of blocks by specifying block index.
 
 ### 2.17
 
