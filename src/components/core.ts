@@ -3,7 +3,7 @@ import * as _ from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import { LogLevels } from './utils';
-import I18n from "./i18n";
+import I18n from './i18n';
 
 /**
  * @typedef {Core} Core - editor core class
