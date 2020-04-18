@@ -100,7 +100,7 @@ export default class DeleteTune implements BlockTune {
        */
       this.api.events.off('block-settings-closed', this.resetConfirmation);
 
-      this.api.blocks.delete(null);
+      this.api.blocks.delete();
       this.api.toolbar.close();
       this.api.tooltip.hide();
 
