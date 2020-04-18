@@ -354,7 +354,7 @@ export default class BlockManager extends Module {
     /**
      * If index is not passed and there is no block selected, show a warning
      */
-    if (index === -1) {
+    if (!this.validateIndex(index)) {
       throw new Error('Can\'t find a Block to remove');
     }
 
