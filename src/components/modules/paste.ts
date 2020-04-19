@@ -4,7 +4,6 @@ import * as _ from '../utils';
 import {
   BlockTool,
   BlockToolConstructable,
-  BlockToolData,
   PasteConfig,
   PasteEvent,
   PasteEventDetail
@@ -736,7 +735,7 @@ export default class Paste extends Module {
   /**
    * Insert data passed as application/x-editor-js JSON
    *
-   * @param {Array<Pick<SavedData, 'data' | 'tool'>>} blocks — Blocks' data to insert
+   * @param {Array} blocks — Blocks' data to insert
    *
    * @returns {void}
    */
@@ -744,8 +743,6 @@ export default class Paste extends Module {
     const { BlockManager, Tools } = this.Editor;
 
     blocks.forEach(({ tool, data }, i) => {
-      const settings = this.Editor.Tools.getToolSettings(tool);
-
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {

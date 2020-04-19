@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig } from '../../../types';
+import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -205,7 +205,7 @@ export default class BlockManager extends Module {
    * Creates Block instance by tool name
    *
    * @param {string} tool - tools passed in editor config {@link EditorConfig#tools}
-   * @param {object} data - constructor params
+   * @param {BlockToolData} [data] - constructor params
    *
    * @returns {Block}
    */
@@ -320,7 +320,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus = false) {
+  public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
     const block = this.composeBlock({ tool: this.config.initialBlock });
 
     this._blocks[index] = block;

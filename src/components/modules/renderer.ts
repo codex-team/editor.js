@@ -45,7 +45,7 @@ export default class Renderer extends Module {
    * @param {OutputBlockData[]} blocks - blocks to render
    */
   public async render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
+    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 

@@ -2,9 +2,7 @@ import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
 import {
-  BlockTool,
   BlockToolConstructable,
-  BlockToolData,
   EditorConfig,
   InlineTool,
   InlineToolConstructable, Tool,
