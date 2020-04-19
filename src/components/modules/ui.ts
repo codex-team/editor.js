@@ -15,6 +15,7 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
+import dom from '../dom';
 
 /**
  * @class
@@ -390,12 +391,20 @@ export default class UI extends Module {
   private backspacePressed(event: KeyboardEvent): void {
     const {BlockManager, BlockSelection, Caret} = this.Editor;
 
+    /** Prevent block removal while editing an input inside settings */
+    if (this.Editor.BlockSettings.opened && dom.canSetCaret(document.activeElement as HTMLElement)) {
+        return;
+    }
+
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
+
+      /** Close settings */
+      this.Editor.BlockSettings.close();
 
       /**
        * Stop propagations
@@ -416,12 +425,20 @@ export default class UI extends Module {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
+    /** Prevent block removal while editing an input inside settings */
+    if (this.Editor.BlockSettings.opened && dom.canSetCaret(document.activeElement as HTMLElement)) {
+      return;
+    }
+
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
+
+      /** Close settings */
+      this.Editor.BlockSettings.close();
 
       /**
        * Stop propagations
