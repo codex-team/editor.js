@@ -5,6 +5,7 @@
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
 - `Improvements` - Adjusted GitHub action for ESLint.
+- `Fix` - Editor's styles are not appended to HEAD again any time new instance is created [#1073](https://github.com/codex-team/editor.js/issues/1073)
 
 ### 2.17
 
