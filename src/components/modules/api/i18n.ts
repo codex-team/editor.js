@@ -2,7 +2,7 @@ import Module from '../../__module';
 import { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
 import { ToolType } from '../tools';
-import { log } from '../../utils';
+import {copyTextToClipboard, log} from '../../utils';
 
 /**
  * Provides methods for working with i18n
@@ -29,9 +29,8 @@ export default class I18nAPI extends Module {
    */
   public get methods(): I18n {
     return {
-      t: (namespace: string, dictKey: string): string => I18nInternal.t(namespace, dictKey),
-      tn: (): string | undefined => {
-        log('I18n.tn() method can be accessed only from Tools', 'warn');
+      t: (): string | undefined => {
+        log('I18n.t() method can be accessed only from Tools', 'warn');
 
         return undefined;
       },
@@ -48,7 +47,9 @@ export default class I18nAPI extends Module {
     return Object.assign(
       this.methods,
       {
-        tn: (dictKey: string): string => I18nInternal.t(I18nAPI.getNamespace(toolName, toolType), dictKey),
+        t: (dictKey: string): string => {
+          return I18nInternal.t(I18nAPI.getNamespace(toolName, toolType), dictKey);
+        },
       });
   }
 }

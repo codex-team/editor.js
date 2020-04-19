@@ -10972,7 +10972,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module
          */
 
-        this.api.tooltip.onHover(this.nodes.button, this.api.i18n.tn('Delete'));
+        this.api.tooltip.onHover(this.nodes.button, this.api.i18n.t('Delete'));
         return this.nodes.button;
       }
       /**
@@ -11116,7 +11116,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module on button
          */
 
-        this.api.tooltip.onHover(moveDownButton, this.api.i18n.tn('Move down'));
+        this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'));
         return moveDownButton;
       }
       /**
@@ -11255,7 +11255,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enable tooltip module on button
          */
 
-        this.api.tooltip.onHover(moveUpButton, this.api.i18n.tn('Move up'));
+        this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'));
         return moveUpButton;
       }
       /**
@@ -14528,7 +14528,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this = this;
 
         this.nodes.input = document.createElement('input');
-        this.nodes.input.placeholder = this.i18n.tn('Add a link');
+        this.nodes.input.placeholder = this.i18n.t('Add a link');
         this.nodes.input.classList.add(this.CSS.input);
         this.nodes.input.addEventListener('keydown', function (event) {
           if (event.keyCode === _this.ENTER_KEY) {
@@ -15640,7 +15640,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
       value: function getMethodsForTool(toolName, toolType) {
         return Object.assign(this.methods, {
-          tn: function tn(dictKey) {
+          t: function t(dictKey) {
             return _i18n["default"].t(I18nAPI.getNamespace(toolName, toolType), dictKey);
           }
         });
@@ -15653,11 +15653,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
       get: function get() {
         return {
-          t: function t(namespace, dictKey) {
-            return _i18n["default"].t(namespace, dictKey);
-          },
-          tn: function tn() {
-            (0, _utils.log)('I18n.tn() method can be accessed only from Tools', 'warn');
+          t: function t() {
+            (0, _utils.log)('I18n.t() method can be accessed only from Tools', 'warn');
             return undefined;
           }
         };
@@ -27562,8 +27559,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         subtitle: 'ce-stub__subtitle'
       };
       this.api = api;
-      this.title = data.title || this.api.i18n.tn('Error');
-      this.subtitle = this.api.i18n.tn('The block can not be displayed correctly.');
+      this.title = data.title || this.api.i18n.t('Error');
+      this.subtitle = this.api.i18n.t('The block can not be displayed correctly.');
       this.savedData = data.savedData;
       this.wrapper = this.make();
     }

@@ -1,6 +1,6 @@
 import defaultDictionary from './locales/en/messages.json';
 import * as _ from '../utils';
-import { I18nDictionary, Dictionary, DictValue } from '../../../types/configs/i18n-dictionary';
+import { I18nDictionary, Dictionary } from '../../../types/configs/i18n-dictionary';
 
 /**
  * This class will responsible for the translation through the language dictionary
