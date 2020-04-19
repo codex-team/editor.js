@@ -58,10 +58,9 @@ export enum BlockToolAPI {
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
+ * @property {BlockTool} tool - Tool instance
+ * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
   /**
@@ -69,7 +68,7 @@ export default class Block {
    *
    * @returns {{wrapper: string, content: string}}
    */
-  static get CSS() {
+  public static get CSS(): {[name: string]: string} {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
@@ -81,11 +80,139 @@ export default class Block {
   }
 
   /**
+   * Block Tool`s name
+   */
+  public name: string;
+
+  /**
+   * Instance of the Tool Block represents
+   */
+  public tool: BlockTool;
+
+  /**
+   * Class blueprint of the ool Block represents
+   */
+  public class: BlockToolConstructable;
+
+  /**
+   * User Tool configuration
+   */
+  public settings: ToolConfig;
+
+  /**
+   * Wrapper for Block`s content
+   */
+  public holder: HTMLDivElement;
+
+  /**
+   * Tunes used by Tool
+   */
+  public tunes: BlockTune[];
+
+  /**
+   * Tool's user configuration
+   */
+  public readonly config: ToolConfig;
+
+  /**
+   * Cached inputs
+   *
+   * @type {HTMLElement[]}
+   */
+  private cachedInputs: HTMLElement[] = [];
+
+  /**
+   * Editor`s API
+   */
+  private readonly api: API;
+
+  /**
+   * Focused input index
+   *
+   * @type {number}
+   */
+  private inputIndex = 0;
+
+  /**
+   * Mutation observer to handle DOM mutations
+   *
+   * @type {MutationObserver}
+   */
+  private mutationObserver: MutationObserver;
+
+  /**
+   * Debounce Timer
+   *
+   * @type {number}
+   */
+  private readonly modificationDebounceTimer = 450;
+
+  /**
+   * Is fired when DOM mutation has been happened
+   */
+  private didMutated = _.debounce((): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+
+    this.call(BlockToolAPI.UPDATED);
+  }, this.modificationDebounceTimer);
+
+  /**
+   * Current block API interface
+   */
+  private readonly blockAPI: BlockAPIInterface;
+
+  /**
+   * @class
+   * @param {string} tool - Tool name that passed on initialization
+   * @param {BlockToolData} data - Tool's initial data
+   * @param {BlockToolConstructable} Tool — Tool's class
+   * @param {ToolSettings} settings - default tool's config
+   * @param {API} api - Editor API
+   */
+  constructor({
+    name,
+    data,
+    Tool,
+    settings,
+    api,
+  }: BlockConstructorOptions) {
+    this.name = name;
+    this.class = Tool;
+    this.settings = settings;
+    this.config = settings.config || {};
+    this.api = api;
+    this.blockAPI = new BlockAPI(this);
+
+    this.mutationObserver = new MutationObserver(this.didMutated);
+
+    this.tool = new Tool({
+      data,
+      config: this.config,
+      api,
+      block: this.blockAPI,
+    });
+
+    this.holder = this.compose();
+    /**
+     * @type {BlockTune[]}
+     */
+    this.tunes = this.makeTunes();
+  }
+
+  /**
    * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
    *
    * @returns {HTMLElement[]}
    */
-  get inputs(): HTMLElement[] {
+  public get inputs(): HTMLElement[] {
     /**
      * Return from cache if existed
      */
@@ -132,16 +259,16 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get currentInput(): HTMLElement | Node {
+  public get currentInput(): HTMLElement | Node {
     return this.inputs[this.inputIndex];
   }
 
   /**
    * Set input index to the passed element
    *
-   * @param {HTMLElement} element
+   * @param {HTMLElement | Node} element - HTML Element to set as current input
    */
-  set currentInput(element: HTMLElement | Node) {
+  public set currentInput(element: HTMLElement | Node) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -154,7 +281,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get firstInput(): HTMLElement {
+  public get firstInput(): HTMLElement {
     return this.inputs[0];
   }
 
@@ -163,7 +290,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get lastInput(): HTMLElement {
+  public get lastInput(): HTMLElement {
     const inputs = this.inputs;
 
     return inputs[inputs.length - 1];
@@ -174,7 +301,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get nextInput(): HTMLElement {
+  public get nextInput(): HTMLElement {
     return this.inputs[this.inputIndex + 1];
   }
 
@@ -183,7 +310,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get previousInput(): HTMLElement {
+  public get previousInput(): HTMLElement {
     return this.inputs[this.inputIndex - 1];
   }
 
@@ -192,7 +319,7 @@ export default class Block {
    *
    * @returns {object}
    */
-  get data(): Promise<BlockToolData> {
+  public get data(): Promise<BlockToolData> {
     return this.save().then((savedObject) => {
       if (savedObject && !_.isEmpty(savedObject.data)) {
         return savedObject.data;
@@ -207,7 +334,7 @@ export default class Block {
    *
    * @returns {object}
    */
-  get sanitize(): SanitizerConfig {
+  public get sanitize(): SanitizerConfig {
     return this.tool.sanitize;
   }
 
@@ -217,7 +344,7 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  get mergeable(): boolean {
+  public mergeable(): boolean {
     return typeof this.tool.merge === 'function';
   }
 
@@ -226,7 +353,7 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  get isEmpty(): boolean {
+  public get isEmpty(): boolean {
     const emptyText = $.isEmpty(this.pluginsContent);
     const emptyMedia = !this.hasMedia;
 
@@ -238,7 +365,7 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  get hasMedia(): boolean {
+  public get hasMedia(): boolean {
     /**
      * This tags represents media-content
      *
@@ -263,14 +390,14 @@ export default class Block {
    *
    * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
-  set focused(state: boolean) {
+  public set focused(state: boolean) {
     this.holder.classList.toggle(Block.CSS.focused, state);
   }
 
   /**
    * Get Block's focused state
    */
-  get focused() {
+  public get focused(): boolean {
     return this.holder.classList.contains(Block.CSS.focused);
   }
 
@@ -280,7 +407,7 @@ export default class Block {
    *
    * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
-  set selected(state: boolean) {
+  public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
     } else {
@@ -293,7 +420,7 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  get selected(): boolean {
+  public get selected(): boolean {
     return this.holder.classList.contains(Block.CSS.selected);
   }
 
@@ -302,7 +429,7 @@ export default class Block {
    *
    * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
    */
-  set stretched(state: boolean) {
+  public set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
   }
 
@@ -311,14 +438,14 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  get stretched(): boolean {
+  public get stretched(): boolean {
     return this.holder.classList.contains(Block.CSS.wrapperStretched);
   }
 
   /**
    * Toggle drop target state
    *
-   * @param {boolean} state
+   * @param {boolean} state - 'true' if block is drop target, false otherwise
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
@@ -329,7 +456,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get pluginsContent(): HTMLElement {
+  public get pluginsContent(): HTMLElement {
     const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
 
     if (blockContentNodes && blockContentNodes.childNodes.length) {
@@ -350,142 +477,14 @@ export default class Block {
   }
 
   /**
-   * Block Tool`s name
-   */
-  public name: string;
-
-  /**
-   * Instance of the Tool Block represents
-   */
-  public tool: BlockTool;
-
-  /**
-   * Class blueprint of the ool Block represents
-   */
-  public class: BlockToolConstructable;
-
-  /**
-   * Tool settings object
-   */
-  public settings: ToolSettings;
-
-  /**
-   * User Tool configuration
-   */
-  public config: ToolConfig;
-
-  /**
-   * Wrapper for Block`s content
-   */
-  public holder: HTMLDivElement;
-
-  /**
-   * Tunes used by Tool
-   */
-  public tunes: BlockTune[];
-
-  /**
-   * Cached inputs
-   *
-   * @type {HTMLElement[]}
-   */
-  private cachedInputs: HTMLElement[] = [];
-
-  /**
-   * Editor`s API
-   */
-  private readonly api: API;
-
-  /**
-   * Current block API interface
-   */
-  private readonly blockAPI: BlockAPIInterface;
-
-  /**
-   * Focused input index
-   *
-   * @type {number}
-   */
-  private inputIndex = 0;
-
-  /**
-   * Mutation observer to handle DOM mutations
-   *
-   * @type {MutationObserver}
-   */
-  private mutationObserver: MutationObserver;
-
-  /**
-   * Debounce Timer
-   *
-   * @type {number}
-   */
-  private readonly modificationDebounceTimer = 450;
-
-  /**
-   * Is fired when DOM mutation has been happened
-   */
-  private didMutated = _.debounce((): void => {
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
-
-    this.call(BlockToolAPI.UPDATED);
-  }, this.modificationDebounceTimer);
-
-  /**
-   * @class
-   * @param {string} tool - Tool name that passed on initialization
-   * @param {BlockToolData} data - Tool's initial data
-   * @param {BlockToolConstructable} Tool — Tool's class
-   * @param {ToolSettings} settings - default tool's config
-   * @param {API} api - Editor API
-   */
-  constructor({
-    name,
-    data,
-    Tool,
-    settings,
-    api,
-  }: BlockConstructorOptions) {
-    this.name = name;
-    this.class = Tool;
-    this.settings = settings;
-    this.config = settings.config || {};
-    this.api = api;
-    this.blockAPI = new BlockAPI(this);
-
-    this.mutationObserver = new MutationObserver(this.didMutated);
-
-    this.tool = new Tool({
-      data,
-      config: this.config,
-      api,
-      block: this.blockAPI,
-    });
-
-    this.holder = this.compose();
-    /**
-     * @type {BlockTune[]}
-     */
-    this.tunes = this.makeTunes();
-  }
-
-  /**
    * Calls Tool's method
    *
    * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
    *
-   * @param {string} methodName
-   * @param {object} params
+   * @param {string} methodName - method to call
+   * @param {object} params - method argument
    */
-  public call(methodName: string, params?: object) {
+  public call(methodName: string, params?: object): void {
     /**
      * call Tool's method with the instance context
      */
@@ -502,7 +501,7 @@ export default class Block {
   /**
    * Call plugins merge method
    *
-   * @param {object} data
+   * @param {BlockToolData} data - data to merge
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.tool.merge(data);
@@ -545,7 +544,7 @@ export default class Block {
    *
    * @description Method returns true|false whether data passed the validation or not
    *
-   * @param {BlockToolData} data
+   * @param {BlockToolData} data - data to validate
    * @returns {Promise<boolean>} valid
    */
   public async validate(data: BlockToolData): Promise<boolean> {
@@ -619,7 +618,7 @@ export default class Block {
   /**
    * Is fired when Block will be unselected
    */
-  public willUnselect() {
+  public willUnselect(): void {
     this.mutationObserver.disconnect();
   }
 

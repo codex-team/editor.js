@@ -4,9 +4,13 @@ import { SavedData } from '../../types-internal/block-data';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
 /**
- * @param block
+ * Constructs new BlockAPI object
+ *
+ * @class
+ *
+ * @param {Block} block - Block to expose
  */
-function BlockAPI(block: Block) {
+function BlockAPI(block: Block): void {
   const blockAPI: BlockAPIInterface = {
     /**
      * Tool name
@@ -95,7 +99,7 @@ function BlockAPI(block: Block) {
     /**
      * Validate Block data
      *
-     * @param {BlockToolData} data
+     * @param {BlockToolData} data - data to validate
      *
      * @returns {Promise<boolean>}
      */

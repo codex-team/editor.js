@@ -15,19 +15,19 @@ export default class BlocksAPI extends Module {
    *
    * @returns {Blocks}
    */
-  get methods(): Blocks {
+  public get methods(): Blocks {
     return {
-      clear: () => this.clear(),
-      render: (data: OutputData) => this.render(data),
-      renderFromHTML: (data: string) => this.renderFromHTML(data),
-      delete: () => this.delete(),
-      swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
-      move: (toIndex: number, fromIndex?: number) => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number) => this.getBlockByIndex(index),
-      getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
-      getBlocksCount: () => this.getBlocksCount(),
-      stretchBlock: (index: number, status = true) => this.stretchBlock(index, status),
-      insertNewBlock: () => this.insertNewBlock(),
+      clear: (): void => this.clear(),
+      render: (data: OutputData): Promise<void> => this.render(data),
+      renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
+      delete: (): void => this.delete(),
+      swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
+      move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
+      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
+      getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
+      getBlocksCount: (): number => this.getBlocksCount(),
+      stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
+      insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
     };
   }
@@ -53,7 +53,7 @@ export default class BlocksAPI extends Module {
   /**
    * Returns Block holder by Block index
    *
-   * @param {number} index
+   * @param {number} index - index to get
    *
    * @returns {HTMLElement}
    */
@@ -83,8 +83,8 @@ export default class BlocksAPI extends Module {
   /**
    * Move block from one index to another
    *
-   * @param {number} toIndex
-   * @param {number} fromIndex
+   * @param {number} toIndex - index to move to
+   * @param {number} fromIndex - index to move from
    */
   public move(toIndex: number, fromIndex?: number): void {
     this.Editor.BlockManager.move(toIndex, fromIndex);
@@ -99,7 +99,7 @@ export default class BlocksAPI extends Module {
   /**
    * Deletes Block
    *
-   * @param blockIndex
+   * @param {number} blockIndex - index of Block to delete
    */
   public delete(blockIndex?: number): void {
     this.Editor.BlockManager.removeBlock(blockIndex);
@@ -142,7 +142,7 @@ export default class BlocksAPI extends Module {
   /**
    * Render passed HTML string
    *
-   * @param {string} data
+   * @param {string} data - HTML string to render
    * @returns {Promise<void>}
    */
   public renderFromHTML(data: string): Promise<void> {
@@ -154,7 +154,7 @@ export default class BlocksAPI extends Module {
   /**
    * Stretch Block's content
    *
-   * @param {number} index
+   * @param {number} index - index of Block to stretch
    * @param {boolean} status - true to enable, false to disable
    *
    * @deprecated Use BlockAPI interface to stretch Blocks
@@ -197,7 +197,7 @@ export default class BlocksAPI extends Module {
    * Insert new Block
    * After set caret to this Block
    *
-   * @todo: remove in 3.0.0
+   * @todo remove in 3.0.0
    *
    * @deprecated with insert() method
    */

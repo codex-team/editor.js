@@ -14,8 +14,8 @@ export default class SelectionAPI extends Module {
    */
   public get methods(): SelectionAPIInterface {
     return {
-      findParentTag: (tagName: string, className?: string) => this.findParentTag(tagName, className),
-      expandToTag: (node: HTMLElement) => this.expandToTag(node),
+      findParentTag: (tagName: string, className?: string): HTMLElement | null => this.findParentTag(tagName, className),
+      expandToTag: (node: HTMLElement): void => this.expandToTag(node),
     };
   }
 
@@ -24,9 +24,10 @@ export default class SelectionAPI extends Module {
    *
    * @param {string} tagName - tag to find
    * @param {string} className - tag's class name
+   *
    * @returns {HTMLElement|null}
    */
-  public findParentTag(tagName: string, className?: string): HTMLElement|null {
+  public findParentTag(tagName: string, className?: string): HTMLElement | null {
     return new SelectionUtils().findParentTag(tagName, className);
   }
 

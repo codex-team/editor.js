@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Prebuilded sprite of SVG icons
  */
@@ -232,7 +233,7 @@ export default class UI extends Module {
   /**
    * Check for mobile mode and cache a result
    */
-  private checkIsMobile() {
+  private checkIsMobile(): void {
     this.isMobile = window.innerWidth < 650;
   }
 
@@ -278,6 +279,7 @@ export default class UI extends Module {
     /**
      * Load CSS
      */
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const styles = require('../../styles/main.css');
 
     /**
@@ -349,7 +351,7 @@ export default class UI extends Module {
   /**
    * All keydowns on document
    *
-   * @param {Event} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private documentKeydown(event: KeyboardEvent): void {
     switch (event.keyCode) {
@@ -368,7 +370,7 @@ export default class UI extends Module {
   /**
    * Ignore all other document's keydown events
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
@@ -394,7 +396,7 @@ export default class UI extends Module {
   }
 
   /**
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
@@ -421,7 +423,7 @@ export default class UI extends Module {
   /**
    * Enter pressed on document
    *
-   * @param event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
@@ -480,7 +482,7 @@ export default class UI extends Module {
   /**
    * All clicks on document
    *
-   * @param {MouseEvent} event - Click
+   * @param {MouseEvent} event - Click event
    */
   private documentClicked(event: MouseEvent): void {
     /**
@@ -525,27 +527,18 @@ export default class UI extends Module {
     }
   }
 
-  //
-  // First touch on editor
-  // Fired before click
-  //
-  // Used to change current block — we need to do it before 'selectionChange' event.
-  // Also:
-  // - Move and show the Toolbar
-  // - Set a Caret
-  //
-  // @param event
-  //
-  private documentTouched/**
-                          *
-                          *//**
-                             *
-                             *//**
-                                *
-                                *//**
- *
- */
-(event: MouseEvent | TouchEvent): void {
+  /**
+   * First touch on editor
+   * Fired before click
+   *
+   * Used to change current block — we need to do it before 'selectionChange' event.
+   * Also:
+   * - Move and show the Toolbar
+   * - Set a Caret
+   *
+   * @param {MouseEvent | TouchEvent} event - touch or mouse event
+   */
+  private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
 
     /**
@@ -594,7 +587,7 @@ export default class UI extends Module {
   /**
    * All clicks on the redactor zone
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - click event
    *
    * @description
    * - By clicks on the Editor's bottom zone:
@@ -652,7 +645,7 @@ export default class UI extends Module {
    * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
    *
-   * @param {Event} event
+   * @param {Event} event - selection event
    */
   private selectionChanged(event: Event): void {
     const focusedElement = Selection.anchorElement as Element;

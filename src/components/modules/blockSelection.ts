@@ -11,6 +11,7 @@ import * as _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
+import { SanitizerConfig } from '../../../types/configs';
 
 /**
  *
@@ -21,7 +22,7 @@ export default class BlockSelection extends Module {
    *
    * @returns {SanitizerConfig}
    */
-  private get sanitizerConfig() {
+  private get sanitizerConfig(): SanitizerConfig {
     return {
       p: {},
       h1: {},
@@ -62,7 +63,7 @@ export default class BlockSelection extends Module {
   /**
    * Set selected all blocks
    *
-   * @param {boolean} state
+   * @param {boolean} state - state to set
    */
   public set allBlocksSelected(state: boolean) {
     const { BlockManager } = this.Editor;
@@ -160,7 +161,7 @@ export default class BlockSelection extends Module {
    *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
-  public unSelectBlockByIndex(index?) {
+  public unSelectBlockByIndex(index?): void {
     const { BlockManager } = this.Editor;
 
     let block;
@@ -180,7 +181,7 @@ export default class BlockSelection extends Module {
    * @param {Event} reason - event caused clear of selection
    * @param {boolean} restoreSelection - if true, restore saved selection
    */
-  public clearSelection(reason?: Event, restoreSelection = false) {
+  public clearSelection(reason?: Event, restoreSelection = false): void {
     const { BlockManager, Caret, RectangleSelection } = this.Editor;
 
     this.needToSelectAll = false;
@@ -226,7 +227,7 @@ export default class BlockSelection extends Module {
    *
    * @param {ClipboardEvent} e - copy/cut event
    *
-   * @returns Promise<void>
+   * @returns {Promise<void>}
    */
   public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
@@ -263,7 +264,7 @@ export default class BlockSelection extends Module {
    *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
-  public selectBlockByIndex(index?) {
+  public selectBlockByIndex(index?): void {
     const { BlockManager } = this.Editor;
 
     /**
@@ -294,7 +295,7 @@ export default class BlockSelection extends Module {
    * First CMD+A selects all input content by native behaviour,
    * next CMD+A keypress selects all blocks
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private handleCommandA(event: KeyboardEvent): void {
     this.Editor.RectangleSelection.clearSelection();
@@ -365,7 +366,7 @@ export default class BlockSelection extends Module {
    * Select All Blocks
    * Each Block has selected setter that makes Block copyable
    */
-  private selectAllBlocks() {
+  private selectAllBlocks(): void {
     /**
      * Save selection
      * Will be restored when closeSelection fired

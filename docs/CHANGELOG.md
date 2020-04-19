@@ -3,7 +3,8 @@
 ### 2.18
 
 - `New` — Block API that allows you to access certain Block properties and methods
-- `Improvements` - Deprecated TSLint replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
+- `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
+- `Improvements` - Fix many code-style issues, add missed annotations.
 - `Improvements` - Adjusted GitHub action for ESLint.
 
 >  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property

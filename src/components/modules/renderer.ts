@@ -42,7 +42,7 @@ export default class Renderer extends Module {
   /**
    * Make plugin blocks from array of plugin`s data
    *
-   * @param {OutputBlockData[]} blocks
+   * @param {OutputBlockData[]} blocks - blocks to render
    */
   public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
@@ -59,9 +59,8 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {object} item
+   * @param {object} item - Block data to insert
    * @returns {Promise<void>}
-   * @private
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;

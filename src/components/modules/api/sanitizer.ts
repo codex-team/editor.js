@@ -1,5 +1,6 @@
 import Module from '../../__module';
 import { Sanitizer } from '../../../../types/api';
+import { SanitizerConfig } from '../../../../types/configs';
 
 /**
  * @class SanitizerAPI
@@ -11,19 +12,21 @@ export default class SanitizerAPI extends Module {
    *
    * @returns {Sanitizer}
    */
-  get methods(): Sanitizer {
+  public get methods(): Sanitizer {
     return {
-      clean: (taintString, config) => this.clean(taintString, config),
+      clean: (taintString, config): string => this.clean(taintString, config),
     };
   }
 
   /**
    * Perform sanitizing of a string
    *
-   * @param taintString - what to sanitize
-   * @param config - sanitizer config
+   * @param {string} taintString - what to sanitize
+   * @param {SanitizerConfig} config - sanitizer config
+   *
+   * @returns {string}
    */
-  public clean(taintString, config) {
+  public clean(taintString: string, config: SanitizerConfig): string {
     return this.Editor.Sanitizer.clean(taintString, config);
   }
 }

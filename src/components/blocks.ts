@@ -1,7 +1,7 @@
 import * as _ from './utils';
 import $ from './dom';
 import Block, { BlockToolAPI } from './block';
-import { MoveEvent, MoveEventDetail } from '../../types/tools';
+import { MoveEvent } from '../../types/tools';
 
 /**
  * @class Blocks
@@ -13,6 +13,26 @@ import { MoveEvent, MoveEventDetail } from '../../types/tools';
  *
  */
 export default class Blocks {
+  /**
+   * Array of Block instances in order of addition
+   */
+  public blocks: Block[];
+
+  /**
+   * Editor`s area where to add Block`s HTML
+   */
+  public workingArea: HTMLElement;
+
+  /**
+   * @class
+   *
+   * @param {HTMLElement} workingArea — editor`s working node
+   */
+  constructor(workingArea: HTMLElement) {
+    this.blocks = [];
+    this.workingArea = workingArea;
+  }
+
   /**
    * Get length of Block instances array
    *
@@ -47,11 +67,11 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {number|string} property — block index or any Blocks class property to set
+   * @param {PropertyKey} property — block index or any Blocks class property key to set
    * @param {Block} value — value to set
    * @returns {boolean}
    */
-  public static set(instance: Blocks, property: number | string, value: Block | any) {
+  public static set(instance: Blocks, property: PropertyKey, value: Block | unknown): boolean {
     /**
      * If property name is not a number (method or other property, access it via reflect
      */
@@ -67,7 +87,7 @@ export default class Blocks {
      * @example
      * blocks[0] = new Block();
      */
-    instance.insert(+property, value);
+    instance.insert(+(property as number), value as Block);
 
     return true;
   }
@@ -76,10 +96,10 @@ export default class Blocks {
    * Proxy trap to implement array-like getter
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {number|string} property — Blocks class property
+   * @param {PropertyKey} property — Blocks class property key
    * @returns {Block|*}
    */
-  public static get(instance: Blocks, property: any | number) {
+  public static get(instance: Blocks, property: PropertyKey): Block | unknown {
     /**
      * If property is not a number, get it via Reflect object
      */
@@ -90,33 +110,13 @@ export default class Blocks {
     /**
      * If property is a number (Block index) return Block by passed index
      */
-    return instance.get(+property);
-  }
-
-  /**
-   * Array of Block instances in order of addition
-   */
-  public blocks: Block[];
-
-  /**
-   * Editor`s area where to add Block`s HTML
-   */
-  public workingArea: HTMLElement;
-
-  /**
-   * @class
-   *
-   * @param {HTMLElement} workingArea — editor`s working node
-   */
-  constructor(workingArea: HTMLElement) {
-    this.blocks = [];
-    this.workingArea = workingArea;
+    return instance.get(+(property as number));
   }
 
   /**
    * Push new Block to the blocks array and append it to working area
    *
-   * @param {Block} block
+   * @param {Block} block - Block to add
    */
   public push(block: Block): void {
     this.blocks.push(block);
@@ -228,7 +228,7 @@ export default class Blocks {
   /**
    * Remove block
    *
-   * @param {number|null} index
+   * @param {number} index - index of Block to remove
    */
   public remove(index: number): void {
     if (isNaN(index)) {
@@ -258,7 +258,7 @@ export default class Blocks {
    *
    * @todo decide if this method is necessary
    *
-   * @param {Block} targetBlock — target after wich Block should be inserted
+   * @param {Block} targetBlock — target after which Block should be inserted
    * @param {Block} newBlock — Block to insert
    */
   public insertAfter(targetBlock: Block, newBlock: Block): void {
@@ -280,7 +280,7 @@ export default class Blocks {
   /**
    * Return index of passed Block
    *
-   * @param {Block} block
+   * @param {Block} block - Block to find
    * @returns {number}
    */
   public indexOf(block: Block): number {
@@ -307,13 +307,12 @@ export default class Blocks {
   /**
    * Composes Block event with passed type and details
    *
-   * @param {string} type
-   * @param {MoveEventDetail} detail
+   * @param {string} type - event type
+   * @param {object} detail - event detail
    */
-  private composeBlockEvent(type: string, detail: MoveEventDetail): MoveEvent {
+  private composeBlockEvent(type: string, detail: object): MoveEvent {
     return new CustomEvent(type, {
       detail,
-    }
-    ) as MoveEvent;
+    }) as MoveEvent;
   }
 }

@@ -8,15 +8,13 @@ export default class DragNDrop extends Module {
   /**
    * If drag has been started at editor, we save it
    *
-   * @type Boolean
+   * @type {boolean}
    * @private
    */
   private isStartedAtEditor = false;
 
   /**
    * Bind events
-   *
-   * @private
    */
   public prepare(): void {
     this.bindEvents();
@@ -45,7 +43,7 @@ export default class DragNDrop extends Module {
   /**
    * Handle drop event
    *
-   * @param {DragEvent} dropEvent
+   * @param {DragEvent} dropEvent - drop event
    */
   private processDrop = async (dropEvent: DragEvent): Promise<void> => {
     const {

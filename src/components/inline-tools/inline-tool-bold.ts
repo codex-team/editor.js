@@ -1,5 +1,5 @@
 import $ from '../dom';
-import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { InlineTool, SanitizerConfig } from '../../../types';
 
 /**
  * Bold Tool
@@ -27,7 +27,7 @@ export default class BoldInlineTool implements InlineTool {
    *
    * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       b: {},
     } as SanitizerConfig;
@@ -69,7 +69,7 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Wrap range with <b> tag
    *
-   * @param {Range} range
+   * @param {Range} range - range to wrap
    */
   public surround(range: Range): void {
     document.execCommand(this.commandName);
@@ -78,7 +78,9 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Check selection and set activated state to button if there are <b> tag
    *
-   * @param {Selection} selection
+   * @param {Selection} selection - selection to check
+   *
+   * @returns {boolean}
    */
   public checkState(selection: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);
@@ -90,6 +92,8 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Set a shortcut
+   *
+   * @returns {boolean}
    */
   public get shortcut(): string {
     return 'CMD+B';

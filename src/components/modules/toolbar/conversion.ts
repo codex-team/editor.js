@@ -3,7 +3,6 @@ import $ from '../../dom';
 import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../types-internal/block-data';
-import Block from '../../block';
 import Flipper from '../../flipper';
 
 /**
@@ -155,7 +154,7 @@ export default class ConversionToolbar extends Module {
    * Replaces one Block with another
    * For that Tools must provide import/export methods
    *
-   * @param {string} replacingToolName
+   * @param {string} replacingToolName - name of Tool which replaces current
    */
   public async replaceWithBlock(replacingToolName: string): Promise <void> {
     /**
@@ -254,7 +253,7 @@ export default class ConversionToolbar extends Module {
     const tools = this.Editor.Tools.blockTools;
 
     for (const toolName in tools) {
-      if (!tools.hasOwnProperty(toolName)) {
+      if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
         continue;
       }
 
@@ -284,9 +283,9 @@ export default class ConversionToolbar extends Module {
   /**
    * Add tool to the Conversion Toolbar
    *
-   * @param toolName
-   * @param toolIcon
-   * @param title
+   * @param {string} toolName - name of Tool to add
+   * @param {string} toolIcon - Tool icon
+   * @param {string} title - button title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
