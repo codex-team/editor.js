@@ -5,6 +5,7 @@
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
 - `Improvements` - Adjusted GitHub action for ESLint.
+- `Fix` - Toolbox: Tool's order in Toolbox is now saved in accordance with `tools` object keys order
 
 ### 2.17
 
