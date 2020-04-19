@@ -10,6 +10,8 @@ import Module from '../__module';
  * Each shortcut must have name and handler
  * `name` is a shortcut, like 'CMD+K', 'CMD+B' etc
  * `handler` is a callback
+ *
+ * @interface ShortcutData
  */
 export interface ShortcutData {
 
@@ -42,7 +44,7 @@ export default class Shortcuts extends Module {
   /**
    * Register shortcut
    *
-   * @param {ShortcutData} shortcut
+   * @param {ShortcutData} shortcut - shortcut options
    */
   public add(shortcut: ShortcutData): void {
     const newShortcut = new Shortcut({
@@ -57,7 +59,7 @@ export default class Shortcuts extends Module {
   /**
    * Remove shortcut
    *
-   * @param {ShortcutData} shortcut
+   * @param {string} shortcut - shortcut name
    */
   public remove(shortcut: string): void {
     const index = this.registeredShortcuts.findIndex((shc) => shc.name === shortcut);

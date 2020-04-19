@@ -32,7 +32,7 @@ export default class BlockSettings extends Module {
    *
    * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  public get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -81,8 +81,6 @@ export default class BlockSettings extends Module {
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
-   *
-   * @returns {Element}
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);

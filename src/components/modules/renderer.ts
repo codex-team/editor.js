@@ -43,10 +43,10 @@ export default class Renderer extends Module {
   /**
    * Make plugin blocks from array of plugin`s data
    *
-   * @param {RendererBlocks[]} blocks
+   * @param {BlockToolData[]} blocks - blocks to render
    */
   public async render(blocks: BlockToolData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: () => this.insertBlock(block) }));
+    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
@@ -60,9 +60,8 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {object} item
+   * @param {object} item - Block data to insert
    * @returns {Promise<void>}
-   * @private
    */
   public async insertBlock(item): Promise<void> {
     const { Tools, BlockManager } = this.Editor;

@@ -57,8 +57,7 @@ export default class Sanitizer extends Module {
    *
    * Enumerate blocks and clean data
    *
-   * @param blocksData
-   * @param {{tool, data: BlockToolData}[]} blocksData[]
+   * @param {Array<{tool, data: BlockToolData}>} blocksData - blocks' data to sanitize
    */
   public sanitizeBlocks(
     blocksData: Array<{tool: string; data: BlockToolData}>
@@ -70,7 +69,7 @@ export default class Sanitizer extends Module {
         return block;
       }
 
-      block.data = this.deepSanitize(block.data, toolConfig);
+      block.data = this.deepSanitize(block.data, toolConfig) as BlockToolData;
 
       return block;
     });
@@ -82,7 +81,7 @@ export default class Sanitizer extends Module {
    * @param {BlockToolData|object|*} dataToSanitize - taint string or object/array that contains taint string
    * @param {SanitizerConfig} rules - object with sanitizer rules
    */
-  public deepSanitize(dataToSanitize: any, rules: SanitizerConfig): any {
+  public deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): object | string {
     /**
      * BlockData It may contain 3 types:
      *  - Array
@@ -138,8 +137,8 @@ export default class Sanitizer extends Module {
   /**
    * Merge with inline tool config
    *
-   * @param {string} toolName
-   * @param {SanitizerConfig} toolRules
+   * @param {string} toolName - tool name
+   *
    * @returns {SanitizerConfig}
    */
   public composeToolConfig(toolName: string): SanitizerConfig {
@@ -166,7 +165,7 @@ export default class Sanitizer extends Module {
     const toolConfig = {} as SanitizerConfig;
 
     for (const fieldName in toolRules) {
-      if (toolRules.hasOwnProperty(fieldName)) {
+      if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
         const rule = toolRules[fieldName];
 
         if (typeof rule === 'object') {
@@ -186,7 +185,7 @@ export default class Sanitizer extends Module {
    * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
    * otherwise get only enabled
    *
-   * @param name
+   * @param {string} name - Inline Tool name
    */
   public getInlineToolsConfig(name: string): SanitizerConfig {
     const { Tools } = this.Editor;
@@ -234,7 +233,7 @@ export default class Sanitizer extends Module {
     const config: SanitizerConfig = {} as SanitizerConfig;
 
     Object.entries(Tools.inline)
-      .forEach(([name, inlineTool]: [string, InlineToolConstructable]) => {
+      .forEach(([, inlineTool]: [string, InlineToolConstructable]) => {
         Object.assign(config, inlineTool[Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG]);
       });
 
@@ -247,9 +246,9 @@ export default class Sanitizer extends Module {
    * Clean array
    *
    * @param {Array} array - [1, 2, {}, []]
-   * @param {object} ruleForItem
+   * @param {SanitizerConfig} ruleForItem - sanitizer config for array
    */
-  private cleanArray(array: any[], ruleForItem: SanitizerConfig): any[] {
+  private cleanArray(array: Array<object | string>, ruleForItem: SanitizerConfig): Array<object | string> {
     return array.map((arrayItem) => this.deepSanitize(arrayItem, ruleForItem));
   }
 
@@ -260,11 +259,11 @@ export default class Sanitizer extends Module {
    * @param {object} rules - { b: true } or true|false
    * @returns {object}
    */
-  private cleanObject(object: any, rules: SanitizerConfig|{[field: string]: SanitizerConfig}): any {
+  private cleanObject(object: object, rules: SanitizerConfig|{[field: string]: SanitizerConfig}): object {
     const cleanData = {};
 
     for (const fieldName in object) {
-      if (!object.hasOwnProperty(fieldName)) {
+      if (!Object.prototype.hasOwnProperty.call(object, fieldName)) {
         continue;
       }
 
@@ -284,8 +283,11 @@ export default class Sanitizer extends Module {
   }
 
   /**
-   * @param {string} taintString
-   * @param {SanitizerConfig|boolean} rule
+   * Clean primitive value
+   *
+   * @param {string} taintString - string to clean
+   * @param {SanitizerConfig|boolean} rule - sanitizer rule
+   *
    * @returns {string}
    */
   private cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {
@@ -303,7 +305,7 @@ export default class Sanitizer extends Module {
    *  { a : true }, {}, false, true, function(){} — correct rules
    *  undefined, null, 0, 1, 2 — not a rules
    *
-   * @param config
+   * @param {SanitizerConfig} config - config to check
    */
   private isRule(config: SanitizerConfig): boolean {
     return typeof config === 'object' || typeof config === 'boolean' || typeof config === 'function';
@@ -314,8 +316,9 @@ export default class Sanitizer extends Module {
    * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
    * At least, if there is no config overrides, that API uses Default configuration
    *
-   * @uses https://www.npmjs.com/package/html-janitor
-   * @license https://github.com/guardian/html-janitor/blob/master/LICENSE
+   * @see {@link https://www.npmjs.com/package/html-janitor}
+   * @license Apache-2.0
+   * @see {@link https://github.com/guardian/html-janitor/blob/master/LICENSE}
    *
    * @param {SanitizerConfig} config - sanitizer extension
    */

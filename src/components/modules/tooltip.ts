@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 import Module from '../__module';
 
 /**
@@ -21,7 +22,7 @@ export default class Tooltip extends Module {
 
   /**
    * @class
-   * @param {EditorConfig}
+   * @param {EditorConfig} - Editor's config
    */
   constructor({ config }: ModuleConfig) {
     super({ config });

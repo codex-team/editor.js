@@ -61,7 +61,7 @@ export default class DomIterator {
   /**
    * Sets items. Can be used when iterable items changed dynamically
    *
-   * @param {HTMLElement[]} nodeList
+   * @param {HTMLElement[]} nodeList - nodes to iterate
    */
   public setItems(nodeList: HTMLElement[]): void {
     this.items = nodeList;

@@ -43,7 +43,7 @@ import i18n from '../../i18n';
  * @classdesc Toolbar module
  *
  * @typedef {Toolbar} Toolbar
- * @property {object} nodes
+ * @property {object} nodes - Toolbar nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
  * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
@@ -77,7 +77,7 @@ export default class Toolbar extends Module {
    *
    * @returns {object}
    */
-  public get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
@@ -274,8 +274,8 @@ export default class Toolbar extends Module {
    */
   public get plusButton(): {hide: () => void; show: () => void} {
     return {
-      hide: () => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: () => {
+      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      show: (): void => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
         }
@@ -291,10 +291,10 @@ export default class Toolbar extends Module {
    */
   private get blockActions(): {hide: () => void; show: () => void} {
     return {
-      hide: () => {
+      hide: (): void => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
       },
-      show: () => {
+      show: (): void => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
       },
     };
@@ -302,8 +302,6 @@ export default class Toolbar extends Module {
 
   /**
    * Handler for Plus Button
-   *
-   * @param {MouseEvent} event
    */
   private plusButtonClicked(): void {
     this.Editor.Toolbox.toggle();

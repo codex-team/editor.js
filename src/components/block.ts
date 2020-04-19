@@ -47,10 +47,9 @@ export enum BlockToolAPI {
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
+ * @property {BlockTool} tool - Tool instance
+ * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
   /**
@@ -58,7 +57,7 @@ export default class Block {
    *
    * @returns {{wrapper: string, content: string}}
    */
-  static get CSS() {
+  public static get CSS(): {[name: string]: string} {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
@@ -67,259 +66,6 @@ export default class Block {
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
     };
-  }
-
-  /**
-   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
-   *
-   * @returns {HTMLElement[]}
-   */
-  get inputs(): HTMLElement[] {
-    /**
-     * Return from cache if existed
-     */
-    if (this.cachedInputs.length !== 0) {
-      return this.cachedInputs;
-    }
-
-    const content = this.holder;
-    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
-
-    const selector = '[contenteditable], textarea, input:not([type]), ' +
-      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
-
-    let inputs = _.array(content.querySelectorAll(selector));
-
-    /**
-     * If contenteditable element contains block elements, treat them as inputs.
-     */
-    inputs = inputs.reduce((result, input) => {
-      if ($.isNativeInput(input) || $.containsOnlyInlineElements(input)) {
-        return [...result, input];
-      }
-
-      return [...result, ...$.getDeepestBlockElements(input)];
-    }, []);
-
-    /**
-     * If inputs amount was changed we need to check if input index is bigger then inputs array length
-     */
-    if (this.inputIndex > inputs.length - 1) {
-      this.inputIndex = inputs.length - 1;
-    }
-
-    /**
-     * Cache inputs
-     */
-    this.cachedInputs = inputs;
-
-    return inputs;
-  }
-
-  /**
-   * Return current Tool`s input
-   *
-   * @returns {HTMLElement}
-   */
-  get currentInput(): HTMLElement | Node {
-    return this.inputs[this.inputIndex];
-  }
-
-  /**
-   * Set input index to the passed element
-   *
-   * @param {HTMLElement} element
-   */
-  set currentInput(element: HTMLElement | Node) {
-    const index = this.inputs.findIndex((input) => input === element || input.contains(element));
-
-    if (index !== -1) {
-      this.inputIndex = index;
-    }
-  }
-
-  /**
-   * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
-   */
-  get firstInput(): HTMLElement {
-    return this.inputs[0];
-  }
-
-  /**
-   * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
-   */
-  get lastInput(): HTMLElement {
-    const inputs = this.inputs;
-
-    return inputs[inputs.length - 1];
-  }
-
-  /**
-   * Return next Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
-   */
-  get nextInput(): HTMLElement {
-    return this.inputs[this.inputIndex + 1];
-  }
-
-  /**
-   * Return previous Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
-   */
-  get previousInput(): HTMLElement {
-    return this.inputs[this.inputIndex - 1];
-  }
-
-  /**
-   * Returns Plugins content
-   *
-   * @returns {HTMLElement}
-   */
-  get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
-
-    if (blockContentNodes && blockContentNodes.childNodes.length) {
-      /**
-       * Editors Block content can contain different Nodes from extensions
-       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
-       */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
-        const contentNode = blockContentNodes.childNodes[child];
-
-        if (!$.isExtensionNode(contentNode)) {
-          return contentNode as HTMLElement;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * Get Block's JSON data
-   *
-   * @returns {object}
-   */
-  get data(): BlockToolData {
-    return this.save().then((savedObject) => {
-      if (savedObject && !_.isEmpty(savedObject.data)) {
-        return savedObject.data;
-      } else {
-        return {};
-      }
-    });
-  }
-
-  /**
-   * Returns tool's sanitizer config
-   *
-   * @returns {object}
-   */
-  get sanitize(): SanitizerConfig {
-    return this.tool.sanitize;
-  }
-
-  /**
-   * is block mergeable
-   * We plugin have merge function then we call it mergable
-   *
-   * @returns {boolean}
-   */
-  get mergeable(): boolean {
-    return typeof this.tool.merge === 'function';
-  }
-
-  /**
-   * Check block for emptiness
-   *
-   * @returns {boolean}
-   */
-  get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent);
-    const emptyMedia = !this.hasMedia;
-
-    return emptyText && emptyMedia;
-  }
-
-  /**
-   * Check if block has a media content such as images, iframes and other
-   *
-   * @returns {boolean}
-   */
-  get hasMedia(): boolean {
-    /**
-     * This tags represents media-content
-     *
-     * @type {string[]}
-     */
-    const mediaTags = [
-      'img',
-      'iframe',
-      'video',
-      'audio',
-      'source',
-      'input',
-      'textarea',
-      'twitterwidget',
-    ];
-
-    return !!this.holder.querySelector(mediaTags.join(','));
-  }
-
-  /**
-   * Set focused state
-   *
-   * @param {boolean} state - 'true' to select, 'false' to remove selection
-   */
-  set focused(state: boolean) {
-    this.holder.classList.toggle(Block.CSS.focused, state);
-  }
-
-  /**
-   * Set selected state
-   * We don't need to mark Block as Selected when it is empty
-   *
-   * @param {boolean} state - 'true' to select, 'false' to remove selection
-   */
-  set selected(state: boolean) {
-    if (state) {
-      this.holder.classList.add(Block.CSS.selected);
-    } else {
-      this.holder.classList.remove(Block.CSS.selected);
-    }
-  }
-
-  /**
-   * Returns True if it is Selected
-   *
-   * @returns {boolean}
-   */
-  get selected(): boolean {
-    return this.holder.classList.contains(Block.CSS.selected);
-  }
-
-  /**
-   * Set stretched state
-   *
-   * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
-   */
-  set stretched(state: boolean) {
-    this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
-  }
-
-  /**
-   * Toggle drop target state
-   *
-   * @param {boolean} state
-   */
-  public set dropTarget(state) {
-    this.holder.classList.toggle(Block.CSS.dropTarget, state);
   }
 
   /**
@@ -433,14 +179,267 @@ export default class Block {
   }
 
   /**
+   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+   *
+   * @returns {HTMLElement[]}
+   */
+  public get inputs(): HTMLElement[] {
+    /**
+     * Return from cache if existed
+     */
+    if (this.cachedInputs.length !== 0) {
+      return this.cachedInputs;
+    }
+
+    const content = this.holder;
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
+
+    const selector = '[contenteditable], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
+
+    let inputs = _.array(content.querySelectorAll(selector));
+
+    /**
+     * If contenteditable element contains block elements, treat them as inputs.
+     */
+    inputs = inputs.reduce((result, input) => {
+      if ($.isNativeInput(input) || $.containsOnlyInlineElements(input)) {
+        return [...result, input];
+      }
+
+      return [...result, ...$.getDeepestBlockElements(input)];
+    }, []);
+
+    /**
+     * If inputs amount was changed we need to check if input index is bigger then inputs array length
+     */
+    if (this.inputIndex > inputs.length - 1) {
+      this.inputIndex = inputs.length - 1;
+    }
+
+    /**
+     * Cache inputs
+     */
+    this.cachedInputs = inputs;
+
+    return inputs;
+  }
+
+  /**
+   * Return current Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  public get currentInput(): HTMLElement | Node {
+    return this.inputs[this.inputIndex];
+  }
+
+  /**
+   * Set input index to the passed element
+   *
+   * @param {HTMLElement | Node} element - HTML Element to set as current input
+   */
+  public set currentInput(element: HTMLElement | Node) {
+    const index = this.inputs.findIndex((input) => input === element || input.contains(element));
+
+    if (index !== -1) {
+      this.inputIndex = index;
+    }
+  }
+
+  /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  public get firstInput(): HTMLElement {
+    return this.inputs[0];
+  }
+
+  /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  public get lastInput(): HTMLElement {
+    const inputs = this.inputs;
+
+    return inputs[inputs.length - 1];
+  }
+
+  /**
+   * Return next Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
+  public get nextInput(): HTMLElement {
+    return this.inputs[this.inputIndex + 1];
+  }
+
+  /**
+   * Return previous Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
+  public get previousInput(): HTMLElement {
+    return this.inputs[this.inputIndex - 1];
+  }
+
+  /**
+   * Returns Plugins content
+   *
+   * @returns {HTMLElement}
+   */
+  public get pluginsContent(): HTMLElement {
+    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
+
+    if (blockContentNodes && blockContentNodes.childNodes.length) {
+      /**
+       * Editors Block content can contain different Nodes from extensions
+       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
+       */
+      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+        const contentNode = blockContentNodes.childNodes[child];
+
+        if (!$.isExtensionNode(contentNode)) {
+          return contentNode as HTMLElement;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get Block's JSON data
+   *
+   * @returns {object}
+   */
+  public get data(): BlockToolData {
+    return this.save().then((savedObject) => {
+      if (savedObject && !_.isEmpty(savedObject.data)) {
+        return savedObject.data;
+      } else {
+        return {};
+      }
+    });
+  }
+
+  /**
+   * Returns tool's sanitizer config
+   *
+   * @returns {object}
+   */
+  public get sanitize(): SanitizerConfig {
+    return this.tool.sanitize;
+  }
+
+  /**
+   * is block mergeable
+   * We plugin have merge function then we call it mergable
+   *
+   * @returns {boolean}
+   */
+  public mergeable(): boolean {
+    return typeof this.tool.merge === 'function';
+  }
+
+  /**
+   * Check block for emptiness
+   *
+   * @returns {boolean}
+   */
+  public get isEmpty(): boolean {
+    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyMedia = !this.hasMedia;
+
+    return emptyText && emptyMedia;
+  }
+
+  /**
+   * Check if block has a media content such as images, iframes and other
+   *
+   * @returns {boolean}
+   */
+  public get hasMedia(): boolean {
+    /**
+     * This tags represents media-content
+     *
+     * @type {string[]}
+     */
+    const mediaTags = [
+      'img',
+      'iframe',
+      'video',
+      'audio',
+      'source',
+      'input',
+      'textarea',
+      'twitterwidget',
+    ];
+
+    return !!this.holder.querySelector(mediaTags.join(','));
+  }
+
+  /**
+   * Set focused state
+   *
+   * @param {boolean} state - 'true' to select, 'false' to remove selection
+   */
+  public set focused(state: boolean) {
+    this.holder.classList.toggle(Block.CSS.focused, state);
+  }
+
+  /**
+   * Set selected state
+   * We don't need to mark Block as Selected when it is empty
+   *
+   * @param {boolean} state - 'true' to select, 'false' to remove selection
+   */
+  public set selected(state: boolean) {
+    if (state) {
+      this.holder.classList.add(Block.CSS.selected);
+    } else {
+      this.holder.classList.remove(Block.CSS.selected);
+    }
+  }
+
+  /**
+   * Returns True if it is Selected
+   *
+   * @returns {boolean}
+   */
+  public get selected(): boolean {
+    return this.holder.classList.contains(Block.CSS.selected);
+  }
+
+  /**
+   * Set stretched state
+   *
+   * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
+   */
+  public set stretched(state: boolean) {
+    this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
+  }
+
+  /**
+   * Toggle drop target state
+   *
+   * @param {boolean} state - 'true' if block is drop target, false otherwise
+   */
+  public set dropTarget(state) {
+    this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
    * Calls Tool's method
    *
    * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
    *
-   * @param {string} methodName
-   * @param {object} params
+   * @param {string} methodName - method to call
+   * @param {object} params - method argument
    */
-  public call(methodName: string, params?: object) {
+  public call(methodName: string, params?: object): void {
     /**
      * call Tool's method with the instance context
      */
@@ -457,7 +456,7 @@ export default class Block {
   /**
    * Call plugins merge method
    *
-   * @param {object} data
+   * @param {BlockToolData} data - data to merge
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.tool.merge(data);
@@ -500,7 +499,7 @@ export default class Block {
    *
    * @description Method returns true|false whether data passed the validation or not
    *
-   * @param {BlockToolData} data
+   * @param {BlockToolData} data - data to validate
    * @returns {Promise<boolean>} valid
    */
   public async validate(data: BlockToolData): Promise<boolean> {
@@ -587,7 +586,7 @@ export default class Block {
   /**
    * Is fired when Block will be unselected
    */
-  public willUnselect() {
+  public willUnselect(): void {
     this.mutationObserver.disconnect();
   }
 
