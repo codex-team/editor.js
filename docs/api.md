@@ -8,7 +8,7 @@ can use Editor\`s API as they want.
 
 API for certain Block methods and properties. You can access it through `editor.api.block.getBlockByIndex` method or get it form `block` property of [Tool constructor](../types/tools/block-tool.d.ts) argument.
 
-`name: string` — Block's Tool name
+`name: string` — Block's Tool name (key, specified in `tools` property of initial configuration)
 
 `config: ToolConfig` — Tool config passed on Editor initialization
 
@@ -22,7 +22,7 @@ API for certain Block methods and properties. You can access it through `editor.
 
 `stretched: boolean` — `true` if Block is stretched
 
-`call(methodName: string, param?: object): void` — method to call Tool's methods with checks and error handlers under-the-hood
+`call(methodName: string, param?: object): void` — method to call any Tool's instance methods with checks and error handlers under-the-hood. For example, [Block lifecycle hooks](./tools.md#block-lifecycle-hooks)
 
 `save(): Promise<void|SavedData>` — returns data saved from current Block's state, including Tool name and saving exec time
 
@@ -64,7 +64,7 @@ use 'move' instead)
 
 `getBlocksCount()` - returns Blocks count
 
-`stretchBlock(index: number, status: boolean)` - *Deprecated* make Block stretched
+`stretchBlock(index: number, status: boolean)` - _Deprecated. Use Block API interface instead._ make Block stretched.
 
 `insertNewBlock()` - __Deprecated__ insert new Block after working place
 

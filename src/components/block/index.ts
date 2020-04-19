@@ -31,11 +31,33 @@ import MoveDownTune from '../block-tunes/block-tune-move-down';
 import SelectionUtils from '../selection';
 import BlockAPI from './api';
 
+/**
+ * Interface describes Block class constructor argument
+ */
 interface BlockConstructorOptions {
+  /**
+   * Tool's name
+   */
   name: string;
+
+  /**
+   * Initial Block data
+   */
   data: BlockToolData;
+
+  /**
+   * Tool's class or constructor function
+   */
   Tool: BlockToolConstructable;
+
+  /**
+   * Tool settings from initial config
+   */
   settings: ToolSettings;
+
+  /**
+   * Editor's API methods
+   */
   api: API;
 }
 
