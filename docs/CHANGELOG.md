@@ -5,6 +5,7 @@
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
 - `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [1103](https://github.com/codex-team/editor.js/issues/1103)
 
 ### 2.17
 
