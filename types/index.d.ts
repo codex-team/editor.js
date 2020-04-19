@@ -4,7 +4,13 @@
  * ------------------------------------
  */
 
-import {EditorConfig} from './configs';
+import {
+  EditorConfig,
+  I18nDictionary,
+  Dictionary,
+  DictValue,
+  I18nConfig,
+} from './configs';
 import {
   Blocks,
   Caret,
@@ -48,7 +54,17 @@ export {
   FilePasteEventDetail,
 } from './tools';
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
-export {EditorConfig, SanitizerConfig, PasteConfig, LogLevels, ConversionConfig} from './configs';
+export {
+  EditorConfig,
+  SanitizerConfig,
+  PasteConfig,
+  LogLevels,
+  ConversionConfig,
+  I18nDictionary,
+  Dictionary,
+  DictValue,
+  I18nConfig,
+} from './configs';
 export {OutputData} from './data-formats/output-data';
 
 /**

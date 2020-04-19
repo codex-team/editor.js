@@ -3,11 +3,6 @@
  */
 export interface I18nDictionary {
   /**
-   * Translation of internal UI components of the editor.js core
-   */
-  ui: Dictionary;
-
-  /**
    * Section for translation Tool Names: both block and inline tools
    * Example:
    *  "toolNames": {
@@ -56,6 +51,11 @@ export interface I18nDictionary {
    *   },
    */
   blockTunes?: Dictionary;
+
+  /**
+   * Translation of internal UI components of the editor.js core
+   */
+  ui?: Dictionary;
 }
 
 /**
@@ -85,7 +85,7 @@ export interface Dictionary {
 }
 
 /**
- * The value of the dictionary can be:  
+ * The value of the dictionary can be:
  *  - other dictionary
  *  - result translate string
  */

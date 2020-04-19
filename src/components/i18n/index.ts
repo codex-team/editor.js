@@ -49,12 +49,12 @@ export default class I18n {
   private static getNamespace(namespace: string): Dictionary {
     const parts = namespace.split('.');
 
-    return parts.reduce((key, part) => {
-      if (!key || !Object.keys(key).length) {
+    return parts.reduce((section, part) => {
+      if (!section || !Object.keys(section).length) {
         return {};
       }
 
-      return key[part];
+      return section[part];
     }, I18n.currentDictionary);
   }
 }

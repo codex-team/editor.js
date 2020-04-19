@@ -14082,12 +14082,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "getNamespace",
       value: function getNamespace(namespace) {
         var parts = namespace.split('.');
-        return parts.reduce(function (key, part) {
-          if (!key || !Object.keys(key).length) {
+        return parts.reduce(function (section, part) {
+          if (!section || !Object.keys(section).length) {
             return {};
           }
 
-          return key[part];
+          return section[part];
         }, I18n.currentDictionary);
       }
     }]);
@@ -24860,7 +24860,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tooltipContent = _dom["default"].make('div');
 
-        var toolTitle = _i18n["default"].t("toolNames", Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName));
+        var toolTitle = _i18n["default"].t('toolNames', Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName));
 
         tooltipContent.appendChild(_dom["default"].text(toolTitle));
 
