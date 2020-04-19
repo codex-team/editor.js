@@ -39,16 +39,16 @@ export interface I18nDictionary {
    *
    * Example:
    * "blockTunes": {
-   *    "delete": {
-   *      "Delete": "Удалить"
-   *    },
-   *     "moveUp": {
-   *       "Move up": "Переместить вверх"
-   *     },
-   *     "moveDown": {
-   *        "Move down": "Переместить вниз"
-   *     }
+   *   "delete": {
+   *     "Delete": "Удалить"
    *   },
+   *   "moveUp": {
+   *     "Move up": "Переместить вверх"
+   *   },
+   *   "moveDown": {
+   *     "Move down": "Переместить вниз"
+   *   }
+   * },
    */
   blockTunes?: Dictionary;
 
