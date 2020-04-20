@@ -1,5 +1,5 @@
 import defaultDictionary from './locales/en/messages.json';
-import { DictNamespaces } from '../../../types/configs/i18n-internal-namespace';
+import { DictNamespaces } from '../../types-internal/i18n-internal-namespace';
 import { typeOf } from '../utils';
 
 /**
@@ -8,7 +8,7 @@ import { typeOf } from '../utils';
  * @param dict - Messages dictionary
  * @param [keyPath] - subsection path (used in recursive call)
  */
-function getNamespaces(dict, keyPath?): DictNamespaces<typeof defaultDictionary> {
+function getNamespaces(dict: object, keyPath?: string): DictNamespaces<typeof defaultDictionary> {
   const result = {};
 
   Object.entries(dict).forEach(([key, section]) => {
