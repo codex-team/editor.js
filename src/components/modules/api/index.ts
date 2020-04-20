@@ -1,12 +1,13 @@
 /**
  * @module API
- * @copyright <CodeX Team> 2018
+ * @copyright <CodeX> 2018
  *
  * Each block has an Editor API instance to use provided public methods
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
+import { ToolType } from '../tools';
 
 /**
  * @class API
@@ -29,7 +30,25 @@ export default class API extends Module {
       toolbar: this.Editor.ToolbarAPI.methods,
       inlineToolbar: this.Editor.InlineToolbarAPI.methods,
       tooltip: this.Editor.TooltipAPI.methods,
+      i18n: this.Editor.I18nAPI.methods,
       readonly: this.Editor.ReadOnlyAPI.methods,
     } as APIInterfaces;
+  }
+
+  /**
+   * Returns Editor.js Core API methods for passed tool
+   *
+   * @param toolName - how user name tool. It can be used in some API logic,
+   *                   for example in i18n to provide namespaced dictionary
+   *
+   * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
+   */
+  public getMethodsForTool(toolName: string, toolType = ToolType.Block): APIInterfaces {
+    return Object.assign(
+      this.methods,
+      {
+        i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, toolType),
+      }
+    ) as APIInterfaces;
   }
 }

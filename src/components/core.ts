@@ -3,6 +3,7 @@ import $ from './dom';
 import * as _ from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
+import I18n from './i18n';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -203,6 +204,13 @@ export default class Core {
     }
 
     this.config.readOnly = this.config.readOnly ? this.config.readOnly : false;
+
+    /**
+     * Adjust i18n
+     */
+    if (config.i18n && config.i18n.messages) {
+      I18n.setDictionary(config.i18n.messages);
+    }
   }
 
   /**

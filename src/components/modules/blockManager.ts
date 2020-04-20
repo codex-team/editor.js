@@ -236,11 +236,11 @@ export default class BlockManager extends Module {
     toolName: string,
     data: BlockToolData = {},
     settings: ToolConfig = {},
-    readOnly: boolean = false
+    readOnly = false,
   ): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods, readOnly);
+    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API, readOnly);
 
     if (!this.readOnlyEnabled) {
       this.bindEvents(block);

@@ -1,6 +1,7 @@
 import {ToolConstructable, ToolSettings} from '../tools';
 import {API, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
+import {I18nConfig} from './i18n-config';
 
 export interface EditorConfig {
   /**
@@ -66,6 +67,11 @@ export interface EditorConfig {
    * Enable read-only mode
    */
   readOnly?: boolean;
+
+  /**
+   * Internalization config
+   */
+  i18n?: I18nConfig;
 
   /**
    * Fires when Editor is ready to work

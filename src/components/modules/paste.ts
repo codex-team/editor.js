@@ -301,7 +301,7 @@ export default class Paste extends Module {
   private processTool = ([name, tool]: [string, BlockToolConstructable]): void => {
     try {
       const toolInstance = new this.Editor.Tools.blockTools[name]({
-        api: this.Editor.API.methods,
+        api: this.Editor.API.getMethodsForTool(name),
         config: {},
         data: {},
       }) as BlockTool;
