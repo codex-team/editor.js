@@ -8,12 +8,13 @@ import { InlineToolbar } from '../../../../types/api/inline-toolbar';
 export default class InlineToolbarAPI extends Module {
   /**
    * Available methods
-   * @return {InlineToolbar}
+   *
+   * @returns {InlineToolbar}
    */
-  get methods(): InlineToolbar {
+  public get methods(): InlineToolbar {
     return {
-      close: () => this.close(),
-      open: () => this.open(),
+      close: (): void => this.close(),
+      open: (): void => this.open(),
     };
   }
 

@@ -1,6 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import Flipper, {FlipperOptions} from '../../flipper';
+import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 
 /**
@@ -15,12 +15,12 @@ import * as _ from '../../utils';
  *  |________________________|
  */
 export default class BlockSettings extends Module {
-
   /**
    * Module Events
-   * @return {{opened: string, closed: string}}
+   *
+   * @returns {{opened: string, closed: string}}
    */
-  public get events(): {opened: string, closed: string} {
+  public get events(): {opened: string; closed: string} {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -29,9 +29,10 @@ export default class BlockSettings extends Module {
 
   /**
    * Block Settings CSS
-   * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   *
+   * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  public get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -41,13 +42,14 @@ export default class BlockSettings extends Module {
 
       button: 'ce-settings__button',
 
-      focusedButton : 'ce-settings__button--focused',
+      focusedButton: 'ce-settings__button--focused',
       focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
 
   /**
    * Is Block Settings opened or not
+   *
    * @returns {boolean}
    */
   public get opened(): boolean {
@@ -70,6 +72,7 @@ export default class BlockSettings extends Module {
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -78,8 +81,6 @@ export default class BlockSettings extends Module {
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
-   *
-   * @return {Element}
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);
@@ -145,7 +146,8 @@ export default class BlockSettings extends Module {
 
   /**
    * Returns Tools Settings and Default Settings
-   * @return {HTMLElement[]}
+   *
+   * @returns {HTMLElement[]}
    */
   public get blockTunesButtons(): HTMLElement[] {
     /**
@@ -198,7 +200,7 @@ export default class BlockSettings extends Module {
          * Restoring focus on current Block after settings clicked.
          * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
          */
-        _.delay( () => {
+        _.delay(() => {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
         }, 10)();
       },

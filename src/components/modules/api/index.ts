@@ -6,12 +6,15 @@
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
-import {API as APIInterfaces} from '../../../../types';
+import { API as APIInterfaces } from '../../../../types';
 
 /**
  * @class API
  */
 export default class API extends Module {
+  /**
+   * Editor.js Core API modules
+   */
   public get methods(): APIInterfaces {
     return {
       blocks: this.Editor.BlocksAPI.methods,

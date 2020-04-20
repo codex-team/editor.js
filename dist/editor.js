@@ -1,7 +1,7 @@
 /*!
  * Editor.js
  * 
- * @version 2.17.0
+ * @version 2.18.0
  * 
  * @licence Apache-2.0
  * @author CodeX <https://codex.so>
@@ -10679,18 +10679,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * Editor.js
    *
    * Short Description (눈_눈;)
-   * @version 2.0
    *
-   * @licence Apache-2.0
+   * @version 2.18.0
+   *
+   * @license Apache-2.0
    * @author CodeX-Team <https://ifmo.su>
    */
   var EditorJS =
   /*#__PURE__*/
   function () {
     /**
-     * @constructor
-     *
-     * @param {EditorConfig|String|undefined} [configuration] - user configuration
+     * @param {EditorConfig|string|undefined} [configuration] - user configuration
      */
     function EditorJS(configuration) {
       var _this = this;
@@ -10700,6 +10699,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set default onReady function
        */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       var onReady = function onReady() {};
       /**
        * If `onReady` was passed in `configuration` then redefine onReady function
@@ -10718,6 +10718,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * We need to export isReady promise in the constructor
        * as it can be used before other API methods are exported
+       *
        * @type {Promise<void>}
        */
 
@@ -10736,7 +10737,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Export external API methods
        *
-       * @param editor
+       * @param {Core} editor — Editor's instance
        */
       value: function exportAPI(editor) {
         var _this2 = this;
@@ -10750,7 +10751,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           editor = null;
 
           for (var field in _this2) {
-            if (_this2.hasOwnProperty(field)) {
+            if (Object.prototype.hasOwnProperty.call(_this2, field)) {
               delete _this2[field];
             }
           }
@@ -10798,7 +10799,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }], [{
       key: "version",
       get: function get() {
-        return "2.17.0";
+        return "2.18.0";
       }
     }]);
     return EditorJS;
@@ -10843,15 +10844,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @classdesc  All modules inherits from this class.
    *
    * @typedef {Module} Module
-   * @property {Object} config - Editor user settings
+   * @property {object} config - Editor user settings
    * @property {EditorModules} Editor - List of Editor modules
    */
   var Module =
   /*#__PURE__*/
   function () {
     /**
-     * @constructor
-     * @param {EditorConfig}
+     * @class
+     * @param {EditorConfig} config - Editor's config
      */
     function Module(_ref) {
       var config = _ref.config;
@@ -10865,7 +10866,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Editor modules setter
-     * @param {EditorModules} Editor
+     *
+     * @param {EditorModules} Editor - Editor's Modules
      */
 
 
@@ -10912,13 +10914,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
 
+  /**
+   *
+   */
   var DeleteTune =
   /*#__PURE__*/
   function () {
     /**
      * DeleteTune constructor
      *
-     * @param {{api: API}} api
+     * @param {API} api - Editor's API
      */
     function DeleteTune(_ref) {
       var _this = this;
@@ -10949,7 +10954,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Create "Delete" button and add click event listener
-     * @returns [Element}
+     *
+     * @returns {HTMLElement}
      */
 
 
@@ -10972,7 +10978,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Delete block conditions passed
-       * @param {MouseEvent} event
+       *
+       * @param {MouseEvent} event - click event
        */
 
     }, {
@@ -11008,6 +11015,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * change tune state
+       *
+       * @param {boolean} state - delete confirmation state
        */
 
     }, {
@@ -11060,13 +11069,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * @copyright <CodeX Team> 2018
    */
+
+  /**
+   *
+   */
   var MoveDownTune =
   /*#__PURE__*/
   function () {
     /**
      * MoveDownTune constructor
      *
-     * @param {{api: API}} api
+     * @param {API} api — Editor's API
      */
     function MoveDownTune(_ref) {
       var api = _ref.api;
@@ -11074,6 +11087,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Styles
+       *
        * @type {{wrapper: string}}
        */
       this.CSS = {
@@ -11085,6 +11099,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Return 'move down' button
+     *
+     * @returns {HTMLElement}
      */
 
 
@@ -11108,8 +11124,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handle clicks on 'move down' button
-       * @param {MouseEvent} event
-       * @param {HTMLElement} button
+       *
+       * @param {MouseEvent} event - click event
+       * @param {HTMLElement} button - clicked button
        */
 
     }, {
@@ -11191,13 +11208,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * @copyright <CodeX Team> 2018
    */
+
+  /**
+   *
+   */
   var MoveUpTune =
   /*#__PURE__*/
   function () {
     /**
      * MoveUpTune constructor
      *
-     * @param {{api: API}} api
+     * @param {API} api - Editor's API
      */
     function MoveUpTune(_ref) {
       var api = _ref.api;
@@ -11205,6 +11226,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Styles
+       *
        * @type {{wrapper: string}}
        */
       this.CSS = {
@@ -11216,7 +11238,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Create "MoveUp" button and add click event listener
-     * @returns [HTMLElement}
+     *
+     * @returns {HTMLElement}
      */
 
 
@@ -11240,8 +11263,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Move current block up
-       * @param {MouseEvent} event
-       * @param {HTMLElement} button
+       *
+       * @param {MouseEvent} event - click event
+       * @param {HTMLElement} button - clicked button
        */
 
     }, {
@@ -11340,7 +11364,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
    *
    * @property {BlockTool} tool — current block tool (Paragraph, for example)
-   * @property {Object} CSS — block`s css classes
+   * @property {object} CSS — block`s css classes
    *
    */
 
@@ -11367,10 +11391,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
    *
-   * @property tool - Tool instance
-   * @property html - Returns HTML content of plugin
-   * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
-   * @property pluginsContent - HTML content that returns by Tool's render function
+   * @property {BlockTool} tool - Tool instance
+   * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+   * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
    */
 
 
@@ -11378,12 +11401,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /*#__PURE__*/
   function () {
     /**
-     * @constructor
-     * @param {String} toolName - Tool name that passed on initialization
-     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-     * @param {Object} toolClass — Tool's class
-     * @param {Object} settings - default settings
-     * @param {Object} apiMethods - Editor API
+     * @class
+     * @param {string} toolName - Tool name that passed on initialization
+     * @param {object} toolInstance — passed Tool`s instance that rendered the Block
+     * @param {object} toolClass — Tool's class
+     * @param {object} settings - default settings
+     * @param {object} apiMethods - Editor API
      */
     function Block(toolName, toolInstance, toolClass, settings, apiMethods) {
       var _this = this;
@@ -11392,17 +11415,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Cached inputs
+       *
        * @type {HTMLElement[]}
        */
       this.cachedInputs = [];
       /**
        * Focused input index
+       *
        * @type {number}
        */
 
       this.inputIndex = 0;
       /**
        * Debounce Timer
+       *
        * @type {number}
        */
 
@@ -11439,11 +11465,30 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
+     *
+     * @returns {{wrapper: string, content: string}}
      */
 
 
     (0, _createClass2["default"])(Block, [{
+      key: "mergeable",
+
+      /**
+       * is block mergeable
+       * We plugin have merge function then we call it mergable
+       *
+       * @returns {boolean}
+       */
+      value: function mergeable() {
+        return typeof this.tool.merge === 'function';
+      }
+      /**
+       * Check block for emptiness
+       *
+       * @returns {boolean}
+       */
+
+    }, {
       key: "call",
 
       /**
@@ -11451,8 +11496,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
        *
-       * @param {String} methodName
-       * @param {Object} params
+       * @param {string} methodName - method to call
+       * @param {object} params - method argument
        */
       value: function call(methodName, params) {
         /**
@@ -11460,6 +11505,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
         if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
           try {
+            // eslint-disable-next-line no-useless-call
             this.tool[methodName].call(this.tool, params);
           } catch (e) {
             _.log("Error during '".concat(methodName, "' call: ").concat(e.message), 'error');
@@ -11468,7 +11514,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Call plugins merge method
-       * @param {Object} data
+       *
+       * @param {BlockToolData} data - data to merge
        */
 
     }, {
@@ -11491,7 +11538,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Extracts data from Block
        * Groups Tool's save processing time
-       * @return {Object}
+       *
+       * @returns {object}
        */
 
     }, {
@@ -11539,7 +11587,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @description Method returns true|false whether data passed the validation or not
        *
-       * @param {BlockToolData} data
+       * @param {BlockToolData} data - data to validate
        * @returns {Promise<boolean>} valid
        */
 
@@ -11577,7 +11625,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Make an array with default settings
        * Each block has default tune instance that have states
-       * @return {BlockTune[]}
+       *
+       * @returns {BlockTune[]}
        */
 
     }, {
@@ -11587,8 +11636,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tunesList = [_blockTuneMoveUp["default"], _blockTuneDelete["default"], _blockTuneMoveDown["default"]]; // Pluck tunes list and return tune instances with passed Editor API and settings
 
-        return tunesList.map(function (tune) {
-          return new tune({
+        return tunesList.map(function (Tune) {
+          return new Tune({
             api: _this3.api,
             settings: _this3.settings
           });
@@ -11596,7 +11645,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-       * @return {DocumentFragment}
+       *
+       * @returns {DocumentFragment}
        */
 
     }, {
@@ -11645,6 +11695,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Make default Block wrappers and put Tool`s content there
+       *
        * @returns {HTMLDivElement}
        */
 
@@ -11723,7 +11774,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set input index to the passed element
        *
-       * @param {HTMLElement} element
+       * @param {HTMLElement | Node} element - HTML Element to set as current input
        */
       ,
       set: function set(element) {
@@ -11782,7 +11833,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns Plugins content
-       * @return {HTMLElement}
+       *
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -11808,7 +11860,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Get Block's JSON data
-       * @return {Object}
+       *
+       * @returns {object}
        */
 
     }, {
@@ -11824,7 +11877,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns tool's sanitizer config
-       * @return {object}
+       *
+       * @returns {object}
        */
 
     }, {
@@ -11832,22 +11886,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       get: function get() {
         return this.tool.sanitize;
       }
-      /**
-       * is block mergeable
-       * We plugin have merge function then we call it mergable
-       * @return {boolean}
-       */
-
-    }, {
-      key: "mergeable",
-      get: function get() {
-        return typeof this.tool.merge === 'function';
-      }
-      /**
-       * Check block for emptiness
-       * @return {Boolean}
-       */
-
     }, {
       key: "isEmpty",
       get: function get() {
@@ -11858,7 +11896,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check if block has a media content such as images, iframes and other
-       * @return {Boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -11866,6 +11905,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       get: function get() {
         /**
          * This tags represents media-content
+         *
          * @type {string[]}
          */
         var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
@@ -11873,7 +11913,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set focused state
-       * @param {Boolean} state - 'true' to select, 'false' to remove selection
+       *
+       * @param {boolean} state - 'true' to select, 'false' to remove selection
        */
 
     }, {
@@ -11884,7 +11925,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set selected state
        * We don't need to mark Block as Selected when it is empty
-       * @param {Boolean} state - 'true' to select, 'false' to remove selection
+       *
+       * @param {boolean} state - 'true' to select, 'false' to remove selection
        */
 
     }, {
@@ -11898,7 +11940,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns True if it is Selected
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
       ,
       get: function get() {
@@ -11906,7 +11949,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set stretched state
-       * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
+       *
+       * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
        */
 
     }, {
@@ -11916,7 +11960,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Toggle drop target state
-       * @param {boolean} state
+       *
+       * @param {boolean} state - 'true' if block is drop target, false otherwise
        */
 
     }, {
@@ -11989,7 +12034,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /*#__PURE__*/
   function () {
     /**
-     * @constructor
+     * @class
      *
      * @param {HTMLElement} workingArea — editor`s working node
      */
@@ -12001,7 +12046,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Get length of Block instances array
      *
-     * @returns {Number}
+     * @returns {number}
      */
 
 
@@ -12011,7 +12056,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Push new Block to the blocks array and append it to working area
        *
-       * @param {Block} block
+       * @param {Block} block - Block to add
        */
       value: function push(block) {
         this.blocks.push(block);
@@ -12019,8 +12064,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Swaps blocks with indexes first and second
-       * @param {Number} first - first block index
-       * @param {Number} second - second block index
+       *
+       * @param {number} first - first block index
+       * @param {number} second - second block index
        * @deprecated — use 'move' instead
        */
 
@@ -12043,8 +12089,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Move a block from one to another index
-       * @param {Number} toIndex - new index of the block
-       * @param {Number} fromIndex - block to move
+       *
+       * @param {number} toIndex - new index of the block
+       * @param {number} fromIndex - block to move
        */
 
     }, {
@@ -12053,6 +12100,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * cut out the block, move the DOM element and insert at the desired index
          * again (the shifting within the blocks array will happen automatically).
+         *
          * @see https://stackoverflow.com/a/44932690/1238150
          */
         var block = this.blocks.splice(fromIndex, 1)[0]; // manipulate DOM
@@ -12079,9 +12127,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Insert new Block at passed index
        *
-       * @param {Number} index — index to insert Block
+       * @param {number} index — index to insert Block
        * @param {Block} block — Block to insert
-       * @param {Boolean} replace — it true, replace block on given index
+       * @param {boolean} replace — it true, replace block on given index
        */
 
     }, {
@@ -12121,7 +12169,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Remove block
-       * @param {Number|null} index
+       *
+       * @param {number} index - index of Block to remove
        */
 
     }, {
@@ -12153,7 +12202,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @todo decide if this method is necessary
        *
-       * @param {Block} targetBlock — target after wich Block should be inserted
+       * @param {Block} targetBlock — target after which Block should be inserted
        * @param {Block} newBlock — Block to insert
        */
 
@@ -12166,7 +12215,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Get Block by index
        *
-       * @param {Number} index — Block index
+       * @param {number} index — Block index
        * @returns {Block}
        */
 
@@ -12178,8 +12227,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Return index of passed Block
        *
-       * @param {Block} block
-       * @returns {Number}
+       * @param {Block} block - Block to find
+       * @returns {number}
        */
 
     }, {
@@ -12209,8 +12258,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Composes Block event with passed type and details
        *
-       * @param {String} type
-       * @param {MoveEventDetail} detail
+       * @param {string} type - event type
+       * @param {object} detail - event detail
        */
 
     }, {
@@ -12254,9 +12303,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * blocks[0] = new Block(...)
        *
        * @param {Blocks} instance — Blocks instance
-       * @param {Number|String} property — block index or any Blocks class property to set
+       * @param {PropertyKey} property — block index or any Blocks class property key to set
        * @param {Block} value — value to set
-       * @returns {Boolean}
+       * @returns {boolean}
        */
 
     }], [{
@@ -12284,7 +12333,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Proxy trap to implement array-like getter
        *
        * @param {Blocks} instance — Blocks instance
-       * @param {Number|String} property — Blocks class property
+       * @param {PropertyKey} property — Blocks class property key
        * @returns {Block|*}
        */
 
@@ -12347,6 +12396,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _dom = _interopRequireDefault(_dom);
   _ = _interopRequireWildcard(_);
 
+  // eslint-disable-next-line import/no-duplicates
+  // eslint-disable-next-line import/no-duplicates
+
   /**
    * @typedef {Core} Core - editor core class
    */
@@ -12372,8 +12424,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * @classdesc Editor.js core class
    *
-   * @property this.config - all settings
-   * @property this.moduleInstances - constructed editor components
+   * @property {EditorConfig} config - all settings
+   * @property {EditorModules} moduleInstances - constructed editor components
    *
    * @type {Core}
    */
@@ -12477,7 +12529,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Setting for configuration
-     * @param {EditorConfig|string|undefined} config
+     *
+     * @param {EditorConfig|string} config - Editor's config to set
      */
 
 
@@ -12486,6 +12539,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Checks for required fields in Editor's config
+       *
        * @returns {Promise<void>}
        */
       value: function validate() {
@@ -12550,7 +12604,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Start Editor!
        *
        * Get list of modules that needs to be prepared and return a sequence (Promise)
-       * @return {Promise}
+       *
+       * @returns {Promise<void>}
        */
 
     }, {
@@ -12631,6 +12686,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
              *
              * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
              * To prevent this, we use 'babel-plugin-class-display-name' plugin
+             *
              * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
              */
             _this3.moduleInstances[Module.displayName] = new Module({
@@ -12651,7 +12707,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "configureModules",
       value: function configureModules() {
         for (var name in this.moduleInstances) {
-          if (this.moduleInstances.hasOwnProperty(name)) {
+          if (Object.prototype.hasOwnProperty.call(this.moduleInstances, name)) {
             /**
              * Module does not need self-instance
              */
@@ -12661,6 +12717,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return modules without passed name
+       *
        * @param {string} name - module for witch modules difference should be calculated
        */
 
@@ -12707,6 +12764,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
         /**
          * Place config into the class property
+         *
          * @type {EditorConfig}
          */
 
@@ -12733,6 +12791,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.config.initialBlock = this.config.initialBlock || 'paragraph';
         /**
          * Height of Editor's bottom area that allows to set focus on the last Block
+         *
          * @type {number}
          */
 
@@ -12740,6 +12799,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Initial block type
          * Uses in case when there is no blocks passed
+         *
          * @type {{type: (*), data: {text: null}}}
          */
 
@@ -12755,9 +12815,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
         this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
         this.config.tools = this.config.tools || {};
-        this.config.data = this.config.data || {};
+        this.config.data = this.config.data || {}; // eslint-disable-next-line @typescript-eslint/no-empty-function
 
-        this.config.onReady = this.config.onReady || function () {};
+        this.config.onReady = this.config.onReady || function () {}; // eslint-disable-next-line @typescript-eslint/no-empty-function
+
 
         this.config.onChange = this.config.onChange || function () {};
         /**
@@ -12776,6 +12837,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns private property
+       *
        * @returns {EditorConfig}
        */
       ,
@@ -12836,8 +12898,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Check if passed tag has no closed tag
-       * @param  {HTMLElement}  tag
-       * @return {Boolean}
+       *
+       * @param {HTMLElement} tag - element to check
+       * @returns {boolean}
        */
       value: function isSingleTag(tag) {
         return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
@@ -12845,8 +12908,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if element is BR or WBR
        *
-       * @param {HTMLElement} element
-       * @return {boolean}
+       * @param {HTMLElement} element - element to check
+       * @returns {boolean}
        */
 
     }, {
@@ -12857,10 +12920,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Helper for making Elements with classname and attributes
        *
-       * @param  {string} tagName           - new Element tag name
-       * @param  {array|string} classNames  - list or name of CSS classname(s)
-       * @param  {Object} attributes        - any attributes
-       * @return {HTMLElement}
+       * @param  {string} tagName - new Element tag name
+       * @param  {string[]|string} [classNames] - list or name of CSS classname(s)
+       * @param  {object} [attributes] - any attributes
+       *
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -12879,7 +12943,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         for (var attrName in attributes) {
-          if (attributes.hasOwnProperty(attrName)) {
+          if (Object.prototype.hasOwnProperty.call(attributes, attrName)) {
             el[attrName] = attributes[attrName];
           }
         }
@@ -12888,8 +12952,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Creates Text Node with the passed content
-       * @param {String} content - text content
-       * @return {Text}
+       *
+       * @param {string} content - text content
+       *
+       * @returns {Text}
        */
 
     }, {
@@ -12899,10 +12965,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Creates SVG icon linked to the sprite
+       *
        * @param {string} name - name (id) of icon from sprite
-       * @param {number} width
-       * @param {number} height
-       * @return {SVGElement}
+       * @param {number} [width] - icon width
+       * @param {number} [height] - icon height
+       *
+       * @returns {SVGElement}
        */
 
     }, {
@@ -12920,8 +12988,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Append one or several elements to the parent
        *
-       * @param  {Element|DocumentFragment} parent    - where to append
-       * @param  {Element|Element[]|Text|Text[]} elements - element or elements list
+       * @param  {Element|DocumentFragment} parent - where to append
+       * @param  {Element|Element[]|DocumentFragment|Text|Text[]} elements - element or elements list
        */
 
     }, {
@@ -12956,6 +13024,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Swap two elements in parent
+       *
        * @param {HTMLElement} el1 - from
        * @param {HTMLElement} el2 - to
        * @deprecated
@@ -12981,7 +13050,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Returns first match
        *
        * @param {Element} el - element we searching inside. Default - DOM Document
-       * @param {String} selector - searching string
+       * @param {string} selector - searching string
        *
        * @returns {Element}
        */
@@ -12996,7 +13065,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Get Element by Id
        *
-       * @param {string} id
+       * @param {string} id - id to find
        * @returns {HTMLElement | null}
        */
 
@@ -13010,8 +13079,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * Returns all matches
        *
-       * @param {Element} el - element we searching inside. Default - DOM Document
-       * @param {String} selector - searching string
+       * @param {Element|Document} el - element we searching inside. Default - DOM Document
+       * @param {string} selector - searching string
+       *
        * @returns {NodeList}
        */
 
@@ -13030,8 +13100,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @param {Node} node - root Node. From this vertex we start Deep-first search
        *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
-       * @param {Boolean} atLast - find last text node
-       * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
+       * @param {boolean} [atLast] - find last text node
+       *
+       * @returns {Node} - it can be text Node or Element Node, so that caret will able to work with it
        */
 
     }, {
@@ -13043,6 +13114,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Current function have two directions:
          *  - starts from first child and every time gets first or nextSibling in special cases
          *  - starts from last child and gets last or previousSibling
+         *
          * @type {string}
          */
         var child = atLast ? 'lastChild' : 'firstChild',
@@ -13081,9 +13153,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if object is DOM node
        *
-       * @param {Object} node
+       * @param {*} node - object to check
+       *
        * @returns {boolean}
        */
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     }, {
       key: "isElement",
@@ -13093,9 +13167,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if object is DocumentFragmemt node
        *
-       * @param {Object} node
+       * @param {object} node - object to check
        * @returns {boolean}
        */
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     }, {
       key: "isFragment",
@@ -13104,8 +13179,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check if passed element is contenteditable
-       * @param {HTMLElement} element
-       * @return {boolean}
+       *
+       * @param {HTMLElement} element - html element to check
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -13115,9 +13192,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Checks target if it is native input
-       * @param {Element|String|Node} target - HTML element or string
-       * @return {Boolean}
+       *
+       * @param {*} target - HTML element or string
+       *
+       * @returns {boolean}
        */
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     }, {
       key: "isNativeInput",
@@ -13127,8 +13207,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Checks if we can set caret
-       * @param {HTMLElement} target
-       * @return {boolean}
+       *
+       * @param {HTMLElement} target - target to check
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -13137,9 +13219,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var result = true;
 
         if (Dom.isNativeInput(target)) {
-          var inputElement = target;
-
-          switch (inputElement.type) {
+          switch (target.type) {
             case 'file':
             case 'checkbox':
             case 'radio':
@@ -13163,8 +13243,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @description Method checks simple Node without any childs for emptiness
        * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
        *
-       * @param {Node} node
-       * @return {Boolean} true if it is empty
+       * @param {Node} node - node to check
+       *
+       * @returns {boolean} true if it is empty
        */
 
     }, {
@@ -13186,8 +13267,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * checks node if it is doesn't have any child nodes
-       * @param {Node} node
-       * @return {boolean}
+       *
+       * @param {Node} node - node to check
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -13205,8 +13288,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @description Pushes to stack all DOM leafs and checks for emptiness
        *
-       * @param {Node} node
-       * @return {boolean}
+       * @param {Node} node - node to check
+       * @returns {boolean}
        */
 
     }, {
@@ -13255,7 +13338,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             treeWalker.push(node);
           }
           /**
-           * If one of childs is not empty, checked Node is not empty too
+           * If one of child is not empty, checked Node is not empty too
            */
 
 
@@ -13271,8 +13354,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if string contains html elements
        *
+       * @param {string} str - string to check
+       *
        * @returns {boolean}
-       * @param {String} str
        */
 
     }, {
@@ -13285,7 +13369,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Return length of node`s text content
        *
-       * @param {Node} node
+       * @param {Node} node - node with content
+       *
        * @returns {number}
        */
 
@@ -13315,7 +13400,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Check if passed content includes only inline elements
        *
        * @param {string|HTMLElement} data - element or html string
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
       value: function containsOnlyInlineElements(data) {
         var wrapper;
@@ -13336,9 +13422,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Find and return all block elements in the passed parent (including subtree)
        *
-       * @param {HTMLElement} parent
+       * @param {HTMLElement} parent - root element
        *
-       * @return {HTMLElement[]}
+       * @returns {HTMLElement[]}
        */
 
     }, {
@@ -13352,9 +13438,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return [].concat((0, _toConsumableArray2["default"])(result), (0, _toConsumableArray2["default"])(Dom.getDeepestBlockElements(element)));
         }, []);
       }
-      /*
+      /**
        * Helper for get holder from {string} or return HTMLElement
-       * @param element
+       *
+       * @param {string | HTMLElement} element - holder's id or holder's HTML Element
+       *
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -13368,7 +13457,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Method checks passed Node if it is some extension Node
+       *
        * @param {Node} node - any node
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -13380,7 +13472,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Returns true if element is anchor (is A tag)
        *
-       * @param element
+       * @param {Element} element - element to check
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -13448,6 +13542,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Focused button index.
        * Default is -1 which means nothing is active
+       *
        * @type {number}
        */
       this.cursor = -1;
@@ -13461,7 +13556,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Returns Focused button Node
-     * @return {HTMLElement}
+     *
+     * @returns {HTMLElement}
      */
 
 
@@ -13470,7 +13566,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Sets items. Can be used when iterable items changed dynamically
-       * @param {HTMLElement[]} nodeList
+       *
+       * @param {HTMLElement[]} nodeList - nodes to iterate
        */
       value: function setItems(nodeList) {
         this.items = nodeList;
@@ -13511,7 +13608,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Leafs nodes inside the target list from active element
        *
        * @param {string} direction - leaf direction. Can be 'left' or 'right'
-       * @return {Number} index of focused node
+       * @returns {number} index of focused node
        */
 
     }, {
@@ -13560,6 +13657,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (direction === DomIterator.directions.RIGHT) {
           /**
            * If we go right then choose next (+1) Tool
+           *
            * @type {number}
            */
           focusedButtonIndex = (focusedButtonIndex + 1) % this.items.length;
@@ -13567,6 +13665,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * If we go left then choose previous (-1) Tool
            * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+           *
            * @type {number}
            */
           focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
@@ -13604,6 +13703,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }();
   /**
    * This is a static property that defines iteration directions
+   *
    * @type {{RIGHT: string, LEFT: string}}
    */
 
@@ -13656,10 +13756,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /*#__PURE__*/
   function () {
     /**
-     * @constructor
+     * @class
      *
      * @param {FlipperOptions} options - different constructing settings
-     * @
      */
     function Flipper(options) {
       var _this = this;
@@ -13668,17 +13767,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Instance of flipper iterator
+       *
        * @type {DomIterator|null}
        */
       this.iterator = null;
       /**
        * Flag that defines activation status
+       *
        * @type {boolean}
        */
 
       this.activated = false;
       /**
        * Flag that allows arrows usage to flip items
+       *
        * @type {boolean}
        */
 
@@ -13736,7 +13838,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Array of keys (codes) that is handled by Flipper
      * Used to:
-     *  - preventDefault only for this keys, not all keywdowns (@see constructor)
+     *  - preventDefault only for this keys, not all keydowns (@see constructor)
      *  - to skip external behaviours only for these keys, when filler is activated (@see BlockEvents@arrowRightAndDown)
      */
 
@@ -13746,6 +13848,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Active tab/arrows handling by flipper
+       *
        * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
        */
       value: function activate(items) {
@@ -13767,7 +13870,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return current focused button
-       * @return {HTMLElement|null}
+       *
+       * @returns {HTMLElement|null}
        */
 
     }, {
@@ -13782,6 +13886,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Drops flipper's iterator cursor
+       *
        * @see DomIterator#dropCursor
        */
 
@@ -13793,8 +13898,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * This function is fired before handling flipper keycodes
        * The result of this function defines if it is need to be handled or not
-       * @param {KeyboardEvent} event
-       * @return {boolean}
+       *
+       * @param {KeyboardEvent} event - keydown keyboard event
+       * @returns {boolean}
        */
 
     }, {
@@ -13814,7 +13920,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * When flipper is activated tab press will leaf the items
-       * @param {KeyboardEvent} event
+       *
+       * @param {KeyboardEvent} event - tab keydown event
        */
 
     }, {
@@ -13854,7 +13961,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enter press will click current item if flipper is activated
-       * @param {KeyboardEvent} event
+       *
+       * @param {KeyboardEvent} event - enter keydown event
        */
 
     }, {
@@ -13960,7 +14068,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Sanitizer Rule
      * Leave <b> tags
-     * @return {object}
+     *
+     * @returns {object}
      */
 
 
@@ -13979,7 +14088,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Wrap range with <b> tag
-       * @param {Range} range
+       *
+       * @param {Range} range - range to wrap
        */
 
     }, {
@@ -13989,7 +14099,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check selection and set activated state to button if there are <b> tag
-       * @param {Selection} selection
+       *
+       * @param {Selection} selection - selection to check
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -14001,6 +14114,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set a shortcut
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -14021,7 +14136,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
 
 
@@ -14102,7 +14217,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Sanitizer Rule
      * Leave <i> tags
-     * @return {object}
+     *
+     * @returns {object}
      */
 
 
@@ -14121,7 +14237,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Wrap range with <i> tag
-       * @param {Range} range
+       *
+       * @param {Range} range - range to wrap
        */
 
     }, {
@@ -14131,7 +14248,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check selection and set activated state to button if there are <i> tag
-       * @param {Selection} selection
+       *
+       * @param {Selection} selection - selection to check
        */
 
     }, {
@@ -14163,7 +14281,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
 
 
@@ -14222,7 +14340,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /*#__PURE__*/
   function () {
     /**
-     * @param {{api: API}} - Editor.js API
+     * @param {API} api - Editor.js API
      */
     function LinkInlineTool(_ref) {
       var api = _ref.api;
@@ -14271,7 +14389,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Sanitizer Rule
      * Leave <a> tags
-     * @return {object}
+     *
+     * @returns {object}
      */
 
 
@@ -14310,7 +14429,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handle clicks on the Inline Toolbar icon
-       * @param {Range} range
+       *
+       * @param {Range} range - range to wrap with link
        */
 
     }, {
@@ -14351,7 +14471,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check selection and set activated state to button if there are <a> tag
-       * @param {Selection} selection
+       *
+       * @param {Selection} selection - selection to check
        */
 
     }, {
@@ -14392,6 +14513,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "toggleActions",
+
+      /**
+       * Show/close link input
+       */
       value: function toggleActions() {
         if (!this.inputOpened) {
           this.openActions(true);
@@ -14417,6 +14542,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Close input
+       *
        * @param {boolean} clearSavedSelection — we don't need to clear saved selection
        *                                        on toggle-clicks on the icon of opened Toolbar
        */
@@ -14447,7 +14573,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enter pressed on input
-       * @param {KeyboardEvent} event
+       *
+       * @param {KeyboardEvent} event - enter keydown event
        */
 
     }, {
@@ -14489,8 +14616,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Detects if passed string is URL
-       * @param  {string}  str
-       * @return {Boolean}
+       *
+       * @param {string} str - string to validate
+       * @returns {boolean}
        */
 
     }, {
@@ -14505,6 +14633,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Process link before injection
        * - sanitize
        * - add protocol for links like 'google.com'
+       *
        * @param {string} link - raw user input
        */
 
@@ -14517,7 +14646,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Add 'http' protocol to the links like 'vc.ru', 'google.com'
-       * @param {String} link
+       *
+       * @param {string} link - string to process
        */
 
     }, {
@@ -14537,9 +14667,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
 
-        var isInternal = /^\/[^\/\s]/.test(link),
+        var isInternal = /^\/[^/\s]/.test(link),
             isAnchor = link.substring(0, 1) === '#',
-            isProtocolRelative = /^\/\/[^\/\s]/.test(link);
+            isProtocolRelative = /^\/\/[^/\s]/.test(link);
 
         if (!isInternal && !isAnchor && !isProtocolRelative) {
           link = 'http://' + link;
@@ -14549,6 +14679,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Inserts <a> tag with "href"
+       *
        * @param {string} link - "href" value
        */
 
@@ -14597,7 +14728,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
 
 
@@ -14799,7 +14930,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Available methods
-     * @return {Blocks}
+     *
+     * @returns {Blocks}
      */
 
 
@@ -14808,14 +14940,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Returns Blocks count
-       * @return {number}
+       *
+       * @returns {number}
        */
       value: function getBlocksCount() {
         return this.Editor.BlockManager.blocks.length;
       }
       /**
        * Returns current block index
-       * @return {number}
+       *
+       * @returns {number}
        */
 
     }, {
@@ -14825,9 +14959,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns Block holder by Block index
-       * @param {Number} index
        *
-       * @return {HTMLElement}
+       * @param {number} index - index to get
+       *
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -14838,6 +14973,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Call Block Manager method that swap Blocks
+       *
        * @param {number} fromIndex - position of first Block
        * @param {number} toIndex - position of second Block
        * @deprecated — use 'move' instead
@@ -14856,8 +14992,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Move block from one index to another
-       * @param {Number} toIndex
-       * @param {number} fromIndex
+       *
+       * @param {number} toIndex - index to move to
+       * @param {number} fromIndex - index to move from
        */
 
     }, {
@@ -14873,7 +15010,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Deletes Block
-       * @param blockIndex
+       *
+       * @param {number} blockIndex - index of Block to delete
        */
 
     }, {
@@ -14908,6 +15046,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Fills Editor with Blocks data
+       *
        * @param {OutputData} data — Saved Editor data
        */
 
@@ -14919,8 +15058,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Render passed HTML string
-       * @param {string} data
-       * @return {Promise<void>}
+       *
+       * @param {string} data - HTML string to render
+       * @returns {Promise<void>}
        */
 
     }, {
@@ -14931,7 +15071,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Stretch Block's content
-       * @param {number} index
+       *
+       * @param {number} index - index of Block to stretch
        * @param {boolean} status - true to enable, false to disable
        */
 
@@ -14951,7 +15092,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Insert new Block
        * After set caret to this Block
        *
-       * @todo: remove in 3.0.0
+       * @todo remove in 3.0.0
        *
        * @deprecated with insert() method
        */
@@ -15067,7 +15208,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} position - position where to set caret
        * @param {number} offset - caret offset
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
       _this.setToFirstBlock = function () {
@@ -15088,7 +15229,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} position - position where to set caret
        * @param {number} offset - caret offset
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
 
@@ -15110,7 +15251,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} position - position where to set caret
        * @param {number} offset - caret offset
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
 
@@ -15132,7 +15273,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} position - position where to set caret
        * @param {number} offset - caret offset
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
 
@@ -15155,7 +15296,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} position - position where to set caret
        * @param {number} offset - caret offset
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
 
@@ -15176,7 +15317,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @param {boolean} atEnd - if true, set Caret to the end of the Editor
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
 
@@ -15194,7 +15335,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Available methods
-     * @return {Caret}
+     *
+     * @returns {Caret}
      */
 
 
@@ -15270,16 +15412,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Subscribe on Events
-       * @param {String} eventName
-       * @param {Function} callback
+       *
+       * @param {string} eventName - event name to subscribe
+       * @param {Function} callback - event handler
        */
       value: function on(eventName, callback) {
         this.Editor.Events.on(eventName, callback);
       }
       /**
        * Emit event with data
-       * @param {String} eventName
-       * @param {Object} data
+       *
+       * @param {string} eventName - event to emit
+       * @param {object} data - event's data
        */
 
     }, {
@@ -15289,8 +15433,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Unsubscribe from Event
-       * @param {String} eventName
-       * @param {Function} callback
+       *
+       * @param {string} eventName - event to unsubscribe
+       * @param {Function} callback - event handler
        */
 
     }, {
@@ -15303,7 +15448,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {Events}
+       *
+       * @returns {Events}
        */
       get: function get() {
         var _this = this;
@@ -15384,6 +15530,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(API, [{
       key: "methods",
+
+      /**
+       * Editor.js Core API modules
+       */
       get: function get() {
         return {
           blocks: this.Editor.BlocksAPI.methods,
@@ -15479,7 +15629,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {InlineToolbar}
+       *
+       * @returns {InlineToolbar}
        */
       get: function get() {
         var _this = this;
@@ -15554,10 +15705,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * adds DOM event listener
        *
-       * @param {HTMLElement} element
-       * @param {string} eventType
-       * @param {() => void} handler
-       * @param {boolean} useCapture
+       * @param {HTMLElement} element - Element to set handler to
+       * @param {string} eventType - event type
+       * @param {() => void} handler - event handler
+       * @param {boolean} useCapture - capture event or not
        */
       value: function on(element, eventType, handler, useCapture) {
         this.Editor.Listeners.on(element, eventType, handler, useCapture);
@@ -15565,22 +15716,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Removes DOM listener from element
        *
-       * @param element
-       * @param eventType
-       * @param handler
+       * @param {Element} element - Element to remove handler from
+       * @param eventType - event type
+       * @param handler - event handler
+       * @param {boolean} useCapture - capture event or not
        */
 
     }, {
       key: "off",
-      value: function off(element, eventType, handler) {
-        this.Editor.Listeners.off(element, eventType, handler);
+      value: function off(element, eventType, handler, useCapture) {
+        this.Editor.Listeners.off(element, eventType, handler, useCapture);
       }
     }, {
       key: "methods",
 
       /**
        * Available methods
-       * @return {Listeners}
+       *
+       * @returns {Listeners}
        */
       get: function get() {
         var _this = this;
@@ -15589,8 +15742,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           on: function on(element, eventType, handler, useCapture) {
             return _this.on(element, eventType, handler, useCapture);
           },
-          off: function off(element, eventType, handler) {
-            return _this.off(element, eventType, handler);
+          off: function off(element, eventType, handler, useCapture) {
+            return _this.off(element, eventType, handler, useCapture);
           }
         };
       }
@@ -15635,6 +15788,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
 
+  /**
+   *
+   */
   var NotifierAPI =
   /*#__PURE__*/
   function (_Module) {
@@ -15647,6 +15803,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(NotifierAPI, [{
       key: "show",
+
+      /**
+       * Show notification
+       *
+       * @param {NotifierOptions} options - message option
+       */
       value: function show(options) {
         return this.Editor.Notifier.show(options);
       }
@@ -15804,6 +15966,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(SanitizerAPI, [{
       key: "clean",
+
+      /**
+       * Perform sanitizing of a string
+       *
+       * @param {string} taintString - what to sanitize
+       * @param {SanitizerConfig} config - sanitizer config
+       *
+       * @returns {string}
+       */
       value: function clean(taintString, config) {
         return this.Editor.Sanitizer.clean(taintString, config);
       }
@@ -15812,7 +15983,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {Sanitizer}
+       *
+       * @returns {Sanitizer}
        */
       get: function get() {
         var _this = this;
@@ -15892,7 +16064,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {Saver}
+       *
+       * @returns {Saver}
        */
       get: function get() {
         var _this = this;
@@ -15964,15 +16137,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Looks ahead from selection and find passed tag with class name
+       *
        * @param {string} tagName - tag to find
        * @param {string} className - tag's class name
-       * @return {HTMLElement|null}
+       *
+       * @returns {HTMLElement|null}
        */
       value: function findParentTag(tagName, className) {
         return new _selection["default"]().findParentTag(tagName, className);
       }
       /**
        * Expand selection to passed tag
+       *
        * @param {HTMLElement} node - tag that should contain selection
        */
 
@@ -15986,7 +16162,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {SelectionAPIInterface}
+       *
+       * @returns {SelectionAPIInterface}
        */
       get: function get() {
         var _this = this;
@@ -16056,6 +16233,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(StylesAPI, [{
       key: "classes",
+
+      /**
+       * Exported classes
+       */
       get: function get() {
         return {
           /**
@@ -16161,7 +16342,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Available methods
-       * @return {Toolbar}
+       *
+       * @returns {Toolbar}
        */
       get: function get() {
         var _this = this;
@@ -16236,9 +16418,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Method show tooltip on element with passed HTML content
        *
-       * @param {HTMLElement} element
-       * @param {TooltipContent} content
-       * @param {TooltipOptions} options
+       * @param {HTMLElement} element - element on which tooltip should be shown
+       * @param {TooltipContent} content - tooltip content
+       * @param {TooltipOptions} options - tooltip options
        */
       value: function show(element, content, options) {
         this.Editor.Tooltip.show(element, content, options);
@@ -16255,9 +16437,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Decorator for showing Tooltip by mouseenter/mouseleave
        *
-       * @param {HTMLElement} element
-       * @param {TooltipContent} content
-       * @param {TooltipOptions} options
+       * @param {HTMLElement} element - element on which tooltip should be shown
+       * @param {TooltipContent} content - tooltip content
+       * @param {TooltipOptions} options - tooltip options
        */
 
     }, {
@@ -16335,148 +16517,72 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Contains keyboard and mouse events binded on each Block by Block Manager
    */
+
+  /**
+   *
+   */
   var BlockEvents =
   /*#__PURE__*/
   function (_Module) {
     (0, _inherits2["default"])(BlockEvents, _Module);
 
     function BlockEvents() {
-      var _this;
-
       (0, _classCallCheck2["default"])(this, BlockEvents);
-      _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(BlockEvents).apply(this, arguments));
+      return (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(BlockEvents).apply(this, arguments));
+    }
+
+    (0, _createClass2["default"])(BlockEvents, [{
+      key: "keydown",
+
       /**
        * All keydowns on Block
+       *
        * @param {KeyboardEvent} event - keydown
        */
-
-      _this.keydown = function (event) {
+      value: function keydown(event) {
         /**
          * Run common method for all keydown events
          */
-        _this.beforeKeydownProcessing(event);
+        this.beforeKeydownProcessing(event);
         /**
          * Fire keydown processor by event.keyCode
          */
 
-
         switch (event.keyCode) {
           case _.keyCodes.BACKSPACE:
-            _this.backspace(event);
-
+            this.backspace(event);
             break;
 
           case _.keyCodes.ENTER:
-            _this.enter(event);
-
+            this.enter(event);
             break;
 
           case _.keyCodes.DOWN:
           case _.keyCodes.RIGHT:
-            _this.arrowRightAndDown(event);
-
+            this.arrowRightAndDown(event);
             break;
 
           case _.keyCodes.UP:
           case _.keyCodes.LEFT:
-            _this.arrowLeftAndUp(event);
-
+            this.arrowLeftAndUp(event);
             break;
 
           case _.keyCodes.TAB:
-            _this.tabPressed(event);
-
+            this.tabPressed(event);
             break;
 
           case _.keyCodes.ESC:
-            _this.escapePressed(event);
-
-            break;
-
-          default:
-            _this.defaultHandler();
-
+            this.escapePressed(event);
             break;
         }
-      };
+      }
       /**
-       * Key up on Block:
-       * - shows Inline Toolbar if something selected
-       * - shows conversion toolbar with 85% of block selection
-       */
-
-
-      _this.keyup = function (event) {
-        /**
-         * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
-         */
-        if (event.shiftKey) {
-          return;
-        }
-        /**
-         * Check if editor is empty on each keyup and add special css class to wrapper
-         */
-
-
-        _this.Editor.UI.checkEmptiness();
-      };
-      /**
-       * Mouse up on Block:
-       */
-
-
-      _this.mouseUp = function () {};
-      /**
-       * Set up mouse selection handlers
+       * Fires on keydown before event processing
        *
-       * @param {MouseEvent} event
+       * @param {KeyboardEvent} event - keydown
        */
 
-
-      _this.mouseDown = function (event) {
-        /**
-         * Each mouse down on Block must disable selectAll state
-         */
-        if (!_selection["default"].isCollapsed) {
-          _this.Editor.BlockSelection.clearSelection(event);
-        }
-
-        _this.Editor.CrossBlockSelection.watchSelection(event);
-      };
-      /**
-       * Add drop target styles
-       *
-       * @param {DragEvent} e
-       */
-
-
-      _this.dragOver = function (e) {
-        var block = _this.Editor.BlockManager.getBlockByChildNode(e.target);
-
-        block.dropTarget = true;
-      };
-      /**
-       * Remove drop target style
-       *
-       * @param {DragEvent} e
-       */
-
-
-      _this.dragLeave = function (e) {
-        var block = _this.Editor.BlockManager.getBlockByChildNode(e.target);
-
-        block.dropTarget = false;
-      };
-
-      return _this;
-    }
-    /**
-     * Fires on keydown before event processing
-     * @param {KeyboardEvent} event - keydown
-     */
-
-
-    (0, _createClass2["default"])(BlockEvents, [{
+    }, {
       key: "beforeKeydownProcessing",
       value: function beforeKeydownProcessing(event) {
         /**
@@ -16498,6 +16604,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.Editor.ConversionToolbar.close();
           /**
            * Allow to use shortcuts with selected blocks
+           *
            * @type {boolean}
            */
 
@@ -16510,8 +16617,51 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
       }
       /**
+       * Key up on Block:
+       * - shows Inline Toolbar if something selected
+       * - shows conversion toolbar with 85% of block selection
+       *
+       * @param {KeyboardEvent} event - keyup event
+       */
+
+    }, {
+      key: "keyup",
+      value: function keyup(event) {
+        /**
+         * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
+         */
+        if (event.shiftKey) {
+          return;
+        }
+        /**
+         * Check if editor is empty on each keyup and add special css class to wrapper
+         */
+
+
+        this.Editor.UI.checkEmptiness();
+      }
+      /**
+       * Set up mouse selection handlers
+       *
+       * @param {MouseEvent} event - mouse down event
+       */
+
+    }, {
+      key: "mouseDown",
+      value: function mouseDown(event) {
+        /**
+         * Each mouse down on Block must disable selectAll state
+         */
+        if (!_selection["default"].isCollapsed) {
+          this.Editor.BlockSelection.clearSelection(event);
+        }
+
+        this.Editor.CrossBlockSelection.watchSelection(event);
+      }
+      /**
        * Open Toolbox to leaf Tools
-       * @param {KeyboardEvent} event
+       *
+       * @param {KeyboardEvent} event - tab keydown event
        */
 
     }, {
@@ -16549,7 +16699,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Escape pressed
        * If some of Toolbar components are opened, then close it otherwise close Toolbar
        *
-       * @param {Event} event
+       * @param {Event} event - escape keydown event
        */
 
     }, {
@@ -16573,10 +16723,34 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
       }
       /**
+       * Add drop target styles
+       *
+       * @param {DragEvent} e - drag over event
+       */
+
+    }, {
+      key: "dragOver",
+      value: function dragOver(e) {
+        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+        block.dropTarget = true;
+      }
+      /**
+       * Remove drop target style
+       *
+       * @param {DragEvent} e - drag leave event
+       */
+
+    }, {
+      key: "dragLeave",
+      value: function dragLeave(e) {
+        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+        block.dropTarget = false;
+      }
+      /**
        * Copying selected blocks
        * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
        *
-       * @param {ClipboardEvent} event
+       * @param {ClipboardEvent} event - clipboard event
        */
 
     }, {
@@ -16593,7 +16767,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Copy and Delete selected Blocks
-       * @param {ClipboardEvent} event
+       *
+       * @param {ClipboardEvent} event - clipboard event
        */
 
     }, {
@@ -16617,6 +16792,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * ENTER pressed on block
+       *
        * @param {KeyboardEvent} event - keydown
        */
 
@@ -16691,6 +16867,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handle backspace keydown on Block
+       *
        * @param {KeyboardEvent} event - keydown
        */
 
@@ -16802,12 +16979,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handle right and down keyboard keys
+       *
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
       key: "arrowRightAndDown",
       value: function arrowRightAndDown(event) {
-        var _this2 = this;
+        var _this = this;
 
         var isFlipperCombination = _flipper["default"].usedKeys.includes(event.keyCode) && (!event.shiftKey || event.keyCode === _.keyCodes.TAB);
         /**
@@ -16844,8 +17023,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _.delay(function () {
             /** Check currentBlock for case when user moves selection out of Editor */
-            if (_this2.Editor.BlockManager.currentBlock) {
-              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this.Editor.BlockManager.currentBlock) {
+              _this.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -16858,12 +17037,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handle left and up keyboard keys
+       *
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
       key: "arrowLeftAndUp",
       value: function arrowLeftAndUp(event) {
-        var _this3 = this;
+        var _this2 = this;
 
         /**
          * Arrows might be handled on toolbars by flipper
@@ -16901,8 +17082,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _.delay(function () {
             /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
-            if (_this3.Editor.BlockManager.currentBlock) {
-              _this3.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this2.Editor.BlockManager.currentBlock) {
+              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -16914,14 +17095,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.BlockSelection.clearSelection(event);
       }
       /**
-       * Default keydown handler
-       */
-
-    }, {
-      key: "defaultHandler",
-      value: function defaultHandler() {}
-      /**
        * Cases when we need to close Toolbar
+       *
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
@@ -17036,7 +17212,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   /**
    * @typedef {BlockManager} BlockManager
-   * @property {Number} currentBlockIndex - Index of current working block
+   * @property {number} currentBlockIndex - Index of current working block
    * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
    */
   var BlockManager =
@@ -17078,7 +17254,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Returns current Block index
-     * @return {number}
+     *
+     * @returns {number}
      */
 
 
@@ -17177,11 +17354,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Creates Block instance by tool name
        *
-       * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
-       * @param {Object} data - constructor params
-       * @param {Object} settings - block settings
+       * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
+       * @param {object} data - constructor params
+       * @param {object} settings - block settings
        *
-       * @return {Block}
+       * @returns {Block}
        */
 
     }, {
@@ -17202,13 +17379,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Insert new block into _blocks
        *
-       * @param {String} toolName — plugin name, by default method inserts initial block type
-       * @param {Object} data — plugin data
-       * @param {Object} settings - default settings
+       * @param {string} toolName — plugin name, by default method inserts initial block type
+       * @param {object} data — plugin data
+       * @param {object} settings - default settings
        * @param {number} index - index where to insert new Block
        * @param {boolean} needToFocus - flag shows if needed to update current Block index
        *
-       * @return {Block}
+       * @returns {Block}
        */
 
     }, {
@@ -17231,7 +17408,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Insert pasted content. Call onPaste callback after insert.
        *
-       * @param {string} toolName
+       * @param {string} toolName - name of Tool to insert
        * @param {PasteEvent} pasteEvent - pasted data
        * @param {boolean} replace - should replace current block
        */
@@ -17264,7 +17441,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * TODO: Remove method and use insert() with index instead (?)
        *
-       * @return {Block} inserted Block
+       * @returns {Block} inserted Block
        */
 
     }, {
@@ -17284,7 +17461,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Always inserts at the end
-       * @return {Block}
+       *
+       * @returns {Block}
        */
 
     }, {
@@ -17302,10 +17480,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Merge two blocks
+       *
        * @param {Block} targetBlock - previous block will be append to this block
        * @param {Block} blockToMerge - block that will be merged with target block
        *
-       * @return {Promise} - the sequence that can be continued
+       * @returns {Promise} - the sequence that can be continued
        */
 
     }, {
@@ -17353,7 +17532,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Remove block with passed index or remove last
-       * @param {Number|null} index
+       *
+       * @param {number|null} index - index of Block to remove
        */
 
     }, {
@@ -17376,7 +17556,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (!this.blocks.length) {
           this.currentBlockIndex = -1;
           this.insert();
-          return;
         } else if (index === 0) {
           this.currentBlockIndex = 0;
         }
@@ -17384,7 +17563,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Remove only selected Blocks
        * and returns first Block index where started removing...
-       * @return number|undefined
+       *
+       * @returns {number|undefined}
        */
 
     }, {
@@ -17428,7 +17608,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * 1. Extract content from Caret position to the Block`s end
        * 2. Insert a new Block below current one with extracted content
        *
-       * @return {Block}
+       * @returns {Block}
        */
 
     }, {
@@ -17448,6 +17628,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
         /**
          * Renew current Block
+         *
          * @type {Block}
          */
 
@@ -17456,11 +17637,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Replace current working block
        *
-       * @param {String} toolName — plugin name
+       * @param {string} toolName — plugin name
        * @param {BlockToolData} data — plugin data
        * @param {ToolConfig} settings — plugin config
        *
-       * @return {Block}
+       * @returns {Block}
        */
 
     }, {
@@ -17477,8 +17658,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns Block by passed index
-       * @param {Number} index
-       * @return {Block}
+       *
+       * @param {number} index - index to get
+       *
+       * @returns {Block}
        */
 
     }, {
@@ -17488,7 +17671,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Get Block instance by html element
-       * @param {Node} element
+       *
+       * @param {Node} element - html element to get Block by
+       *
        * @returns {Block}
        */
 
@@ -17520,6 +17705,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.clearFocused();
         /**
          * Mark current Block as selected
+         *
          * @type {boolean}
          */
 
@@ -17533,7 +17719,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "clearFocused",
       value: function clearFocused() {
         this.blocks.forEach(function (block) {
-          return block.focused = false;
+          block.focused = false;
         });
       }
       /**
@@ -17541,6 +17727,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * 2) Mark it as current
        *
        *  @param {Node} childNode - look ahead from this node.
+       *
        *  @throws Error  - when passed Node is not included at the Block
        */
 
@@ -17559,6 +17746,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (parentFirstLevelBlock) {
           /**
            * Update current Block's index
+           *
            * @type {number}
            */
           this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock);
@@ -17570,8 +17758,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Return block which contents passed node
        *
-       * @param {Node} childNode
-       * @return {Block}
+       * @param {Node} childNode - node to get Block by
+       *
+       * @returns {Block}
        */
 
     }, {
@@ -17591,8 +17780,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Swap Blocks Position
-       * @param {Number} fromIndex
-       * @param {Number} toIndex
+       *
+       * @param {number} fromIndex - index of first block
+       * @param {number} toIndex - index of second block
+       *
        * @deprecated — use 'move' instead
        */
 
@@ -17608,8 +17799,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Move a block to a new index
-       * @param {Number} toIndex
-       * @param {Number} fromIndex
+       *
+       * @param {number} toIndex - index where to move Block
+       * @param {number} fromIndex - index of Block to move
        */
 
     }, {
@@ -17651,6 +17843,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Clears Editor
+       *
        * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
        *                                        we don't need to add empty initial block
        *                                        2) in api.blocks.clear we should add empty block
@@ -17694,6 +17887,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Bind Events
+       *
+       * @param {Block} block - Block to which event should be bound
        * @param {Block} block
        */
 
@@ -17701,8 +17896,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "bindEvents",
       value: function bindEvents(block) {
         var _this$Editor3 = this.Editor,
-            Listeners = _this$Editor3.Listeners,
-            BlockEvents = _this$Editor3.BlockEvents;
+            BlockEvents = _this$Editor3.BlockEvents,
+            Listeners = _this$Editor3.Listeners;
         this.listenerIds.push(Listeners.on(block.holder, 'keydown', BlockEvents.keydown, true));
         this.listenerIds.push(Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp));
         this.listenerIds.push(Listeners.on(block.holder, 'mousedown', BlockEvents.mouseDown));
@@ -17747,17 +17942,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Validates that the given index is not lower than 0 or higher than the amount of blocks
+       *
        * @param {number} index - index of blocks array to validate
+       *
+       * @returns {boolean}
        */
 
     }, {
       key: "validateIndex",
       value: function validateIndex(index) {
-        if (index < 0 || index >= this._blocks.length) {
-          return false;
-        }
-
-        return true;
+        return !(index < 0 || index >= this._blocks.length);
       }
     }, {
       key: "currentBlockIndex",
@@ -17766,7 +17960,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set current Block index and fire Block lifecycle callbacks
-       * @param newIndex
+       *
+       * @param {number} newIndex - index of Block to set as current
        */
       ,
       set: function set(newIndex) {
@@ -17782,7 +17977,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * returns first Block
-       * @return {Block}
+       *
+       * @returns {Block}
        */
 
     }, {
@@ -17792,7 +17988,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * returns last Block
-       * @return {Block}
+       *
+       * @returns {Block}
        */
 
     }, {
@@ -17803,7 +18000,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Get current Block instance
        *
-       * @return {Block}
+       * @returns {Block}
        */
 
     }, {
@@ -17813,7 +18010,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns next Block instance
-       * @return {Block|null}
+       *
+       * @returns {Block|null}
        */
 
     }, {
@@ -17857,7 +18055,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns previous Block instance
-       * @return {Block|null}
+       *
+       * @returns {Block|null}
        */
 
     }, {
@@ -17949,6 +18148,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @module BlockSelection
    * @version 1.0.0
    */
+
+  /**
+   *
+   */
   var BlockSelection =
   /*#__PURE__*/
   function (_Module) {
@@ -17962,6 +18165,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Flag used to define block selection
        * First CMD+A defines it as true and then second CMD+A selects all Blocks
+       *
        * @type {boolean}
        */
 
@@ -17969,6 +18173,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Flag used to define native input selection
        * In this case we allow double CMD+A to select Block
+       *
        * @type {boolean}
        */
 
@@ -17976,6 +18181,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Flag identifies any input selection
        * That means we can select whole Block
+       *
        * @type {boolean}
        */
 
@@ -17984,7 +18190,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Sanitizer Config
-     * @return {SanitizerConfig}
+     *
+     * @returns {SanitizerConfig}
      */
 
 
@@ -18021,8 +18228,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               /**
                * When one page consist of two or more EditorJS instances
                * Shortcut module tries to handle all events.
-               * That's why Editor's selection works inside the target Editor, but
-               * for others error occurs because nothing to select.s
+               * Thats why Editor's selection works inside the target Editor, but
+               * for others error occurs because nothing to select.
                *
                * Prevent such actions if focus is not inside the Editor
                */
@@ -18042,6 +18249,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Remove selection of Block
+       *
        * @param {number?} index - Block index according to the BlockManager's indexes
        */
 
@@ -18117,7 +18325,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @param {ClipboardEvent} e - copy/cut event
        *
-       * @return Promise<void>
+       * @returns {Promise<void>}
        */
 
     }, {
@@ -18170,6 +18378,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * select Block
+       *
        * @param {number?} index - Block index according to the BlockManager's indexes
        */
 
@@ -18205,7 +18414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * First CMD+A selects all input content by native behaviour,
        * next CMD+A keypress selects all blocks
        *
-       * @param {KeyboardEvent} event
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
@@ -18324,7 +18533,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Flag that identifies all Blocks selection
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -18337,18 +18547,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set selected all blocks
-       * @param {boolean} state
+       *
+       * @param {boolean} state - state to set
        */
       ,
       set: function set(state) {
         var BlockManager = this.Editor.BlockManager;
         BlockManager.blocks.forEach(function (block) {
-          return block.selected = state;
+          block.selected = state;
         });
       }
       /**
        * Flag that identifies any Block selection
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -18361,7 +18573,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return selected Blocks array
-       * @return {Block[]}
+       *
+       * @returns {Block[]}
        */
 
     }, {
@@ -18451,9 +18664,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
        *
        * @param {Block} block - Block class
-       * @param {String} position - position where to set caret.
+       * @param {string} position - position where to set caret.
        *                            If default - leave default behaviour and apply offset if it's passed
-       * @param {Number} offset - caret offset regarding to the text node
+       * @param {number} offset - caret offset regarding to the text node
        */
       value: function setToBlock(block) {
         var _this = this;
@@ -18510,7 +18723,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Set caret to the current input of current Block.
        *
        * @param {HTMLElement} input - input where caret should be set
-       * @param {String} position - position of the caret.
+       * @param {string} position - position of the caret.
        *                            If default - leave default behaviour and apply offset if it's passed
        * @param {number} offset - caret offset regarding to the text node
        */
@@ -18530,9 +18743,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             break;
 
           case this.positions.END:
-            var contentLength = _dom["default"].getContentLength(nodeToSet);
-
-            this.set(nodeToSet, contentLength);
+            this.set(nodeToSet, _dom["default"].getContentLength(nodeToSet));
             break;
 
           default:
@@ -18546,8 +18757,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Creates Document Range and sets caret to the element with offset
+       *
        * @param {HTMLElement} element - target node.
-       * @param {Number} offset - offset
+       * @param {number} offset - offset
        */
 
     }, {
@@ -18644,9 +18856,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Before moving caret, we should check if caret position is at the end of Plugins node
        * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
        *
-       * @param {Boolean} force - force navigation even if caret is not at the end
+       * @param {boolean} force - force navigation even if caret is not at the end
        *
-       * @return {Boolean}
+       * @returns {boolean}
        */
 
     }, {
@@ -18680,9 +18892,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Before moving caret, we should check if caret position is start of the Plugins node
        * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
        *
-       * @param {Boolean} force - force navigation even if caret is not at the start
+       * @param {boolean} force - force navigation even if caret is not at the start
        *
-       * @return {Boolean}
+       * @returns {boolean}
        */
 
     }, {
@@ -18718,7 +18930,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Inserts shadow element after passed element where caret can be placed
-       * @param {Node} element
+       *
+       * @param {Element} element - element after which shadow caret should be inserted
        */
 
     }, {
@@ -18726,11 +18939,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function createShadow(element) {
         var shadowCaret = document.createElement('span');
         shadowCaret.classList.add(Caret.CSS.shadowCaret);
-        element.insertAdjacentElement('beforeEnd', shadowCaret);
+        element.insertAdjacentElement('beforeend', shadowCaret);
       }
       /**
        * Restores caret position
-       * @param {HTMLElement} element
+       *
+       * @param {HTMLElement} element - element where caret should be restored
        */
 
     }, {
@@ -18794,16 +19008,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @example
        * <div contenteditable>
-       *     <p></p>                            |
-       *     <p></p>                            | left first-level siblings
-       *     <p></p>                            |
-       *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
-       *     <p></p>                            |
-       *     <p></p>                            | right first-level siblings
-       *     <p></p>                            |
+       * <p></p>                            |
+       * <p></p>                            | left first-level siblings
+       * <p></p>                            |
+       * <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+       * <p></p>                            |
+       * <p></p>                            | right first-level siblings
+       * <p></p>                            |
        * </div>
        *
-       * @return {Element[]}
+       * @param {HTMLElement} from - element from which siblings should be searched
+       * @param {'left' | 'right'} direction - direction of search
+       *
+       * @returns {HTMLElement[]}
        */
 
     }, {
@@ -18856,7 +19073,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Get's deepest first node and checks if offset is zero
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
       get: function get() {
         var selection = _selection["default"].get();
@@ -18878,6 +19096,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Workaround case when caret in the text like " |Hello!"
          * selection.anchorOffset is 1, but real caret visible position is 0
+         *
          * @type {number}
          */
 
@@ -18924,6 +19143,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           var nothingAtLeft = leftSiblings.every(function (node) {
             /**
              * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
+             *
              * @see https://github.com/codex-team/editor.js/issues/726
              * We need to allow to delete such linebreaks, so in this case caret IS NOT AT START
              */
@@ -18953,7 +19173,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Get's deepest last node and checks if offset is last node text length
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -19090,6 +19311,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _selection = _interopRequireDefault(_selection);
   _ = _interopRequireWildcard(_);
 
+  /**
+   *
+   */
   var CrossBlockSelection =
   /*#__PURE__*/
   function (_Module) {
@@ -19114,7 +19338,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Mouse over event handler
        * Gets target and related blocks and change selected state for blocks in between
        *
-       * @param {MouseEvent} event
+       * @param {MouseEvent} event - mouse over event
        */
 
 
@@ -19172,7 +19396,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var _this$Editor = this.Editor,
             BlockManager = _this$Editor.BlockManager,
-            UI = _this$Editor.UI,
             Listeners = _this$Editor.Listeners;
         this.firstSelectedBlock = BlockManager.getBlock(event.target);
         this.lastSelectedBlock = this.firstSelectedBlock;
@@ -19272,8 +19495,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Change blocks selection state between passed two blocks.
        *
-       * @param {Block} firstBlock
-       * @param {Block} lastBlock
+       * @param {Block} firstBlock - first block in range
+       * @param {Block} lastBlock - last block in range
        */
 
     }, {
@@ -19346,6 +19569,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _selection = _interopRequireDefault(_selection);
   _module = _interopRequireDefault(_module);
 
+  /**
+   *
+   */
   var DragNDrop =
   /*#__PURE__*/
   function (_Module) {
@@ -19359,7 +19585,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * If drag has been started at editor, we save it
        *
-       * @type Boolean
+       * @type {boolean}
        * @private
        */
 
@@ -19372,7 +19598,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Handle drop event
        *
-       * @param {DragEvent} dropEvent
+       * @param {DragEvent} dropEvent - drop event
        */
 
       _this.processDrop = function _callee(dropEvent) {
@@ -19385,7 +19611,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, Paste = _this$Editor.Paste;
                 dropEvent.preventDefault();
                 BlockManager.blocks.forEach(function (block) {
-                  return block.dropTarget = false;
+                  block.dropTarget = false;
                 });
 
                 if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed && _this.isStartedAtEditor) {
@@ -19442,8 +19668,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Bind events
-     *
-     * @private
      */
 
 
@@ -19469,6 +19693,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Add drag events listeners to editor zone
+       *
        * @private
        */
 
@@ -19566,7 +19791,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @version 1.0.0
    *
    * @typedef {Events} Events
-   * @property {Object} subscribers - all subscribers grouped by event name
+   * @property {object} subscribers - all subscribers grouped by event name
    */
   var Events =
   /*#__PURE__*/
@@ -19580,6 +19805,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Events).apply(this, arguments));
       /**
        * Object with events` names as key and array of callback functions as value
+       *
        * @type {{}}
        */
 
@@ -19589,7 +19815,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Subscribe any event on callback
      *
-     * @param {String} eventName - event name
+     * @param {string} eventName - event name
      * @param {Function} callback - subscriber
      */
 
@@ -19607,7 +19833,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Subscribe any event on callback. Callback will be called once and be removed from subscribers array after call.
        *
-       * @param {String} eventName - event name
+       * @param {string} eventName - event name
        * @param {Function} callback - subscriber
        */
 
@@ -19638,8 +19864,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Emit callbacks with passed data
        *
-       * @param {String} eventName - event name
-       * @param {Object} data - subscribers get this data when they were fired
+       * @param {string} eventName - event name
+       * @param {object} data - subscribers get this data when they were fired
        */
 
     }, {
@@ -19651,14 +19877,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.subscribers[eventName].reduce(function (previousData, currentHandler) {
           var newData = currentHandler(previousData);
-          return newData ? newData : previousData;
+          return newData || previousData;
         }, data);
       }
       /**
-       * Unsubsribe callback from event
+       * Unsubscribe callback from event
        *
-       * @param eventName
-       * @param callback
+       * @param {string} eventName - event name
+       * @param {Function} callback - event handler
        */
 
     }, {
@@ -19735,7 +19961,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   /**
    * @typedef {Listeners} Listeners
-   * @property {Array} allListeners
+   * @property {ListenerData[]} allListeners - listeners store
    */
   var Listeners =
   /*#__PURE__*/
@@ -19749,6 +19975,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Listeners).apply(this, arguments));
       /**
        * Stores all listeners data to find/remove/process it
+       *
        * @type {ListenerData[]}
        */
 
@@ -19759,9 +19986,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * Assigns event listener on element and returns unique identifier
      *
      * @param {EventTarget} element - DOM element that needs to be listened
-     * @param {String} eventType - event type
+     * @param {string} eventType - event type
      * @param {Function} handler - method that will be fired on event
-     * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+     * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
      *
      * @return {string}
      */
@@ -19794,9 +20021,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Removes event listener from element
        *
        * @param {EventTarget} element - DOM element that we removing listener
-       * @param {String} eventType - event type
+       * @param {string} eventType - event type
        * @param {Function} handler - remove handler, if element listens several handlers on the same event type
-       * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+       * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
        */
 
     }, {
@@ -19832,10 +20059,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
       /**
-       * @param {EventTarget} element
-       * @param {String} eventType
-       * @param {Function} handler
-       * @return {ListenerData|null}
+       * Finds and returns first listener by passed params
+       *
+       * @param {EventTarget} element - event target
+       * @param {string} [eventType] - event type
+       * @param {Function} [handler] - event handler
+       *
+       * @returns {ListenerData|null}
        */
 
     }, {
@@ -19845,10 +20075,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return foundListeners.length > 0 ? foundListeners[0] : null;
       }
       /**
-       * @param {EventTarget} element
-       * @param {String} eventType
-       * @param {Function} handler
-       * @return {ListenerData[]}
+       * Return all stored listeners by passed params
+       *
+       * @param {EventTarget} element - event target
+       * @param {string} eventType - event type
+       * @param {Function} handler - event handler
+       *
+       * @returns {ListenerData[]}
        */
 
     }, {
@@ -19885,7 +20118,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Search method: looks for listener by passed element
+       *
        * @param {EventTarget} element - searching element
+       *
        * @returns {Array} listeners that found on element
        */
 
@@ -19900,8 +20135,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Search method: looks for listener by passed event type
-       * @param {String} eventType
-       * @return {Array} listeners that found on element
+       *
+       * @param {string} eventType - event type
+       *
+       * @returns {ListenerData[]} listeners that found on element
        */
 
     }, {
@@ -19915,8 +20152,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Search method: looks for listener by passed handler
-       * @param {Function} handler
-       * @return {Array} listeners that found on element
+       *
+       * @param {Function} handler - event handler
+       *
+       * @returns {ListenerData[]} listeners that found on element
        */
 
     }, {
@@ -20017,6 +20256,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * Handles any mutations
    * and gives opportunity to handle outside
    */
+
+  /**
+   *
+   */
   var ModificationsObserver =
   /*#__PURE__*/
   function (_Module) {
@@ -20029,6 +20272,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(ModificationsObserver).apply(this, arguments));
       /**
        * Used to prevent several mutation callback execution
+       *
        * @type {Function}
        */
 
@@ -20055,6 +20299,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function destroy() {
         var _this2 = this;
 
+        this.mutationDebouncer = null;
+
         if (this.observer) {
           this.observer.disconnect();
         }
@@ -20067,7 +20313,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Preparation method
-       * @return {Promise<void>}
+       *
+       * @returns {Promise<void>}
        */
 
     }, {
@@ -20157,8 +20404,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * MutationObserver events handler
-       * @param mutationList
-       * @param observer
+       *
+       * @param {MutationRecord[]} mutationList - list of mutations
+       * @param {MutationObserver} observer - observer instance
        */
 
     }, {
@@ -20181,21 +20429,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         mutationList.forEach(function (mutation) {
           switch (mutation.type) {
             case 'childList':
-            case 'subtree':
             case 'characterData':
-            case 'characterDataOldValue':
               contentMutated = true;
               break;
 
             case 'attributes':
-              var mutatedTarget = mutation.target;
               /**
                * Changes on Element.ce-block usually is functional
                */
-
-              if (!mutatedTarget.classList.contains(_block["default"].CSS.wrapper)) {
+              if (!mutation.target.classList.contains(_block["default"].CSS.wrapper)) {
                 contentMutated = true;
-                return;
               }
 
               break;
@@ -20232,6 +20475,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }(_module["default"]);
   /**
    * Debounce Timer
+   *
    * @type {number}
    */
 
@@ -20300,7 +20544,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Show web notification
        *
-       * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions} options
+       * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions} options - notification options
        */
       value: function show(options) {
         _codexNotifier["default"].show(options);
@@ -20397,9 +20641,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.exceptionList = [];
       /**
        * Process paste config for each tool
-       *
-       * @param {string} name
-       * @param {Tool} tool
        */
 
       _this.processTool = function (_ref) {
@@ -20438,7 +20679,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if Editor should process pasted data and pass data transfer object to handler
        *
-       * @param {ClipboardEvent} event
+       * @param {ClipboardEvent} event - clipboard event
        */
 
 
@@ -20533,7 +20774,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Handle pasted or dropped data transfer object
        *
        * @param {DataTransfer} dataTransfer - pasted or dropped data transfer object
-       * @param {boolean} isDragNDrop
+       * @param {boolean} isDragNDrop - true if data transfer comes from drag'n'drop events
        */
 
     }, {
@@ -20560,6 +20801,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 /**
                  * In Microsoft Edge types is DOMStringList. So 'contains' is used to check if 'Files' type included
                  */
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
                 includesFiles = types.includes ? types.includes('Files') : types.contains('Files');
 
@@ -20762,7 +21004,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tags = toolPasteConfig.tags || [];
         tags.forEach(function (tag) {
-          if (_this3.toolsTags.hasOwnProperty(tag)) {
+          if (Object.prototype.hasOwnProperty.call(_this3.toolsTags, tag)) {
             _.log("Paste handler for \xAB".concat(name, "\xBB Tool on \xAB").concat(tag, "\xBB tag is skipped ") + "because it is already used by \xAB".concat(_this3.toolsTags[tag].tool, "\xBB Tool."), 'warn');
 
             return;
@@ -20861,6 +21103,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Check if browser behavior suits better
        *
        * @param {EventTarget} element - element where content has been pasted
+       *
        * @returns {boolean}
        */
 
@@ -20913,7 +21156,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Get information about file and find Tool to handle it
        *
-       * @param {File} file
+       * @param {File} file - file to process
        */
 
     }, {
@@ -20979,7 +21222,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Split HTML string to blocks and return it as array of Block data
        *
-       * @param {string} innerHTML
+       * @param {string} innerHTML - html string to process
+       *
        * @returns {PasteData[]}
        */
 
@@ -21047,7 +21291,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Split plain text by new line symbols and return it as array of Block data
        *
-       * @param {string} plain
+       * @param {string} plain - string to process
+       *
        * @returns {PasteData[]}
        */
 
@@ -21056,8 +21301,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function processPlain(plain) {
         var _this7 = this;
 
-        var initialBlock = this.config.initialBlock,
-            Tools = this.Editor.Tools;
+        var initialBlock = this.config.initialBlock;
 
         if (!plain) {
           return [];
@@ -21086,7 +21330,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Process paste of single Block tool content
        *
-       * @param {PasteData} dataToInsert
+       * @param {PasteData} dataToInsert - data of Block to inseret
        */
 
     }, {
@@ -21128,20 +21372,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * 2. Insert new block if it is not the same type as current one
        * 3. Just insert text if there is no substitutions
        *
-       * @param {PasteData} dataToInsert
+       * @param {PasteData} dataToInsert - data of Block to insert
        */
 
     }, {
       key: "processInlinePaste",
       value: function processInlinePaste(dataToInsert) {
-        var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, tool, currentBlockIsInitial, blockData, insertedBlock, needToReplaceCurrentBlock, currentToolSanitizeConfig;
+        var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, currentBlockIsInitial, blockData, needToReplaceCurrentBlock, insertedBlock, currentToolSanitizeConfig;
 
         return _index["default"].async(function processInlinePaste$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
                 _this$Editor6 = this.Editor, BlockManager = _this$Editor6.BlockManager, Caret = _this$Editor6.Caret, Sanitizer = _this$Editor6.Sanitizer, Tools = _this$Editor6.Tools;
-                content = dataToInsert.content, tool = dataToInsert.tool;
+                content = dataToInsert.content;
                 currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
                 if (!(currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
@@ -21184,8 +21428,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Get patterns` matches
        *
-       * @param {string} text
-       * @returns Promise<{data: BlockToolData, tool: string}>
+       * @param {string} text - text to process
+       *
+       * @returns {Promise<{event: PasteEvent, tool: string}>}
        */
 
     }, {
@@ -21233,8 +21478,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Insert pasted Block content to Editor
        *
-       * @param {PasteData} data
-       * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
+       * @param {PasteData} data - data to insert
+       * @param {boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
+       *
        * @returns {void}
        */
 
@@ -21262,7 +21508,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @param {object} blocks — Blocks' data to insert
        *
-       * @return {void}
+       * @returns {void}
        */
 
     }, {
@@ -21294,11 +21540,56 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         });
       }
       /**
+       * Fetch nodes from Element node
+       *
+       * @param {Node} node - current node
+       * @param {Node[]} nodes - processed nodes
+       * @param {Node} destNode - destination node
+       *
+       * @returns {Node[]}
+       */
+
+    }, {
+      key: "processElementNode",
+      value: function processElementNode(node, nodes, destNode) {
+        var tags = Object.keys(this.toolsTags);
+        var element = node;
+
+        var _ref8 = this.toolsTags[element.tagName] || {},
+            _ref8$tool = _ref8.tool,
+            tool = _ref8$tool === void 0 ? '' : _ref8$tool;
+
+        var toolTags = this.tagsByTool[tool] || [];
+        var isSubstitutable = tags.includes(element.tagName);
+
+        var isBlockElement = _dom["default"].blockElements.includes(element.tagName.toLowerCase());
+
+        var containsAnotherToolTags = Array.from(element.children).some(function (_ref9) {
+          var tagName = _ref9.tagName;
+          return tags.includes(tagName) && !toolTags.includes(tagName);
+        });
+        var containsBlockElements = Array.from(element.children).some(function (_ref10) {
+          var tagName = _ref10.tagName;
+          return _dom["default"].blockElements.includes(tagName.toLowerCase());
+        });
+        /** Append inline elements to previous fragment */
+
+        if (!isBlockElement && !isSubstitutable && !containsAnotherToolTags) {
+          destNode.appendChild(element);
+          return [].concat((0, _toConsumableArray2["default"])(nodes), [destNode]);
+        }
+
+        if (isSubstitutable && !containsAnotherToolTags || isBlockElement && !containsBlockElements && !containsAnotherToolTags) {
+          return [].concat((0, _toConsumableArray2["default"])(nodes), [destNode, element]);
+        }
+      }
+      /**
        * Recursively divide HTML string to two types of nodes:
        * 1. Block element
        * 2. Document Fragments contained text and markup tags like a, b, i etc.
        *
-       * @param {Node} wrapper
+       * @param {Node} wrapper - wrapper of paster HTML content
+       *
        * @returns {Node[]}
        */
 
@@ -21307,8 +21598,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function getNodes(wrapper) {
         var _this9 = this;
 
-        var children = Array.from(wrapper.childNodes),
-            tags = Object.keys(this.toolsTags);
+        var children = Array.from(wrapper.childNodes);
+        var elementNodeProcessingResult;
 
         var reducer = function reducer(nodes, node) {
           if (_dom["default"].isEmpty(node) && !_dom["default"].isSingleTag(node)) {
@@ -21329,34 +21620,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
              * 2. Check if it contains another block or substitutable elements
              */
             case Node.ELEMENT_NODE:
-              var element = node;
+              elementNodeProcessingResult = _this9.processElementNode(node, nodes, destNode);
 
-              var _ref8 = _this9.toolsTags[element.tagName] || {},
-                  _ref8$tool = _ref8.tool,
-                  tool = _ref8$tool === void 0 ? '' : _ref8$tool;
-
-              var toolTags = _this9.tagsByTool[tool] || [];
-              var isSubstitutable = tags.includes(element.tagName);
-
-              var isBlockElement = _dom["default"].blockElements.includes(element.tagName.toLowerCase());
-
-              var containsAnotherToolTags = Array.from(element.children).some(function (_ref9) {
-                var tagName = _ref9.tagName;
-                return tags.includes(tagName) && !toolTags.includes(tagName);
-              });
-              var containsBlockElements = Array.from(element.children).some(function (_ref10) {
-                var tagName = _ref10.tagName;
-                return _dom["default"].blockElements.includes(tagName.toLowerCase());
-              });
-              /** Append inline elements to previous fragment */
-
-              if (!isBlockElement && !isSubstitutable && !containsAnotherToolTags) {
-                destNode.appendChild(element);
-                return [].concat((0, _toConsumableArray2["default"])(nodes), [destNode]);
-              }
-
-              if (isSubstitutable && !containsAnotherToolTags || isBlockElement && !containsBlockElements && !containsAnotherToolTags) {
-                return [].concat((0, _toConsumableArray2["default"])(nodes), [destNode, element]);
+              if (elementNodeProcessingResult) {
+                return elementNodeProcessingResult;
               }
 
               break;
@@ -21381,8 +21648,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Compose paste event with passed type and detail
        *
-       * @param {string} type
-       * @param {PasteEventDetail} detail
+       * @param {string} type - event type
+       * @param {PasteEventDetail} detail - event detail
        */
 
     }, {
@@ -21568,6 +21835,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @module RectangleSelection
    * @version 1.0.0
    */
+
+  /**
+   *
+   */
   var RectangleSelection =
   /*#__PURE__*/
   function (_Module) {
@@ -21580,6 +21851,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(RectangleSelection).apply(this, arguments));
       /**
        * Using the selection rectangle
+       *
        * @type {boolean}
        */
 
@@ -21692,7 +21964,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
+     *
+     * @returns {{wrapper: string, content: string}}
      */
 
 
@@ -21723,6 +21996,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Init rect params
+       *
        * @param {number} pageX - X coord of mouse
        * @param {number} pageY - Y coord of mouse
        */
@@ -21840,6 +22114,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Scroll If mouse in scroll zone
+       *
        * @param {number} clientY - Y coord of mouse
        */
 
@@ -21866,6 +22141,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.isScrolling = true;
         }
       }
+      /**
+       * Generates required HTML elements
+       *
+       * @returns {object<string, Element>}
+       */
+
     }, {
       key: "genHTML",
       value: function genHTML() {
@@ -21889,6 +22170,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Activates scrolling if blockSelection is active and mouse is in scroll zone
+       *
        * @param {number} speed - speed of scrolling
        */
 
@@ -21910,7 +22192,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Handles the change in the rectangle and its effect
-       * @param {MouseEvent} event
+       *
+       * @param {MouseEvent} event - mouse event
        */
 
     }, {
@@ -21976,9 +22259,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "inverseSelection",
       value: function inverseSelection() {
         var firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stackOfSelected[0]);
-        var isSelecteMode = firstBlockInStack.selected;
+        var isSelectedMode = firstBlockInStack.selected;
 
-        if (this.rectCrossesBlocks && !isSelecteMode) {
+        if (this.rectCrossesBlocks && !isSelectedMode) {
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
           var _iteratorError2 = undefined;
@@ -22004,7 +22287,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
 
-        if (!this.rectCrossesBlocks && isSelecteMode) {
+        if (!this.rectCrossesBlocks && isSelectedMode) {
           var _iteratorNormalCompletion3 = true;
           var _didIteratorError3 = false;
           var _iteratorError3 = undefined;
@@ -22057,7 +22340,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Collects information needed to determine the behavior of the rectangle
-       * @return {number} index - index next Block, leftPos - start of left border of Block, rightPos - right border
+       *
+       * @returns {object} index - index next Block, leftPos - start of left border of Block, rightPos - right border
        */
 
     }, {
@@ -22088,6 +22372,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Select block with index index
+       *
        * @param index - index of block in redactor
        */
 
@@ -22102,6 +22387,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Adds a block to the selection and determines which blocks should be selected
+       *
        * @param {object} index - index of new block in the reactor
        */
 
@@ -22121,10 +22407,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         var blockNumbersIncrease = this.stackOfSelected[sizeStack - 1] - this.stackOfSelected[sizeStack - 2] > 0;
-        var direction = sizeStack <= 1 ? undef : blockNumbersIncrease ? down : up;
-        var selectionInDownDurection = index > this.stackOfSelected[sizeStack - 1] && direction === down;
+        var direction = undef;
+
+        if (sizeStack > 1) {
+          direction = blockNumbersIncrease ? down : up;
+        }
+
+        var selectionInDownDirection = index > this.stackOfSelected[sizeStack - 1] && direction === down;
         var selectionInUpDirection = index < this.stackOfSelected[sizeStack - 1] && direction === up;
-        var generalSelection = selectionInDownDurection || selectionInUpDirection || direction === undef;
+        var generalSelection = selectionInDownDirection || selectionInUpDirection || direction === undef;
         var reduction = !generalSelection; // When the selection is too fast, some blocks do not have time to be noticed. Fix it.
 
         if (!reduction && (index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
@@ -22173,8 +22464,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.stackOfSelected.pop();
           i--;
         }
-
-        return;
       }
     }], [{
       key: "CSS",
@@ -22232,6 +22521,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _module = _interopRequireDefault(_module);
   _ = _interopRequireWildcard(_);
 
+  /* eslint-disable import/no-duplicates */
+
   /**
    * Editor.js Renderer Module
    *
@@ -22254,9 +22545,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "render",
 
       /**
-       * @typedef {Object} RendererBlocks
-       * @property {String} type - tool name
-       * @property {Object} data - tool data
+       * @typedef {object} RendererBlocks
+       * @property {string} type - tool name
+       * @property {object} data - tool data
        */
 
       /**
@@ -22281,7 +22572,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Make plugin blocks from array of plugin`s data
-       * @param {RendererBlocks[]} blocks
+       *
+       * @param {BlockToolData[]} blocks - blocks to render
        */
       value: function render(blocks) {
         var _this = this;
@@ -22318,9 +22610,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Add plugin instance to BlockManager
        * Insert block to working zone
        *
-       * @param {Object} item
+       * @param {object} item - Block data to insert
        * @returns {Promise<void>}
-       * @private
        */
 
     }, {
@@ -22453,8 +22744,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    */
 
   /**
-   * @typedef {Object} SanitizerConfig
-   * @property {Object} tags - define tags restrictions
+   * @typedef {object} SanitizerConfig
+   * @property {object} tags - define tags restrictions
    *
    * @example
    *
@@ -22466,6 +22757,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *       target: "_blank"
    *     }
    * }
+   */
+
+  /**
+   *
    */
   var Sanitizer =
   /*#__PURE__*/
@@ -22494,7 +22789,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      *
      * Enumerate blocks and clean data
      *
-     * @param {{tool, data: BlockToolData}[]} blocksData[]
+     * @param {Array<{tool, data: BlockToolData}>} blocksData - blocks' data to sanitize
      */
 
 
@@ -22560,7 +22855,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} taintString - taint string
        * @param {SanitizerConfig} customConfig - allowed tags
        *
-       * @return {string} clean HTML
+       * @returns {string} clean HTML
        */
 
     }, {
@@ -22580,9 +22875,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Merge with inline tool config
        *
-       * @param {string} toolName
-       * @param {SanitizerConfig} toolRules
-       * @return {SanitizerConfig}
+       * @param {string} toolName - tool name
+       *
+       * @returns {SanitizerConfig}
        */
 
     }, {
@@ -22610,7 +22905,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolConfig = {};
 
         for (var fieldName in toolRules) {
-          if (toolRules.hasOwnProperty(fieldName)) {
+          if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
             var rule = toolRules[fieldName];
 
             if ((0, _typeof2["default"])(rule) === 'object') {
@@ -22628,6 +22923,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Returns Sanitizer config
        * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
        * otherwise get only enabled
+       *
+       * @param {string} name - Inline Tool name
        */
 
     }, {
@@ -22676,7 +22973,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var config = {};
         Object.entries(Tools.inline).forEach(function (_ref) {
           var _ref2 = (0, _slicedToArray2["default"])(_ref, 2),
-              name = _ref2[0],
               inlineTool = _ref2[1];
 
           Object.assign(config, inlineTool[Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG]);
@@ -22686,8 +22982,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Clean array
-       * @param {array} array - [1, 2, {}, []]
-       * @param {object} ruleForItem
+       *
+       * @param {Array} array - [1, 2, {}, []]
+       * @param {SanitizerConfig} ruleForItem - sanitizer config for array
        */
 
     }, {
@@ -22701,9 +22998,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Clean object
+       *
        * @param {object} object  - {level: 0, text: 'adada', items: [1,2,3]}}
        * @param {object} rules - { b: true } or true|false
-       * @return {object}
+       * @returns {object}
        */
 
     }, {
@@ -22712,7 +23010,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var cleanData = {};
 
         for (var fieldName in object) {
-          if (!object.hasOwnProperty(fieldName)) {
+          if (!Object.prototype.hasOwnProperty.call(object, fieldName)) {
             continue;
           }
 
@@ -22730,9 +23028,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return cleanData;
       }
       /**
-       * @param {string} taintString
-       * @param {SanitizerConfig|boolean} rule
-       * @return {string}
+       * Clean primitive value
+       *
+       * @param {string} taintString - string to clean
+       * @param {SanitizerConfig|boolean} rule - sanitizer rule
+       *
+       * @returns {string}
        */
 
     }, {
@@ -22750,7 +23051,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Check if passed item is a HTML Janitor rule:
        *  { a : true }, {}, false, true, function(){} — correct rules
        *  undefined, null, 0, 1, 2 — not a rules
-       * @param config
+       *
+       * @param {SanitizerConfig} config - config to check
        */
 
     }, {
@@ -22763,8 +23065,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
        * At least, if there is no config overrides, that API uses Default configuration
        *
-       * @uses https://www.npmjs.com/package/html-janitor
-       * @license https://github.com/guardian/html-janitor/blob/master/LICENSE
+       * @see {@link https://www.npmjs.com/package/html-janitor}
+       * @license Apache-2.0
+       * @see {@link https://github.com/guardian/html-janitor/blob/master/LICENSE}
        *
        * @param {SanitizerConfig} config - sanitizer extension
        */
@@ -22836,7 +23139,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * @typedef {Saver} Saver
    * @property {Element} html - Editor HTML content
-   * @property {String} json - Editor JSON output
+   * @property {string} json - Editor JSON output
    */
   var Saver =
   /*#__PURE__*/
@@ -22853,7 +23156,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Composes new chain of Promises to fire them alternatelly
-       * @return {OutputData}
+       *
+       * @returns {OutputData}
        */
       value: function save() {
         var _this = this;
@@ -22896,8 +23200,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Saves and validates
+       *
        * @param {Block} block - Editor's Tool
-       * @return {ValidatedData} - Tool's validated data
+       * @returns {ValidatedData} - Tool's validated data
        */
 
     }, {
@@ -22941,8 +23246,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Creates output object with saved data, time and version of editor
-       * @param {ValidatedData} allExtractedData
-       * @return {OutputData}
+       *
+       * @param {ValidatedData} allExtractedData - data extracted from Blocks
+       * @returns {OutputData}
        */
 
     }, {
@@ -23000,7 +23306,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return {
           time: +new Date(),
           blocks: blocks,
-          version: "2.17.0"
+          version: "2.18.0"
         };
       }
     }]);
@@ -23067,6 +23373,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Shortcuts).apply(this, arguments));
       /**
        * All registered shortcuts
+       *
        * @type {Shortcut[]}
        */
 
@@ -23075,7 +23382,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Register shortcut
-     * @param {ShortcutData} shortcut
+     *
+     * @param {ShortcutData} shortcut - shortcut options
      */
 
 
@@ -23091,7 +23399,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Remove shortcut
-       * @param {ShortcutData} shortcut
+       *
+       * @param {string} shortcut - shortcut name
        */
 
     }, {
@@ -23191,6 +23500,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.buttons = [];
       /**
        * Instance of class that responses for leafing buttons by arrows/tab
+       *
        * @type {Flipper|null}
        */
 
@@ -23199,7 +23509,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Module Events
-     * @return {{opened: string, closed: string}}
+     *
+     * @returns {{opened: string, closed: string}}
      */
 
 
@@ -23210,8 +23521,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Panel with block settings with 2 sections:
        *  - Tool's Settings
        *  - Default Settings [Move, Remove, etc]
-       *
-       * @return {Element}
        */
       value: function make() {
         this.nodes.wrapper = _dom["default"].make('div', this.CSS.wrapper);
@@ -23279,7 +23588,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns Tools Settings and Default Settings
-       * @return {HTMLElement[]}
+       *
+       * @returns {HTMLElement[]}
        */
 
     }, {
@@ -23335,7 +23645,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Block Settings CSS
-       * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+       *
+       * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
        */
 
     }, {
@@ -23354,6 +23665,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Is Block Settings opened or not
+       *
        * @returns {boolean}
        */
 
@@ -23456,6 +23768,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       };
       /**
        * Conversion Toolbar open/close state
+       *
        * @type {boolean}
        */
 
@@ -23467,6 +23780,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.tools = {};
       /**
        * Instance of class that responses for leafing buttons by arrows/tab
+       *
        * @type {Flipper|null}
        */
 
@@ -23516,7 +23830,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Toggle conversion dropdown visibility
-       * @param {function} [togglingCallback] — callback that will accept opening state
+       *
+       * @param {Function} [togglingCallback] — callback that will accept opening state
        */
 
     }, {
@@ -23591,7 +23906,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Replaces one Block with another
        * For that Tools must provide import/export methods
        *
-       * @param {string} replacingToolName
+       * @param {string} replacingToolName - name of Tool which replaces current
        */
 
     }, {
@@ -23606,6 +23921,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               case 0:
                 /**
                  * At first, we get current Block data
+                 *
                  * @type {BlockToolConstructable}
                  */
                 currentBlockClass = this.Editor.BlockManager.currentBlock["class"];
@@ -23627,6 +23943,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 }
                 /**
                  * Getting a class of replacing Tool
+                 *
                  * @type {BlockToolConstructable}
                  */
 
@@ -23733,7 +24050,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var tools = this.Editor.Tools.blockTools;
 
         for (var toolName in tools) {
-          if (!tools.hasOwnProperty(toolName)) {
+          if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
             continue;
           }
 
@@ -23762,6 +24079,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Add tool to the Conversion Toolbar
+       *
+       * @param {string} toolName - name of Tool to add
+       * @param {string} toolIcon - Tool icon
+       * @param {string} title - button title
        */
 
     }, {
@@ -23931,7 +24252,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @classdesc Toolbar module
    *
    * @typedef {Toolbar} Toolbar
-   * @property {Object} nodes
+   * @property {object} nodes - Toolbar nodes
    * @property {Element} nodes.wrapper        - Toolbar main element
    * @property {Element} nodes.content        - Zone with Plus button and toolbox.
    * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
@@ -23969,7 +24290,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       };
       /**
        * Handler for Plus Button
-       * @param {MouseEvent} event
        */
 
       _this.plusButtonClicked = function () {
@@ -23992,7 +24312,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * CSS styles
-     * @return {Object}
+     *
+     * @returns {object}
      */
 
 
@@ -24093,7 +24414,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Move Toolbar to the Current Block
-       * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
+       *
+       * @param {boolean} forceClose - force close Toolbar Settings and Toolbar
        */
 
     }, {
@@ -24140,6 +24462,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Open Toolbar with Plus Button and Actions
+       *
        * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
        *                                     This flag allows to open Toolbar without Actions.
        * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
@@ -24170,7 +24493,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * returns toolbar opened state
-       * @return {Boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -24189,7 +24513,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Plus Button public methods
-       * @return {{hide: function(): void, show: function(): void}}
+       *
+       * @returns {{hide: function(): void, show: function(): void}}
        */
 
     }, {
@@ -24248,7 +24573,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Block actions appearance manipulations
-       * @return {{hide: function(): void, show: function(): void}}
+       *
+       * @returns {{hide: function(): void, show: function(): void}}
        */
 
     }, {
@@ -24352,6 +24678,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       };
       /**
        * State of inline toolbar
+       *
        * @type {boolean}
        */
 
@@ -24379,12 +24706,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.toolbarVerticalMargin = 5;
       /**
        * Buttons List
+       *
        * @type {NodeList}
        */
 
       _this.buttonsList = null;
       /**
        * Cache for Inline Toolbar width
+       *
        * @type {number}
        */
 
@@ -24399,7 +24728,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     /**
      * Inline Toolbar Tools
      *
-     * @returns Map<string, InlineTool>
+     * @returns {Map<string, InlineTool>}
      */
 
 
@@ -24467,6 +24796,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Shows Inline Toolbar if something is selected
+       *
        * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
        *                                  Avoid to use it just for closing IT, better call .close() clearly.
        */
@@ -24502,8 +24832,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
         var newCoords = {
           x: selectionRect.x - wrapperOffset.left,
-          y: selectionRect.y + selectionRect.height // + window.scrollY
-          - wrapperOffset.top + this.toolbarVerticalMargin
+          y: selectionRect.y + selectionRect.height - // + window.scrollY
+          wrapperOffset.top + this.toolbarVerticalMargin
         };
         /**
          * If we know selections width, place InlineToolbar to center
@@ -24673,6 +25003,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
         /**
          * All Inline Toolbar buttons
+         *
          * @type {HTMLElement[]}
          */
 
@@ -24823,6 +25154,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Add tool button and activate clicks
+       *
+       * @param {string} toolName - name of Tool to add
+       * @param {InlineTool} tool - Tool class instance
        */
 
     }, {
@@ -24868,7 +25202,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var internalTools = Object.entries(Tools.internalTools).filter(function (_ref) {
           var _ref2 = (0, _slicedToArray2["default"])(_ref, 2),
-              name = _ref2[0],
               toolClass = _ref2[1];
 
           if (_.isFunction(toolClass)) {
@@ -24920,6 +25253,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enable Tool shortcut with Editor Shortcuts Module
+       *
        * @param {InlineTool} tool - Tool instance
        * @param {string} shortcut - shortcut according to the ShortcutData Module format
        */
@@ -24962,6 +25296,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Inline Tool button clicks
+       *
        * @param {InlineTool} tool - Tool's instance
        */
 
@@ -25009,7 +25344,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.toolsInstances = new Map();
 
           for (var tool in allTools) {
-            if (allTools.hasOwnProperty(tool)) {
+            if (Object.prototype.hasOwnProperty.call(allTools, tool)) {
               this.toolsInstances.set(tool, allTools[tool]);
             }
           }
@@ -25023,7 +25358,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var result = {};
 
         for (var tool in this.Editor.Tools.inline) {
-          if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+          if (Object.prototype.hasOwnProperty.call(this.Editor.Tools.inline, tool)) {
             var toolSettings = this.Editor.Tools.getToolSettings(tool);
             result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
           }
@@ -25082,9 +25417,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @classdesc Holder for Tools
    *
    * @typedef {Toolbox} Toolbox
-   * @property {Boolean} opened - opening state
-   * @property {Object} nodes   - Toolbox nodes
-   * @property {Object} CSS     - CSS class names
+   * @property {boolean} opened - opening state
+   * @property {object} nodes   - Toolbox nodes
+   * @property {object} CSS     - CSS class names
    *
    */
   var Toolbox =
@@ -25099,6 +25434,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Toolbox).apply(this, arguments));
       /**
        * Opening state
+       *
        * @type {boolean}
        */
 
@@ -25113,12 +25449,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       };
       /**
        * How many tools displayed in Toolbox
+       *
        * @type {number}
        */
 
       _this.displayedToolsCount = 0;
       /**
        * Instance of class that responses for leafing buttons by arrows/tab
+       *
        * @type {Flipper|null}
        */
 
@@ -25127,8 +25465,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * CSS styles
-     * @return {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
-     * toolboxOpened: string, tooltip: string, tooltipShown: string, tooltipShortcut: string}}
+     *
+     * @returns {object.<string, string>}
      */
 
 
@@ -25149,8 +25487,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Toolbox Tool's button click handler
        *
-       * @param {MouseEvent|KeyboardEvent} event
-       * @param {string} toolName
+       * @param {MouseEvent|KeyboardEvent} event - event that activates toolbox button
+       * @param {string} toolName - button to activate
        */
 
     }, {
@@ -25210,7 +25548,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var tools = this.Editor.Tools.available;
 
         for (var toolName in tools) {
-          if (tools.hasOwnProperty(toolName)) {
+          if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
             this.addTool(toolName, tools[toolName]);
           }
         }
@@ -25296,8 +25634,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Draw tooltip for toolbox tools
        *
-       * @param {String} toolName - toolbox tool name
-       * @return { HTMLElement }
+       * @param {string} toolName - toolbox tool name
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -25325,9 +25663,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enable shortcut Block Tool implemented shortcut
+       *
        * @param {BlockToolConstructable} tool - Tool class
-       * @param {String} toolName - Tool name
-       * @param {String} shortcut - shortcut according to the ShortcutData Module format
+       * @param {string} toolName - Tool name
+       * @param {string} shortcut - shortcut according to the ShortcutData Module format
        */
 
     }, {
@@ -25362,7 +25701,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Can be called when button clicked on Toolbox or by ShortcutData
        *
        * @param {BlockToolConstructable} tool - Tool Class
-       * @param {String} toolName - Tool name
+       * @param {string} toolName - Tool name
        */
 
     }, {
@@ -25371,10 +25710,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this$Editor = this.Editor,
             BlockManager = _this$Editor.BlockManager,
             Caret = _this$Editor.Caret;
-        /**
-         * @type {Block}
-         */
-
         var currentBlock = BlockManager.currentBlock;
         var newBlock;
 
@@ -25422,7 +25757,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns True if Toolbox is Empty and nothing to show
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -25503,9 +25839,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _inherits2["default"])(Tools, _Module);
 
     /**
-     * @constructor
+     * @class
      *
-     * @param {EditorConfig} config
+     * @param {EditorConfig} config - Editor's configuration
      */
     function Tools(_ref) {
       var _this;
@@ -25518,6 +25854,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Name of Stub Tool
        * Stub Tool is used to substitute unavailable block Tools and store their data
+       *
        * @type {string}
        */
 
@@ -25525,7 +25862,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Map {name: Class, ...} where:
        *  name — block type name in JSON. Got from EditorConfig.tools keys
-       * @type {Object}
+       *
+       * @type {object}
        */
 
       _this.toolsClasses = {};
@@ -25541,12 +25879,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.toolsUnavailable = {};
       /**
        * Tools settings in a map {name: settings, ...}
-       * @type {Object}
+       *
+       * @type {object}
        */
 
       _this.toolsSettings = {};
       /**
        * Cache for the prepared inline tools
+       *
        * @type {null|object}
        * @private
        */
@@ -25557,14 +25897,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Available tools list
        * {name: Class, ...}
-       * @type {Object}
+       *
+       * @type {object}
        */
 
       _this.toolsAvailable = {};
       /**
        * Tools that rejected a prepare method
        * {name: Class, ... }
-       * @type {Object}
+       *
+       * @type {object}
        */
 
       _this.toolsUnavailable = {};
@@ -25573,7 +25915,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Returns available Tools
-     * @return {Tool[]}
+     *
+     * @returns {Tool[]}
      */
 
 
@@ -25582,7 +25925,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * Creates instances via passed or default configuration
-       * @return {Promise}
+       *
+       * @returns {Promise<void>}
        */
       value: function prepare() {
         var _this2 = this;
@@ -25594,7 +25938,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.config.tools = _.deepMerge({}, this.internalTools, this.config.tools);
 
-        if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
+        if (!Object.prototype.hasOwnProperty.call(this.config, 'tools') || Object.keys(this.config.tools).length === 0) {
           throw Error('Can\'t start without tools');
         }
         /**
@@ -25610,11 +25954,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if ((0, _typeof2["default"])(this.config.tools[toolName]) === 'object') {
             /**
              * Save Tool's class from 'class' field
+             *
              * @type {Tool}
              */
             this.toolsClasses[toolName] = this.config.tools[toolName]["class"];
             /**
              * Save Tool's settings
+             *
              * @type {ToolSettings}
              */
 
@@ -25627,11 +25973,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           } else {
             /**
              * Save Tool's class
+             *
              * @type {Tool}
              */
             this.toolsClasses[toolName] = this.config.tools[toolName];
             /**
              * Set empty settings for Block by default
+             *
              * @type {{}}
              */
 
@@ -25654,7 +26002,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return Promise.resolve();
         }
         /**
-         * to see how it works {@link Util#sequence}
+         * to see how it works {@link '../utils.ts#sequence'}
          */
 
 
@@ -25678,7 +26026,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
       }
       /**
-       * @param {ChainData.data} data - append tool to available list
+       * Success callback
+       *
+       * @param {object} data - append tool to available list
        */
 
     }, {
@@ -25687,7 +26037,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
       }
       /**
-       * @param {ChainData.data} data - append tool to unavailable list
+       * Fail callback
+       *
+       * @param {object} data - append tool to unavailable list
        */
 
     }, {
@@ -25698,15 +26050,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Return Tool`s instance
        *
-       * @param {String} tool — tool name
-       * @param {BlockToolData} data — initial data
-       * @return {BlockTool}
+       * @param {string} tool — tool name
+       * @param {object} data — initial data
+       *
+       * @returns {BlockTool}
        */
 
     }, {
       key: "construct",
       value: function construct(tool, data) {
-        var plugin = this.toolsClasses[tool];
+        var Plugin = this.toolsClasses[tool];
         /**
          * Configuration to be passed to the Tool's constructor
          */
@@ -25716,44 +26069,40 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (tool === this.config.initialBlock && !config.placeholder) {
           config.placeholder = this.config.placeholder;
         }
-        /**
-         * @type {{api: API, config: ({}), data: BlockToolData}}
-         */
-
 
         var constructorOptions = {
           api: this.Editor.API.methods,
           config: config,
           data: data
         };
-        return new plugin(constructorOptions);
+        return new Plugin(constructorOptions);
       }
       /**
        * Return Inline Tool's instance
        *
-       * @param {InlineTool} tool
-       * @param {ToolSettings} toolSettings
-       * @return {InlineTool} — instance
+       * @param {InlineTool} tool - Inline Tool instance
+       * @param {ToolSettings} toolSettings - tool settings
+       *
+       * @returns {InlineTool} — instance
        */
 
     }, {
       key: "constructInline",
       value: function constructInline(tool) {
         var toolSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        /**
-         * @type {{api: API}}
-         */
         var constructorOptions = {
           api: this.Editor.API.methods,
           config: toolSettings[this.USER_SETTINGS.CONFIG] || {}
-        };
+        }; // eslint-disable-next-line new-cap
+
         return new tool(constructorOptions);
       }
       /**
        * Check if passed Tool is an instance of Initial Block Tool
+       *
        * @param {Tool} tool - Tool to check
-       * @return {Boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -25763,8 +26112,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return Tool's config by name
-       * @param {string} toolName
-       * @return {ToolSettings}
+       *
+       * @param {string} toolName - name of tool
+       *
+       * @returns {ToolSettings}
        */
 
     }, {
@@ -25773,17 +26124,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return this.toolsSettings[toolName];
       }
       /**
-       * Binds prepare function of plugins with user or default config
-       * @return {Array} list of functions that needs to be fired sequentially
+       * Returns internal tools
+       * Includes Bold, Italic, Link and Paragraph
        */
 
     }, {
       key: "getListOfPrepareFunctions",
+
+      /**
+       * Binds prepare function of plugins with user or default config
+       *
+       * @returns {Array} list of functions that needs to be fired sequentially
+       */
       value: function getListOfPrepareFunctions() {
         var toolPreparationList = [];
 
         for (var toolName in this.toolsClasses) {
-          if (this.toolsClasses.hasOwnProperty(toolName)) {
+          if (Object.prototype.hasOwnProperty.call(this.toolsClasses, toolName)) {
             var toolClass = this.toolsClasses[toolName];
 
             if (typeof toolClass.prepare === 'function') {
@@ -25816,7 +26173,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Check Tools for a class containing
          */
         for (var toolName in this.config.tools) {
-          if (this.config.tools.hasOwnProperty(toolName)) {
+          if (Object.prototype.hasOwnProperty.call(this.config.tools, toolName)) {
             if (toolName in this.internalTools) {
               return;
             }
@@ -25829,11 +26186,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
       }
-      /**
-       * Returns internal tools
-       * Includes Bold, Italic, Link and Paragraph
-       */
-
     }, {
       key: "available",
       get: function get() {
@@ -25841,7 +26193,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns unavailable Tools
-       * @return {Tool[]}
+       *
+       * @returns {Tool[]}
        */
 
     }, {
@@ -25851,7 +26204,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return Tools for the Inline Toolbar
-       * @return {Object} - object of Inline Tool's classes
+       *
+       * @returns {object} - object of Inline Tool's classes
        */
 
     }, {
@@ -25865,7 +26219,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var tools = Object.entries(this.available).filter(function (_ref2) {
           var _ref3 = (0, _slicedToArray2["default"])(_ref2, 2),
-              name = _ref3[0],
               tool = _ref3[1];
 
           if (!tool[_this3.INTERNAL_SETTINGS.IS_INLINE]) {
@@ -25899,7 +26252,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               name = _ref5[0],
               tool = _ref5[1];
 
-          return result[name] = tool;
+          result[name] = tool;
         });
         /**
          * Cache prepared Tools
@@ -25917,10 +26270,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       get: function get() {
         var _this4 = this;
 
-        // eslint-disable-next-line no-unused-vars
         var tools = Object.entries(this.available).filter(function (_ref6) {
           var _ref7 = (0, _slicedToArray2["default"])(_ref6, 2),
-              name = _ref7[0],
               tool = _ref7[1];
 
           return !tool[_this4.INTERNAL_SETTINGS.IS_INLINE];
@@ -25935,14 +26286,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               name = _ref9[0],
               tool = _ref9[1];
 
-          return result[name] = tool;
+          result[name] = tool;
         });
         return result;
       }
       /**
        * Constant for available Tools internal settings provided by Tool developer
        *
-       * @return {object}
+       * @returns {object}
        */
 
     }, {
@@ -26038,6 +26389,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _module = _interopRequireDefault(_module);
   _codexTooltip = _interopRequireDefault(_codexTooltip);
 
+  /* eslint-disable jsdoc/no-undefined-types */
+
   /**
    * Use external module CodeX Tooltip
    */
@@ -26053,8 +26406,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _inherits2["default"])(Tooltip, _Module);
 
     /**
-     * @constructor
-     * @param {EditorConfig}
+     * @class
+     * @param {EditorConfig} - Editor's config
      */
     function Tooltip(_ref) {
       var _this;
@@ -26066,6 +26419,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }));
       /**
        * Tooltips lib: CodeX Tooltips
+       *
        * @see https://github.com/codex-team/codex.tooltips
        */
 
@@ -26159,6 +26513,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _block = _interopRequireDefault(_block);
   _flipper = _interopRequireDefault(_flipper);
 
+  /* eslint-disable jsdoc/no-undefined-types */
+
   /**
    * Prebuilded sprite of SVG icons
    */
@@ -26181,8 +26537,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * @typedef {UI} UI
    * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
-   * @property {Object} Editor         - available editor modules {@link EditorJS#moduleInstances}
-   * @property {Object} nodes          -
+   * @property {object} Editor         - available editor modules {@link EditorJS#moduleInstances}
+   * @property {object} nodes          -
    * @property {Element} nodes.holder  - element where we need to append redactor
    * @property {Element} nodes.wrapper  - <codex-editor>
    * @property {Element} nodes.redactor - <ce-redactor>
@@ -26199,6 +26555,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(UI).apply(this, arguments));
       /**
        * Flag that became true on mobile viewport
+       *
        * @type {boolean}
        */
 
@@ -26215,6 +26572,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Cache for center column rectangle info
        * Invalidates on window resize
+       *
        * @type {DOMRect}
        */
 
@@ -26226,6 +26584,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.listenerIds = [];
       /**
        * Handle window resize only when it finished
+       *
        * @type {() => void}
        */
 
@@ -26233,33 +26592,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _this.windowResize();
       }, 200);
       /**
-       * All keydowns on document
-       * @param {Event} event
-       */
-
-      _this.documentKeydown = function (event) {
-        switch (event.keyCode) {
-          case _.keyCodes.ENTER:
-            _this.enterPressed(event);
-
-            break;
-
-          case _.keyCodes.BACKSPACE:
-            _this.backspacePressed(event);
-
-            break;
-
-          default:
-            _this.defaultBehaviour(event);
-
-            break;
-        }
-      };
-      /**
        * All clicks on document
-       * @param {MouseEvent} event - Click
+       *
+       * @param {MouseEvent} event - Click event
        */
-
 
       _this.documentClicked = function (event) {
         /**
@@ -26319,6 +26655,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Also:
        * - Move and show the Toolbar
        * - Set a Caret
+       *
+       * @param {MouseEvent | TouchEvent} event - touch or mouse event
        */
 
 
@@ -26373,7 +26711,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * All clicks on the redactor zone
        *
-       * @param {MouseEvent} event
+       * @param {MouseEvent} event - click event
        *
        * @description
        * - By clicks on the Editor's bottom zone:
@@ -26433,7 +26771,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Handle selection changes on mobile devices
        * Uses for showing the Inline Toolbar
-       * @param {Event} event
+       *
+       * @param {Event} event - selection event
        */
 
 
@@ -26470,7 +26809,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Editor.js UI CSS class names
-     * @return {{editorWrapper: string, editorZone: string}}
+     *
+     * @returns {{editorWrapper: string, editorZone: string}}
      */
 
 
@@ -26592,7 +26932,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Check if one of Toolbar is opened
        * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -26632,6 +26973,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Makes Editor.js interface
+       *
+       * @returns {Promise<void>}
        */
 
     }, {
@@ -26639,6 +26982,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function make() {
         /**
          * Element where we need to append Editor.js
+         *
          * @type {Element}
          */
         this.nodes.holder = _dom["default"].getHolder(this.config.holder);
@@ -26762,8 +27106,32 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.checkIsMobile();
       }
       /**
+       * All keydowns on document
+       *
+       * @param {KeyboardEvent} event - keyboard event
+       */
+
+    }, {
+      key: "documentKeydown",
+      value: function documentKeydown(event) {
+        switch (event.keyCode) {
+          case _.keyCodes.ENTER:
+            this.enterPressed(event);
+            break;
+
+          case _.keyCodes.BACKSPACE:
+            this.backspacePressed(event);
+            break;
+
+          default:
+            this.defaultBehaviour(event);
+            break;
+        }
+      }
+      /**
        * Ignore all other document's keydown events
-       * @param {KeyboardEvent} event
+       *
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
@@ -26792,7 +27160,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.Toolbar.close();
       }
       /**
-       * @param {KeyboardEvent} event
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
@@ -26822,7 +27190,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Enter pressed on document
-       * @param event
+       *
+       * @param {KeyboardEvent} event - keyboard event
        */
 
     }, {
@@ -26910,7 +27279,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return Width of center column of Editor
-       * @return {DOMRect}
+       *
+       * @returns {DOMRect}
        */
 
     }, {
@@ -26999,7 +27369,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * would be selected by the specified selector string;
    * otherwise, returns false.
    *
-   * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
+   *
+   * @param {string} s - selector
    */
 
   if (!Element.prototype.matches) {
@@ -27018,12 +27390,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * matches the selectors given in parameter.
    * If there isn't such an ancestor, it returns null.
    *
-   * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
+   *
+   * @param {string} s - selector
    */
 
 
   if (!Element.prototype.closest) {
     Element.prototype.closest = function (s) {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       var el = this;
 
       if (!document.documentElement.contains(el)) {
@@ -27046,7 +27421,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * or DOMString objects before the first child of the ParentNode.
    * DOMString objects are inserted as equivalent Text nodes.
    *
-   * {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
+   *
+   * @param {Node | Node[] | string | string[]} nodes - nodes to prepend
    */
 
 
@@ -27060,7 +27437,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       nodes.forEach(function (node) {
         var isNode = node instanceof Node;
-        docFrag.appendChild(isNode ? node : document.createTextNode(String(node)));
+        docFrag.appendChild(isNode ? node : document.createTextNode(node));
       });
       this.insertBefore(docFrag, this.firstChild);
     };
@@ -27105,6 +27482,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   /**
    * Working with selection
+   *
    * @typedef {SelectionUtils} SelectionUtils
    */
   var SelectionUtils =
@@ -27112,10 +27490,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   function () {
     function SelectionUtils() {
       (0, _classCallCheck2["default"])(this, SelectionUtils);
+
+      /**
+       * Selection instances
+       *
+       * @todo Check if this is still relevant
+       */
       this.instance = null;
       this.selection = null;
       /**
        * This property can store SelectionUtils's range for restoring later
+       *
        * @type {Range|null}
        */
 
@@ -27123,7 +27508,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Fake background is active
        *
-       * @return {boolean}
+       * @returns {boolean}
        */
 
       this.isFakeBackgroundEnabled = false;
@@ -27136,7 +27521,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Editor styles
-     * @return {{editorWrapper: string, editorZone: string}}
+     *
+     * @returns {{editorWrapper: string, editorZone: string}}
      */
 
 
@@ -27214,10 +27600,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Looks ahead to find passed tag from current selection
        *
-       * @param  {String} tagName       - tag to found
-       * @param  {String} [className]   - tag's class name
-       * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
-       * @return {HTMLElement|null}
+       * @param  {string} tagName       - tag to found
+       * @param  {string} [className]   - tag's class name
+       * @param  {number} [searchDepth] - count of tags that can be included. For better performance.
+       *
+       * @returns {HTMLElement|null}
        */
 
     }, {
@@ -27295,7 +27682,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Expands selection range to the passed parent node
        *
-       * @param {HTMLElement} element
+       * @param {HTMLElement} element - element which contents should be selcted
        */
 
     }, {
@@ -27313,7 +27700,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Returns window SelectionUtils
        * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-       * @return {Selection}
+       *
+       * @returns {Selection}
        */
       value: function get() {
         return window.getSelection();
@@ -27329,7 +27717,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Returns selected anchor
        * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-       * @return {Node|null}
+       *
+       * @returns {Node|null}
        */
 
     }, {
@@ -27340,7 +27729,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns selected anchor element
-       * @return {Element|null}
+       *
+       * @returns {Element|null}
        */
 
     }, {
@@ -27367,7 +27757,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Returns selection offset according to the anchor node
        * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-       * @return {Number|null}
+       *
+       * @returns {number|null}
        */
 
     }, {
@@ -27378,7 +27769,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Is current selection range collapsed
-       * @return {boolean|null}
+       *
+       * @returns {boolean|null}
        */
 
     }, {
@@ -27389,7 +27781,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Check current selection if it is at Editor's zone
-       * @return {boolean}
+       *
+       * @returns {boolean}
        */
 
     }, {
@@ -27420,7 +27813,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return first range
-       * @return {Range|null}
+       *
+       * @returns {Range|null}
        */
 
     }, {
@@ -27431,7 +27825,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Calculates position and size of selected text
-       * @return {{x, y, width, height, top?, left?, bottom?, right?}}
+       *
+       * @returns {DOMRect | ClientRect}
        */
 
     }, {
@@ -27501,6 +27896,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns selected text as String
+       *
        * @returns {string}
        */
 
@@ -27567,17 +27963,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
 
+  /**
+   *
+   */
   var Stub =
   /*#__PURE__*/
   function () {
+    /**
+     * @param {BlockToolData} data - stub tool data
+     */
     function Stub(_ref) {
-      var data = _ref.data,
-          config = _ref.config,
-          api = _ref.api;
+      var data = _ref.data;
       (0, _classCallCheck2["default"])(this, Stub);
 
       /**
        * Stub styles
+       *
        * @type {{wrapper: string; info: string; title: string; subtitle: string}}
        */
       this.CSS = {
@@ -27593,7 +27994,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
     /**
      * Returns stub holder
-     * @return {HTMLElement}
+     *
+     * @returns {HTMLElement}
      */
 
 
@@ -27604,7 +28006,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Return original Tool data
-       * @return {BlockToolData}
+       *
+       * @returns {BlockToolData}
        */
 
     }, {
@@ -27614,7 +28017,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Create Tool html markup
-       * @return {HTMLElement}
+       *
+       * @returns {HTMLElement}
        */
 
     }, {
@@ -27688,8 +28092,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.copyTextToClipboard = copyTextToClipboard;
   _exports.getUserOS = getUserOS;
   _exports.capitalize = capitalize;
-  _exports.deepMerge = deepMerge;
   _exports.typeOf = typeOf;
+  _exports.deepMerge = deepMerge;
   _exports.beautifyShortcut = beautifyShortcut;
   _exports.getValidUrl = getValidUrl;
   _exports.openTab = openTab;
@@ -27720,7 +28124,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   /**
    * Returns basic keycodes as constants
-   * @return {{}}
+   *
+   * @returns {{}}
    */
 
 
@@ -27760,14 +28165,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @param {string} type - logging type 'log'|'warn'|'error'|'info'
    * @param {*} [args]      - argument to log with a message
    * @param {string} style  - additional styling to message
-   * @param labeled
    */
 
   _exports.mouseButtons = mouseButtons;
 
   function _log(labeled, msg) {
     var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'log';
-    var args = arguments.length > 3 ? arguments[3] : undefined;
+    var // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    args = arguments.length > 3 ? arguments[3] : undefined;
     var style = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'color: inherit';
 
     if (!('console' in window) || !window.console[type]) {
@@ -27804,7 +28209,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       argsToPass.push(args);
     }
 
-    var editorLabelText = "Editor.js ".concat("2.17.0");
+    var editorLabelText = "Editor.js ".concat("2.18.0");
     var editorLabelStyle = "line-height: 1em;\n            color: #006FEA;\n            display: inline-block;\n            font-size: 11px;\n            line-height: 1em;\n            background-color: #fff;\n            padding: 4px 9px;\n            border-radius: 30px;\n            border: 1px solid rgba(56, 138, 229, 0.16);\n            margin: 4px 5px 4px 0;";
 
     if (labeled) {
@@ -27861,8 +28266,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   var logLabeled = _log.bind(window, true);
   /**
    * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
-   * @param {number} keyCode
-   * @return {boolean}
+   *
+   * @param {number} keyCode - key code
+   *
+   * @returns {boolean}
    */
 
 
@@ -27877,13 +28284,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     keyCode > 218 && keyCode < 223; // [\]' (in order)
   }
   /**
-   * Fires a promise sequence asyncronically
+   * Fires a promise sequence asynchronously
    *
    * @param {ChainData[]} chains - list or ChainData's
    * @param {Function} success - success callback
    * @param {Function} fallback - callback that fires in case of errors
    *
-   * @return {Promise}
+   * @returns {Promise}
    */
 
 
@@ -27928,8 +28335,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
             success = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : function () {};
             fallback = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : function () {};
-            _context3.next = 5;
-            return _index["default"].awrap(chains.reduce(function _callee(previousValue, currentValue) {
+            return _context3.abrupt("return", chains.reduce(function _callee(previousValue, currentValue) {
               return _index["default"].async(function _callee$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
@@ -27948,10 +28354,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               });
             }, Promise.resolve()));
 
-          case 5:
-            return _context3.abrupt("return", _context3.sent);
-
-          case 6:
+          case 4:
           case "end":
             return _context3.stop();
         }
@@ -27961,10 +28364,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Make array from array-like collection
    *
-   * @param {ArrayLike} collection
+   * @param {ArrayLike} collection - collection to convert to array
    *
-   * @return {Array}
+   * @returns {Array}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 
   function array(collection) {
@@ -27972,9 +28376,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Check if passed variable is a function
-   * @param {*} fn
-   * @return {boolean}
+   *
+   * @param {*} fn - function to check
+   *
+   * @returns {boolean}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 
   function isFunction(fn) {
@@ -27982,9 +28389,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Check if passed function is a class
-   * @param {function} fn
-   * @return {boolean}
+   *
+   * @param {Function} fn - function to check
+   *
+   * @returns {boolean}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 
   function isClass(fn) {
@@ -27993,8 +28403,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Checks if object is empty
    *
-   * @param {Object} object
-   * @return {boolean}
+   * @param {object} object - object to check
+   *
+   * @returns {boolean}
    */
 
 
@@ -28007,9 +28418,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Check if passed object is a Promise
+   *
    * @param  {*}  object - object to check
-   * @return {Boolean}
+   * @returns {boolean}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 
   function isPromise(object) {
@@ -28018,15 +28431,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Delays method execution
    *
-   * @param {Function} method
-   * @param {Number} timeout
+   * @param {Function} method - method to execute
+   * @param {number} timeout - timeout in ms
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 
   function delay(method, timeout) {
     return function () {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       var context = this,
-          args = arguments;
+          // eslint-disable-next-line prefer-rest-params
+      args = arguments;
       window.setTimeout(function () {
         return method.apply(context, args);
       }, timeout);
@@ -28035,8 +28451,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Get file extension
    *
-   * @param {File} file
-   * @return string
+   * @param {File} file - file
+   *
+   * @returns {string}
    */
 
 
@@ -28046,8 +28463,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Check if string is MIME type
    *
-   * @param {string} type
-   * @return boolean
+   * @param {string} type - string to check
+   *
+   * @returns {boolean}
    */
 
 
@@ -28061,9 +28479,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * Note that this method returns Function and declared variable need to be called
    *
    * @param {Function} func - function that we're throttling
-   * @param {Number} wait - time in milliseconds
-   * @param {Boolean} immediate - call now
-   * @return {Function}
+   * @param {number} wait - time in milliseconds
+   * @param {boolean} immediate - call now
+   * @returns {Function}
    */
 
 
@@ -28073,8 +28491,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     var timeout;
     return function () {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       var context = _this,
-          args = _arguments;
+          // eslint-disable-next-line prefer-rest-params
+      args = _arguments; // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 
       var later = function later() {
         timeout = null;
@@ -28095,7 +28515,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Copies passed text to the clipboard
-   * @param text
+   *
+   * @param text - text to copy
    */
 
 
@@ -28115,8 +28536,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Returns object with os name as key and boolean as value. Shows current user OS
-   *
-   * @return {[key: string]: boolean}
    */
 
 
@@ -28140,8 +28559,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }
   /**
    * Capitalizes first letter of the string
-   * @param {string} text
-   * @return {string}
+   *
+   * @param {string} text - text to capitalize
+   *
+   * @returns {string}
    */
 
 
@@ -28149,10 +28570,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     return text[0].toUpperCase() + text.slice(1);
   }
   /**
+   * Return string representation of the object type
+   *
+   * @param {*} object - object to get type
+   *
+   * @returns {string}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function typeOf(object) {
+    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  }
+  /**
    * Merge to objects recursively
-   * @param {object} target
-   * @param {object[]} sources
-   * @return {object}
+   *
+   * @param {object} target - merge target
+   * @param {object[]} sources - merge sources
+   * @returns {object}
    */
 
 
@@ -28192,29 +28627,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    *
    * Note! This is a simple solution, it can give false-positive results.
    * To detect touch devices more carefully, use 'touchstart' event listener
+   *
    * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
 
 
   var isTouchSupported = 'ontouchstart' in document.documentElement;
   /**
-   * Return string representation of the object type
-   *
-   * @param {any} object
-   */
-
-  _exports.isTouchSupported = isTouchSupported;
-
-  function typeOf(object) {
-    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
-  }
-  /**
    * Make shortcut command more human-readable
+   *
    * @param {string} shortcut — string like 'CMD+B'
    */
 
+  _exports.isTouchSupported = isTouchSupported;
 
   function beautifyShortcut(shortcut) {
     var OS = getUserOS();
@@ -28233,7 +28660,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * If url has `one slash`, then it concatenates with window location origin
    * or when url has `two lack` it appends only protocol
    *
-   * @param {String} url
+   * @param {string} url - url to prettify
    */
 
 
@@ -28253,7 +28680,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Opens new Tab with passed URL
    *
-   * @param {String} url - URL address to redirect
+   * @param {string} url - URL address to redirect
    */
 
 

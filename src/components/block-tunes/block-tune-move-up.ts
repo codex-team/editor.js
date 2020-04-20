@@ -5,18 +5,22 @@
  * @copyright <CodeX Team> 2018
  */
 import $ from '../dom';
-import {API, BlockTune} from '../../../types';
+import { API, BlockTune } from '../../../types';
 
+/**
+ *
+ */
 export default class MoveUpTune implements BlockTune {
-
   /**
    * Property that contains Editor.js API methods
-   * @see {api.md}
+   *
+   * @see {@link docs/api.md}
    */
   private readonly api: API;
 
   /**
    * Styles
+   *
    * @type {{wrapper: string}}
    */
   private CSS = {
@@ -28,24 +32,26 @@ export default class MoveUpTune implements BlockTune {
   /**
    * MoveUpTune constructor
    *
-   * @param {{api: API}} api
+   * @param {API} api - Editor's API
    */
-  public constructor({api}) {
+  constructor({ api }) {
     this.api = api;
   }
 
   /**
    * Create "MoveUp" button and add click event listener
-   * @returns [HTMLElement}
+   *
+   * @returns {HTMLElement}
    */
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
+
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
     this.api.listeners.on(
       moveUpButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveUpButton),
-      false,
+      false
     );
 
     /**
@@ -58,19 +64,20 @@ export default class MoveUpTune implements BlockTune {
 
   /**
    * Move current block up
-   * @param {MouseEvent} event
-   * @param {HTMLElement} button
+   *
+   * @param {MouseEvent} event - click event
+   * @param {HTMLElement} button - clicked button
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
-
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     if (currentBlockIndex === 0) {
       button.classList.add(this.CSS.animation);
 
-      window.setTimeout( () => {
+      window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
       }, 500);
+
       return;
     }
 
@@ -86,7 +93,7 @@ export default class MoveUpTune implements BlockTune {
      *      than we scroll window to the difference between this offsets.
      */
     const currentBlockCoords = currentBlockElement.getBoundingClientRect(),
-      previousBlockCoords = previousBlockElement.getBoundingClientRect();
+        previousBlockCoords = previousBlockElement.getBoundingClientRect();
 
     let scrollUpOffset;
 

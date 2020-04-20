@@ -1,5 +1,5 @@
 import $ from '../dom';
-import {InlineTool, SanitizerConfig} from '../../../types';
+import { InlineTool, SanitizerConfig } from '../../../types';
 
 /**
  * Italic Tool
@@ -9,25 +9,25 @@ import {InlineTool, SanitizerConfig} from '../../../types';
  * Style selected text with italic
  */
 export default class ItalicInlineTool implements InlineTool {
-
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public static isInline = true;
 
   /**
    * Title for hover-tooltip
    */
-  public static title: string = 'Italic';
+  public static title = 'Italic';
 
   /**
    * Sanitizer Rule
    * Leave <i> tags
-   * @return {object}
+   *
+   * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       i: {},
     } as SanitizerConfig;
@@ -62,12 +62,14 @@ export default class ItalicInlineTool implements InlineTool {
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('italic', 4, 11));
+
     return this.nodes.button;
   }
 
   /**
    * Wrap range with <i> tag
-   * @param {Range} range
+   *
+   * @param {Range} range - range to wrap
    */
   public surround(range: Range): void {
     document.execCommand(this.commandName);
@@ -75,12 +77,14 @@ export default class ItalicInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <i> tag
-   * @param {Selection} selection
+   *
+   * @param {Selection} selection - selection to check
    */
   public checkState(selection: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
+
     return isActive;
   }
 

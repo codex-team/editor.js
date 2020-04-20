@@ -96,8 +96,9 @@ body {
   display: inline-flex;
   margin: 20px auto;
   background: #4A9DF8;
-  padding: 15px 20px;
-  box-shadow: 0 6px 4px -4px rgba(137, 207, 255, 0.77);
+  padding: 17px 30px;
+  box-shadow: 0 22px 18px -4px rgba(137, 207, 255, 0.77);
+  transition: all 150ms ease;
   cursor: pointer;
   border-radius: 31px;
   color: #fff;
@@ -107,6 +108,8 @@ body {
 
 .ce-example__button:hover {
   background: #3D8DE5;
+  transform: translateY(2px);
+  box-shadow: 0 20px 15px -4px rgba(137, 207, 255, 0.77);
 }
 
 .ce-example__output-footer {

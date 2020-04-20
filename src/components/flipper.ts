@@ -3,6 +3,8 @@ import * as _ from './utils';
 
 /**
  * Flipper construction options
+ *
+ * @interface FlipperOptions
  */
 export interface FlipperOptions {
   /**
@@ -36,21 +38,23 @@ export interface FlipperOptions {
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
-
   /**
    * Instance of flipper iterator
+   *
    * @type {DomIterator|null}
    */
   private readonly iterator: DomIterator = null;
 
   /**
    * Flag that defines activation status
+   *
    * @type {boolean}
    */
-  private activated: boolean = false;
+  private activated = false;
 
   /**
    * Flag that allows arrows usage to flip items
+   *
    * @type {boolean}
    */
   private readonly allowArrows: boolean = true;
@@ -61,10 +65,9 @@ export default class Flipper {
   private readonly activateCallback: () => void;
 
   /**
-   * @constructor
+   * @class
    *
    * @param {FlipperOptions} options - different constructing settings
-   * @
    */
   constructor(options: FlipperOptions) {
     this.allowArrows = typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
@@ -113,7 +116,7 @@ export default class Flipper {
   /**
    * Array of keys (codes) that is handled by Flipper
    * Used to:
-   *  - preventDefault only for this keys, not all keywdowns (@see constructor)
+   *  - preventDefault only for this keys, not all keydowns (@see constructor)
    *  - to skip external behaviours only for these keys, when filler is activated (@see BlockEvents@arrowRightAndDown)
    */
   public static get usedKeys(): number[] {
@@ -129,6 +132,7 @@ export default class Flipper {
 
   /**
    * Active tab/arrows handling by flipper
+   *
    * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
    */
   public activate(items?: HTMLElement[]): void {
@@ -149,7 +153,8 @@ export default class Flipper {
 
   /**
    * Return current focused button
-   * @return {HTMLElement|null}
+   *
+   * @returns {HTMLElement|null}
    */
   public get currentItem(): HTMLElement|null {
     return this.iterator.currentItem;
@@ -165,6 +170,7 @@ export default class Flipper {
 
   /**
    * Drops flipper's iterator cursor
+   *
    * @see DomIterator#dropCursor
    */
   private dropCursor(): void {
@@ -174,8 +180,9 @@ export default class Flipper {
   /**
    * This function is fired before handling flipper keycodes
    * The result of this function defines if it is need to be handled or not
-   * @param {KeyboardEvent} event
-   * @return {boolean}
+   *
+   * @param {KeyboardEvent} event - keydown keyboard event
+   * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
     const handlingKeyCodeList = [
@@ -188,7 +195,7 @@ export default class Flipper {
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
         _.keyCodes.UP,
-        _.keyCodes.DOWN,
+        _.keyCodes.DOWN
       );
     }
 
@@ -201,12 +208,13 @@ export default class Flipper {
 
   /**
    * When flipper is activated tab press will leaf the items
-   * @param {KeyboardEvent} event
+   *
+   * @param {KeyboardEvent} event - tab keydown event
    */
   private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
     const shiftKey = event.shiftKey,
-      direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
+        direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
 
     switch (direction) {
       case DomIterator.directions.RIGHT:
@@ -234,7 +242,8 @@ export default class Flipper {
 
   /**
    * Enter press will click current item if flipper is activated
-   * @param {KeyboardEvent} event
+   *
+   * @param {KeyboardEvent} event - enter keydown event
    */
   private handleEnterPress(event: KeyboardEvent): void {
     if (!this.activated) {

@@ -1,12 +1,14 @@
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
+/**
+ *
+ */
 export default class DragNDrop extends Module {
-
   /**
    * If drag has been started at editor, we save it
    *
-   * @type Boolean
+   * @type {boolean}
    * @private
    */
   private isStartedAtEditor = false;
@@ -18,8 +20,6 @@ export default class DragNDrop extends Module {
 
   /**
    * Bind events
-   *
-   * @private
    */
   public prepare(): void {
     this.toggleReadOnly(this.config.readOnly);
@@ -40,6 +40,7 @@ export default class DragNDrop extends Module {
 
   /**
    * Add drag events listeners to editor zone
+   *
    * @private
    */
   private bindEvents(): void {
@@ -71,7 +72,7 @@ export default class DragNDrop extends Module {
   /**
    * Handle drop event
    *
-   * @param {DragEvent} dropEvent
+   * @param {DragEvent} dropEvent - drop event
    */
   private processDrop = async (dropEvent: DragEvent): Promise<void> => {
     const {
@@ -82,7 +83,9 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
-    BlockManager.blocks.forEach((block) => block.dropTarget = false);
+    BlockManager.blocks.forEach((block) => {
+      block.dropTarget = false;
+    });
 
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
       document.execCommand('delete');

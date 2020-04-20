@@ -1,8 +1,9 @@
 import Module from '../__module';
+/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
-import {ChainData} from '../utils';
-import {BlockToolData} from '../../../types';
-import {BlockToolConstructable} from '../../../types/tools';
+import { ChainData } from '../utils';
+import { BlockToolData } from '../../../types';
+import { BlockToolConstructable } from '../../../types/tools';
 
 /**
  * Editor.js Renderer Module
@@ -14,9 +15,9 @@ import {BlockToolConstructable} from '../../../types/tools';
  */
 export default class Renderer extends Module {
   /**
-   * @typedef {Object} RendererBlocks
-   * @property {String} type - tool name
-   * @property {Object} data - tool data
+   * @typedef {object} RendererBlocks
+   * @property {string} type - tool name
+   * @property {object} data - tool data
    */
 
   /**
@@ -41,10 +42,11 @@ export default class Renderer extends Module {
 
   /**
    * Make plugin blocks from array of plugin`s data
-   * @param {RendererBlocks[]} blocks
+   *
+   * @param {BlockToolData[]} blocks - blocks to render
    */
   public async render(blocks: BlockToolData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
+    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
@@ -58,9 +60,8 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {Object} item
+   * @param {object} item - Block data to insert
    * @returns {Promise<void>}
-   * @private
    */
   public async insertBlock(item): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
@@ -76,7 +77,6 @@ export default class Renderer extends Module {
         throw Error(error);
       }
     } else {
-
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {

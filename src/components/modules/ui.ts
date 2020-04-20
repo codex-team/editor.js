@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Prebuilded sprite of SVG icons
  */
@@ -28,35 +29,36 @@ import Flipper from '../flipper';
  *
  * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
- * @property {Object} Editor         - available editor modules {@link EditorJS#moduleInstances}
- * @property {Object} nodes          -
+ * @property {object} Editor         - available editor modules {@link EditorJS#moduleInstances}
+ * @property {object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module {
-
   /**
    * Editor.js UI CSS class names
-   * @return {{editorWrapper: string, editorZone: string}}
+   *
+   * @returns {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
-    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
-    editorLoader: string, editorEmpty: string,
-  } {
+    editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
+    editorLoader: string; editorEmpty: string;
+    } {
     return {
-      editorWrapper    : 'codex-editor',
-      editorWrapperNarrow : 'codex-editor--narrow',
-      editorZone       : 'codex-editor__redactor',
-      editorZoneHidden : 'codex-editor__redactor--hidden',
-      editorLoader     : 'codex-editor__loader',
-      editorEmpty      : 'codex-editor--empty',
+      editorWrapper: 'codex-editor',
+      editorWrapperNarrow: 'codex-editor--narrow',
+      editorZone: 'codex-editor__redactor',
+      editorZoneHidden: 'codex-editor__redactor--hidden',
+      editorLoader: 'codex-editor__loader',
+      editorEmpty: 'codex-editor--empty',
     };
   }
 
   /**
    * Return Width of center column of Editor
-   * @return {DOMRect}
+   *
+   * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
     if (this.contentRectCache) {
@@ -83,9 +85,10 @@ export default class UI extends Module {
 
   /**
    * Flag that became true on mobile viewport
+   *
    * @type {boolean}
    */
-  public isMobile: boolean = false;
+  public isMobile = false;
 
   /**
    * HTML Elements used for UI
@@ -99,6 +102,7 @@ export default class UI extends Module {
   /**
    * Cache for center column rectangle info
    * Invalidates on window resize
+   *
    * @type {DOMRect}
    */
   private contentRectCache: DOMRect = undefined;
@@ -110,6 +114,7 @@ export default class UI extends Module {
 
   /**
    * Handle window resize only when it finished
+   *
    * @type {() => void}
    */
   private resizeDebouncer: () => void = _.debounce(() => {
@@ -207,7 +212,7 @@ export default class UI extends Module {
    * Check if Editor is empty and set CSS class to wrapper
    */
   public checkEmptiness(): void {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
   }
@@ -215,7 +220,8 @@ export default class UI extends Module {
   /**
    * Check if one of Toolbar is opened
    * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
     const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
@@ -229,9 +235,10 @@ export default class UI extends Module {
   public get someFlipperButtonFocused(): boolean {
     return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
       return moduleClass.flipper instanceof Flipper;
-    }).some(([moduleName, moduleClass]) => {
-      return moduleClass.flipper.currentItem;
-    });
+    })
+      .some(([moduleName, moduleClass]) => {
+        return moduleClass.flipper.currentItem;
+      });
   }
 
   /**
@@ -256,16 +263,19 @@ export default class UI extends Module {
   /**
    * Check for mobile mode and cache a result
    */
-  private checkIsMobile() {
+  private checkIsMobile(): void {
     this.isMobile = window.innerWidth < 650;
   }
 
   /**
    * Makes Editor.js interface
+   *
+   * @returns {Promise<void>}
    */
   private make() {
     /**
      * Element where we need to append Editor.js
+     *
      * @type {Element}
      */
     this.nodes.holder = $.getHolder(this.config.holder);
@@ -273,7 +283,7 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**
@@ -380,9 +390,10 @@ export default class UI extends Module {
 
   /**
    * All keydowns on document
-   * @param {Event} event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
-  private documentKeydown = (event: KeyboardEvent): void => {
+  private documentKeydown(event: KeyboardEvent): void {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
@@ -398,11 +409,12 @@ export default class UI extends Module {
 
   /**
    * Ignore all other document's keydown events
-   * @param {KeyboardEvent} event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
-    const {currentBlock} = this.Editor.BlockManager;
+    const { currentBlock } = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
@@ -424,13 +436,14 @@ export default class UI extends Module {
   }
 
   /**
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
@@ -449,7 +462,8 @@ export default class UI extends Module {
 
   /**
    * Enter pressed on document
-   * @param event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
@@ -457,6 +471,7 @@ export default class UI extends Module {
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
@@ -470,6 +485,7 @@ export default class UI extends Module {
       event.preventDefault();
       event.stopImmediatePropagation();
       event.stopPropagation();
+
       return;
     }
 
@@ -505,7 +521,8 @@ export default class UI extends Module {
 
   /**
    * All clicks on document
-   * @param {MouseEvent} event - Click
+   *
+   * @param {MouseEvent} event - Click event
    */
   private documentClicked = (event: MouseEvent): void => {
     /**
@@ -558,6 +575,8 @@ export default class UI extends Module {
    * Also:
    * - Move and show the Toolbar
    * - Set a Caret
+   *
+   * @param {MouseEvent | TouchEvent} event - touch or mouse event
    */
   private documentTouched = (event: MouseEvent | TouchEvent): void => {
     let clickedNode = event.target as HTMLElement;
@@ -608,7 +627,7 @@ export default class UI extends Module {
   /**
    * All clicks on the redactor zone
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - click event
    *
    * @description
    * - By clicks on the Editor's bottom zone:
@@ -635,6 +654,7 @@ export default class UI extends Module {
       const validUrl = _.getValidUrl(href);
 
       _.openTab(validUrl);
+
       return;
     }
 
@@ -664,7 +684,8 @@ export default class UI extends Module {
   /**
    * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
-   * @param {Event} event
+   *
+   * @param {Event} event - selection event
    */
   private selectionChanged = (event: Event): void => {
     const focusedElement = Selection.anchorElement as Element;
@@ -674,7 +695,6 @@ export default class UI extends Module {
      * We need to skip such firings
      */
     if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
-
       /**
        * If new selection is not on Inline Toolbar, we need to close it
        */

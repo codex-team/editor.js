@@ -3,7 +3,7 @@ import $ from '../../dom';
 
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} from '../../../../types';
+import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
 import Flipper from '../../flipper';
 
 /**
@@ -14,7 +14,6 @@ import Flipper from '../../flipper';
  * |________________________|
  */
 export default class InlineToolbar extends Module {
-
   /**
    * CSS styles
    */
@@ -37,19 +36,20 @@ export default class InlineToolbar extends Module {
 
   /**
    * State of inline toolbar
+   *
    * @type {boolean}
    */
-  public opened: boolean = false;
+  public opened = false;
 
   /**
    * Inline Toolbar elements
    */
   private nodes: {
-    wrapper: HTMLElement,
-    buttons: HTMLElement,
-    conversionToggler: HTMLElement,
-    conversionTogglerContent: HTMLElement,
-    actions: HTMLElement,
+    wrapper: HTMLElement;
+    buttons: HTMLElement;
+    conversionToggler: HTMLElement;
+    conversionTogglerContent: HTMLElement;
+    actions: HTMLElement;
   } = {
     wrapper: null,
     buttons: null,
@@ -74,15 +74,17 @@ export default class InlineToolbar extends Module {
 
   /**
    * Buttons List
+   *
    * @type {NodeList}
    */
   private buttonsList: NodeList = null;
 
   /**
    * Cache for Inline Toolbar width
+   *
    * @type {number}
    */
-  private width: number = 0;
+  private width = 0;
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
@@ -92,15 +94,15 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar Tools
    *
-   * @returns Map<string, InlineTool>
+   * @returns {Map<string, InlineTool>}
    */
-  get tools(): Map<string, InlineTool> {
+  public get tools(): Map<string, InlineTool> {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
       const allTools = this.inlineTools;
 
       this.toolsInstances = new Map();
       for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
+        if (Object.prototype.hasOwnProperty.call(allTools, tool)) {
           this.toolsInstances.set(tool, allTools[tool]);
         }
       }
@@ -112,7 +114,7 @@ export default class InlineToolbar extends Module {
   /**
    * Making DOM
    */
-  public make() {
+  public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -169,14 +171,16 @@ export default class InlineToolbar extends Module {
 
   /**
    * Shows Inline Toolbar if something is selected
+   *
    * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
    */
-  public tryToShow(needToClose: boolean = false): void {
+  public tryToShow(needToClose = false): void {
     if (!this.allowedToShow()) {
       if (needToClose) {
         this.close();
       }
+
       return;
     }
 
@@ -196,11 +200,11 @@ export default class InlineToolbar extends Module {
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
-      y: selectionRect.y
-        + selectionRect.height
+      y: selectionRect.y +
+        selectionRect.height -
         // + window.scrollY
-        - wrapperOffset.top
-        + this.toolbarVerticalMargin,
+        wrapperOffset.top +
+        this.toolbarVerticalMargin,
     };
 
     /**
@@ -222,12 +226,12 @@ export default class InlineToolbar extends Module {
      */
     this.nodes.wrapper.classList.toggle(
       this.CSS.inlineToolbarLeftOriented,
-      realLeftCoord < this.Editor.UI.contentRect.left,
+      realLeftCoord < this.Editor.UI.contentRect.left
     );
 
     this.nodes.wrapper.classList.toggle(
       this.CSS.inlineToolbarRightOriented,
-      realRightCoord > this.Editor.UI.contentRect.right,
+      realRightCoord > this.Editor.UI.contentRect.right
     );
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
@@ -331,7 +335,7 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const target = !$.isElement(currentSelection.anchorNode )
+    const target = !$.isElement(currentSelection.anchorNode)
       ? currentSelection.anchorNode.parentElement
       : currentSelection.anchorNode;
 
@@ -363,13 +367,14 @@ export default class InlineToolbar extends Module {
    */
   private filterTools(): void {
     const currentSelection = SelectionUtils.get(),
-      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+        currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+        inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
 
     /**
      * All Inline Toolbar buttons
+     *
      * @type {HTMLElement[]}
      */
     const buttons = Array.from(this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`)) as HTMLElement[];
@@ -458,7 +463,7 @@ export default class InlineToolbar extends Module {
    * Changes Conversion Dropdown content for current block's Tool
    */
   private setConversionTogglerContent(): void {
-    const {BlockManager, Tools} = this.Editor;
+    const { BlockManager, Tools } = this.Editor;
     const toolName = BlockManager.currentBlock.name;
 
     /**
@@ -478,11 +483,11 @@ export default class InlineToolbar extends Module {
     const userToolboxSettings = toolSettings.toolbox || {};
 
     this.nodes.conversionTogglerContent.innerHTML =
-      userToolboxSettings.icon
-      || toolboxSettings.icon
-      || userToolboxSettings.title
-      || toolboxSettings.title
-      || _.capitalize(toolName);
+      userToolboxSettings.icon ||
+      toolboxSettings.icon ||
+      userToolboxSettings.title ||
+      toolboxSettings.title ||
+      _.capitalize(toolName);
   }
 
   /**
@@ -510,6 +515,9 @@ export default class InlineToolbar extends Module {
 
   /**
    * Add tool button and activate clicks
+   *
+   * @param {string} toolName - name of Tool to add
+   * @param {InlineTool} tool - Tool class instance
    */
   private addTool(toolName: string, tool: InlineTool): void {
     const {
@@ -522,6 +530,7 @@ export default class InlineToolbar extends Module {
 
     if (!button) {
       _.log('Render method must return an instance of Node', 'warn', toolName);
+
       return;
     }
 
@@ -530,6 +539,7 @@ export default class InlineToolbar extends Module {
 
     if (typeof tool.renderActions === 'function') {
       const actions = tool.renderActions();
+
       this.nodes.actions.appendChild(actions);
     }
 
@@ -551,14 +561,14 @@ export default class InlineToolbar extends Module {
      */
     const internalTools: string[] = Object
       .entries(Tools.internalTools)
-      .filter(([name, toolClass]: [string, ToolConstructable | ToolSettings]) => {
+      .filter(([, toolClass]: [string, ToolConstructable | ToolSettings]) => {
         if (_.isFunction(toolClass)) {
           return toolClass[Tools.INTERNAL_SETTINGS.IS_INLINE];
         }
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([ name ]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
@@ -592,11 +602,11 @@ export default class InlineToolbar extends Module {
       placement: 'top',
       hidingDelay: 100,
     });
-
   }
 
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
+   *
    * @param {InlineTool} tool - Tool instance
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
@@ -604,7 +614,7 @@ export default class InlineToolbar extends Module {
     this.Editor.Shortcuts.add({
       name: shortcut,
       handler: (event) => {
-        const {currentBlock} = this.Editor.BlockManager;
+        const { currentBlock } = this.Editor.BlockManager;
 
         /**
          * Editor is not focused
@@ -618,7 +628,7 @@ export default class InlineToolbar extends Module {
          * it can be used by tools like «Mention» that works without selection:
          * Example: by SHIFT+@ show dropdown and insert selected username
          */
-          // if (SelectionUtils.isCollapsed) return;
+        // if (SelectionUtils.isCollapsed) return;
 
         const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
@@ -634,6 +644,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * Inline Tool button clicks
+   *
    * @param {InlineTool} tool - Tool's instance
    */
   private toolClicked(tool: InlineTool): void {
@@ -660,7 +671,7 @@ export default class InlineToolbar extends Module {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {
-      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+      if (Object.prototype.hasOwnProperty.call(this.Editor.Tools.inline, tool)) {
         const toolSettings = this.Editor.Tools.getToolSettings(tool);
 
         result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
