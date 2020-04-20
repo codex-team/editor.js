@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import i18n from '../../i18n';
+import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
@@ -133,7 +133,7 @@ export default class Toolbar extends Module {
      */
     const tooltipContent = $.make('div');
 
-    tooltipContent.appendChild(document.createTextNode(i18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
+    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
     tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
       textContent: '⇥ Tab',
     }));
@@ -161,7 +161,7 @@ export default class Toolbar extends Module {
 
     this.Editor.Tooltip.onHover(
       this.nodes.settingsToggler,
-      i18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
         placement: 'top',
       }

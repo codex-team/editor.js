@@ -590,7 +590,7 @@ export default class InlineToolbar extends Module {
      */
     const tooltipContent = $.make('div');
     const toolTitle = I18n.t(
-      'toolNames',
+      I18nInternalNS.toolNames,
       Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName)
     );
 

@@ -60,8 +60,8 @@ export default class I18n {
   private static _t(namespace: string, dictKey: string): string {
     const section = I18n.getNamespace(namespace);
 
-    if (_.isEmpty(section)) {
-      _.log('I18n: section %o was not found in current dictionary', 'warn', namespace);
+    if (section === undefined) {
+      _.logLabeled('I18n: section %o was not found in current dictionary', 'log', namespace);
     }
 
     if (!section || !section[dictKey]) {
