@@ -5,7 +5,7 @@ import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
-import {I18nInternalNS} from "../../i18n/namespace-internal";
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * @class Toolbox
