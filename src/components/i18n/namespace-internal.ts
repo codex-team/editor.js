@@ -18,8 +18,8 @@ function getNamespaces(dict, keyPath?): DictNamespaces<typeof defaultDictionary>
       /**
        * Check current section values, it all of them are strings, so there is the last section
        */
-      const isLastSection = Object.entries(section).every(([, lastValue]) => {
-        return typeOf(lastValue) === 'string';
+      const isLastSection = Object.values(section).every((sectionValue) => {
+        return typeOf(sectionValue) === 'string';
       });
 
       /**
