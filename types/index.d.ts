@@ -11,7 +11,7 @@ import {
   Events,
   InlineToolbar,
   Listeners,
-  Notifier,
+  Notifier, ReadOnly,
   Sanitizer,
   Saver,
   Selection,
@@ -87,6 +87,7 @@ declare class EditorJS {
   public styles: Styles;
   public toolbar: Toolbar;
   public inlineToolbar: InlineToolbar;
+  public readonly: ReadOnly;
   constructor(configuration?: EditorConfig|string);
 
   /**

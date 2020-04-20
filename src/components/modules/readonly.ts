@@ -12,7 +12,6 @@ import Module from '../__module';
  * @property {Boolean} readOnlyEnabled - read-only state
  */
 export default class ReadOnly extends Module {
-
   /**
    * Value to track read-only state
    *
@@ -36,12 +35,16 @@ export default class ReadOnly extends Module {
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
-      // Verify module has method
-      if (!this.Editor[name].toggleReadOnly) {
+      /**
+       * Verify module has method `toggleReadOnly` method
+       */
+      if (!this.Editor.hasOwnProperty(name) || !this.Editor[name].toggleReadOnly) {
         continue;
       }
 
-      // set or toggle read-only state
+      /**
+       * set or toggle read-only state
+       */
       this.Editor[name].toggleReadOnly(state);
     }
 

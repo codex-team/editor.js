@@ -21501,10 +21501,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.readOnlyEnabled = state;
 
         for (var name in this.Editor) {
-          // Verify module has method
-          if (!this.Editor[name].toggleReadOnly) {
+          /**
+           * Verify module has method `toggleReadOnly` method
+           */
+          if (!this.Editor.hasOwnProperty(name) || !this.Editor[name].toggleReadOnly) {
             continue;
-          } // set or toggle read-only state
+          }
+          /**
+           * set or toggle read-only state
+           */
 
 
           this.Editor[name].toggleReadOnly(state);
