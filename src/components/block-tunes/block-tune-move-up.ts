@@ -51,7 +51,7 @@ export default class MoveUpTune implements BlockTune {
       moveUpButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveUpButton),
-      false
+      false,
     );
 
     /**

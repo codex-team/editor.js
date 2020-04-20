@@ -340,7 +340,7 @@ export default class BlockEvents extends Module {
 
       Caret.setToBlock(
         BlockManager.currentBlock,
-        index ? Caret.positions.END : Caret.positions.START
+        index ? Caret.positions.END : Caret.positions.START,
       );
 
       /** Close Toolbar */

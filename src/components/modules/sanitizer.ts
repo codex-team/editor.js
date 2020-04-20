@@ -60,7 +60,7 @@ export default class Sanitizer extends Module {
    * @param {Array<{tool, data: BlockToolData}>} blocksData - blocks' data to sanitize
    */
   public sanitizeBlocks(
-    blocksData: Array<{tool: string; data: BlockToolData}>
+    blocksData: Array<{tool: string; data: BlockToolData}>,
   ): Array<{tool: string; data: BlockToolData}> {
     return blocksData.map((block) => {
       const toolConfig = this.composeToolConfig(block.tool);
@@ -206,7 +206,7 @@ export default class Sanitizer extends Module {
       (enableInlineTools as string[]).map((inlineToolName) => {
         config = Object.assign(
           config,
-          Tools.inline[inlineToolName][Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG]
+          Tools.inline[inlineToolName][Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG],
         ) as SanitizerConfig;
       });
     }

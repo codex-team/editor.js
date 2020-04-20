@@ -195,7 +195,7 @@ export default class Flipper {
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
         _.keyCodes.UP,
-        _.keyCodes.DOWN
+        _.keyCodes.DOWN,
       );
     }
 

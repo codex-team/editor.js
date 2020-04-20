@@ -229,6 +229,16 @@ export default class SelectionUtils {
   }
 
   /**
+   * Returns window SelectionUtils
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   *
+   * @returns {Selection}
+   */
+  public static get(): Selection {
+    return window.getSelection();
+  }
+
+  /**
    * Selection instances
    *
    * @todo Check if this is still relevant
@@ -255,16 +265,6 @@ export default class SelectionUtils {
    */
   private readonly commandBackground: string = 'backColor';
   private readonly commandRemoveFormat: string = 'removeFormat';
-
-  /**
-   * Returns window SelectionUtils
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   *
-   * @returns {Selection}
-   */
-  public static get(): Selection {
-    return window.getSelection();
-  }
 
   /**
    * Removes fake background

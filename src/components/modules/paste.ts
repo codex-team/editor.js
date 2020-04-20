@@ -7,7 +7,7 @@ import {
   BlockToolData,
   PasteConfig,
   PasteEvent,
-  PasteEventDetail
+  PasteEventDetail,
 } from '../../../types';
 import Block from '../block';
 
@@ -260,7 +260,7 @@ export default class Paste extends Module {
     const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.map(
-      async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
+      async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     );
 
     if (BlockManager.currentBlock) {
@@ -325,7 +325,7 @@ export default class Paste extends Module {
       _.log(
         `Paste handling for «${name}» Tool hasn't been set up because of the error`,
         'warn',
-        e
+        e,
       );
     }
   }
@@ -344,7 +344,7 @@ export default class Paste extends Module {
         _.log(
           `Paste handler for «${name}» Tool on «${tag}» tag is skipped ` +
           `because it is already used by «${this.toolsTags[tag].tool}» Tool.`,
-          'warn'
+          'warn',
         );
 
         return;
@@ -416,7 +416,7 @@ export default class Paste extends Module {
       if (!(pattern instanceof RegExp)) {
         _.log(
           `Pattern ${pattern} for «${name}» Tool is skipped because it should be a Regexp instance.`,
-          'warn'
+          'warn',
         );
       }
 
@@ -481,7 +481,7 @@ export default class Paste extends Module {
     dataToInsert = await Promise.all(
       Array
         .from(items)
-        .map((item) => this.processFile(item))
+        .map((item) => this.processFile(item)),
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
@@ -491,7 +491,7 @@ export default class Paste extends Module {
     dataToInsert.forEach(
       (data, i) => {
         BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
-      }
+      },
     );
   }
 
@@ -695,7 +695,7 @@ export default class Paste extends Module {
       document.execCommand(
         'insertHTML',
         false,
-        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig)
+        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig),
       );
     } else {
       this.insertBlock(dataToInsert);
@@ -811,11 +811,11 @@ export default class Paste extends Module {
     const containsAnotherToolTags = Array
       .from(element.children)
       .some(
-        ({ tagName }) => tags.includes(tagName) && !toolTags.includes(tagName)
+        ({ tagName }) => tags.includes(tagName) && !toolTags.includes(tagName),
       );
 
     const containsBlockElements = Array.from(element.children).some(
-      ({ tagName }) => $.blockElements.includes(tagName.toLowerCase())
+      ({ tagName }) => $.blockElements.includes(tagName.toLowerCase()),
     );
 
     /** Append inline elements to previous fragment */

@@ -6,7 +6,7 @@ import {
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
-  ToolConfig
+  ToolConfig,
 } from '../../types';
 
 import { SavedData } from '../types-internal/block-data';
@@ -161,7 +161,7 @@ export default class Block {
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
-    apiMethods: API
+    apiMethods: API,
   ) {
     this.name = toolName;
     this.tool = toolInstance;
@@ -566,7 +566,7 @@ export default class Block {
         subtree: true,
         characterData: true,
         attributes: true,
-      }
+      },
     );
   }
 

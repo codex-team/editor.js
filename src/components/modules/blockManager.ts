@@ -200,14 +200,14 @@ export default class BlockManager extends Module {
     Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
     );
 
     /** Copy and cut */
     Listeners.on(
       document,
       'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
     );
 
     this.readOnlyEnabled = this.config.readOnly;
@@ -282,7 +282,7 @@ export default class BlockManager extends Module {
     data: BlockToolData = {},
     settings: ToolConfig = {},
     index: number = this.currentBlockIndex + 1,
-    needToFocus = true
+    needToFocus = true,
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -305,7 +305,7 @@ export default class BlockManager extends Module {
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace = false
+    replace = false,
   ): Block {
     let block;
 
@@ -495,7 +495,7 @@ export default class BlockManager extends Module {
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
-    settings: ToolConfig = {}
+    settings: ToolConfig = {},
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 

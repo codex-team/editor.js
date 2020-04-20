@@ -108,7 +108,7 @@ export default class Listeners extends Module {
     element: EventTarget,
     eventType: string,
     handler?: (event: Event) => void,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
 

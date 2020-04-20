@@ -286,7 +286,7 @@ export default class Core {
         }
         // _.log(`Preparing ${module} module`, 'timeEnd');
       }),
-      Promise.resolve()
+      Promise.resolve(),
     );
   }
 

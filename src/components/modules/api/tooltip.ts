@@ -13,13 +13,13 @@ export default class TooltipAPI extends Module {
   public get methods(): Tooltip {
     return {
       show: (element: HTMLElement,
-        content: TooltipContent,
-        options?: TooltipOptions
+             content: TooltipContent,
+             options?: TooltipOptions,
       ): void => this.show(element, content, options),
       hide: (): void => this.hide(),
       onHover: (element: HTMLElement,
-        content: TooltipContent,
-        options?: TooltipOptions
+                content: TooltipContent,
+                options?: TooltipOptions,
       ): void => this.onHover(element, content, options),
     };
   }

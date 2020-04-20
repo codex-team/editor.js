@@ -108,7 +108,7 @@ export default class Dom {
    */
   public static append(
     parent: Element|DocumentFragment,
-    elements: Element|Element[]|DocumentFragment|Text|Text[]
+    elements: Element|Element[]|DocumentFragment|Text|Text[],
   ): void {
     if (Array.isArray(elements)) {
       elements.forEach((el) => parent.appendChild(el));

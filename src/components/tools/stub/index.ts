@@ -1,7 +1,7 @@
 import $ from '../../dom';
 import { BlockTool, BlockToolData } from '../../../../types';
 
-export interface StubData extends BlockToolData{
+export interface StubData extends BlockToolData {
   title: string;
   savedData: BlockToolData;
 }

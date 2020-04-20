@@ -52,7 +52,7 @@ export default class MoveDownTune implements BlockTune {
       moveDownButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveDownButton),
-      false
+      false,
     );
 
     /**
