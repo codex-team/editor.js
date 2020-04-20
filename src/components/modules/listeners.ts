@@ -1,5 +1,5 @@
 import Module from '../__module';
-import listeners from './api/listeners';
+import * as _ from '../utils';
 
 /**
  * Event listener information
@@ -66,7 +66,7 @@ export default class Listeners extends Module {
    * @param {Function} handler - method that will be fired on event
    * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    *
-   * @return {string}
+   * @returns {string}
    */
   public on(
     element: EventTarget,
@@ -74,8 +74,7 @@ export default class Listeners extends Module {
     handler: (event: Event) => void,
     options: boolean | AddEventListenerOptions = false,
   ): string {
-    // tslint:disable-next-line:no-bitwise
-    const id = `f${(~~(Math.random() * 1e8)).toString(16)}`;
+    const id = _.generateId();
     const assignedEventData = {
       id,
       element,
@@ -125,6 +124,7 @@ export default class Listeners extends Module {
 
   /**
    * Removes listener by id
+   *
    * @param {string} id - listener identifier
    */
   public offById(id: string): void {
@@ -234,9 +234,10 @@ export default class Listeners extends Module {
 
   /**
    * Returns listener data found by id
+   *
    * @param {string} id - listener identifier
    *
-   * @return {ListenerData}
+   * @returns {ListenerData}
    */
   private findById(id: string): ListenerData {
     for (const listener of this.allListeners) {

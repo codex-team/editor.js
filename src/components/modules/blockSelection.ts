@@ -50,17 +50,6 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Flag that identifies all Blocks selection
-   *
-   * @returns {boolean}
-   */
-  public get allBlocksSelected(): boolean {
-    const { BlockManager } = this.Editor;
-
-    return BlockManager.blocks.every((block) => block.selected === true);
-  }
-
-  /**
    * Set selected all blocks
    *
    * @param {boolean} state - state to set
@@ -134,19 +123,32 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Set read-only state
+   * Toggle read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * If readOnly is true:
+   *  - Disable CMD+A shortcut
+   *  - Unset selection property
+   *
+   * if readOnly is false:
+   *  - Enable CMD+A shortcut
+   *  - Set selection property
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     const { Shortcuts } = this.Editor;
 
-    if (!readOnlyEnabled) {
-      /** Selection shortcut */
+    if (readOnlyEnabled) {
+      Shortcuts.remove('CMD+A');
+      this.selection = null;
+    } else {
+      /**
+       * CMD/CTRL+A selection shortcut
+       */
       Shortcuts.add({
         name: 'CMD+A',
         handler: (event) => {
-          const {BlockManager} = this.Editor;
+          const { BlockManager } = this.Editor;
 
           /**
            * When one page consist of two or more EditorJS instances
@@ -165,9 +167,6 @@ export default class BlockSelection extends Module {
       });
 
       this.selection = new SelectionUtils();
-    } else {
-      Shortcuts.remove('CMD+A');
-      this.selection = null;
     }
   }
 

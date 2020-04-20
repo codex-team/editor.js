@@ -110,15 +110,15 @@ export default class RectangleSelection extends Module {
   }
 
   /**
-   * Set read-only state
+   * Toggle read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * @param {boolean} readOnlyEnabled - "read only" state
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
-    if (!readOnlyEnabled) {
-      this.bindEvents();
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (readOnlyEnabled) {
+      this.disableModuleBindings();
     } else {
-      this.unbindEvents();
+      this.enableModuleBindings();
     }
   }
 
@@ -188,35 +188,48 @@ export default class RectangleSelection extends Module {
     this.isRectSelectionActivated = false;
   }
 
-  private bindEvents(): void {
-    const {Listeners} = this.Editor;
-    const {container} = this.genHTML();
+  /**
+   * Sets Module necessary event handlers
+   */
+  private enableModuleBindings(): void {
+    const { Listeners } = this.Editor;
+    const { container } = this.genHTML();
 
     this.listenerIds.push(
-      Listeners.on(container, 'mousedown', this.processMouseDown, false),
+      Listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
+        this.processMouseDown(mouseEvent);
+      }, false),
     );
 
     this.listenerIds.push(
-      Listeners.on(document.body, 'mousemove', this.processMouseMove, false),
+      Listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
+        this.processMouseMove(mouseEvent);
+      }, false),
     );
 
     this.listenerIds.push(
-      Listeners.on(document.body, 'mouseleave', this.processMouseLeave),
+      Listeners.on(document.body, 'mouseleave', () => {
+        this.processMouseLeave();
+      }),
     );
 
     this.listenerIds.push(
-      Listeners.on(window, 'scroll', this.processScroll, false),
+      Listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
+        this.processScroll(mouseEvent);
+      }, false),
     );
 
     this.listenerIds.push(
-      Listeners.on(document.body, 'mouseup', this.processMouseUp, false),
+      Listeners.on(document.body, 'mouseup', () => {
+        this.processMouseUp();
+      }, false),
     );
   }
 
   /**
-   * Unbind events
+   * Removes Modules bindings
    */
-  private unbindEvents(): void {
+  private disableModuleBindings(): void {
     for (const id of this.listenerIds) {
       this.Editor.Listeners.offById(id);
     }
@@ -226,9 +239,10 @@ export default class RectangleSelection extends Module {
 
   /**
    * Handle mouse down events
-   * @param {MouseEvent} mouseEvent
+   *
+   * @param {MouseEvent} mouseEvent - mouse event payload
    */
-  private processMouseDown = (mouseEvent: MouseEvent): void => {
+  private processMouseDown(mouseEvent: MouseEvent): void {
     if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
       return;
     }
@@ -237,9 +251,10 @@ export default class RectangleSelection extends Module {
 
   /**
    * Handle mouse move events
-   * @param {MouseEvent} mouseEvent
+   *
+   * @param {MouseEvent} mouseEvent - mouse event payload
    */
-  private processMouseMove = (mouseEvent: MouseEvent): void => {
+  private processMouseMove(mouseEvent: MouseEvent): void {
     this.changingRectangle(mouseEvent);
     this.scrollByZones(mouseEvent.clientY);
   }
@@ -247,22 +262,22 @@ export default class RectangleSelection extends Module {
   /**
    * Handle mouse leave
    */
-  private processMouseLeave = (): void => {
+  private processMouseLeave(): void {
     this.clearSelection();
     this.endSelection();
   }
 
   /**
-   * @param {MouseEvent} mouseEvent
+   * @param {MouseEvent} mouseEvent - mouse event payload
    */
-  private processScroll = (mouseEvent: MouseEvent): void => {
+  private processScroll(mouseEvent: MouseEvent): void {
     this.changingRectangle(mouseEvent);
   }
 
   /**
    * Handle mouse up
    */
-  private processMouseUp = (): void => {
+  private processMouseUp(): void {
     this.endSelection();
   }
 

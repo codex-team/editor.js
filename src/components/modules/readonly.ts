@@ -9,15 +9,15 @@ import Module from '../__module';
  * @version 1.0.0
  *
  * @typedef {ReadOnly} ReadOnly
- * @property {Boolean} readOnlyEnabled - read-only state
+ * @property {boolean} readOnlyEnabled - read-only state
  */
 export default class ReadOnly extends Module {
   /**
    * Value to track read-only state
    *
-   * @type Boolean
+   * @type {boolean}
    */
-  private readOnlyEnabled: boolean = false;
+  private readOnlyEnabled = false;
 
   /**
    * Set initial state
@@ -29,16 +29,16 @@ export default class ReadOnly extends Module {
   /**
    * Set read-only mode or toggle current state
    *
-   * @param {Boolean} state - (optional) read-only state or toggle
+   * @param {boolean} state - (optional) read-only state or toggle
    */
-  public toggle(state: boolean = !this.readOnlyEnabled) {
+  public toggle(state = !this.readOnlyEnabled): boolean {
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
       /**
        * Verify module has method `toggleReadOnly` method
        */
-      if (!this.Editor.hasOwnProperty(name) || !this.Editor[name].toggleReadOnly) {
+      if (!this.Editor[name].toggleReadOnly) {
         continue;
       }
 

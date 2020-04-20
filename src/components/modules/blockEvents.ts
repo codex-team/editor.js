@@ -97,7 +97,7 @@ export default class BlockEvents extends Module {
    *
    * @param {KeyboardEvent} event - keyup event
    */
-  public keyup(event): void {
+  public keyup(event: KeyboardEvent): void {
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
      */
@@ -186,10 +186,10 @@ export default class BlockEvents extends Module {
   /**
    * Add drop target styles
    *
-   * @param {DragEvent} e - drag over event
+   * @param {DragEvent} event - drag over event
    */
-  public dragOver(e: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
+  public dragOver(event: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
     block.dropTarget = true;
   }
@@ -197,10 +197,10 @@ export default class BlockEvents extends Module {
   /**
    * Remove drop target style
    *
-   * @param {DragEvent} e - drag leave event
+   * @param {DragEvent} event - drag leave event
    */
-  public dragLeave(e: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
+  public dragLeave(event: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
     block.dropTarget = false;
   }

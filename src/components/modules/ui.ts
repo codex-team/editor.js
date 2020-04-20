@@ -142,8 +142,6 @@ export default class UI extends Module {
    * Making main interface
    */
   public async prepare(): Promise<void> {
-    console.log('prepare ui');
-
     /**
      * Detect mobile version
      */
@@ -186,12 +184,16 @@ export default class UI extends Module {
   }
 
   /**
-   * Set read-only state
+   * Toggle read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * If readOnly is true:
+   *  - bb
+   * if readOnly is false:
+   *  - ss
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
-
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     /**
      * Prepare components based on read-only state
      */
@@ -269,10 +271,8 @@ export default class UI extends Module {
 
   /**
    * Makes Editor.js interface
-   *
-   * @returns {Promise<void>}
    */
-  private make() {
+  private make(): void {
     /**
      * Element where we need to append Editor.js
      *
@@ -329,34 +329,48 @@ export default class UI extends Module {
    */
   private bindEvents(): void {
     this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false),
+      this.Editor.Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
+        this.redactorClicked(event);
+      }, false),
     );
 
     this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true),
+      this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
+        this.documentTouched(event);
+      }, true),
     );
 
     this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true),
+      this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
+        this.documentTouched(event);
+      }, true),
     );
 
     this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true),
+      this.Editor.Listeners.on(document, 'keydown', (event: KeyboardEvent) => {
+        this.documentKeydown(event);
+      }, true),
     );
 
     this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'click', this.documentClicked, true),
+      this.Editor.Listeners.on(document, 'click', (event: MouseEvent) => {
+        this.documentClicked(event);
+      }, true),
     );
 
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
     this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true),
+      this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
+        this.selectionChanged(event);
+      }, true),
     );
 
     this.listenerIds.push(
-      this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
+      this.Editor.Listeners.on(window, 'resize', () => {
+        this.resizeDebouncer();
+      }, {
         passive: true,
       }),
     );
@@ -524,7 +538,7 @@ export default class UI extends Module {
    *
    * @param {MouseEvent} event - Click event
    */
-  private documentClicked = (event: MouseEvent): void => {
+  private documentClicked(event: MouseEvent): void {
     /**
      * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
      * We don't need to handle such events, because they handled in other place.
@@ -578,7 +592,7 @@ export default class UI extends Module {
    *
    * @param {MouseEvent | TouchEvent} event - touch or mouse event
    */
-  private documentTouched = (event: MouseEvent | TouchEvent): void => {
+  private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
 
     /**
@@ -634,7 +648,7 @@ export default class UI extends Module {
    *      - if last Block is empty, set a Caret to this
    *      - otherwise, add a new empty Block and set a Caret to that
    */
-  private redactorClicked = (event: MouseEvent) => {
+  private redactorClicked(event: MouseEvent): void {
     if (!Selection.isCollapsed) {
       return;
     }
@@ -687,7 +701,7 @@ export default class UI extends Module {
    *
    * @param {Event} event - selection event
    */
-  private selectionChanged = (event: Event): void => {
+  private selectionChanged(event: Event): void {
     const focusedElement = Selection.anchorElement as Element;
 
     /**
@@ -720,9 +734,4 @@ export default class UI extends Module {
 
     $.append(this.nodes.wrapper, spriteHolder);
   }
-
-  /**
-   * Window resize listener
-   */
-  private windowResizeListener = () => this.resizeDebouncer();
 }

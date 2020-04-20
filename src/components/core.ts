@@ -1,8 +1,6 @@
 import $ from './dom';
 // eslint-disable-next-line import/no-duplicates
 import * as _ from './utils';
-// eslint-disable-next-line import/no-duplicates
-import { LogLevels } from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 
@@ -149,7 +147,7 @@ export default class Core {
     }
 
     if (!this.config.logLevel) {
-      this.config.logLevel = LogLevels.VERBOSE;
+      this.config.logLevel = _.LogLevels.VERBOSE;
     }
 
     _.setLogLevel(this.config.logLevel);
@@ -272,7 +270,6 @@ export default class Core {
       'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
-      'ReadOnly',
     ];
 
     await modulesToPrepare.reduce(

@@ -556,3 +556,13 @@ export function getValidUrl(url: string): string {
 export function openTab(url: string): void {
   window.open(url, '_blank');
 }
+
+/**
+ * Returns random generated identifier
+ *
+ * @returns {string}
+ */
+export function generateId(): string {
+  // tslint:disable-next-line:no-bitwise
+  return `f${(~~(Math.random() * 1e8)).toString(16)}`;
+}

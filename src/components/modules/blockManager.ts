@@ -160,7 +160,7 @@ export default class BlockManager extends Module {
   /**
    * Read only flag
    */
-  private readOnlyEnabled: boolean = false;
+  private readOnlyEnabled = false;
 
   /**
    * Binded listener ids
@@ -175,7 +175,6 @@ export default class BlockManager extends Module {
    */
   public async prepare(): Promise<void> {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
-    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -196,53 +195,31 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    /** Copy event */
-    Listeners.on(
-      document,
-      'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
-    );
-
-    /** Copy and cut */
-    Listeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
-    );
-
-    this.readOnlyEnabled = this.config.readOnly;
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
-   * Set read-only state
+   * Toggle read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * If readOnly is true:
+   *  - Remove shortcuts
+   *  - Unbind event handlers from created Blocks
+   *  - Remove listeners from document (cut, copy and so on)
+   *
+   * if readOnly is false:
+   *  - Restore shortcuts (bind them again)
+   *  - Bind event handlers to all existing Blocks
+   *  - Restore listeners to document (cut, copy and others)
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
-    const { BlockEvents, Shortcuts } = this.Editor;
-
     if (readOnlyEnabled) {
-      Shortcuts.remove('CMD+C');
-      Shortcuts.remove('CMD+X');
+      this.disableModuleEvents();
     } else {
-      /** Copy shortcut */
-      Shortcuts.add({
-        name: 'CMD+C',
-        handler: (event) => {
-          BlockEvents.handleCommandC(event);
-        },
-      });
-
-      /** Copy and cut */
-      Shortcuts.add({
-        name: 'CMD+X',
-        handler: (event) => {
-          BlockEvents.handleCommandX(event);
-        },
-      });
+      this.enableModuleEvents();
     }
-
-    this.toggleBlockEventBindings(readOnlyEnabled);
+    this.readOnlyEnabled = readOnlyEnabled;
   }
 
   /**
@@ -688,64 +665,114 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * @param readonly
-   */
-  private toggleBlockEventBindings(readonly: boolean): void {
-    this.blocks.forEach( (block: Block) => {
-      if (readonly) {
-        this.unbindEvents(block);
-      } else {
-        this.bindEvents(block);
-      }
-    });
-  }
-
-  /**
    * Bind Events
    *
    * @param {Block} block - Block to which event should be bound
-   * @param {Block} block
    */
   private bindEvents(block: Block): void {
     const { BlockEvents, Listeners } = this.Editor;
 
     this.listenerIds.push(
-      Listeners.on(block.holder, 'keydown', BlockEvents.keydown, true),
+      Listeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
+        BlockEvents.keydown(event);
+      }, true),
+    );
+
+    // this.listenerIds.push(
+    //   Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
+    // );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
+        BlockEvents.mouseDown(event);
+      }),
     );
 
     this.listenerIds.push(
-      Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
+      Listeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
+        BlockEvents.keyup(event);
+      }),
     );
 
     this.listenerIds.push(
-      Listeners.on(block.holder, 'mousedown', BlockEvents.mouseDown),
+      Listeners.on(block.holder, 'dragover', (event: DragEvent) => {
+        BlockEvents.dragOver(event);
+      }),
     );
 
     this.listenerIds.push(
-      Listeners.on(block.holder, 'keyup', BlockEvents.keyup),
-    );
-
-    this.listenerIds.push(
-      Listeners.on(block.holder, 'dragover', BlockEvents.dragOver),
-    );
-
-    this.listenerIds.push(
-      Listeners.on(block.holder, 'dragleave', BlockEvents.dragLeave),
+      Listeners.on(block.holder, 'dragleave', (event: DragEvent) => {
+        BlockEvents.dragLeave(event);
+      }),
     );
   }
 
   /**
-   * Unbind Events
-   * @param {Block} block
+   * Disable all handlers and bindings
+   * The sequence is following:
+   *  - Removes all listeners by id
+   *  - Removes all shortcuts
    */
-  private unbindEvents(block: Block): void {
-    const {Listeners} = this.Editor;
+  private disableModuleEvents(): void {
+    const { Listeners, Shortcuts } = this.Editor;
 
     for (const id of this.listenerIds) {
       Listeners.offById(id);
     }
 
     this.listenerIds = [];
+
+    Shortcuts.remove('CMD+C');
+    Shortcuts.remove('CMD+X');
+  }
+
+  /**
+   * Enables all module handlers and bindings
+   * The sequence is following:
+   *  - Enable shortcuts again
+   *  - Restore `copy` and `cut` bindings
+   *  - Bind all events handlers for all Blocks
+   */
+  private enableModuleEvents(): void {
+    const { Listeners, Shortcuts, BlockEvents } = this.Editor;
+
+    /** Copy shortcut */
+    Shortcuts.add({
+      name: 'CMD+C',
+      handler: (event) => {
+        BlockEvents.handleCommandC(event);
+      },
+    });
+
+    /** Copy and cut */
+    Shortcuts.add({
+      name: 'CMD+X',
+      handler: (event) => {
+        BlockEvents.handleCommandX(event);
+      },
+    });
+
+    /** Copy event */
+    this.listenerIds.push(
+      Listeners.on(
+        document,
+        'copy',
+        (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+      ),
+    );
+
+    /** Copy and cut */
+    this.listenerIds.push(
+      Listeners.on(
+        document,
+        'cut',
+        (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+      ),
+    );
+
+    this.blocks.forEach((block: Block) => {
+      this.bindEvents(block);
+    });
   }
 
   /**

@@ -12397,7 +12397,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _ = _interopRequireWildcard(_);
 
   // eslint-disable-next-line import/no-duplicates
-  // eslint-disable-next-line import/no-duplicates
 
   /**
    * @typedef {Core} Core - editor core class
@@ -12618,7 +12617,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection', 'RectangleSelection', 'ReadOnly'];
+                modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection', 'RectangleSelection'];
                 _context5.next = 3;
                 return _index["default"].awrap(modulesToPrepare.reduce(function (promise, module) {
                   return promise.then(function _callee3() {
@@ -16725,25 +16724,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Add drop target styles
        *
-       * @param {DragEvent} e - drag over event
+       * @param {DragEvent} event - drag over event
        */
 
     }, {
       key: "dragOver",
-      value: function dragOver(e) {
-        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+      value: function dragOver(event) {
+        var block = this.Editor.BlockManager.getBlockByChildNode(event.target);
         block.dropTarget = true;
       }
       /**
        * Remove drop target style
        *
-       * @param {DragEvent} e - drag leave event
+       * @param {DragEvent} event - drag leave event
        */
 
     }, {
       key: "dragLeave",
-      value: function dragLeave(e) {
-        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+      value: function dragLeave(event) {
+        var block = this.Editor.BlockManager.getBlockByChildNode(event.target);
         block.dropTarget = false;
       }
       /**
@@ -17269,14 +17268,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @returns {Promise}
        */
       value: function prepare() {
-        var blocks, _this$Editor, BlockEvents, Listeners;
-
+        var blocks;
         return _index["default"].async(function prepare$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 blocks = new _blocks["default"](this.Editor.UI.nodes.redactor);
-                _this$Editor = this.Editor, BlockEvents = _this$Editor.BlockEvents, Listeners = _this$Editor.Listeners;
                 /**
                  * We need to use Proxy to overload set/get [] operator.
                  * So we can use array-like syntax to access blocks
@@ -17296,19 +17293,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   set: _blocks["default"].set,
                   get: _blocks["default"].get
                 });
-                /** Copy event */
+                this.toggleReadOnly(this.config.readOnly);
 
-                Listeners.on(document, 'copy', function (e) {
-                  return BlockEvents.handleCommandC(e);
-                });
-                /** Copy and cut */
-
-                Listeners.on(document, 'cut', function (e) {
-                  return BlockEvents.handleCommandX(e);
-                });
-                this.readOnlyEnabled = this.config.readOnly;
-
-              case 6:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -17316,40 +17303,31 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }, null, this);
       }
       /**
-       * Set read-only state
+       * Toggle read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * If readOnly is true:
+       *  - Remove shortcuts
+       *  - Unbind event handlers from created Blocks
+       *  - Remove listeners from document (cut, copy and so on)
+       *
+       * if readOnly is false:
+       *  - Restore shortcuts (bind them again)
+       *  - Bind event handlers to all existing Blocks
+       *  - Restore listeners to document (cut, copy and others)
+       *
+       * @param {boolean} readOnlyEnabled - "read only" state
        */
 
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        var _this$Editor2 = this.Editor,
-            BlockEvents = _this$Editor2.BlockEvents,
-            Shortcuts = _this$Editor2.Shortcuts;
-
         if (readOnlyEnabled) {
-          Shortcuts.remove('CMD+C');
-          Shortcuts.remove('CMD+X');
+          this.disableModuleEvents();
         } else {
-          /** Copy shortcut */
-          Shortcuts.add({
-            name: 'CMD+C',
-            handler: function handler(event) {
-              BlockEvents.handleCommandC(event);
-            }
-          });
-          /** Copy and cut */
-
-          Shortcuts.add({
-            name: 'CMD+X',
-            handler: function handler(event) {
-              BlockEvents.handleCommandX(event);
-            }
-          });
+          this.enableModuleEvents();
         }
 
-        this.toggleBlockEventBindings(readOnlyEnabled);
+        this.readOnlyEnabled = readOnlyEnabled;
       }
       /**
        * Creates Block instance by tool name
@@ -17869,51 +17847,49 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.UI.checkEmptiness();
       }
       /**
-       * @param readonly
-       */
-
-    }, {
-      key: "toggleBlockEventBindings",
-      value: function toggleBlockEventBindings(readonly) {
-        var _this2 = this;
-
-        this.blocks.forEach(function (block) {
-          if (readonly) {
-            _this2.unbindEvents(block);
-          } else {
-            _this2.bindEvents(block);
-          }
-        });
-      }
-      /**
        * Bind Events
        *
        * @param {Block} block - Block to which event should be bound
-       * @param {Block} block
        */
 
     }, {
       key: "bindEvents",
       value: function bindEvents(block) {
-        var _this$Editor3 = this.Editor,
-            BlockEvents = _this$Editor3.BlockEvents,
-            Listeners = _this$Editor3.Listeners;
-        this.listenerIds.push(Listeners.on(block.holder, 'keydown', BlockEvents.keydown, true));
-        this.listenerIds.push(Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp));
-        this.listenerIds.push(Listeners.on(block.holder, 'mousedown', BlockEvents.mouseDown));
-        this.listenerIds.push(Listeners.on(block.holder, 'keyup', BlockEvents.keyup));
-        this.listenerIds.push(Listeners.on(block.holder, 'dragover', BlockEvents.dragOver));
-        this.listenerIds.push(Listeners.on(block.holder, 'dragleave', BlockEvents.dragLeave));
+        var _this$Editor = this.Editor,
+            BlockEvents = _this$Editor.BlockEvents,
+            Listeners = _this$Editor.Listeners;
+        this.listenerIds.push(Listeners.on(block.holder, 'keydown', function (event) {
+          BlockEvents.keydown(event);
+        }, true)); // this.listenerIds.push(
+        //   Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
+        // );
+
+        this.listenerIds.push(Listeners.on(block.holder, 'mousedown', function (event) {
+          BlockEvents.mouseDown(event);
+        }));
+        this.listenerIds.push(Listeners.on(block.holder, 'keyup', function (event) {
+          BlockEvents.keyup(event);
+        }));
+        this.listenerIds.push(Listeners.on(block.holder, 'dragover', function (event) {
+          BlockEvents.dragOver(event);
+        }));
+        this.listenerIds.push(Listeners.on(block.holder, 'dragleave', function (event) {
+          BlockEvents.dragLeave(event);
+        }));
       }
       /**
-       * Unbind Events
-       * @param {Block} block
+       * Disable all handlers and bindings
+       * The sequence is following:
+       *  - Removes all listeners by id
+       *  - Removes all shortcuts
        */
 
     }, {
-      key: "unbindEvents",
-      value: function unbindEvents(block) {
-        var Listeners = this.Editor.Listeners;
+      key: "disableModuleEvents",
+      value: function disableModuleEvents() {
+        var _this$Editor2 = this.Editor,
+            Listeners = _this$Editor2.Listeners,
+            Shortcuts = _this$Editor2.Shortcuts;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -17939,6 +17915,55 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.listenerIds = [];
+        Shortcuts.remove('CMD+C');
+        Shortcuts.remove('CMD+X');
+      }
+      /**
+       * Enables all module handlers and bindings
+       * The sequence is following:
+       *  - Enable shortcuts again
+       *  - Restore `copy` and `cut` bindings
+       *  - Bind all events handlers for all Blocks
+       */
+
+    }, {
+      key: "enableModuleEvents",
+      value: function enableModuleEvents() {
+        var _this2 = this;
+
+        var _this$Editor3 = this.Editor,
+            Listeners = _this$Editor3.Listeners,
+            Shortcuts = _this$Editor3.Shortcuts,
+            BlockEvents = _this$Editor3.BlockEvents;
+        /** Copy shortcut */
+
+        Shortcuts.add({
+          name: 'CMD+C',
+          handler: function handler(event) {
+            BlockEvents.handleCommandC(event);
+          }
+        });
+        /** Copy and cut */
+
+        Shortcuts.add({
+          name: 'CMD+X',
+          handler: function handler(event) {
+            BlockEvents.handleCommandX(event);
+          }
+        });
+        /** Copy event */
+
+        this.listenerIds.push(Listeners.on(document, 'copy', function (e) {
+          return BlockEvents.handleCommandC(e);
+        }));
+        /** Copy and cut */
+
+        this.listenerIds.push(Listeners.on(document, 'cut', function (e) {
+          return BlockEvents.handleCommandX(e);
+        }));
+        this.blocks.forEach(function (block) {
+          _this2.bindEvents(block);
+        });
       }
       /**
        * Validates that the given index is not lower than 0 or higher than the amount of blocks
@@ -18207,9 +18232,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.toggleReadOnly(this.config.readOnly);
       }
       /**
-       * Set read-only state
+       * Toggle read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * If readOnly is true:
+       *  - Disable CMD+A shortcut
+       *  - Unset selection property
+       *
+       * if readOnly is false:
+       *  - Enable CMD+A shortcut
+       *  - Set selection property
+       *
+       * @param {boolean} readOnlyEnabled - "read only" state
        */
 
     }, {
@@ -18219,8 +18252,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var Shortcuts = this.Editor.Shortcuts;
 
-        if (!readOnlyEnabled) {
-          /** Selection shortcut */
+        if (readOnlyEnabled) {
+          Shortcuts.remove('CMD+A');
+          this.selection = null;
+        } else {
+          /**
+           * CMD/CTRL+A selection shortcut
+           */
           Shortcuts.add({
             name: 'CMD+A',
             handler: function handler(event) {
@@ -18242,9 +18280,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
           });
           this.selection = new _selection["default"]();
-        } else {
-          Shortcuts.remove('CMD+A');
-          this.selection = null;
         }
       }
       /**
@@ -18532,25 +18567,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
       }
       /**
-       * Flag that identifies all Blocks selection
-       *
-       * @returns {boolean}
-       */
-
-    }, {
-      key: "allBlocksSelected",
-      get: function get() {
-        var BlockManager = this.Editor.BlockManager;
-        return BlockManager.blocks.every(function (block) {
-          return block.selected === true;
-        });
-      }
-      /**
        * Set selected all blocks
        *
        * @param {boolean} state - state to set
        */
-      ,
+
+    }, {
+      key: "allBlocksSelected",
       set: function set(state) {
         var BlockManager = this.Editor.BlockManager;
         BlockManager.blocks.forEach(function (block) {
@@ -19595,75 +19618,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.listenerIds = [];
-      /**
-       * Handle drop event
-       *
-       * @param {DragEvent} dropEvent - drop event
-       */
-
-      _this.processDrop = function _callee(dropEvent) {
-        var _this$Editor, BlockManager, Caret, Paste, targetBlock, _targetBlock;
-
-        return _index["default"].async(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, Paste = _this$Editor.Paste;
-                dropEvent.preventDefault();
-                BlockManager.blocks.forEach(function (block) {
-                  block.dropTarget = false;
-                });
-
-                if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed && _this.isStartedAtEditor) {
-                  document.execCommand('delete');
-                }
-
-                _this.isStartedAtEditor = false;
-                /**
-                 * Try to set current block by drop target.
-                 * If drop target (error will be thrown) is not part of the Block, set last Block as current.
-                 */
-
-                try {
-                  targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target);
-
-                  _this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
-                } catch (e) {
-                  _targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
-
-                  _this.Editor.Caret.setToBlock(_targetBlock, Caret.positions.END);
-                }
-
-                Paste.processDataTransfer(dropEvent.dataTransfer, true);
-
-              case 7:
-              case "end":
-                return _context.stop();
-            }
-          }
-        });
-      };
-      /**
-       * Handle drag start event
-       */
-
-
-      _this.processDragStart = function () {
-        if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed) {
-          _this.isStartedAtEditor = true;
-        }
-
-        _this.Editor.InlineToolbar.close();
-      };
-      /**
-       * @param {DragEvent} dragEvent
-       */
-
-
-      _this.processDragOver = function (dragEvent) {
-        dragEvent.preventDefault();
-      };
-
       return _this;
     }
     /**
@@ -19677,42 +19631,68 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.toggleReadOnly(this.config.readOnly);
       }
       /**
-       * Set read-only state
+       * Toggle read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * if state is true:
+       *  - disable all drag-n-drop event handlers
+       *
+       * if state is false:
+       *  - restore drag-n-drop event handlers
+       *
+       * @param {boolean} readOnlyEnabled - "read only" state
        */
 
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
-          this.unbindEvents();
+          this.disableModuleBindings();
         } else {
-          this.bindEvents();
+          this.enableModuleBindings();
         }
       }
       /**
        * Add drag events listeners to editor zone
-       *
-       * @private
        */
 
     }, {
-      key: "bindEvents",
-      value: function bindEvents() {
-        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true));
-        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart));
-        /* Prevent default browser behavior to allow drop on non-contenteditable elements */
+      key: "enableModuleBindings",
+      value: function enableModuleBindings() {
+        var _this2 = this;
 
-        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true));
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', function _callee(dropEvent) {
+          return _index["default"].async(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.next = 2;
+                  return _index["default"].awrap(_this2.processDrop(dropEvent));
+
+                case 2:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          });
+        }, true));
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', function () {
+          _this2.processDragStart();
+        }));
+        /**
+         * Prevent default browser behavior to allow drop on non-contenteditable elements
+         */
+
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', function (dragEvent) {
+          _this2.processDragOver(dragEvent);
+        }, true));
       }
       /**
-       * Unbind drag events
+       * Unbind drag-n-drop event handlers
        */
 
     }, {
-      key: "unbindEvents",
-      value: function unbindEvents() {
+      key: "disableModuleBindings",
+      value: function disableModuleBindings() {
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -19738,6 +19718,77 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.listenerIds = [];
+      }
+      /**
+       * Handle drop event
+       *
+       * @param {DragEvent} dropEvent - drop event
+       */
+
+    }, {
+      key: "processDrop",
+      value: function processDrop(dropEvent) {
+        var _this$Editor, BlockManager, Caret, Paste, targetBlock, _targetBlock;
+
+        return _index["default"].async(function processDrop$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this$Editor = this.Editor, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, Paste = _this$Editor.Paste;
+                dropEvent.preventDefault();
+                BlockManager.blocks.forEach(function (block) {
+                  block.dropTarget = false;
+                });
+
+                if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed && this.isStartedAtEditor) {
+                  document.execCommand('delete');
+                }
+
+                this.isStartedAtEditor = false;
+                /**
+                 * Try to set current block by drop target.
+                 * If drop target (error will be thrown) is not part of the Block, set last Block as current.
+                 */
+
+                try {
+                  targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target);
+                  this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
+                } catch (e) {
+                  _targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+                  this.Editor.Caret.setToBlock(_targetBlock, Caret.positions.END);
+                }
+
+                _context2.next = 8;
+                return _index["default"].awrap(Paste.processDataTransfer(dropEvent.dataTransfer, true));
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, null, this);
+      }
+      /**
+       * Handle drag start event
+       */
+
+    }, {
+      key: "processDragStart",
+      value: function processDragStart() {
+        if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed) {
+          this.isStartedAtEditor = true;
+        }
+
+        this.Editor.InlineToolbar.close();
+      }
+      /**
+       * @param {DragEvent} dragEvent - drag event
+       */
+
+    }, {
+      key: "processDragOver",
+      value: function processDragOver(dragEvent) {
+        dragEvent.preventDefault();
       }
     }]);
     return DragNDrop;
@@ -19927,13 +19978,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
   "use strict";
+
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
@@ -19947,6 +20000,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf2);
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
+  _ = _interopRequireWildcard(_);
 
   /**
    * Editor.js Listeners module
@@ -19990,7 +20044,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @param {Function} handler - method that will be fired on event
      * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
      *
-     * @return {string}
+     * @returns {string}
      */
 
 
@@ -19998,8 +20052,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "on",
       value: function on(element, eventType, handler) {
         var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-        // tslint:disable-next-line:no-bitwise
-        var id = "f".concat((~~(Math.random() * 1e8)).toString(16));
+
+        var id = _.generateId();
+
         var assignedEventData = {
           id: id,
           element: element,
@@ -20044,6 +20099,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Removes listener by id
+       *
        * @param {string} id - listener identifier
        */
 
@@ -20169,9 +20225,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns listener data found by id
+       *
        * @param {string} id - listener identifier
        *
-       * @return {ListenerData}
+       * @returns {ListenerData}
        */
 
     }, {
@@ -21713,7 +21770,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @version 1.0.0
    *
    * @typedef {ReadOnly} ReadOnly
-   * @property {Boolean} readOnlyEnabled - read-only state
+   * @property {boolean} readOnlyEnabled - read-only state
    */
   var ReadOnly =
   /*#__PURE__*/
@@ -21728,7 +21785,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Value to track read-only state
        *
-       * @type Boolean
+       * @type {boolean}
        */
 
       _this.readOnlyEnabled = false;
@@ -21758,7 +21815,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set read-only mode or toggle current state
        *
-       * @param {Boolean} state - (optional) read-only state or toggle
+       * @param {boolean} state - (optional) read-only state or toggle
        */
 
     }, {
@@ -21771,7 +21828,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * Verify module has method `toggleReadOnly` method
            */
-          if (!this.Editor.hasOwnProperty(name) || !this.Editor[name].toggleReadOnly) {
+          if (!this.Editor[name].toggleReadOnly) {
             continue;
           }
           /**
@@ -21910,56 +21967,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.listenerIds = [];
-      /**
-       * Handle mouse down events
-       * @param {MouseEvent} mouseEvent
-       */
-
-      _this.processMouseDown = function (mouseEvent) {
-        if (mouseEvent.button !== _this.MAIN_MOUSE_BUTTON) {
-          return;
-        }
-
-        _this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
-      };
-      /**
-       * Handle mouse move events
-       * @param {MouseEvent} mouseEvent
-       */
-
-
-      _this.processMouseMove = function (mouseEvent) {
-        _this.changingRectangle(mouseEvent);
-
-        _this.scrollByZones(mouseEvent.clientY);
-      };
-      /**
-       * Handle mouse leave
-       */
-
-
-      _this.processMouseLeave = function () {
-        _this.clearSelection();
-
-        _this.endSelection();
-      };
-      /**
-       * @param {MouseEvent} mouseEvent
-       */
-
-
-      _this.processScroll = function (mouseEvent) {
-        _this.changingRectangle(mouseEvent);
-      };
-      /**
-       * Handle mouse up
-       */
-
-
-      _this.processMouseUp = function () {
-        _this.endSelection();
-      };
-
       return _this;
     }
     /**
@@ -21980,18 +21987,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.toggleReadOnly(this.config.readOnly);
       }
       /**
-       * Set read-only state
+       * Toggle read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * @param {boolean} readOnlyEnabled - "read only" state
        */
 
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        if (!readOnlyEnabled) {
-          this.bindEvents();
+        if (readOnlyEnabled) {
+          this.disableModuleBindings();
         } else {
-          this.unbindEvents();
+          this.enableModuleBindings();
         }
       }
       /**
@@ -22065,27 +22072,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function clearSelection() {
         this.isRectSelectionActivated = false;
       }
+      /**
+       * Sets Module necessary event handlers
+       */
+
     }, {
-      key: "bindEvents",
-      value: function bindEvents() {
+      key: "enableModuleBindings",
+      value: function enableModuleBindings() {
+        var _this2 = this;
+
         var Listeners = this.Editor.Listeners;
 
         var _this$genHTML = this.genHTML(),
             container = _this$genHTML.container;
 
-        this.listenerIds.push(Listeners.on(container, 'mousedown', this.processMouseDown, false));
-        this.listenerIds.push(Listeners.on(document.body, 'mousemove', this.processMouseMove, false));
-        this.listenerIds.push(Listeners.on(document.body, 'mouseleave', this.processMouseLeave));
-        this.listenerIds.push(Listeners.on(window, 'scroll', this.processScroll, false));
-        this.listenerIds.push(Listeners.on(document.body, 'mouseup', this.processMouseUp, false));
+        this.listenerIds.push(Listeners.on(container, 'mousedown', function (mouseEvent) {
+          _this2.processMouseDown(mouseEvent);
+        }, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mousemove', function (mouseEvent) {
+          _this2.processMouseMove(mouseEvent);
+        }, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mouseleave', function () {
+          _this2.processMouseLeave();
+        }));
+        this.listenerIds.push(Listeners.on(window, 'scroll', function (mouseEvent) {
+          _this2.processScroll(mouseEvent);
+        }, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mouseup', function () {
+          _this2.processMouseUp();
+        }, false));
       }
       /**
-       * Unbind events
+       * Removes Modules bindings
        */
 
     }, {
-      key: "unbindEvents",
-      value: function unbindEvents() {
+      key: "disableModuleBindings",
+      value: function disableModuleBindings() {
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -22111,6 +22134,61 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.listenerIds = [];
+      }
+      /**
+       * Handle mouse down events
+       *
+       * @param {MouseEvent} mouseEvent - mouse event payload
+       */
+
+    }, {
+      key: "processMouseDown",
+      value: function processMouseDown(mouseEvent) {
+        if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
+          return;
+        }
+
+        this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+      }
+      /**
+       * Handle mouse move events
+       *
+       * @param {MouseEvent} mouseEvent - mouse event payload
+       */
+
+    }, {
+      key: "processMouseMove",
+      value: function processMouseMove(mouseEvent) {
+        this.changingRectangle(mouseEvent);
+        this.scrollByZones(mouseEvent.clientY);
+      }
+      /**
+       * Handle mouse leave
+       */
+
+    }, {
+      key: "processMouseLeave",
+      value: function processMouseLeave() {
+        this.clearSelection();
+        this.endSelection();
+      }
+      /**
+       * @param {MouseEvent} mouseEvent - mouse event payload
+       */
+
+    }, {
+      key: "processScroll",
+      value: function processScroll(mouseEvent) {
+        this.changingRectangle(mouseEvent);
+      }
+      /**
+       * Handle mouse up
+       */
+
+    }, {
+      key: "processMouseUp",
+      value: function processMouseUp() {
+        this.endSelection();
       }
       /**
        * Scroll If mouse in scroll zone
@@ -22177,7 +22255,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "scrollVertical",
       value: function scrollVertical(speed) {
-        var _this2 = this;
+        var _this3 = this;
 
         if (!(this.inScrollZone && this.mousedown)) {
           return;
@@ -22187,7 +22265,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         window.scrollBy(0, speed);
         this.mouseY += window.pageYOffset - lastOffset;
         setTimeout(function () {
-          _this2.scrollVertical(speed);
+          _this3.scrollVertical(speed);
         }, 0);
       }
       /**
@@ -22394,7 +22472,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "trySelectNextBlock",
       value: function trySelectNextBlock(index) {
-        var _this3 = this;
+        var _this4 = this;
 
         var sameBlock = this.stackOfSelected[this.stackOfSelected.length - 1] === index;
         var sizeStack = this.stackOfSelected.length;
@@ -22446,11 +22524,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (index > this.stackOfSelected[sizeStack - 1]) {
           cmp = function cmp() {
-            return index > _this3.stackOfSelected[i];
+            return index > _this4.stackOfSelected[i];
           };
         } else {
           cmp = function cmp() {
-            return index < _this3.stackOfSelected[i];
+            return index < _this4.stackOfSelected[i];
           };
         } // Remove blocks missed due to speed.
         // cmp checks if we have removed all the necessary blocks
@@ -26591,220 +26669,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.resizeDebouncer = _.debounce(function () {
         _this.windowResize();
       }, 200);
-      /**
-       * All clicks on document
-       *
-       * @param {MouseEvent} event - Click event
-       */
-
-      _this.documentClicked = function (event) {
-        /**
-         * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
-         * We don't need to handle such events, because they handled in other place.
-         */
-        if (!event.isTrusted) {
-          return;
-        }
-        /**
-         * Close Inline Toolbar when nothing selected
-         * Do not fire check on clicks at the Inline Toolbar buttons
-         */
-
-
-        var target = event.target;
-
-        var clickedInsideOfEditor = _this.nodes.holder.contains(target) || _selection["default"].isAtEditor;
-
-        if (!clickedInsideOfEditor) {
-          /**
-           * Clear highlightings and pointer on BlockManager
-           *
-           * Current page might contain several instances
-           * Click between instances MUST clear focus, pointers and close toolbars
-           */
-          _this.Editor.BlockManager.dropPointer();
-
-          _this.Editor.InlineToolbar.close();
-
-          _this.Editor.Toolbar.close();
-
-          _this.Editor.ConversionToolbar.close();
-        }
-        /**
-         * Clear Selection if user clicked somewhere
-         */
-
-
-        if (!_this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-          _this.Editor.BlockSelection.clearSelection(event);
-        }
-        /**
-         * Clear Selection if user clicked somewhere
-         */
-
-
-        if (!_this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-          _this.Editor.BlockSelection.clearSelection(event);
-        }
-      };
-      /**
-       * First touch on editor
-       * Fired before click
-       *
-       * Used to change current block — we need to do it before 'selectionChange' event.
-       * Also:
-       * - Move and show the Toolbar
-       * - Set a Caret
-       *
-       * @param {MouseEvent | TouchEvent} event - touch or mouse event
-       */
-
-
-      _this.documentTouched = function (event) {
-        var clickedNode = event.target;
-        /**
-         * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
-         */
-
-        if (clickedNode === _this.nodes.redactor) {
-          var clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-          var clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
-          clickedNode = document.elementFromPoint(clientX, clientY);
-        }
-        /**
-         * Select clicked Block as Current
-         */
-
-
-        try {
-          /**
-           * Renew Current Block
-           */
-          _this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-          /**
-           * Highlight Current Node
-           */
-
-
-          _this.Editor.BlockManager.highlightCurrentNode();
-        } catch (e) {
-          /**
-           * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
-           */
-          if (!_this.Editor.RectangleSelection.isRectActivated()) {
-            _this.Editor.Caret.setToTheLastBlock();
-          }
-        }
-        /**
-         * Move and open toolbar
-         */
-
-
-        _this.Editor.Toolbar.open();
-        /**
-         * Hide the Plus Button
-         */
-
-
-        _this.Editor.Toolbar.plusButton.hide();
-      };
-      /**
-       * All clicks on the redactor zone
-       *
-       * @param {MouseEvent} event - click event
-       *
-       * @description
-       * - By clicks on the Editor's bottom zone:
-       *      - if last Block is empty, set a Caret to this
-       *      - otherwise, add a new empty Block and set a Caret to that
-       */
-
-
-      _this.redactorClicked = function (event) {
-        if (!_selection["default"].isCollapsed) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-        event.stopPropagation();
-        /**
-         * case when user clicks on anchor element
-         * if it is clicked via ctrl key, then we open new window with url
-         */
-
-        var element = event.target;
-        var ctrlKey = event.metaKey || event.ctrlKey;
-
-        if (_dom["default"].isAnchor(element) && ctrlKey) {
-          var href = element.getAttribute('href');
-
-          var validUrl = _.getValidUrl(href);
-
-          _.openTab(validUrl);
-
-          return;
-        }
-
-        if (!_this.Editor.BlockManager.currentBlock) {
-          _this.Editor.BlockManager.insert();
-        }
-        /**
-         * Show the Plus Button if:
-         * - Block is an initial-block (Text)
-         * - Block is empty
-         */
-
-
-        var isInitialBlock = _this.Editor.Tools.isInitial(_this.Editor.BlockManager.currentBlock.tool);
-
-        if (isInitialBlock) {
-          /**
-           * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
-           */
-          var isEmptyBlock = _this.Editor.BlockManager.currentBlock.isEmpty;
-
-          if (isEmptyBlock) {
-            _this.Editor.Toolbar.plusButton.show();
-          }
-        }
-      };
-      /**
-       * Handle selection changes on mobile devices
-       * Uses for showing the Inline Toolbar
-       *
-       * @param {Event} event - selection event
-       */
-
-
-      _this.selectionChanged = function (event) {
-        var focusedElement = _selection["default"].anchorElement;
-        /**
-         * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
-         * We need to skip such firings
-         */
-
-        if (!focusedElement || !focusedElement.closest(".".concat(_block["default"].CSS.content))) {
-          /**
-           * If new selection is not on Inline Toolbar, we need to close it
-           */
-          if (!_this.Editor.InlineToolbar.containsNode(focusedElement)) {
-            _this.Editor.InlineToolbar.close();
-          }
-
-          return;
-        }
-
-        _this.Editor.InlineToolbar.tryToShow(true);
-      };
-      /**
-       * Window resize listener
-       */
-
-
-      _this.windowResizeListener = function () {
-        return _this.resizeDebouncer();
-      };
-
       return _this;
     }
     /**
@@ -26846,11 +26710,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log('prepare ui');
                 /**
                  * Detect mobile version
                  */
-
                 this.checkIsMobile();
                 /**
                  * Make main UI elements
@@ -26888,7 +26750,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
                 this.toggleReadOnly(this.config.readOnly);
 
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -26896,9 +26758,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }, null, this);
       }
       /**
-       * Set read-only state
+       * Toggle read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * If readOnly is true:
+       *  - bb
+       * if readOnly is false:
+       *  - ss
+       *
+       * @param {boolean} readOnlyEnabled - "read only" state
        */
 
     }, {
@@ -26973,8 +26840,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Makes Editor.js interface
-       *
-       * @returns {Promise<void>}
        */
 
     }, {
@@ -27041,17 +26906,33 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents() {
-        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false));
-        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true));
-        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true));
-        this.listenerIds.push(this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true));
-        this.listenerIds.push(this.Editor.Listeners.on(document, 'click', this.documentClicked, true));
+        var _this2 = this;
+
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
+          _this2.redactorClicked(event);
+        }, false));
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', function (event) {
+          _this2.documentTouched(event);
+        }, true));
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', function (event) {
+          _this2.documentTouched(event);
+        }, true));
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'keydown', function (event) {
+          _this2.documentKeydown(event);
+        }, true));
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'click', function (event) {
+          _this2.documentClicked(event);
+        }, true));
         /**
          * Handle selection change to manipulate Inline Toolbar appearance
          */
 
-        this.listenerIds.push(this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true));
-        this.listenerIds.push(this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'selectionchange', function (event) {
+          _this2.selectionChanged(event);
+        }, true));
+        this.listenerIds.push(this.Editor.Listeners.on(window, 'resize', function () {
+          _this2.resizeDebouncer();
+        }, {
           passive: true
         }));
       }
@@ -27249,6 +27130,211 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.Editor.BlockSelection.clearSelection(event);
+      }
+      /**
+       * All clicks on document
+       *
+       * @param {MouseEvent} event - Click event
+       */
+
+    }, {
+      key: "documentClicked",
+      value: function documentClicked(event) {
+        /**
+         * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
+         * We don't need to handle such events, because they handled in other place.
+         */
+        if (!event.isTrusted) {
+          return;
+        }
+        /**
+         * Close Inline Toolbar when nothing selected
+         * Do not fire check on clicks at the Inline Toolbar buttons
+         */
+
+
+        var target = event.target;
+
+        var clickedInsideOfEditor = this.nodes.holder.contains(target) || _selection["default"].isAtEditor;
+
+        if (!clickedInsideOfEditor) {
+          /**
+           * Clear highlightings and pointer on BlockManager
+           *
+           * Current page might contain several instances
+           * Click between instances MUST clear focus, pointers and close toolbars
+           */
+          this.Editor.BlockManager.dropPointer();
+          this.Editor.InlineToolbar.close();
+          this.Editor.Toolbar.close();
+          this.Editor.ConversionToolbar.close();
+        }
+        /**
+         * Clear Selection if user clicked somewhere
+         */
+
+
+        if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+          this.Editor.BlockSelection.clearSelection(event);
+        }
+        /**
+         * Clear Selection if user clicked somewhere
+         */
+
+
+        if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+          this.Editor.BlockSelection.clearSelection(event);
+        }
+      }
+      /**
+       * First touch on editor
+       * Fired before click
+       *
+       * Used to change current block — we need to do it before 'selectionChange' event.
+       * Also:
+       * - Move and show the Toolbar
+       * - Set a Caret
+       *
+       * @param {MouseEvent | TouchEvent} event - touch or mouse event
+       */
+
+    }, {
+      key: "documentTouched",
+      value: function documentTouched(event) {
+        var clickedNode = event.target;
+        /**
+         * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+         */
+
+        if (clickedNode === this.nodes.redactor) {
+          var clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+          var clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+          clickedNode = document.elementFromPoint(clientX, clientY);
+        }
+        /**
+         * Select clicked Block as Current
+         */
+
+
+        try {
+          /**
+           * Renew Current Block
+           */
+          this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+          /**
+           * Highlight Current Node
+           */
+
+          this.Editor.BlockManager.highlightCurrentNode();
+        } catch (e) {
+          /**
+           * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
+           */
+          if (!this.Editor.RectangleSelection.isRectActivated()) {
+            this.Editor.Caret.setToTheLastBlock();
+          }
+        }
+        /**
+         * Move and open toolbar
+         */
+
+
+        this.Editor.Toolbar.open();
+        /**
+         * Hide the Plus Button
+         */
+
+        this.Editor.Toolbar.plusButton.hide();
+      }
+      /**
+       * All clicks on the redactor zone
+       *
+       * @param {MouseEvent} event - click event
+       *
+       * @description
+       * - By clicks on the Editor's bottom zone:
+       *      - if last Block is empty, set a Caret to this
+       *      - otherwise, add a new empty Block and set a Caret to that
+       */
+
+    }, {
+      key: "redactorClicked",
+      value: function redactorClicked(event) {
+        if (!_selection["default"].isCollapsed) {
+          return;
+        }
+
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+        /**
+         * case when user clicks on anchor element
+         * if it is clicked via ctrl key, then we open new window with url
+         */
+
+        var element = event.target;
+        var ctrlKey = event.metaKey || event.ctrlKey;
+
+        if (_dom["default"].isAnchor(element) && ctrlKey) {
+          var href = element.getAttribute('href');
+
+          var validUrl = _.getValidUrl(href);
+
+          _.openTab(validUrl);
+
+          return;
+        }
+
+        if (!this.Editor.BlockManager.currentBlock) {
+          this.Editor.BlockManager.insert();
+        }
+        /**
+         * Show the Plus Button if:
+         * - Block is an initial-block (Text)
+         * - Block is empty
+         */
+
+
+        var isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
+
+        if (isInitialBlock) {
+          /**
+           * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+           */
+          var isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+
+          if (isEmptyBlock) {
+            this.Editor.Toolbar.plusButton.show();
+          }
+        }
+      }
+      /**
+       * Handle selection changes on mobile devices
+       * Uses for showing the Inline Toolbar
+       *
+       * @param {Event} event - selection event
+       */
+
+    }, {
+      key: "selectionChanged",
+      value: function selectionChanged(event) {
+        var focusedElement = _selection["default"].anchorElement;
+        /**
+         * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
+         * We need to skip such firings
+         */
+
+        if (!focusedElement || !focusedElement.closest(".".concat(_block["default"].CSS.content))) {
+          /**
+           * If new selection is not on Inline Toolbar, we need to close it
+           */
+          if (!this.Editor.InlineToolbar.containsNode(focusedElement)) {
+            this.Editor.InlineToolbar.close();
+          }
+
+          return;
+        }
+
+        this.Editor.InlineToolbar.tryToShow(true);
       }
       /**
        * Append prebuilt sprite with SVG icons
@@ -28097,6 +28183,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.beautifyShortcut = beautifyShortcut;
   _exports.getValidUrl = getValidUrl;
   _exports.openTab = openTab;
+  _exports.generateId = generateId;
   _exports.isTouchSupported = _exports.logLabeled = _exports.log = _exports.mouseButtons = _exports.keyCodes = _exports.LogLevels = void 0;
   _defineProperty2 = _interopRequireDefault(_defineProperty2);
   _index = _interopRequireDefault(_index);
@@ -28686,6 +28773,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   function openTab(url) {
     window.open(url, '_blank');
+  }
+  /**
+   * Returns random generated identifier
+   *
+   * @returns {string}
+   */
+
+
+  function generateId() {
+    // tslint:disable-next-line:no-bitwise
+    return "f".concat((~~(Math.random() * 1e8)).toString(16));
   }
 });
 
