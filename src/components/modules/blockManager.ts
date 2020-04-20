@@ -228,13 +228,19 @@ export default class BlockManager extends Module {
    * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
    * @param {object} data - constructor params
    * @param {object} settings - block settings
+   * @param {boolean} readOnly - read only flag
    *
    * @returns {Block}
    */
-  public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
+  public composeBlock(
+    toolName: string,
+    data: BlockToolData = {},
+    settings: ToolConfig = {},
+    readOnly: boolean = false
+  ): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
+    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods, readOnly);
 
     if (!this.readOnlyEnabled) {
       this.bindEvents(block);
@@ -249,6 +255,7 @@ export default class BlockManager extends Module {
    * @param {string} toolName — plugin name, by default method inserts initial block type
    * @param {object} data — plugin data
    * @param {object} settings - default settings
+   * @param {boolean} readOnly - readonly flag
    * @param {number} index - index where to insert new Block
    * @param {boolean} needToFocus - flag shows if needed to update current Block index
    *
@@ -258,10 +265,11 @@ export default class BlockManager extends Module {
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
     settings: ToolConfig = {},
+    readOnly = false,
     index: number = this.currentBlockIndex + 1,
     needToFocus = true,
   ): Block {
-    const block = this.composeBlock(toolName, data, settings);
+    const block = this.composeBlock(toolName, data, settings, readOnly);
 
     this._blocks[index] = block;
 

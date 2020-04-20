@@ -11,17 +11,18 @@ export default class ReadOnlyAPI extends Module {
    */
   get methods(): ReadOnly {
     return {
-      toggle: (state) => this.toggle(state),
+      toggle: (state): Promise<boolean> => this.toggle(state),
     };
   }
 
   /**
    * Set or toggle read-only state
    *
-   * @param {Boolean|undefined} state - set or toggle state
-   * @returns {Boolean} current value
+   * @param {boolean|undefined} state - set or toggle state
+   *
+   * @returns {boolean} current value
    */
-  public toggle(state?: boolean) {
+  public toggle(state?: boolean): Promise<boolean> {
     return this.Editor.ReadOnly.toggle(state);
   }
 }

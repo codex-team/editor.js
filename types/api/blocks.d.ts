@@ -12,10 +12,13 @@ export interface Blocks {
 
   /**
    * Render passed data
-   * @param {OutputData} data
-   * @return {Promise<void>}
+   *
+   * @param {OutputData} data - saved Block data
+   * @param {boolean} readOnly - read only flag
+   *
+   * @returns {Promise<void>}
    */
-  render(data: OutputData): Promise<void>;
+  render(data: OutputData, readOnly: boolean): Promise<void>;
 
   /**
    * Render passed HTML string
@@ -83,6 +86,7 @@ export interface Blocks {
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
+   * @param {boolean} readOnly - readonly flag
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
@@ -90,6 +94,7 @@ export interface Blocks {
     type?: string,
     data?: BlockToolData,
     config?: ToolConfig,
+    readOnly?: boolean,
     index?: number,
     needToFocus?: boolean,
   ): void;

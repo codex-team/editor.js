@@ -155,6 +155,7 @@ export default class Block {
    * @param {object} toolClass — Tool's class
    * @param {object} settings - default settings
    * @param {object} apiMethods - Editor API
+   * @param {boolean} readOnly - read only flag
    */
   constructor(
     toolName: string,
@@ -162,13 +163,14 @@ export default class Block {
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
     apiMethods: API,
+    readOnly: boolean,
   ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
     this.settings = settings;
     this.api = apiMethods;
-    this.holder = this.compose();
+    this.holder = this.compose(readOnly);
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
@@ -580,12 +582,14 @@ export default class Block {
   /**
    * Make default Block wrappers and put Tool`s content there
    *
+   * @param {boolean} readOnly - read only flag
+   *
    * @returns {HTMLDivElement}
    */
-  private compose(): HTMLDivElement {
+  private compose(readOnly: boolean): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.tool.render();
+        pluginsContent = this.tool.render(readOnly);
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);

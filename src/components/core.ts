@@ -201,6 +201,8 @@ export default class Core {
         this.config.data.blocks = [ initialBlockData ];
       }
     }
+
+    this.config.readOnly = this.config.readOnly ? this.config.readOnly : false;
   }
 
   /**
@@ -291,7 +293,7 @@ export default class Core {
    * Render initial data
    */
   private render(): Promise<void> {
-    return this.moduleInstances.Renderer.render(this.config.data.blocks);
+    return this.moduleInstances.Renderer.render(this.config.data.blocks, this.config.readOnly);
   }
 
   /**

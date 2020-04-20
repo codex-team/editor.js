@@ -17,6 +17,11 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
+   * @param {boolean} readOnly - render HTML on readonly mode
+   */
+  render(readOnly?: boolean): HTMLElement;
+
+  /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {BlockToolData}

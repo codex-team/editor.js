@@ -17,7 +17,7 @@ export default class BlocksAPI extends Module {
   public get methods(): Blocks {
     return {
       clear: (): void => this.clear(),
-      render: (data: OutputData): Promise<void> => this.render(data),
+      render: (data: OutputData, readOnly: boolean): Promise<void> => this.render(data, readOnly),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
       delete: (): void => this.delete(),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
@@ -131,11 +131,12 @@ export default class BlocksAPI extends Module {
    * Fills Editor with Blocks data
    *
    * @param {OutputData} data — Saved Editor data
+   * @param {boolean} readOnly - read only flag
    */
-  public render(data: OutputData): Promise<void> {
+  public render(data: OutputData, readOnly: boolean): Promise<void> {
     this.Editor.BlockManager.clear();
 
-    return this.Editor.Renderer.render(data.blocks);
+    return this.Editor.Renderer.render(data.blocks, readOnly);
   }
 
   /**
@@ -172,6 +173,7 @@ export default class BlocksAPI extends Module {
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
+   * @param {boolean} readOnly - read only flag
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
@@ -179,6 +181,7 @@ export default class BlocksAPI extends Module {
     type: string = this.config.initialBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
+    readOnly = false,
     index?: number,
     needToFocus?: boolean,
   ): void => {
@@ -186,6 +189,7 @@ export default class BlocksAPI extends Module {
       type,
       data,
       config,
+      readOnly,
       index,
       needToFocus,
     );

@@ -1,7 +1,5 @@
 import Module from '../__module';
-/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
-import { ChainData } from '../utils';
 import { BlockToolData } from '../../../types';
 import { BlockToolConstructable } from '../../../types/tools';
 
@@ -44,11 +42,12 @@ export default class Renderer extends Module {
    * Make plugin blocks from array of plugin`s data
    *
    * @param {BlockToolData[]} blocks - blocks to render
+   * @param {boolean} readOnly - readOnly flag value
    */
-  public async render(blocks: BlockToolData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
+  public async render(blocks: BlockToolData[], readOnly: boolean): Promise<void> {
+    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block, readOnly) }));
 
-    const sequence = await _.sequence(chainData as ChainData[]);
+    const sequence = await _.sequence(chainData as _.ChainData[]);
 
     this.Editor.UI.checkEmptiness();
 
@@ -61,9 +60,11 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
+   * @param {boolean} readOnly - read only flag
+   *
    * @returns {Promise<void>}
    */
-  public async insertBlock(item): Promise<void> {
+  public async insertBlock(item, readOnly): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
@@ -71,7 +72,7 @@ export default class Renderer extends Module {
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert(tool, data, settings);
+        BlockManager.insert(tool, data, settings, readOnly);
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
@@ -93,7 +94,7 @@ export default class Renderer extends Module {
         stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
       }
 
-      const stub = BlockManager.insert(Tools.stubTool, stubData, settings);
+      const stub = BlockManager.insert(Tools.stubTool, stubData, settings, true);
 
       stub.stretched = true;
 
