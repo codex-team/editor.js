@@ -1,5 +1,4 @@
 import {
-  API,
   BlockTool,
   BlockToolConstructable,
   BlockToolData,
@@ -12,6 +11,13 @@ import {
 import { SavedData } from '../types-internal/block-data';
 import $ from './dom';
 import * as _ from './utils';
+import ApiModule from './../components/modules/api';
+/** Import default tunes */
+import MoveUpTune from './block-tunes/block-tune-move-up';
+import DeleteTune from './block-tunes/block-tune-delete';
+import MoveDownTune from './block-tunes/block-tune-move-down';
+import SelectionUtils from './selection';
+import { ToolType } from './modules/tools';
 
 /**
  * @class Block
@@ -21,12 +27,6 @@ import * as _ from './utils';
  * @property {object} CSS — block`s css classes
  *
  */
-
-/** Import default tunes */
-import MoveUpTune from './block-tunes/block-tune-move-up';
-import DeleteTune from './block-tunes/block-tune-delete';
-import MoveDownTune from './block-tunes/block-tune-move-down';
-import SelectionUtils from './selection';
 
 /**
  * Available Block Tool API methods
@@ -106,9 +106,9 @@ export default class Block {
   private cachedInputs: HTMLElement[] = [];
 
   /**
-   * Editor`s API
+   * Editor`s API module
    */
-  private readonly api: API;
+  private readonly api: ApiModule;
 
   /**
    * Focused input index
@@ -154,20 +154,20 @@ export default class Block {
    * @param {object} toolInstance — passed Tool`s instance that rendered the Block
    * @param {object} toolClass — Tool's class
    * @param {object} settings - default settings
-   * @param {object} apiMethods - Editor API
+   * @param {ApiModule} apiModule - Editor API module for pass it to the Block Tunes
    */
   constructor(
     toolName: string,
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
-    apiMethods: API
+    apiModule: ApiModule
   ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
     this.settings = settings;
-    this.api = apiMethods;
+    this.api = apiModule;
     this.holder = this.compose();
 
     this.mutationObserver = new MutationObserver(this.didMutated);
@@ -519,12 +519,25 @@ export default class Block {
    * @returns {BlockTune[]}
    */
   public makeTunes(): BlockTune[] {
-    const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
+    const tunesList = [
+      {
+        name: 'moveUp',
+        Tune: MoveUpTune,
+      },
+      {
+        name: 'delete',
+        Tune: DeleteTune,
+      },
+      {
+        name: 'moveDown',
+        Tune: MoveDownTune,
+      },
+    ];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map((Tune: BlockTuneConstructable) => {
+    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
       return new Tune({
-        api: this.api,
+        api: this.api.getMethodsForTool(name, ToolType.Tune),
         settings: this.settings,
       });
     });
