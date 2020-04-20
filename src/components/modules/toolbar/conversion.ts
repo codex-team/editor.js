@@ -5,6 +5,7 @@ import * as _ from '../../utils';
 import { SavedData } from '../../../types-internal/block-data';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * Block Converter
@@ -68,7 +69,7 @@ export default class ConversionToolbar extends Module {
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-      textContent: I18n.t('ui.inlineToolbar.converter', 'Convert to'),
+      textContent: I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'),
     });
 
     /**

@@ -1,6 +1,12 @@
 import defaultDictionary from './locales/en/messages.json';
 import * as _ from '../utils';
-import { I18nDictionary, Dictionary } from '../../../types/configs/i18n-dictionary';
+import { I18nDictionary, Dictionary } from '../../../types/configs';
+import { LeavesDictKeys } from '../../../types/configs/i18n-internal-namespace';
+
+/**
+ * Type for all available internal dictionary strings
+ */
+export type DictKeys = LeavesDictKeys<typeof defaultDictionary>;
 
 /**
  * This class will responsible for the translation through the language dictionary
@@ -12,13 +18,46 @@ export default class I18n {
   private static currentDictionary: I18nDictionary = defaultDictionary;
 
   /**
+   * Type-safe translation for internal UI texts:
    * Perform translation of the string by namespace and a key
-   * If there is no translation found, returns passed key as a translated message
+   *
+   * @example I18n.ui(I18nNamespace.ui.blockTunes.toggler, 'Click to tune')
+   *
+   * @param internalNamespace - path to translated string in dictionary
+   * @param dictKey - dictionary key. Better to use default locale original text
+   */
+  public static ui(internalNamespace: string, dictKey: DictKeys): string {
+    return I18n._t(internalNamespace, dictKey);
+  }
+
+  /**
+   * Translate for external strings that is not presented in default dictionary.
+   * For example, for user-specified tool names
    *
    * @param namespace - path to translated string in dictionary
    * @param dictKey - dictionary key. Better to use default locale original text
    */
   public static t(namespace: string, dictKey: string): string {
+    return I18n._t(namespace, dictKey);
+  }
+
+  /**
+   * Adjust module for using external dictionary
+   *
+   * @param dictionary - new messages list to override default
+   */
+  public static setDictionary(dictionary: I18nDictionary): void {
+    I18n.currentDictionary = dictionary;
+  }
+
+  /**
+   * Perform translation both for internal and external namespaces
+   * If there is no translation found, returns passed key as a translated message
+   *
+   * @param namespace - path to translated string in dictionary
+   * @param dictKey - dictionary key. Better to use default locale original text
+   */
+  private static _t(namespace: string, dictKey: string): string {
     const section = I18n.getNamespace(namespace);
 
     if (_.isEmpty(section)) {
@@ -30,15 +69,6 @@ export default class I18n {
     }
 
     return section[dictKey] as string;
-  }
-
-  /**
-   * Adjust module for using external dictionary
-   *
-   * @param dictionary - new messages list to override default
-   */
-  public static setDictionary(dictionary: I18nDictionary): void {
-    I18n.currentDictionary = dictionary;
   }
 
   /**

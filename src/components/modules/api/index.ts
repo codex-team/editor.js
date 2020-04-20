@@ -7,7 +7,7 @@
  */
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
-import { ToolType } from "../tools";
+import { ToolType } from '../tools';
 
 /**
  * @class API
@@ -36,6 +36,7 @@ export default class API extends Module {
 
   /**
    * Returns Editor.js Core API methods for passed tool
+   *
    * @param toolName - how user name tool. It can be used in some API logic,
    *                   for example in i18n to provide namespaced dictionary
    *
@@ -46,7 +47,7 @@ export default class API extends Module {
       this.methods,
       {
         i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, toolType),
-      },
+      }
     ) as APIInterfaces;
   }
 }

@@ -531,7 +531,7 @@ export default class Block {
       {
         name: 'moveDown',
         Tune: MoveDownTune,
-      }
+      },
     ];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings

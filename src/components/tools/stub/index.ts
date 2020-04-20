@@ -49,10 +49,10 @@ export default class Stub implements BlockTool {
   private readonly savedData: BlockToolData;
 
   /**
+   * @param data - stub tool data
    * @param api - Editor.js API
-   * @param {BlockToolData} data - stub tool data
    */
-  constructor({ data, api }: {data: StubData, api: API}) {
+  constructor({ data, api }: {data: StubData; api: API}) {
     this.api = api;
     this.title = data.title || this.api.i18n.t('Error');
     this.subtitle = this.api.i18n.t('The block can not be displayed correctly.');

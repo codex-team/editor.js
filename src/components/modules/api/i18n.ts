@@ -2,7 +2,7 @@ import Module from '../../__module';
 import { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
 import { ToolType } from '../tools';
-import {copyTextToClipboard, log} from '../../utils';
+import { logLabeled } from '../../utils';
 
 /**
  * Provides methods for working with i18n
@@ -30,7 +30,7 @@ export default class I18nAPI extends Module {
   public get methods(): I18n {
     return {
       t: (): string | undefined => {
-        log('I18n.t() method can be accessed only from Tools', 'warn');
+        logLabeled('I18n.t() method can be accessed only from Tools', 'warn');
 
         return undefined;
       },
