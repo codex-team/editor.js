@@ -16,7 +16,7 @@ function getNamespaces(dict: object, keyPath?: string): DictNamespaces<typeof de
       const newPath = keyPath ? `${keyPath}.${key}` : key;
 
       /**
-       * Check current section values, it all of them are strings, so there is the last section
+       * Check current section values, if all of them are strings, so there is the last section
        */
       const isLastSection = Object.values(section).every((sectionValue) => {
         return typeOf(sectionValue) === 'string';
