@@ -6,7 +6,7 @@ import { LeavesDictKeys } from '../../../types/configs/i18n-internal-namespace';
 /**
  * Type for all available internal dictionary strings
  */
-export type DictKeys = LeavesDictKeys<typeof defaultDictionary>;
+type DictKeys = LeavesDictKeys<typeof defaultDictionary>;
 
 /**
  * This class will responsible for the translation through the language dictionary

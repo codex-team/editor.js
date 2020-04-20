@@ -18,6 +18,10 @@
     }
   },
   "toolNames": {
+    "Text": "",
+    "Link": "",
+    "Bold": "",
+    "Italic": ""
   },
   "tools": {
     "link": {
@@ -28,5 +32,14 @@
     }
   },
   "blockTunes": {
+    "delete": {
+      "Delete": ""
+    },
+    "moveUp": {
+      "Move up": ""
+    },
+    "moveDown": {
+      "Move down": ""
+    }
   }
 }
