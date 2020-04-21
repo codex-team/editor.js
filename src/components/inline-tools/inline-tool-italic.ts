@@ -27,7 +27,7 @@ export default class ItalicInlineTool implements InlineTool {
    *
    * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       i: {},
     } as SanitizerConfig;
@@ -69,7 +69,7 @@ export default class ItalicInlineTool implements InlineTool {
   /**
    * Wrap range with <i> tag
    *
-   * @param {Range} range
+   * @param {Range} range - range to wrap
    */
   public surround(range: Range): void {
     document.execCommand(this.commandName);
@@ -78,7 +78,7 @@ export default class ItalicInlineTool implements InlineTool {
   /**
    * Check selection and set activated state to button if there are <i> tag
    *
-   * @param {Selection} selection
+   * @param {Selection} selection - selection to check
    */
   public checkState(selection: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);

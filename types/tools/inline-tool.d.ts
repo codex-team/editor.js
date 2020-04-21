@@ -1,4 +1,5 @@
 import {BaseTool, BaseToolConstructable} from './tool';
+import {API, ToolConfig} from "../index";
 /**
  * Base structure for the Inline Toolbar Tool
  */
@@ -34,4 +35,20 @@ export interface InlineTool extends BaseTool {
   clear?(): void;
 }
 
-export interface InlineToolConstructable extends BaseToolConstructable {}
+
+/**
+ * Describe constructor parameters
+ */
+export interface InlineToolConstructorOptions {
+  api: API;
+  config?: ToolConfig;
+}
+
+export interface InlineToolConstructable extends BaseToolConstructable {
+  /**
+   * Constructor
+   *
+   * @param {InlineToolConstructorOptions} config - constructor parameters
+   */
+  new(config: InlineToolConstructorOptions): BaseTool;
+}

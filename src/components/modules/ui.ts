@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Prebuilded sprite of SVG icons
  */
@@ -28,8 +29,8 @@ import Flipper from '../flipper';
  *
  * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
- * @property {Object} Editor         - available editor modules {@link EditorJS#moduleInstances}
- * @property {Object} nodes          -
+ * @property {object} Editor         - available editor modules {@link EditorJS#moduleInstances}
+ * @property {object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
@@ -37,7 +38,8 @@ import Flipper from '../flipper';
 export default class UI extends Module {
   /**
    * Editor.js UI CSS class names
-   * @return {{editorWrapper: string, editorZone: string}}
+   *
+   * @returns {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
@@ -55,7 +57,8 @@ export default class UI extends Module {
 
   /**
    * Return Width of center column of Editor
-   * @return {DOMRect}
+   *
+   * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
     if (this.contentRectCache) {
@@ -82,6 +85,7 @@ export default class UI extends Module {
 
   /**
    * Flag that became true on mobile viewport
+   *
    * @type {boolean}
    */
   public isMobile = false;
@@ -98,12 +102,14 @@ export default class UI extends Module {
   /**
    * Cache for center column rectangle info
    * Invalidates on window resize
+   *
    * @type {DOMRect}
    */
   private contentRectCache: DOMRect = undefined;
 
   /**
    * Handle window resize only when it finished
+   *
    * @type {() => void}
    */
   private resizeDebouncer: () => void = _.debounce(() => {
@@ -184,7 +190,8 @@ export default class UI extends Module {
   /**
    * Check if one of Toolbar is opened
    * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
     const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
@@ -226,17 +233,19 @@ export default class UI extends Module {
   /**
    * Check for mobile mode and cache a result
    */
-  private checkIsMobile() {
+  private checkIsMobile(): void {
     this.isMobile = window.innerWidth < 650;
   }
 
   /**
    * Makes Editor.js interface
-   * @return {Promise<void>}
+   *
+   * @returns {Promise<void>}
    */
   private async make(): Promise<void> {
     /**
      * Element where we need to append Editor.js
+     *
      * @type {Element}
      */
     this.nodes.holder = $.getHolder(this.config.holder);
@@ -270,6 +279,7 @@ export default class UI extends Module {
     /**
      * Load CSS
      */
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const styles = require('../../styles/main.css');
 
     /**
@@ -340,7 +350,8 @@ export default class UI extends Module {
 
   /**
    * All keydowns on document
-   * @param {Event} event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
   private documentKeydown(event: KeyboardEvent): void {
     switch (event.keyCode) {
@@ -358,7 +369,8 @@ export default class UI extends Module {
 
   /**
    * Ignore all other document's keydown events
-   * @param {KeyboardEvent} event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
@@ -384,7 +396,7 @@ export default class UI extends Module {
   }
 
   /**
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
@@ -410,7 +422,8 @@ export default class UI extends Module {
 
   /**
    * Enter pressed on document
-   * @param event
+   *
+   * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
@@ -468,7 +481,8 @@ export default class UI extends Module {
 
   /**
    * All clicks on document
-   * @param {MouseEvent} event - Click
+   *
+   * @param {MouseEvent} event - Click event
    */
   private documentClicked(event: MouseEvent): void {
     /**
@@ -521,6 +535,8 @@ export default class UI extends Module {
    * Also:
    * - Move and show the Toolbar
    * - Set a Caret
+   *
+   * @param {MouseEvent | TouchEvent} event - touch or mouse event
    */
   private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
@@ -571,7 +587,7 @@ export default class UI extends Module {
   /**
    * All clicks on the redactor zone
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - click event
    *
    * @description
    * - By clicks on the Editor's bottom zone:
@@ -628,7 +644,8 @@ export default class UI extends Module {
   /**
    * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
-   * @param {Event} event
+   *
+   * @param {Event} event - selection event
    */
   private selectionChanged(event: Event): void {
     const focusedElement = Selection.anchorElement as Element;

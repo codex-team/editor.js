@@ -28,7 +28,7 @@ export default class Module {
 
   /**
    * @class
-   * @param {EditorConfig}
+   * @param {EditorConfig} config - Editor's config
    */
   constructor({ config }: ModuleConfig) {
     if (new.target === Module) {
@@ -41,9 +41,9 @@ export default class Module {
   /**
    * Editor modules setter
    *
-   * @param {EditorModules} Editor
+   * @param {EditorModules} Editor - Editor's Modules
    */
-  set state(Editor: EditorModules) {
+  public set state(Editor: EditorModules) {
     this.Editor = Editor;
   }
 }

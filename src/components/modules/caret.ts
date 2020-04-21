@@ -131,7 +131,7 @@ export default class Caret extends Module {
      * We use <= comparison for case:
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
-    return firstNode === null || focusNode === firstNode && focusOffset <= firstLetterPosition;
+    return firstNode === null || (focusNode === firstNode && focusOffset <= firstLetterPosition);
   }
 
   /**
@@ -191,7 +191,7 @@ export default class Caret extends Module {
          */
         const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
 
-        return (isLastBR) || $.isEmpty(node) && !$.isLineBreakTag(node);
+        return isLastBR || ($.isEmpty(node) && !$.isLineBreakTag(node));
       });
 
       if (nothingAtRight && focusOffset === focusNode.textContent.length) {
@@ -286,9 +286,7 @@ export default class Caret extends Module {
         break;
 
       case this.positions.END:
-        const contentLength = $.getContentLength(nodeToSet);
-
-        this.set(nodeToSet as HTMLElement, contentLength);
+        this.set(nodeToSet as HTMLElement, $.getContentLength(nodeToSet));
         break;
 
       default:
@@ -459,19 +457,19 @@ export default class Caret extends Module {
   /**
    * Inserts shadow element after passed element where caret can be placed
    *
-   * @param {Node} element
+   * @param {Element} element - element after which shadow caret should be inserted
    */
-  public createShadow(element): void {
+  public createShadow(element: Element): void {
     const shadowCaret = document.createElement('span');
 
     shadowCaret.classList.add(Caret.CSS.shadowCaret);
-    element.insertAdjacentElement('beforeEnd', shadowCaret);
+    element.insertAdjacentElement('beforeend', shadowCaret);
   }
 
   /**
    * Restores caret position
    *
-   * @param {HTMLElement} element
+   * @param {HTMLElement} element - element where caret should be restored
    */
   public restoreCaret(element: HTMLElement): void {
     const shadowCaret = element.querySelector(`.${Caret.CSS.shadowCaret}`);
@@ -543,11 +541,13 @@ export default class Caret extends Module {
    * <p></p>                            | right first-level siblings
    * <p></p>                            |
    * </div>
-   * @returns {Element[]}
-   * @param from
-   * @param direction
+   *
+   * @param {HTMLElement} from - element from which siblings should be searched
+   * @param {'left' | 'right'} direction - direction of search
+   *
+   * @returns {HTMLElement[]}
    */
-  private getHigherLevelSiblings(from: HTMLElement, direction?: string): HTMLElement[] {
+  private getHigherLevelSiblings(from: HTMLElement, direction?: 'left' | 'right'): HTMLElement[] {
     let current = from;
     const siblings = [];
 

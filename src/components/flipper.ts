@@ -3,6 +3,8 @@ import * as _ from './utils';
 
 /**
  * Flipper construction options
+ *
+ * @interface FlipperOptions
  */
 export interface FlipperOptions {
   /**
@@ -66,7 +68,6 @@ export default class Flipper {
    * @class
    *
    * @param {FlipperOptions} options - different constructing settings
-   * @
    */
   constructor(options: FlipperOptions) {
     this.allowArrows = typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
@@ -115,7 +116,7 @@ export default class Flipper {
   /**
    * Array of keys (codes) that is handled by Flipper
    * Used to:
-   *  - preventDefault only for this keys, not all keywdowns (@see constructor)
+   *  - preventDefault only for this keys, not all keydowns (@see constructor)
    *  - to skip external behaviours only for these keys, when filler is activated (@see BlockEvents@arrowRightAndDown)
    */
   public static get usedKeys(): number[] {
@@ -180,7 +181,7 @@ export default class Flipper {
    * This function is fired before handling flipper keycodes
    * The result of this function defines if it is need to be handled or not
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - keydown keyboard event
    * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
@@ -208,7 +209,7 @@ export default class Flipper {
   /**
    * When flipper is activated tab press will leaf the items
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - tab keydown event
    */
   private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
@@ -242,7 +243,7 @@ export default class Flipper {
   /**
    * Enter press will click current item if flipper is activated
    *
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - enter keydown event
    */
   private handleEnterPress(event: KeyboardEvent): void {
     if (!this.activated) {

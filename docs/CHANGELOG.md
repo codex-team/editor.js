@@ -5,6 +5,7 @@
 - `Improvements` - Deprecated TSLint replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Adjusted GitHub action for ESLint.
 - `Improvements` - Blocks API: allow deletion of blocks by specifying block index via `blocks.delete()`.
+- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
 
 ### 2.17
 

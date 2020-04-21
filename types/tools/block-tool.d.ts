@@ -1,10 +1,11 @@
 import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
 import { BlockToolData } from './block-tool-data';
-import { BaseTool, BaseToolConstructable } from './tool';
+import {BaseTool, BaseToolConstructable, BaseToolConstructorOptions} from './tool';
 import { ToolConfig } from './tool-config';
 import { API } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
+
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
@@ -73,6 +74,15 @@ export interface BlockTool extends BaseTool {
   moved?(event: MoveEvent): void;
 }
 
+/**
+ * Describe constructor parameters
+ */
+export interface BlockToolConstructorOptions extends BaseToolConstructorOptions {
+  api: API;
+  data: BlockToolData;
+  config?: ToolConfig;
+}
+
 export interface BlockToolConstructable extends BaseToolConstructable {
   /**
    * Tool's Toolbox settings
@@ -101,7 +111,10 @@ export interface BlockToolConstructable extends BaseToolConstructable {
 
   /**
    * @constructor
+   *
+   * @param {BlockToolConstructorOptions} config - constructor parameters
+   *
    * @return {BlockTool}
    */
-  new(config: { api: API, config: ToolConfig, data: BlockToolData }): BlockTool;
+  new(config: BlockToolConstructorOptions): BlockTool;
 }

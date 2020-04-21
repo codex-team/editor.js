@@ -14,7 +14,7 @@ export default class MoveUpTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
    *
-   * @see {api.md}
+   * @see {@link docs/api.md}
    */
   private readonly api: API;
 
@@ -32,7 +32,7 @@ export default class MoveUpTune implements BlockTune {
   /**
    * MoveUpTune constructor
    *
-   * @param {{api: API}} api
+   * @param {API} api - Editor's API
    */
   constructor({ api }) {
     this.api = api;
@@ -41,7 +41,7 @@ export default class MoveUpTune implements BlockTune {
   /**
    * Create "MoveUp" button and add click event listener
    *
-   * @returns [HTMLElement}
+   * @returns {HTMLElement}
    */
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
@@ -57,7 +57,7 @@ export default class MoveUpTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveUpButton, 'Move up');
+    this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'));
 
     return moveUpButton;
   }
@@ -65,8 +65,8 @@ export default class MoveUpTune implements BlockTune {
   /**
    * Move current block up
    *
-   * @param {MouseEvent} event
-   * @param {HTMLElement} button
+   * @param {MouseEvent} event - click event
+   * @param {HTMLElement} button - clicked button
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();

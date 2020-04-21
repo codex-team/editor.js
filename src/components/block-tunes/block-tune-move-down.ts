@@ -15,7 +15,7 @@ export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
    *
-   * @see {api.md}
+   * @see {@link docs/api.md}
    */
   private readonly api: API;
 
@@ -33,7 +33,7 @@ export default class MoveDownTune implements BlockTune {
   /**
    * MoveDownTune constructor
    *
-   * @param {{api: API}} api
+   * @param {API} api — Editor's API
    */
   constructor({ api }) {
     this.api = api;
@@ -41,8 +41,10 @@ export default class MoveDownTune implements BlockTune {
 
   /**
    * Return 'move down' button
+   *
+   * @returns {HTMLElement}
    */
-  public render() {
+  public render(): HTMLElement {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
 
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
@@ -56,7 +58,7 @@ export default class MoveDownTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveDownButton, 'Move down');
+    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'));
 
     return moveDownButton;
   }
@@ -64,10 +66,10 @@ export default class MoveDownTune implements BlockTune {
   /**
    * Handle clicks on 'move down' button
    *
-   * @param {MouseEvent} event
-   * @param {HTMLElement} button
+   * @param {MouseEvent} event - click event
+   * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event: MouseEvent, button: HTMLElement) {
+  public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     // If Block is last do nothing

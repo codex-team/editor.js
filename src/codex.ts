@@ -17,9 +17,9 @@ declare const VERSION: string;
  *
  * Short Description (눈_눈;)
  *
- * @version 2.0
+ * @version 2.18.0
  *
- * @licence Apache-2.0
+ * @license Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
  */
 export default class EditorJS {
@@ -35,7 +35,7 @@ export default class EditorJS {
   public destroy: () => void;
 
   /** Editor version */
-  static get version(): string {
+  public static get version(): string {
     return VERSION;
   }
 
@@ -46,7 +46,8 @@ export default class EditorJS {
     /**
      * Set default onReady function
      */
-    let onReady = () => {};
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    let onReady = (): void => {};
 
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
@@ -75,18 +76,18 @@ export default class EditorJS {
   /**
    * Export external API methods
    *
-   * @param editor
+   * @param {Core} editor — Editor's instance
    */
   public exportAPI(editor: Core): void {
     const fieldsToExport = [ 'configuration' ];
-    const destroy = () => {
+    const destroy = (): void => {
       editor.moduleInstances.Listeners.removeAll();
       editor.moduleInstances.UI.destroy();
       editor.moduleInstances.ModificationsObserver.destroy();
       editor = null;
 
       for (const field in this) {
-        if (this.hasOwnProperty(field)) {
+        if (Object.prototype.hasOwnProperty.call(this, field)) {
           delete this[field];
         }
       }

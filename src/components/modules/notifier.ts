@@ -14,9 +14,9 @@ export default class Notifier extends Module {
   /**
    * Show web notification
    *
-   * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions} options
+   * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions} options - notification options
    */
-  public show(options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions) {
+  public show(options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions): void {
     notifier.show(options);
   }
 }

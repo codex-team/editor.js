@@ -31,7 +31,7 @@ export default class BlockManager extends Module {
   /**
    * Set current Block index and fire Block lifecycle callbacks
    *
-   * @param newIndex
+   * @param {number} newIndex - index of Block to set as current
    */
   public set currentBlockIndex(newIndex: number) {
     if (this._blocks[this._currentBlockIndex]) {
@@ -163,7 +163,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Promise}
    */
-  public async prepare() {
+  public async prepare(): Promise<void> {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
     const { BlockEvents, Listeners } = this.Editor;
 
@@ -213,7 +213,7 @@ export default class BlockManager extends Module {
   public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
+    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
 
     this.bindEvents(block);
 
@@ -252,7 +252,7 @@ export default class BlockManager extends Module {
   /**
    * Insert pasted content. Call onPaste callback after insert.
    *
-   * @param {string} toolName
+   * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
    */
@@ -288,7 +288,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus = false) {
+  public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
     const block = this.composeBlock(this.config.initialBlock, {}, {});
 
     this._blocks[index] = block;
@@ -347,7 +347,7 @@ export default class BlockManager extends Module {
   /**
    * Remove block with passed index or remove last
    *
-   * @param {number|null} index
+   * @param {number|null} index - index of Block to remove
    */
   public removeBlock(index?: number): void {
     if (index === undefined) {
@@ -374,7 +374,7 @@ export default class BlockManager extends Module {
    * Remove only selected Blocks
    * and returns first Block index where started removing...
    *
-   * @returns number|undefined
+   * @returns {number|undefined}
    */
   public removeSelectedBlocks(): number|undefined {
     let firstSelectedBlockIndex;
@@ -461,7 +461,8 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
-   * @param {number} index
+   * @param {number} index - index to get
+   *
    * @returns {Block}
    */
   public getBlockByIndex(index): Block {
@@ -471,7 +472,8 @@ export default class BlockManager extends Module {
   /**
    * Get Block instance by html element
    *
-   * @param {Node} element
+   * @param {Node} element - html element to get Block by
+   *
    * @returns {Block}
    */
   public getBlock(element: HTMLElement): Block {
@@ -519,7 +521,7 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    *  @param {Node} childNode - look ahead from this node.
-   *  @param {string} caretPosition - position where to set caret
+   *
    *  @throws Error  - when passed Node is not included at the Block
    */
   public setCurrentBlockByChildNode(childNode: Node): Block {
@@ -549,7 +551,8 @@ export default class BlockManager extends Module {
   /**
    * Return block which contents passed node
    *
-   * @param {Node} childNode
+   * @param {Node} childNode - node to get Block by
+   *
    * @returns {Block}
    */
   public getBlockByChildNode(childNode: Node): Block {
@@ -568,8 +571,9 @@ export default class BlockManager extends Module {
   /**
    * Swap Blocks Position
    *
-   * @param {number} fromIndex
-   * @param {number} toIndex
+   * @param {number} fromIndex - index of first block
+   * @param {number} toIndex - index of second block
+   *
    * @deprecated — use 'move' instead
    */
   public swap(fromIndex, toIndex): void {
@@ -583,8 +587,8 @@ export default class BlockManager extends Module {
   /**
    * Move a block to a new index
    *
-   * @param {number} toIndex
-   * @param {number} fromIndex
+   * @param {number} toIndex - index where to move Block
+   * @param {number} fromIndex - index of Block to move
    */
   public move(toIndex, fromIndex = this.currentBlockIndex): void {
     // make sure indexes are valid and within a valid range
@@ -640,7 +644,7 @@ export default class BlockManager extends Module {
   /**
    * Bind Events
    *
-   * @param {object} block
+   * @param {Block} block - Block to which event should be bound
    */
   private bindEvents(block: Block): void {
     const { BlockEvents, Listeners } = this.Editor;
@@ -656,12 +660,10 @@ export default class BlockManager extends Module {
    * Validates that the given index is not lower than 0 or higher than the amount of blocks
    *
    * @param {number} index - index of blocks array to validate
+   *
+   * @returns {boolean}
    */
   private validateIndex(index: number): boolean {
-    if (index < 0 || index >= this._blocks.length) {
-      return false;
-    }
-
-    return true;
+    return !(index < 0 || index >= this._blocks.length);
   }
 }

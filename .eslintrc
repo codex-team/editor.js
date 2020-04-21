@@ -6,13 +6,40 @@
     /**
      * Temporary suppress some errors. We need to fix them partially in next patches
      */
-    "@typescript-eslint/explicit-function-return-type": ["warn"],
-    "@typescript-eslint/explicit-member-accessibility": ["warn"],
-    "@typescript-eslint/member-ordering": ["warn"],
-    "@typescript-eslint/no-empty-function": ["warn"],
-    "no-prototype-builtins": ["warn"],
-    "no-mixed-operators": ["warn"],
     "import/no-duplicates": ["warn"],
-    "no-case-declarations": ["warn"]
+  },
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript"
+    }
+  },
+  "globals": {
+    "Node": true,
+    "Range": true,
+    "HTMLElement": true,
+    "HTMLDivElement": true,
+    "Element": true,
+    "Selection": true,
+    "SVGElement": true,
+    "Text": true,
+    "InsertPosition": true,
+    "PropertyKey": true,
+    "MouseEvent": true,
+    "TouchEvent": true,
+    "KeyboardEvent": true,
+    "ClipboardEvent": true,
+    "DragEvent": true,
+    "Event": true,
+    "EventTarget": true,
+    "Document": true,
+    "NodeList": true,
+    "File": true,
+    "FileList": true,
+    "MutationRecord": true,
+    "AddEventListenerOptions": true,
+    "DataTransfer": true,
+    "DOMRect": true,
+    "ClientRect": true,
+    "ArrayLike": true
   }
 }

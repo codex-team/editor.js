@@ -49,7 +49,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Clear timeout and set null to mutationDebouncer property
    */
-  public destroy() {
+  public destroy(): void {
     this.mutationDebouncer = null;
     if (this.observer) {
       this.observer.disconnect();
@@ -76,7 +76,7 @@ export default class ModificationsObserver extends Module {
    * Allows to disable observer,
    * for example when Editor wants to stealthy mutate DOM
    */
-  public disable() {
+  public disable(): void {
     this.disabled = true;
   }
 
@@ -84,7 +84,7 @@ export default class ModificationsObserver extends Module {
    * Enables mutation handling
    * Should be called after .disable()
    */
-  public enable() {
+  public enable(): void {
     this.disabled = false;
   }
 
@@ -113,10 +113,10 @@ export default class ModificationsObserver extends Module {
   /**
    * MutationObserver events handler
    *
-   * @param mutationList
-   * @param observer
+   * @param {MutationRecord[]} mutationList - list of mutations
+   * @param {MutationObserver} observer - observer instance
    */
-  private mutationHandler(mutationList, observer) {
+  private mutationHandler(mutationList: MutationRecord[], observer): void {
     /**
      * Skip mutations in stealth mode
      */
@@ -134,18 +134,14 @@ export default class ModificationsObserver extends Module {
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case 'childList':
-        case 'subtree':
         case 'characterData':
-        case 'characterDataOldValue':
           contentMutated = true;
           break;
         case 'attributes':
-          const mutatedTarget = mutation.target as Element;
-
           /**
            * Changes on Element.ce-block usually is functional
            */
-          if (!mutatedTarget.classList.contains(Block.CSS.wrapper)) {
+          if (!(mutation.target as Element).classList.contains(Block.CSS.wrapper)) {
             contentMutated = true;
           }
           break;

@@ -1,7 +1,7 @@
 /*!
  * Editor.js
  * 
- * @version 2.17.0
+ * @version 2.18.0
  * 
  * @licence Apache-2.0
  * @author CodeX <https://codex.so>
@@ -15,8 +15,9 @@
        * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
        * At least, if there is no config overrides, that API uses Default configuration
        *
-       * @uses https://www.npmjs.com/package/html-janitor
-       * @license https://github.com/guardian/html-janitor/blob/master/LICENSE
+       * @see {@link https://www.npmjs.com/package/html-janitor}
+       * @license Apache-2.0
+       * @see {@link https://github.com/guardian/html-janitor/blob/master/LICENSE}
        *
        * @param {SanitizerConfig} config - sanitizer extension
        */
@@ -26,11 +27,20 @@
    *
    * Short Description (눈_눈;)
    *
-   * @version 2.0
+   * @version 2.18.0
    *
-   * @licence Apache-2.0
+   * @license Apache-2.0
    * @author CodeX-Team <https://ifmo.su>
    */
+
+/**
+ * Base Paragraph Block for the Editor.js.
+ * Represents simple paragraph
+ *
+ * @author CodeX (team@codex.so)
+ * @copyright CodeX 2018
+ * @license The MIT License (MIT)
+ */
 
 /*!
  * Codex JavaScript Notification module
@@ -43,15 +53,6 @@
  * @license MIT
  * @author CodeX (https://codex.so)
  * @version 1.1.1
- */
-
-/**
- * Base Paragraph Block for the Editor.js.
- * Represents simple paragraph
- *
- * @author CodeX (team@codex.so)
- * @copyright CodeX 2018
- * @license The MIT License (MIT)
  */
 
 /*!
