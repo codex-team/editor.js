@@ -72,7 +72,7 @@ export default class BlocksAPI extends Module {
    */
   public swap(fromIndex: number, toIndex: number): void {
     _.log(
-      '`blocks.swap()` method is deprecated and will be removed in next major release. ' +
+      '`blocks.swap()` method is deprecated and will be removed in the next major release. ' +
       'Use `block.move()` method instead',
       'info'
     );
@@ -167,7 +167,7 @@ export default class BlocksAPI extends Module {
    */
   public stretchBlock(index: number, status = true): void {
     _.log(
-      '`blocks.stretchBlock()` method is deprecated and will be removed in next major release. ' +
+      '`blocks.stretchBlock()` method is deprecated and will be removed in the next major release. ' +
       'Use BlockAPI interface instead',
       'warn'
     );
@@ -214,7 +214,7 @@ export default class BlocksAPI extends Module {
    * @deprecated with insert() method
    */
   public insertNewBlock(): void {
-    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in next major release. ' +
+    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
   }

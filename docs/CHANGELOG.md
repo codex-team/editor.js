@@ -89,7 +89,7 @@
 - `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A
 - `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
 - `New` *Config* - Added new property in EditorConfig `holder`, use this property for append Editor instead `holderId`. `holder` property now support reference on dom element. [#696](https://github.com/codex-team/editor.js/issues/696)
-- `Deprecated` *Config* - `holderId` property now is deprecated and will removed in next major release. Use `holder` instead.
+- `Deprecated` *Config* - `holderId` property now is deprecated and will removed in the next major release. Use `holder` instead.
 - `Fix` *Types* — Fixed error with `codex-notifier` package [#713](https://github.com/codex-team/editor.js/issues/713)
 - `Improvements` — Close inline toolbar after creating a new link.
 - `New` *Config* — Option `minHeight` for customizing Editor's bottom zone height added.
