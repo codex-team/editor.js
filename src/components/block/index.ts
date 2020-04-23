@@ -512,6 +512,14 @@ export default class Block {
      * call Tool's method with the instance context
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+      if (methodName === BlockToolAPI.APPEND_CALLBACK) {
+        _.log(
+          '`appendCallback` hook is deprecated and will be removed in neext major release. ' +
+          'Use `rendered` hook instead',
+          'warn'
+        );
+      }
+
       try {
         // eslint-disable-next-line no-useless-call
         this.tool[methodName].call(this.tool, params);

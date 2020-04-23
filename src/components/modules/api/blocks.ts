@@ -71,6 +71,12 @@ export default class BlocksAPI extends Module {
    * @deprecated — use 'move' instead
    */
   public swap(fromIndex: number, toIndex: number): void {
+    _.log(
+      '`blocks.swap()` method is deprecated and will be removed in next major release. ' +
+      'Use `block.move()` method instead',
+      'info'
+    );
+
     this.Editor.BlockManager.swap(fromIndex, toIndex);
 
     /**
@@ -160,6 +166,12 @@ export default class BlocksAPI extends Module {
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
+    _.log(
+      '`blocks.stretchBlock()` method is deprecated and will be removed in next major release. ' +
+      'Use BlockAPI interface instead',
+      'warn'
+    );
+
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {

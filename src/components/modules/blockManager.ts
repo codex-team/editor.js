@@ -228,10 +228,11 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {string} toolName — plugin name, by default method inserts initial block type
+   * @param {string} tool — plugin name, by default method inserts initial block type
    * @param {object} data — plugin data
    * @param {number} index - index where to insert new Block
    * @param {boolean} needToFocus - flag shows if needed to update current Block index
+   * @param {boolean} replace - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
@@ -267,7 +268,7 @@ export default class BlockManager extends Module {
   /**
    * Replace current working block
    *
-   * @param {string} toolName — plugin name
+   * @param {string} tool — plugin name
    * @param {BlockToolData} data — plugin data
    *
    * @returns {Block}
