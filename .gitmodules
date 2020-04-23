@@ -1,3 +1,6 @@
+[submodule "src/components/external/codex.tooltips"]
+	path = src/components/external/codex.tooltips
+	url = https://github.com/codex-team/codex.tooltips
 [submodule "example/tools/inline-code"]
 	path = example/tools/inline-code
 	url = https://github.com/editor-js/inline-code
