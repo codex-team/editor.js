@@ -14,6 +14,11 @@ export interface ToolboxConfig {
    * HTML string with an icon for Toolbox
    */
   icon?: string;
+
+  /**
+   * Hide from tool box, but load the tool
+   */
+  hidden?: boolean;
 }
 
 /**
