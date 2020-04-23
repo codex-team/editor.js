@@ -5,7 +5,8 @@
 - `New` — Block API that allows you to access certain Block properties and methods
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
-- `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - Adjusted GitHub Action for ESLint.
+- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
 
 >  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
 

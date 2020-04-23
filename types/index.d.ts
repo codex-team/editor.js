@@ -4,7 +4,13 @@
  * ------------------------------------
  */
 
-import {EditorConfig} from './configs';
+import {
+  EditorConfig,
+  I18nDictionary,
+  Dictionary,
+  DictValue,
+  I18nConfig,
+} from './configs';
 import {
   Blocks,
   Caret,
@@ -18,6 +24,7 @@ import {
   Styles,
   Toolbar,
   Tooltip,
+  I18n,
 } from './api';
 import {OutputData} from './data-formats/output-data';
 
@@ -49,9 +56,19 @@ export {
   FilePasteEventDetail,
 } from './tools';
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
-export {EditorConfig, SanitizerConfig, PasteConfig, LogLevels, ConversionConfig} from './configs';
+export {
+  EditorConfig,
+  SanitizerConfig,
+  PasteConfig,
+  LogLevels,
+  ConversionConfig,
+  I18nDictionary,
+  Dictionary,
+  DictValue,
+  I18nConfig,
+} from './configs';
 export {OutputData, OutputBlockData} from './data-formats/output-data';
-export { BlockAPI } from './api';
+export { BlockAPI } from './api'
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface
@@ -70,6 +87,7 @@ export interface API {
   toolbar: Toolbar;
   inlineToolbar: InlineToolbar;
   tooltip: Tooltip;
+  i18n: I18n;
 }
 
 /**

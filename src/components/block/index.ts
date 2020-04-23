@@ -1,5 +1,4 @@
 import {
-  API,
   BlockAPI as BlockAPIInterface,
   BlockTool,
   BlockToolConstructable,
@@ -14,22 +13,15 @@ import {
 import { SavedData } from '../../types-internal/block-data';
 import $ from '../dom';
 import * as _ from '../utils';
-
-/**
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {BlockTool} tool — current block tool (Paragraph, for example)
- * @property {object} CSS — block`s css classes
- *
- */
+import ApiModule from '../modules/api';
+import SelectionUtils from '../selection';
+import BlockAPI from './api';
+import { ToolType } from '../modules/tools';
 
 /** Import default tunes */
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
-import SelectionUtils from '../selection';
-import BlockAPI from './api';
 
 /**
  * Interface describes Block class constructor argument
@@ -58,8 +50,17 @@ interface BlockConstructorOptions {
   /**
    * Editor's API methods
    */
-  api: API;
+  api: ApiModule;
 }
+
+/**
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {BlockTool} tool — current block tool (Paragraph, for example)
+ * @property {object} CSS — block`s css classes
+ *
+ */
 
 /**
  * Available Block Tool API methods
@@ -144,9 +145,9 @@ export default class Block {
   private cachedInputs: HTMLElement[] = [];
 
   /**
-   * Editor`s API
+   * Editor`s API module
    */
-  private readonly api: API;
+  private readonly api: ApiModule;
 
   /**
    * Focused input index
@@ -197,7 +198,7 @@ export default class Block {
    * @param {BlockToolData} data - Tool's initial data
    * @param {BlockToolConstructable} Tool — Tool's class
    * @param {ToolSettings} settings - default tool's config
-   * @param {API} api - Editor API
+   * @param {ApiModule} api - Editor API module for pass it to the Block Tunes
    */
   constructor({
     name,
@@ -218,7 +219,7 @@ export default class Block {
     this.tool = new Tool({
       data,
       config: this.config,
-      api,
+      api: this.api.getMethodsForTool(name, ToolType.Block),
       block: this.blockAPI,
     });
 
@@ -586,12 +587,25 @@ export default class Block {
    * @returns {BlockTune[]}
    */
   public makeTunes(): BlockTune[] {
-    const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
+    const tunesList = [
+      {
+        name: 'moveUp',
+        Tune: MoveUpTune,
+      },
+      {
+        name: 'delete',
+        Tune: DeleteTune,
+      },
+      {
+        name: 'moveDown',
+        Tune: MoveDownTune,
+      },
+    ];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map((Tune: BlockTuneConstructable) => {
+    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
       return new Tune({
-        api: this.api,
+        api: this.api.getMethodsForTool(name, ToolType.Tune),
         settings: this.config,
       });
     });

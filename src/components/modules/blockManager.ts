@@ -217,7 +217,7 @@ export default class BlockManager extends Module {
       data,
       Tool,
       settings,
-      api: this.Editor.API.methods,
+      api: this.Editor.API,
     });
 
     this.bindEvents(block);

@@ -1,5 +1,12 @@
 # Editor.js API
 
+---
+Most actual API described by [this interface](../types/api/index.d.ts).
+
+---
+📃 See official API documentation [https://editorjs.io/api](https://editorjs.io/api)
+
+---
 
 Tools have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
 can use Editor\`s API as they want.
