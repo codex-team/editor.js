@@ -68,7 +68,7 @@ export default class Tools extends Module {
       return this._inlineTools;
     }
 
-    const tools = Object.entries(this.available).filter(([, tool]) => {
+    const tools = Object.entries(this.available).filter(([name, tool]) => {
       if (!tool[this.INTERNAL_SETTINGS.IS_INLINE]) {
         return false;
       }
