@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Describe a problem.
+Describe a bug.
 
 Steps to reproduce:
 1. Go to …
@@ -21,3 +21,10 @@ Screenshots:
 Device, Browser, OS:
 
 Editor.js version:
+
+Plugins you use with their versions:
+
+<!--
+🤫 If you like Editor.js, please consider supporting us via OpenCollective:
+https://opencollective.com/editorjs
+-->

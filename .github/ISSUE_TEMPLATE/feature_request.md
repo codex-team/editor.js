@@ -12,3 +12,8 @@ assignees: ''
 2. Describe the solution you'd like. The mockups will be welcomed.
 
 3. Are there alternatives?
+
+<!--
+🤫 If you like Editor.js, please consider supporting us via OpenCollective:
+https://opencollective.com/editorjs
+-->
