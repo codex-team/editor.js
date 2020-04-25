@@ -1,0 +1,45 @@
+{
+  "ui": {
+    "blockTunes": {
+      "toggler": {
+        "Click to tune": "",
+        "or drag to move": ""
+      }
+    },
+    "inlineToolbar": {
+      "converter": {
+        "Convert to": ""
+      }
+    },
+    "toolbar": {
+      "toolbox": {
+        "Add": ""
+      }
+    }
+  },
+  "toolNames": {
+    "Text": "",
+    "Link": "",
+    "Bold": "",
+    "Italic": ""
+  },
+  "tools": {
+    "link": {
+      "Add a link": ""
+    },
+    "stub": {
+      "The block can not be displayed correctly.": ""
+    }
+  },
+  "blockTunes": {
+    "delete": {
+      "Delete": ""
+    },
+    "moveUp": {
+      "Move up": ""
+    },
+    "moveDown": {
+      "Move down": ""
+    }
+  }
+}
