@@ -313,7 +313,6 @@ export default class Tools extends Module {
    * @param {object} data - append tool to available list
    */
   public success(data: {toolName: string}): void {
-    console.log(data);
     this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
@@ -432,29 +431,19 @@ export default class Tools extends Module {
         const toolClass = this.toolsClasses[toolName];
         const toolConfig = this.toolsSettings[toolName][this.USER_SETTINGS.CONFIG];
 
-        if (typeof toolClass.prepare === 'function') {
-          toolPreparationList.push({
-            function: toolClass.prepare,
-            data: {
-              toolName,
-              config: toolConfig,
-            },
-          });
-        } else {
-          /**
-           * If Tool hasn't a prepare method,
-           * still push it to tool preparation list to save tools order in Toolbox.
-           * As Tool's prepare method might be async, _.sequence util helps to save the order.
-           */
-          toolPreparationList.push({
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            function: () => {},
-            data: {
-              toolName,
-              config: toolConfig,
-            },
-          });
-        }
+        /**
+         * If Tool hasn't a prepare method,
+         * still push it to tool preparation list to save tools order in Toolbox.
+         * As Tool's prepare method might be async, _.sequence util helps to save the order.
+         */
+        toolPreparationList.push({
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          function: typeof toolClass.prepare === 'function' ? toolClass.prepare : (): void => {},
+          data: {
+            toolName,
+            config: toolConfig,
+          },
+        });
       }
     }
 
