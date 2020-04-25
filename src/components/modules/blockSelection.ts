@@ -119,6 +119,8 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
+    this.selection = new SelectionUtils();
+
     this.toggleReadOnly(this.config.readOnly);
   }
 
@@ -127,11 +129,11 @@ export default class BlockSelection extends Module {
    *
    * If readOnly is true:
    *  - Disable CMD+A shortcut
-   *  - Unset selection property
+   *  - Remove all ranges
+   *  - Unselect all Blocks
    *
    * if readOnly is false:
    *  - Enable CMD+A shortcut
-   *  - Set selection property
    *
    * @param {boolean} readOnlyEnabled - "read only" state
    */
@@ -140,7 +142,11 @@ export default class BlockSelection extends Module {
 
     if (readOnlyEnabled) {
       Shortcuts.remove('CMD+A');
-      this.selection = null;
+
+      SelectionUtils.get()
+        .removeAllRanges();
+
+      this.allBlocksSelected = false;
     } else {
       /**
        * CMD/CTRL+A selection shortcut
@@ -165,8 +171,6 @@ export default class BlockSelection extends Module {
           this.handleCommandA(event);
         },
       });
-
-      this.selection = new SelectionUtils();
     }
   }
 

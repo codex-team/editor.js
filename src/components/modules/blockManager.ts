@@ -158,11 +158,6 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
-   * Read only flag
-   */
-  private readOnlyEnabled = false;
-
-  /**
    * Binded listener ids
    */
   private listenerIds: string[] = [];
@@ -219,7 +214,6 @@ export default class BlockManager extends Module {
     } else {
       this.enableModuleEvents();
     }
-    this.readOnlyEnabled = readOnlyEnabled;
   }
 
   /**
@@ -228,7 +222,6 @@ export default class BlockManager extends Module {
    * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
    * @param {object} data - constructor params
    * @param {object} settings - block settings
-   * @param {boolean} readOnly - read only flag
    *
    * @returns {Block}
    */
@@ -236,14 +229,13 @@ export default class BlockManager extends Module {
     toolName: string,
     data: BlockToolData = {},
     settings: ToolConfig = {},
-    readOnly = false,
   ): Block {
-    const toolInstance = this.Editor.Tools.construct(toolName, data, readOnly) as BlockTool;
+    const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
 
-    if (!this.readOnlyEnabled) {
-      this.bindEvents(block);
+    if (!this.Editor.ReadOnly.isEnabled()) {
+      this.bindBlockEvents(block);
     }
 
     return block;
@@ -255,7 +247,6 @@ export default class BlockManager extends Module {
    * @param {string} toolName — plugin name, by default method inserts initial block type
    * @param {object} data — plugin data
    * @param {object} settings - default settings
-   * @param {boolean} readOnly - readonly flag
    * @param {number} index - index where to insert new Block
    * @param {boolean} needToFocus - flag shows if needed to update current Block index
    *
@@ -265,11 +256,10 @@ export default class BlockManager extends Module {
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
     settings: ToolConfig = {},
-    readOnly = false,
     index: number = this.currentBlockIndex + 1,
     needToFocus = true,
   ): Block {
-    const block = this.composeBlock(toolName, data, settings, readOnly);
+    const block = this.composeBlock(toolName, data, settings);
 
     this._blocks[index] = block;
 
@@ -673,11 +663,11 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Bind Events
+   * Bind Block events
    *
    * @param {Block} block - Block to which event should be bound
    */
-  private bindEvents(block: Block): void {
+  private bindBlockEvents(block: Block): void {
     const { BlockEvents, Listeners } = this.Editor;
 
     this.listenerIds.push(
@@ -685,10 +675,6 @@ export default class BlockManager extends Module {
         BlockEvents.keydown(event);
       }, true),
     );
-
-    // this.listenerIds.push(
-    //   Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
-    // );
 
     this.listenerIds.push(
       Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
@@ -722,16 +708,13 @@ export default class BlockManager extends Module {
    *  - Removes all shortcuts
    */
   private disableModuleEvents(): void {
-    const { Listeners, Shortcuts } = this.Editor;
+    const { Listeners } = this.Editor;
 
     for (const id of this.listenerIds) {
       Listeners.offById(id);
     }
 
     this.listenerIds = [];
-
-    Shortcuts.remove('CMD+C');
-    Shortcuts.remove('CMD+X');
   }
 
   /**
@@ -742,44 +725,28 @@ export default class BlockManager extends Module {
    *  - Bind all events handlers for all Blocks
    */
   private enableModuleEvents(): void {
-    const { Listeners, Shortcuts, BlockEvents } = this.Editor;
-
-    /** Copy shortcut */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        BlockEvents.handleCommandC(event);
-      },
-    });
-
-    /** Copy and cut */
-    Shortcuts.add({
-      name: 'CMD+X',
-      handler: (event) => {
-        BlockEvents.handleCommandX(event);
-      },
-    });
+    const { Listeners, BlockEvents } = this.Editor;
 
     /** Copy event */
-    this.listenerIds.push(
+    // this.listenerIds.push(
       Listeners.on(
         document,
         'copy',
         (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
       ),
-    );
+    // );
 
     /** Copy and cut */
-    this.listenerIds.push(
+    // this.listenerIds.push(
       Listeners.on(
         document,
         'cut',
         (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
       ),
-    );
+    // );
 
     this.blocks.forEach((block: Block) => {
-      this.bindEvents(block);
+      this.bindBlockEvents(block);
     });
   }
 

@@ -18231,10 +18231,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             Listeners = _this$Editor.Listeners;
         this.listenerIds.push(Listeners.on(block.holder, 'keydown', function (event) {
           BlockEvents.keydown(event);
-        }, true)); // this.listenerIds.push(
-        //   Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
-        // );
-
+        }, true));
         this.listenerIds.push(Listeners.on(block.holder, 'mousedown', function (event) {
           BlockEvents.mouseDown(event);
         }));
@@ -18258,9 +18255,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "disableModuleEvents",
       value: function disableModuleEvents() {
-        var _this$Editor2 = this.Editor,
-            Listeners = _this$Editor2.Listeners,
-            Shortcuts = _this$Editor2.Shortcuts;
+        var Listeners = this.Editor.Listeners;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -18285,9 +18280,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
 
-        this.listenerIds = []; // Shortcuts.remove('CMD+C');
-
-        Shortcuts.remove('CMD+X');
+        this.listenerIds = [];
       }
       /**
        * Enables all module handlers and bindings
@@ -18302,36 +18295,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function enableModuleEvents() {
         var _this2 = this;
 
-        var _this$Editor3 = this.Editor,
-            Listeners = _this$Editor3.Listeners,
-            Shortcuts = _this$Editor3.Shortcuts,
-            BlockEvents = _this$Editor3.BlockEvents;
-        /** Copy shortcut */
-
-        Shortcuts.add({
-          name: 'CMD+C',
-          handler: function handler(event) {
-            BlockEvents.handleCommandC(event);
-          }
-        });
-        /** Copy and cut */
-
-        Shortcuts.add({
-          name: 'CMD+X',
-          handler: function handler(event) {
-            BlockEvents.handleCommandX(event);
-          }
-        });
+        var _this$Editor2 = this.Editor,
+            Listeners = _this$Editor2.Listeners,
+            BlockEvents = _this$Editor2.BlockEvents;
         /** Copy event */
+        // this.listenerIds.push(
 
-        this.listenerIds.push(Listeners.on(document, 'copy', function (e) {
+        Listeners.on(document, 'copy', function (e) {
           return BlockEvents.handleCommandC(e);
-        }));
-        /** Copy and cut */
+        }), // );
 
-        this.listenerIds.push(Listeners.on(document, 'cut', function (e) {
+        /** Copy and cut */
+        // this.listenerIds.push(
+        Listeners.on(document, 'cut', function (e) {
           return BlockEvents.handleCommandX(e);
-        }));
+        }), // );
         this.blocks.forEach(function (block) {
           _this2.bindBlockEvents(block);
         });
