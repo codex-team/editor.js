@@ -169,6 +169,7 @@ export default class BlockManager extends Module {
    * @returns {Promise}
    */
   public async prepare(): Promise<void> {
+    const { Listeners, BlockEvents } = this.Editor;
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
 
     /**
@@ -190,7 +191,19 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    this.toggleReadOnly(this.config.readOnly);
+    /** Copy event */
+    Listeners.on(
+      document,
+      'copy',
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+    );
+
+    /** Copy and cut */
+    Listeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+    );
   }
 
   /**
@@ -730,26 +743,6 @@ export default class BlockManager extends Module {
    *  - Bind all events handlers for all Blocks
    */
   private enableModuleEvents(): void {
-    const { Listeners, BlockEvents } = this.Editor;
-
-    /** Copy event */
-    // this.listenerIds.push(
-      Listeners.on(
-        document,
-        'copy',
-        (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
-      ),
-    // );
-
-    /** Copy and cut */
-    // this.listenerIds.push(
-      Listeners.on(
-        document,
-        'cut',
-        (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
-      ),
-    // );
-
     this.blocks.forEach((block: Block) => {
       this.bindBlockEvents(block);
     });
