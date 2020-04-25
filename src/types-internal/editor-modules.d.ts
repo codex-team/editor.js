@@ -35,6 +35,7 @@ import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 import CrossBlockSelection from '../components/modules/crossBlockSelection';
 import ConversionToolbar from '../components/modules/toolbar/conversion';
 import TooltipAPI from '../components/modules/api/tooltip';
+import I18nAPI from '../components/modules/api/i18n';
 
 export interface EditorModules {
   UI: UI;
@@ -74,4 +75,5 @@ export interface EditorModules {
   CrossBlockSelection: CrossBlockSelection;
   NotifierAPI: NotifierAPI;
   TooltipAPI: TooltipAPI;
+  I18nAPI: I18nAPI;
 }

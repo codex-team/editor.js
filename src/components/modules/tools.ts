@@ -77,7 +77,7 @@ export default class Tools extends Module {
        * Some Tools validation
        */
       const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !this.constructInline(tool)[method]);
+      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !this.constructInline(tool, name)[method]);
 
       if (notImplementedMethods.length) {
         _.log(
@@ -347,7 +347,7 @@ export default class Tools extends Module {
     }
 
     const constructorOptions = {
-      api: this.Editor.API.methods,
+      api: this.Editor.API.getMethodsForTool(tool),
       config,
       data,
     };
@@ -359,13 +359,14 @@ export default class Tools extends Module {
    * Return Inline Tool's instance
    *
    * @param {InlineTool} tool - Inline Tool instance
+   * @param {string} name - tool name
    * @param {ToolSettings} toolSettings - tool settings
    *
    * @returns {InlineTool} — instance
    */
-  public constructInline(tool: InlineToolConstructable, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
+  public constructInline(tool: InlineToolConstructable, name: string, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
     const constructorOptions = {
-      api: this.Editor.API.methods,
+      api: this.Editor.API.getMethodsForTool(name),
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
     };
 
@@ -473,4 +474,23 @@ export default class Tools extends Module {
       }
     }
   }
+}
+
+/**
+ * What kind of plugins developers can create
+ */
+export enum ToolType {
+  /**
+   * Block tool
+   */
+  Block,
+  /**
+   * Inline tool
+   */
+  Inline,
+
+  /**
+   * Block tune
+   */
+  Tune,
 }
