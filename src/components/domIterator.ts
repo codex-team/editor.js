@@ -156,7 +156,8 @@ export default class DomIterator {
       focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
     }
 
-    if (Dom.isNativeInput(this.items[focusedButtonIndex])) {
+    if (Dom.canSetCaret(this.items[focusedButtonIndex])) {
+
       /**
        * Focus input
        */

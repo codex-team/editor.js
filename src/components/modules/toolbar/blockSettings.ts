@@ -2,6 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
+import SelectionUtils from "../../selection";
 
 /**
  * Block Settings
@@ -78,6 +79,11 @@ export default class BlockSettings extends Module {
   private flipper: Flipper = null;
 
   /**
+   * Page selection utils
+   */
+  private selection: SelectionUtils = new SelectionUtils();
+
+  /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
@@ -102,6 +108,11 @@ export default class BlockSettings extends Module {
    */
   public open(): void {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
+
+    /**
+     * Save current selection in case block settings contains some inputs
+     */
+    this.selection.save();
 
     /**
      * Highlight content of a Block we are working with
@@ -130,6 +141,11 @@ export default class BlockSettings extends Module {
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
+    /**
+     * Restore selection to Block
+     */
+    this.selection.restore();
+
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';
@@ -150,6 +166,8 @@ export default class BlockSettings extends Module {
    * @returns {HTMLElement[]}
    */
   public get blockTunesButtons(): HTMLElement[] {
+    const { StylesAPI } = this.Editor;
+
     /**
      * Return from cache
      * if exists
@@ -158,7 +176,10 @@ export default class BlockSettings extends Module {
       return this.buttons;
     }
 
-    const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
+    const toolSettings = this.nodes.toolSettings.querySelectorAll(
+      // Select buttons and inputs
+      `.${StylesAPI.classes.settingsButton}, .${StylesAPI.classes.input}`
+    );
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
     toolSettings.forEach((item) => {
@@ -195,7 +216,18 @@ export default class BlockSettings extends Module {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      activateCallback: () => {
+      activateCallback: (activatedItem) => {
+
+        /**
+         * If activated item is editable element, restore selection to block and flip to the next item
+         */
+        if ($.canSetCaret(activatedItem)) {
+          this.selection.restore();
+          this.flipper.flipRight();
+
+          return;
+        }
+
         /**
          * Restoring focus on current Block after settings clicked.
          * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one

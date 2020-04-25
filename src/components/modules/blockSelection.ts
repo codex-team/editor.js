@@ -188,17 +188,20 @@ export default class BlockSelection extends Module {
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
 
+    const isKeyboard = reason && (reason instanceof KeyboardEvent);
+    const isPrintableKey = isKeyboard && _.isPrintableKey((reason as KeyboardEvent).keyCode);
+
     /**
      * If reason caused clear of the selection was printable key and any block is selected,
      * remove selected blocks and insert pressed key
      */
-    if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
+    if (this.anyBlockSelected && isKeyboard && isPrintableKey && !SelectionUtils.exists) {
       const indexToInsert = BlockManager.removeSelectedBlocks();
 
       BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
       Caret.setToBlock(BlockManager.currentBlock);
       _.delay(() => {
-        Caret.insertContentAtCaretPosition(reason.key);
+        Caret.insertContentAtCaretPosition((reason as KeyboardEvent).key);
       }, 20)();
     }
 

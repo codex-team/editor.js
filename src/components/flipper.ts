@@ -31,7 +31,7 @@ export interface FlipperOptions {
   /**
    * Optional callback for button click
    */
-  activateCallback?: () => void;
+  activateCallback?: (item: HTMLElement) => void;
 }
 
 /**
@@ -62,7 +62,7 @@ export default class Flipper {
   /**
    * Call back for button click/enter
    */
-  private readonly activateCallback: () => void;
+  private readonly activateCallback: (item: HTMLElement) => void;
 
   /**
    * @class
@@ -73,44 +73,6 @@ export default class Flipper {
     this.allowArrows = typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
     this.iterator = new DomIterator(options.items, options.focusedItemClass);
     this.activateCallback = options.activateCallback;
-
-    /**
-     * Listening all keydowns on document and react on TAB/Enter press
-     * TAB will leaf iterator items
-     * ENTER will click the focused item
-     */
-    document.addEventListener('keydown', (event) => {
-      const isReady = this.isEventReadyForHandling(event);
-
-      if (!isReady) {
-        return;
-      }
-
-      /**
-       * Prevent only used keys default behaviour
-       * (allows to navigate by ARROW DOWN, for example)
-       */
-      if (Flipper.usedKeys.includes(event.keyCode)) {
-        event.preventDefault();
-      }
-
-      switch (event.keyCode) {
-        case _.keyCodes.TAB:
-          this.handleTabPress(event);
-          break;
-        case _.keyCodes.LEFT:
-        case _.keyCodes.UP:
-          this.flipLeft();
-          break;
-        case _.keyCodes.RIGHT:
-        case _.keyCodes.DOWN:
-          this.flipRight();
-          break;
-        case _.keyCodes.ENTER:
-          this.handleEnterPress(event);
-          break;
-      }
-    }, false);
   }
 
   /**
@@ -141,6 +103,13 @@ export default class Flipper {
     if (items) {
       this.iterator.setItems(items);
     }
+
+    /**
+     * Listening all keydowns on document and react on TAB/Enter press
+     * TAB will leaf iterator items
+     * ENTER will click the focused item
+     */
+    document.addEventListener('keydown', this.onKeyDown);
   }
 
   /**
@@ -149,6 +118,8 @@ export default class Flipper {
   public deactivate(): void {
     this.activated = false;
     this.dropCursor();
+
+    document.removeEventListener('keydown', this.onKeyDown);
   }
 
   /**
@@ -169,6 +140,20 @@ export default class Flipper {
   }
 
   /**
+   * Focuses previous flipper iterator item
+   */
+  public flipLeft(): void {
+    this.iterator.previous();
+  }
+
+  /**
+   * Focuses next flipper iterator item
+   */
+  public flipRight(): void {
+    this.iterator.next();
+  }
+
+  /**
    * Drops flipper's iterator cursor
    *
    * @see DomIterator#dropCursor
@@ -176,6 +161,44 @@ export default class Flipper {
   private dropCursor(): void {
     this.iterator.dropCursor();
   }
+
+  /**
+   * KeyDown event handler
+   *
+   * @param event - keydown event
+   */
+  private onKeyDown = (event): void => {
+    const isReady = this.isEventReadyForHandling(event);
+
+    if (!isReady) {
+      return;
+    }
+
+    /**
+     * Prevent only used keys default behaviour
+     * (allows to navigate by ARROW DOWN, for example)
+     */
+    if (Flipper.usedKeys.includes(event.keyCode)) {
+      event.preventDefault();
+    }
+
+    switch (event.keyCode) {
+      case _.keyCodes.TAB:
+        this.handleTabPress(event);
+        break;
+      case _.keyCodes.LEFT:
+      case _.keyCodes.UP:
+        this.flipLeft();
+        break;
+      case _.keyCodes.RIGHT:
+      case _.keyCodes.DOWN:
+        this.flipRight();
+        break;
+      case _.keyCodes.ENTER:
+        this.handleEnterPress(event);
+        break;
+    }
+  };
 
   /**
    * This function is fired before handling flipper keycodes
@@ -190,7 +213,7 @@ export default class Flipper {
       _.keyCodes.ENTER,
     ];
 
-    if (this.allowArrows) {
+    if (this.allowArrows && this.iterator.currentItem !== document.activeElement) {
       handlingKeyCodeList.push(
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
@@ -199,11 +222,7 @@ export default class Flipper {
       );
     }
 
-    if (!this.activated || handlingKeyCodeList.indexOf(event.keyCode) === -1) {
-      return false;
-    }
-
-    return true;
+    return (this.activated && handlingKeyCodeList.indexOf(event.keyCode) !== -1);
   }
 
   /**
@@ -227,20 +246,6 @@ export default class Flipper {
   }
 
   /**
-   * Focuses previous flipper iterator item
-   */
-  private flipLeft(): void {
-    this.iterator.previous();
-  }
-
-  /**
-   * Focuses next flipper iterator item
-   */
-  private flipRight(): void {
-    this.iterator.next();
-  }
-
-  /**
    * Enter press will click current item if flipper is activated
    *
    * @param {KeyboardEvent} event - enter keydown event
@@ -255,7 +260,7 @@ export default class Flipper {
     }
 
     if (typeof this.activateCallback === 'function') {
-      this.activateCallback();
+      this.activateCallback(this.iterator.currentItem);
     }
 
     event.preventDefault();
