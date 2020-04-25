@@ -1,6 +1,6 @@
 ---
 name: Discussion
-about: Any question about the editor.js to discuss
+about: Any question about the Editor.js to discuss
 title: ''
 labels: discussion
 assignees: ''
