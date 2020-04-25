@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea of how to improve Editor.js
+about: Suggest an idea to improve Editor.js
 title: "\U0001F4A1"
 labels: feature
 assignees: ''
