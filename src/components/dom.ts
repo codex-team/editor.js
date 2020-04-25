@@ -384,23 +384,12 @@ export default class Dom {
    * @returns {boolean}
    */
   public static isEmpty(node: Node): boolean {
-    const treeWalker = [],
-        leafs = [];
-
-    if (!node) {
-      return true;
-    }
-
-    if (!node.childNodes.length) {
-      return this.isNodeEmpty(node);
-    }
-
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
     node.normalize();
 
-    treeWalker.push(node.firstChild);
+    const treeWalker = [ node ];
 
     while (treeWalker.length > 0) {
       node = treeWalker.shift();
@@ -409,31 +398,16 @@ export default class Dom {
         continue;
       }
 
-      if (this.isLeaf(node)) {
-        leafs.push(node);
-      } else {
-        treeWalker.push(node.firstChild);
-      }
-
-      while (node && node.nextSibling) {
-        node = node.nextSibling;
-
-        if (!node) {
-          continue;
-        }
-
-        treeWalker.push(node);
-      }
-
-      /**
-       * If one of child is not empty, checked Node is not empty too
-       */
-      if (node && !this.isNodeEmpty(node)) {
+      if (this.isLeaf(node) && !this.isNodeEmpty(node)) {
         return false;
+      }
+
+      if (node.childNodes) {
+        treeWalker.push(...Array.from(node.childNodes));
       }
     }
 
-    return leafs.every((leaf) => this.isNodeEmpty(leaf));
+    return true;
   }
 
   /**
