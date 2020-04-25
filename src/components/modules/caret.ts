@@ -397,17 +397,31 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigateNext(force = false): boolean {
-    const { currentBlock, nextContentfulBlock } = this.Editor.BlockManager;
+    const { BlockManager, Tools } = this.Editor;
+    const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
 
-    if (!nextContentfulBlock && !nextInput) {
-      return false;
+    let nextBlock = nextContentfulBlock;
+
+    if (!nextBlock && !nextInput) {
+      /**
+       * If there is no nextBlock and currentBlock is initial, do not navigate
+       */
+      if (Tools.isInitial(currentBlock.tool)) {
+        return false;
+      }
+
+      /**
+       * If there is no nextBlock, but currentBlock is not initial,
+       * insert new initial block at the end and navigate to it
+       */
+      nextBlock = BlockManager.insertAtEnd();
     }
 
     if (force || this.isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
-        this.setToBlock(nextContentfulBlock, this.positions.START);
+        this.setToBlock(nextBlock, this.positions.START);
       } else {
         this.setToInput(nextInput, this.positions.START);
       }
