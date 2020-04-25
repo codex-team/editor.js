@@ -1,20 +1,19 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea to improve Editor.js
 title: "\U0001F4A1"
 labels: feature
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+1. Describe a problem.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+2. Describe the solution you'd like. Mockups are welcome.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+3. Are there any alternatives?
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+<!--
+🤫 If you like Editor.js, please consider supporting us via OpenCollective:
+https://opencollective.com/editorjs
+-->
