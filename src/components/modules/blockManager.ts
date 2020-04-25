@@ -213,7 +213,7 @@ export default class BlockManager extends Module {
   public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
+    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
 
     this.bindEvents(block);
 
@@ -348,11 +348,16 @@ export default class BlockManager extends Module {
    * Remove block with passed index or remove last
    *
    * @param {number|null} index - index of Block to remove
+   * @throws {Error} if Block to remove is not found
    */
-  public removeBlock(index?: number): void {
-    if (index === undefined) {
-      index = this.currentBlockIndex;
+  public removeBlock(index = this.currentBlockIndex): void {
+    /**
+     * If index is not passed and there is no block selected, show a warning
+     */
+    if (!this.validateIndex(index)) {
+      throw new Error('Can\'t find a Block to remove');
     }
+
     this._blocks.remove(index);
 
     if (this.currentBlockIndex >= index) {
