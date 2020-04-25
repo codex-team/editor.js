@@ -35,9 +35,6 @@ export default class ReadOnly extends Module {
   public async toggle(state = !this.readOnlyEnabled): Promise<boolean> {
     this.readOnlyEnabled = state;
 
-    /**
-     *
-     */
     for (const name in this.Editor) {
       /**
        * Verify module has method `toggleReadOnly` method

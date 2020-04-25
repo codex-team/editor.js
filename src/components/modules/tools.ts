@@ -343,10 +343,11 @@ export default class Tools extends Module {
    *
    * @param {string} tool — tool name
    * @param {object} data — initial data
+   * @param {boolean} readOnly - read only flag
    *
    * @returns {BlockTool}
    */
-  public construct(tool: string, data: BlockToolData): BlockTool {
+  public construct(tool: string, data: BlockToolData, readOnly: boolean): BlockTool {
     const Plugin = this.toolsClasses[tool] as BlockToolConstructable;
 
     /**
@@ -363,6 +364,7 @@ export default class Tools extends Module {
       api: this.Editor.API.getMethodsForTool(tool),
       config,
       data,
+      readOnly,
     };
 
     return new Plugin(constructorOptions);

@@ -154,8 +154,7 @@ export default class Block {
    * @param {object} toolInstance — passed Tool`s instance that rendered the Block
    * @param {object} toolClass — Tool's class
    * @param {object} settings - default settings
-   * @param {ApiModule} apiModule - Editor API module for pass it to the Block Tunes
-   * @param {boolean} readOnly - read only flag
+   * @param {ApiModule} apiMethods - Editor API module for pass it to the Block Tunes
    */
   constructor(
     toolName: string,
@@ -163,14 +162,13 @@ export default class Block {
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
     apiMethods: ApiModule,
-    readOnly: boolean,
   ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
     this.settings = settings;
     this.api = apiMethods;
-    this.holder = this.compose(readOnly);
+    this.holder = this.compose();
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
@@ -595,14 +593,12 @@ export default class Block {
   /**
    * Make default Block wrappers and put Tool`s content there
    *
-   * @param {boolean} readOnly - read only flag
-   *
    * @returns {HTMLDivElement}
    */
-  private compose(readOnly: boolean): HTMLDivElement {
+  private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.tool.render(readOnly);
+        pluginsContent = this.tool.render();
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
