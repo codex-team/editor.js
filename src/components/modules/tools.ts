@@ -343,11 +343,10 @@ export default class Tools extends Module {
    *
    * @param {string} tool — tool name
    * @param {object} data — initial data
-   * @param {boolean} readOnly - read only flag
    *
    * @returns {BlockTool}
    */
-  public construct(tool: string, data: BlockToolData, readOnly: boolean): BlockTool {
+  public construct(tool: string, data: BlockToolData): BlockTool {
     const Plugin = this.toolsClasses[tool] as BlockToolConstructable;
 
     /**
@@ -364,7 +363,7 @@ export default class Tools extends Module {
       api: this.Editor.API.getMethodsForTool(tool),
       config,
       data,
-      readOnly,
+      readOnly: this.Editor.ReadOnly.isEnabled(),
     };
 
     return new Plugin(constructorOptions);
@@ -379,7 +378,12 @@ export default class Tools extends Module {
    *
    * @returns {InlineTool} — instance
    */
-  public constructInline(tool: InlineToolConstructable, name: string, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
+  // tslint:disable-next-line:max-line-length
+  public constructInline(
+    tool: InlineToolConstructable,
+    name: string,
+    toolSettings: ToolSettings = {} as ToolSettings,
+  ): InlineTool {
     const constructorOptions = {
       api: this.Editor.API.getMethodsForTool(name),
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,

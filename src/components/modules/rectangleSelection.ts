@@ -106,20 +106,7 @@ export default class RectangleSelection extends Module {
    * Creating rect and hang handlers
    */
   public prepare(): void {
-    this.toggleReadOnly(this.config.readOnly);
-  }
-
-  /**
-   * Toggle read-only state
-   *
-   * @param {boolean} readOnlyEnabled - "read only" state
-   */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (readOnlyEnabled) {
-      this.disableModuleBindings();
-    } else {
-      this.enableModuleBindings();
-    }
+    this.enableModuleBindings();
   }
 
   /**

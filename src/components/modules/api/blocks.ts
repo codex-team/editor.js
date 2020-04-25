@@ -17,7 +17,7 @@ export default class BlocksAPI extends Module {
   public get methods(): Blocks {
     return {
       clear: (): void => this.clear(),
-      render: (data: OutputData, readOnly: boolean): Promise<void> => this.render(data, readOnly),
+      render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
       delete: (): void => this.delete(),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
@@ -131,12 +131,11 @@ export default class BlocksAPI extends Module {
    * Fills Editor with Blocks data
    *
    * @param {OutputData} data — Saved Editor data
-   * @param {boolean} readOnly - read only flag
    */
-  public render(data: OutputData, readOnly: boolean): Promise<void> {
+  public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
 
-    return this.Editor.Renderer.render(data.blocks, readOnly);
+    return this.Editor.Renderer.render(data.blocks);
   }
 
   /**
@@ -189,7 +188,6 @@ export default class BlocksAPI extends Module {
       type,
       data,
       config,
-      readOnly,
       index,
       needToFocus,
     );

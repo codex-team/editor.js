@@ -20,6 +20,13 @@ export default class ReadOnly extends Module {
   private readOnlyEnabled = false;
 
   /**
+   * Returns state of read only mode
+   */
+  public isEnabled(): boolean {
+    return this.readOnlyEnabled;
+  }
+
+  /**
    * Set initial state
    */
   public async prepare(): Promise<void> {
@@ -55,7 +62,7 @@ export default class ReadOnly extends Module {
     const savedBlocks = await this.Editor.Saver.save();
 
     await this.Editor.BlockManager.clear();
-    await this.Editor.Renderer.render(savedBlocks.blocks, state);
+    await this.Editor.Renderer.render(savedBlocks.blocks);
 
     return this.readOnlyEnabled;
   }

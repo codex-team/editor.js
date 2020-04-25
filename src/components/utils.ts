@@ -560,9 +560,11 @@ export function openTab(url: string): void {
 /**
  * Returns random generated identifier
  *
+ * @param {string} prefix - identifier prefix
+ *
  * @returns {string}
  */
-export function generateId(): string {
+export function generateId(prefix = ''): string {
   // tslint:disable-next-line:no-bitwise
-  return `f${(~~(Math.random() * 1e8)).toString(16)}`;
+  return `${prefix}${(~~(Math.random() * 1e8)).toString(16)}`;
 }

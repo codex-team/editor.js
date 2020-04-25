@@ -301,7 +301,7 @@ export default class Core {
    * Render initial data
    */
   private render(): Promise<void> {
-    return this.moduleInstances.Renderer.render(this.config.data.blocks, this.config.readOnly);
+    return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
 
   /**

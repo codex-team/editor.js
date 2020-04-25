@@ -5,27 +5,30 @@
  */
 
 import {
-  EditorConfig,
-  I18nDictionary,
   Dictionary,
   DictValue,
+  EditorConfig,
   I18nConfig,
+  I18nDictionary,
 } from './configs';
+
 import {
   Blocks,
   Caret,
   Events,
+  I18n,
   InlineToolbar,
   Listeners,
-  Notifier, ReadOnly,
+  Notifier,
+  ReadOnly,
   Sanitizer,
   Saver,
   Selection,
   Styles,
   Toolbar,
   Tooltip,
-  I18n,
 } from './api';
+
 import {OutputData} from './data-formats/output-data';
 
 /**

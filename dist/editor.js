@@ -12674,7 +12674,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "render",
       value: function render() {
-        return this.moduleInstances.Renderer.render(this.config.data.blocks, this.config.readOnly);
+        return this.moduleInstances.Renderer.render(this.config.data.blocks);
       }
       /**
        * Make modules instances and save it to the @property this.moduleInstances
@@ -15177,7 +15177,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var index = arguments.length > 4 ? arguments[4] : undefined;
         var needToFocus = arguments.length > 5 ? arguments[5] : undefined;
 
-        _this.Editor.BlockManager.insert(type, data, config, readOnly, index, needToFocus);
+        _this.Editor.BlockManager.insert(type, data, config, index, needToFocus);
       };
 
       return _this;
@@ -15302,14 +15302,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Fills Editor with Blocks data
        *
        * @param {OutputData} data — Saved Editor data
-       * @param {boolean} readOnly - read only flag
        */
 
     }, {
       key: "render",
-      value: function render(data, readOnly) {
+      value: function render(data) {
         this.Editor.BlockManager.clear();
-        return this.Editor.Renderer.render(data.blocks, readOnly);
+        return this.Editor.Renderer.render(data.blocks);
       }
       /**
        * Render passed HTML string
@@ -15368,8 +15367,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           clear: function clear() {
             return _this2.clear();
           },
-          render: function render(data, readOnly) {
-            return _this2.render(data, readOnly);
+          render: function render(data) {
+            return _this2.render(data);
           },
           renderFromHTML: function renderFromHTML(data) {
             return _this2.renderFromHTML(data);
@@ -17619,11 +17618,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this._blocks = null;
       /**
-       * Read only flag
-       */
-
-      _this.readOnlyEnabled = false;
-      /**
        * Binded listener ids
        */
 
@@ -17705,8 +17699,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         } else {
           this.enableModuleEvents();
         }
-
-        this.readOnlyEnabled = readOnlyEnabled;
       }
       /**
        * Creates Block instance by tool name
@@ -17714,7 +17706,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
        * @param {object} data - constructor params
        * @param {object} settings - block settings
-       * @param {boolean} readOnly - read only flag
        *
        * @returns {Block}
        */
@@ -17724,13 +17715,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function composeBlock(toolName) {
         var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-        var readOnly = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-        var toolInstance = this.Editor.Tools.construct(toolName, data, readOnly);
+        var toolInstance = this.Editor.Tools.construct(toolName, data);
         var toolClass = this.Editor.Tools.available[toolName];
         var block = new _block["default"](toolName, toolInstance, toolClass, settings, this.Editor.API);
 
-        if (!this.readOnlyEnabled) {
-          this.bindEvents(block);
+        if (!this.Editor.ReadOnly.isEnabled()) {
+          this.bindBlockEvents(block);
         }
 
         return block;
@@ -17741,7 +17731,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {string} toolName — plugin name, by default method inserts initial block type
        * @param {object} data — plugin data
        * @param {object} settings - default settings
-       * @param {boolean} readOnly - readonly flag
        * @param {number} index - index where to insert new Block
        * @param {boolean} needToFocus - flag shows if needed to update current Block index
        *
@@ -17754,10 +17743,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.config.initialBlock;
         var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-        var readOnly = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-        var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : this.currentBlockIndex + 1;
-        var needToFocus = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : true;
-        var block = this.composeBlock(toolName, data, settings, readOnly);
+        var index = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : this.currentBlockIndex + 1;
+        var needToFocus = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+        var block = this.composeBlock(toolName, data, settings);
         this._blocks[index] = block;
 
         if (needToFocus) {
@@ -18230,14 +18218,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.UI.checkEmptiness();
       }
       /**
-       * Bind Events
+       * Bind Block events
        *
        * @param {Block} block - Block to which event should be bound
        */
 
     }, {
-      key: "bindEvents",
-      value: function bindEvents(block) {
+      key: "bindBlockEvents",
+      value: function bindBlockEvents(block) {
         var _this$Editor = this.Editor,
             BlockEvents = _this$Editor.BlockEvents,
             Listeners = _this$Editor.Listeners;
@@ -18297,8 +18285,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
 
-        this.listenerIds = [];
-        Shortcuts.remove('CMD+C');
+        this.listenerIds = []; // Shortcuts.remove('CMD+C');
+
         Shortcuts.remove('CMD+X');
       }
       /**
@@ -18345,7 +18333,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return BlockEvents.handleCommandX(e);
         }));
         this.blocks.forEach(function (block) {
-          _this2.bindEvents(block);
+          _this2.bindBlockEvents(block);
         });
       }
       /**
@@ -18612,6 +18600,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * to select all and copy them
        */
       value: function prepare() {
+        this.selection = new _selection["default"]();
         this.toggleReadOnly(this.config.readOnly);
       }
       /**
@@ -18619,11 +18608,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * If readOnly is true:
        *  - Disable CMD+A shortcut
-       *  - Unset selection property
+       *  - Remove all ranges
+       *  - Unselect all Blocks
        *
        * if readOnly is false:
        *  - Enable CMD+A shortcut
-       *  - Set selection property
        *
        * @param {boolean} readOnlyEnabled - "read only" state
        */
@@ -18637,7 +18626,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (readOnlyEnabled) {
           Shortcuts.remove('CMD+A');
-          this.selection = null;
+
+          _selection["default"].get().removeAllRanges();
+
+          this.allBlocksSelected = false;
         } else {
           /**
            * CMD/CTRL+A selection shortcut
@@ -18662,7 +18654,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               _this2.handleCommandA(event);
             }
           });
-          this.selection = new _selection["default"]();
         }
       }
       /**
@@ -20436,7 +20427,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function on(element, eventType, handler) {
         var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-        var id = _.generateId();
+        var id = _.generateId('l');
 
         var assignedEventData = {
           id: id,
@@ -20617,32 +20608,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "findById",
       value: function findById(id) {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = this.allListeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var listener = _step.value;
-
-            if (listener.id === id) {
-              return listener;
-            }
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        return this.allListeners.find(function (listener) {
+          return listener.id === id;
+        });
       }
     }]);
     return Listeners;
@@ -22175,11 +22143,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return _this;
     }
     /**
-     * Set initial state
+     * Returns state of read only mode
      */
 
 
     (0, _createClass2["default"])(ReadOnly, [{
+      key: "isEnabled",
+      value: function isEnabled() {
+        return this.readOnlyEnabled;
+      }
+      /**
+       * Set initial state
+       */
+
+    }, {
       key: "prepare",
       value: function prepare() {
         return _index["default"].async(function prepare$(_context) {
@@ -22251,7 +22228,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
               case 15:
                 _context2.next = 17;
-                return _index["default"].awrap(this.Editor.Renderer.render(savedBlocks.blocks, state));
+                return _index["default"].awrap(this.Editor.Renderer.render(savedBlocks.blocks));
 
               case 17:
                 return _context2.abrupt("return", this.readOnlyEnabled);
@@ -22406,22 +22383,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Creating rect and hang handlers
        */
       value: function prepare() {
-        this.toggleReadOnly(this.config.readOnly);
-      }
-      /**
-       * Toggle read-only state
-       *
-       * @param {boolean} readOnlyEnabled - "read only" state
-       */
-
-    }, {
-      key: "toggleReadOnly",
-      value: function toggleReadOnly(readOnlyEnabled) {
-        if (readOnlyEnabled) {
-          this.disableModuleBindings();
-        } else {
-          this.enableModuleBindings();
-        }
+        this.enableModuleBindings();
       }
       /**
        * Init rect params
@@ -23072,9 +23034,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Make plugin blocks from array of plugin`s data
        *
        * @param {BlockToolData[]} blocks - blocks to render
-       * @param {boolean} readOnly - readOnly flag value
        */
-      value: function render(blocks, readOnly) {
+      value: function render(blocks) {
         var _this = this;
 
         var chainData, sequence;
@@ -23085,7 +23046,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 chainData = blocks.map(function (block) {
                   return {
                     "function": function _function() {
-                      return _this.insertBlock(block, readOnly);
+                      return _this.insertBlock(block);
                     }
                   };
                 });
@@ -23110,14 +23071,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Insert block to working zone
        *
        * @param {object} item - Block data to insert
-       * @param {boolean} readOnly - read only flag
        *
        * @returns {Promise<void>}
        */
 
     }, {
       key: "insertBlock",
-      value: function insertBlock(item, readOnly) {
+      value: function insertBlock(item) {
         var _this$Editor, Tools, BlockManager, tool, data, settings, stubData, toolToolboxSettings, userToolboxSettings, stub;
 
         return _index["default"].async(function insertBlock$(_context2) {
@@ -23135,7 +23095,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 }
 
                 _context2.prev = 5;
-                BlockManager.insert(tool, data, settings, readOnly);
+                BlockManager.insert(tool, data, settings);
                 _context2.next = 13;
                 break;
 
@@ -23167,7 +23127,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
                 }
 
-                stub = BlockManager.insert(Tools.stubTool, stubData, settings, true);
+                stub = BlockManager.insert(Tools.stubTool, stubData, settings);
                 stub.stretched = true;
 
                 _.log("Tool \xAB".concat(tool, "\xBB is not found. Check 'tools' property at your initial Editor.js config."), 'warn');
@@ -23911,7 +23871,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return shc.name === shortcut;
         });
 
-        if (!this.registeredShortcuts[index]) {
+        if (index === -1 || !this.registeredShortcuts[index]) {
           return;
         }
 
@@ -26559,14 +26519,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @param {string} tool — tool name
        * @param {object} data — initial data
-       * @param {boolean} readOnly - read only flag
        *
        * @returns {BlockTool}
        */
 
     }, {
       key: "construct",
-      value: function construct(tool, data, readOnly) {
+      value: function construct(tool, data) {
         var Plugin = this.toolsClasses[tool];
         /**
          * Configuration to be passed to the Tool's constructor
@@ -26582,7 +26541,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           api: this.Editor.API.getMethodsForTool(tool),
           config: config,
           data: data,
-          readOnly: readOnly
+          readOnly: this.Editor.ReadOnly.isEnabled()
         };
         return new Plugin(constructorOptions);
       }
@@ -26595,6 +26554,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @returns {InlineTool} — instance
        */
+      // tslint:disable-next-line:max-line-length
 
     }, {
       key: "constructInline",
@@ -27215,9 +27175,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Toggle read-only state
        *
        * If readOnly is true:
-       *  - bb
+       *  - removes all listeners from main UI module elements
+       *
        * if readOnly is false:
-       *  - ss
+       *  - enables all listeners to UI module elements
        *
        * @param {boolean} readOnlyEnabled - "read only" state
        */
@@ -29235,13 +29196,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * Returns random generated identifier
    *
+   * @param {string} prefix - identifier prefix
+   *
    * @returns {string}
    */
 
 
   function generateId() {
+    var prefix = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     // tslint:disable-next-line:no-bitwise
-    return "f".concat((~~(Math.random() * 1e8)).toString(16));
+    return "".concat(prefix).concat((~~(Math.random() * 1e8)).toString(16));
   }
 });
 

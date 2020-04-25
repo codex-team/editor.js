@@ -187,9 +187,10 @@ export default class UI extends Module {
    * Toggle read-only state
    *
    * If readOnly is true:
-   *  - bb
+   *  - removes all listeners from main UI module elements
+   *
    * if readOnly is false:
-   *  - ss
+   *  - enables all listeners to UI module elements
    *
    * @param {boolean} readOnlyEnabled - "read only" state
    */

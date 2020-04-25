@@ -42,10 +42,9 @@ export default class Renderer extends Module {
    * Make plugin blocks from array of plugin`s data
    *
    * @param {BlockToolData[]} blocks - blocks to render
-   * @param {boolean} readOnly - readOnly flag value
    */
-  public async render(blocks: BlockToolData[], readOnly: boolean): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block, readOnly) }));
+  public async render(blocks: BlockToolData[]): Promise<void> {
+    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as _.ChainData[]);
 
@@ -60,11 +59,10 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
-   * @param {boolean} readOnly - read only flag
    *
    * @returns {Promise<void>}
    */
-  public async insertBlock(item, readOnly): Promise<void> {
+  public async insertBlock(item): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
@@ -72,7 +70,7 @@ export default class Renderer extends Module {
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert(tool, data, settings, readOnly);
+        BlockManager.insert(tool, data, settings);
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
@@ -94,7 +92,7 @@ export default class Renderer extends Module {
         stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
       }
 
-      const stub = BlockManager.insert(Tools.stubTool, stubData, settings, true);
+      const stub = BlockManager.insert(Tools.stubTool, stubData, settings);
 
       stub.stretched = true;
 

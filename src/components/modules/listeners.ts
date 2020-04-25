@@ -74,7 +74,7 @@ export default class Listeners extends Module {
     handler: (event: Event) => void,
     options: boolean | AddEventListenerOptions = false,
   ): string {
-    const id = _.generateId();
+    const id = _.generateId('l');
     const assignedEventData = {
       id,
       element,
@@ -240,10 +240,6 @@ export default class Listeners extends Module {
    * @returns {ListenerData}
    */
   private findById(id: string): ListenerData {
-    for (const listener of this.allListeners) {
-      if (listener.id === id) {
-        return listener;
-      }
-    }
+    return this.allListeners.find((listener) => listener.id === id);
   }
 }
