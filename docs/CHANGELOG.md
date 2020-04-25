@@ -4,7 +4,9 @@
 
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
-- `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - Adjusted GitHub Action for ESLint.
+- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
+- `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
 - `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [1103](https://github.com/codex-team/editor.js/issues/1103)
 
 ### 2.17
