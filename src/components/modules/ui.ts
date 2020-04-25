@@ -281,11 +281,20 @@ export default class UI extends Module {
      */
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const styles = require('../../styles/main.css');
+    const styleTagId = 'editor-js-styles';
+
+    /**
+     * Do not append styles again if they are already on the page
+     */
+    if ($.get(styleTagId)) {
+      return;
+    }
 
     /**
      * Make tag
      */
     const tag = $.make('style', null, {
+      id: styleTagId,
       textContent: styles.toString(),
     });
 

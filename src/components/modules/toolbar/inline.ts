@@ -1,10 +1,11 @@
 import Module from '../../__module';
 import $ from '../../dom';
-
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
 import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
 import Flipper from '../../flipper';
+import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -453,7 +454,7 @@ export default class InlineToolbar extends Module {
       });
     });
 
-    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, 'Convert to', {
+    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });
@@ -588,7 +589,10 @@ export default class InlineToolbar extends Module {
      * Enable tooltip module on button
      */
     const tooltipContent = $.make('div');
-    const toolTitle = Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName);
+    const toolTitle = I18n.t(
+      I18nInternalNS.toolNames,
+      Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName)
+    );
 
     tooltipContent.appendChild($.text(toolTitle));
 
@@ -674,7 +678,7 @@ export default class InlineToolbar extends Module {
       if (Object.prototype.hasOwnProperty.call(this.Editor.Tools.inline, tool)) {
         const toolSettings = this.Editor.Tools.getToolSettings(tool);
 
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], tool, toolSettings);
       }
     }
 

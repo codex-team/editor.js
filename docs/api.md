@@ -1,5 +1,12 @@
 # Editor.js API
 
+---
+Most actual API described by [this interface](../types/api/index.d.ts).
+
+---
+📃 See official API documentation [https://editorjs.io/api](https://editorjs.io/api)
+
+---
 
 Blocks have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
 can use Editor\`s API as they want.
@@ -42,7 +49,7 @@ use 'move' instead)
 
 `stretchBlock(index: number, status: boolean)` - make Block stretched
 
-`insertNewBlock()` - __Deprecated__ insert new Block after working place 
+`insertNewBlock()` - __Deprecated__ insert new Block after working place
 
 `insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
 
@@ -100,11 +107,11 @@ Each method accept `position` and `offset` parameters. `Offset` should be used t
 
 `Position` can be one of the following values:
 
-| Value     | Description 
-| --------- | ----------- 
+| Value     | Description
+| --------- | -----------
 | `start`   | Caret will be set at the Block's beginning
 | `end`     | Caret will be set at the Block end
-| `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
+| `default` | More or less emulates browser behaviour, in most cases behaves as `start`
 
 Each method returns `boolean` value: true if caret is set successfully or false otherwise (e.g. when there is no Block at index);
 
@@ -148,7 +155,7 @@ this.api.notifier.show({
 ![](https://capella.pics/14fcdbe4-d6eb-41d4-b66e-e0e86ccf1a4b.jpg)
 
 
-Check out [`codex-notifier` package page](https://github.com/codex-team/js-notifier) on GitHub to find docs, params and examples. 
+Check out [`codex-notifier` package page](https://github.com/codex-team/js-notifier) on GitHub to find docs, params and examples.
 
 ### Destroy API
 
@@ -173,10 +180,10 @@ Methods for showing Tooltip helper near your elements. Parameters are the same a
 #### Show
 
 Method shows tooltip with custom content on passed element
- 
+
 ```js
 this.api.tooltip.show(element, content, options);
-``` 
+```
 
 | parameter | type | description |
 | -- | -- | -- |
@@ -184,17 +191,17 @@ this.api.tooltip.show(element, content, options);
 | `content` | _String_ or _Node_ | Content that will be appended to the Tooltip |
 | `options` | _Object_ | Some displaying options, see below |
 
-Available showing options 
+Available showing options
 
 | name | type | action |
 | -- | -- | -- |
-| placement | `top`, `bottom`, `left`, `right` | Where to place the tooltip. Default value is `bottom' | 
-| marginTop | _Number_ | Offset above the tooltip with `top` placement | 
-| marginBottom | _Number_ | Offset below the tooltip with `bottom` placement | 
-| marginLeft | _Number_ | Offset at left from the tooltip with `left` placement | 
-| marginRight | _Number_ | Offset at right from the tooltip with `right` placement | 
-| delay | _Number_ | Delay before showing, in ms. Default is `70` | 
-| hidingDelay | _Number_ | Delay before hiding, in ms. Default is `0` | 
+| placement | `top`, `bottom`, `left`, `right` | Where to place the tooltip. Default value is `bottom' |
+| marginTop | _Number_ | Offset above the tooltip with `top` placement |
+| marginBottom | _Number_ | Offset below the tooltip with `bottom` placement |
+| marginLeft | _Number_ | Offset at left from the tooltip with `left` placement |
+| marginRight | _Number_ | Offset at right from the tooltip with `right` placement |
+| delay | _Number_ | Delay before showing, in ms. Default is `70` |
+| hidingDelay | _Number_ | Delay before hiding, in ms. Default is `0` |
 
 #### Hide
 
@@ -206,7 +213,7 @@ this.api.tooltip.hide();
 
 #### onHover
 
-Decorator for showing tooltip near some element by "mouseenter" and hide by "mouseleave". 
+Decorator for showing tooltip near some element by "mouseenter" and hide by "mouseleave".
 
 ```js
 this.api.tooltip.onHover(element, content, options);
@@ -214,7 +221,7 @@ this.api.tooltip.onHover(element, content, options);
 
 ### API Shorthands
 
-Editor`s API provides some shorthands for API methods. 
+Editor`s API provides some shorthands for API methods.
 
 | Alias    | Method          |
 | ------   | --------------- |
