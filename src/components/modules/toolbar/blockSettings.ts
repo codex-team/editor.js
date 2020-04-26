@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
-import SelectionUtils from "../../selection";
+import SelectionUtils from '../../selection';
 
 /**
  * Block Settings
@@ -144,7 +144,10 @@ export default class BlockSettings extends Module {
     /**
      * Restore selection to Block
      */
-    this.selection.restore();
+    if (!SelectionUtils.isAtEditor) {
+      this.selection.restore();
+    }
+
     this.selection.clearSaved();
 
     /** Clear settings */
@@ -221,11 +224,10 @@ export default class BlockSettings extends Module {
        * @param {HTMLElement} focusedItem - activated Tune
        */
       activateCallback: (focusedItem) => {
-
         /**
          * If activated item is editable element, restore selection to block and flip to the next item
          */
-        if ($.canSetCaret(focusedItem)) {
+        if (focusedItem && $.canSetCaret(focusedItem)) {
           this.selection.restore();
           this.flipper.flipRight();
 
@@ -238,7 +240,7 @@ export default class BlockSettings extends Module {
          */
         _.delay(() => {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-        }, 10)();
+        }, 50)();
       },
     } as FlipperOptions);
   }

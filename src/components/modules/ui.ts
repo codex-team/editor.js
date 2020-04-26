@@ -439,7 +439,6 @@ export default class UI extends Module {
     }
   }
 
-
   /**
    * Escape pressed
    * If some of Toolbar components are opened, then close it otherwise close Toolbar

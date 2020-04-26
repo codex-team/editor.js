@@ -1,4 +1,5 @@
 import Dom from './dom';
+import * as _ from './utils';
 
 /**
  * Iterator above passed Elements list.
@@ -157,11 +158,10 @@ export default class DomIterator {
     }
 
     if (Dom.canSetCaret(this.items[focusedButtonIndex])) {
-
       /**
-       * Focus input
+       * Focus input with micro-delay to ensure DOM is updated
        */
-      Dom.focus(this.items[focusedButtonIndex]);
+      _.delay(() => Dom.focus(this.items[focusedButtonIndex]), 50)();
     }
 
     /**

@@ -1,5 +1,4 @@
-import * as _ from "./utils";
-import Selection from "./selection";
+import * as _ from './utils';
 
 /**
  * DOM manipulations helper

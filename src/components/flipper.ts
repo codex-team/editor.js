@@ -213,7 +213,7 @@ export default class Flipper {
       _.keyCodes.ENTER,
     ];
 
-    const isCurrentItemIsFocusedInput =this.iterator.currentItem == document.activeElement;
+    const isCurrentItemIsFocusedInput = this.iterator.currentItem == document.activeElement;
 
     if (this.allowArrows && !isCurrentItemIsFocusedInput) {
       handlingKeyCodeList.push(

@@ -154,7 +154,6 @@ export default class BlockEvents extends Module {
     }
   }
 
-
   /**
    * Add drop target styles
    *
