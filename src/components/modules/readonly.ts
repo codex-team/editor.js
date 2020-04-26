@@ -22,7 +22,7 @@ export default class ReadOnly extends Module {
   /**
    * Returns state of read only mode
    */
-  public isEnabled(): boolean {
+  public get isEnabled(): boolean {
     return this.readOnlyEnabled;
   }
 

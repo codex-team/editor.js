@@ -11,7 +11,7 @@
 - `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
 - `Improvements` - Improve performance of DOM traversing at the `isEmpty()` method [#1095](https://github.com/codex-team/editor.js/issues/1095)
 - `Fix` - Toolbox: Tool's order in Toolbox now saved in accordance with `tools` object keys order [#1073](https://github.com/codex-team/editor.js/issues/1073)
-- `New` - Read only mode [#837](https://github.com/codex-team/editor.js/issues/837)
+- `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)
 
 ### 2.17
 

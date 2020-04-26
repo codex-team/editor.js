@@ -57,21 +57,6 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module {
-  /**
-   * HTML Elements used for Toolbar UI
-   */
-  public nodes: {[key: string]: HTMLElement} = {
-    wrapper: null,
-    content: null,
-    actions: null,
-
-    // Content Zone
-    plusButton: null,
-
-    // Actions Zone
-    blockActionsButtons: null,
-    settingsToggler: null,
-  };
 
   /**
    * CSS styles
@@ -97,6 +82,68 @@ export default class Toolbar extends Module {
       settingsToggler: 'ce-toolbar__settings-btn',
     };
   }
+
+  /**
+   * returns toolbar opened state
+   *
+   * @returns {boolean}
+   */
+  public get opened(): boolean {
+    return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
+  }
+
+  /**
+   * Plus Button public methods
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
+   */
+  public get plusButton(): {hide: () => void; show: () => void} {
+    return {
+      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      show: (): void => {
+        if (this.Editor.Toolbox.isEmpty) {
+          return;
+        }
+        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
+      },
+    };
+  }
+
+  /**
+   * Block actions appearance manipulations
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
+   */
+  private get blockActions(): {hide: () => void; show: () => void} {
+    return {
+      hide: (): void => {
+        this.nodes.actions.classList.remove(this.CSS.actionsOpened);
+      },
+      show: (): void => {
+        this.nodes.actions.classList.add(this.CSS.actionsOpened);
+      },
+    };
+  }
+
+  /**
+   * HTML Elements used for Toolbar UI
+   */
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper: null,
+    content: null,
+    actions: null,
+
+    // Content Zone
+    plusButton: null,
+
+    // Actions Zone
+    blockActionsButtons: null,
+    settingsToggler: null,
+  };
+  /**
+   * listener ids
+   */
+  private listenerIds: string[] = [];
 
   /**
    * Makes toolbar
@@ -126,7 +173,11 @@ export default class Toolbar extends Module {
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
 
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', this.plusButtonClicked, false);
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => {
+        this.plusButtonClicked();
+      }, false),
+    );
 
     /**
      * Add events to show/hide tooltip for plus button
@@ -164,7 +215,7 @@ export default class Toolbar extends Module {
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
         placement: 'top',
-      }
+      },
     );
 
     /**
@@ -252,15 +303,6 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * returns toolbar opened state
-   *
-   * @returns {boolean}
-   */
-  public get opened(): boolean {
-    return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
-  }
-
-  /**
    * Close the Toolbar
    */
   public close(): void {
@@ -273,42 +315,9 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Plus Button public methods
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
-   */
-  public get plusButton(): {hide: () => void; show: () => void} {
-    return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: (): void => {
-        if (this.Editor.Toolbox.isEmpty) {
-          return;
-        }
-        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      },
-    };
-  }
-
-  /**
-   * Block actions appearance manipulations
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
-   */
-  private get blockActions(): {hide: () => void; show: () => void} {
-    return {
-      hide: (): void => {
-        this.nodes.actions.classList.remove(this.CSS.actionsOpened);
-      },
-      show: (): void => {
-        this.nodes.actions.classList.add(this.CSS.actionsOpened);
-      },
-    };
-  }
-
-  /**
    * Handler for Plus Button
    */
-  private plusButtonClicked = (): void => {
+  private plusButtonClicked(): void {
     this.Editor.Toolbox.toggle();
   }
 
@@ -320,13 +329,17 @@ export default class Toolbar extends Module {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', this.settingsTogglerClicked);
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => {
+        this.settingsTogglerClicked();
+      }),
+    );
   }
 
   /**
    * Clicks on the Block Settings toggler
    */
-  private settingsTogglerClicked = (): void => {
+  private settingsTogglerClicked(): void {
     if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else {

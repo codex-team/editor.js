@@ -154,20 +154,20 @@ export default class Block {
    * @param {object} toolInstance — passed Tool`s instance that rendered the Block
    * @param {object} toolClass — Tool's class
    * @param {object} settings - default settings
-   * @param {ApiModule} apiMethods - Editor API module for pass it to the Block Tunes
+   * @param {ApiModule} apiModule - Editor API module for pass it to the Block Tunes
    */
   constructor(
     toolName: string,
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
-    apiMethods: ApiModule,
+    apiModule: ApiModule,
   ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
     this.settings = settings;
-    this.api = apiMethods;
+    this.api = apiModule;
     this.holder = this.compose();
 
     this.mutationObserver = new MutationObserver(this.didMutated);
