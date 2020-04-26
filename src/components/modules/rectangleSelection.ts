@@ -185,31 +185,31 @@ export default class RectangleSelection extends Module {
     this.listenerIds.push(
       Listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
         this.processMouseDown(mouseEvent);
-      }, false),
+      }, false)
     );
 
     this.listenerIds.push(
       Listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
         this.processMouseMove(mouseEvent);
-      }, false),
+      }, false)
     );
 
     this.listenerIds.push(
       Listeners.on(document.body, 'mouseleave', () => {
         this.processMouseLeave();
-      }),
+      })
     );
 
     this.listenerIds.push(
       Listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
         this.processScroll(mouseEvent);
-      }, false),
+      }, false)
     );
 
     this.listenerIds.push(
       Listeners.on(document.body, 'mouseup', () => {
         this.processMouseUp();
-      }, false),
+      }, false)
     );
   }
 

@@ -211,7 +211,7 @@ export default class ConversionToolbar extends Module {
      */
     const cleaned: string = this.Editor.Sanitizer.clean(
       exportData,
-      replacingTool.sanitize,
+      replacingTool.sanitize
     );
 
     /**

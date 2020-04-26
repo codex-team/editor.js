@@ -186,14 +186,14 @@ export default class BlocksAPI extends Module {
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean,
+    needToFocus?: boolean
   ): void => {
     this.Editor.BlockManager.insert(
       type,
       data,
       config,
       index,
-      needToFocus,
+      needToFocus
     );
   }
 

@@ -8,7 +8,7 @@ import {
   InlineToolConstructable, Tool,
   ToolConfig,
   ToolConstructable,
-  ToolSettings,
+  ToolSettings
 } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
@@ -83,7 +83,7 @@ export default class Tools extends Module {
         _.log(
           `Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`,
           'warn',
-          notImplementedMethods,
+          notImplementedMethods
         );
 
         return false;
@@ -382,7 +382,7 @@ export default class Tools extends Module {
   public constructInline(
     tool: InlineToolConstructable,
     name: string,
-    toolSettings: ToolSettings = {} as ToolSettings,
+    toolSettings: ToolSettings = {} as ToolSettings
   ): InlineTool {
     const constructorOptions = {
       api: this.Editor.API.getMethodsForTool(name),
@@ -487,7 +487,7 @@ export default class Tools extends Module {
 
         if (!_.isFunction(tool) && !_.isFunction((tool as ToolSettings).class)) {
           throw Error(
-            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
+            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`
           );
         }
       }

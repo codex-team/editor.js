@@ -28,7 +28,7 @@ if (!Element.prototype.matches) {
     Element.prototype.msMatchesSelector ||
     Element.prototype.oMatchesSelector ||
     Element.prototype.webkitMatchesSelector ||
-    function(s): boolean {
+    function (s): boolean {
       const matches = (this.document || this.ownerDocument).querySelectorAll(s);
       let i = matches.length;
 
@@ -50,7 +50,7 @@ if (!Element.prototype.matches) {
  * @param {string} s - selector
  */
 if (!Element.prototype.closest) {
-  Element.prototype.closest = function(s): Element | null {
+  Element.prototype.closest = function (s): Element | null {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let el = this;
 

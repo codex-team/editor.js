@@ -84,7 +84,7 @@ function _log(
   type = 'log',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args?: any,
-  style = 'color: inherit',
+  style = 'color: inherit'
 ): void {
   if (!('console' in window) || !window.console[type]) {
     return;
@@ -203,7 +203,7 @@ export async function sequence(
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   success: (data: object) => void = (): void => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fallback: (data: object) => void = (): void => {},
+  fallback: (data: object) => void = (): void => {}
 ): Promise<void> {
   /**
    * Decorator
@@ -218,7 +218,7 @@ export async function sequence(
   async function waitNextBlock(
     chainData: ChainData,
     successCallback: (data: object) => void,
-    fallbackCallback: (data: object) => void,
+    fallbackCallback: (data: object) => void
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
@@ -312,7 +312,7 @@ export function isPromise(object: any): object is Promise<any> {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function delay(method: (...args: any[]) => any, timeout: number) {
-  return function(): void {
+  return function (): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
         // eslint-disable-next-line prefer-rest-params

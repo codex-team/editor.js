@@ -13,7 +13,6 @@ import { MoveEvent } from '../../types/tools';
  *
  */
 export default class Blocks {
-
   /**
    * Get length of Block instances array
    *
@@ -93,6 +92,7 @@ export default class Blocks {
      */
     return instance.get(+(property as number));
   }
+
   /**
    * Array of Block instances in order of addition
    */

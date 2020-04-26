@@ -51,13 +51,13 @@ export default class DragNDrop extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
         await this.processDrop(dropEvent);
-      }, true),
+      }, true)
     );
 
     this.listenerIds.push(
       this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', () => {
         this.processDragStart();
-      }),
+      })
     );
 
     /**
@@ -66,7 +66,7 @@ export default class DragNDrop extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (dragEvent: DragEvent) => {
         this.processDragOver(dragEvent);
-      }, true),
+      }, true)
     );
   }
 

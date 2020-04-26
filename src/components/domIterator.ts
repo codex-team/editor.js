@@ -39,7 +39,7 @@ export default class DomIterator {
    */
   constructor(
     nodeList: HTMLElement[],
-    focusedCssClass: string,
+    focusedCssClass: string
   ) {
     this.items = nodeList || [];
     this.focusedCssClass = focusedCssClass;

@@ -57,7 +57,6 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module {
-
   /**
    * CSS styles
    *
@@ -140,6 +139,7 @@ export default class Toolbar extends Module {
     blockActionsButtons: null,
     settingsToggler: null,
   };
+
   /**
    * listener ids
    */
@@ -176,7 +176,7 @@ export default class Toolbar extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => {
         this.plusButtonClicked();
-      }, false),
+      }, false)
     );
 
     /**
@@ -215,7 +215,7 @@ export default class Toolbar extends Module {
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
         placement: 'top',
-      },
+      }
     );
 
     /**
@@ -332,7 +332,7 @@ export default class Toolbar extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => {
         this.settingsTogglerClicked();
-      }),
+      })
     );
   }
 
