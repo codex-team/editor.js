@@ -195,14 +195,14 @@ export default class BlockManager extends Module {
     Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
 
     /** Copy and cut */
     Listeners.on(
       document,
       'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
     );
   }
 
@@ -241,13 +241,13 @@ export default class BlockManager extends Module {
   public composeBlock(
     toolName: string,
     data: BlockToolData = {},
-    settings: ToolConfig = {},
+    settings: ToolConfig = {}
   ): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
 
-    if (!this.Editor.ReadOnly.isEnabled()) {
+    if (!this.Editor.ReadOnly.isEnabled) {
       this.bindBlockEvents(block);
     }
 
@@ -270,7 +270,7 @@ export default class BlockManager extends Module {
     data: BlockToolData = {},
     settings: ToolConfig = {},
     index: number = this.currentBlockIndex + 1,
-    needToFocus = true,
+    needToFocus = true
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -293,7 +293,7 @@ export default class BlockManager extends Module {
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace = false,
+    replace = false
   ): Block {
     let block;
 
@@ -488,7 +488,7 @@ export default class BlockManager extends Module {
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
-    settings: ToolConfig = {},
+    settings: ToolConfig = {}
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
@@ -688,34 +688,34 @@ export default class BlockManager extends Module {
   private bindBlockEvents(block: Block): void {
     const { BlockEvents, Listeners } = this.Editor;
 
+    // this.listenerIds.push(
+    //   Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
+    //     BlockEvents.mouseDown(event);
+    //   })
+    // );
+
     this.listenerIds.push(
       Listeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
         BlockEvents.keydown(event);
-      }, true),
-    );
-
-    this.listenerIds.push(
-      Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
-        BlockEvents.mouseDown(event);
-      }),
+      }, true)
     );
 
     this.listenerIds.push(
       Listeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
         BlockEvents.keyup(event);
-      }),
+      })
     );
 
     this.listenerIds.push(
       Listeners.on(block.holder, 'dragover', (event: DragEvent) => {
         BlockEvents.dragOver(event);
-      }),
+      })
     );
 
     this.listenerIds.push(
       Listeners.on(block.holder, 'dragleave', (event: DragEvent) => {
         BlockEvents.dragLeave(event);
-      }),
+      })
     );
   }
 

@@ -363,7 +363,7 @@ export default class Tools extends Module {
       api: this.Editor.API.getMethodsForTool(tool),
       config,
       data,
-      readOnly: this.Editor.ReadOnly.isEnabled(),
+      readOnly: this.Editor.ReadOnly.isEnabled,
     };
 
     return new Plugin(constructorOptions);

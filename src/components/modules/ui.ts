@@ -16,6 +16,7 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
+import SelectionUtils from '../selection';
 
 /**
  * @class
@@ -341,31 +342,31 @@ export default class UI extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
         this.redactorClicked(event);
-      }, false),
+      }, false)
     );
 
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
         this.documentTouched(event);
-      }, true),
+      }, true)
     );
 
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
         this.documentTouched(event);
-      }, true),
+      }, true)
     );
 
     this.listenerIds.push(
       this.Editor.Listeners.on(document, 'keydown', (event: KeyboardEvent) => {
         this.documentKeydown(event);
-      }, true),
+      }, true)
     );
 
     this.listenerIds.push(
       this.Editor.Listeners.on(document, 'click', (event: MouseEvent) => {
         this.documentClicked(event);
-      }, true),
+      }, true)
     );
 
     /**
@@ -374,7 +375,7 @@ export default class UI extends Module {
     this.listenerIds.push(
       this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
         this.selectionChanged(event);
-      }, true),
+      }, true)
     );
 
     this.listenerIds.push(
@@ -382,7 +383,7 @@ export default class UI extends Module {
         this.resizeDebouncer();
       }, {
         passive: true,
-      }),
+      })
     );
   }
 

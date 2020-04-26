@@ -178,7 +178,6 @@ export default class BlocksAPI extends Module {
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
-   * @param {boolean} readOnly - read only flag
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
@@ -186,7 +185,6 @@ export default class BlocksAPI extends Module {
     type: string = this.config.initialBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
-    readOnly = false,
     index?: number,
     needToFocus?: boolean,
   ): void => {

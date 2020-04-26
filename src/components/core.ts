@@ -280,6 +280,7 @@ export default class Core {
       'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
+      'CrossBlockSelection',
       'ReadOnly',
     ];
 
