@@ -1,6 +1,6 @@
 import Dom from './dom';
 import * as _ from './utils';
-import SelectionUtils from "./selection";
+import SelectionUtils from './selection';
 
 /**
  * Iterator above passed Elements list.
