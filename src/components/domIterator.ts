@@ -1,5 +1,6 @@
 import Dom from './dom';
 import * as _ from './utils';
+import SelectionUtils from "./selection";
 
 /**
  * Iterator above passed Elements list.
@@ -161,7 +162,7 @@ export default class DomIterator {
       /**
        * Focus input with micro-delay to ensure DOM is updated
        */
-      _.delay(() => Dom.focus(this.items[focusedButtonIndex]), 50)();
+      _.delay(() => SelectionUtils.setCursor(this.items[focusedButtonIndex]), 50)();
     }
 
     /**

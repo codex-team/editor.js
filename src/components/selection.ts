@@ -276,6 +276,37 @@ export default class SelectionUtils {
   }
 
   /**
+   * Set focus to contenteditable or native input element
+   *
+   * @param element - element where to set focus
+   * @param offset - offset of cursor
+   */
+  public static setCursor(element: HTMLElement, offset = 0): DOMRect {
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    /** if found deepest node is native input */
+    if ($.isNativeInput(element)) {
+      if (!$.canSetCaret(element)) {
+        return;
+      }
+
+      element.focus();
+      element.selectionStart = element.selectionEnd = offset;
+
+      return element.getBoundingClientRect();
+    }
+
+    range.setStart(element, offset);
+    range.setEnd(element, offset);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    return range.getBoundingClientRect();
+  }
+
+  /**
    * Removes fake background
    */
   public removeFakeBackground(): void {

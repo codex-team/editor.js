@@ -225,11 +225,10 @@ export default class BlockSettings extends Module {
        */
       activateCallback: (focusedItem) => {
         /**
-         * If activated item is editable element, restore selection to block and flip to the next item
+         * If focused item is editable element, close block settings
          */
         if (focusedItem && $.canSetCaret(focusedItem)) {
-          this.selection.restore();
-          this.flipper.flipRight();
+          this.close();
 
           return;
         }

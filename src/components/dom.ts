@@ -599,31 +599,4 @@ export default class Dom {
   public static isAnchor(element: Element): element is HTMLAnchorElement {
     return element.tagName.toLowerCase() === 'a';
   }
-
-  /**
-   * Set focus to contenteditable or native input element
-   *
-   * @param element - element where to set focus
-   */
-  public static focus(element: HTMLElement): void {
-    const range = document.createRange();
-    const selection = window.getSelection();
-
-    /** if found deepest node is native input */
-    if (Dom.isNativeInput(element)) {
-      if (!Dom.canSetCaret(element)) {
-        return;
-      }
-
-      element.focus();
-
-      return;
-    }
-
-    range.setStart(element, 0);
-    range.setEnd(element, 0);
-
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
 }
