@@ -12846,7 +12846,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
 
-        this.config.readOnly = this.config.readOnly ? this.config.readOnly : false;
+        this.config.readOnly = this.config.readOnly || false;
         /**
          * Adjust i18n
          */
@@ -17591,7 +17591,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this._blocks = null;
       /**
-       * Binded listener ids
+       * listener identifiers bound on elements
        */
 
       _this.listenerIds = [];
@@ -17678,10 +17678,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        if (readOnlyEnabled) {
-          this.disableModuleEvents();
+        if (!readOnlyEnabled) {
+          this.enableModuleBindings();
         } else {
-          this.enableModuleEvents();
+          this.disableModuleBindings();
         }
       }
       /**
@@ -18218,12 +18218,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function bindBlockEvents(block) {
         var _this$Editor2 = this.Editor,
             BlockEvents = _this$Editor2.BlockEvents,
-            Listeners = _this$Editor2.Listeners; // this.listenerIds.push(
-        //   Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
-        //     BlockEvents.mouseDown(event);
-        //   })
-        // );
-
+            Listeners = _this$Editor2.Listeners;
         this.listenerIds.push(Listeners.on(block.holder, 'keydown', function (event) {
           BlockEvents.keydown(event);
         }, true));
@@ -18245,8 +18240,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "disableModuleEvents",
-      value: function disableModuleEvents() {
+      key: "disableModuleBindings",
+      value: function disableModuleBindings() {
         var Listeners = this.Editor.Listeners;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
@@ -18283,8 +18278,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "enableModuleEvents",
-      value: function enableModuleEvents() {
+      key: "enableModuleBindings",
+      value: function enableModuleBindings() {
         var _this2 = this;
 
         this.blocks.forEach(function (block) {
@@ -18556,7 +18551,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
       value: function prepare() {
         this.selection = new _selection["default"]();
-        this.toggleReadOnly(this.config.readOnly);
+
+        if (!this.config.readOnly) {
+          this.enableModuleBindings();
+        }
       }
       /**
        * Toggle read-only state
@@ -18575,40 +18573,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        var _this2 = this;
-
-        var Shortcuts = this.Editor.Shortcuts;
-
         if (readOnlyEnabled) {
-          Shortcuts.remove('CMD+A');
-
-          _selection["default"].get().removeAllRanges();
-
-          this.allBlocksSelected = false;
+          this.disableModuleBindings();
         } else {
-          /**
-           * CMD/CTRL+A selection shortcut
-           */
-          Shortcuts.add({
-            name: 'CMD+A',
-            handler: function handler(event) {
-              var BlockManager = _this2.Editor.BlockManager;
-              /**
-               * When one page consist of two or more EditorJS instances
-               * Shortcut module tries to handle all events.
-               * Thats why Editor's selection works inside the target Editor, but
-               * for others error occurs because nothing to select.
-               *
-               * Prevent such actions if focus is not inside the Editor
-               */
-
-              if (!BlockManager.currentBlock) {
-                return;
-              }
-
-              _this2.handleCommandA(event);
-            }
-          });
+          this.enableModuleBindings();
         }
       }
       /**
@@ -18695,7 +18663,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "copySelectedBlocks",
       value: function copySelectedBlocks(e) {
-        var _this3 = this;
+        var _this2 = this;
 
         var fakeClipboard, savedData, textPlain, textHTML;
         return _index["default"].async(function copySelectedBlocks$(_context) {
@@ -18711,7 +18679,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   /**
                    * Make <p> tag that holds clean HTML
                    */
-                  var cleanHTML = _this3.Editor.Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
+                  var cleanHTML = _this2.Editor.Sanitizer.clean(block.holder.innerHTML, _this2.sanitizerConfig);
 
                   var fragment = _dom["default"].make('p');
 
@@ -18867,6 +18835,55 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.Editor.InlineToolbar.close();
       }
+      /**
+       * Binds module all necessary events
+       */
+
+    }, {
+      key: "enableModuleBindings",
+      value: function enableModuleBindings() {
+        var _this3 = this;
+
+        var Shortcuts = this.Editor.Shortcuts;
+        /**
+         * CMD/CTRL+A selection shortcut
+         */
+
+        Shortcuts.add({
+          name: 'CMD+A',
+          handler: function handler(event) {
+            var BlockManager = _this3.Editor.BlockManager;
+            /**
+             * When one page consist of two or more EditorJS instances
+             * Shortcut module tries to handle all events.
+             * Thats why Editor's selection works inside the target Editor, but
+             * for others error occurs because nothing to select.
+             *
+             * Prevent such actions if focus is not inside the Editor
+             */
+
+            if (!BlockManager.currentBlock) {
+              return;
+            }
+
+            _this3.handleCommandA(event);
+          }
+        });
+      }
+      /**
+       * Unbinds module events
+       */
+
+    }, {
+      key: "disableModuleBindings",
+      value: function disableModuleBindings() {
+        var Shortcuts = this.Editor.Shortcuts;
+        Shortcuts.remove('CMD+A');
+
+        _selection["default"].get().removeAllRanges();
+
+        this.allBlocksSelected = false;
+      }
     }, {
       key: "sanitizerConfig",
       get: function get() {
@@ -18896,13 +18913,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
       }
       /**
-       * Set selected all blocks
+       * Flag that identifies all Blocks selection
        *
-       * @param {boolean} state - state to set
+       * @returns {boolean}
        */
 
     }, {
       key: "allBlocksSelected",
+      get: function get() {
+        var BlockManager = this.Editor.BlockManager;
+        return BlockManager.blocks.every(function (block) {
+          return block.selected === true;
+        });
+      }
+      /**
+       * Set selected all blocks
+       *
+       * @param {boolean} state - state to set
+       */
+      ,
       set: function set(state) {
         var BlockManager = this.Editor.BlockManager;
         BlockManager.blocks.forEach(function (block) {
@@ -19749,6 +19778,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return _this;
     }
     /**
+     * Module preparation
+     *
      * @returns {Promise}
      */
 
@@ -19765,7 +19796,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               case 0:
                 Listeners = this.Editor.Listeners;
                 Listeners.on(document, 'mousedown', function (event) {
-                  _this2.handleCBSMouseDown(event);
+                  _this2.enableCrossBlockSelection(event);
                 });
 
               case 2:
@@ -19801,12 +19832,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "handleCBSMouseDown",
+      key: "enableCrossBlockSelection",
 
       /**
-       * @param {MouseEvent} event
+       * Enables Cross Block Selection
+       *
+       * @param {MouseEvent} event - mouse down event
        */
-      value: function handleCBSMouseDown(event) {
+      value: function enableCrossBlockSelection(event) {
         /**
          * Each mouse down on Block must disable selectAll state
          */
@@ -20015,7 +20048,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _createClass2["default"])(DragNDrop, [{
       key: "prepare",
       value: function prepare() {
-        this.toggleReadOnly(this.config.readOnly);
+        if (!this.config.readOnly) {
+          this.enableModuleBindings();
+        }
       }
       /**
        * Toggle read-only state
@@ -20745,7 +20780,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                this.toggleReadOnly(this.config.readOnly);
+                if (!this.config.readOnly) {
+                  this.enableModule();
+                }
 
               case 1:
               case "end":
@@ -20757,25 +20794,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * @param {boolean} readOnlyEnabled - read only flag value
        */
 
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        var _this3 = this;
-
         if (readOnlyEnabled) {
-          this.disable();
+          this.disableModule();
         } else {
-          /**
-           * wait till Browser render Editor's Blocks
-           */
-          window.setTimeout(function () {
-            _this3.setObserver();
-
-            _this3.enable();
-          }, 1000);
+          this.enableModule();
         }
       }
       /**
@@ -20808,7 +20836,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "setObserver",
       value: function setObserver() {
-        var _this4 = this;
+        var _this3 = this;
 
         var UI = this.Editor.UI;
         var observerOptions = {
@@ -20819,7 +20847,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           characterDataOldValue: true
         };
         this.observer = new MutationObserver(function (mutationList, observer) {
-          _this4.mutationHandler(mutationList, observer);
+          _this3.mutationHandler(mutationList, observer);
         });
         this.observer.observe(UI.nodes.redactor, observerOptions);
       }
@@ -20878,18 +20906,45 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "updateNativeInputs",
       value: function updateNativeInputs() {
-        var _this5 = this;
+        var _this4 = this;
 
         if (this.nativeInputs) {
           this.nativeInputs.forEach(function (input) {
-            _this5.Editor.Listeners.off(input, 'input');
+            _this4.Editor.Listeners.off(input, 'input');
           });
         }
 
         this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
         this.nativeInputs.forEach(function (input) {
-          return _this5.Editor.Listeners.on(input, 'input', _this5.mutationDebouncer);
+          return _this4.Editor.Listeners.on(input, 'input', _this4.mutationDebouncer);
         });
+      }
+      /**
+       * Sets observer and enables it
+       */
+
+    }, {
+      key: "enableModule",
+      value: function enableModule() {
+        var _this5 = this;
+
+        /**
+         * wait till Browser render Editor's Blocks
+         */
+        window.setTimeout(function () {
+          _this5.setObserver();
+
+          _this5.enable();
+        }, 1000);
+      }
+      /**
+       * Disables observer
+       */
+
+    }, {
+      key: "disableModule",
+      value: function disableModule() {
+        this.disable();
       }
     }]);
     return ModificationsObserver;
@@ -21173,7 +21228,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Set read-only state
        *
-       * @param {boolean} readOnlyEnabled
+       * @param {boolean} readOnlyEnabled - read only flag value
        */
 
     }, {
@@ -21399,7 +21454,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "unsetCallback",
       value: function unsetCallback() {
         var Listeners = this.Editor.Listeners;
-        Listeners.off(document, 'paste', this.handlePasteEvent);
+        Listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
       }
       /**
        * Get and process tool`s paste configs
@@ -22126,7 +22181,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _module = _interopRequireDefault(_module);
 
   /**
-   * @module readonly
+   * @module ReadOnly
    *
    * Has one important method:
    *    - {Function} toggleReadonly - Set read-only mode or toggle current state
@@ -26506,19 +26561,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         });
       }
       /**
-       * Set read-only state
-       *
-       * @param {boolean} readOnlyEnabled
-       */
-
-    }, {
-      key: "toggleReadOnly",
-      value: function toggleReadOnly(readOnlyEnabled) {
-        if (readOnlyEnabled) {// read-only state should set in each tool
-        } else {// tools should still be configured
-          }
-      }
-      /**
        * Success callback
        *
        * @param {object} data - append tool to available list
@@ -27188,7 +27230,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                  * Prepare with read-only state from config
                  */
 
-                this.toggleReadOnly(this.config.readOnly);
+                if (!this.config.readOnly) {
+                  this.enableModuleBindings();
+                }
 
               case 8:
               case "end":
@@ -27215,16 +27259,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Prepare components based on read-only state
          */
-        if (readOnlyEnabled) {
+        if (!readOnlyEnabled) {
           /**
            * Unbind all events
            */
-          this.unbindEvents();
+          this.enableModuleBindings();
         } else {
           /**
            * Bind events for the UI elements
            */
-          this.bindEvents();
+          this.disableModuleBindings();
         }
       }
       /**
@@ -27355,8 +27399,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "bindEvents",
-      value: function bindEvents() {
+      key: "enableModuleBindings",
+      value: function enableModuleBindings() {
         var _this2 = this;
 
         this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
@@ -27392,8 +27436,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "unbindEvents",
-      value: function unbindEvents() {
+      key: "disableModuleBindings",
+      value: function disableModuleBindings() {
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
