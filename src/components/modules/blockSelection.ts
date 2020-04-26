@@ -195,7 +195,7 @@ export default class BlockSelection extends Module {
      * If reason caused clear of the selection was printable key and any block is selected,
      * remove selected blocks and insert pressed key
      */
-    if (this.anyBlockSelected && isKeyboard && isPrintableKey && !SelectionUtils.exists) {
+    if (this.anyBlockSelected && isKeyboard && isPrintableKey && !SelectionUtils.isSelectionExists) {
       const indexToInsert = BlockManager.removeSelectedBlocks();
 
       BlockManager.insertInitialBlockAtIndex(indexToInsert, true);

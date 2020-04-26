@@ -138,7 +138,7 @@ export default class SelectionUtils {
   /**
    * Methods return boolean that true if selection exists on the page
    */
-  public static get exists(): boolean {
+  public static get isSelectionExists(): boolean {
     const selection = SelectionUtils.get();
 
     return !!selection.anchorNode;

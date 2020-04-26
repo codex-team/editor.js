@@ -213,7 +213,9 @@ export default class Flipper {
       _.keyCodes.ENTER,
     ];
 
-    if (this.allowArrows && this.iterator.currentItem !== document.activeElement) {
+    const isCurrentItemIsFocusedInput =this.iterator.currentItem == document.activeElement;
+
+    if (this.allowArrows && !isCurrentItemIsFocusedInput) {
       handlingKeyCodeList.push(
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
@@ -222,7 +224,7 @@ export default class Flipper {
       );
     }
 
-    return (this.activated && handlingKeyCodeList.indexOf(event.keyCode) !== -1);
+    return this.activated && handlingKeyCodeList.indexOf(event.keyCode) !== -1;
   }
 
   /**

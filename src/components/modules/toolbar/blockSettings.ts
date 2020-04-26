@@ -145,6 +145,7 @@ export default class BlockSettings extends Module {
      * Restore selection to Block
      */
     this.selection.restore();
+    this.selection.clearSaved();
 
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
@@ -216,12 +217,15 @@ export default class BlockSettings extends Module {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      activateCallback: (activatedItem) => {
+      /**
+       * @param {HTMLElement} focusedItem - activated Tune
+       */
+      activateCallback: (focusedItem) => {
 
         /**
          * If activated item is editable element, restore selection to block and flip to the next item
          */
-        if ($.canSetCaret(activatedItem)) {
+        if ($.canSetCaret(focusedItem)) {
           this.selection.restore();
           this.flipper.flipRight();
 

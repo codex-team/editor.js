@@ -161,7 +161,7 @@ export default class DomIterator {
       /**
        * Focus input
        */
-      this.items[focusedButtonIndex].focus();
+      Dom.focus(this.items[focusedButtonIndex]);
     }
 
     /**

@@ -416,7 +416,11 @@ export default class UI extends Module {
   private backspacePressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
 
-    if (BlockSelection.anyBlockSelected && !Selection.exists) {
+    /**
+     * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
+     * remove selected blocks
+     */
+    if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
@@ -470,7 +474,11 @@ export default class UI extends Module {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
-    if (BlockSelection.anyBlockSelected && !Selection.exists) {
+    /**
+     * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
+     * remove selected blocks
+     */
+    if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
