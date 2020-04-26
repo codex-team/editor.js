@@ -1604,6 +1604,7 @@ codex-notifier@^1.1.2:
 codex-tooltip@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/codex-tooltip/-/codex-tooltip-1.0.1.tgz#f6e4f39d81507f9c455b667f1287746d14ee8056"
+  integrity sha512-1xLb1NZbxguNtf02xBRhDphq/EXvMMeEbY0ievjQTHqf8UjXsD41evGk9rqcbjpl+JOjNgtwnp1OaU/X/h6fhQ==
 
 collapse-white-space@^1.0.2:
   version "1.0.6"
