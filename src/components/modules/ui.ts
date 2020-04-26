@@ -181,7 +181,9 @@ export default class UI extends Module {
     /**
      * Prepare with read-only state from config
      */
-    this.toggleReadOnly(this.config.readOnly);
+    if (!this.config.readOnly) {
+      this.enableModuleBindings();
+    }
   }
 
   /**
@@ -199,16 +201,16 @@ export default class UI extends Module {
     /**
      * Prepare components based on read-only state
      */
-    if (readOnlyEnabled) {
+    if (!readOnlyEnabled) {
       /**
        * Unbind all events
        */
-      this.unbindEvents();
+      this.enableModuleBindings();
     } else {
       /**
        * Bind events for the UI elements
        */
-      this.bindEvents();
+      this.disableModuleBindings();
     }
   }
 
@@ -338,7 +340,7 @@ export default class UI extends Module {
   /**
    * Bind events on the Editor.js interface
    */
-  private bindEvents(): void {
+  private enableModuleBindings(): void {
     this.listenerIds.push(
       this.Editor.Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
         this.redactorClicked(event);
@@ -390,7 +392,7 @@ export default class UI extends Module {
   /**
    * Unbind events on the Editor.js interface
    */
-  private unbindEvents(): void {
+  private disableModuleBindings(): void {
     for (const id of this.listenerIds) {
       this.Editor.Listeners.offById(id);
     }

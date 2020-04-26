@@ -151,9 +151,9 @@ export default class Paste extends Module {
   /**
    * Set read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * @param {boolean} readOnlyEnabled - read only flag value
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (!readOnlyEnabled) {
       this.processTools();
       this.setCallback();

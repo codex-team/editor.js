@@ -22,7 +22,9 @@ export default class DragNDrop extends Module {
    * Bind events
    */
   public prepare(): void {
-    this.toggleReadOnly(this.config.readOnly);
+    if (!this.config.readOnly) {
+      this.enableModuleBindings();
+    }
   }
 
   /**

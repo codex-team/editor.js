@@ -1,7 +1,7 @@
 import Module from '../__module';
 
 /**
- * @module readonly
+ * @module ReadOnly
  *
  * Has one important method:
  *    - {Function} toggleReadonly - Set read-only mode or toggle current state

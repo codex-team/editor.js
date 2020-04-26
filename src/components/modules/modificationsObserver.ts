@@ -65,25 +65,21 @@ export default class ModificationsObserver extends Module {
    * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    this.toggleReadOnly(this.config.readOnly);
+    if (!this.config.readOnly) {
+      this.enableModule();
+    }
   }
 
   /**
    * Set read-only state
    *
-   * @param {boolean} readOnlyEnabled
+   * @param {boolean} readOnlyEnabled - read only flag value
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (readOnlyEnabled) {
-      this.disable();
+      this.disableModule();
     } else {
-      /**
-       * wait till Browser render Editor's Blocks
-       */
-      window.setTimeout(() => {
-        this.setObserver();
-        this.enable();
-      }, 1000);
+      this.enableModule();
     }
   }
 
@@ -182,5 +178,25 @@ export default class ModificationsObserver extends Module {
     this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
 
     this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
+  }
+
+  /**
+   * Sets observer and enables it
+   */
+  private enableModule(): void {
+    /**
+     * wait till Browser render Editor's Blocks
+     */
+    window.setTimeout(() => {
+      this.setObserver();
+      this.enable();
+    }, 1000);
+  }
+
+  /**
+   * Disables observer
+   */
+  private disableModule(): void {
+    this.disable();
   }
 }

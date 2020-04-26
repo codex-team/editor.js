@@ -158,7 +158,7 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
-   * Binded listener ids
+   * listener identifiers bound on elements
    */
   private listenerIds: string[] = [];
 
@@ -222,10 +222,10 @@ export default class BlockManager extends Module {
    * @param {boolean} readOnlyEnabled - "read only" state
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (readOnlyEnabled) {
-      this.disableModuleEvents();
+    if (!readOnlyEnabled) {
+      this.enableModuleBindings();
     } else {
-      this.enableModuleEvents();
+      this.disableModuleBindings();
     }
   }
 
@@ -688,12 +688,6 @@ export default class BlockManager extends Module {
   private bindBlockEvents(block: Block): void {
     const { BlockEvents, Listeners } = this.Editor;
 
-    // this.listenerIds.push(
-    //   Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => {
-    //     BlockEvents.mouseDown(event);
-    //   })
-    // );
-
     this.listenerIds.push(
       Listeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
         BlockEvents.keydown(event);
@@ -725,7 +719,7 @@ export default class BlockManager extends Module {
    *  - Removes all listeners by id
    *  - Removes all shortcuts
    */
-  private disableModuleEvents(): void {
+  private disableModuleBindings(): void {
     const { Listeners } = this.Editor;
 
     for (const id of this.listenerIds) {
@@ -742,7 +736,7 @@ export default class BlockManager extends Module {
    *  - Restore `copy` and `cut` bindings
    *  - Bind all events handlers for all Blocks
    */
-  private enableModuleEvents(): void {
+  private enableModuleBindings(): void {
     this.blocks.forEach((block: Block) => {
       this.bindBlockEvents(block);
     });

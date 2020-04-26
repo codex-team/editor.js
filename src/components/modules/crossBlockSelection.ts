@@ -18,13 +18,15 @@ export default class CrossBlockSelection extends Module {
   private lastSelectedBlock: Block;
 
   /**
+   * Module preparation
+   *
    * @returns {Promise}
    */
   public async prepare(): Promise<void> {
     const { Listeners } = this.Editor;
 
     Listeners.on(document, 'mousedown', (event: MouseEvent) => {
-      this.handleCBSMouseDown(event);
+      this.enableCrossBlockSelection(event);
     });
   }
 
@@ -56,9 +58,11 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
-   * @param {MouseEvent} event
+   * Enables Cross Block Selection
+   *
+   * @param {MouseEvent} event - mouse down event
    */
-  public handleCBSMouseDown(event: MouseEvent): void {
+  private enableCrossBlockSelection(event: MouseEvent): void {
     /**
      * Each mouse down on Block must disable selectAll state
      */
