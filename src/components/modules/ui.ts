@@ -314,6 +314,27 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false
     );
+
+    let blurTimerId: number | undefined;
+
+    this.Editor.Listeners.on(
+      this.nodes.redactor,
+      'focusin',
+      () => clearTimeout(blurTimerId),
+      false,
+    );
+
+    this.Editor.Listeners.on(
+      this.nodes.redactor,
+      'focusout',
+      () => {
+        blurTimerId = setTimeout(() => {
+          alert('blur');
+        });
+      },
+      false,
+    );
+
     this.Editor.Listeners.on(this.nodes.redactor,
       'mousedown',
       (event) => this.documentTouched(event as MouseEvent),
