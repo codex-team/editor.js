@@ -65,7 +65,7 @@ export default class ModificationsObserver extends Module {
    * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    if (!this.config.readOnly) {
+    if (!this.Editor.ReadOnly.isEnabled) {
       this.enableModule();
     }
   }

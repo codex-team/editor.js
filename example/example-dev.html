@@ -93,11 +93,13 @@
      * To initialize the Editor, create a new instance with configuration object
      * @see docs/installation.md for mode details
      */
+    const readOnly = true;
+
     var editor = new EditorJS({
       /**
        * Enable read only
        */
-      readOnly: true,
+      readOnly: readOnly,
 
       /**
        * Wrapper of Editor
@@ -287,7 +289,9 @@
         ]
       },
       onReady: function(){
-        saveButton.click();
+        if (!readOnly) {
+          saveButton.click();
+        }
       },
       onChange: function() {
         console.log('something changed');
@@ -299,7 +303,13 @@
      * Saving example
      */
     saveButton.addEventListener('click', function () {
-      editor.save().then((savedData) => {
+      const promise = editor.save();
+
+      if (!promise) {
+        return;
+      }
+
+      promise.then((savedData) => {
         cPreview.show(savedData, document.getElementById("output"));
       });
     });

@@ -130,32 +130,58 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
+    const { Shortcuts } = this.Editor;
+
     this.selection = new SelectionUtils();
 
-    if (!this.config.readOnly) {
-      this.enableModuleBindings();
-    }
+    /**
+     * CMD/CTRL+A selection shortcut
+     */
+    Shortcuts.add({
+      name: 'CMD+A',
+      handler: (event) => {
+        const { BlockManager, ReadOnly } = this.Editor;
+
+        /**
+         * We use Editor's Block selection on CMD+A ShortCut instead of Browsers
+         */
+        if (ReadOnly.isEnabled) {
+          event.preventDefault();
+          this.selectAllBlocks();
+
+          return;
+        }
+
+        /**
+         * When one page consist of two or more EditorJS instances
+         * Shortcut module tries to handle all events.
+         * Thats why Editor's selection works inside the target Editor, but
+         * for others error occurs because nothing to select.
+         *
+         * Prevent such actions if focus is not inside the Editor
+         */
+        if (!BlockManager.currentBlock) {
+          return;
+        }
+
+        this.handleCommandA(event);
+      },
+    });
   }
 
   /**
    * Toggle read-only state
    *
-   * If readOnly is true:
-   *  - Disable CMD+A shortcut
    *  - Remove all ranges
    *  - Unselect all Blocks
-   *
-   * if readOnly is false:
-   *  - Enable CMD+A shortcut
    *
    * @param {boolean} readOnlyEnabled - "read only" state
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (readOnlyEnabled) {
-      this.disableModuleBindings();
-    } else {
-      this.enableModuleBindings();
-    }
+    SelectionUtils.get()
+      .removeAllRanges();
+
+    this.allBlocksSelected = false;
   }
 
   /**
@@ -385,50 +411,5 @@ export default class BlockSelection extends Module {
 
     /** close InlineToolbar if we selected all Blocks */
     this.Editor.InlineToolbar.close();
-  }
-
-  /**
-   * Binds module all necessary events
-   */
-  private enableModuleBindings(): void {
-    const { Shortcuts } = this.Editor;
-
-    /**
-     * CMD/CTRL+A selection shortcut
-     */
-    Shortcuts.add({
-      name: 'CMD+A',
-      handler: (event) => {
-        const { BlockManager } = this.Editor;
-
-        /**
-         * When one page consist of two or more EditorJS instances
-         * Shortcut module tries to handle all events.
-         * Thats why Editor's selection works inside the target Editor, but
-         * for others error occurs because nothing to select.
-         *
-         * Prevent such actions if focus is not inside the Editor
-         */
-        if (!BlockManager.currentBlock) {
-          return;
-        }
-
-        this.handleCommandA(event);
-      },
-    });
-  }
-
-  /**
-   * Unbinds module events
-   */
-  private disableModuleBindings(): void {
-    const { Shortcuts } = this.Editor;
-
-    Shortcuts.remove('CMD+A');
-
-    SelectionUtils.get()
-      .removeAllRanges();
-
-    this.allBlocksSelected = false;
   }
 }

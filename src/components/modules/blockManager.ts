@@ -210,14 +210,10 @@ export default class BlockManager extends Module {
    * Toggle read-only state
    *
    * If readOnly is true:
-   *  - Remove shortcuts
    *  - Unbind event handlers from created Blocks
-   *  - Remove listeners from document (cut, copy and so on)
    *
    * if readOnly is false:
-   *  - Restore shortcuts (bind them again)
    *  - Bind event handlers to all existing Blocks
-   *  - Restore listeners to document (cut, copy and others)
    *
    * @param {boolean} readOnlyEnabled - "read only" state
    */
@@ -691,22 +687,16 @@ export default class BlockManager extends Module {
     this.listenerIds.push(
       Listeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
         BlockEvents.keydown(event);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
       Listeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
         BlockEvents.keyup(event);
-      })
-    );
+      }),
 
-    this.listenerIds.push(
       Listeners.on(block.holder, 'dragover', (event: DragEvent) => {
         BlockEvents.dragOver(event);
-      })
-    );
+      }),
 
-    this.listenerIds.push(
       Listeners.on(block.holder, 'dragleave', (event: DragEvent) => {
         BlockEvents.dragLeave(event);
       })
@@ -714,10 +704,7 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Disable all handlers and bindings
-   * The sequence is following:
-   *  - Removes all listeners by id
-   *  - Removes all shortcuts
+   * Disable all handlers and bindings (Removes all listeners by id)
    */
   private disableModuleBindings(): void {
     const { Listeners } = this.Editor;
@@ -730,11 +717,7 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Enables all module handlers and bindings
-   * The sequence is following:
-   *  - Enable shortcuts again
-   *  - Restore `copy` and `cut` bindings
-   *  - Bind all events handlers for all Blocks
+   * Enables all module handlers and bindings for all Blocks
    */
   private enableModuleBindings(): void {
     this.blocks.forEach((block: Block) => {

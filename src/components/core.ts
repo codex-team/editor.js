@@ -272,6 +272,7 @@ export default class Core {
    */
   public async start(): Promise<void> {
     const modulesToPrepare = [
+      'ReadOnly',
       'Tools',
       'UI',
       'BlockManager',
@@ -281,7 +282,6 @@ export default class Core {
       'BlockSelection',
       'RectangleSelection',
       'CrossBlockSelection',
-      'ReadOnly',
     ];
 
     await modulesToPrepare.reduce(

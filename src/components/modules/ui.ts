@@ -181,7 +181,7 @@ export default class UI extends Module {
     /**
      * Prepare with read-only state from config
      */
-    if (!this.config.readOnly) {
+    if (!this.Editor.ReadOnly.isEnabled) {
       this.enableModuleBindings();
     }
   }
@@ -341,47 +341,37 @@ export default class UI extends Module {
    * Bind events on the Editor.js interface
    */
   private enableModuleBindings(): void {
+    const { Listeners } = this.Editor;
+
     this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
+      Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
         this.redactorClicked(event);
-      }, false)
-    );
+      }, false),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
+      Listeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
         this.documentTouched(event);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
+      Listeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
         this.documentTouched(event);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'keydown', (event: KeyboardEvent) => {
+      Listeners.on(document, 'keydown', (event: KeyboardEvent) => {
         this.documentKeydown(event);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'click', (event: MouseEvent) => {
+      Listeners.on(document, 'click', (event: MouseEvent) => {
         this.documentClicked(event);
-      }, true)
-    );
+      }, true),
 
-    /**
-     * Handle selection change to manipulate Inline Toolbar appearance
-     */
-    this.listenerIds.push(
-      this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
+      /**
+       * Handle selection change to manipulate Inline Toolbar appearance
+       */
+      Listeners.on(document, 'selectionchange', (event: Event) => {
         this.selectionChanged(event);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(window, 'resize', () => {
+      Listeners.on(window, 'resize', () => {
         this.resizeDebouncer();
       }, {
         passive: true,

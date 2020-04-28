@@ -88,6 +88,7 @@ export interface API {
   inlineToolbar: InlineToolbar;
   tooltip: Tooltip;
   i18n: I18n;
+  readonly: ReadOnly;
 }
 
 /**

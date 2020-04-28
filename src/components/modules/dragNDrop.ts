@@ -19,10 +19,10 @@ export default class DragNDrop extends Module {
   private listenerIds: string[] = [];
 
   /**
-   * Bind events
+   * Bind module. Enable all bindings if it is not read-only mode
    */
   public prepare(): void {
-    if (!this.config.readOnly) {
+    if (!this.Editor.ReadOnly.isEnabled) {
       this.enableModuleBindings();
     }
   }
@@ -50,23 +50,21 @@ export default class DragNDrop extends Module {
    * Add drag events listeners to editor zone
    */
   private enableModuleBindings(): void {
+    const { Listeners, UI } = this.Editor;
+
     this.listenerIds.push(
-      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
+      Listeners.on(UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
         await this.processDrop(dropEvent);
-      }, true)
-    );
+      }, true),
 
-    this.listenerIds.push(
-      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', () => {
+      Listeners.on(UI.nodes.holder, 'dragstart', () => {
         this.processDragStart();
-      })
-    );
+      }),
 
-    /**
-     * Prevent default browser behavior to allow drop on non-contenteditable elements
-     */
-    this.listenerIds.push(
-      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (dragEvent: DragEvent) => {
+      /**
+       * Prevent default browser behavior to allow drop on non-contenteditable elements
+       */
+      Listeners.on(UI.nodes.holder, 'dragover', (dragEvent: DragEvent) => {
         this.processDragOver(dragEvent);
       }, true)
     );

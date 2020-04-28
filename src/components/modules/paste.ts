@@ -141,11 +141,12 @@ export default class Paste extends Module {
 
   /**
    * Set onPaste callback and collect tools` paste configurations
-   *
-   * @public
    */
   public async prepare(): Promise<void> {
-    this.toggleReadOnly(this.config.readOnly);
+    this.processTools();
+    if (!this.Editor.ReadOnly.isEnabled) {
+      this.setCallback();
+    }
   }
 
   /**
@@ -155,16 +156,9 @@ export default class Paste extends Module {
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (!readOnlyEnabled) {
-      this.processTools();
       this.setCallback();
     } else {
       this.unsetCallback();
-
-      this.toolsTags = {};
-      this.tagsByTool = {};
-      this.toolsPatterns = [];
-      this.toolsFiles = {};
-      this.exceptionList = [];
     }
   }
 
