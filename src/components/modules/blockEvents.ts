@@ -51,6 +51,7 @@ export default class BlockEvents extends Module {
         this.escapePressed(event);
         break;
     }
+    this.Editor.BlockManager.highlightCurrentNode(); //set focus on current block after key processed -DJ
   }
 
   /**
@@ -455,8 +456,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (this.Editor.Caret.navigateNext()) {
-      /**
+//    if (this.Editor.Caret.navigateNext()) {
+    if (this.Editor.Caret.isAtEnd && this.Editor.Caret.navigateNext()) { //CAUTION: might create next block; only do this at end of current block -DJ
+        /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();

@@ -286,6 +286,7 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+    block.focused = true; //also turn on editor icon and styling -DJ
 
     /** close InlineToolbar when we selected any Block */
     this.Editor.InlineToolbar.close();

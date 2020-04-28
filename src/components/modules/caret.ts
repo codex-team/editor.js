@@ -266,6 +266,7 @@ export default class Caret extends Module {
 
     BlockManager.setCurrentBlockByChildNode(block.holder);
     BlockManager.currentBlock.currentInput = element;
+    block.focused = true; //also turn on editor icon and styling -DJ
   }
 
   /**

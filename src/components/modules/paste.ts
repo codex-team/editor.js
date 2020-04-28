@@ -437,6 +437,7 @@ export default class Paste extends Module {
     this.processDataTransfer(event.clipboardData);
 
     BlockManager.clearFocused();
+    BlockManager.currentBlock.focused = true; //also turn on editor icon and styling -DJ
     Toolbar.close();
   }
 
