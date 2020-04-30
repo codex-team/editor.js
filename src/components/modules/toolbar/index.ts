@@ -166,15 +166,20 @@ export default class Toolbar extends Module {
      * Bind events on the Toolbar elements
      */
     if (!this.Editor.ReadOnly.isEnabled) {
-      this.bindEvents();
+      this.enableModuleBindings();
     }
   }
 
+  /**
+   * Toggles read-only mode
+   *
+   * @param {boolean} readOnlyEnabled - read-only mode
+   */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (!readOnlyEnabled) {
-      this.bindEvents();
+      this.enableModuleBindings();
     } else {
-      // this.unbindEvents();
+      this.disableModuleBindings();
     }
   }
 
@@ -343,16 +348,22 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Bind events on the Toolbar Elements:
-   * - Block Settings
+   * Enable bindings
    */
-  private bindEvents(): void {
+  private enableModuleBindings(): void {
     /**
      * Settings toggler
      */
     this.mutableListeners.on(this.nodes.settingsToggler, 'click', () => {
       this.settingsTogglerClicked();
     });
+  }
+
+  /**
+   * Disable bindings
+   */
+  private disableModuleBindings(): void {
+    this.mutableListeners.clearAll();
   }
 
   /**
