@@ -365,7 +365,6 @@ export default class Tools extends Module {
    *
    * @returns {InlineTool} — instance
    */
-  // tslint:disable-next-line:max-line-length
   public constructInline(
     tool: InlineToolConstructable,
     name: string,

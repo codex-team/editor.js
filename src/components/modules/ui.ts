@@ -109,11 +109,6 @@ export default class UI extends Module {
   private contentRectCache: DOMRect = undefined;
 
   /**
-   * Binded listener ids
-   */
-  private listenerIds: string[] = [];
-
-  /**
    * Handle window resize only when it finished
    *
    * @type {() => void}
@@ -162,16 +157,6 @@ export default class UI extends Module {
      * Append SVG sprite
      */
     this.appendSVGSprite();
-
-    /**
-     * Make toolbar
-     */
-    this.Editor.Toolbar.make();
-
-    /**
-     * Make the Inline toolbar
-     */
-    this.Editor.InlineToolbar.make();
 
     /**
      * Load and append CSS
@@ -341,53 +326,45 @@ export default class UI extends Module {
    * Bind events on the Editor.js interface
    */
   private enableModuleBindings(): void {
-    const { Listeners } = this.Editor;
+    this.mutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
+      this.redactorClicked(event);
+    }, false);
 
-    this.listenerIds.push(
-      Listeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
-        this.redactorClicked(event);
-      }, false),
+    this.mutableListeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
+      this.documentTouched(event);
+    }, true);
 
-      Listeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
-        this.documentTouched(event);
-      }, true),
+    this.mutableListeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
+      this.documentTouched(event);
+    }, true);
 
-      Listeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
-        this.documentTouched(event);
-      }, true),
+    this.mutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
+      this.documentKeydown(event);
+    }, true);
 
-      Listeners.on(document, 'keydown', (event: KeyboardEvent) => {
-        this.documentKeydown(event);
-      }, true),
+    this.mutableListeners.on(document, 'click', (event: MouseEvent) => {
+      this.documentClicked(event);
+    }, true);
 
-      Listeners.on(document, 'click', (event: MouseEvent) => {
-        this.documentClicked(event);
-      }, true),
+    /**
+     * Handle selection change to manipulate Inline Toolbar appearance
+     */
+    this.mutableListeners.on(document, 'selectionchange', (event: Event) => {
+      this.selectionChanged(event);
+    }, true);
 
-      /**
-       * Handle selection change to manipulate Inline Toolbar appearance
-       */
-      Listeners.on(document, 'selectionchange', (event: Event) => {
-        this.selectionChanged(event);
-      }, true),
-
-      Listeners.on(window, 'resize', () => {
-        this.resizeDebouncer();
-      }, {
-        passive: true,
-      })
-    );
+    this.mutableListeners.on(window, 'resize', () => {
+      this.resizeDebouncer();
+    }, {
+      passive: true,
+    });
   }
 
   /**
    * Unbind events on the Editor.js interface
    */
   private disableModuleBindings(): void {
-    for (const id of this.listenerIds) {
-      this.Editor.Listeners.offById(id);
-    }
-
-    this.listenerIds = [];
+    this.mutableListeners.clearAll();
   }
 
   /**

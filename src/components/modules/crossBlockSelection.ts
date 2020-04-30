@@ -58,22 +58,6 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
-   * Enables Cross Block Selection
-   *
-   * @param {MouseEvent} event - mouse down event
-   */
-  private enableCrossBlockSelection(event: MouseEvent): void {
-    /**
-     * Each mouse down on Block must disable selectAll state
-     */
-    if (!SelectionUtils.isCollapsed) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
-
-    this.watchSelection(event);
-  }
-
-  /**
    * Change selection state of the next Block
    * Used for CBS via Shift + arrow keys
    *
@@ -147,6 +131,22 @@ export default class CrossBlockSelection extends Module {
     }
 
     this.firstSelectedBlock = this.lastSelectedBlock = null;
+  }
+
+  /**
+   * Enables Cross Block Selection
+   *
+   * @param {MouseEvent} event - mouse down event
+   */
+  private enableCrossBlockSelection(event: MouseEvent): void {
+    /**
+     * Each mouse down on Block must disable selectAll state
+     */
+    if (!SelectionUtils.isCollapsed) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
+
+    this.watchSelection(event);
   }
 
   /**

@@ -275,6 +275,8 @@ export default class Core {
       'ReadOnly',
       'Tools',
       'UI',
+      'Toolbar',
+      'InlineToolbar',
       'BlockManager',
       'Paste',
       'DragNDrop',

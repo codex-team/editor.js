@@ -27,6 +27,50 @@ export default class Module {
   protected config: EditorConfig;
 
   /**
+   * Mutable listeners
+   */
+  protected mutableListeners = {
+    /**
+     * Assigns event listener on DOM element and pushes into special array that might be removed
+     *
+     * @param {EventTarget} element - DOM Element
+     * @param {string} eventType - Event name
+     * @param {Function} handler - Event handler
+     * @param {boolean|AddEventListenerOptions} options - Listening options
+     */
+    on: (
+      element: EventTarget,
+      eventType: string,
+      handler: (event: Event) => void,
+      options: boolean | AddEventListenerOptions = false
+    ): void => {
+      const { Listeners } = this.Editor;
+
+      this.mutableListenerIds.push(
+        Listeners.on(element, eventType, handler, options)
+      );
+    },
+
+    /**
+     * Clears all mutable listeners
+     */
+    clearAll: (): void => {
+      const { Listeners } = this.Editor;
+
+      for (const id of this.mutableListenerIds) {
+        Listeners.offById(id);
+      }
+
+      this.mutableListenerIds = [];
+    },
+  };
+
+  /**
+   * Listener identifiers
+   */
+  private mutableListenerIds: string[] = [];
+
+  /**
    * @class
    * @param {EditorConfig} config - Editor's config
    */

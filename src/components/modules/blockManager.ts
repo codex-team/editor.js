@@ -158,11 +158,6 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
-   * listener identifiers bound on elements
-   */
-  private listenerIds: string[] = [];
-
-  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -682,38 +677,30 @@ export default class BlockManager extends Module {
    * @param {Block} block - Block to which event should be bound
    */
   private bindBlockEvents(block: Block): void {
-    const { BlockEvents, Listeners } = this.Editor;
+    const { BlockEvents } = this.Editor;
 
-    this.listenerIds.push(
-      Listeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
-        BlockEvents.keydown(event);
-      }, true),
+    this.mutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
+      BlockEvents.keydown(event);
+    }, true);
 
-      Listeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
-        BlockEvents.keyup(event);
-      }),
+    this.mutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
+      BlockEvents.keyup(event);
+    });
 
-      Listeners.on(block.holder, 'dragover', (event: DragEvent) => {
-        BlockEvents.dragOver(event);
-      }),
+    this.mutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+      BlockEvents.dragOver(event);
+    });
 
-      Listeners.on(block.holder, 'dragleave', (event: DragEvent) => {
-        BlockEvents.dragLeave(event);
-      })
-    );
+    this.mutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
+      BlockEvents.dragLeave(event);
+    });
   }
 
   /**
-   * Disable all handlers and bindings (Removes all listeners by id)
+   * Disable mutable handlers and bindings
    */
   private disableModuleBindings(): void {
-    const { Listeners } = this.Editor;
-
-    for (const id of this.listenerIds) {
-      Listeners.offById(id);
-    }
-
-    this.listenerIds = [];
+    this.mutableListeners.clearAll();
   }
 
   /**

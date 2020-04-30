@@ -113,56 +113,10 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Making DOM
+   * Module preparation method
    */
-  public make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
-    this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
-    this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
-
-    // To prevent reset of a selection when click on the wrapper
-    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
-      const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
-
-      // If click is on actions wrapper,
-      // do not prevent default behaviour because actions might include interactive elements
-      if (!isClickedOnActionsWrapper) {
-        event.preventDefault();
-      }
-    });
-
-    /**
-     * Append Inline Toolbar to the Editor
-     */
-    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
-    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-
-    /**
-     * Add button that will allow switching block type
-     */
-    this.addConversionToggler();
-
-    /**
-     * Append Inline Toolbar Tools
-     */
-    this.addTools();
-
-    /**
-     * Prepare conversion toolbar.
-     * If it has any conversion tool then it will be enabled in the Inline Toolbar
-     */
-    this.prepareConversionToolbar();
-
-    /**
-     * Recalculate initial width with all buttons
-     */
-    this.recalculateWidth();
-
-    /**
-     * Allow to leaf buttons by arrows / tab
-     * Buttons will be filled on opening
-     */
-    this.enableFlipper();
+  public async prepare(): Promise<void> {
+    this.make();
   }
 
   /**
@@ -312,6 +266,59 @@ export default class InlineToolbar extends Module {
    */
   public containsNode(node: Node): boolean {
     return this.nodes.wrapper.contains(node);
+  }
+
+  /**
+   * Making DOM
+   */
+  private make(): void {
+    this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+    this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
+    this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
+
+    // To prevent reset of a selection when click on the wrapper
+    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
+      const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
+
+      // If click is on actions wrapper,
+      // do not prevent default behaviour because actions might include interactive elements
+      if (!isClickedOnActionsWrapper) {
+        event.preventDefault();
+      }
+    });
+
+    /**
+     * Append Inline Toolbar to the Editor
+     */
+    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
+    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    /**
+     * Add button that will allow switching block type
+     */
+    this.addConversionToggler();
+
+    /**
+     * Append Inline Toolbar Tools
+     */
+    this.addTools();
+
+    /**
+     * Prepare conversion toolbar.
+     * If it has any conversion tool then it will be enabled in the Inline Toolbar
+     */
+    this.prepareConversionToolbar();
+
+    /**
+     * Recalculate initial width with all buttons
+     */
+    this.recalculateWidth();
+
+    /**
+     * Allow to leaf buttons by arrows / tab
+     * Buttons will be filled on opening
+     */
+    this.enableFlipper();
   }
 
   /**

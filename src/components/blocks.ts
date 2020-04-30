@@ -41,6 +41,26 @@ export default class Blocks {
   }
 
   /**
+   * Array of Block instances in order of addition
+   */
+  public blocks: Block[];
+
+  /**
+   * Editor`s area where to add Block`s HTML
+   */
+  public workingArea: HTMLElement;
+
+  /**
+   * @class
+   *
+   * @param {HTMLElement} workingArea — editor`s working node
+   */
+  constructor(workingArea: HTMLElement) {
+    this.blocks = [];
+    this.workingArea = workingArea;
+  }
+
+  /**
    * Proxy trap to implement array-like setter
    *
    * @example
@@ -91,26 +111,6 @@ export default class Blocks {
      * If property is a number (Block index) return Block by passed index
      */
     return instance.get(+(property as number));
-  }
-
-  /**
-   * Array of Block instances in order of addition
-   */
-  public blocks: Block[];
-
-  /**
-   * Editor`s area where to add Block`s HTML
-   */
-  public workingArea: HTMLElement;
-
-  /**
-   * @class
-   *
-   * @param {HTMLElement} workingArea — editor`s working node
-   */
-  constructor(workingArea: HTMLElement) {
-    this.blocks = [];
-    this.workingArea = workingArea;
   }
 
   /**

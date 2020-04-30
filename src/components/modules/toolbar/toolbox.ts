@@ -82,7 +82,6 @@ export default class Toolbox extends Module {
    */
   public make(): void {
     this.nodes.toolbox = $.make('div', this.CSS.toolbox);
-    $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
     this.enableFlipper();

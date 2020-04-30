@@ -182,38 +182,25 @@ export default class RectangleSelection extends Module {
     const { Listeners } = this.Editor;
     const { container } = this.genHTML();
 
-    this.listenerIds.push(
-      Listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
-        this.processMouseDown(mouseEvent);
-      }, false),
+    Listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
+      this.processMouseDown(mouseEvent);
+    }, false);
 
-      Listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
-        this.processMouseMove(mouseEvent);
-      }, false),
+    Listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
+      this.processMouseMove(mouseEvent);
+    }, false);
 
-      Listeners.on(document.body, 'mouseleave', () => {
-        this.processMouseLeave();
-      }),
+    Listeners.on(document.body, 'mouseleave', () => {
+      this.processMouseLeave();
+    });
 
-      Listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
-        this.processScroll(mouseEvent);
-      }, false),
+    Listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
+      this.processScroll(mouseEvent);
+    }, false);
 
-      Listeners.on(document.body, 'mouseup', () => {
-        this.processMouseUp();
-      }, false)
-    );
-  }
-
-  /**
-   * Removes Modules bindings
-   */
-  private disableModuleBindings(): void {
-    for (const id of this.listenerIds) {
-      this.Editor.Listeners.offById(id);
-    }
-
-    this.listenerIds = [];
+    Listeners.on(document.body, 'mouseup', () => {
+      this.processMouseUp();
+    }, false);
   }
 
   /**
