@@ -384,4 +384,15 @@ export default class BlockSelection extends Module {
     /** close InlineToolbar if we selected all Blocks */
     this.Editor.InlineToolbar.close();
   }
+
+  /**
+   * Module destruction
+   * De-registers Shortcut CMD+A
+   */
+  public destroy(): void {
+    const { Shortcuts } = this.Editor;
+    
+    /** Selection shortcut */
+    Shortcuts.remove('CMD+A');
+  }
 }

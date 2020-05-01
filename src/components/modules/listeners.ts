@@ -204,4 +204,11 @@ export default class Listeners extends Module {
       }
     });
   }
+
+  /**
+   * Module cleanup on destruction
+   */
+  public destroy(): void {
+    this.removeAll();
+  }
 }

@@ -9,6 +9,7 @@ import '@babel/register';
 
 import 'components/polyfills';
 import Core from './components/core';
+import * as _ from './components/utils';
 
 declare const VERSION: string;
 
@@ -81,9 +82,14 @@ export default class EditorJS {
   public exportAPI(editor: Core): void {
     const fieldsToExport = [ 'configuration' ];
     const destroy = (): void => {
-      editor.moduleInstances.Listeners.removeAll();
-      editor.moduleInstances.UI.destroy();
-      editor.moduleInstances.ModificationsObserver.destroy();
+      for(const moduleName in editor.moduleInstances) {
+        if (Object.prototype.hasOwnProperty.call(editor.moduleInstances, moduleName)) {
+          const moduleInstance = editor.moduleInstances[moduleName];
+          if(moduleInstance.destroy && _.isFunction(moduleInstance.destroy)) {
+            moduleInstance.destroy();
+          }
+        }
+      }
       editor = null;
 
       for (const field in this) {
