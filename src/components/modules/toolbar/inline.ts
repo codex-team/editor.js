@@ -577,8 +577,8 @@ export default class InlineToolbar extends Module {
      */
     if (internalTools.includes(toolName)) {
       shortcut = this.inlineTools[toolName][Tools.INTERNAL_SETTINGS.SHORTCUT];
-    } else if (toolSettings && toolSettings[Tools.USER_SETTINGS.SHORTCUT]) {
-      shortcut = toolSettings[Tools.USER_SETTINGS.SHORTCUT];
+    } else if (toolSettings && toolSettings.class && toolSettings.class[Tools.USER_SETTINGS.SHORTCUT]) {
+      shortcut = toolSettings.class[Tools.USER_SETTINGS.SHORTCUT];
     }
 
     if (shortcut) {
