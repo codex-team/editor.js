@@ -161,6 +161,13 @@ export default class Listeners extends Module {
   }
 
   /**
+   * Module cleanup on destruction
+   */
+  public destroy(): void {
+    this.removeAll();
+  }
+
+  /**
    * Search method: looks for listener by passed element
    *
    * @param {EventTarget} element - searching element
@@ -203,12 +210,5 @@ export default class Listeners extends Module {
         return listener;
       }
     });
-  }
-
-  /**
-   * Module cleanup on destruction
-   */
-  public destroy(): void {
-    this.removeAll();
   }
 }
