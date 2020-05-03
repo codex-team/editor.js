@@ -82,14 +82,13 @@ export default class EditorJS {
   public exportAPI(editor: Core): void {
     const fieldsToExport = [ 'configuration' ];
     const destroy = (): void => {
-      for(const moduleName in editor.moduleInstances) {
-        if (Object.prototype.hasOwnProperty.call(editor.moduleInstances, moduleName)) {
-          const moduleInstance = editor.moduleInstances[moduleName];
-          if(moduleInstance.destroy && _.isFunction(moduleInstance.destroy)) {
+      Object.values(editor.moduleInstances)
+        .forEach((moduleInstance) => {
+          if (_.isFunction(moduleInstance.destroy)) {
             moduleInstance.destroy();
           }
-        }
-      }
+        });
+
       editor = null;
 
       for (const field in this) {
