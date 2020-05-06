@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+  <title>Editor.js</title>
+  <link rel="stylesheet" href="/dist/main.css" />
+  <link rel="preload" href="https://codex.so/editor?frame=1" as="document">
+  <link rel="icon" type="image/png" href="/favicon.png?v=2">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta property="og:title" content="Editor.js" />
+  <meta property="og:site_name" content="Editor.js" />
+  <meta name="description" property="og:description" content="A block-styled editor with clean JSON output">
+</head>
+<body class="landing-body">
+  <header class="docs-header">
+  <a href="/" class="docs-header__logo">
+    Editor.js
+  </a>
+  <ul class="docs-header__menu">
+              <li>
+        <a
+                      href="/base-concepts"
+          >
+          Guides
+        </a>
+      </li>
+          <li>
+        <a
+                      href="/api"
+          >
+          API
+        </a>
+      </li>
+          <li>
+        <a
+                      href="https://github.com/editor-js"
+          >
+          Plugins
+        </a>
+      </li>
+          <li>
+        <a
+                      href="https://github.com/codex-team/editor.js"
+          >
+          GitHub
+        </a>
+      </li>
+          <li>
+        <a
+                      href="https://opencollective.com/editorjs"
+          >
+          Support Project
+        </a>
+      </li>
+      </ul>
+</header>
+  <div class="landing-loader" id="frame-loader">
+    <svg class="ldi-zbvw97" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 80 80" preserveAspectRatio="xMidYMid">
+  <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" style="transform-origin:50px 50px 0">
+    <g style="transform-origin:50px 50px 0">
+      <g style="transform-origin:50px 50px 0;transform:scale(.6)">
+        <g style="transform-origin:50px 50px 0">
+          <style>
+            .st3{fill:#dff0fc}
+            .st5{fill:#69cdff}
+          </style>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.346153846153846s;animation-direction:normal">
+              <path class="st3" d="M69.4 28.7c-3-2.8-6.5-4.8-10.3-6-4.6-1.5-7.7-5.8-7.7-10.6V7.5c4.9.2 9.7 1.1 14.2 2.9 7.4 2.9 9.5 12.6 3.8 18.3z" fill="#dff0fc"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.2923076923076924s;animation-direction:normal">
+              <path class="st5" d="M33 11c-4.4 1.9-8.5 4.6-12.1 8l3.2 3.2c3.4 3.4 8.6 4.2 12.9 2.1 3.6-1.8 7.5-2.8 11.6-3 0-8.1-8.2-13.5-15.6-10.3z" fill="#69cdff"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.2384615384615383s;animation-direction:normal">
+              <path class="st3" d="M10.4 34.4c-1.8 4.5-2.7 9.3-2.9 14.2H12c4.8 0 9.1-3.1 10.6-7.7 1.3-3.8 3.3-7.3 6.1-10.3-5.7-5.7-15.4-3.6-18.3 3.8z" fill="#dff0fc"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.1846153846153846s;animation-direction:normal">
+              <path class="st5" d="M11 67c1.9 4.4 4.6 8.5 8 12.1l3.2-3.2c3.4-3.4 4.2-8.6 2.1-12.9-1.8-3.6-2.8-7.5-3-11.6-8.1 0-13.5 8.2-10.3 15.6z" fill="#69cdff"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.1307692307692307s;animation-direction:normal">
+              <path class="st5" d="M89 33c-1.9-4.4-4.6-8.5-8-12.1l-3.2 3.2c-3.4 3.4-4.2 8.6-2.1 12.9 1.8 3.6 2.8 7.5 3 11.6 8.1 0 13.5-8.2 10.3-15.6z" fill="#69cdff"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.0769230769230769s;animation-direction:normal">
+              <path class="st3" d="M89.6 65.6c1.8-4.5 2.7-9.3 2.9-14.2H88c-4.8 0-9.1 3.1-10.6 7.7-1.3 3.8-3.3 7.3-6.1 10.3 5.7 5.7 15.4 3.6 18.3-3.8z" fill="#dff0fc"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-1.023076923076923s;animation-direction:normal">
+              <path class="st5" d="M67 89c4.4-1.9 8.5-4.6 12.1-8l-3.2-3.2c-3.4-3.4-8.6-4.2-12.9-2.1-3.6 1.8-7.5 2.8-11.6 3 0 8.1 8.2 13.5 15.6 10.3z" fill="#69cdff"/>
+            </g>
+          </g>
+          <g style="transform-origin:50px 50px 0">
+            <g class="ld ld-spin" style="transform-origin:50px 50px 0;animation-duration:1.4s;animation-delay:-.9692307692307691s;animation-direction:normal">
+              <path class="st3" d="M34.4 89.6c4.5 1.8 9.3 2.7 14.2 2.9V88c0-4.8-3.1-9.1-7.7-10.6-3.8-1.3-7.3-3.3-10.3-6.1-5.7 5.7-3.6 15.4 3.8 18.3z" fill="#dff0fc"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <style>
+      .ld-spin {
+        will-change: transform;
+      }
+      @keyframes ld-spin{0%{-webkit-transform:rotate(0);transform:rotate(0);animation-timing-function:cubic-bezier(.55,.055,.675,.19)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg);animation-timing-function:cubic-bezier(.215,.61,.355,1)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes ld-spin{0%{-webkit-transform:rotate(0);transform:rotate(0);animation-timing-function:cubic-bezier(.55,.055,.675,.19)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg);animation-timing-function:cubic-bezier(.215,.61,.355,1)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}path{stroke-width:0}.ld.ld-spin{-webkit-animation:ld-spin 1s infinite;animation:ld-spin 1s infinite}
+    </style>
+  </svg>
+</svg>
+
+  </div>
+  <iframe class="landing-frame" src="https://codex.so/editor?frame=1" seamless frameborder="0" onload="this.style.opacity = 1; setTimeout(document.getElementById('frame-loader').remove(), 500)"></iframe>
+
+      <script type="text/javascript" >
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+      ym(53080309, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+      });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/53080309" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  </body>
+</html>
+
