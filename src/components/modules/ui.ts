@@ -408,7 +408,15 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const { BlockManager, Tools, BlockSelection, Caret } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+    const tool = Tools.available[currentBlock.name];
+
+    const enabledToolLineBreaks = tool && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS];
+    if (enabledToolLineBreaks && this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+      return;
+    }
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
@@ -435,8 +443,16 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const { BlockManager, Tools, BlockSelection, Caret } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
+    const currentBlock = BlockManager.currentBlock;
+    const tool = Tools.available[currentBlock.name];
+
+    const enabledToolLineBreaks = tool && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS];
+    if (enabledToolLineBreaks && this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+      return;
+    }
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
