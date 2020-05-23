@@ -139,7 +139,7 @@ export default class BlockEvents extends Module {
 
     /**
      * Don't handle Tab keydowns when Tool sets disableDefaultTabEvent to true.
-     * Uses for user user-customized tab events like tab indent
+     * Uses for user-customized tab events like tab indent
      */
     if (tool && tool[Tools.INTERNAL_SETTINGS.IS_DISABLED_DEFAULT_TAB_EVENT]) {
       event.preventDefault();
