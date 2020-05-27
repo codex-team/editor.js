@@ -87,6 +87,7 @@ export default class Core {
             const { BlockManager, Caret } = this.moduleInstances;
 
             Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
+            BlockManager.highlightCurrentNode();
           }
 
           /**
