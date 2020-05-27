@@ -10,6 +10,8 @@
 - `Improvements` - Blocks API: allow deletion of blocks by specifying block index via `blocks.delete(index)`.
 - `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [1103](https://github.com/codex-team/editor.js/issues/1103)
 - `Improvements` - Improve performance of DOM traversing at the `isEmpty()` method [#1095](https://github.com/codex-team/editor.js/issues/1095)
+- `Improvements` - Add code of conduct
+- `Improvements` - Disabled useCapture flag for a block keydown handling. That will allow plugins to override keydown and stop event propagation, for example, to make own Tab behavior.
 - `Fix` - Editor's styles won't be appended to the `<head>` when another instance have already do that [#1079](https://github.com/codex-team/editor.js/issues/1079)
 - `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
 - `Fix` - Toolbox: Tool's order in Toolbox now saved in accordance with `tools` object keys order [#1073](https://github.com/codex-team/editor.js/issues/1073)
@@ -28,6 +30,7 @@
 - `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
 - `Fix` — Improve plain text paste [#1012](https://github.com/codex-team/editor.js/issues/1012)
 - `Fix` — Fix multiline paste [#1015](https://github.com/codex-team/editor.js/issues/1015)
+- `Fix` - Public getter `shortcut` now works for Inline Tools [#1132](https://github.com/codex-team/editor.js/issues/1132)
 
 ### 2.16.1
 
