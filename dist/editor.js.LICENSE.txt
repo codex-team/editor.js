@@ -1,4 +1,20 @@
 /*!
+ * CodeX.Tooltips
+ * 
+ * @version 1.0.1
+ * 
+ * @licence MIT
+ * @author CodeX <https://codex.so>
+ * 
+ * 
+ */
+
+/*!
+ * Codex JavaScript Notification module
+ * https://github.com/codex-team/js-notifier
+ */
+
+/*!
  * Editor.js
  * 
  * @version 2.18.0
@@ -8,6 +24,14 @@
  * 
  * @uses html-janitor
  * @licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)
+ */
+
+/*!
+ * Library for handling keyboard shortcuts
+ * @copyright CodeX (https://codex.so)
+ * @license MIT
+ * @author CodeX (https://codex.so)
+ * @version 1.1.1
  */
 
 /**
@@ -40,28 +64,4 @@
  * @author CodeX (team@codex.so)
  * @copyright CodeX 2018
  * @license The MIT License (MIT)
- */
-
-/*!
- * Codex JavaScript Notification module
- * https://github.com/codex-team/js-notifier
- */
-
-/*!
- * Library for handling keyboard shortcuts
- * @copyright CodeX (https://codex.so)
- * @license MIT
- * @author CodeX (https://codex.so)
- * @version 1.1.1
- */
-
-/*!
- * CodeX.Tooltips
- * 
- * @version 1.0.0
- * 
- * @licence MIT
- * @author CodeX <https://codex.so>
- * 
- * 
  */
