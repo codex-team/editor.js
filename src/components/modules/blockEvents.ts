@@ -132,13 +132,13 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - tab keydown event
    */
   public tabPressed(event): void {
-    const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
-
     /**
      * Clear blocks selection by tab
      */
     this.Editor.BlockSelection.clearSelection(event);
+
+    const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
       return;
