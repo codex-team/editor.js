@@ -280,6 +280,8 @@ export default class SelectionUtils {
    *
    * @param element - element where to set focus
    * @param offset - offset of cursor
+   *
+   * @returns {DOMRect} of range
    */
   public static setCursor(element: HTMLElement, offset = 0): DOMRect {
     const range = document.createRange();

@@ -110,7 +110,8 @@ export default class BlockSettings extends Module {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
-     * Save current selection in case block settings contains some inputs
+     * If block settings contains any inputs, focus will be set there,
+     * so we need to save current selection to restore it after block settings is closed
      */
     this.selection.save();
 
@@ -182,7 +183,7 @@ export default class BlockSettings extends Module {
 
     const toolSettings = this.nodes.toolSettings.querySelectorAll(
       // Select buttons and inputs
-      `.${StylesAPI.classes.settingsButton}, .${StylesAPI.classes.input}`
+      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
