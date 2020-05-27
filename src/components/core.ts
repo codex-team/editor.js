@@ -87,6 +87,7 @@ export default class Core {
             const { BlockManager, Caret } = this.moduleInstances;
 
             Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
+            BlockManager.highlightCurrentNode();
           }
 
           /**
@@ -132,7 +133,8 @@ export default class Core {
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
       config.holderId = null;
-      _.log('holderId property will deprecated in next major release, use holder property instead.', 'warn');
+      _.log('holderId property is deprecated and will be removed in the next major release. ' +
+        'Use holder property instead.', 'warn');
     }
 
     /**
