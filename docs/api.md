@@ -8,8 +8,32 @@ Most actual API described by [this interface](../types/api/index.d.ts).
 
 ---
 
-Blocks have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
+Tools have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
 can use Editor\`s API as they want.
+
+## Block API
+
+API for certain Block methods and properties. You can access it through `editor.api.block.getBlockByIndex` method or get it form `block` property of [Tool constructor](../types/tools/block-tool.d.ts) argument.
+
+`name: string` — Block's Tool name (key, specified in `tools` property of initial configuration)
+
+`config: ToolConfig` — Tool config passed on Editor initialization
+
+`holder: HTMLElement` — HTML Element that wraps Tool's HTML content
+
+`isEmpty: boolean` — `true` if Block has any editable content
+
+`selected: boolean` - `true` if Block is selected with Cross-Block Selection
+
+`set stretched(state: boolean)` — set Block's stretch state
+
+`stretched: boolean` — `true` if Block is stretched
+
+`call(methodName: string, param?: object): void` — method to call any Tool's instance methods with checks and error handlers under-the-hood. For example, [Block lifecycle hooks](./tools.md#block-lifecycle-hooks)
+
+`save(): Promise<void|SavedData>` — returns data saved from current Block's state, including Tool name and saving exec time
+
+`validate(data: BlockToolData): Promise<boolean>` — calls Tool's validate method if exists
 
 ## Api object description
 
@@ -43,11 +67,11 @@ use 'move' instead)
 
 `getCurrentBlockIndex()` - current Block index
 
-`getBlockByIndex(index: Number)` - returns Block with passed index
+`getBlockByIndex(index: Number)` - returns Block API object by passed index
 
 `getBlocksCount()` - returns Blocks count
 
-`stretchBlock(index: number, status: boolean)` - make Block stretched
+`stretchBlock(index: number, status: boolean)` - _Deprecated. Use Block API interface instead._ make Block stretched.
 
 `insertNewBlock()` - __Deprecated__ insert new Block after working place
 

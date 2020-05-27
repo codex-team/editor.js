@@ -2,8 +2,8 @@ import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
 import {
-  BlockTool,
-  BlockToolConstructable, BlockToolData, EditorConfig,
+  BlockToolConstructable,
+  EditorConfig,
   InlineTool,
   InlineToolConstructable, Tool,
   ToolConfig,
@@ -326,36 +326,6 @@ export default class Tools extends Module {
   }
 
   /**
-   * Return Tool`s instance
-   *
-   * @param {string} tool — tool name
-   * @param {object} data — initial data
-   *
-   * @returns {BlockTool}
-   */
-  public construct(tool: string, data: BlockToolData): BlockTool {
-    const Plugin = this.toolsClasses[tool] as BlockToolConstructable;
-
-    /**
-     * Configuration to be passed to the Tool's constructor
-     */
-    const config = this.toolsSettings[tool][this.USER_SETTINGS.CONFIG] || {};
-
-    // Pass placeholder to initial Block config
-    if (tool === this.config.initialBlock && !config.placeholder) {
-      config.placeholder = this.config.placeholder;
-    }
-
-    const constructorOptions = {
-      api: this.Editor.API.getMethodsForTool(tool),
-      config,
-      data,
-    };
-
-    return new Plugin(constructorOptions);
-  }
-
-  /**
    * Return Inline Tool's instance
    *
    * @param {InlineTool} tool - Inline Tool instance
@@ -393,7 +363,16 @@ export default class Tools extends Module {
    * @returns {ToolSettings}
    */
   public getToolSettings(toolName): ToolSettings {
-    return this.toolsSettings[toolName];
+    const settings = this.toolsSettings[toolName];
+    const config = settings[this.USER_SETTINGS.CONFIG] || {};
+
+    // Pass placeholder to initial Block config
+    if (toolName === this.config.initialBlock && !config.placeholder) {
+      config.placeholder = this.config.placeholder;
+      settings[this.USER_SETTINGS.CONFIG] = config;
+    }
+
+    return settings;
   }
 
   /**

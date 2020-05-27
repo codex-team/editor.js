@@ -1,4 +1,4 @@
-import {API, BlockToolData, ToolSettings} from '../index';
+import {API} from '../index';
 import {ToolConfig} from './tool-config';
 import {SanitizerConfig} from '../configs';
 
@@ -29,6 +29,11 @@ export interface BaseToolConstructable {
    * Title of Inline Tool
    */
   title?: string;
+
+  /**
+   * Describe constructor parameters
+   */
+  new (config: {api: API, config?: ToolConfig}): BaseTool;
 
   /**
    * Tool`s prepare method. Can be async

@@ -1,12 +1,12 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {LogLevels, OutputData, API} from '../index';
+import {API, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
 
 export interface EditorConfig {
   /**
    * Element where Editor will be append
-   * @deprecated property will be removed in next major release, use holder instead
+   * @deprecated property will be removed in the next major release, use holder instead
    */
   holderId?: string | HTMLElement;
 

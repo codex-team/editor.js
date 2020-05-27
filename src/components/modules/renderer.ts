@@ -2,8 +2,7 @@ import Module from '../__module';
 /* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
 import { ChainData } from '../utils';
-import { BlockToolData } from '../../../types';
-import { BlockToolConstructable } from '../../../types/tools';
+import { BlockToolConstructable, OutputBlockData } from '../../../types';
 
 /**
  * Editor.js Renderer Module
@@ -43,9 +42,9 @@ export default class Renderer extends Module {
   /**
    * Make plugin blocks from array of plugin`s data
    *
-   * @param {BlockToolData[]} blocks - blocks to render
+   * @param {OutputBlockData[]} blocks - blocks to render
    */
-  public async render(blocks: BlockToolData[]): Promise<void> {
+  public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as ChainData[]);
@@ -63,15 +62,17 @@ export default class Renderer extends Module {
    * @param {object} item - Block data to insert
    * @returns {Promise<void>}
    */
-  public async insertBlock(item): Promise<void> {
+  public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
-    const settings = item.settings;
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert(tool, data, settings);
+        BlockManager.insert({
+          tool,
+          data,
+        });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
@@ -93,7 +94,10 @@ export default class Renderer extends Module {
         stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
       }
 
-      const stub = BlockManager.insert(Tools.stubTool, stubData, settings);
+      const stub = BlockManager.insert({
+        tool: Tools.stubTool,
+        data: stubData,
+      });
 
       stub.stretched = true;
 

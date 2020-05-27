@@ -295,13 +295,10 @@ export default class Toolbox extends Module {
     const { BlockManager, Caret } = this.Editor;
     const { currentBlock } = BlockManager;
 
-    let newBlock;
-
-    if (currentBlock.isEmpty) {
-      newBlock = BlockManager.replace(toolName);
-    } else {
-      newBlock = BlockManager.insert(toolName);
-    }
+    const newBlock = BlockManager.insert({
+      tool: toolName,
+      replace: currentBlock.isEmpty,
+    });
 
     /**
      * Apply callback before inserting html

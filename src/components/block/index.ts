@@ -1,23 +1,57 @@
 import {
+  BlockAPI as BlockAPIInterface,
   BlockTool,
   BlockToolConstructable,
   BlockToolData,
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
-  ToolConfig
-} from '../../types';
+  ToolConfig,
+  ToolSettings
+} from '../../../types';
 
-import { SavedData } from '../types-internal/block-data';
-import $ from './dom';
-import * as _ from './utils';
-import ApiModule from './../components/modules/api';
+import { SavedData } from '../../types-internal/block-data';
+import $ from '../dom';
+import * as _ from '../utils';
+import ApiModule from '../modules/api';
+import SelectionUtils from '../selection';
+import BlockAPI from './api';
+import { ToolType } from '../modules/tools';
+
 /** Import default tunes */
-import MoveUpTune from './block-tunes/block-tune-move-up';
-import DeleteTune from './block-tunes/block-tune-delete';
-import MoveDownTune from './block-tunes/block-tune-move-down';
-import SelectionUtils from './selection';
-import { ToolType } from './modules/tools';
+import MoveUpTune from '../block-tunes/block-tune-move-up';
+import DeleteTune from '../block-tunes/block-tune-delete';
+import MoveDownTune from '../block-tunes/block-tune-move-down';
+
+/**
+ * Interface describes Block class constructor argument
+ */
+interface BlockConstructorOptions {
+  /**
+   * Tool's name
+   */
+  name: string;
+
+  /**
+   * Initial Block data
+   */
+  data: BlockToolData;
+
+  /**
+   * Tool's class or constructor function
+   */
+  Tool: BlockToolConstructable;
+
+  /**
+   * Tool settings from initial config
+   */
+  settings: ToolSettings;
+
+  /**
+   * Editor's API methods
+   */
+  api: ApiModule;
+}
 
 /**
  * @class Block
@@ -99,6 +133,11 @@ export default class Block {
   public tunes: BlockTune[];
 
   /**
+   * Tool's user configuration
+   */
+  public readonly config: ToolConfig;
+
+  /**
    * Cached inputs
    *
    * @type {HTMLElement[]}
@@ -149,29 +188,42 @@ export default class Block {
   }, this.modificationDebounceTimer);
 
   /**
-   * @class
-   * @param {string} toolName - Tool name that passed on initialization
-   * @param {object} toolInstance — passed Tool`s instance that rendered the Block
-   * @param {object} toolClass — Tool's class
-   * @param {object} settings - default settings
-   * @param {ApiModule} apiModule - Editor API module for pass it to the Block Tunes
+   * Current block API interface
    */
-  constructor(
-    toolName: string,
-    toolInstance: BlockTool,
-    toolClass: BlockToolConstructable,
-    settings: ToolConfig,
-    apiModule: ApiModule
-  ) {
-    this.name = toolName;
-    this.tool = toolInstance;
-    this.class = toolClass;
+  private readonly blockAPI: BlockAPIInterface;
+
+  /**
+   * @class
+   * @param {string} tool - Tool name that passed on initialization
+   * @param {BlockToolData} data - Tool's initial data
+   * @param {BlockToolConstructable} Tool — Tool's class
+   * @param {ToolSettings} settings - default tool's config
+   * @param {ApiModule} api - Editor API module for pass it to the Block Tunes
+   */
+  constructor({
+    name,
+    data,
+    Tool,
+    settings,
+    api,
+  }: BlockConstructorOptions) {
+    this.name = name;
+    this.class = Tool;
     this.settings = settings;
-    this.api = apiModule;
-    this.holder = this.compose();
+    this.config = settings.config || {};
+    this.api = api;
+    this.blockAPI = new BlockAPI(this);
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
+    this.tool = new Tool({
+      data,
+      config: this.config,
+      api: this.api.getMethodsForTool(name, ToolType.Block),
+      block: this.blockAPI,
+    });
+
+    this.holder = this.compose();
     /**
      * @type {BlockTune[]}
      */
@@ -286,36 +338,11 @@ export default class Block {
   }
 
   /**
-   * Returns Plugins content
-   *
-   * @returns {HTMLElement}
-   */
-  public get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
-
-    if (blockContentNodes && blockContentNodes.childNodes.length) {
-      /**
-       * Editors Block content can contain different Nodes from extensions
-       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
-       */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
-        const contentNode = blockContentNodes.childNodes[child];
-
-        if (!$.isExtensionNode(contentNode)) {
-          return contentNode as HTMLElement;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  /**
    * Get Block's JSON data
    *
    * @returns {object}
    */
-  public get data(): BlockToolData {
+  public get data(): Promise<BlockToolData> {
     return this.save().then((savedObject) => {
       if (savedObject && !_.isEmpty(savedObject.data)) {
         return savedObject.data;
@@ -391,6 +418,13 @@ export default class Block {
   }
 
   /**
+   * Get Block's focused state
+   */
+  public get focused(): boolean {
+    return this.holder.classList.contains(Block.CSS.focused);
+  }
+
+  /**
    * Set selected state
    * We don't need to mark Block as Selected when it is empty
    *
@@ -423,12 +457,46 @@ export default class Block {
   }
 
   /**
+   * Return Block's stretched state
+   *
+   * @returns {boolean}
+   */
+  public get stretched(): boolean {
+    return this.holder.classList.contains(Block.CSS.wrapperStretched);
+  }
+
+  /**
    * Toggle drop target state
    *
    * @param {boolean} state - 'true' if block is drop target, false otherwise
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
+   * Returns Plugins content
+   *
+   * @returns {HTMLElement}
+   */
+  public get pluginsContent(): HTMLElement {
+    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
+
+    if (blockContentNodes && blockContentNodes.childNodes.length) {
+      /**
+       * Editors Block content can contain different Nodes from extensions
+       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
+       */
+      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+        const contentNode = blockContentNodes.childNodes[child];
+
+        if (!$.isExtensionNode(contentNode)) {
+          return contentNode as HTMLElement;
+        }
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -444,6 +512,14 @@ export default class Block {
      * call Tool's method with the instance context
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+      if (methodName === BlockToolAPI.APPEND_CALLBACK) {
+        _.log(
+          '`appendCallback` hook is deprecated and will be removed in the next major release. ' +
+          'Use `rendered` hook instead',
+          'warn'
+        );
+      }
+
       try {
         // eslint-disable-next-line no-useless-call
         this.tool[methodName].call(this.tool, params);
@@ -538,7 +614,7 @@ export default class Block {
     return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
       return new Tune({
         api: this.api.getMethodsForTool(name, ToolType.Tune),
-        settings: this.settings,
+        settings: this.config,
       });
     });
   }

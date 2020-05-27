@@ -3,6 +3,7 @@
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
+- `New` — Block API that allows you to access certain Block properties and methods
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
 - `Improvements` - Adjusted GitHub action for ESLint.
@@ -19,6 +20,9 @@
 - `Fix` - Setting `autofocus` config property to `true` cause adding `.ce-block--focused` for the autofocused block  [#1073](https://github.com/codex-team/editor.js/issues/1124)
 - `Fix` - Public getter `shortcut` now works for Inline Tools [#1132](https://github.com/codex-team/editor.js/issues/1132)
 - `Fix` - `CMD+A` handler removed after Editor.js destroy [#1133](https://github.com/codex-team/editor.js/issues/1133)
+
+>  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
+
 
 ### 2.17
 
