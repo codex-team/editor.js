@@ -1,9 +1,6 @@
 <!--
   This page contains example of editor.js internalization.
-  See <script src="../dist/locales/ru.js"> section -> Load Editor.js's Locales
   See <script> section -> i18n property of the configuration object
-
-  Customize i18n dictionary see: example-i18n-customize.html
 
   \ (•◡•) /
 -->
@@ -62,9 +59,6 @@
 
 <!-- Load Editor.js's Core -->
 <script src="../dist/editor.js"></script>
-
-<!-- Load Editor.js's Locales -->
-<script src="../dist/locales/ru.js"></script>
 
 <!-- Initialization -->
 <script>
@@ -158,9 +152,114 @@
     /**
      * To provide localization of the editor.js you need to provide 'i18n' option with 'messages' dictionary:
      *
-     * (Customize dictionary see: example-i18n-customize.html)
+     * 1. At the 'ui' section of 'messages' there are translations for the internal editor.js UI elements.
+     *   You can create or find/download a dictionary for your language
+     *
+     * 2. As long as tools list is a user-specific thing (we do not know which tools you use and under which names),
+     *    so we can't provide a ready-to-use tool names dictionary.
+     *    There is a 'toolNames' section for that reason. Put translations for the names of your tools there.
+     *
+     * 3. Also, the UI of the tools you use is also invisible to editor.js core.
+     *    To pass translations for specific tools (that supports I18n API), there are 'tools' and 'blockTunes' section.
+     *    Pass dictionaries for specific plugins through them.
      */
-    i18n: EditorJSLocaleRu,
+    i18n: {
+      /**
+       * @type {I18nDictionary}
+       */
+      messages: {
+        /**
+         * Other below: translation of different UI components of the editor.js core
+         */
+        "ui": {
+          "blockTunes": {
+            "toggler": {
+              "Click to tune": "Нажмите, чтобы настроить",
+              "or drag to move": "или перетащите"
+            },
+          },
+          "inlineToolbar": {
+            "converter": {
+              "Convert to": "Конвертировать в"
+            }
+          },
+          "toolbar": {
+            "toolbox": {
+              "Add": "Добавить"
+            }
+          }
+        },
+
+        /**
+         * Section for translation Tool Names: both block and inline tools
+         */
+        "toolNames": {
+          "Text": "Параграф",
+          "Heading": "Заголовок",
+          "List": "Список",
+          "Warning": "Примечание",
+          "Checklist": "Чеклист",
+          "Quote": "Цитата",
+          "Code": "Код",
+          "Delimiter": "Разделитель",
+          "Raw HTML": "HTML-фрагмент",
+          "Table": "Таблица",
+          "Link": "Ссылка",
+          "Marker": "Маркер",
+          "Bold": "Полужирный",
+          "Italic": "Курсив",
+          "InlineCode": "Моноширинный"
+        },
+
+        /**
+         * Section for passing translations to the external tools classes
+         */
+        "tools": {
+          /**
+           * Each subsection is the i18n dictionary that will be passed to the corresponded plugin
+           * The name of a plugin should be equal the name you specify in the 'tool' section for that plugin
+           */
+          "warning": { // <-- 'Warning' tool will accept this dictionary section
+            "Title": "Название",
+            "Message": "Сообщение"
+          },
+
+          /**
+           * Link is the internal Inline Tool
+           */
+          "link": {
+            "Add a link": "Вставьте ссылку"
+          },
+          /**
+           * The "stub" is an internal block tool, used to fit blocks that does not have the corresponded plugin
+           */
+          "stub": {
+            "The block can not be displayed correctly.": "Блок не может быть отображен"
+          }
+        },
+
+        /**
+         * Section allows to translate Block Tunes
+         */
+        "blockTunes": {
+          /**
+           * Each subsection is the i18n dictionary that will be passed to the corresponded Block Tune plugin
+           * The name of a plugin should be equal the name you specify in the 'tunes' section for that plugin
+           *
+           * Also, there are few internal block tunes: "delete", "moveUp" and "moveDown"
+           */
+          "delete": {
+            "Delete": "Удалить"
+          },
+          "moveUp": {
+            "Move up": "Переместить вверх"
+          },
+          "moveDown": {
+            "Move down": "Переместить вниз"
+          }
+        }
+      }
+    },
 
     /**
      * Initial Editor data

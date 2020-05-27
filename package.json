@@ -12,10 +12,11 @@
     "editorjs"
   ],
   "scripts": {
-    "build": "rimraf dist/* && yarn svg && yarn build:prod",
-    "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
+    "build": "rimraf dist/* && yarn svg && yarn build:prod && yarn build:i18n",
+    "build:win": "rimraf dist && yarn svg:win && yarn build:prod && yarn build:i18n",
     "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
+    "build:i18n": "webpack --config webpack.i18n.config.js --mode production",
     "lint": "eslint src/ --ext .ts",
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",

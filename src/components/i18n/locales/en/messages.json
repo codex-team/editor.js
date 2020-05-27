@@ -19,11 +19,26 @@
   },
   "toolNames": {
     "Text": "",
+    "Heading": "",
+    "List": "",
+    "Warning": "",
+    "Checklist": "",
+    "Quote": "",
+    "Code": "",
+    "Delimiter": "",
+    "Raw HTML": "",
+    "Table": "",
     "Link": "",
+    "Marker": "",
     "Bold": "",
-    "Italic": ""
+    "Italic": "",
+    "InlineCode": ""
   },
   "tools": {
+    "warning": {
+      "Title": "",
+      "Message": ""
+    },
     "link": {
       "Add a link": ""
     },
