@@ -409,21 +409,21 @@ export default class Tools extends Module {
     for (const toolName in this.toolsClasses) {
       if (Object.prototype.hasOwnProperty.call(this.toolsClasses, toolName)) {
         const toolClass = this.toolsClasses[toolName];
+        const toolConfig = this.toolsSettings[toolName][this.USER_SETTINGS.CONFIG];
 
-        if (typeof toolClass.prepare === 'function') {
-          toolPreparationList.push({
-            function: toolClass.prepare,
-            data: {
-              toolName,
-              config: this.toolsSettings[toolName][this.USER_SETTINGS.CONFIG],
-            },
-          });
-        } else {
-          /**
-           * If Tool hasn't a prepare method, mark it as available
-           */
-          this.toolsAvailable[toolName] = toolClass;
-        }
+        /**
+         * If Tool hasn't a prepare method,
+         * still push it to tool preparation list to save tools order in Toolbox.
+         * As Tool's prepare method might be async, _.sequence util helps to save the order.
+         */
+        toolPreparationList.push({
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          function: typeof toolClass.prepare === 'function' ? toolClass.prepare : (): void => {},
+          data: {
+            toolName,
+            config: toolConfig,
+          },
+        });
       }
     }
 

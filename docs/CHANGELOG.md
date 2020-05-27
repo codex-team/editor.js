@@ -2,11 +2,19 @@
 
 ### 2.18
 
+- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
 - `New` — Block API that allows you to access certain Block properties and methods
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
-- `Improvements` - Adjusted GitHub Action for ESLint.
-- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
+- `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - Blocks API: if `blocks.delete` method is called, but no Block is selected, show warning instead of throwing an error [#1102](https://github.com/codex-team/editor.js/issues/1102)
+- `Improvements` - Blocks API: allow deletion of blocks by specifying block index via `blocks.delete(index)`.
+- `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [1103](https://github.com/codex-team/editor.js/issues/1103)
+- `Improvements` - Improve performance of DOM traversing at the `isEmpty()` method [#1095](https://github.com/codex-team/editor.js/issues/1095)
+- `Improvements` - Add code of conduct
+- `Fix` - Editor's styles won't be appended to the `<head>` when another instance have already do that [#1079](https://github.com/codex-team/editor.js/issues/1079)
+- `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
+- `Fix` - Toolbox: Tool's order in Toolbox now saved in accordance with `tools` object keys order [#1073](https://github.com/codex-team/editor.js/issues/1073)
 
 >  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
 
@@ -89,7 +97,7 @@
 - `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A
 - `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
 - `New` *Config* - Added new property in EditorConfig `holder`, use this property for append Editor instead `holderId`. `holder` property now support reference on dom element. [#696](https://github.com/codex-team/editor.js/issues/696)
-- `Deprecated` *Config* - `holderId` property now is deprecated and will removed in the next major release. Use `holder` instead.
+- `Deprecated` *Config* - `holderId` property now is deprecated and will removed in next major release. Use `holder` instead.
 - `Fix` *Types* — Fixed error with `codex-notifier` package [#713](https://github.com/codex-team/editor.js/issues/713)
 - `Improvements` — Close inline toolbar after creating a new link.
 - `New` *Config* — Option `minHeight` for customizing Editor's bottom zone height added.

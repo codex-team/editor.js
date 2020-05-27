@@ -20,7 +20,7 @@ export default class BlocksAPI extends Module {
       clear: (): void => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
-      delete: (): void => this.delete(),
+      delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
@@ -108,7 +108,13 @@ export default class BlocksAPI extends Module {
    * @param {number} blockIndex - index of Block to delete
    */
   public delete(blockIndex?: number): void {
-    this.Editor.BlockManager.removeBlock(blockIndex);
+    try {
+      this.Editor.BlockManager.removeBlock(blockIndex);
+    } catch (e) {
+      _.logLabeled(e, 'warn');
+
+      return;
+    }
 
     /**
      * in case of last block deletion
