@@ -251,7 +251,7 @@ export default class BlockManager extends Module {
   } = {}): Block {
     let newIndex = index;
 
-    if (!newIndex) {
+    if (newIndex === undefined) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
     }
 
