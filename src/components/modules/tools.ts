@@ -137,7 +137,6 @@ export default class Tools extends Module {
   public get INTERNAL_SETTINGS(): {[name: string]: string} {
     return {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-      IS_DISABLED_DEFAULT_TAB_EVENT: 'disableDefaultTabEvent',
       IS_INLINE: 'isInline',
       TITLE: 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
       SHORTCUT: 'shortcut',

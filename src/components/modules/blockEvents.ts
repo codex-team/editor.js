@@ -132,19 +132,8 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - tab keydown event
    */
   public tabPressed(event): void {
-
     const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = currentBlock && Tools.available[currentBlock.name];
-
-    /**
-     * Don't handle Tab keydowns when Tool sets disableDefaultTabEvent to true.
-     * Uses for user-customized tab events like tab indent
-     */
-    if (tool && tool[Tools.INTERNAL_SETTINGS.IS_DISABLED_DEFAULT_TAB_EVENT]) {
-      event.preventDefault();
-      return;
-    }
 
     /**
      * Clear blocks selection by tab
