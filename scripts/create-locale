@@ -1,0 +1,72 @@
+#!/usr/bin/env node
+const path = require('path');
+const fs = require('fs');
+
+/**
+ * Get the stub file path
+ *
+ * @param {string} localeName
+ */
+function stubPath(localeName) {
+  return path.resolve(__dirname, `stubs/${localeName}`)
+}
+
+/**
+ * Get the locale file path
+ *
+ * @param {string} localeName
+ * @param {string} fileName
+ */
+function localePath(localeName, fileName = null) {
+  return path.resolve(__dirname, `../src/components/i18n/locales/${localeName}`, fileName || '');
+}
+
+/**
+ * Get the locale dist file path
+ *
+ * @param {string} localeName
+ */
+function localeDistPath(localeName) {
+  return path.resolve(__dirname, `../locales/${localeName}.d.ts`)
+}
+
+/**
+ * Locale name
+ *
+ * @var {string}
+ */
+const locale = process.argv[2];
+
+if (!locale) {
+  // Missing locale name
+  console.log('\x1b[31m%s\x1b[0m', 'Missing locale name!');
+  process.exit(1);
+}
+
+if(fs.existsSync(localePath(locale))) {
+  // Locale exists
+  console.log('\x1b[31m%s\x1b[0m', `Locale "${locale}" exists!`);
+  process.exit(1);
+}
+
+// Copy locale dir
+fs.mkdirSync(localePath(locale));
+
+// Copy files into locale dir
+for (const file of fs.readdirSync(stubPath('locale'))) {
+  if(!fs.existsSync(localePath(locale, file))) {
+    fs.copyFileSync(stubPath(`locale/${file}`), localePath(locale, file));
+  }
+}
+
+// Copy locale declaration file
+if(!fs.existsSync(localeDistPath(locale))) {
+  fs.copyFileSync(stubPath('default.d.ts'), localeDistPath(locale));
+}
+
+// Create locale file successfully
+console.log('\x1b[32m%s\x1b[0m', `Create locale file successfully.
+
+Open the "${localePath(locale, 'messages.json')}" file to start translation!
+
+And run \`yarn build\` compilation after translation.`);
