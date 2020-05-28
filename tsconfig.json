@@ -11,5 +11,9 @@
 
     // allows to omit export default in .json files
     "allowSyntheticDefaultImports": true
-  }
+  },
+
+  "exclude": [
+    "scripts"
+  ]
 }
