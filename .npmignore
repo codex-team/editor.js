@@ -2,6 +2,7 @@
 build/sprite.svg
 docs/
 example/
+scripts/
 src/
 .babelrc
 .editorconfig
@@ -15,5 +16,6 @@ CODEOWNERS
 tsconfig.json
 tslint.json
 webpack.config.js
+webpack.i18n.config.js
 yarn.lock
 .github
