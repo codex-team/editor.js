@@ -63,7 +63,9 @@ export default class ModificationsObserver extends Module {
      * wait till Browser render Editor's Blocks
      */
     window.setTimeout( () => {
-      this.setObserver();
+      if (this.mutationDebouncer) {
+        this.setObserver();
+      }
     }, 3000);
   }
 
