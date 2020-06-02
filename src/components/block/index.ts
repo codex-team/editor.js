@@ -243,24 +243,7 @@ export default class Block {
       return this.cachedInputs;
     }
 
-    const content = this.holder;
-    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
-
-    const selector = '[contenteditable], textarea, input:not([type]), ' +
-      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
-
-    let inputs = _.array(content.querySelectorAll(selector));
-
-    /**
-     * If contenteditable element contains block elements, treat them as inputs.
-     */
-    inputs = inputs.reduce((result, input) => {
-      if ($.isNativeInput(input) || $.containsOnlyInlineElements(input)) {
-        return [...result, input];
-      }
-
-      return [...result, ...$.getDeepestBlockElements(input)];
-    }, []);
+    const inputs = $.findAllInputs(this.holder);
 
     /**
      * If inputs amount was changed we need to check if input index is bigger then inputs array length

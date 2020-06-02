@@ -305,31 +305,9 @@ export default class Caret extends Module {
    * @param {number} offset - offset
    */
   public set(element: HTMLElement, offset = 0): void {
-    const range = document.createRange(),
-        selection = Selection.get();
-
-    /** if found deepest node is native input */
-    if ($.isNativeInput(element)) {
-      if (!$.canSetCaret(element)) {
-        return;
-      }
-
-      element.focus();
-      (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = offset;
-
-      return;
-    }
-
-    range.setStart(element, offset);
-    range.setEnd(element, offset);
-
-    selection.removeAllRanges();
-    selection.addRange(range);
+    const { top, bottom } = Selection.setCursor(element, offset);
 
     /** If new cursor position is not visible, scroll to it */
-    const { top, bottom } = element.nodeType === Node.ELEMENT_NODE
-      ? element.getBoundingClientRect()
-      : range.getBoundingClientRect();
     const { innerHeight } = window;
 
     if (top < 0) {

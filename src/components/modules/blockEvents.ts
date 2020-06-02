@@ -46,10 +46,6 @@ export default class BlockEvents extends Module {
       case _.keyCodes.TAB:
         this.tabPressed(event);
         break;
-
-      case _.keyCodes.ESC:
-        this.escapePressed(event);
-        break;
     }
   }
 
@@ -155,31 +151,6 @@ export default class BlockEvents extends Module {
       this.activateToolbox();
     } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
       this.activateBlockSettings();
-    }
-  }
-
-  /**
-   * Escape pressed
-   * If some of Toolbar components are opened, then close it otherwise close Toolbar
-   *
-   * @param {Event} event - escape keydown event
-   */
-  public escapePressed(event): void {
-    /**
-     * Clear blocks selection by ESC
-     */
-    this.Editor.BlockSelection.clearSelection(event);
-
-    if (this.Editor.Toolbox.opened) {
-      this.Editor.Toolbox.close();
-    } else if (this.Editor.BlockSettings.opened) {
-      this.Editor.BlockSettings.close();
-    } else if (this.Editor.ConversionToolbar.opened) {
-      this.Editor.ConversionToolbar.close();
-    } else if (this.Editor.InlineToolbar.opened) {
-      this.Editor.InlineToolbar.close();
-    } else {
-      this.Editor.Toolbar.close();
     }
   }
 

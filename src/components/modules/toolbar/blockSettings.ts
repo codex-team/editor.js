@@ -2,6 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
+import SelectionUtils from '../../selection';
 
 /**
  * Block Settings
@@ -78,6 +79,11 @@ export default class BlockSettings extends Module {
   private flipper: Flipper = null;
 
   /**
+   * Page selection utils
+   */
+  private selection: SelectionUtils = new SelectionUtils();
+
+  /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
@@ -102,6 +108,12 @@ export default class BlockSettings extends Module {
    */
   public open(): void {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
+
+    /**
+     * If block settings contains any inputs, focus will be set there,
+     * so we need to save current selection to restore it after block settings is closed
+     */
+    this.selection.save();
 
     /**
      * Highlight content of a Block we are working with
@@ -130,6 +142,19 @@ export default class BlockSettings extends Module {
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
+    /**
+     * If selection is at editor on Block Settings closing,
+     * it means that caret placed at some editable element inside the Block Settings.
+     * Previously we have saved the selection, then open the Block Settings and set caret to the input
+     *
+     * So, we need to restore selection back to Block after closing the Block Settings
+     */
+    if (!SelectionUtils.isAtEditor) {
+      this.selection.restore();
+    }
+
+    this.selection.clearSaved();
+
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';
@@ -150,6 +175,8 @@ export default class BlockSettings extends Module {
    * @returns {HTMLElement[]}
    */
   public get blockTunesButtons(): HTMLElement[] {
+    const { StylesAPI } = this.Editor;
+
     /**
      * Return from cache
      * if exists
@@ -158,7 +185,10 @@ export default class BlockSettings extends Module {
       return this.buttons;
     }
 
-    const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
+    const toolSettings = this.nodes.toolSettings.querySelectorAll(
+      // Select buttons and inputs
+      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
+    );
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
     toolSettings.forEach((item) => {
@@ -195,14 +225,26 @@ export default class BlockSettings extends Module {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      activateCallback: () => {
+      /**
+       * @param {HTMLElement} focusedItem - activated Tune
+       */
+      activateCallback: (focusedItem) => {
+        /**
+         * If focused item is editable element, close block settings
+         */
+        if (focusedItem && $.canSetCaret(focusedItem)) {
+          this.close();
+
+          return;
+        }
+
         /**
          * Restoring focus on current Block after settings clicked.
          * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
          */
         _.delay(() => {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-        }, 10)();
+        }, 50)();
       },
     } as FlipperOptions);
   }
