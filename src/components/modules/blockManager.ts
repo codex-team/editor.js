@@ -239,7 +239,7 @@ export default class BlockManager extends Module {
   public insert({
     tool = this.config.initialBlock,
     data = {},
-    index = this.currentBlockIndex + 1,
+    index,
     needToFocus = true,
     replace = false,
   }: {
@@ -249,16 +249,22 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
   } = {}): Block {
+    let newIndex = index;
+
+    if (newIndex === undefined) {
+      newIndex = this.currentBlockIndex + (replace ? 0 : 1);
+    }
+
     const block = this.composeBlock({
       tool,
       data,
     });
 
-    this._blocks.insert(index, block, replace);
+    this._blocks.insert(newIndex, block, replace);
 
     if (needToFocus) {
-      this.currentBlockIndex = index;
-    } else if (index <= this.currentBlockIndex) {
+      this.currentBlockIndex = newIndex;
+    } else if (newIndex <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
 
