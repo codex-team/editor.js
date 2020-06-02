@@ -143,7 +143,11 @@ export default class BlockSettings extends Module {
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
     /**
-     * Restore selection to Block
+     * If selection is at editor on Block Settings closing,
+     * it means that caret placed at some editable element inside the Block Settings.
+     * Previously we have saved the selection, then open the Block Settings and set caret to the input
+     *
+     * So, we need to restore selection back to Block after closing the Block Settings
      */
     if (!SelectionUtils.isAtEditor) {
       this.selection.restore();
