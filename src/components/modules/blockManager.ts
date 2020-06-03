@@ -204,8 +204,9 @@ export default class BlockManager extends Module {
   /**
    * Creates Block instance by tool name
    *
-   * @param {string} tool - tools passed in editor config {@link EditorConfig#tools}
-   * @param {BlockToolData} [data] - constructor params
+   * @param {object} options - block creation options
+   * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
    */
@@ -228,11 +229,12 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {string} tool — plugin name, by default method inserts initial block type
-   * @param {object} data — plugin data
-   * @param {number} index - index where to insert new Block
-   * @param {boolean} needToFocus - flag shows if needed to update current Block index
-   * @param {boolean} replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {object} options - insert options
+   * @param {string} options.tool - plugin name, by default method inserts initial block type
+   * @param {object} options.data - plugin data
+   * @param {number} options.index - index where to insert new Block
+   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
+   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
@@ -274,8 +276,9 @@ export default class BlockManager extends Module {
   /**
    * Replace current working block
    *
-   * @param {string} tool — plugin name
-   * @param {BlockToolData} data — plugin data
+   * @param {object} options - replace options
+   * @param {string} options.tool — plugin name
+   * @param {BlockToolData} options.data — plugin data
    *
    * @returns {Block}
    */

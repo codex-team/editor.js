@@ -65,8 +65,6 @@ export default class Flipper {
   private readonly activateCallback: (item: HTMLElement) => void;
 
   /**
-   * @class
-   *
    * @param {FlipperOptions} options - different constructing settings
    */
   constructor(options: FlipperOptions) {

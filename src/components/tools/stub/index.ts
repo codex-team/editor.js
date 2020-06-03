@@ -14,7 +14,7 @@ export default class Stub implements BlockTool {
   /**
    * Stub styles
    *
-   * @type {{wrapper: string; info: string; title: string; subtitle: string}}
+   * @type {{wrapper: string, info: string, title: string, subtitle: string}}
    */
   private CSS = {
     wrapper: 'ce-stub',
@@ -49,8 +49,9 @@ export default class Stub implements BlockTool {
   private readonly savedData: BlockToolData;
 
   /**
-   * @param data - stub tool data
-   * @param api - Editor.js API
+   * @param options - constructor options
+   * @param options.data - stub tool data
+   * @param options.api - Editor.js API
    */
   constructor({ data, api }: BlockToolConstructorOptions<StubData>) {
     this.api = api;

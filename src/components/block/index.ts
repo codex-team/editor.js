@@ -193,12 +193,12 @@ export default class Block {
   private readonly blockAPI: BlockAPIInterface;
 
   /**
-   * @class
-   * @param {string} tool - Tool name that passed on initialization
-   * @param {BlockToolData} data - Tool's initial data
-   * @param {BlockToolConstructable} Tool — Tool's class
-   * @param {ToolSettings} settings - default tool's config
-   * @param {ApiModule} api - Editor API module for pass it to the Block Tunes
+   * @param {object} options - block constructor options
+   * @param {string} options.name - Tool name that passed on initialization
+   * @param {BlockToolData} options.data - Tool's initial data
+   * @param {BlockToolConstructable} options.Tool — Tool's class
+   * @param {ToolSettings} options.settings - default tool's config
+   * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
    */
   constructor({
     name,
