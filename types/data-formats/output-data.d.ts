@@ -1,5 +1,19 @@
 import {BlockToolData} from '../tools';
 
+/**
+ * Output of one Tool
+ */
+export interface OutputBlockData {
+  /**
+   * Too type
+   */
+  type: string;
+  /**
+   * Saved Block data
+   */
+  data: BlockToolData;
+}
+
 export interface OutputData {
   /**
    * Editor's version
@@ -14,8 +28,5 @@ export interface OutputData {
   /**
    * Saved Blocks
    */
-  blocks: Array<{
-    type: string;
-    data: BlockToolData
-  }>;
+  blocks: OutputBlockData[];
 }

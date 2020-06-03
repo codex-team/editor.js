@@ -2,8 +2,8 @@ import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import * as _ from '../utils';
-import {API, InlineTool, SanitizerConfig} from '../../../types';
-import {Notifier, Toolbar} from '../../../types/api';
+import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { Notifier, Toolbar, I18n } from '../../../types/api';
 
 /**
  * Link Tool
@@ -13,25 +13,25 @@ import {Notifier, Toolbar} from '../../../types/api';
  * Wrap selected text with <a> tag
  */
 export default class LinkInlineTool implements InlineTool {
-
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public static isInline = true;
 
   /**
    * Title for hover-tooltip
    */
-  public static title: string = 'Link';
+  public static title = 'Link';
 
   /**
    * Sanitizer Rule
    * Leave <a> tags
-   * @return {object}
+   *
+   * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       a: {
         href: true,
@@ -83,7 +83,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Input opening state
    */
-  private inputOpened: boolean = false;
+  private inputOpened = false;
 
   /**
    * Available Toolbar methods (open/close)
@@ -101,12 +101,18 @@ export default class LinkInlineTool implements InlineTool {
   private notifier: Notifier;
 
   /**
-   * @param {{api: API}} - Editor.js API
+   * I18n API
    */
-  constructor({api}) {
+  private i18n: I18n;
+
+  /**
+   * @param {API} api - Editor.js API
+   */
+  constructor({ api }) {
     this.toolbar = api.toolbar;
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
+    this.i18n = api.i18n;
     this.selection = new SelectionUtils();
   }
 
@@ -119,6 +125,7 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('link', 14, 10));
     this.nodes.button.appendChild($.svg('unlink', 15, 11));
+
     return this.nodes.button;
   }
 
@@ -127,19 +134,21 @@ export default class LinkInlineTool implements InlineTool {
    */
   public renderActions(): HTMLElement {
     this.nodes.input = document.createElement('input') as HTMLInputElement;
-    this.nodes.input.placeholder = 'Add a link';
+    this.nodes.input.placeholder = this.i18n.t('Add a link');
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY) {
         this.enterPressed(event);
       }
     });
+
     return this.nodes.input;
   }
 
   /**
    * Handle clicks on the Inline Toolbar icon
-   * @param {Range} range
+   *
+   * @param {Range} range - range to wrap with link
    */
   public surround(range: Range): void {
     /**
@@ -168,6 +177,7 @@ export default class LinkInlineTool implements InlineTool {
         this.closeActions();
         this.checkState();
         this.toolbar.close();
+
         return;
       }
     }
@@ -177,7 +187,8 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <a> tag
-   * @param {Selection} selection
+   *
+   * @param {Selection} selection - selection to check
    */
   public checkState(selection?: Selection): boolean {
     const anchorTag = this.selection.findParentTag('A');
@@ -191,6 +202,7 @@ export default class LinkInlineTool implements InlineTool {
        * Fill input value with link href
        */
       const hrefAttr = anchorTag.getAttribute('href');
+
       this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
 
       this.selection.save();
@@ -216,6 +228,9 @@ export default class LinkInlineTool implements InlineTool {
     return 'CMD+K';
   }
 
+  /**
+   * Show/close link input
+   */
   private toggleActions(): void {
     if (!this.inputOpened) {
       this.openActions(true);
@@ -227,7 +242,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
    */
-  private openActions(needFocus: boolean = false): void {
+  private openActions(needFocus = false): void {
     this.nodes.input.classList.add(this.CSS.inputShowed);
     if (needFocus) {
       this.nodes.input.focus();
@@ -237,13 +252,15 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Close input
+   *
    * @param {boolean} clearSavedSelection — we don't need to clear saved selection
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
-  private closeActions(clearSavedSelection: boolean = true): void {
+  private closeActions(clearSavedSelection = true): void {
     if (this.selection.isFakeBackgroundEnabled) {
       // if actions is broken by other selection We need to save new selection
       const currentSelection = new SelectionUtils();
+
       currentSelection.save();
 
       this.selection.restore();
@@ -263,7 +280,8 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Enter pressed on input
-   * @param {KeyboardEvent} event
+   *
+   * @param {KeyboardEvent} event - enter keydown event
    */
   private enterPressed(event: KeyboardEvent): void {
     let value = this.nodes.input.value || '';
@@ -276,13 +294,13 @@ export default class LinkInlineTool implements InlineTool {
     }
 
     if (!this.validateURL(value)) {
-
       this.notifier.show({
         message: 'Pasted link is not valid.',
         style: 'error',
       });
 
       _.log('Incorrect Link pasted', 'warn', value);
+
       return;
     }
 
@@ -305,8 +323,9 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Detects if passed string is URL
-   * @param  {string}  str
-   * @return {Boolean}
+   *
+   * @param {string} str - string to validate
+   * @returns {boolean}
    */
   private validateURL(str: string): boolean {
     /**
@@ -319,17 +338,20 @@ export default class LinkInlineTool implements InlineTool {
    * Process link before injection
    * - sanitize
    * - add protocol for links like 'google.com'
+   *
    * @param {string} link - raw user input
    */
   private prepareLink(link: string): string {
     link = link.trim();
     link = this.addProtocol(link);
+
     return link;
   }
 
   /**
    * Add 'http' protocol to the links like 'vc.ru', 'google.com'
-   * @param {String} link
+   *
+   * @param {string} link - string to process
    */
   private addProtocol(link: string): string {
     /**
@@ -345,9 +367,9 @@ export default class LinkInlineTool implements InlineTool {
      *     2) Anchors looks like "#results"
      *     3) Protocol-relative URLs like "//google.com"
      */
-    const isInternal = /^\/[^\/\s]/.test(link),
-      isAnchor = link.substring(0, 1) === '#',
-      isProtocolRelative = /^\/\/[^\/\s]/.test(link);
+    const isInternal = /^\/[^/\s]/.test(link),
+        isAnchor = link.substring(0, 1) === '#',
+        isProtocolRelative = /^\/\/[^/\s]/.test(link);
 
     if (!isInternal && !isAnchor && !isProtocolRelative) {
       link = 'http://' + link;
@@ -358,10 +380,10 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Inserts <a> tag with "href"
+   *
    * @param {string} link - "href" value
    */
   private insertLink(link: string): void {
-
     /**
      * Edit all link, not selected part
      */
