@@ -58,22 +58,6 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  */
 export default class Toolbar extends Module {
   /**
-   * HTML Elements used for Toolbar UI
-   */
-  public nodes: {[key: string]: HTMLElement} = {
-    wrapper: null,
-    content: null,
-    actions: null,
-
-    // Content Zone
-    plusButton: null,
-
-    // Actions Zone
-    blockActionsButtons: null,
-    settingsToggler: null,
-  };
-
-  /**
    * CSS styles
    *
    * @returns {object}
@@ -99,46 +83,74 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Makes toolbar
+   * returns toolbar opened state
+   *
+   * @returns {boolean}
    */
-  public make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+  public get opened(): boolean {
+    return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
+  }
 
+  /**
+   * Plus Button public methods
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
+   */
+  public get plusButton(): {hide: () => void; show: () => void} {
+    return {
+      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      show: (): void => {
+        if (this.Editor.Toolbox.isEmpty) {
+          return;
+        }
+        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
+      },
+    };
+  }
+
+  /**
+   * Block actions appearance manipulations
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
+   */
+  private get blockActions(): {hide: () => void; show: () => void} {
+    return {
+      hide: (): void => {
+        this.nodes.actions.classList.remove(this.CSS.actionsOpened);
+      },
+      show: (): void => {
+        this.nodes.actions.classList.add(this.CSS.actionsOpened);
+      },
+    };
+  }
+
+  /**
+   * HTML Elements used for Toolbar UI
+   */
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper: null,
+    content: null,
+    actions: null,
+
+    // Content Zone
+    plusButton: null,
+
+    // Actions Zone
+    blockActionsButtons: null,
+    settingsToggler: null,
+  };
+
+  /**
+   * Module preparation method
+   * Steps:
+   *  - Make Toolbar dependent components like BlockSettings, Toolbox and so on
+   *  - Make itself and append dependent nodes to itself
+   */
+  public async prepare(): Promise<void> {
     /**
-     * Make Content Zone and Actions Zone
+     * Make and append Settings Panel
      */
-    ['content', 'actions'].forEach((el) => {
-      this.nodes[el] = $.make('div', this.CSS[el]);
-    });
-
-    /**
-     * Actions will be included to the toolbar content so we can align in to the right of the content
-     */
-    $.append(this.nodes.wrapper, this.nodes.content);
-    $.append(this.nodes.content, this.nodes.actions);
-
-    /**
-     * Fill Content Zone:
-     *  - Plus Button
-     *  - Toolbox
-     */
-    this.nodes.plusButton = $.make('div', this.CSS.plusButton);
-    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
-    $.append(this.nodes.content, this.nodes.plusButton);
-
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
-
-    /**
-     * Add events to show/hide tooltip for plus button
-     */
-    const tooltipContent = $.make('div');
-
-    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
-    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
-    }));
-
-    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
+    this.Editor.BlockSettings.make();
 
     /**
      * Make a Toolbox
@@ -146,42 +158,29 @@ export default class Toolbar extends Module {
     this.Editor.Toolbox.make();
 
     /**
-     * Fill Actions Zone:
-     *  - Settings Toggler
-     *  - Remove Block Button
-     *  - Settings Panel
+     * Draw UI elements
      */
-    this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
-    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 8, 8);
-
-    $.append(this.nodes.settingsToggler, settingsIcon);
-    $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
-    $.append(this.nodes.actions, this.nodes.blockActionsButtons);
-
-    this.Editor.Tooltip.onHover(
-      this.nodes.settingsToggler,
-      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
-      {
-        placement: 'top',
-      }
-    );
-
-    /**
-     * Make and append Settings Panel
-     */
-    this.Editor.BlockSettings.make();
-    $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
-
-    /**
-     * Append toolbar to the Editor
-     */
-    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+    this.make();
 
     /**
      * Bind events on the Toolbar elements
      */
-    this.bindEvents();
+    if (!this.Editor.ReadOnly.isEnabled) {
+      this.enableModuleBindings();
+    }
+  }
+
+  /**
+   * Toggles read-only mode
+   *
+   * @param {boolean} readOnlyEnabled - read-only mode
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.enableModuleBindings();
+    } else {
+      this.disableModuleBindings();
+    }
   }
 
   /**
@@ -252,15 +251,6 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * returns toolbar opened state
-   *
-   * @returns {boolean}
-   */
-  public get opened(): boolean {
-    return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
-  }
-
-  /**
    * Close the Toolbar
    */
   public close(): void {
@@ -273,36 +263,81 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Plus Button public methods
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
+   * Draws Toolbar elements
    */
-  public get plusButton(): {hide: () => void; show: () => void} {
-    return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: (): void => {
-        if (this.Editor.Toolbox.isEmpty) {
-          return;
-        }
-        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      },
-    };
-  }
+  private make(): void {
+    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
 
-  /**
-   * Block actions appearance manipulations --
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
-   */
-  private get blockActions(): {hide: () => void; show: () => void} {
-    return {
-      hide: (): void => {
-        this.nodes.actions.classList.remove(this.CSS.actionsOpened);
-      },
-      show: (): void => {
-        this.nodes.actions.classList.add(this.CSS.actionsOpened);
-      },
-    };
+    /**
+     * Make Content Zone and Actions Zone
+     */
+    ['content', 'actions'].forEach((el) => {
+      this.nodes[el] = $.make('div', this.CSS[el]);
+    });
+
+    /**
+     * Actions will be included to the toolbar content so we can align in to the right of the content
+     */
+    $.append(this.nodes.wrapper, this.nodes.content);
+    $.append(this.nodes.content, this.nodes.actions);
+
+    /**
+     * Fill Content Zone:
+     *  - Plus Button
+     *  - Toolbox
+     */
+    this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
+    $.append(this.nodes.content, this.nodes.plusButton);
+
+    this.mutableListeners.on(this.nodes.plusButton, 'click', () => {
+      this.plusButtonClicked();
+    }, false);
+
+    /**
+     * Add events to show/hide tooltip for plus button
+     */
+    const tooltipContent = $.make('div');
+
+    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
+    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
+      textContent: '⇥ Tab',
+    }));
+
+    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
+
+    /**
+     * Fill Actions Zone:
+     *  - Settings Toggler
+     *  - Remove Block Button
+     *  - Settings Panel
+     */
+    this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
+    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
+    const settingsIcon = $.svg('dots', 8, 8);
+
+    $.append(this.nodes.settingsToggler, settingsIcon);
+    $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
+    $.append(this.nodes.actions, this.nodes.blockActionsButtons);
+
+    this.Editor.Tooltip.onHover(
+      this.nodes.settingsToggler,
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
+      {
+        placement: 'top',
+      }
+    );
+
+    /**
+     * Appending Toolbar components to itself
+     */
+    $.append(this.nodes.content, this.Editor.Toolbox.nodes.toolbox);
+    $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
+
+    /**
+     * Append toolbar to the Editor
+     */
+    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
   }
 
   /**
@@ -313,14 +348,22 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Bind events on the Toolbar Elements:
-   * - Block Settings
+   * Enable bindings
    */
-  private bindEvents(): void {
+  private enableModuleBindings(): void {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
+    this.mutableListeners.on(this.nodes.settingsToggler, 'click', () => {
+      this.settingsTogglerClicked();
+    });
+  }
+
+  /**
+   * Disable bindings
+   */
+  private disableModuleBindings(): void {
+    this.mutableListeners.clearAll();
   }
 
   /**
