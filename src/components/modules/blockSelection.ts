@@ -216,17 +216,20 @@ export default class BlockSelection extends Module {
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
 
+    const isKeyboard = reason && (reason instanceof KeyboardEvent);
+    const isPrintableKey = isKeyboard && _.isPrintableKey((reason as KeyboardEvent).keyCode);
+
     /**
      * If reason caused clear of the selection was printable key and any block is selected,
      * remove selected blocks and insert pressed key
      */
-    if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
+    if (this.anyBlockSelected && isKeyboard && isPrintableKey && !SelectionUtils.isSelectionExists) {
       const indexToInsert = BlockManager.removeSelectedBlocks();
 
       BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
       Caret.setToBlock(BlockManager.currentBlock);
       _.delay(() => {
-        Caret.insertContentAtCaretPosition(reason.key);
+        Caret.insertContentAtCaretPosition((reason as KeyboardEvent).key);
       }, 20)();
     }
 
@@ -317,6 +320,17 @@ export default class BlockSelection extends Module {
 
     /** close InlineToolbar when we selected any Block */
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Module destruction
+   * De-registers Shortcut CMD+A
+   */
+  public destroy(): void {
+    const { Shortcuts } = this.Editor;
+
+    /** Selection shortcut */
+    Shortcuts.remove('CMD+A');
   }
 
   /**

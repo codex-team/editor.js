@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig } from '../../../types';
+import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -223,20 +223,22 @@ export default class BlockManager extends Module {
   /**
    * Creates Block instance by tool name
    *
-   * @param {string} toolName - tools passed in editor config {@link EditorConfig#tools}
-   * @param {object} data - constructor params
-   * @param {object} settings - block settings
+   * @param {object} options - block creation options
+   * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
    */
-  public composeBlock(
-    toolName: string,
-    data: BlockToolData = {},
-    settings: ToolConfig = {}
-  ): Block {
-    const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
-    const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API);
+  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+    const settings = this.Editor.Tools.getToolSettings(tool);
+    const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
+    const block = new Block({
+      name: tool,
+      data,
+      Tool,
+      settings,
+      api: this.Editor.API,
+    });
 
     if (!this.Editor.ReadOnly.isEnabled) {
       this.bindBlockEvents(block);
@@ -248,30 +250,69 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {string} toolName — plugin name, by default method inserts initial block type
-   * @param {object} data — plugin data
-   * @param {object} settings - default settings
-   * @param {number} index - index where to insert new Block
-   * @param {boolean} needToFocus - flag shows if needed to update current Block index
+   * @param {object} options - insert options
+   * @param {string} options.tool - plugin name, by default method inserts initial block type
+   * @param {object} options.data - plugin data
+   * @param {number} options.index - index where to insert new Block
+   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
+   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
-  public insert(
-    toolName: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    settings: ToolConfig = {},
-    index: number = this.currentBlockIndex + 1,
-    needToFocus = true
-  ): Block {
-    const block = this.composeBlock(toolName, data, settings);
+  public insert({
+    tool = this.config.initialBlock,
+    data = {},
+    index,
+    needToFocus = true,
+    replace = false,
+  }: {
+    tool?: string;
+    data?: BlockToolData;
+    index?: number;
+    needToFocus?: boolean;
+    replace?: boolean;
+  } = {}): Block {
+    let newIndex = index;
 
-    this._blocks[index] = block;
+    if (newIndex === undefined) {
+      newIndex = this.currentBlockIndex + (replace ? 0 : 1);
+    }
+
+    const block = this.composeBlock({
+      tool,
+      data,
+    });
+
+    this._blocks.insert(newIndex, block, replace);
 
     if (needToFocus) {
-      this.currentBlockIndex = index;
+      this.currentBlockIndex = newIndex;
+    } else if (newIndex <= this.currentBlockIndex) {
+      this.currentBlockIndex++;
     }
 
     return block;
+  }
+
+  /**
+   * Replace current working block
+   *
+   * @param {object} options - replace options
+   * @param {string} options.tool — plugin name
+   * @param {BlockToolData} options.data — plugin data
+   *
+   * @returns {Block}
+   */
+  public replace({
+    tool = this.config.initialBlock,
+    data = {},
+  }): Block {
+    return this.insert({
+      tool,
+      data,
+      index: this.currentBlockIndex,
+      replace: true,
+    });
   }
 
   /**
@@ -286,13 +327,10 @@ export default class BlockManager extends Module {
     pasteEvent: PasteEvent,
     replace = false
   ): Block {
-    let block;
-
-    if (replace) {
-      block = this.replace(toolName);
-    } else {
-      block = this.insert(toolName);
-    }
+    const block = this.insert({
+      tool: toolName,
+      replace,
+    });
 
     try {
       block.call(BlockToolAPI.ON_PASTE, pasteEvent);
@@ -314,7 +352,7 @@ export default class BlockManager extends Module {
    * @returns {Block} inserted Block
    */
   public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
-    const block = this.composeBlock(this.config.initialBlock, {}, {});
+    const block = this.composeBlock({ tool: this.config.initialBlock });
 
     this._blocks[index] = block;
 
@@ -406,7 +444,7 @@ export default class BlockManager extends Module {
    *
    * @returns {number|undefined}
    */
-  public removeSelectedBlocks(): number|undefined {
+  public removeSelectedBlocks(): number | undefined {
     let firstSelectedBlockIndex;
 
     /**
@@ -464,28 +502,7 @@ export default class BlockManager extends Module {
      *
      * @type {Block}
      */
-    return this.insert(this.config.initialBlock, data);
-  }
-
-  /**
-   * Replace current working block
-   *
-   * @param {string} toolName — plugin name
-   * @param {BlockToolData} data — plugin data
-   * @param {ToolConfig} settings — plugin config
-   *
-   * @returns {Block}
-   */
-  public replace(
-    toolName: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    settings: ToolConfig = {}
-  ): Block {
-    const block = this.composeBlock(toolName, data, settings);
-
-    this._blocks.insert(this.currentBlockIndex, block, true);
-
-    return block;
+    return this.insert({ data });
   }
 
   /**
@@ -662,7 +679,7 @@ export default class BlockManager extends Module {
     this.dropPointer();
 
     if (needAddInitialBlock) {
-      this.insert(this.config.initialBlock);
+      this.insert();
     }
 
     /**

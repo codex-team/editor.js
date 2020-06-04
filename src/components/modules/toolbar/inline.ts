@@ -581,11 +581,14 @@ export default class InlineToolbar extends Module {
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
+     * 3) If shortcut is not set in settings, check Tool's public property
      */
     if (internalTools.includes(toolName)) {
       shortcut = this.inlineTools[toolName][Tools.INTERNAL_SETTINGS.SHORTCUT];
     } else if (toolSettings && toolSettings[Tools.USER_SETTINGS.SHORTCUT]) {
       shortcut = toolSettings[Tools.USER_SETTINGS.SHORTCUT];
+    } else if (tool.shortcut) {
+      shortcut = tool.shortcut;
     }
 
     if (shortcut) {

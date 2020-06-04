@@ -1,3 +1,5 @@
+import * as _ from './utils';
+
 /**
  * DOM manipulations helper
  */
@@ -192,6 +194,35 @@ export default class Dom {
    */
   public static findAll(el: Element|Document = document, selector: string): NodeList {
     return el.querySelectorAll(selector);
+  }
+
+  /**
+   * Returns CSS selector for all text inputs
+   */
+  public static get allInputsSelector(): string {
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
+
+    return '[contenteditable], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
+  }
+
+  /**
+   * Find all contendeditable, textarea and editable input elements passed holder contains
+   *
+   * @param holder - element where to find inputs
+   */
+  public static findAllInputs(holder: Element): HTMLElement[] {
+    return _.array(holder.querySelectorAll(Dom.allInputsSelector))
+      /**
+       * If contenteditable element contains block elements, treat them as inputs.
+       */
+      .reduce((result, input) => {
+        if (Dom.isNativeInput(input) || Dom.containsOnlyInlineElements(input)) {
+          return [...result, input];
+        }
+
+        return [...result, ...Dom.getDeepestBlockElements(input)];
+      }, []);
   }
 
   /**

@@ -1,8 +1,9 @@
 import Module from '../../__module';
 
-import { Blocks } from '../../../../types/api';
+import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
+import BlockAPI from '../../block/api';
 
 /**
  * @class BlocksAPI
@@ -22,7 +23,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): HTMLElement => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
@@ -56,10 +57,10 @@ export default class BlocksAPI extends Module {
    *
    * @returns {HTMLElement}
    */
-  public getBlockByIndex(index: number): HTMLElement {
+  public getBlockByIndex(index: number): BlockAPIInterface {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
-    return block.holder;
+    return new BlockAPI(block);
   }
 
   /**
@@ -70,6 +71,12 @@ export default class BlocksAPI extends Module {
    * @deprecated — use 'move' instead
    */
   public swap(fromIndex: number, toIndex: number): void {
+    _.log(
+      '`blocks.swap()` method is deprecated and will be removed in the next major release. ' +
+      'Use `block.move()` method instead',
+      'info'
+    );
+
     this.Editor.BlockManager.swap(fromIndex, toIndex);
 
     /**
@@ -161,8 +168,16 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} index - index of Block to stretch
    * @param {boolean} status - true to enable, false to disable
+   *
+   * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
+    _.log(
+      '`blocks.stretchBlock()` method is deprecated and will be removed in the next major release. ' +
+      'Use BlockAPI interface instead',
+      'warn'
+    );
+
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {
@@ -188,13 +203,12 @@ export default class BlocksAPI extends Module {
     index?: number,
     needToFocus?: boolean
   ): void => {
-    this.Editor.BlockManager.insert(
-      type,
+    this.Editor.BlockManager.insert({
+      tool: type,
       data,
-      config,
       index,
-      needToFocus
-    );
+      needToFocus,
+    });
   }
 
   /**
@@ -206,7 +220,7 @@ export default class BlocksAPI extends Module {
    * @deprecated with insert() method
    */
   public insertNewBlock(): void {
-    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in next major release. ' +
+    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
   }

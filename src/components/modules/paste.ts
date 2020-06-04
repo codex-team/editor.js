@@ -4,12 +4,12 @@ import * as _ from '../utils';
 import {
   BlockTool,
   BlockToolConstructable,
-  BlockToolData,
   PasteConfig,
   PasteEvent,
   PasteEventDetail
 } from '../../../types';
 import Block from '../block';
+import { SavedData } from '../../types-internal/block-data';
 
 /**
  * Tag substitute object.
@@ -757,16 +757,14 @@ export default class Paste extends Module {
   /**
    * Insert data passed as application/x-editor-js JSON
    *
-   * @param {object} blocks — Blocks' data to insert
+   * @param {Array} blocks — Blocks' data to insert
    *
    * @returns {void}
    */
-  private insertEditorJSData(blocks: Array<{tool: string; data: BlockToolData}>): void {
+  private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
     const { BlockManager, Tools } = this.Editor;
 
     blocks.forEach(({ tool, data }, i) => {
-      const settings = this.Editor.Tools.getToolSettings(tool);
-
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
@@ -775,11 +773,11 @@ export default class Paste extends Module {
         needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
       }
 
-      if (needToReplaceCurrentBlock) {
-        BlockManager.replace(tool, data, settings);
-      } else {
-        BlockManager.insert(tool, data, settings);
-      }
+      BlockManager.insert({
+        tool,
+        data,
+        replace: needToReplaceCurrentBlock,
+      });
     });
   }
 

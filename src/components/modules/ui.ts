@@ -392,9 +392,15 @@ export default class UI extends Module {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
         break;
+
       case _.keyCodes.BACKSPACE:
         this.backspacePressed(event);
         break;
+
+      case _.keyCodes.ESC:
+        this.escapePressed(event);
+        break;
+
       default:
         this.defaultBehaviour(event);
         break;
@@ -435,7 +441,11 @@ export default class UI extends Module {
   private backspacePressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
 
-    if (BlockSelection.anyBlockSelected) {
+    /**
+     * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
+     * remove selected blocks
+     */
+    if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
@@ -455,6 +465,31 @@ export default class UI extends Module {
   }
 
   /**
+   * Escape pressed
+   * If some of Toolbar components are opened, then close it otherwise close Toolbar
+   *
+   * @param {Event} event - escape keydown event
+   */
+  private escapePressed(event): void {
+    /**
+     * Clear blocks selection by ESC
+     */
+    this.Editor.BlockSelection.clearSelection(event);
+
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.close();
+    } else if (this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.close();
+    } else if (this.Editor.ConversionToolbar.opened) {
+      this.Editor.ConversionToolbar.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+    } else {
+      this.Editor.Toolbar.close();
+    }
+  }
+
+  /**
    * Enter pressed on document
    *
    * @param {KeyboardEvent} event - keyboard event
@@ -463,7 +498,11 @@ export default class UI extends Module {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
-    if (BlockSelection.anyBlockSelected) {
+    /**
+     * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
+     * remove selected blocks
+     */
+    if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);

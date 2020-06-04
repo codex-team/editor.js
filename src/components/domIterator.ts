@@ -1,4 +1,6 @@
 import Dom from './dom';
+import * as _ from './utils';
+import SelectionUtils from './selection';
 
 /**
  * Iterator above passed Elements list.
@@ -156,11 +158,11 @@ export default class DomIterator {
       focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
     }
 
-    if (Dom.isNativeInput(this.items[focusedButtonIndex])) {
+    if (Dom.canSetCaret(this.items[focusedButtonIndex])) {
       /**
-       * Focus input
+       * Focus input with micro-delay to ensure DOM is updated
        */
-      this.items[focusedButtonIndex].focus();
+      _.delay(() => SelectionUtils.setCursor(this.items[focusedButtonIndex]), 50)();
     }
 
     /**

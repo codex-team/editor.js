@@ -1,5 +1,5 @@
 import $ from '../../dom';
-import { API, BlockTool, BlockToolData } from '../../../../types';
+import { API, BlockTool, BlockToolData, BlockToolConstructorOptions } from '../../../../types';
 
 export interface StubData extends BlockToolData {
   title: string;
@@ -14,7 +14,7 @@ export default class Stub implements BlockTool {
   /**
    * Stub styles
    *
-   * @type {{wrapper: string; info: string; title: string; subtitle: string}}
+   * @type {{wrapper: string, info: string, title: string, subtitle: string}}
    */
   private CSS = {
     wrapper: 'ce-stub',
@@ -49,10 +49,11 @@ export default class Stub implements BlockTool {
   private readonly savedData: BlockToolData;
 
   /**
-   * @param data - stub tool data
-   * @param api - Editor.js API
+   * @param options - constructor options
+   * @param options.data - stub tool data
+   * @param options.api - Editor.js API
    */
-  constructor({ data, api }: {data: StubData; api: API}) {
+  constructor({ data, api }: BlockToolConstructorOptions<StubData>) {
     this.api = api;
     this.title = data.title || this.api.i18n.t('Error');
     this.subtitle = this.api.i18n.t('The block can not be displayed correctly.');

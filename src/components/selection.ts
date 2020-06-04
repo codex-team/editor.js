@@ -136,6 +136,15 @@ export default class SelectionUtils {
   }
 
   /**
+   * Methods return boolean that true if selection exists on the page
+   */
+  public static get isSelectionExists(): boolean {
+    const selection = SelectionUtils.get();
+
+    return !!selection.anchorNode;
+  }
+
+  /**
    * Return first range
    *
    * @returns {Range|null}
@@ -229,16 +238,6 @@ export default class SelectionUtils {
   }
 
   /**
-   * Returns window SelectionUtils
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   *
-   * @returns {Selection}
-   */
-  public static get(): Selection {
-    return window.getSelection();
-  }
-
-  /**
    * Selection instances
    *
    * @todo Check if this is still relevant
@@ -265,6 +264,49 @@ export default class SelectionUtils {
    */
   private readonly commandBackground: string = 'backColor';
   private readonly commandRemoveFormat: string = 'removeFormat';
+
+  /**
+   * Returns window SelectionUtils
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   *
+   * @returns {Selection}
+   */
+  public static get(): Selection {
+    return window.getSelection();
+  }
+
+  /**
+   * Set focus to contenteditable or native input element
+   *
+   * @param element - element where to set focus
+   * @param offset - offset of cursor
+   *
+   * @returns {DOMRect} of range
+   */
+  public static setCursor(element: HTMLElement, offset = 0): DOMRect {
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    /** if found deepest node is native input */
+    if ($.isNativeInput(element)) {
+      if (!$.canSetCaret(element)) {
+        return;
+      }
+
+      element.focus();
+      element.selectionStart = element.selectionEnd = offset;
+
+      return element.getBoundingClientRect();
+    }
+
+    range.setStart(element, offset);
+    range.setEnd(element, offset);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    return range.getBoundingClientRect();
+  }
 
   /**
    * Removes fake background

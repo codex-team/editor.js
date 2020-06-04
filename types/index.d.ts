@@ -39,7 +39,9 @@ export {
   BaseToolConstructable,
   InlineTool,
   InlineToolConstructable,
+  InlineToolConstructorOptions,
   BlockToolConstructable,
+  BlockToolConstructorOptions,
   BlockTool,
   BlockToolData,
   Tool,
@@ -68,7 +70,8 @@ export {
   DictValue,
   I18nConfig,
 } from './configs';
-export {OutputData} from './data-formats/output-data';
+export {OutputData, OutputBlockData} from './data-formats/output-data';
+export { BlockAPI } from './api'
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface
