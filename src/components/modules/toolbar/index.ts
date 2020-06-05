@@ -148,24 +148,10 @@ export default class Toolbar extends Module {
    */
   public async prepare(): Promise<void> {
     /**
-     * Make and append Settings Panel
-     */
-    this.Editor.BlockSettings.make();
-
-    /**
-     * Make a Toolbox
-     */
-    this.Editor.Toolbox.make();
-
-    /**
-     * Draw UI elements
-     */
-    this.make();
-
-    /**
      * Bind events on the Toolbar elements
      */
     if (!this.Editor.ReadOnly.isEnabled) {
+      this.drawUI();
       this.enableModuleBindings();
     }
   }
@@ -177,8 +163,10 @@ export default class Toolbar extends Module {
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (!readOnlyEnabled) {
+      this.drawUI();
       this.enableModuleBindings();
     } else {
+      this.destroy();
       this.disableModuleBindings();
     }
   }
@@ -290,7 +278,7 @@ export default class Toolbar extends Module {
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
 
-    this.mutableListeners.on(this.nodes.plusButton, 'click', () => {
+    this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
       this.plusButtonClicked();
     }, false);
 
@@ -354,7 +342,7 @@ export default class Toolbar extends Module {
     /**
      * Settings toggler
      */
-    this.mutableListeners.on(this.nodes.settingsToggler, 'click', () => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'click', () => {
       this.settingsTogglerClicked();
     });
   }
@@ -363,7 +351,7 @@ export default class Toolbar extends Module {
    * Disable bindings
    */
   private disableModuleBindings(): void {
-    this.mutableListeners.clearAll();
+    this.readOnlyMutableListeners.clearAll();
   }
 
   /**
@@ -375,5 +363,38 @@ export default class Toolbar extends Module {
     } else {
       this.Editor.BlockSettings.open();
     }
+  }
+
+  /**
+   * Draws Toolbar UI
+   *
+   * Toolbar contains BlockSettings and Toolbox.
+   * Thats why at first we draw its components and then Toolbar itself
+   */
+  private drawUI(): void {
+    /**
+     * Make BlockSettings Panel
+     */
+    this.Editor.BlockSettings.make();
+
+    /**
+     * Make Toolbox
+     */
+    this.Editor.Toolbox.make();
+
+    /**
+     * Make Toolbar
+     */
+    this.make();
+  }
+
+  /**
+   * Removes all created and saved HTMLElements
+   * It is used in Read-Only mode
+   */
+  private destroy(): void {
+    this.Editor.Toolbox.destroy();
+    this.Editor.BlockSettings.destroy();
+    this.removeAllNodes();
   }
 }

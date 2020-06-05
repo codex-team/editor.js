@@ -104,6 +104,15 @@ export default class BlockSettings extends Module {
   }
 
   /**
+   * Destroys module
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+    this.removeAllNodes();
+  }
+
+  /**
    * Open Block Settings pane
    */
   public open(): void {

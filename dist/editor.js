@@ -10962,7 +10962,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Mutable listeners
        */
-      this.mutableListeners = {
+      this.readOnlyMutableListeners = {
         /**
          * Assigns event listener on DOM element and pushes into special array that might be removed
          *
@@ -11021,6 +11021,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
     (0, _createClass2["default"])(Module, [{
+      key: "removeAllNodes",
+
+      /**
+       * Remove memorized nodes
+       */
+      value: function removeAllNodes() {
+        for (var key in this.nodes) {
+          var node = this.nodes[key];
+
+          if (node instanceof HTMLElement) {
+            node.remove();
+          }
+        }
+      }
+    }, {
       key: "state",
       set: function set(Editor) {
         this.Editor = Editor;
@@ -11688,6 +11703,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @param {BlockToolConstructable} options.Tool — Tool's class
      * @param {ToolSettings} options.settings - default tool's config
      * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
+     * @param {boolean} options.readOnly - Read-Only flag
      */
     function Block(_ref) {
       var _this = this;
@@ -11696,7 +11712,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           data = _ref.data,
           Tool = _ref.Tool,
           settings = _ref.settings,
-          api = _ref.api;
+          api = _ref.api,
+          readOnly = _ref.readOnly;
       (0, _classCallCheck2["default"])(this, Block);
 
       /**
@@ -11747,7 +11764,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         data: data,
         config: this.config,
         api: this.api.getMethodsForTool(name, _tools.ToolType.Block),
-        block: this.blockAPI
+        block: this.blockAPI,
+        readOnly: readOnly
       });
       this.holder = this.compose();
       /**
@@ -18034,13 +18052,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   Listeners.on(document, 'copy', function (e) {
                     return BlockEvents.handleCommandC(e);
                   });
-                  /** Copy and cut */
 
-                  Listeners.on(document, 'cut', function (e) {
-                    return BlockEvents.handleCommandX(e);
-                  });
-
-                case 5:
+                case 4:
                 case "end":
                   return _context.stop();
               }
@@ -18091,6 +18104,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var tool = _ref.tool,
             _ref$data = _ref.data,
             data = _ref$data === void 0 ? {} : _ref$data;
+        var readOnly = this.Editor.ReadOnly.isEnabled;
         var settings = this.Editor.Tools.getToolSettings(tool);
         var Tool = this.Editor.Tools.available[tool];
         var block = new _block["default"]({
@@ -18098,10 +18112,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           data: data,
           Tool: Tool,
           settings: settings,
-          api: this.Editor.API
+          api: this.Editor.API,
+          readOnly: readOnly
         });
 
-        if (!this.Editor.ReadOnly.isEnabled) {
+        if (!readOnly) {
           this.bindBlockEvents(block);
         }
 
@@ -18645,16 +18660,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "bindBlockEvents",
       value: function bindBlockEvents(block) {
         var BlockEvents = this.Editor.BlockEvents;
-        this.mutableListeners.on(block.holder, 'keydown', function (event) {
+        this.readOnlyMutableListeners.on(block.holder, 'keydown', function (event) {
           BlockEvents.keydown(event);
         }, true);
-        this.mutableListeners.on(block.holder, 'keyup', function (event) {
+        this.readOnlyMutableListeners.on(block.holder, 'keyup', function (event) {
           BlockEvents.keyup(event);
         });
-        this.mutableListeners.on(block.holder, 'dragover', function (event) {
+        this.readOnlyMutableListeners.on(block.holder, 'dragover', function (event) {
           BlockEvents.dragOver(event);
         });
-        this.mutableListeners.on(block.holder, 'dragleave', function (event) {
+        this.readOnlyMutableListeners.on(block.holder, 'dragleave', function (event) {
           BlockEvents.dragLeave(event);
         });
       }
@@ -18665,7 +18680,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "disableModuleBindings",
       value: function disableModuleBindings() {
-        this.mutableListeners.clearAll();
+        this.readOnlyMutableListeners.clearAll();
       }
       /**
        * Enables all module handlers and bindings for all Blocks
@@ -18676,6 +18691,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function enableModuleBindings() {
         var _this2 = this;
 
+        /** Copy and cut */
+        this.readOnlyMutableListeners.on(document, 'cut', function (e) {
+          return _this2.Editor.BlockEvents.handleCommandX(e);
+        });
         this.blocks.forEach(function (block) {
           _this2.bindBlockEvents(block);
         });
@@ -20467,7 +20486,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this2 = this;
 
         var UI = this.Editor.UI;
-        this.mutableListeners.on(UI.nodes.holder, 'drop', /*#__PURE__*/function () {
+        this.readOnlyMutableListeners.on(UI.nodes.holder, 'drop', /*#__PURE__*/function () {
           var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(dropEvent) {
             return _regenerator["default"].wrap(function _callee$(_context) {
               while (1) {
@@ -20488,14 +20507,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             return _ref.apply(this, arguments);
           };
         }(), true);
-        this.mutableListeners.on(UI.nodes.holder, 'dragstart', function () {
+        this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', function () {
           _this2.processDragStart();
         });
         /**
          * Prevent default browser behavior to allow drop on non-contenteditable elements
          */
 
-        this.mutableListeners.on(UI.nodes.holder, 'dragover', function (dragEvent) {
+        this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragover', function (dragEvent) {
           _this2.processDragOver(dragEvent);
         }, true);
       }
@@ -20506,7 +20525,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "disableModuleBindings",
       value: function disableModuleBindings() {
-        this.mutableListeners.clearAll();
+        this.readOnlyMutableListeners.clearAll();
       }
       /**
        * Handle drop event
@@ -21529,7 +21548,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           var toolInstance = new _this.Editor.Tools.blockTools[name]({
             api: _this.Editor.API.getMethodsForTool(name),
             config: {},
-            data: {}
+            data: {},
+            readOnly: false
           });
 
           if (tool.pasteConfig === false) {
@@ -24523,6 +24543,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.enableFlipper();
       }
       /**
+       * Destroys module
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.flipper.deactivate();
+        this.flipper = null;
+        this.removeAllNodes();
+      }
+      /**
        * Open Block Settings pane
        */
 
@@ -24855,6 +24886,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _dom["default"].append(this.nodes.wrapper, this.nodes.tools);
 
         return this.nodes.wrapper;
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.flipper.deactivate();
+        this.flipper = null;
+
+        for (var key in this.nodes) {
+          var node = this.nodes[key];
+        }
       }
       /**
        * Toggle conversion dropdown visibility
@@ -25359,28 +25400,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               switch (_context.prev = _context.next) {
                 case 0:
                   /**
-                   * Make and append Settings Panel
-                   */
-                  this.Editor.BlockSettings.make();
-                  /**
-                   * Make a Toolbox
-                   */
-
-                  this.Editor.Toolbox.make();
-                  /**
-                   * Draw UI elements
-                   */
-
-                  this.make();
-                  /**
                    * Bind events on the Toolbar elements
                    */
-
                   if (!this.Editor.ReadOnly.isEnabled) {
+                    this.drawUI();
                     this.enableModuleBindings();
                   }
 
-                case 4:
+                case 1:
                 case "end":
                   return _context.stop();
               }
@@ -25404,8 +25431,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
         if (!readOnlyEnabled) {
+          this.drawUI();
           this.enableModuleBindings();
         } else {
+          this.destroy();
           this.disableModuleBindings();
         }
       }
@@ -25539,7 +25568,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _dom["default"].append(this.nodes.content, this.nodes.plusButton);
 
-        this.mutableListeners.on(this.nodes.plusButton, 'click', function () {
+        this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', function () {
           _this3.plusButtonClicked();
         }, false);
         /**
@@ -25609,7 +25638,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Settings toggler
          */
-        this.mutableListeners.on(this.nodes.settingsToggler, 'click', function () {
+        this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'click', function () {
           _this4.settingsTogglerClicked();
         });
       }
@@ -25620,7 +25649,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "disableModuleBindings",
       value: function disableModuleBindings() {
-        this.mutableListeners.clearAll();
+        this.readOnlyMutableListeners.clearAll();
       }
       /**
        * Clicks on the Block Settings toggler
@@ -25634,6 +25663,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         } else {
           this.Editor.BlockSettings.open();
         }
+      }
+      /**
+       * Draws Toolbar UI
+       *
+       * Toolbar contains BlockSettings and Toolbox.
+       * Thats why at first we draw its components and then Toolbar itself
+       */
+
+    }, {
+      key: "drawUI",
+      value: function drawUI() {
+        /**
+         * Make BlockSettings Panel
+         */
+        this.Editor.BlockSettings.make();
+        /**
+         * Make Toolbox
+         */
+
+        this.Editor.Toolbox.make();
+        /**
+         * Make Toolbar
+         */
+
+        this.make();
+      }
+      /**
+       * Removes all created and saved HTMLElements
+       * It is used in Read-Only mode
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.Editor.Toolbox.destroy();
+        this.Editor.BlockSettings.destroy();
+        this.removeAllNodes();
       }
     }, {
       key: "CSS",
@@ -25868,7 +25934,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  this.make();
+                  if (!this.Editor.ReadOnly.isEnabled) {
+                    this.make();
+                  }
 
                 case 1:
                 case "end":
@@ -25884,6 +25952,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         return prepare;
       }()
+      /**
+       * Toggles read-only mode
+       *
+       * @param {boolean} readOnlyEnabled - read-only mode
+       */
+
+    }, {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
+        if (!readOnlyEnabled) {
+          this.make();
+        } else {
+          this.destroy();
+        }
+      }
       /**
        *  Moving / appearance
        *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25961,6 +26044,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "close",
       value: function close() {
+        if (this.Editor.ReadOnly.isEnabled) {
+          return;
+        }
+
         this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
         this.tools.forEach(function (toolInstance) {
           if (typeof toolInstance.clear === 'function') {
@@ -26032,6 +26119,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "containsNode",
       value: function containsNode(node) {
         return this.nodes.wrapper.contains(node);
+      }
+      /**
+       * Removes UI and its components
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.flipper.deactivate();
+        this.flipper = null;
+        this.Editor.ConversionToolbar.destroy();
       }
       /**
        * Making DOM
@@ -26640,6 +26738,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nodes.toolbox = _dom["default"].make('div', this.CSS.toolbox);
         this.addTools();
         this.enableFlipper();
+      }
+      /**
+       * Destroy Module
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.flipper.deactivate();
+        this.flipper = null;
+        this.removeAllNodes();
       }
       /**
        * Toolbox Tool's button click handler
@@ -27975,29 +28084,29 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function enableModuleBindings() {
         var _this2 = this;
 
-        this.mutableListeners.on(this.nodes.redactor, 'click', function (event) {
+        this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', function (event) {
           _this2.redactorClicked(event);
         }, false);
-        this.mutableListeners.on(this.nodes.redactor, 'mousedown', function (event) {
+        this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousedown', function (event) {
           _this2.documentTouched(event);
         }, true);
-        this.mutableListeners.on(this.nodes.redactor, 'touchstart', function (event) {
+        this.readOnlyMutableListeners.on(this.nodes.redactor, 'touchstart', function (event) {
           _this2.documentTouched(event);
         }, true);
-        this.mutableListeners.on(document, 'keydown', function (event) {
+        this.readOnlyMutableListeners.on(document, 'keydown', function (event) {
           _this2.documentKeydown(event);
         }, true);
-        this.mutableListeners.on(document, 'click', function (event) {
+        this.readOnlyMutableListeners.on(document, 'click', function (event) {
           _this2.documentClicked(event);
         }, true);
         /**
          * Handle selection change to manipulate Inline Toolbar appearance
          */
 
-        this.mutableListeners.on(document, 'selectionchange', function (event) {
+        this.readOnlyMutableListeners.on(document, 'selectionchange', function (event) {
           _this2.selectionChanged(event);
         }, true);
-        this.mutableListeners.on(window, 'resize', function () {
+        this.readOnlyMutableListeners.on(window, 'resize', function () {
           _this2.resizeDebouncer();
         }, {
           passive: true
@@ -28010,7 +28119,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "disableModuleBindings",
       value: function disableModuleBindings() {
-        this.mutableListeners.clearAll();
+        this.readOnlyMutableListeners.clearAll();
       }
       /**
        * Resize window handler

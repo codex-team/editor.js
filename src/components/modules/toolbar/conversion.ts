@@ -88,6 +88,15 @@ export default class ConversionToolbar extends Module {
     return this.nodes.wrapper;
   }
 
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+
+    for (const key in this.nodes) {
+      const node = this.nodes[key];
+    }
+  }
+
   /**
    * Toggle conversion dropdown visibility
    *

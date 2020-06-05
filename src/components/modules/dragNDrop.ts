@@ -47,18 +47,18 @@ export default class DragNDrop extends Module {
   private enableModuleBindings(): void {
     const { UI } = this.Editor;
 
-    this.mutableListeners.on(UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
       await this.processDrop(dropEvent);
     }, true);
 
-    this.mutableListeners.on(UI.nodes.holder, 'dragstart', () => {
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', () => {
       this.processDragStart();
     });
 
     /**
      * Prevent default browser behavior to allow drop on non-contenteditable elements
      */
-    this.mutableListeners.on(UI.nodes.holder, 'dragover', (dragEvent: DragEvent) => {
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragover', (dragEvent: DragEvent) => {
       this.processDragOver(dragEvent);
     }, true);
   }
@@ -67,7 +67,7 @@ export default class DragNDrop extends Module {
    * Unbind drag-n-drop event handlers
    */
   private disableModuleBindings(): void {
-    this.mutableListeners.clearAll();
+    this.readOnlyMutableListeners.clearAll();
   }
 
   /**

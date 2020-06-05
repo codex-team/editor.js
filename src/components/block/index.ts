@@ -51,6 +51,11 @@ interface BlockConstructorOptions {
    * Editor's API methods
    */
   api: ApiModule;
+
+  /**
+   * Read-Only flag
+   */
+  readOnly: boolean;
 }
 
 /**
@@ -199,6 +204,7 @@ export default class Block {
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
    * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
+   * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
     name,
@@ -206,6 +212,7 @@ export default class Block {
     Tool,
     settings,
     api,
+    readOnly,
   }: BlockConstructorOptions) {
     this.name = name;
     this.class = Tool;
@@ -221,6 +228,7 @@ export default class Block {
       config: this.config,
       api: this.api.getMethodsForTool(name, ToolType.Block),
       block: this.blockAPI,
+      readOnly: readOnly,
     });
 
     this.holder = this.compose();

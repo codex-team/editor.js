@@ -45,7 +45,7 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  private nodes: {
+  public nodes: {
     wrapper: HTMLElement;
     buttons: HTMLElement;
     conversionToggler: HTMLElement;
@@ -116,7 +116,22 @@ export default class InlineToolbar extends Module {
    * Module preparation method
    */
   public async prepare(): Promise<void> {
-    this.make();
+    if (!this.Editor.ReadOnly.isEnabled) {
+      this.make();
+    }
+  }
+
+  /**
+   * Toggles read-only mode
+   *
+   * @param {boolean} readOnlyEnabled - read-only mode
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.make();
+    } else {
+      this.destroy();
+    }
   }
 
   /**
@@ -197,6 +212,10 @@ export default class InlineToolbar extends Module {
    * Hides Inline Toolbar
    */
   public close(): void {
+    if (this.Editor.ReadOnly.isEnabled) {
+      return;
+    }
+
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     this.tools.forEach((toolInstance) => {
       if (typeof toolInstance.clear === 'function') {
@@ -266,6 +285,16 @@ export default class InlineToolbar extends Module {
    */
   public containsNode(node: Node): boolean {
     return this.nodes.wrapper.contains(node);
+  }
+
+  /**
+   * Removes UI and its components
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+
+    this.Editor.ConversionToolbar.destroy();
   }
 
   /**

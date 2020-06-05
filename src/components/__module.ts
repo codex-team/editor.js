@@ -13,6 +13,11 @@ import { ModuleConfig } from '../types-internal/module-config';
  */
 export default class Module {
   /**
+   * Module memorizes HTMLElements
+   */
+  public nodes: any;
+
+  /**
    * Editor modules list
    *
    * @type {EditorModules}
@@ -29,7 +34,7 @@ export default class Module {
   /**
    * Mutable listeners
    */
-  protected mutableListeners = {
+  protected readOnlyMutableListeners = {
     /**
      * Assigns event listener on DOM element and pushes into special array that might be removed
      *
@@ -89,5 +94,18 @@ export default class Module {
    */
   public set state(Editor: EditorModules) {
     this.Editor = Editor;
+  }
+
+  /**
+   * Remove memorized nodes
+   */
+  public removeAllNodes(): void {
+    for (const key in this.nodes) {
+      const node = this.nodes[key];
+
+      if (node instanceof HTMLElement) {
+        node.remove();
+      }
+    }
   }
 }

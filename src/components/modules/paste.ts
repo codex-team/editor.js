@@ -298,6 +298,7 @@ export default class Paste extends Module {
         api: this.Editor.API.getMethodsForTool(name),
         config: {},
         data: {},
+        readOnly: false,
       }) as BlockTool;
 
       if (tool.pasteConfig === false) {

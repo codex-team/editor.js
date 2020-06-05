@@ -192,13 +192,6 @@ export default class BlockManager extends Module {
       'copy',
       (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
-
-    /** Copy and cut */
-    Listeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
-    );
   }
 
   /**
@@ -230,6 +223,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+    const readOnly = this.Editor.ReadOnly.isEnabled;
     const settings = this.Editor.Tools.getToolSettings(tool);
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
@@ -238,9 +232,10 @@ export default class BlockManager extends Module {
       Tool,
       settings,
       api: this.Editor.API,
+      readOnly,
     });
 
-    if (!this.Editor.ReadOnly.isEnabled) {
+    if (!readOnly) {
       this.bindBlockEvents(block);
     }
 
@@ -696,19 +691,19 @@ export default class BlockManager extends Module {
   private bindBlockEvents(block: Block): void {
     const { BlockEvents } = this.Editor;
 
-    this.mutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
+    this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
       BlockEvents.keydown(event);
     }, true);
 
-    this.mutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
+    this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
       BlockEvents.keyup(event);
     });
 
-    this.mutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
       BlockEvents.dragOver(event);
     });
 
-    this.mutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
+    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
       BlockEvents.dragLeave(event);
     });
   }
@@ -717,13 +712,20 @@ export default class BlockManager extends Module {
    * Disable mutable handlers and bindings
    */
   private disableModuleBindings(): void {
-    this.mutableListeners.clearAll();
+    this.readOnlyMutableListeners.clearAll();
   }
 
   /**
    * Enables all module handlers and bindings for all Blocks
    */
   private enableModuleBindings(): void {
+    /** Copy and cut */
+    this.readOnlyMutableListeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
+    );
+
     this.blocks.forEach((block: Block) => {
       this.bindBlockEvents(block);
     });

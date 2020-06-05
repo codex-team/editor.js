@@ -326,34 +326,34 @@ export default class UI extends Module {
    * Bind events on the Editor.js interface
    */
   private enableModuleBindings(): void {
-    this.mutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
       this.redactorClicked(event);
     }, false);
 
-    this.mutableListeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
       this.documentTouched(event);
     }, true);
 
-    this.mutableListeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
       this.documentTouched(event);
     }, true);
 
-    this.mutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
+    this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
       this.documentKeydown(event);
     }, true);
 
-    this.mutableListeners.on(document, 'click', (event: MouseEvent) => {
+    this.readOnlyMutableListeners.on(document, 'click', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);
 
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.mutableListeners.on(document, 'selectionchange', (event: Event) => {
+    this.readOnlyMutableListeners.on(document, 'selectionchange', (event: Event) => {
       this.selectionChanged(event);
     }, true);
 
-    this.mutableListeners.on(window, 'resize', () => {
+    this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
     }, {
       passive: true,
@@ -364,7 +364,7 @@ export default class UI extends Module {
    * Unbind events on the Editor.js interface
    */
   private disableModuleBindings(): void {
-    this.mutableListeners.clearAll();
+    this.readOnlyMutableListeners.clearAll();
   }
 
   /**

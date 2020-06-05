@@ -88,6 +88,15 @@ export default class Toolbox extends Module {
   }
 
   /**
+   * Destroy Module
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+    this.removeAllNodes();
+  }
+
+  /**
    * Toolbox Tool's button click handler
    *
    * @param {MouseEvent|KeyboardEvent} event - event that activates toolbox button
