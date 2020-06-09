@@ -9,7 +9,7 @@ export default class ReadOnlyAPI extends Module {
   /**
    * Available methods
    */
-  get methods(): ReadOnly {
+  public get methods(): ReadOnly {
     return {
       toggle: (state): Promise<boolean> => this.toggle(state),
     };

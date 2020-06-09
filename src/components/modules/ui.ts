@@ -16,7 +16,6 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
-import SelectionUtils from '../selection';
 
 /**
  * @class
@@ -298,6 +297,7 @@ export default class UI extends Module {
     /**
      * Load CSS
      */
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const styles = require('../../styles/main.css');
     const styleTagId = 'editor-js-styles';
 
