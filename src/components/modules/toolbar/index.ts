@@ -83,7 +83,7 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * returns toolbar opened state
+   * Returns the Toolbar opening state
    *
    * @returns {boolean}
    */

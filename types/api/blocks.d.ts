@@ -15,7 +15,7 @@ export interface Blocks {
    * Render passed data
    *
    * @param {OutputData} data - saved Block data
-   * @param {boolean} readOnly - read only flag
+   * @param {boolean} readOnly - the flag that should be used to render a block in the read-only mode
    *
    * @returns {Promise<void>}
    */

@@ -53,7 +53,7 @@ interface BlockConstructorOptions {
   api: ApiModule;
 
   /**
-   * Read-Only flag
+   * This flag indicates that the Block should be constructed in the read-only mode.
    */
   readOnly: boolean;
 }

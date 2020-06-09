@@ -13,7 +13,7 @@ import { ModuleConfig } from '../types-internal/module-config';
  */
 export default class Module {
   /**
-   * Module memorizes HTMLElements
+   * Each module can provide some UI elements that will be stored in this property
    */
   public nodes: any;
 
@@ -32,7 +32,7 @@ export default class Module {
   protected config: EditorConfig;
 
   /**
-   * Mutable listeners
+   * This object provides methods to push into set of listeners that being dropped when read-only mode is enabled
    */
   protected readOnlyMutableListeners = {
     /**
@@ -43,12 +43,12 @@ export default class Module {
      * @param {Function} handler - Event handler
      * @param {boolean|AddEventListenerOptions} options - Listening options
      */
-    on: (
+    on(
       element: EventTarget,
       eventType: string,
       handler: (event: Event) => void,
       options: boolean | AddEventListenerOptions = false
-    ): void => {
+    ): void {
       const { Listeners } = this.Editor;
 
       this.mutableListenerIds.push(
@@ -59,7 +59,7 @@ export default class Module {
     /**
      * Clears all mutable listeners
      */
-    clearAll: (): void => {
+    clearAll(): void {
       const { Listeners } = this.Editor;
 
       for (const id of this.mutableListenerIds) {
@@ -71,7 +71,7 @@ export default class Module {
   };
 
   /**
-   * Listener identifiers
+   * The set of listener identifiers which will be dropped in read-only mode
    */
   private mutableListenerIds: string[] = [];
 
