@@ -1,0 +1,9 @@
+[build]
+  command = "yarn pull_tools && yarn build && cp -r dist/ example/dist"
+  publish = "example"
+
+[[redirects]]
+  from = "/"
+  to = "/example-dev.html"
+  status = 200
+  force = true
