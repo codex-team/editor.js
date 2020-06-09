@@ -209,7 +209,7 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Hides Inline Toolbar
+   * Hides Inline Toolbar -- 
    */
   public close(): void {
     if (this.Editor.ReadOnly.isEnabled) {
