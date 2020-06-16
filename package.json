@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.17.4",
+  "version": "2.17.5",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -19,7 +19,8 @@
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
-    "checkout_tools": "git submodule foreach git pull origin master"
+    "checkout_tools": "git submodule foreach git pull origin master",
+    "generate-disclaimer": "yarn licenses generate-disclaimer --ignore-platform > DISCLAIMER.md"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -48,6 +49,7 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "html-janitor": "^2.0.4",
     "license-webpack-plugin": "^2.1.1",
+    "material-design-icons": "^3.0.1",
     "postcss-apply": "^0.12.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
