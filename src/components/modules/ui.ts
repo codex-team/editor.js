@@ -3,6 +3,7 @@
  * Prebuilded sprite of SVG icons
  */
 import sprite from '../../../dist/sprite.svg';
+import autosize from 'autosize';
 
 /**
  * Module UI
@@ -44,7 +45,7 @@ export default class UI extends Module {
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
     editorLoader: string; editorEmpty: string;
-  } {
+    } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
@@ -273,6 +274,7 @@ export default class UI extends Module {
      */
     if (this.config.fixedTitleBlock) {
       const fixedTitleBlock = await this.makeFixedTitleBlock();
+
       this.nodes.holder.appendChild(fixedTitleBlock);
     }
 
@@ -295,27 +297,30 @@ export default class UI extends Module {
      * not the required HTMLTextAreaElement
      */
     const fixedTitleBlock = document.createElement('textarea');
+
     fixedTitleBlock.rows = 1;
-    fixedTitleBlock.id = "fixed-title-block";
+    fixedTitleBlock.id = 'fixed-title-block';
     /**
      * If fixedTitleBlock is an object provided by user (instead of boolean)
      * then assigning placeholder prperty from the object
      */
-    if(typeof this.config.fixedTitleBlock != "boolean"){
+    if (typeof this.config.fixedTitleBlock != 'boolean') {
       fixedTitleBlock.placeholder = this.config.fixedTitleBlock.placeholder;
-    }else{
-      fixedTitleBlock.placeholder = "Title";
+    } else {
+      fixedTitleBlock.placeholder = 'Title';
     }
 
     /**
      * autosize module is used to chnage size of teatarea on input change
      * check it out on npm for documentation
      */
-    const autosize = require('autosize');
+
     autosize(fixedTitleBlock);
-    fixedTitleBlockContainer.appendChild(fixedTitleBlock)
+    fixedTitleBlockContainer.appendChild(fixedTitleBlock);
+
     return fixedTitleBlockContainer;
   }
+
   /**
    * Appends CSS
    */

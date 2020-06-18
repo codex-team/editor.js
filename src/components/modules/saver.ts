@@ -10,7 +10,7 @@ import { OutputData } from '../../../types';
 import { ValidatedData } from '../../types-internal/block-data';
 import Block from '../block';
 import * as _ from '../utils';
-import fixedTitleBlock from '../fixedTitleBlock'
+import fixedTitleBlock from '../fixedTitleBlock';
 
 declare const VERSION: string;
 
@@ -121,7 +121,7 @@ export default class Saver extends Module {
       time: +new Date(),
       blocks,
       version: VERSION,
-      title
+      title,
     };
   }
 }
