@@ -1,0 +1,27 @@
+.fixed-title-block-container{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 12px;
+}
+
+#fixed-title-block{
+  border: none;
+  box-sizing: border-box;
+  border-color: transparent;
+  outline: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 40px;
+  font-weight: bold;
+  overflow: hidden;
+  resize: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 650px;
+}

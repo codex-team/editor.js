@@ -44,7 +44,7 @@ export default class UI extends Module {
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
     editorLoader: string; editorEmpty: string;
-    } {
+  } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
@@ -268,10 +268,54 @@ export default class UI extends Module {
      */
     this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
 
+    /**
+     * If fixedTitleBlock is ture, add fixedTitleBlock Element
+     */
+    if (this.config.fixedTitleBlock) {
+      const fixedTitleBlock = await this.makeFixedTitleBlock();
+      this.nodes.holder.appendChild(fixedTitleBlock);
+    }
+
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
   }
 
+  /**
+   * Makes FixedTitleBlock interface
+   */
+  private async makeFixedTitleBlock(): Promise<HTMLElement> {
+    /**
+     * Container for textarea element
+     */
+    const fixedTitleBlockContainer = $.make('div', 'fixed-title-block-container');
+
+    /**
+     * Creating the title block
+     * Did not use dom.ts ($) beacuse it returns HTMLElement,
+     * not the required HTMLTextAreaElement
+     */
+    const fixedTitleBlock = document.createElement('textarea');
+    fixedTitleBlock.rows = 1;
+    fixedTitleBlock.id = "fixed-title-block";
+    /**
+     * If fixedTitleBlock is an object provided by user (instead of boolean)
+     * then assigning placeholder prperty from the object
+     */
+    if(typeof this.config.fixedTitleBlock != "boolean"){
+      fixedTitleBlock.placeholder = this.config.fixedTitleBlock.placeholder;
+    }else{
+      fixedTitleBlock.placeholder = "Title";
+    }
+
+    /**
+     * autosize module is used to chnage size of teatarea on input change
+     * check it out on npm for documentation
+     */
+    const autosize = require('autosize');
+    autosize(fixedTitleBlock);
+    fixedTitleBlockContainer.appendChild(fixedTitleBlock)
+    return fixedTitleBlockContainer;
+  }
   /**
    * Appends CSS
    */
@@ -607,7 +651,6 @@ export default class UI extends Module {
        * Renew Current Block
        */
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-
       /**
        * Highlight Current Node
        */

@@ -29,4 +29,9 @@ export interface OutputData {
    * Saved Blocks
    */
   blocks: OutputBlockData[];
+
+  /**
+   * Title block
+   */
+  title: string;
 }

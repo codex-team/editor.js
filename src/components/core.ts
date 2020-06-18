@@ -49,7 +49,7 @@ export default class Core {
    * Object with core modules instances
    */
   public moduleInstances: EditorModules = {} as EditorModules;
-
+  
   /**
    * Promise that resolves when all core modules are prepared and UI is rendered on the page
    */
@@ -64,7 +64,7 @@ export default class Core {
      * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
     let onReady, onFail;
-
+    
     this.isReady = new Promise((resolve, reject) => {
       onReady = resolve;
       onFail = reject;
@@ -124,6 +124,7 @@ export default class Core {
     if (typeof config !== 'object') {
       config = {
         holder: config,
+        fixedTitleBlock: false
       };
     }
 

@@ -1,4 +1,10 @@
 /*!
+	autosize 4.0.2
+	license: MIT
+	http://www.jacklmoore.com/autosize
+*/
+
+/*!
  * CodeX.Tooltips
  * 
  * @version 1.0.1

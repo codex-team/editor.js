@@ -2,6 +2,7 @@ import {ToolConstructable, ToolSettings} from '../tools';
 import {API, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
+import {FixedTitleBlockConfig} from './fixed-title-block-config'
 
 export interface EditorConfig {
   /**
@@ -67,6 +68,11 @@ export interface EditorConfig {
    * Internalization config
    */
   i18n?: I18nConfig;
+
+  /**
+   * If true, add a fixed title block
+   */
+  fixedTitleBlock: boolean|FixedTitleBlockConfig;
 
   /**
    * Fires when Editor is ready to work

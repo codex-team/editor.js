@@ -74,6 +74,7 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
+    "autosize": "^4.0.2",
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.1"
   }

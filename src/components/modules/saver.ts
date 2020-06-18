@@ -10,6 +10,7 @@ import { OutputData } from '../../../types';
 import { ValidatedData } from '../../types-internal/block-data';
 import Block from '../block';
 import * as _ from '../utils';
+import fixedTitleBlock from '../fixedTitleBlock'
 
 declare const VERSION: string;
 
@@ -111,10 +112,16 @@ export default class Saver extends Module {
     _.log('Total', 'log', totalTime);
     _.log(undefined, 'groupEnd');
 
+    /**
+     * FixedTitleBlock text value
+     */
+    const title = fixedTitleBlock.getTitleText();
+
     return {
       time: +new Date(),
       blocks,
       version: VERSION,
+      title
     };
   }
 }
