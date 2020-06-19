@@ -11,7 +11,7 @@
 - `Improvements` - Blocks API: allow deletion of blocks by specifying block index via `blocks.delete(index)`.
 - `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [#1103](https://github.com/codex-team/editor.js/issues/1103)
 - `Improvements` - Improve performance of DOM traversing at the `isEmpty()` method [#1095](https://github.com/codex-team/editor.js/issues/1095)
-- `Improvements` - CODE OF CONDUCT added
+- `Improvements` - Add code of conduct
 - `Improvements` - Disabled useCapture flag for a block keydown handling. That will allow plugins to override keydown and stop event propagation, for example, to make own Tab behavior.
 - `Improvements` - All modules now might have `destroy` method called on Editor.js destroy
 - `Improvements` - Block settings can contain text inputs, focus will be restored after settings closed [#1090](https://github.com/codex-team/editor.js/issues/1090)
