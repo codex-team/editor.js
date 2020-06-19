@@ -330,7 +330,7 @@ export default class Caret extends Module {
     }
 
     /**
-     * If last block is empty and it is an initialBlock, set to that.
+     * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
     if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {

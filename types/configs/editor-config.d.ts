@@ -25,7 +25,7 @@ export interface EditorConfig {
    * Name should be equal to one of Tool`s keys of passed tools
    * If not specified, Paragraph Tool will be used
    */
-  initialBlock?: string;
+  defaultBlock?: string;
 
   /**
    * First Block placeholder

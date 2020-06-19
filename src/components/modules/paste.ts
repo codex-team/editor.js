@@ -514,7 +514,7 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools, Sanitizer } = this.Editor;
-    const initialTool = this.config.initialBlock;
+    const initialTool = this.config.defaultBlock;
     const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
@@ -576,13 +576,13 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
-    const { initialBlock } = this.config as {initialBlock: string};
+    const { defaultBlock } = this.config as {defaultBlock: string};
 
     if (!plain) {
       return [];
     }
 
-    const tool = initialBlock;
+    const tool = defaultBlock;
 
     return plain
       .split(/\r?\n/)

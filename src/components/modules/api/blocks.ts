@@ -197,7 +197,7 @@ export default class BlocksAPI extends Module {
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
   public insert = (
-    type: string = this.config.initialBlock,
+    type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
