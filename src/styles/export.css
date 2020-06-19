@@ -31,6 +31,13 @@
 }
 
 /**
+ * Add text cursor on placeholder 
+ */
+.ce-header[contentEditable=true][data-placeholder]:empty::before {
+  cursor: text;
+}
+
+/**
  * Settings
  */
 .cdx-settings-button {
