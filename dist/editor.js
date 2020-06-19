@@ -17314,11 +17314,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+        var canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty;
         var conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
         var inlineToolbarOpened = !currentBlock.isEmpty && !_selection["default"].isCollapsed && InlineToolbar.opened;
         /**
-         * For empty Blocks we show Plus button via Toolbox only for initial Blocks
+         * For empty Blocks we show Plus button via Toolbox only for default Blocks
          */
 
         if (canOpenToolbox) {
@@ -17390,7 +17390,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         BlockSelection.copySelectedBlocks(event);
         var selectionPositionIndex = BlockManager.removeSelectedBlocks();
-        Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+        Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
         /** Clear selection */
 
         BlockSelection.clearSelection(event);
@@ -17442,7 +17442,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
-          this.Editor.BlockManager.insertInitialBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
+          this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
         } else {
           /**
            * Split the Current Block into two blocks
@@ -17456,7 +17456,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * If new Block is empty
          */
 
-        if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+        if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty) {
           /**
            * Show Toolbar
            */
@@ -18050,8 +18050,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "insertInitialBlockAtIndex",
-      value: function insertInitialBlockAtIndex(index) {
+      key: "insertDefaultBlockAtIndex",
+      value: function insertDefaultBlockAtIndex(index) {
         var needToFocus = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         var block = this.composeBlock({
           tool: this.config.defaultBlock
@@ -18445,7 +18445,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Clears Editor
        *
-       * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+       * @param {boolean} needAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
        *                                        we don't need to add empty initial block
        *                                        2) in api.blocks.clear we should add empty block
        */
@@ -18453,13 +18453,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "clear",
       value: function clear() {
-        var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+        var needAddDefaultBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
         this._blocks.removeAll();
 
         this.dropPointer();
 
-        if (needAddInitialBlock) {
+        if (needAddDefaultBlock) {
           this.insert();
         }
         /**
@@ -18833,7 +18833,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (this.anyBlockSelected && isKeyboard && isPrintableKey && !_selection["default"].isSelectionExists) {
           var indexToInsert = BlockManager.removeSelectedBlocks();
-          BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
+          BlockManager.insertDefaultBlockAtIndex(indexToInsert, true);
           Caret.setToBlock(BlockManager.currentBlock);
 
           _.delay(function () {
@@ -19358,7 +19358,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
 
-        if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
+        if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
           this.setToBlock(lastBlock);
         } else {
           var newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -19411,14 +19411,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (!nextBlock && !nextInput) {
           /**
-           * If there is no nextBlock and currentBlock is initial, do not navigate
+           * If there is no nextBlock and currentBlock is default, do not navigate
            */
-          if (Tools.isInitial(currentBlock.tool)) {
+          if (Tools.isDefault(currentBlock.tool)) {
             return false;
           }
           /**
-           * If there is no nextBlock, but currentBlock is not initial,
-           * insert new initial block at the end and navigate to it
+           * If there is no nextBlock, but currentBlock is not default,
+           * insert new default block at the end and navigate to it
            */
 
 
@@ -21353,7 +21353,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               BlockManager,
               Tools,
               dataToInsert,
-              isCurrentBlockInitial,
+              isCurrentBlockDefault,
               needToReplaceCurrentBlock,
               _args5 = arguments;
 
@@ -21387,8 +21387,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   return _context5.abrupt("return");
 
                 case 8:
-                  isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
-                  needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+                  isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+                  needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
                   dataToInsert.map( /*#__PURE__*/function () {
                     var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(content, i) {
                       return _regenerator["default"].wrap(function _callee4$(_context4) {
@@ -21582,7 +21582,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _processFiles = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(items) {
           var _this5 = this;
 
-          var _this$Editor3, BlockManager, Tools, dataToInsert, isCurrentBlockInitial, needToReplaceCurrentBlock;
+          var _this$Editor3, BlockManager, Tools, dataToInsert, isCurrentBlockDefault, needToReplaceCurrentBlock;
 
           return _regenerator["default"].wrap(function _callee6$(_context6) {
             while (1) {
@@ -21599,8 +21599,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   dataToInsert = dataToInsert.filter(function (data) {
                     return !!data;
                   });
-                  isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
-                  needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+                  isCurrentBlockDefault = Tools.isDefault(BlockManager.currentBlock.tool);
+                  needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
                   dataToInsert.forEach(function (data, i) {
                     BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
                   });
@@ -21828,7 +21828,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                     break;
                   }
 
-                  this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
+                  this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty);
                   return _context8.abrupt("return");
 
                 case 5:
@@ -21861,7 +21861,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "processInlinePaste",
       value: function () {
         var _processInlinePaste = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(dataToInsert) {
-          var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, currentBlockIsInitial, blockData, needToReplaceCurrentBlock, insertedBlock, currentToolSanitizeConfig;
+          var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, currentBlockIsDefault, blockData, needToReplaceCurrentBlock, insertedBlock, currentToolSanitizeConfig;
 
           return _regenerator["default"].wrap(function _callee9$(_context9) {
             while (1) {
@@ -21869,9 +21869,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 case 0:
                   _this$Editor6 = this.Editor, BlockManager = _this$Editor6.BlockManager, Caret = _this$Editor6.Caret, Sanitizer = _this$Editor6.Sanitizer, Tools = _this$Editor6.Tools;
                   content = dataToInsert.content;
-                  currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+                  currentBlockIsDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
 
-                  if (!(currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
+                  if (!(currentBlockIsDefault && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
                     _context9.next = 12;
                     break;
                   }
@@ -21887,7 +21887,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                     break;
                   }
 
-                  needToReplaceCurrentBlock = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool) && BlockManager.currentBlock.isEmpty;
+                  needToReplaceCurrentBlock = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool) && BlockManager.currentBlock.isEmpty;
                   insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
                   Caret.setToBlock(insertedBlock, Caret.positions.END);
                   return _context9.abrupt("return");
@@ -22021,8 +22021,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           var needToReplaceCurrentBlock = false;
 
           if (i === 0) {
-            var isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
-            needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+            var isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+            needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
           }
 
           BlockManager.insert({
@@ -26422,8 +26422,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "isInitial",
-      value: function isInitial(tool) {
+      key: "isDefault",
+      value: function isDefault(tool) {
         return tool instanceof this.available[this.config.defaultBlock];
       }
       /**
@@ -27294,7 +27294,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (BlockSelection.anyBlockSelected && !_selection["default"].isSelectionExists) {
           var selectionPositionIndex = BlockManager.removeSelectedBlocks();
-          Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+          Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
           /** Clear selection */
 
           BlockSelection.clearSelection(event);
@@ -27357,7 +27357,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (BlockSelection.anyBlockSelected && !_selection["default"].isSelectionExists) {
           var selectionPositionIndex = BlockManager.removeSelectedBlocks();
-          Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+          Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
           /** Clear selection */
 
           BlockSelection.clearSelection(event);
@@ -27560,14 +27560,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
         /**
          * Show the Plus Button if:
-         * - Block is an initial-block (Text)
+         * - Block is an default-block (Text)
          * - Block is empty
          */
 
 
-        var isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
+        var isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
 
-        if (isInitialBlock) {
+        if (isDefaultBlock) {
           /**
            * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
            */

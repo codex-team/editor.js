@@ -237,8 +237,8 @@ export default class Paste extends Module {
       return;
     }
 
-    const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+    const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.map(
       async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
@@ -457,8 +457,8 @@ export default class Paste extends Module {
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
-    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+    const isCurrentBlockDefault = Tools.isDefault(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.forEach(
       (data, i) => {
@@ -622,7 +622,7 @@ export default class Paste extends Module {
       dataToInsert.tool !== currentBlock.name ||
       !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
     ) {
-      this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
+      this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty);
 
       return;
     }
@@ -642,14 +642,14 @@ export default class Paste extends Module {
     const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
     const { content } = dataToInsert;
 
-    const currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+    const currentBlockIsDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
 
-    if (currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
+    if (currentBlockIsDefault && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
         const needToReplaceCurrentBlock = BlockManager.currentBlock &&
-          Tools.isInitial(BlockManager.currentBlock.tool) &&
+          Tools.isDefault(BlockManager.currentBlock.tool) &&
           BlockManager.currentBlock.isEmpty;
 
         const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
@@ -746,9 +746,9 @@ export default class Paste extends Module {
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
-        const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+        const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
 
-        needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+        needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
       }
 
       BlockManager.insert({

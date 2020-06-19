@@ -351,7 +351,7 @@ export default class Tools extends Module {
    *
    * @returns {boolean}
    */
-  public isInitial(tool): boolean {
+  public isDefault(tool): boolean {
     return tool instanceof this.available[this.config.defaultBlock];
   }
 

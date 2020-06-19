@@ -333,7 +333,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
+    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -383,15 +383,15 @@ export default class Caret extends Module {
 
     if (!nextBlock && !nextInput) {
       /**
-       * If there is no nextBlock and currentBlock is initial, do not navigate
+       * If there is no nextBlock and currentBlock is default, do not navigate
        */
-      if (Tools.isInitial(currentBlock.tool)) {
+      if (Tools.isDefault(currentBlock.tool)) {
         return false;
       }
 
       /**
-       * If there is no nextBlock, but currentBlock is not initial,
-       * insert new initial block at the end and navigate to it
+       * If there is no nextBlock, but currentBlock is not default,
+       * insert new default block at the end and navigate to it
        */
       nextBlock = BlockManager.insertAtEnd();
     }

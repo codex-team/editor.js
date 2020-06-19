@@ -330,7 +330,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
+  public insertDefaultBlockAtIndex(index: number, needToFocus = false): Block {
     const block = this.composeBlock({ tool: this.config.defaultBlock });
 
     this._blocks[index] = block;
@@ -649,15 +649,15 @@ export default class BlockManager extends Module {
   /**
    * Clears Editor
    *
-   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   * @param {boolean} needAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
    *                                        we don't need to add empty initial block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needAddInitialBlock = false): void {
+  public clear(needAddDefaultBlock = false): void {
     this._blocks.removeAll();
     this.dropPointer();
 
-    if (needAddInitialBlock) {
+    if (needAddDefaultBlock) {
       this.insert();
     }
 
