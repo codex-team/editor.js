@@ -556,3 +556,12 @@ export function getValidUrl(url: string): string {
 export function openTab(url: string): void {
   window.open(url, '_blank');
 }
+
+/**
+ * Checks if element is "<input />" or "<textarea />"
+ *
+ * @param element - Element to check
+ */
+export function isNativeTextInput(element: Node | HTMLElement): boolean {
+  return element.nodeName === 'INPUT' || element.nodeName === 'TEXTAREA';
+}

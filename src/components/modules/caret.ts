@@ -355,12 +355,30 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        const range = selectRange.cloneRange();
+        if (_.isNativeTextInput(currentBlockInput)) {
+          /**
+           * If input is native text input we need to use it's value
+           * Text before the caret stays in the input,
+           * while text after the caret is returned as a fragment to be inserted after the block.
+           */
+          const input = currentBlockInput as HTMLInputElement | HTMLTextAreaElement;
+          const newFragment = document.createDocumentFragment();
 
-        range.selectNodeContents(currentBlockInput);
-        range.setStart(selectRange.endContainer, selectRange.endOffset);
+          const inputRemainingText = input.value.substring(0, input.selectionStart);
+          const fragmentText = input.value.substring(input.selectionStart);
 
-        return range.extractContents();
+          newFragment.textContent = fragmentText;
+          input.value = inputRemainingText;
+
+          return newFragment;
+        } else {
+          const range = selectRange.cloneRange();
+
+          range.selectNodeContents(currentBlockInput);
+          range.setStart(selectRange.endContainer, selectRange.endOffset);
+
+          return range.extractContents();
+        }
       }
     }
   }
