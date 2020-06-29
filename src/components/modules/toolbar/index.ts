@@ -150,7 +150,7 @@ export default class Toolbar extends Module {
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
     this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 8, 8);
+    const settingsIcon = $.svg('ic_settings_24px', 24, 24);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
