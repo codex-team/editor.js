@@ -35,13 +35,17 @@ export default class SizeObserver extends Module {
      */
     window.setTimeout( () => {
         this.setObserver();
-    }, 3000);
+    }, 500);
   }
 
   /**
    * Set observer
    */
   private setObserver(): void {
+    if (!('ResizeObserver' in window)) {
+      return ;
+    }
+
     const {UI} = this.Editor;
 
     // @ts-ignore
