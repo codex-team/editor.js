@@ -35,7 +35,7 @@ export default class SizeObserver extends Module {
      */
     window.setTimeout( () => {
         this.setObserver();
-    }, 500);
+    }, 3000);
   }
 
   /**
