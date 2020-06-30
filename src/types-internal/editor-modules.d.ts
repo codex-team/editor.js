@@ -12,6 +12,7 @@ import Notifier from '../components/modules/notifier';
 import Tooltip from '../components/modules/tooltip';
 import DragNDrop from '../components/modules/dragNDrop';
 import ModificationsObserver from '../components/modules/modificationsObserver';
+import SizeObserver from '../components/modules/sizeObserver';
 import Renderer from '../components/modules/renderer';
 import Sanitizer from '../components/modules/sanitizer';
 import Tools from '../components/modules/tools';
@@ -52,6 +53,7 @@ export interface EditorModules {
   Paste: Paste;
   DragNDrop: DragNDrop;
   ModificationsObserver: ModificationsObserver;
+  SizeObserver: SizeObserver;
   Renderer: Renderer;
   Sanitizer: Sanitizer;
   Tools: Tools;

@@ -82,6 +82,7 @@ export default class EditorJS {
       editor.moduleInstances.Listeners.removeAll();
       editor.moduleInstances.UI.destroy();
       editor.moduleInstances.ModificationsObserver.destroy();
+      editor.moduleInstances.SizeObserver.destroy();
       editor = null;
 
       for (const field in this) {
