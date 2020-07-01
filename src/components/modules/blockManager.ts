@@ -235,11 +235,24 @@ export default class BlockManager extends Module {
   ): Block {
     const block = this.composeBlock(toolName, data, settings);
 
+    /**
+     * Remove empty initial block at the end.
+     */
+    if (
+      this.blocks.length !== 0 &&
+      this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
+      this.blocks[this.blocks.length - 1].isEmpty
+    ) {
+      this._blocks.remove(this._blocks.length - 1);
+    }
+
     this._blocks[index] = block;
 
     if (needToFocus) {
       this.currentBlockIndex = index;
     }
+
+    this.keepInitialBlockAtEnd();
 
     return block;
   }
@@ -269,6 +282,7 @@ export default class BlockManager extends Module {
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
+
     return block;
   }
 
@@ -292,6 +306,8 @@ export default class BlockManager extends Module {
     } else if (index <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
+
+    this.keepInitialBlockAtEnd();
 
     return block;
   }
@@ -350,16 +366,7 @@ export default class BlockManager extends Module {
       this.currentBlockIndex--;
     }
 
-    /**
-     * If first Block was removed, insert new Initial Block and set focus on it`s first input
-     */
-    if (!this.blocks.length) {
-      this.currentBlockIndex = -1;
-      this.insert();
-      return;
-    } else if (index === 0) {
-      this.currentBlockIndex = 0;
-    }
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -395,8 +402,9 @@ export default class BlockManager extends Module {
       this._blocks.remove(index);
     }
 
+    this.keepInitialBlockAtEnd();
+
     this.currentBlockIndex = -1;
-    this.insert();
     this.currentBlock.firstInput.focus();
   }
 
@@ -444,6 +452,8 @@ export default class BlockManager extends Module {
     const block = this.composeBlock(toolName, data, settings);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
+
+    this.keepInitialBlockAtEnd();
 
     return block;
   }
@@ -570,6 +580,8 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -594,6 +606,8 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -623,6 +637,17 @@ export default class BlockManager extends Module {
      * Add empty modifier
      */
     this.Editor.UI.checkEmptiness();
+  }
+
+  /**
+   * Keep empty initial block at the end.
+   */
+  private keepInitialBlockAtEnd() {
+    if (this.blocks.length === 0 || this.blocks[this.blocks.length - 1].name === this.config.initialBlock) {
+      return ;
+    }
+
+    this.insertAtEnd();
   }
 
   /**
