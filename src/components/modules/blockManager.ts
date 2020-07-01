@@ -643,11 +643,19 @@ export default class BlockManager extends Module {
    * Keep empty initial block at the end.
    */
   private keepInitialBlockAtEnd() {
-    if (this.blocks.length === 0 || this.blocks[this.blocks.length - 1].name === this.config.initialBlock) {
+    if (
+      this.blocks.length === 0 || (
+        this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
+        this.blocks[this.blocks.length - 1].isEmpty
+      )
+    ) {
       return ;
     }
 
+    const prevBlockIndex = this.currentBlockIndex;
+
     this.insertAtEnd();
+    this.currentBlockIndex = prevBlockIndex;
   }
 
   /**
