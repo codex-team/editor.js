@@ -251,6 +251,17 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
   } = {}): Block {
+    /**
+     * Remove empty initial block at the end.
+     */
+    if (
+      this.blocks.length !== 0 &&
+      this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
+      this.blocks[this.blocks.length - 1].isEmpty
+    ) {
+      this._blocks.remove(this._blocks.length - 1);
+    }
+
     let newIndex = index;
 
     if (newIndex === undefined) {
@@ -269,6 +280,8 @@ export default class BlockManager extends Module {
     } else if (newIndex <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
+
+    this.keepInitialBlockAtEnd();
 
     return block;
   }
@@ -340,6 +353,8 @@ export default class BlockManager extends Module {
     } else if (index <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
+
+    this.keepInitialBlockAtEnd();
 
     return block;
   }
@@ -415,6 +430,8 @@ export default class BlockManager extends Module {
     } else if (index === 0) {
       this.currentBlockIndex = 0;
     }
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -454,6 +471,8 @@ export default class BlockManager extends Module {
     this.currentBlockIndex = -1;
     this.insert();
     this.currentBlock.firstInput.focus();
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -608,6 +627,8 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -635,6 +656,8 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    this.keepInitialBlockAtEnd();
   }
 
   /**
@@ -665,6 +688,25 @@ export default class BlockManager extends Module {
      * Add empty modifier
      */
     this.Editor.UI.checkEmptiness();
+  }
+
+  /**
+   * Keep empty initial block at the end.
+   */
+  private keepInitialBlockAtEnd(): void {
+    if (
+      this.blocks.length === 0 || (
+        this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
+        this.blocks[this.blocks.length - 1].isEmpty
+      )
+    ) {
+      return;
+    }
+
+    const prevBlockIndex = this.currentBlockIndex;
+
+    this.insertAtEnd();
+    this.currentBlockIndex = prevBlockIndex;
   }
 
   /**
