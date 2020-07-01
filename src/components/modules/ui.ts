@@ -45,12 +45,12 @@ export default class UI extends Module {
     editorLoader: string, editorEmpty: string,
   } {
     return {
-      editorWrapper    : 'codex-editor',
-      editorWrapperNarrow : 'codex-editor--narrow',
-      editorZone       : 'codex-editor__redactor',
-      editorZoneHidden : 'codex-editor__redactor--hidden',
-      editorLoader     : 'codex-editor__loader',
-      editorEmpty      : 'codex-editor--empty',
+      editorWrapper: 'codex-editor',
+      editorWrapperNarrow: 'codex-editor--narrow',
+      editorZone: 'codex-editor__redactor',
+      editorZoneHidden: 'codex-editor__redactor--hidden',
+      editorLoader: 'codex-editor__loader',
+      editorEmpty: 'codex-editor--empty',
     };
   }
 
@@ -177,7 +177,7 @@ export default class UI extends Module {
    * Check if Editor is empty and set CSS class to wrapper
    */
   public checkEmptiness(): void {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
   }
@@ -244,7 +244,7 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**
@@ -296,6 +296,20 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
+
+    let blurTimeoutID: number | undefined;
+
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'focusin',
+      () => clearTimeout(blurTimeoutID),
+      false,
+    );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'focusout',
+      () => blurTimeoutID = setTimeout(() => this.config.onBlur(this.Editor.API.methods)),
+      false,
+    );
+
     this.Editor.Listeners.on(this.nodes.redactor,
       'mousedown',
       (event) => this.documentTouched(event as MouseEvent),
@@ -363,7 +377,7 @@ export default class UI extends Module {
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
-    const {currentBlock} = this.Editor.BlockManager;
+    const { currentBlock } = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
@@ -388,7 +402,7 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();

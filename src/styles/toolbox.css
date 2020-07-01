@@ -5,6 +5,15 @@
   will-change: opacity;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  background-color: #ffffff;
+  border: 1px solid var(--color-gray-border);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+  max-width: 288px;
+  padding: 4px;
+  text-align: center;
 
   @media (--mobile){
     position: static;
@@ -20,7 +29,24 @@
 
   &__button {
     @apply --toolbox-button;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     flex-shrink: 0;
+    flex-wrap: nowrap;
+    font-size: 0.75rem;
+    height: 64px;
+    justify-content: center;
+    margin: 4px;
+    width: 64px;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    min-width: 24px;
   }
 }
 

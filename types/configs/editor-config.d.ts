@@ -68,6 +68,12 @@ export interface EditorConfig {
   onReady?(): void;
 
   /**
+   * Fires when blurred
+   * @param {API} api - editor.js api
+   */
+  onBlur?(api: API): void;
+
+  /**
    * Fires when something changed in DOM
    * @param {API} api - editor.js api
    */
