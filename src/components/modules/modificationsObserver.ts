@@ -43,6 +43,11 @@ export default class ModificationsObserver extends Module {
   private nativeInputs: HTMLElement[] = [];
 
   /**
+   * setObserver timeout ID
+   */
+  private setObserverID?: number;
+
+  /**
    * Clear timeout and set null to mutationDebouncer property
    */
   public destroy() {
@@ -52,6 +57,8 @@ export default class ModificationsObserver extends Module {
     }
     this.observer = null;
     this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
+
+    window.clearTimeout(this.setObserverID);
   }
 
   /**
@@ -62,7 +69,7 @@ export default class ModificationsObserver extends Module {
     /**
      * wait till Browser render Editor's Blocks
      */
-    window.setTimeout( () => {
+    this.setObserverID = window.setTimeout( () => {
       if (this.mutationDebouncer) {
         this.setObserver();
       }
