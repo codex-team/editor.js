@@ -66,7 +66,7 @@ export default class ModificationsObserver extends Module {
       if (this.mutationDebouncer) {
         this.setObserver();
       }
-    }, 3000);
+    }, 1000);
   }
 
   /**
@@ -92,6 +92,10 @@ export default class ModificationsObserver extends Module {
    * so that User can handle outside from API
    */
   private setObserver(): void {
+    if (!('MutationObserver' in window)) {
+      return ;
+    }
+
     const {UI} = this.Editor;
     const observerOptions = {
       childList: true,

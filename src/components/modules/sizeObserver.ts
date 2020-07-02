@@ -16,13 +16,21 @@ export default class SizeObserver extends Module {
   private observer: ResizeObserver;
 
   /**
+   * setObserver timeout ID
+   */
+  private setObserverID?: number;
+
+  /**
    * Disconnect ResizeObserver
    */
   public destroy() {
     if (this.observer) {
       this.observer.disconnect();
     }
+
     this.observer = null;
+
+    window.clearTimeout(this.setObserverID);
   }
 
   /**
@@ -33,9 +41,9 @@ export default class SizeObserver extends Module {
     /**
      * wait till Browser render Editor's Blocks
      */
-    window.setTimeout( () => {
+    this.setObserverID = window.setTimeout( () => {
         this.setObserver();
-    }, 500);
+    }, 1000);
   }
 
   /**
