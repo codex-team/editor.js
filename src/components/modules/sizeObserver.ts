@@ -16,11 +16,6 @@ export default class SizeObserver extends Module {
   private observer: ResizeObserver;
 
   /**
-   * setObserver timeout ID
-   */
-  private setObserverID?: number;
-
-  /**
    * Disconnect ResizeObserver
    */
   public destroy() {
@@ -29,8 +24,6 @@ export default class SizeObserver extends Module {
     }
 
     this.observer = null;
-
-    window.clearTimeout(this.setObserverID);
   }
 
   /**
@@ -38,18 +31,6 @@ export default class SizeObserver extends Module {
    * @return {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    /**
-     * wait till Browser render Editor's Blocks
-     */
-    this.setObserverID = window.setTimeout( () => {
-        this.setObserver();
-    }, 1000);
-  }
-
-  /**
-   * Set observer
-   */
-  private setObserver(): void {
     if (!('ResizeObserver' in window)) {
       return ;
     }
@@ -67,6 +48,13 @@ export default class SizeObserver extends Module {
    * ResizeObserver events handler
    */
   private resizeHandler() {
+    /**
+     * Wait till Browser render Editor's Blocks
+     */
+    if (!this.Editor.BlockManager.currentBlock) {
+      return ;
+    }
+
     /**
      * Adjust toolbar position
      */
