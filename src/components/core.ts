@@ -193,6 +193,8 @@ export default class Core {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onReady = this.config.onReady || ((): void => {});
     // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.config.onBlur = this.config.onBlur || ((): void => {});
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onChange = this.config.onChange || ((): void => {});
 
     /**

@@ -315,24 +315,19 @@ export default class UI extends Module {
       false
     );
 
-    let blurTimerId: number | undefined;
+    let blurTimeoutID: number | undefined;
 
-    this.Editor.Listeners.on(
-      this.nodes.redactor,
+    this.Editor.Listeners.on(this.nodes.redactor,
       'focusin',
-      () => clearTimeout(blurTimerId),
-      false,
+      () => clearTimeout(blurTimeoutID),
+      false
     );
-
-    this.Editor.Listeners.on(
-      this.nodes.redactor,
+    this.Editor.Listeners.on(this.nodes.redactor,
       'focusout',
       () => {
-        blurTimerId = setTimeout(() => {
-          alert('blur');
-        });
+        blurTimeoutID = setTimeout(() => this.config.onBlur(this.Editor.API.methods));
       },
-      false,
+      false
     );
 
     this.Editor.Listeners.on(this.nodes.redactor,
