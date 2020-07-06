@@ -78,4 +78,9 @@ export interface EditorConfig {
    * @param {API} api - editor.js api
    */
   onChange?(api: API): void;
+
+  /**
+   * Editor's onChange debounce time
+   */
+  onChangeDebounceTime?: number;
 }
