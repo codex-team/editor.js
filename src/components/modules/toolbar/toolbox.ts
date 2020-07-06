@@ -185,6 +185,10 @@ export default class Toolbox extends Module {
 
     const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
 
+    if (userToolboxSettings.hidden === undefined ? toolToolboxSettings.hidden : userToolboxSettings.hidden === true) {
+      return;
+    }
+
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
