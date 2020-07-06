@@ -263,6 +263,7 @@ export default class Core {
       'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
+      'SizeObserver',
     ];
 
     await modulesToPrepare.reduce(
