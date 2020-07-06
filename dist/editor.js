@@ -12759,6 +12759,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.config.onReady = this.config.onReady || function () {};
 
+        this.config.onBlur = this.config.onBlur || function () {};
+
         this.config.onChange = this.config.onChange || function () {};
         /**
          * Initialize Blocks to pass data to the Renderer
@@ -25882,13 +25884,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
           return _this2.redactorClicked(event);
         }, false);
-        var blurTimerId;
+        var blurTimeoutID;
         this.Editor.Listeners.on(this.nodes.redactor, 'focusin', function () {
-          return clearTimeout(blurTimerId);
+          return clearTimeout(blurTimeoutID);
         }, false);
         this.Editor.Listeners.on(this.nodes.redactor, 'focusout', function () {
-          blurTimerId = setTimeout(function () {
-            alert('blur');
+          return blurTimeoutID = setTimeout(function () {
+            return _this2.config.onBlur(_this2.Editor.API.methods);
           });
         }, false);
         this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', function (event) {

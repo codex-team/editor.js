@@ -183,6 +183,7 @@ export default class Core {
     this.config.tools = this.config.tools || {};
     this.config.data = this.config.data || {} as OutputData;
     this.config.onReady = this.config.onReady || (() => {});
+    this.config.onBlur = this.config.onBlur || (() => {});
     this.config.onChange = this.config.onChange || (() => {});
 
     /**
