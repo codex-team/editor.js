@@ -2,7 +2,8 @@
 build/sprite.svg
 docs/
 example/
-src/
+src/*
+!src/types-internal
 .babelrc
 .editorconfig
 .eslintrc
