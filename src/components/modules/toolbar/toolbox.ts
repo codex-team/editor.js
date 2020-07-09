@@ -27,6 +27,7 @@ export default class Toolbox extends Module {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
       toolboxButtonActive : 'ce-toolbox__button--active',
+      toolboxIcon: 'ce-toolbox__icon',
       toolboxOpened: 'ce-toolbox--opened',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
 
@@ -186,8 +187,13 @@ export default class Toolbox extends Module {
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
 
+    const icon = $.make('div', [ this.CSS.toolboxIcon ]);
+
+    icon.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
+
+    $.append(button, icon);
+    $.append(button, this.drawToolLabel(toolName));
     $.append(this.nodes.toolbox, button);
 
     this.nodes.toolbox.appendChild(button);
@@ -198,16 +204,6 @@ export default class Toolbox extends Module {
      */
     this.Editor.Listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, toolName);
-    });
-
-    /**
-     * Add listeners to show/hide toolbox tooltip
-     */
-    const tooltipContent = this.drawTooltip(toolName);
-
-    this.Editor.Tooltip.onHover(button, tooltipContent, {
-      placement: 'bottom',
-      hidingDelay: 200,
     });
 
     /**
@@ -224,33 +220,29 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * Draw tooltip for toolbox tools
+   * Draw tool label for toolbox tools
    *
    * @param {String} toolName - toolbox tool name
    * @return { HTMLElement }
    */
-  private drawTooltip(toolName: string): HTMLElement {
+  private drawToolLabel(toolName: string): HTMLElement {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
     const name = userToolboxSettings.title || toolboxSettings.title || toolName;
+    const label = $.make('div');
+    const nameContainer = $.make('div');
 
-    let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
+    nameContainer.appendChild($.text(_.capitalize(name)));
+    label.appendChild(nameContainer);
 
-    const tooltip = $.make('div', this.CSS.buttonTooltip);
-    const hint = document.createTextNode(_.capitalize(name));
+    const shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
+    const shortcutContainer = $.make('div');
 
-    tooltip.appendChild(hint);
+    shortcutContainer.appendChild($.text(shortcut && _.beautifyShortcut(shortcut) || '　'));
+    label.appendChild(shortcutContainer);
 
-    if (shortcut) {
-      shortcut = _.beautifyShortcut(shortcut);
-
-      tooltip.appendChild($.make('div', this.CSS.buttonShortcut, {
-        textContent: shortcut,
-      }));
-    }
-
-    return tooltip;
+    return label;
   }
 
   /**
