@@ -1,10 +1,11 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import {BlockToolConstructable} from '../../../../types';
+import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
-import {SavedData} from '../../../types-internal/block-data';
-import Block from '../../block';
+import { SavedData } from '../../../types-internal/block-data';
 import Flipper from '../../flipper';
+import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * Block Converter
@@ -23,8 +24,8 @@ export default class ConversionToolbar extends Module {
       conversionToolHidden: 'ce-conversion-tool--hidden',
       conversionToolIcon: 'ce-conversion-tool__icon',
 
-      conversionToolFocused : 'ce-conversion-tool--focused',
-      conversionToolActive : 'ce-conversion-tool--active',
+      conversionToolFocused: 'ce-conversion-tool--focused',
+      conversionToolActive: 'ce-conversion-tool--active',
     };
   }
 
@@ -38,9 +39,10 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Conversion Toolbar open/close state
+   *
    * @type {boolean}
    */
-  public opened: boolean = false;
+  public opened = false;
 
   /**
    * Available tools
@@ -49,6 +51,7 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -66,7 +69,7 @@ export default class ConversionToolbar extends Module {
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
-      textContent: 'Convert to',
+      textContent: I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'),
     });
 
     /**
@@ -87,7 +90,8 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Toggle conversion dropdown visibility
-   * @param {function} [togglingCallback] — callback that will accept opening state
+   *
+   * @param {Function} [togglingCallback] — callback that will accept opening state
    */
   public toggle(togglingCallback?: (openedState: boolean) => void): void {
     if (!this.opened) {
@@ -152,11 +156,12 @@ export default class ConversionToolbar extends Module {
    * Replaces one Block with another
    * For that Tools must provide import/export methods
    *
-   * @param {string} replacingToolName
+   * @param {string} replacingToolName - name of Tool which replaces current
    */
   public async replaceWithBlock(replacingToolName: string): Promise <void> {
     /**
      * At first, we get current Block data
+     *
      * @type {BlockToolConstructable}
      */
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
@@ -175,6 +180,7 @@ export default class ConversionToolbar extends Module {
 
     /**
      * Getting a class of replacing Tool
+     *
      * @type {BlockToolConstructable}
      */
     const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
@@ -186,7 +192,7 @@ export default class ConversionToolbar extends Module {
      *
      * In both cases returning value must be a string
      */
-    let exportData: string = '';
+    let exportData = '';
     const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
 
     if (typeof exportProp === 'function') {
@@ -196,6 +202,7 @@ export default class ConversionToolbar extends Module {
     } else {
       _.log('Conversion «export» property must be a string or function. ' +
         'String means key of saved data object to export. Function should export processed string to export.');
+
       return;
     }
 
@@ -204,7 +211,7 @@ export default class ConversionToolbar extends Module {
      */
     const cleaned: string = this.Editor.Sanitizer.clean(
       exportData,
-      replacingTool.sanitize,
+      replacingTool.sanitize
     );
 
     /**
@@ -222,10 +229,14 @@ export default class ConversionToolbar extends Module {
     } else {
       _.log('Conversion «import» property must be a string or function. ' +
         'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
+
       return;
     }
 
-    this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+    this.Editor.BlockManager.replace({
+      tool: replacingToolName,
+      data: newBlockData,
+    });
     this.Editor.BlockSelection.clearSelection();
 
     this.close();
@@ -244,7 +255,7 @@ export default class ConversionToolbar extends Module {
     const tools = this.Editor.Tools.blockTools;
 
     for (const toolName in tools) {
-      if (!tools.hasOwnProperty(toolName)) {
+      if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
         continue;
       }
 
@@ -273,6 +284,10 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Add tool to the Conversion Toolbar
+   *
+   * @param {string} toolName - name of Tool to add
+   * @param {string} toolIcon - Tool icon
+   * @param {string} title - button title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
@@ -282,7 +297,7 @@ export default class ConversionToolbar extends Module {
     icon.innerHTML = toolIcon;
 
     $.append(tool, icon);
-    $.append(tool, $.text(title || _.capitalize(toolName)));
+    $.append(tool, $.text(I18n.t(I18nInternalNS.toolNames, title || _.capitalize(toolName))));
 
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;

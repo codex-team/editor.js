@@ -1,8 +1,39 @@
 # Editor.js API
 
+---
+Most actual API described by [this interface](../types/api/index.d.ts).
 
-Blocks have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
+---
+📃 See official API documentation [https://editorjs.io/api](https://editorjs.io/api)
+
+---
+
+Tools have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
 can use Editor\`s API as they want.
+
+## Block API
+
+API for certain Block methods and properties. You can access it through `editor.api.block.getBlockByIndex` method or get it form `block` property of [Tool constructor](../types/tools/block-tool.d.ts) argument.
+
+`name: string` — Block's Tool name (key, specified in `tools` property of initial configuration)
+
+`config: ToolConfig` — Tool config passed on Editor initialization
+
+`holder: HTMLElement` — HTML Element that wraps Tool's HTML content
+
+`isEmpty: boolean` — `true` if Block has any editable content
+
+`selected: boolean` - `true` if Block is selected with Cross-Block Selection
+
+`set stretched(state: boolean)` — set Block's stretch state
+
+`stretched: boolean` — `true` if Block is stretched
+
+`call(methodName: string, param?: object): void` — method to call any Tool's instance methods with checks and error handlers under-the-hood. For example, [Block lifecycle hooks](./tools.md#block-lifecycle-hooks)
+
+`save(): Promise<void|SavedData>` — returns data saved from current Block's state, including Tool name and saving exec time
+
+`validate(data: BlockToolData): Promise<boolean>` — calls Tool's validate method if exists
 
 ## Api object description
 
@@ -36,13 +67,13 @@ use 'move' instead)
 
 `getCurrentBlockIndex()` - current Block index
 
-`getBlockByIndex(index: Number)` - returns Block with passed index
+`getBlockByIndex(index: Number)` - returns Block API object by passed index
 
 `getBlocksCount()` - returns Blocks count
 
-`stretchBlock(index: number, status: boolean)` - make Block stretched
+`stretchBlock(index: number, status: boolean)` - _Deprecated. Use Block API interface instead._ make Block stretched.
 
-`insertNewBlock()` - __Deprecated__ insert new Block after working place 
+`insertNewBlock()` - __Deprecated__ insert new Block after working place
 
 `insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
 
@@ -100,11 +131,11 @@ Each method accept `position` and `offset` parameters. `Offset` should be used t
 
 `Position` can be one of the following values:
 
-| Value     | Description 
-| --------- | ----------- 
+| Value     | Description
+| --------- | -----------
 | `start`   | Caret will be set at the Block's beginning
 | `end`     | Caret will be set at the Block end
-| `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
+| `default` | More or less emulates browser behaviour, in most cases behaves as `start`
 
 Each method returns `boolean` value: true if caret is set successfully or false otherwise (e.g. when there is no Block at index);
 
@@ -148,7 +179,7 @@ this.api.notifier.show({
 ![](https://capella.pics/14fcdbe4-d6eb-41d4-b66e-e0e86ccf1a4b.jpg)
 
 
-Check out [`codex-notifier` package page](https://github.com/codex-team/js-notifier) on GitHub to find docs, params and examples. 
+Check out [`codex-notifier` package page](https://github.com/codex-team/js-notifier) on GitHub to find docs, params and examples.
 
 ### Destroy API
 
@@ -173,10 +204,10 @@ Methods for showing Tooltip helper near your elements. Parameters are the same a
 #### Show
 
 Method shows tooltip with custom content on passed element
- 
+
 ```js
 this.api.tooltip.show(element, content, options);
-``` 
+```
 
 | parameter | type | description |
 | -- | -- | -- |
@@ -184,17 +215,17 @@ this.api.tooltip.show(element, content, options);
 | `content` | _String_ or _Node_ | Content that will be appended to the Tooltip |
 | `options` | _Object_ | Some displaying options, see below |
 
-Available showing options 
+Available showing options
 
 | name | type | action |
 | -- | -- | -- |
-| placement | `top`, `bottom`, `left`, `right` | Where to place the tooltip. Default value is `bottom' | 
-| marginTop | _Number_ | Offset above the tooltip with `top` placement | 
-| marginBottom | _Number_ | Offset below the tooltip with `bottom` placement | 
-| marginLeft | _Number_ | Offset at left from the tooltip with `left` placement | 
-| marginRight | _Number_ | Offset at right from the tooltip with `right` placement | 
-| delay | _Number_ | Delay before showing, in ms. Default is `70` | 
-| hidingDelay | _Number_ | Delay before hiding, in ms. Default is `0` | 
+| placement | `top`, `bottom`, `left`, `right` | Where to place the tooltip. Default value is `bottom' |
+| marginTop | _Number_ | Offset above the tooltip with `top` placement |
+| marginBottom | _Number_ | Offset below the tooltip with `bottom` placement |
+| marginLeft | _Number_ | Offset at left from the tooltip with `left` placement |
+| marginRight | _Number_ | Offset at right from the tooltip with `right` placement |
+| delay | _Number_ | Delay before showing, in ms. Default is `70` |
+| hidingDelay | _Number_ | Delay before hiding, in ms. Default is `0` |
 
 #### Hide
 
@@ -206,7 +237,7 @@ this.api.tooltip.hide();
 
 #### onHover
 
-Decorator for showing tooltip near some element by "mouseenter" and hide by "mouseleave". 
+Decorator for showing tooltip near some element by "mouseenter" and hide by "mouseleave".
 
 ```js
 this.api.tooltip.onHover(element, content, options);
@@ -214,7 +245,7 @@ this.api.tooltip.onHover(element, content, options);
 
 ### API Shorthands
 
-Editor`s API provides some shorthands for API methods. 
+Editor`s API provides some shorthands for API methods.
 
 | Alias    | Method          |
 | ------   | --------------- |

@@ -1,11 +1,14 @@
+import * as _ from './utils';
+
 /**
  * DOM manipulations helper
  */
 export default class Dom {
   /**
    * Check if passed tag has no closed tag
-   * @param  {HTMLElement}  tag
-   * @return {Boolean}
+   *
+   * @param {HTMLElement} tag - element to check
+   * @returns {boolean}
    */
   public static isSingleTag(tag: HTMLElement): boolean {
     return tag.tagName && [
@@ -31,10 +34,10 @@ export default class Dom {
   /**
    * Check if element is BR or WBR
    *
-   * @param {HTMLElement} element
-   * @return {boolean}
+   * @param {HTMLElement} element - element to check
+   * @returns {boolean}
    */
-  public static isLineBreakTag(element: HTMLElement) {
+  public static isLineBreakTag(element: HTMLElement): element is HTMLBRElement {
     return element && element.tagName && [
       'BR',
       'WBR',
@@ -44,22 +47,23 @@ export default class Dom {
   /**
    * Helper for making Elements with classname and attributes
    *
-   * @param  {string} tagName           - new Element tag name
-   * @param  {array|string} classNames  - list or name of CSS classname(s)
-   * @param  {Object} attributes        - any attributes
-   * @return {HTMLElement}
+   * @param  {string} tagName - new Element tag name
+   * @param  {string[]|string} [classNames] - list or name of CSS classname(s)
+   * @param  {object} [attributes] - any attributes
+   *
+   * @returns {HTMLElement}
    */
   public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
-    if ( Array.isArray(classNames) ) {
+    if (Array.isArray(classNames)) {
       el.classList.add(...classNames);
-    } else if ( classNames ) {
+    } else if (classNames) {
       el.classList.add(classNames);
     }
 
     for (const attrName in attributes) {
-      if (attributes.hasOwnProperty(attrName)) {
+      if (Object.prototype.hasOwnProperty.call(attributes, attrName)) {
         el[attrName] = attributes[attrName];
       }
     }
@@ -69,8 +73,10 @@ export default class Dom {
 
   /**
    * Creates Text Node with the passed content
-   * @param {String} content - text content
-   * @return {Text}
+   *
+   * @param {string} content - text content
+   *
+   * @returns {Text}
    */
   public static text(content: string): Text {
     return document.createTextNode(content);
@@ -78,12 +84,14 @@ export default class Dom {
 
   /**
    * Creates SVG icon linked to the sprite
+   *
    * @param {string} name - name (id) of icon from sprite
-   * @param {number} width
-   * @param {number} height
-   * @return {SVGElement}
+   * @param {number} [width] - icon width
+   * @param {number} [height] - icon height
+   *
+   * @returns {SVGElement}
    */
-  public static svg(name: string, width: number = 14, height: number = 14): SVGElement {
+  public static svg(name: string, width = 14, height = 14): SVGElement {
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     icon.classList.add('icon', 'icon--' + name);
@@ -97,15 +105,15 @@ export default class Dom {
   /**
    * Append one or several elements to the parent
    *
-   * @param  {Element|DocumentFragment} parent    - where to append
-   * @param  {Element|Element[]|Text|Text[]} elements - element or elements list
+   * @param  {Element|DocumentFragment} parent - where to append
+   * @param  {Element|Element[]|DocumentFragment|Text|Text[]} elements - element or elements list
    */
   public static append(
     parent: Element|DocumentFragment,
-    elements: Element|Element[]|DocumentFragment|Text|Text[],
+    elements: Element|Element[]|DocumentFragment|Text|Text[]
   ): void {
-    if ( Array.isArray(elements) ) {
-      elements.forEach( (el) => parent.appendChild(el) );
+    if (Array.isArray(elements)) {
+      elements.forEach((el) => parent.appendChild(el));
     } else {
       parent.appendChild(elements);
     }
@@ -118,9 +126,9 @@ export default class Dom {
    * @param {Element|Element[]} elements - element or elements list
    */
   public static prepend(parent: Element, elements: Element|Element[]): void {
-    if ( Array.isArray(elements) ) {
+    if (Array.isArray(elements)) {
       elements = elements.reverse();
-      elements.forEach( (el) => parent.prepend(el) );
+      elements.forEach((el) => parent.prepend(el));
     } else {
       parent.prepend(elements);
     }
@@ -128,6 +136,7 @@ export default class Dom {
 
   /**
    * Swap two elements in parent
+   *
    * @param {HTMLElement} el1 - from
    * @param {HTMLElement} el2 - to
    * @deprecated
@@ -135,7 +144,7 @@ export default class Dom {
   public static swap(el1: HTMLElement, el2: HTMLElement): void {
     // create marker element and insert it where el1 is
     const temp = document.createElement('div'),
-      parent = el1.parentNode;
+        parent = el1.parentNode;
 
     parent.insertBefore(temp, el1);
 
@@ -155,7 +164,7 @@ export default class Dom {
    * Returns first match
    *
    * @param {Element} el - element we searching inside. Default - DOM Document
-   * @param {String} selector - searching string
+   * @param {string} selector - searching string
    *
    * @returns {Element}
    */
@@ -166,10 +175,10 @@ export default class Dom {
   /**
    * Get Element by Id
    *
-   * @param {string} id
+   * @param {string} id - id to find
    * @returns {HTMLElement | null}
    */
-  public static get(id: string): HTMLElement {
+  public static get(id: string): HTMLElement | null {
     return document.getElementById(id);
   }
 
@@ -178,12 +187,42 @@ export default class Dom {
    *
    * Returns all matches
    *
-   * @param {Element} el - element we searching inside. Default - DOM Document
-   * @param {String} selector - searching string
+   * @param {Element|Document} el - element we searching inside. Default - DOM Document
+   * @param {string} selector - searching string
+   *
    * @returns {NodeList}
    */
   public static findAll(el: Element|Document = document, selector: string): NodeList {
     return el.querySelectorAll(selector);
+  }
+
+  /**
+   * Returns CSS selector for all text inputs
+   */
+  public static get allInputsSelector(): string {
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
+
+    return '[contenteditable], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
+  }
+
+  /**
+   * Find all contendeditable, textarea and editable input elements passed holder contains
+   *
+   * @param holder - element where to find inputs
+   */
+  public static findAllInputs(holder: Element): HTMLElement[] {
+    return _.array(holder.querySelectorAll(Dom.allInputsSelector))
+      /**
+       * If contenteditable element contains block elements, treat them as inputs.
+       */
+      .reduce((result, input) => {
+        if (Dom.isNativeInput(input) || Dom.containsOnlyInlineElements(input)) {
+          return [...result, input];
+        }
+
+        return [...result, ...Dom.getDeepestBlockElements(input)];
+      }, []);
   }
 
   /**
@@ -194,18 +233,20 @@ export default class Dom {
    *
    * @param {Node} node - root Node. From this vertex we start Deep-first search
    *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
-   * @param {Boolean} atLast - find last text node
-   * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
+   * @param {boolean} [atLast] - find last text node
+   *
+   * @returns {Node} - it can be text Node or Element Node, so that caret will able to work with it
    */
-  public static getDeepestNode(node: Node, atLast: boolean = false): Node {
+  public static getDeepestNode(node: Node, atLast = false): Node {
     /**
      * Current function have two directions:
      *  - starts from first child and every time gets first or nextSibling in special cases
      *  - starts from last child and gets last or previousSibling
+     *
      * @type {string}
      */
     const child = atLast ? 'lastChild' : 'firstChild',
-      sibling = atLast ? 'previousSibling' : 'nextSibling';
+        sibling = atLast ? 'previousSibling' : 'nextSibling';
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
       let nodeChild = node[child] as Node;
@@ -245,9 +286,11 @@ export default class Dom {
   /**
    * Check if object is DOM node
    *
-   * @param {Object} node
+   * @param {*} node - object to check
+   *
    * @returns {boolean}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isElement(node: any): node is Element {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
@@ -255,17 +298,20 @@ export default class Dom {
   /**
    * Check if object is DocumentFragmemt node
    *
-   * @param {Object} node
+   * @param {object} node - object to check
    * @returns {boolean}
    */
-  public static isFragment(node: any): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public static isFragment(node: any): node is DocumentFragment {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
   /**
    * Check if passed element is contenteditable
-   * @param {HTMLElement} element
-   * @return {boolean}
+   *
+   * @param {HTMLElement} element - html element to check
+   *
+   * @returns {boolean}
    */
   public static isContentEditable(element: HTMLElement): boolean {
     return element.contentEditable === 'true';
@@ -273,10 +319,13 @@ export default class Dom {
 
   /**
    * Checks target if it is native input
-   * @param {Element|String|Node} target - HTML element or string
-   * @return {Boolean}
+   *
+   * @param {*} target - HTML element or string
+   *
+   * @returns {boolean}
    */
-  public static isNativeInput(target: any): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public static isNativeInput(target: any): target is HTMLInputElement | HTMLTextAreaElement {
     const nativeInputs = [
       'INPUT',
       'TEXTAREA',
@@ -287,14 +336,16 @@ export default class Dom {
 
   /**
    * Checks if we can set caret
-   * @param {HTMLElement} target
-   * @return {boolean}
+   *
+   * @param {HTMLElement} target - target to check
+   *
+   * @returns {boolean}
    */
   public static canSetCaret(target: HTMLElement): boolean {
     let result = true;
+
     if (Dom.isNativeInput(target)) {
-      const inputElement = target as HTMLInputElement;
-      switch (inputElement.type) {
+      switch (target.type) {
         case 'file':
         case 'checkbox':
         case 'radio':
@@ -309,6 +360,7 @@ export default class Dom {
     } else {
       result = Dom.isContentEditable(target);
     }
+
     return result;
   }
 
@@ -318,8 +370,9 @@ export default class Dom {
    * @description Method checks simple Node without any childs for emptiness
    * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
    *
-   * @param {Node} node
-   * @return {Boolean} true if it is empty
+   * @param {Node} node - node to check
+   *
+   * @returns {boolean} true if it is empty
    */
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
@@ -328,7 +381,7 @@ export default class Dom {
       return false;
     }
 
-    if ( this.isElement(node) && this.isNativeInput(node) ) {
+    if (this.isElement(node) && this.isNativeInput(node)) {
       nodeText = (node as HTMLInputElement).value;
     } else {
       nodeText = node.textContent.replace('\u200B', '');
@@ -339,8 +392,10 @@ export default class Dom {
 
   /**
    * checks node if it is doesn't have any child nodes
-   * @param {Node} node
-   * @return {boolean}
+   *
+   * @param {Node} node - node to check
+   *
+   * @returns {boolean}
    */
   public static isLeaf(node: Node): boolean {
     if (!node) {
@@ -356,63 +411,42 @@ export default class Dom {
    *
    * @description Pushes to stack all DOM leafs and checks for emptiness
    *
-   * @param {Node} node
-   * @return {boolean}
+   * @param {Node} node - node to check
+   * @returns {boolean}
    */
   public static isEmpty(node: Node): boolean {
-    const treeWalker = [],
-      leafs = [];
-
-    if (!node) {
-      return true;
-    }
-
-    if (!node.childNodes.length) {
-      return this.isNodeEmpty(node);
-    }
-
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
     node.normalize();
 
-    treeWalker.push(node.firstChild);
+    const treeWalker = [ node ];
 
-    while ( treeWalker.length > 0 ) {
+    while (treeWalker.length > 0) {
       node = treeWalker.shift();
 
-      if (!node) { continue; }
-
-      if ( this.isLeaf(node) ) {
-        leafs.push(node);
-      } else {
-        treeWalker.push(node.firstChild);
+      if (!node) {
+        continue;
       }
 
-      while ( node && node.nextSibling ) {
-        node = node.nextSibling;
-
-        if (!node) { continue; }
-
-        treeWalker.push(node);
-      }
-
-      /**
-       * If one of childs is not empty, checked Node is not empty too
-       */
-      if (node && !this.isNodeEmpty(node)) {
+      if (this.isLeaf(node) && !this.isNodeEmpty(node)) {
         return false;
+      }
+
+      if (node.childNodes) {
+        treeWalker.push(...Array.from(node.childNodes));
       }
     }
 
-    return leafs.every( (leaf) => this.isNodeEmpty(leaf) );
+    return true;
   }
 
   /**
    * Check if string contains html elements
    *
+   * @param {string} str - string to check
+   *
    * @returns {boolean}
-   * @param {String} str
    */
   public static isHTMLString(str: string): boolean {
     const wrapper = Dom.make('div');
@@ -425,7 +459,8 @@ export default class Dom {
   /**
    * Return length of node`s text content
    *
-   * @param {Node} node
+   * @param {Node} node - node with content
+   *
    * @returns {number}
    */
   public static getContentLength(node: Node): number {
@@ -445,7 +480,7 @@ export default class Dom {
    *
    * @returns {string[]}
    */
-  static get blockElements(): string[] {
+  public static get blockElements(): string[] {
     return [
       'address',
       'article',
@@ -491,7 +526,8 @@ export default class Dom {
    * Check if passed content includes only inline elements
    *
    * @param {string|HTMLElement} data - element or html string
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
     let wrapper: HTMLElement;
@@ -503,9 +539,9 @@ export default class Dom {
       wrapper = data;
     }
 
-    const check = (element: HTMLElement) => {
-      return !Dom.blockElements.includes(element.tagName.toLowerCase())
-        && Array.from(element.children).every(check);
+    const check = (element: HTMLElement): boolean => {
+      return !Dom.blockElements.includes(element.tagName.toLowerCase()) &&
+        Array.from(element.children).every(check);
     };
 
     return Array.from(wrapper.children).every(check);
@@ -514,13 +550,13 @@ export default class Dom {
   /**
    * Find and return all block elements in the passed parent (including subtree)
    *
-   * @param {HTMLElement} parent
+   * @param {HTMLElement} parent - root element
    *
-   * @return {HTMLElement[]}
+   * @returns {HTMLElement[]}
    */
   public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
     if (Dom.containsOnlyInlineElements(parent)) {
-      return [parent];
+      return [ parent ];
     }
 
     return Array.from(parent.children).reduce((result, element) => {
@@ -528,18 +564,27 @@ export default class Dom {
     }, []);
   }
 
-  /*
+  /**
    * Helper for get holder from {string} or return HTMLElement
-   * @param element
+   *
+   * @param {string | HTMLElement} element - holder's id or holder's HTML Element
+   *
+   * @returns {HTMLElement}
    */
   public static getHolder(element: string | HTMLElement): HTMLElement {
-    if (typeof element === 'string') { return document.getElementById(element); }
+    if (typeof element === 'string') {
+      return document.getElementById(element);
+    }
+
     return element;
   }
 
   /**
    * Method checks passed Node if it is some extension Node
+   *
    * @param {Node} node - any node
+   *
+   * @returns {boolean}
    */
   public static isExtensionNode(node: Node): boolean {
     const extensions = [
@@ -552,9 +597,11 @@ export default class Dom {
   /**
    * Returns true if element is anchor (is A tag)
    *
-   * @param element
+   * @param {Element} element - element to check
+   *
+   * @returns {boolean}
    */
-  public static isAnchor(element: Element): boolean {
+  public static isAnchor(element: Element): element is HTMLAnchorElement {
     return element.tagName.toLowerCase() === 'a';
   }
 }

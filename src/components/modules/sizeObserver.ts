@@ -7,8 +7,10 @@
 import Module from '../__module';
 import * as _ from '../utils';
 
+/**
+ *
+ */
 export default class SizeObserver extends Module {
-
   /**
    * ResizeObserver instance
    */
@@ -28,14 +30,15 @@ export default class SizeObserver extends Module {
 
   /**
    * Preparation method
-   * @return {Promise<void>}
+   *
+   * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
     if (!('ResizeObserver' in window)) {
-      return ;
+      return;
     }
 
-    const {UI} = this.Editor;
+    const { UI } = this.Editor;
 
     // @ts-ignore
     this.observer = new ResizeObserver(() => {
@@ -52,7 +55,7 @@ export default class SizeObserver extends Module {
      * Wait till Browser render Editor's Blocks
      */
     if (!this.Editor.BlockManager.currentBlock) {
-      return ;
+      return;
     }
 
     /**

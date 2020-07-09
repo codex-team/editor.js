@@ -9,10 +9,13 @@ import Module from '../__module';
 import * as _ from '../utils';
 import Block from '../block';
 
+/**
+ *
+ */
 export default class ModificationsObserver extends Module {
-
   /**
    * Debounce Timer
+   *
    * @type {number}
    */
   public static readonly DebounceTimer = 450;
@@ -29,9 +32,10 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Used to prevent several mutation callback execution
+   *
    * @type {Function}
    */
-  private mutationDebouncer = _.debounce( () => {
+  private mutationDebouncer = _.debounce(() => {
     this.updateNativeInputs();
     this.config.onChange(this.Editor.API.methods);
   }, ModificationsObserver.DebounceTimer);
@@ -50,7 +54,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Clear timeout and set null to mutationDebouncer property
    */
-  public destroy() {
+  public destroy(): void {
     this.mutationDebouncer = null;
     if (this.observer) {
       this.observer.disconnect();
@@ -63,13 +67,14 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Preparation method
-   * @return {Promise<void>}
+   *
+   * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
     /**
      * wait till Browser render Editor's Blocks
      */
-    this.setObserverID = window.setTimeout( () => {
+    this.setObserverID = window.setTimeout(() => {
       if (this.mutationDebouncer) {
         this.setObserver();
       }
@@ -80,7 +85,7 @@ export default class ModificationsObserver extends Module {
    * Allows to disable observer,
    * for example when Editor wants to stealthy mutate DOM
    */
-  public disable() {
+  public disable(): void {
     this.disabled = true;
   }
 
@@ -88,7 +93,7 @@ export default class ModificationsObserver extends Module {
    * Enables mutation handling
    * Should be called after .disable()
    */
-  public enable() {
+  public enable(): void {
     this.disabled = false;
   }
 
@@ -100,10 +105,10 @@ export default class ModificationsObserver extends Module {
    */
   private setObserver(): void {
     if (!('MutationObserver' in window)) {
-      return ;
+      return;
     }
 
-    const {UI} = this.Editor;
+    const { UI } = this.Editor;
     const observerOptions = {
       childList: true,
       attributes: true,
@@ -120,10 +125,11 @@ export default class ModificationsObserver extends Module {
 
   /**
    * MutationObserver events handler
-   * @param mutationList
-   * @param observer
+   *
+   * @param {MutationRecord[]} mutationList - list of mutations
+   * @param {MutationObserver} observer - observer instance
    */
-  private mutationHandler(mutationList, observer) {
+  private mutationHandler(mutationList: MutationRecord[], observer): void {
     /**
      * Skip mutations in stealth mode
      */
@@ -141,20 +147,15 @@ export default class ModificationsObserver extends Module {
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case 'childList':
-        case 'subtree':
         case 'characterData':
-        case 'characterDataOldValue':
           contentMutated = true;
           break;
         case 'attributes':
-          const mutatedTarget = mutation.target as Element;
-
           /**
            * Changes on Element.ce-block usually is functional
            */
-          if (!mutatedTarget.classList.contains(Block.CSS.wrapper)) {
+          if (!(mutation.target as Element).classList.contains(Block.CSS.wrapper)) {
             contentMutated = true;
-            return;
           }
           break;
       }

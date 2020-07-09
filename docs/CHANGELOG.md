@@ -1,5 +1,30 @@
 # Changelog
 
+### 2.18
+
+- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
+- `New` — Block API that allows you to access certain Block properties and methods
+- `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
+- `Improvements` - Fix many code-style issues, add missed annotations.
+- `Improvements` - Adjusted GitHub action for ESLint.
+- `Improvements` - Blocks API: if `blocks.delete` method is called, but no Block is selected, show warning instead of throwing an error [#1102](https://github.com/codex-team/editor.js/issues/1102)
+- `Improvements` - Blocks API: allow deletion of blocks by specifying block index via `blocks.delete(index)`.
+- `Improvements` - UX: Navigate next Block from the last non-initial one creates new initial Block now [#1103](https://github.com/codex-team/editor.js/issues/1103)
+- `Improvements` - Improve performance of DOM traversing at the `isEmpty()` method [#1095](https://github.com/codex-team/editor.js/issues/1095)
+- `Improvements` - CODE OF CONDUCT added
+- `Improvements` - Disabled useCapture flag for a block keydown handling. That will allow plugins to override keydown and stop event propagation, for example, to make own Tab behavior.
+- `Improvements` - All modules now might have `destroy` method called on Editor.js destroy
+- `Improvements` - Block settings can contain text inputs, focus will be restored after settings closed [#1090](https://github.com/codex-team/editor.js/issues/1090)
+- `Fix` - Editor's styles won't be appended to the `<head>` when another instance have already do that [#1079](https://github.com/codex-team/editor.js/issues/1079)
+- `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
+- `Fix` - Toolbox: Tool's order in Toolbox now saved in accordance with `tools` object keys order [#1073](https://github.com/codex-team/editor.js/issues/1073)
+- `Fix` - Setting `autofocus` config property to `true` cause adding `.ce-block--focused` for the autofocused block  [#1073](https://github.com/codex-team/editor.js/issues/1124)
+- `Fix` - Public getter `shortcut` now works for Inline Tools [#1132](https://github.com/codex-team/editor.js/issues/1132)
+- `Fix` - `CMD+A` handler removed after Editor.js destroy [#1133](https://github.com/codex-team/editor.js/issues/1133)
+
+>  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
+
+
 ### 2.17
 
 - `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter
@@ -14,6 +39,7 @@
 - `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
 - `Fix` — Improve plain text paste [#1012](https://github.com/codex-team/editor.js/issues/1012)
 - `Fix` — Fix multiline paste [#1015](https://github.com/codex-team/editor.js/issues/1015)
+
 
 ### 2.16.1
 

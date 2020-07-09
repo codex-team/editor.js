@@ -1,7 +1,6 @@
 'use strict';
-import {EditorConfig} from '../types';
 
-declare const VERSION: string;
+import { EditorConfig } from '../types';
 
 /**
  * Apply polyfills
@@ -10,14 +9,18 @@ import '@babel/register';
 
 import 'components/polyfills';
 import Core from './components/core';
+import * as _ from './components/utils';
+
+declare const VERSION: string;
 
 /**
  * Editor.js
  *
  * Short Description (눈_눈;)
- * @version 2.0
  *
- * @licence Apache-2.0
+ * @version 2.18.0
+ *
+ * @license Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
  */
 export default class EditorJS {
@@ -33,20 +36,19 @@ export default class EditorJS {
   public destroy: () => void;
 
   /** Editor version */
-  static get version(): string {
+  public static get version(): string {
     return VERSION;
   }
 
   /**
-   * @constructor
-   *
-   * @param {EditorConfig|String|undefined} [configuration] - user configuration
+   * @param {EditorConfig|string|undefined} [configuration] - user configuration
    */
-  public constructor(configuration?: EditorConfig|string) {
+  constructor(configuration?: EditorConfig|string) {
     /**
      * Set default onReady function
      */
-    let onReady = () => {};
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    let onReady = (): void => {};
 
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
@@ -63,6 +65,7 @@ export default class EditorJS {
     /**
      * We need to export isReady promise in the constructor
      * as it can be used before other API methods are exported
+     *
      * @type {Promise<void>}
      */
     this.isReady = editor.isReady.then(() => {
@@ -74,19 +77,22 @@ export default class EditorJS {
   /**
    * Export external API methods
    *
-   * @param editor
+   * @param {Core} editor — Editor's instance
    */
   public exportAPI(editor: Core): void {
     const fieldsToExport = [ 'configuration' ];
-    const destroy = () => {
-      editor.moduleInstances.Listeners.removeAll();
-      editor.moduleInstances.UI.destroy();
-      editor.moduleInstances.ModificationsObserver.destroy();
-      editor.moduleInstances.SizeObserver.destroy();
+    const destroy = (): void => {
+      Object.values(editor.moduleInstances)
+        .forEach((moduleInstance) => {
+          if (_.isFunction(moduleInstance.destroy)) {
+            moduleInstance.destroy();
+          }
+        });
+
       editor = null;
 
       for (const field in this) {
-        if (this.hasOwnProperty(field)) {
+        if (Object.prototype.hasOwnProperty.call(this, field)) {
           delete this[field];
         }
       }
