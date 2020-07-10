@@ -6,17 +6,22 @@
  */
 
 import $ from '../dom';
-import {API, BlockTune} from '../../../types';
+import { API, BlockTune } from '../../../types';
 
+/**
+ *
+ */
 export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
-   * @see {api.md}
+   *
+   * @see {@link docs/api.md}
    */
   private readonly api: API;
 
   /**
    * Styles
+   *
    * @type {{wrapper: string}}
    */
   private CSS = {
@@ -28,53 +33,58 @@ export default class MoveDownTune implements BlockTune {
   /**
    * MoveDownTune constructor
    *
-   * @param {{api: API}} api
+   * @param {API} api — Editor's API
    */
-  public constructor({api}) {
+  constructor({ api }) {
     this.api = api;
   }
 
   /**
    * Return 'move down' button
+   *
+   * @returns {HTMLElement}
    */
-  public render() {
+  public render(): HTMLElement {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
+
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
     this.api.listeners.on(
       moveDownButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveDownButton),
-      false,
+      false
     );
 
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveDownButton, 'Move down');
+    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'));
 
     return moveDownButton;
   }
 
   /**
    * Handle clicks on 'move down' button
-   * @param {MouseEvent} event
-   * @param {HTMLElement} button
+   *
+   * @param {MouseEvent} event - click event
+   * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event: MouseEvent, button: HTMLElement) {
-
+  public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     // If Block is last do nothing
     if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
       button.classList.add(this.CSS.animation);
 
-      window.setTimeout( () => {
+      window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
       }, 500);
+
       return;
     }
 
-    const nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
+    const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
+    const nextBlockElement = nextBlock.holder;
     const nextBlockCoords = nextBlockElement.getBoundingClientRect();
 
     let scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
@@ -84,15 +94,13 @@ export default class MoveDownTune implements BlockTune {
      * Increment scroll by next block's height to save element onscreen-position
      */
     if (nextBlockCoords.top < window.innerHeight) {
-
       scrollOffset = window.scrollY + nextBlockElement.offsetHeight;
-
     }
 
     window.scrollTo(0, scrollOffset);
 
     /** Change blocks positions */
-    this.api.blocks.swap(currentBlockIndex, currentBlockIndex + 1);
+    this.api.blocks.move(currentBlockIndex + 1);
 
     /** Hide the Tooltip */
     this.api.tooltip.hide();

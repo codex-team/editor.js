@@ -1,9 +1,11 @@
-import {ConversionConfig, PasteConfig, SanitizerConfig} from '../configs';
-import {BlockToolData} from './block-tool-data';
+import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
+import { BlockToolData } from './block-tool-data';
 import {BaseTool, BaseToolConstructable} from './tool';
-import {ToolConfig} from './tool-config';
-import {API} from '../index';
-import {PasteEvent} from './paste-events';
+import { ToolConfig } from './tool-config';
+import {API, BlockAPI} from '../index';
+import { PasteEvent } from './paste-events';
+import { MoveEvent } from './hook-events';
+
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
@@ -65,6 +67,21 @@ export interface BlockTool extends BaseTool {
    * Called after block removed from the page but before instance is deleted
    */
   removed?(): void;
+
+  /**
+   * Called after block was moved
+   */
+  moved?(event: MoveEvent): void;
+}
+
+/**
+ * Describe constructor parameters
+ */
+export interface BlockToolConstructorOptions<D extends object = any, C extends object = any> {
+  api: API;
+  data: BlockToolData<D>;
+  config?: ToolConfig<C>;
+  block?: BlockAPI;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
@@ -95,7 +112,10 @@ export interface BlockToolConstructable extends BaseToolConstructable {
 
   /**
    * @constructor
+   *
+   * @param {BlockToolConstructorOptions} config - constructor parameters
+   *
    * @return {BlockTool}
    */
-  new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
+  new(config: BlockToolConstructorOptions): BlockTool;
 }

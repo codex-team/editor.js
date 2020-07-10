@@ -1,6 +1,8 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
+import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  *
@@ -8,12 +10,13 @@ import * as _ from '../../utils';
  *
  *  ______________________________________ Toolbar ____________________________________________
  * |                                                                                           |
- * |  ..................... Content ....................   ......... Block Actions ..........  |
- * |  .                                                .   .                                .  |
- * |  .                                                .   .        [Open Settings]         .  |
- * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
- * |  .                                                .   .        [Settings Panel]        .  |
- * |  ..................................................   ..................................  |
+ * |  ..................... Content .........................................................  |
+ * |  .                                                   ........ Block Actions ...........   |
+ * |  .                                                   .        [Open Settings]         .   |
+ * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]       .                                .   |
+ * |  .                                                   .        [Settings Panel]        .   |
+ * |  .                                                   ..................................   |
+ * |  .......................................................................................  |
  * |                                                                                           |
  * |___________________________________________________________________________________________|
  *
@@ -41,7 +44,7 @@ import * as _ from '../../utils';
  * @classdesc Toolbar module
  *
  * @typedef {Toolbar} Toolbar
- * @property {Object} nodes
+ * @property {object} nodes - Toolbar nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
  * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
@@ -58,23 +61,24 @@ export default class Toolbar extends Module {
    * HTML Elements used for Toolbar UI
    */
   public nodes: {[key: string]: HTMLElement} = {
-    wrapper : null,
-    content : null,
-    actions : null,
+    wrapper: null,
+    content: null,
+    actions: null,
 
     // Content Zone
-    plusButton : null,
+    plusButton: null,
 
     // Actions Zone
     blockActionsButtons: null,
-    settingsToggler : null,
+    settingsToggler: null,
   };
 
   /**
    * CSS styles
-   * @return {Object}
+   *
+   * @returns {object}
    */
-  public get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
@@ -103,10 +107,15 @@ export default class Toolbar extends Module {
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content',  'actions'].forEach( (el) => {
+    ['content', 'actions'].forEach((el) => {
       this.nodes[el] = $.make('div', this.CSS[el]);
-      $.append(this.nodes.wrapper, this.nodes[el]);
     });
+
+    /**
+     * Actions will be included to the toolbar content so we can align in to the right of the content
+     */
+    $.append(this.nodes.wrapper, this.nodes.content);
+    $.append(this.nodes.content, this.nodes.actions);
 
     /**
      * Fill Content Zone:
@@ -124,7 +133,7 @@ export default class Toolbar extends Module {
      */
     const tooltipContent = $.make('div');
 
-    tooltipContent.appendChild(document.createTextNode('Add'));
+    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
     tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
       textContent: '⇥ Tab',
     }));
@@ -143,16 +152,20 @@ export default class Toolbar extends Module {
      *  - Settings Panel
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
-    this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 18, 4);
+    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
+    const settingsIcon = $.svg('dots', 8, 8);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
 
-    this.Editor.Tooltip.onHover(this.nodes.settingsToggler, 'Click to tune', {
-      placement: 'top',
-    });
+    this.Editor.Tooltip.onHover(
+      this.nodes.settingsToggler,
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
+      {
+        placement: 'top',
+      }
+    );
 
     /**
      * Make and append Settings Panel
@@ -173,9 +186,10 @@ export default class Toolbar extends Module {
 
   /**
    * Move Toolbar to the Current Block
-   * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
+   *
+   * @param {boolean} forceClose - force close Toolbar Settings and Toolbar
    */
-  public move(forceClose: boolean = true): void {
+  public move(forceClose = true): void {
     if (forceClose) {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
@@ -216,6 +230,7 @@ export default class Toolbar extends Module {
 
   /**
    * Open Toolbar with Plus Button and Actions
+   *
    * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
    *                                     This flag allows to open Toolbar without Actions.
    * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
@@ -223,7 +238,7 @@ export default class Toolbar extends Module {
    *                                      with closing Toolbox and Block Settings
    *                                      This flag allows to open Toolbar with Toolbox
    */
-  public open(withBlockActions: boolean = true, needToCloseToolbox: boolean = true): void {
+  public open(withBlockActions = true, needToCloseToolbox = true): void {
     _.delay(() => {
       this.move(needToCloseToolbox);
       this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
@@ -238,7 +253,8 @@ export default class Toolbar extends Module {
 
   /**
    * returns toolbar opened state
-   * @return {Boolean}
+   *
+   * @returns {boolean}
    */
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
@@ -258,12 +274,13 @@ export default class Toolbar extends Module {
 
   /**
    * Plus Button public methods
-   * @return {{hide: function(): void, show: function(): void}}
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
    */
-  public get plusButton(): {hide: () => void, show: () => void} {
+  public get plusButton(): {hide: () => void; show: () => void} {
     return {
-      hide: () => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: () => {
+      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      show: (): void => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
         }
@@ -274,14 +291,15 @@ export default class Toolbar extends Module {
 
   /**
    * Block actions appearance manipulations
-   * @return {{hide: function(): void, show: function(): void}}
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
    */
-  private get blockActions(): {hide: () => void, show: () => void} {
+  private get blockActions(): {hide: () => void; show: () => void} {
     return {
-      hide: () => {
+      hide: (): void => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
       },
-      show : () => {
+      show: (): void => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
       },
     };
@@ -289,7 +307,6 @@ export default class Toolbar extends Module {
 
   /**
    * Handler for Plus Button
-   * @param {MouseEvent} event
    */
   private plusButtonClicked(): void {
     this.Editor.Toolbox.toggle();

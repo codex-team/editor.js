@@ -3,18 +3,6 @@
     margin-top: 0;
   }
 
-  &--focused {
-    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);
-    border-radius: 3px;
-
-    @media (--mobile){
-      background-image: none;
-      background-color: rgba(200, 199, 219, 0.17);
-      margin: 0 -10px;
-      padding: 0 10px;
-    }
-  }
-
   &--selected &__content {
     background: var(--selectionColor);
 
@@ -88,7 +76,6 @@
     font-style: italic;
   }
 }
-
 
 .codex-editor--narrow .ce-block--focused {
   @media (--not-mobile) {

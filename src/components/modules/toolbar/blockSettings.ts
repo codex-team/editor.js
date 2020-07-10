@@ -1,7 +1,8 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import Flipper, {FlipperOptions} from '../../flipper';
+import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
+import SelectionUtils from '../../selection';
 
 /**
  * Block Settings
@@ -15,12 +16,12 @@ import * as _ from '../../utils';
  *  |________________________|
  */
 export default class BlockSettings extends Module {
-
   /**
    * Module Events
-   * @return {{opened: string, closed: string}}
+   *
+   * @returns {{opened: string, closed: string}}
    */
-  public get events(): {opened: string, closed: string} {
+  public get events(): {opened: string; closed: string} {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -29,9 +30,10 @@ export default class BlockSettings extends Module {
 
   /**
    * Block Settings CSS
-   * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   *
+   * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  public get CSS() {
+  public get CSS(): {[name: string]: string} {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -41,13 +43,14 @@ export default class BlockSettings extends Module {
 
       button: 'ce-settings__button',
 
-      focusedButton : 'ce-settings__button--focused',
+      focusedButton: 'ce-settings__button--focused',
       focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
 
   /**
    * Is Block Settings opened or not
+   *
    * @returns {boolean}
    */
   public get opened(): boolean {
@@ -70,16 +73,20 @@ export default class BlockSettings extends Module {
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
 
   /**
+   * Page selection utils
+   */
+  private selection: SelectionUtils = new SelectionUtils();
+
+  /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
-   *
-   * @return {Element}
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);
@@ -103,6 +110,17 @@ export default class BlockSettings extends Module {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
+     * If block settings contains any inputs, focus will be set there,
+     * so we need to save current selection to restore it after block settings is closed
+     */
+    this.selection.save();
+
+    /**
+     * Highlight content of a Block we are working with
+     */
+    this.Editor.BlockManager.currentBlock.selected = true;
+
+    /**
      * Fill Tool's settings
      */
     this.addToolSettings();
@@ -124,6 +142,19 @@ export default class BlockSettings extends Module {
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
+    /**
+     * If selection is at editor on Block Settings closing,
+     * it means that caret placed at some editable element inside the Block Settings.
+     * Previously we have saved the selection, then open the Block Settings and set caret to the input
+     *
+     * So, we need to restore selection back to Block after closing the Block Settings
+     */
+    if (!SelectionUtils.isAtEditor) {
+      this.selection.restore();
+    }
+
+    this.selection.clearSaved();
+
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';
@@ -140,9 +171,12 @@ export default class BlockSettings extends Module {
 
   /**
    * Returns Tools Settings and Default Settings
-   * @return {HTMLElement[]}
+   *
+   * @returns {HTMLElement[]}
    */
   public get blockTunesButtons(): HTMLElement[] {
+    const { StylesAPI } = this.Editor;
+
     /**
      * Return from cache
      * if exists
@@ -151,7 +185,10 @@ export default class BlockSettings extends Module {
       return this.buttons;
     }
 
-    const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
+    const toolSettings = this.nodes.toolSettings.querySelectorAll(
+      // Select buttons and inputs
+      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
+    );
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
     toolSettings.forEach((item) => {
@@ -188,14 +225,26 @@ export default class BlockSettings extends Module {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      activateCallback: () => {
+      /**
+       * @param {HTMLElement} focusedItem - activated Tune
+       */
+      activateCallback: (focusedItem) => {
+        /**
+         * If focused item is editable element, close block settings
+         */
+        if (focusedItem && $.canSetCaret(focusedItem)) {
+          this.close();
+
+          return;
+        }
+
         /**
          * Restoring focus on current Block after settings clicked.
          * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
          */
-        _.delay( () => {
+        _.delay(() => {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-        }, 10)();
+        }, 50)();
       },
     } as FlipperOptions);
   }

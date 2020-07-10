@@ -1,8 +1,9 @@
 import Module from '../../__module';
 
-import {Blocks} from '../../../../types/api';
-import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
+import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
+import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
+import BlockAPI from '../../block/api';
 
 /**
  * @class BlocksAPI
@@ -11,27 +12,30 @@ import * as _ from './../../utils';
 export default class BlocksAPI extends Module {
   /**
    * Available methods
-   * @return {Blocks}
+   *
+   * @returns {Blocks}
    */
-  get methods(): Blocks {
+  public get methods(): Blocks {
     return {
-      clear: () => this.clear(),
-      render: (data: OutputData) => this.render(data),
-      renderFromHTML: (data: string) => this.renderFromHTML(data),
-      delete: () => this.delete(),
-      swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
-      getBlockByIndex: (index: number) => this.getBlockByIndex(index),
-      getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
-      getBlocksCount: () => this.getBlocksCount(),
-      stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
-      insertNewBlock: () => this.insertNewBlock(),
+      clear: (): void => this.clear(),
+      render: (data: OutputData): Promise<void> => this.render(data),
+      renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
+      delete: (index?: number): void => this.delete(index),
+      swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
+      move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
+      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
+      getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
+      getBlocksCount: (): number => this.getBlocksCount(),
+      stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
+      insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
     };
   }
 
   /**
    * Returns Blocks count
-   * @return {number}
+   *
+   * @returns {number}
    */
   public getBlocksCount(): number {
     return this.Editor.BlockManager.blocks.length;
@@ -39,7 +43,8 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns current block index
-   * @return {number}
+   *
+   * @returns {number}
    */
   public getCurrentBlockIndex(): number {
     return this.Editor.BlockManager.currentBlockIndex;
@@ -47,21 +52,31 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns Block holder by Block index
-   * @param {Number} index
    *
-   * @return {HTMLElement}
+   * @param {number} index - index to get
+   *
+   * @returns {HTMLElement}
    */
-  public getBlockByIndex(index: number): HTMLElement {
+  public getBlockByIndex(index: number): BlockAPIInterface {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
-    return block.holder;
+
+    return new BlockAPI(block);
   }
 
   /**
    * Call Block Manager method that swap Blocks
+   *
    * @param {number} fromIndex - position of first Block
    * @param {number} toIndex - position of second Block
+   * @deprecated — use 'move' instead
    */
   public swap(fromIndex: number, toIndex: number): void {
+    _.log(
+      '`blocks.swap()` method is deprecated and will be removed in the next major release. ' +
+      'Use `block.move()` method instead',
+      'info'
+    );
+
     this.Editor.BlockManager.swap(fromIndex, toIndex);
 
     /**
@@ -72,11 +87,34 @@ export default class BlocksAPI extends Module {
   }
 
   /**
+   * Move block from one index to another
+   *
+   * @param {number} toIndex - index to move to
+   * @param {number} fromIndex - index to move from
+   */
+  public move(toIndex: number, fromIndex?: number): void {
+    this.Editor.BlockManager.move(toIndex, fromIndex);
+
+    /**
+     * Move toolbar
+     * DO not close the settings
+     */
+    this.Editor.Toolbar.move(false);
+  }
+
+  /**
    * Deletes Block
-   * @param blockIndex
+   *
+   * @param {number} blockIndex - index of Block to delete
    */
   public delete(blockIndex?: number): void {
-    this.Editor.BlockManager.removeBlock(blockIndex);
+    try {
+      this.Editor.BlockManager.removeBlock(blockIndex);
+    } catch (e) {
+      _.logLabeled(e, 'warn');
+
+      return;
+    }
 
     /**
      * in case of last block deletion
@@ -104,29 +142,42 @@ export default class BlocksAPI extends Module {
 
   /**
    * Fills Editor with Blocks data
+   *
    * @param {OutputData} data — Saved Editor data
    */
   public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Renderer.render(data.blocks);
   }
 
   /**
    * Render passed HTML string
-   * @param {string} data
-   * @return {Promise<void>}
+   *
+   * @param {string} data - HTML string to render
+   * @returns {Promise<void>}
    */
   public renderFromHTML(data: string): Promise<void> {
     this.Editor.BlockManager.clear();
+
     return this.Editor.Paste.processText(data, true);
   }
 
   /**
    * Stretch Block's content
-   * @param {number} index
+   *
+   * @param {number} index - index of Block to stretch
    * @param {boolean} status - true to enable, false to disable
+   *
+   * @deprecated Use BlockAPI interface to stretch Blocks
    */
-  public stretchBlock(index: number, status: boolean = true): void {
+  public stretchBlock(index: number, status = true): void {
+    _.log(
+      '`blocks.stretchBlock()` method is deprecated and will be removed in the next major release. ' +
+      'Use BlockAPI interface instead',
+      'warn'
+    );
+
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {
@@ -150,27 +201,26 @@ export default class BlocksAPI extends Module {
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean,
+    needToFocus?: boolean
   ): void => {
-    this.Editor.BlockManager.insert(
-      type,
+    this.Editor.BlockManager.insert({
+      tool: type,
       data,
-      config,
       index,
       needToFocus,
-    );
+    });
   }
 
   /**
    * Insert new Block
    * After set caret to this Block
    *
-   * @todo: remove in 3.0.0
+   * @todo remove in 3.0.0
    *
    * @deprecated with insert() method
    */
   public insertNewBlock(): void {
-    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in next major release. ' +
+    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
   }

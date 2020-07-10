@@ -1,10 +1,11 @@
+/* eslint-disable jsdoc/no-undefined-types */
 import Module from '../__module';
 
 /**
  * Use external module CodeX Tooltip
  */
 import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
-import {ModuleConfig} from '../../types-internal/module-config';
+import { ModuleConfig } from '../../types-internal/module-config';
 
 /**
  * Tooltip
@@ -12,19 +13,19 @@ import {ModuleConfig} from '../../types-internal/module-config';
  * Decorates any tooltip module like adapter
  */
 export default class Tooltip extends Module {
-
   /**
    * Tooltips lib: CodeX Tooltips
+   *
    * @see https://github.com/codex-team/codex.tooltips
    */
   private lib: CodeXTooltips = new CodeXTooltips();
 
   /**
-   * @constructor
-   * @param {EditorConfig}
+   * @class
+   * @param {EditorConfig} - Editor's config
    */
-  constructor({config}: ModuleConfig) {
-    super({config});
+  constructor({ config }: ModuleConfig) {
+    super({ config });
   }
 
   /**

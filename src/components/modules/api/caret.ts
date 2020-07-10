@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import {Caret} from '../../../../types/api';
+import { Caret } from '../../../../types/api';
 
 /**
  * @class CaretAPI
@@ -8,9 +8,10 @@ import {Caret} from '../../../../types/api';
 export default class CaretAPI extends Module {
   /**
    * Available methods
-   * @return {Caret}
+   *
+   * @returns {Caret}
    */
-  get methods(): Caret {
+  public get methods(): Caret {
     return {
       setToFirstBlock: this.setToFirstBlock,
       setToLastBlock: this.setToLastBlock,
@@ -27,14 +28,15 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
-  private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.firstBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.firstBlock, position, offset);
+
     return true;
   }
 
@@ -44,14 +46,15 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
-  private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.lastBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.lastBlock, position, offset);
+
     return true;
   }
 
@@ -61,17 +64,18 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToPreviousBlock = (
     position: string = this.Editor.Caret.positions.DEFAULT,
-    offset: number = 0,
+    offset = 0
   ): boolean => {
     if (!this.Editor.BlockManager.previousBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.previousBlock, position, offset);
+
     return true;
   }
 
@@ -81,14 +85,15 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
-  private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset: number = 0): boolean => {
+  private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.nextBlock) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.nextBlock, position, offset);
+
     return true;
   }
 
@@ -99,18 +104,19 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToBlock = (
     index: number,
     position: string = this.Editor.Caret.positions.DEFAULT,
-    offset: number = 0,
+    offset = 0
   ): boolean => {
     if (!this.Editor.BlockManager.blocks[index]) {
       return false;
     }
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.blocks[index], position, offset);
+
     return true;
   }
 
@@ -119,9 +125,9 @@ export default class CaretAPI extends Module {
    *
    * @param {boolean} atEnd - if true, set Caret to the end of the Editor
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
-  private focus = (atEnd: boolean = false) => {
+  private focus = (atEnd = false): boolean => {
     if (atEnd) {
       return this.setToLastBlock(this.Editor.Caret.positions.END);
     }

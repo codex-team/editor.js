@@ -19,6 +19,11 @@
   --grayText: #707684;
 
   /**
+   * Gray icons hover
+   */
+  --color-dark: #1D202B;
+
+  /**
    * Blue icons
    */
   --color-active-icon: #388AE5;
@@ -112,6 +117,8 @@
    */
   --toolbar-button: {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 34px;
     height: 34px;
     line-height: 34px;
@@ -128,11 +135,6 @@
 
     &:hover {
       background-color: var(--bg-light);
-    }
-
-    & > svg,
-    .icon {
-      margin: auto;
     }
 
     &--active {
