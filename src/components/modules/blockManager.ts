@@ -251,17 +251,6 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
   } = {}): Block {
-    /**
-     * Remove empty initial block at the end.
-     */
-    if (
-      this.blocks.length !== 0 &&
-      this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
-      this.blocks[this.blocks.length - 1].isEmpty
-    ) {
-      this._blocks.remove(this._blocks.length - 1);
-    }
-
     let newIndex = index;
 
     if (newIndex === undefined) {
