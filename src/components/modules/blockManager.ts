@@ -703,7 +703,7 @@ export default class BlockManager extends Module {
   /**
    * Keep empty initial block at the end.
    */
-  private keepInitialBlockAtEnd() {
+  private keepInitialBlockAtEnd(): void {
     if (
       this.blocks.length === 0 || (
         this.blocks[this.blocks.length - 1].name === this.config.initialBlock &&
