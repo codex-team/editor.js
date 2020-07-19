@@ -269,7 +269,7 @@ export default class UI extends Module {
     /**
      * Set customizable bottom zone height
      */
-    this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
+    this.nodes.redactorClicker.style.paddingBottom = this.config.minHeight + 'px';
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.wrapper.appendChild(this.nodes.redactorClicker);
