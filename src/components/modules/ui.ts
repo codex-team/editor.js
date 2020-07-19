@@ -43,12 +43,14 @@ export default class UI extends Module {
    */
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
+    editorZoneClicker: string;
     editorLoader: string; editorEmpty: string;
     } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
       editorZone: 'codex-editor__redactor',
+      editorZoneClicker: 'codex-editor__redactor--clicker',
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorLoader: 'codex-editor__loader',
       editorEmpty: 'codex-editor--empty',
@@ -255,6 +257,7 @@ export default class UI extends Module {
      */
     this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    this.nodes.redactorClicker = $.make('div', this.CSS.editorZoneClicker);
 
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
@@ -269,6 +272,7 @@ export default class UI extends Module {
     this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
+    this.nodes.wrapper.appendChild(this.nodes.redactorClicker);
     this.nodes.holder.appendChild(this.nodes.wrapper);
   }
 
@@ -309,7 +313,7 @@ export default class UI extends Module {
    */
   private bindEvents(): void {
     this.Editor.Listeners.on(
-      this.nodes.redactor,
+      this.nodes.redactorClicker,
       'click',
       (event) => this.redactorClicked(event as MouseEvent),
       false
