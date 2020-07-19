@@ -11,5 +11,5 @@ export * from './tool-settings';
 export * from './paste-events';
 export * from './hook-events';
 
-export type Tool = BaseTool | BlockTool | InlineTool;
-export type ToolConstructable = BaseToolConstructable | BlockToolConstructable | InlineToolConstructable;
+export type Tool = BlockTool | InlineTool;
+export type ToolConstructable = BlockToolConstructable | InlineToolConstructable;

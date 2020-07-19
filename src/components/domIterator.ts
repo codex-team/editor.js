@@ -1,4 +1,6 @@
 import Dom from './dom';
+import * as _ from './utils';
+import SelectionUtils from './selection';
 
 /**
  * Iterator above passed Elements list.
@@ -7,6 +9,7 @@ import Dom from './dom';
 export default class DomIterator {
   /**
    * This is a static property that defines iteration directions
+   *
    * @type {{RIGHT: string, LEFT: string}}
    */
   public static directions = {
@@ -22,9 +25,10 @@ export default class DomIterator {
   /**
    * Focused button index.
    * Default is -1 which means nothing is active
+   *
    * @type {number}
    */
-  private cursor: number = -1;
+  private cursor = -1;
 
   /**
    * Items to flip
@@ -37,7 +41,7 @@ export default class DomIterator {
    */
   constructor(
     nodeList: HTMLElement[],
-    focusedCssClass: string,
+    focusedCssClass: string
   ) {
     this.items = nodeList || [];
     this.focusedCssClass = focusedCssClass;
@@ -45,7 +49,8 @@ export default class DomIterator {
 
   /**
    * Returns Focused button Node
-   * @return {HTMLElement}
+   *
+   * @returns {HTMLElement}
    */
   public get currentItem(): HTMLElement {
     if (this.cursor === -1) {
@@ -57,7 +62,8 @@ export default class DomIterator {
 
   /**
    * Sets items. Can be used when iterable items changed dynamically
-   * @param {HTMLElement[]} nodeList
+   *
+   * @param {HTMLElement[]} nodeList - nodes to iterate
    */
   public setItems(nodeList: HTMLElement[]): void {
     this.items = nodeList;
@@ -93,7 +99,7 @@ export default class DomIterator {
    * Leafs nodes inside the target list from active element
    *
    * @param {string} direction - leaf direction. Can be 'left' or 'right'
-   * @return {Number} index of focused node
+   * @returns {number} index of focused node
    */
   private leafNodesAndReturnIndex(direction: string): number {
     /**
@@ -138,6 +144,7 @@ export default class DomIterator {
     if (direction === DomIterator.directions.RIGHT) {
       /**
        * If we go right then choose next (+1) Tool
+       *
        * @type {number}
        */
       focusedButtonIndex = (focusedButtonIndex + 1) % this.items.length;
@@ -145,16 +152,17 @@ export default class DomIterator {
       /**
        * If we go left then choose previous (-1) Tool
        * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+       *
        * @type {number}
        */
       focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
     }
 
-    if (Dom.isNativeInput(this.items[focusedButtonIndex])) {
+    if (Dom.canSetCaret(this.items[focusedButtonIndex])) {
       /**
-       * Focus input
+       * Focus input with micro-delay to ensure DOM is updated
        */
-      this.items[focusedButtonIndex].focus();
+      _.delay(() => SelectionUtils.setCursor(this.items[focusedButtonIndex]), 50)();
     }
 
     /**

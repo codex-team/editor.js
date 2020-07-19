@@ -1,7 +1,7 @@
 import * as _ from './utils';
 import $ from './dom';
 import Block, { BlockToolAPI } from './block';
-import {MoveEvent, MoveEventDetail} from '../../types/tools';
+import { MoveEvent } from '../../types/tools';
 
 /**
  * @class Blocks
@@ -14,9 +14,29 @@ import {MoveEvent, MoveEventDetail} from '../../types/tools';
  */
 export default class Blocks {
   /**
+   * Array of Block instances in order of addition
+   */
+  public blocks: Block[];
+
+  /**
+   * Editor`s area where to add Block`s HTML
+   */
+  public workingArea: HTMLElement;
+
+  /**
+   * @class
+   *
+   * @param {HTMLElement} workingArea — editor`s working node
+   */
+  constructor(workingArea: HTMLElement) {
+    this.blocks = [];
+    this.workingArea = workingArea;
+  }
+
+  /**
    * Get length of Block instances array
    *
-   * @returns {Number}
+   * @returns {number}
    */
   public get length(): number {
     return this.blocks.length;
@@ -47,17 +67,17 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} property — block index or any Blocks class property to set
+   * @param {PropertyKey} property — block index or any Blocks class property key to set
    * @param {Block} value — value to set
-   * @returns {Boolean}
+   * @returns {boolean}
    */
-  public static set(instance: Blocks, property: number | string, value: Block | any) {
-
+  public static set(instance: Blocks, property: PropertyKey, value: Block | unknown): boolean {
     /**
      * If property name is not a number (method or other property, access it via reflect
      */
     if (isNaN(Number(property))) {
       Reflect.set(instance, property, value);
+
       return true;
     }
 
@@ -67,7 +87,7 @@ export default class Blocks {
      * @example
      * blocks[0] = new Block();
      */
-    instance.insert(+property, value);
+    instance.insert(+(property as number), value as Block);
 
     return true;
   }
@@ -76,11 +96,10 @@ export default class Blocks {
    * Proxy trap to implement array-like getter
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} property — Blocks class property
+   * @param {PropertyKey} property — Blocks class property key
    * @returns {Block|*}
    */
-  public static get(instance: Blocks, property: any | number) {
-
+  public static get(instance: Blocks, property: PropertyKey): Block | unknown {
     /**
      * If property is not a number, get it via Reflect object
      */
@@ -91,33 +110,13 @@ export default class Blocks {
     /**
      * If property is a number (Block index) return Block by passed index
      */
-    return instance.get(+property);
-  }
-
-  /**
-   * Array of Block instances in order of addition
-   */
-  public blocks: Block[];
-
-  /**
-   * Editor`s area where to add Block`s HTML
-   */
-  public workingArea: HTMLElement;
-
-  /**
-   * @constructor
-   *
-   * @param {HTMLElement} workingArea — editor`s working node
-   */
-  constructor(workingArea: HTMLElement) {
-    this.blocks = [];
-    this.workingArea = workingArea;
+    return instance.get(+(property as number));
   }
 
   /**
    * Push new Block to the blocks array and append it to working area
    *
-   * @param {Block} block
+   * @param {Block} block - Block to add
    */
   public push(block: Block): void {
     this.blocks.push(block);
@@ -126,8 +125,9 @@ export default class Blocks {
 
   /**
    * Swaps blocks with indexes first and second
-   * @param {Number} first - first block index
-   * @param {Number} second - second block index
+   *
+   * @param {number} first - first block index
+   * @param {number} second - second block index
    * @deprecated — use 'move' instead
    */
   public swap(first: number, second: number): void {
@@ -147,13 +147,15 @@ export default class Blocks {
 
   /**
    * Move a block from one to another index
-   * @param {Number} toIndex - new index of the block
-   * @param {Number} fromIndex - block to move
+   *
+   * @param {number} toIndex - new index of the block
+   * @param {number} fromIndex - block to move
    */
   public move(toIndex: number, fromIndex: number): void {
     /**
      * cut out the block, move the DOM element and insert at the desired index
      * again (the shifting within the blocks array will happen automatically).
+     *
      * @see https://stackoverflow.com/a/44932690/1238150
      */
     const block = this.blocks.splice(fromIndex, 1)[0];
@@ -184,13 +186,14 @@ export default class Blocks {
   /**
    * Insert new Block at passed index
    *
-   * @param {Number} index — index to insert Block
+   * @param {number} index — index to insert Block
    * @param {Block} block — Block to insert
-   * @param {Boolean} replace — it true, replace block on given index
+   * @param {boolean} replace — it true, replace block on given index
    */
-  public insert(index: number, block: Block, replace: boolean = false): void {
+  public insert(index: number, block: Block, replace = false): void {
     if (!this.length) {
       this.push(block);
+
       return;
     }
 
@@ -224,7 +227,8 @@ export default class Blocks {
 
   /**
    * Remove block
-   * @param {Number|null} index
+   *
+   * @param {number} index - index of Block to remove
    */
   public remove(index: number): void {
     if (isNaN(index)) {
@@ -254,7 +258,7 @@ export default class Blocks {
    *
    * @todo decide if this method is necessary
    *
-   * @param {Block} targetBlock — target after wich Block should be inserted
+   * @param {Block} targetBlock — target after which Block should be inserted
    * @param {Block} newBlock — Block to insert
    */
   public insertAfter(targetBlock: Block, newBlock: Block): void {
@@ -266,7 +270,7 @@ export default class Blocks {
   /**
    * Get Block by index
    *
-   * @param {Number} index — Block index
+   * @param {number} index — Block index
    * @returns {Block}
    */
   public get(index: number): Block {
@@ -276,8 +280,8 @@ export default class Blocks {
   /**
    * Return index of passed Block
    *
-   * @param {Block} block
-   * @returns {Number}
+   * @param {Block} block - Block to find
+   * @returns {number}
    */
   public indexOf(block: Block): number {
     return this.blocks.indexOf(block);
@@ -303,13 +307,12 @@ export default class Blocks {
   /**
    * Composes Block event with passed type and details
    *
-   * @param {String} type
-   * @param {MoveEventDetail} detail
+   * @param {string} type - event type
+   * @param {object} detail - event detail
    */
-  private composeBlockEvent(type: string, detail: MoveEventDetail): MoveEvent {
+  private composeBlockEvent(type: string, detail: object): MoveEvent {
     return new CustomEvent(type, {
-        detail,
-      },
-    ) as MoveEvent;
+      detail,
+    }) as MoveEvent;
   }
 }

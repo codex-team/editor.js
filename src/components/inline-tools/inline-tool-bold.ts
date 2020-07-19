@@ -1,5 +1,5 @@
 import $ from '../dom';
-import {API, InlineTool, SanitizerConfig} from '../../../types';
+import { InlineTool, SanitizerConfig } from '../../../types';
 
 /**
  * Bold Tool
@@ -9,25 +9,25 @@ import {API, InlineTool, SanitizerConfig} from '../../../types';
  * Makes selected text bolder
  */
 export default class BoldInlineTool implements InlineTool {
-
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public static isInline = true;
 
   /**
    * Title for hover-tooltip
    */
-  public static title: string = 'Bold';
+  public static title = 'Bold';
 
   /**
    * Sanitizer Rule
    * Leave <b> tags
-   * @return {object}
+   *
+   * @returns {object}
    */
-  static get sanitize(): SanitizerConfig {
+  public static get sanitize(): SanitizerConfig {
     return {
       b: {},
     } as SanitizerConfig;
@@ -62,12 +62,14 @@ export default class BoldInlineTool implements InlineTool {
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('bold', 12, 14));
+
     return this.nodes.button;
   }
 
   /**
    * Wrap range with <b> tag
-   * @param {Range} range
+   *
+   * @param {Range} range - range to wrap
    */
   public surround(range: Range): void {
     document.execCommand(this.commandName);
@@ -75,17 +77,23 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <b> tag
-   * @param {Selection} selection
+   *
+   * @param {Selection} selection - selection to check
+   *
+   * @returns {boolean}
    */
   public checkState(selection: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
+
     return isActive;
   }
 
   /**
    * Set a shortcut
+   *
+   * @returns {boolean}
    */
   public get shortcut(): string {
     return 'CMD+B';
