@@ -164,7 +164,7 @@ export default class BlockManager extends Module {
    * @returns {Promise}
    */
   public async prepare(): Promise<void> {
-    const blocks = new Blocks(this.Editor.UI.nodes.redactor);
+    const blocks = new Blocks(this.Editor.UI.nodes.wrapper);
     const { BlockEvents, Listeners } = this.Editor;
 
     /**
