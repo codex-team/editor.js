@@ -269,7 +269,9 @@ export default class UI extends Module {
     /**
      * Set customizable bottom zone height
      */
+    this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
     this.nodes.redactorClicker.style.paddingBottom = this.config.minHeight + 'px';
+    this.nodes.redactorClicker.style.marginTop = (-1 * this.config.minHeight) + 'px';
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.wrapper.appendChild(this.nodes.redactorClicker);
@@ -324,6 +326,16 @@ export default class UI extends Module {
       true
     );
     this.Editor.Listeners.on(this.nodes.redactor,
+      'touchstart',
+      (event) => this.documentTouched(event as MouseEvent),
+      true
+    );
+    this.Editor.Listeners.on(this.nodes.redactorClicker,
+      'mousedown',
+      (event) => this.documentTouched(event as MouseEvent),
+      true
+    );
+    this.Editor.Listeners.on(this.nodes.redactorClicker,
       'touchstart',
       (event) => this.documentTouched(event as MouseEvent),
       true
@@ -596,7 +608,7 @@ export default class UI extends Module {
     /**
      * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
      */
-    if (clickedNode === this.nodes.redactor) {
+    if (clickedNode === this.nodes.redactor || clickedNode === this.nodes.redactorClicker) {
       const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
       const clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
 
