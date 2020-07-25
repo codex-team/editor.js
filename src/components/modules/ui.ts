@@ -44,7 +44,7 @@ export default class UI extends Module {
   public get CSS(): {
     editorWrapper: string; editorRtlWrapper: string; editorWrapperNarrow: string; editorZone: string;
     editorZoneHidden: string; editorLoader: string; editorEmpty: string;
-  } {
+    } {
     return {
       editorWrapper: 'codex-editor',
       editorRtlWrapper: 'rtl-editor',
