@@ -170,6 +170,11 @@ export default class Core {
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     /**
+     * Text direction. If not set, uses ltr
+     */
+    this.config.direction = this.config.direction || 'ltr';
+
+    /**
      * Initial block type
      * Uses in case when there is no blocks passed
      *
