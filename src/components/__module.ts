@@ -2,6 +2,8 @@ import { EditorModules } from '../types-internal/editor-modules';
 import { EditorConfig } from '../../types';
 import { ModuleConfig } from '../types-internal/module-config';
 
+export type ModuleNodes = {[key: string]: HTMLElement};
+
 /**
  * @abstract
  * @class      Module
@@ -11,11 +13,11 @@ import { ModuleConfig } from '../types-internal/module-config';
  * @property {object} config - Editor user settings
  * @property {EditorModules} Editor - List of Editor modules
  */
-export default class Module {
+export default class Module<T extends ModuleNodes = {}> {
   /**
    * Each module can provide some UI elements that will be stored in this property
    */
-  public nodes: any;
+  public nodes: T;
 
   /**
    * Editor modules list

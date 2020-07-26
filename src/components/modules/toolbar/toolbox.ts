@@ -55,10 +55,7 @@ export default class Toolbox extends Module {
   /**
    * HTMLElements used for Toolbox UI
    */
-  public nodes: {
-    toolbox: HTMLElement;
-    buttons: HTMLElement[];
-  } = {
+  public nodes = {
     toolbox: null,
     buttons: [],
   };

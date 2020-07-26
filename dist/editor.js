@@ -27846,7 +27846,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.nodes = {
         holder: null,
         wrapper: null,
-        redactor: null
+        redactor: null,
+        loader: null
       };
       /**
        * Cache for center column rectangle info

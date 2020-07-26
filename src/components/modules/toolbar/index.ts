@@ -60,7 +60,7 @@ export default class Toolbar extends Module {
   /**
    * HTML Elements used for Toolbar UI
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes = {
     wrapper: null,
     content: null,
     actions: null,

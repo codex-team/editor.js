@@ -32,7 +32,7 @@ export default class ConversionToolbar extends Module {
   /**
    * HTML Elements used for UI
    */
-  public nodes: { [key: string]: HTMLElement } = {
+  public nodes = {
     wrapper: null,
     tools: null,
   };

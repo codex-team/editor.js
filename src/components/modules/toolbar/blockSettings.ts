@@ -60,7 +60,7 @@ export default class BlockSettings extends Module {
   /**
    * Block settings UI HTML elements
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes = {
     wrapper: null,
     toolSettings: null,
     defaultSettings: null,

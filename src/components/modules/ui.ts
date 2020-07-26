@@ -93,10 +93,11 @@ export default class UI extends Module {
   /**
    * HTML Elements used for UI
    */
-  public nodes: { [key: string]: HTMLElement } = {
+  public nodes = {
     holder: null,
     wrapper: null,
     redactor: null,
+    loader: null
   };
 
   /**
