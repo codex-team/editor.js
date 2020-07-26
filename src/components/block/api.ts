@@ -1,6 +1,6 @@
 import Block from './index';
 import { BlockToolData, ToolConfig } from '../../../types/tools';
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
 /**

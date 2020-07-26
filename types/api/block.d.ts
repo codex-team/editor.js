@@ -1,5 +1,5 @@
 import {BlockToolData, ToolConfig} from '../tools';
-import {SavedData} from '../../src/types-internal/block-data';
+import {SavedData} from '../data-formats';
 
 /**
  * @interface BlockAPI Describes Block API methods and properties
