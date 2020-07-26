@@ -255,7 +255,7 @@ export default class UI extends Module {
      * Create and save main UI elements
      */
     this.nodes.wrapper = $.make('div',
-      this.config.direction === 'ltr' ? this.CSS.editorWrapper : [this.CSS.editorWrapper, this.CSS.editorRtlWrapper],
+      this.config.direction === 'ltr' ? this.CSS.editorWrapper : [this.CSS.editorWrapper, this.CSS.editorRtlWrapper]
     );
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
