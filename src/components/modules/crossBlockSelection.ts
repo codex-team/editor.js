@@ -47,6 +47,7 @@ export default class CrossBlockSelection extends Module {
 
     Listeners.on(document, 'mouseover', this.onMouseOver);
     Listeners.on(document, 'mouseup', this.onMouseUp);
+    Listeners.on(document, 'selectionchange', this.onSelectionChange);
   }
 
   /**
@@ -158,6 +159,7 @@ export default class CrossBlockSelection extends Module {
 
     Listeners.off(document, 'mouseover', this.onMouseOver);
     Listeners.off(document, 'mouseup', this.onMouseUp);
+    Listeners.off(document, 'selectionChange', this.onSelectionChange);
   }
 
   /**
@@ -200,6 +202,17 @@ export default class CrossBlockSelection extends Module {
 
     this.toggleBlocksSelectedState(relatedBlock, targetBlock);
     this.lastSelectedBlock = targetBlock;
+  }
+
+  /**
+   * Removes all ranges when any Block is selected
+   */
+  private onSelectionChange = () => {
+    const { BlockSelection } = this.Editor;
+
+    if (BlockSelection.anyBlockSelected) {
+      SelectionUtils.get().removeAllRanges();
+    }
   }
 
   /**

@@ -20141,6 +20141,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var Listeners = _this.Editor.Listeners;
         Listeners.off(document, 'mouseover', _this.onMouseOver);
         Listeners.off(document, 'mouseup', _this.onMouseUp);
+        Listeners.off(document, 'selectionChange', _this.onSelectionChange);
       };
       /**
        * Mouse over event handler
@@ -20184,6 +20185,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _this.toggleBlocksSelectedState(relatedBlock, targetBlock);
 
         _this.lastSelectedBlock = targetBlock;
+      };
+      /**
+       * Removes all ranges when any Block is selected
+       */
+
+
+      _this.onSelectionChange = function () {
+        var BlockSelection = _this.Editor.BlockSelection;
+
+        if (BlockSelection.anyBlockSelected) {
+          _selection["default"].get().removeAllRanges();
+        }
       };
 
       return _this;
@@ -20245,6 +20258,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.lastSelectedBlock = this.firstSelectedBlock;
         Listeners.on(document, 'mouseover', this.onMouseOver);
         Listeners.on(document, 'mouseup', this.onMouseUp);
+        Listeners.on(document, 'selectionchange', this.onSelectionChange);
       }
       /**
        * return boolean is cross block selection started
