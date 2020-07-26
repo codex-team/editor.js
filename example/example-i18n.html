@@ -44,18 +44,16 @@
 
 <!-- Load Tools -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script><!-- Header -->
+
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script><!-- Image -->
-<script src="./tools/image/dist/bundle.js"></script><!-- Image -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script><!-- Delimiter -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script><!-- List -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script><!-- Checklist -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script><!-- Quote -->
-<!--<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>&lt;!&ndash; Code &ndash;&gt;-->
-<script src="./tools/code/dist/bundle.js"></script><!-- Code -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script><!-- Code -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script><!-- Embed -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script><!-- Table -->
-<!--<script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script>&lt;!&ndash; Link &ndash;&gt;-->
-<script src="./tools/link/dist/bundle.js"></script><!-- Link -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script><!-- Link -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script><!-- Warning -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
@@ -84,6 +82,11 @@
      * Tools list
      */
     tools: {
+      paragraph: {
+        config: {
+          placeholder: "Enter something"
+        }
+      },
       /**
        * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
        */
@@ -255,6 +258,16 @@
             "Couldn't fetch the link data": "Не удалось получить данные",
             "Couldn't get this link data, try the other one": "Не удалось получить данные по ссылке, попробуйте другую",
             "Wrong response format from the server": "Неполадки на сервере",
+          },
+          "header": {
+            "Header": "Заголовок",
+          },
+          "paragraph": {
+            "Enter something": "Введите текст"
+          },
+          "list": {
+            "Ordered": "Нумерованный",
+            "Unordered": "Маркированный",
           }
         },
 
