@@ -61,26 +61,6 @@ export default class Blocks {
   }
 
   /**
-   * Array of Block instances in order of addition
-   */
-  public blocks: Block[];
-
-  /**
-   * Editor`s area where to add Block`s HTML
-   */
-  public workingArea: HTMLElement;
-
-  /**
-   * @class
-   *
-   * @param {HTMLElement} workingArea — editor`s working node
-   */
-  constructor(workingArea: HTMLElement) {
-    this.blocks = [];
-    this.workingArea = workingArea;
-  }
-
-  /**
    * Proxy trap to implement array-like setter
    *
    * @example
