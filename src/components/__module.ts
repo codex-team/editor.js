@@ -43,12 +43,12 @@ export default class Module {
      * @param {Function} handler - Event handler
      * @param {boolean|AddEventListenerOptions} options - Listening options
      */
-    on(
+    on: (
       element: EventTarget,
       eventType: string,
       handler: (event: Event) => void,
       options: boolean | AddEventListenerOptions = false
-    ): void {
+    ): void => {
       const { Listeners } = this.Editor;
 
       this.mutableListenerIds.push(
@@ -59,7 +59,7 @@ export default class Module {
     /**
      * Clears all mutable listeners
      */
-    clearAll(): void {
+    clearAll: (): void => {
       const { Listeners } = this.Editor;
 
       for (const id of this.mutableListenerIds) {
