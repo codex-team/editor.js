@@ -16,7 +16,6 @@ import {
   Blocks,
   Caret,
   Events,
-  I18n,
   InlineToolbar,
   Listeners,
   Notifier,
@@ -27,6 +26,7 @@ import {
   Styles,
   Toolbar,
   Tooltip,
+  I18n,
 } from './api';
 
 import {OutputData} from './data-formats/output-data';

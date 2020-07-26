@@ -58,6 +58,22 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  */
 export default class Toolbar extends Module {
   /**
+   * HTML Elements used for Toolbar UI
+   */
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper: null,
+    content: null,
+    actions: null,
+
+    // Content Zone
+    plusButton: null,
+
+    // Actions Zone
+    blockActionsButtons: null,
+    settingsToggler: null,
+  };
+
+  /**
    * CSS styles
    *
    * @returns {object}
@@ -123,22 +139,6 @@ export default class Toolbar extends Module {
       },
     };
   }
-
-  /**
-   * HTML Elements used for Toolbar UI
-   */
-  public nodes: {[key: string]: HTMLElement} = {
-    wrapper: null,
-    content: null,
-    actions: null,
-
-    // Content Zone
-    plusButton: null,
-
-    // Actions Zone
-    blockActionsButtons: null,
-    settingsToggler: null,
-  };
 
   /**
    * Module preparation method

@@ -407,7 +407,7 @@ export default class Tools extends Module {
   }> {
     const toolPreparationList: Array<{
       function: (data: {toolName: string; config: ToolConfig}) => void;
-      data: {toolName: string; config: ToolConfig}; }
+      data: {toolName: string; config: ToolConfig};}
       > = [];
 
     for (const toolName in this.toolsClasses) {

@@ -259,6 +259,8 @@ export default class UI extends Module {
 
   /**
    * Makes Editor.js interface
+   *
+   * @returns {Promise<void>}
    */
   private make(): void {
     /**
