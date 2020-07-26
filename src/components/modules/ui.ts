@@ -97,7 +97,7 @@ export default class UI extends Module {
     holder: null,
     wrapper: null,
     redactor: null,
-    loader: null
+    loader: null,
   };
 
   /**
@@ -260,8 +260,6 @@ export default class UI extends Module {
 
   /**
    * Makes Editor.js interface
-   *
-   * @returns {Promise<void>}
    */
   private make(): void {
     /**

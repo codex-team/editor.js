@@ -207,7 +207,7 @@ export default class CrossBlockSelection extends Module {
   /**
    * Removes all ranges when any Block is selected
    */
-  private onSelectionChange = () => {
+  private onSelectionChange = (): void => {
     const { BlockSelection } = this.Editor;
 
     if (BlockSelection.anyBlockSelected) {
