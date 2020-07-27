@@ -19,21 +19,9 @@
   },
   "toolNames": {
     "Text": "",
-    "Heading": "",
-    "List": "",
-    "Warning": "",
-    "Checklist": "",
-    "Quote": "",
-    "Code": "",
-    "Delimiter": "",
-    "Raw HTML": "",
-    "Table": "",
-    "Image": "",
     "Link": "",
-    "Marker": "",
     "Bold": "",
-    "Italic": "",
-    "InlineCode": ""
+    "Italic": ""
   },
   "tools": {
     "warning": {

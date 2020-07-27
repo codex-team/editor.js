@@ -19,21 +19,9 @@
   },
   "toolNames": {
     "Text": "Параграф",
-    "Heading": "Заголовок",
-    "List": "Список",
-    "Warning": "Примечание",
-    "Checklist": "Чеклист",
-    "Quote": "Цитата",
-    "Code": "Код",
-    "Delimiter": "Разделитель",
-    "Raw HTML": "HTML-фрагмент",
-    "Table": "Таблица",
-    "Image": "Образ",
     "Link": "Ссылка",
-    "Marker": "Маркер",
     "Bold": "Полужирный",
-    "Italic": "Курсив",
-    "InlineCode": "Моноширинный"
+    "Italic": "Курсив"
   },
   "tools": {
     "warning": {

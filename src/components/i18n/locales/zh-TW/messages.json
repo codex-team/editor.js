@@ -19,21 +19,9 @@
   },
   "toolNames": {
     "Text": "文字",
-    "Heading": "標題",
-    "List": "列表",
-    "Warning": "警告",
-    "Checklist": "核選框列表",
-    "Quote": "引用",
-    "Code": "程式碼",
-    "Delimiter": "分隔符",
-    "Raw HTML": "HTML",
-    "Table": "表格",
-    "Image": "圖片",
     "Link": "連結",
-    "Marker": "標記",
     "Bold": "粗體",
-    "Italic": "斜體",
-    "InlineCode": "程式碼區塊"
+    "Italic": "斜體"
   },
   "tools": {
     "warning": {
