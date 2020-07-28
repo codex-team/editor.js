@@ -46,4 +46,12 @@ export default class Module {
   public set state(Editor: EditorModules) {
     this.Editor = Editor;
   }
+
+  /**
+   * Returns true if current direction is RTL (Right-To-Left)
+   */
+  protected isRtl(): boolean {
+    return this.config.direction === 'rtl';
+  }
+
 }
