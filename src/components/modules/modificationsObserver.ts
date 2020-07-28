@@ -18,7 +18,7 @@ export default class ModificationsObserver extends Module {
    *
    * @type {number}
    */
-  public DebounceTimer = this.config.onChangeDebounceTime || 450;
+  public DebounceTimer = this.config.onChangeDebounceTime ? this.config.onChangeDebounceTime : 450;
 
   /**
    * MutationObserver instance
