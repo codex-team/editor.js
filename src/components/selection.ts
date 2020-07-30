@@ -263,7 +263,6 @@ export default class SelectionUtils {
    * Native Document's commands for fake background
    */
   private readonly commandBackground: string = 'backColor';
-  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Returns window SelectionUtils
@@ -317,14 +316,14 @@ export default class SelectionUtils {
     }
 
     this.isFakeBackgroundEnabled = false;
-    document.execCommand(this.commandRemoveFormat);
+    document.execCommand(this.commandBackground, false, 'rgba(0, 0, 0, 0)');
   }
 
   /**
    * Sets fake background
    */
   public setFakeBackground(): void {
-    document.execCommand(this.commandBackground, false, '#a8d6ff');
+    document.execCommand(this.commandBackground, false, 'rgb(215, 234, 251)');
 
     this.isFakeBackgroundEnabled = true;
   }
