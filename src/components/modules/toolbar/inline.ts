@@ -667,8 +667,8 @@ export default class InlineToolbar extends Module {
   private checkToolsState(): void {
     const selection = SelectionUtils.get();
 
-    if (selection.isCollapsed){
-      return ;
+    if (selection.isCollapsed) {
+      return;
     }
 
     this.tools.forEach((toolInstance) => {
