@@ -264,10 +264,15 @@ export default class ConversionToolbar extends Module {
       const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
       const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
 
+      const userSettings = this.Editor.Tools.USER_SETTINGS;
+      const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+
+      const toolboxSettings = userToolboxSettings ?? toolToolboxSettings;
+
       /**
        * Skip tools that don't pass 'toolbox' property
        */
-      if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
+      if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
         continue;
       }
 
@@ -278,7 +283,7 @@ export default class ConversionToolbar extends Module {
         continue;
       }
 
-      this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
+      this.addTool(toolName, toolboxSettings.icon, toolboxSettings.title);
     }
   }
 
