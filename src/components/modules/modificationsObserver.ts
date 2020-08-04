@@ -166,6 +166,6 @@ export default class ModificationsObserver extends Module {
 
     this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
 
-    this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
+    this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'change', this.mutationDebouncer));
   }
 }
