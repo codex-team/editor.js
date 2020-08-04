@@ -673,7 +673,7 @@ export default class BlockManager extends Module {
    */
   public destroy(): void {
     this.blocks.forEach((block) => {
-      if(_.isFunction(block.tool.destroy)) {
+      if (_.isFunction(block.tool.destroy)) {
         block.tool.destroy();
       }
     });
