@@ -671,8 +671,11 @@ export default class InlineToolbar extends Module {
       return;
     }
 
-    this.tools.forEach((toolInstance) => {
-      toolInstance.checkState(selection);
+    const visibleToolButtons =
+      Array.from(this.buttonsList).filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
+
+    visibleToolButtons.forEach(button => {
+      this.tools.get(button.dataset.tool).checkState(selection);
     });
   }
 
