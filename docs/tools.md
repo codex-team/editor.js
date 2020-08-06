@@ -78,7 +78,7 @@ var editor = new EditorJS({
     },
     header: Header
   },
-  defaultBlock : 'text',
+  defaultBlock : 'text', // initialBlock property will be deprecated use defaultBlock property instead,
 });
 ```
 
