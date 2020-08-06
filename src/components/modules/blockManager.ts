@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolConstructable, BlockToolData, ToolConfig, PasteEvent } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -207,11 +207,20 @@ export default class BlockManager extends Module {
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
    * @param {BlockToolData} [options.data] - constructor params
+   * @param {ToolConfig} [options.config] - constructor params
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
-    const settings = this.Editor.Tools.getToolSettings(tool);
+  public composeBlock({ tool, data = {}, config }: {tool: string; data?: BlockToolData; config?: ToolConfig}): Block {
+    let settings = this.Editor.Tools.getToolSettings(tool);
+
+    if (config) {
+      /** This is done so that the original settings is not modified. Only the copy is modified. */
+      settings = {
+        ...settings,
+        config,
+      };
+    }
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
       name: tool,
@@ -241,12 +250,14 @@ export default class BlockManager extends Module {
   public insert({
     tool = this.config.initialBlock,
     data = {},
+    config,
     index,
     needToFocus = true,
     replace = false,
   }: {
     tool?: string;
     data?: BlockToolData;
+    config?: ToolConfig;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
@@ -260,6 +271,7 @@ export default class BlockManager extends Module {
     const block = this.composeBlock({
       tool,
       data,
+      config,
     });
 
     this._blocks.insert(newIndex, block, replace);

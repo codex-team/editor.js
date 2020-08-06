@@ -199,13 +199,14 @@ export default class BlocksAPI extends Module {
   public insert = (
     type: string = this.config.initialBlock,
     data: BlockToolData = {},
-    config: ToolConfig = {},
+    config?: ToolConfig,
     index?: number,
     needToFocus?: boolean
   ): void => {
     this.Editor.BlockManager.insert({
       tool: type,
       data,
+      config,
       index,
       needToFocus,
     });
