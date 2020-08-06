@@ -28,6 +28,12 @@ export interface EditorConfig {
   defaultBlock?: string;
 
   /**
+   * This property will be depracated in the next major relase. 
+   * Use 'defaultBlock' property instead.
+   */
+  initialBlock?: string;
+
+  /**
    * First Block placeholder
    */
   placeholder?: string|false;
