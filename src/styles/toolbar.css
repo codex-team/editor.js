@@ -122,3 +122,13 @@
     left: 5px;
   }
 }
+
+.no-follow-label{
+  width: 50%;
+  float: left;
+  display: none;
+  text-align: center;
+}
+.no-follow-checkbox{
+  width: 50%!important;
+}

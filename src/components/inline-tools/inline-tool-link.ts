@@ -61,7 +61,9 @@ export default class LinkInlineTool implements InlineTool {
     buttonModifier: 'ce-inline-tool--link',
     buttonUnlink: 'ce-inline-tool--unlink',
     input: 'ce-inline-tool-input',
+    checkbox: 'no-follow-checkbox',
     inputShowed: 'ce-inline-tool-input--showed',
+    label: 'no-follow-label',
   };
 
   /**
@@ -70,9 +72,15 @@ export default class LinkInlineTool implements InlineTool {
   private nodes: {
     button: HTMLButtonElement;
     input: HTMLInputElement;
+    checkbox: HTMLInputElement;
+    container: HTMLDivElement;
+    label: HTMLLabelElement;
   } = {
     button: null,
     input: null,
+    checkbox: null,
+    container: null,
+    label: null,
   };
 
   /**
@@ -141,8 +149,21 @@ export default class LinkInlineTool implements InlineTool {
         this.enterPressed(event);
       }
     });
+    this.nodes.label = document.createElement('label') as HTMLLabelElement;
+    this.nodes.label.innerHTML="No Follow";
+    this.nodes.label.classList.add(this.CSS.label);
 
-    return this.nodes.input;
+    this.nodes.checkbox = document.createElement('input') as HTMLInputElement;
+    this.nodes.checkbox.type = "checkbox";
+    this.nodes.checkbox.classList.add(this.CSS.input);
+    this.nodes.checkbox.classList.add(this.CSS.checkbox);
+
+    this.nodes.container = document.createElement('div') as HTMLDivElement;
+      this.nodes.container.appendChild(this.nodes.label);
+      this.nodes.container.appendChild(this.nodes.checkbox);
+      this.nodes.container.appendChild(this.nodes.input);
+
+    return this.nodes.container;
   }
 
   /**
@@ -203,6 +224,10 @@ export default class LinkInlineTool implements InlineTool {
        */
       const hrefAttr = anchorTag.getAttribute('href');
 
+      const isNoFollow = anchorTag.getAttribute('rel');
+      if (isNoFollow)
+          this.nodes.checkbox.checked=true;
+
       this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
 
       this.selection.save();
@@ -244,6 +269,8 @@ export default class LinkInlineTool implements InlineTool {
    */
   private openActions(needFocus = false): void {
     this.nodes.input.classList.add(this.CSS.inputShowed);
+    this.nodes.checkbox.classList.add(this.CSS.inputShowed);
+    this.nodes.label.classList.add(this.CSS.inputShowed);
     if (needFocus) {
       this.nodes.input.focus();
     }
@@ -271,7 +298,10 @@ export default class LinkInlineTool implements InlineTool {
     }
 
     this.nodes.input.classList.remove(this.CSS.inputShowed);
+    this.nodes.checkbox.classList.remove(this.CSS.inputShowed);
+    this.nodes.label.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
+    this.nodes.checkbox.checked = false;
     if (clearSavedSelection) {
       this.selection.clearSaved();
     }
@@ -392,8 +422,14 @@ export default class LinkInlineTool implements InlineTool {
     if (anchorTag) {
       this.selection.expandToTag(anchorTag);
     }
+      var sText = document.getSelection();
 
-    document.execCommand(this.commandLink, false, link);
+    let rel_code = ``;
+    if(this.nodes.checkbox.checked)
+      rel_code=`rel="nofollow"`;
+
+    //document.execCommand(this.commandLink, false, link);
+      document.execCommand('insertHTML', false, `<a href="${link}" target="_blank" ${rel_code} >${sText}</a>`)
   }
 
   /**
