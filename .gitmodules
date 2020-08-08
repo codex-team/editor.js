@@ -1,42 +1,42 @@
 [submodule "example/tools/inline-code"]
 	path = example/tools/inline-code
-	url = https://github.com/editor-js/inline-code
+	url = https://github.com/itech-indrustries/inline-code
 [submodule "example/tools/header"]
 	path = example/tools/header
-	url = https://github.com/editor-js/header
+	url = https://github.com/itech-indrustries/header
 [submodule "example/tools/delimiter"]
 	path = example/tools/delimiter
-	url = https://github.com/editor-js/delimiter
+	url = https://github.com/itech-indrustries/delimiter
 [submodule "example/tools/list"]
 	path = example/tools/list
-	url = https://github.com/editor-js/list
+	url = https://github.com/itech-indrustries/list
 [submodule "example/tools/quote"]
 	path = example/tools/quote
-	url = https://github.com/editor-js/quote
+	url = https://github.com/itech-indrustries/quote
 [submodule "example/tools/simple-image"]
 	path = example/tools/simple-image
-	url = https://github.com/editor-js/simple-image
+	url = https://github.com/itech-indrustries/simple-image
 [submodule "src/components/tools/paragraph"]
 	path = src/components/tools/paragraph
 	url = https://github.com/editor-js/paragraph
 [submodule "example/tools/marker"]
 	path = example/tools/marker
-	url = https://github.com/editor-js/marker
+	url = https://github.com/itech-indrustries/marker
 [submodule "example/tools/code"]
 	path = example/tools/code
-	url = https://github.com/editor-js/code
+	url = https://github.com/itech-indrustries/code
 [submodule "example/tools/image"]
 	path = example/tools/image
 	url = https://github.com/editor-js/image
 [submodule "example/tools/embed"]
 	path = example/tools/embed
-	url = https://github.com/editor-js/embed
+	url = https://github.com/itech-indrustries/embed
 [submodule "example/tools/table"]
 	path = example/tools/table
-	url = https://github.com/editor-js/table
+	url = https://github.com/itech-indrustries/table
 [submodule "example/tools/checklist"]
 	path = example/tools/checklist
-	url = https://github.com/editor-js/checklist
+	url = https://github.com/itech-indrustries/checklist
 [submodule "example/tools/link"]
 	path = example/tools/link
 	url = https://github.com/editor-js/link
