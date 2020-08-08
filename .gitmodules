@@ -48,4 +48,13 @@
 	url = https://github.com/editor-js/warning
 [submodule "example/tools/underline"]
 	path = example/tools/underline
-	url = https://github.com/editor-js/underline
+	url = https://github.com/itech-indrustries/underline/
+[submodule "example/tools/editor-js-text-color"]
+	path = example/tools/editor-js-text-color
+	url = https://github.com/itech-indrustries/editor-js-text-color/
+[submodule "example/tools/editorjs-strikethrough"]
+	path = example/tools/editorjs-strikethrough
+	url = https://github.com/itech-indrustries/editorjs-strikethrough/
+[submodule "example/tools/editorjs-alert"]
+	path = example/tools/editorjs-alert
+	url = https://github.com/itech-indrustries/editorjs-alert/
