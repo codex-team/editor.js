@@ -58,3 +58,6 @@
 [submodule "example/tools/editorjs-alert"]
 	path = example/tools/editorjs-alert
 	url = https://github.com/itech-indrustries/editorjs-alert/
+[submodule "example/tools/editorjs-callout"]
+	path = example/tools/editorjs-callout
+	url = https://github.com/itech-indrustries/editorjs-callout.git

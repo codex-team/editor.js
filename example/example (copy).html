@@ -53,6 +53,7 @@
   <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
+  <script src="./tools/editorjs-callout/dist/bundle.js"></script><!-- Callout -->
   <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
   <script src="./tools/table/dist/bundle.js"></script><!-- Table -->
 
@@ -136,6 +137,12 @@
           class:  CodeTool,
           inlineToolbar: true,
           shortcut: 'CMD+SHIFT+C'
+        },
+
+        callout: {
+          class:  CalloutTool,
+          inlineToolbar: true,
+          shortcut: 'CMD+ALT+C'
         },
 
         delimiter: Delimiter,
@@ -276,6 +283,12 @@
                 "type" : "paragraph",
                 "data" : {
                     "text" : "We have been working on this project more than three years. Several large media projects help us to test and debug the Editor, to make its core more stable. At the same time we significantly improved the API. Now, it can be used to create any plugin for any task. Hope you enjoy. 😏"
+                }
+            },
+            {
+                "type" : "callout",
+                "data" : {
+                    "code" : "Here Comes the Callout for Your Service, Write Any Information regarding anything. Its all your callout any thig wiil be appriciated<br>"
                 }
             },
             {
