@@ -156,12 +156,14 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.checkbox = document.createElement('input') as HTMLInputElement;
     this.nodes.checkbox.type = "checkbox";
     this.nodes.checkbox.classList.add(this.CSS.input);
+    this.nodes.checkbox.classList.add('nf-checkbox');
     this.nodes.checkbox.classList.add(this.CSS.checkbox);
 
     this.nodes.container = document.createElement('div') as HTMLDivElement;
       this.nodes.container.appendChild(this.nodes.label);
       this.nodes.container.appendChild(this.nodes.checkbox);
       this.nodes.container.appendChild(this.nodes.input);
+      this.nodes.container.classList.add('nf-link-container');
 
     return this.nodes.container;
   }

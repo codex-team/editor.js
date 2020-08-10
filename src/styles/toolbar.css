@@ -132,3 +132,10 @@
 .no-follow-checkbox{
   width: 50%!important;
 }
+
+.nf-link-container{
+  padding-top: 1px;
+}
+.nf-checkbox{
+  margin-top: 0.3em!important;
+}
