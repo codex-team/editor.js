@@ -594,7 +594,7 @@ export default class Block {
       },
       {
         name: 'align',
-        Tune: AlignTune
+        Tune: AlignTune,
       },
     ];
 

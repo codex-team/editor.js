@@ -104,18 +104,17 @@ export default class BlocksAPI extends Module {
     this.Editor.Toolbar.move(false);
   }
 
-
   /**
    * Aligns content block to his content
    *
-   * @param {left|center|right} alignment
+   * @param {AlignmentType} alignment - Aligment for the block, can be right, left, or center
    */
   public align(alignment: AlignmentType): void {
     // check if some alignment is already present, if so just remove them and the new one
     const classes = this.Editor.BlockManager.currentBlock.holder.classList;
+
     if (classes.contains(`align-${alignment}`)) {
       classes.remove(`align-${alignment}`);
-      return;
     } else {
       classes.forEach(cls => {
         if (cls.includes('align-')) {
