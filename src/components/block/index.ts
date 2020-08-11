@@ -22,6 +22,7 @@ import { ToolType } from '../modules/tools';
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
+import AlignTune from '../block-tunes/block-tune-alignment';
 
 /**
  * Interface describes Block class constructor argument
@@ -590,6 +591,10 @@ export default class Block {
       {
         name: 'moveDown',
         Tune: MoveDownTune,
+      },
+      {
+        name: 'align',
+        Tune: AlignTune
       },
     ];
 

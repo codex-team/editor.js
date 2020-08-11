@@ -2,6 +2,7 @@ import Module from '../../__module';
 
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
+import { AlignmentType } from '../../../../types/block-tunes';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 
@@ -18,6 +19,7 @@ export default class BlocksAPI extends Module {
   public get methods(): Blocks {
     return {
       clear: (): void => this.clear(),
+      align: (alignment: 'left' | 'center' | 'right'): void => this.align(alignment),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
       delete: (index?: number): void => this.delete(index),
@@ -100,6 +102,29 @@ export default class BlocksAPI extends Module {
      * DO not close the settings
      */
     this.Editor.Toolbar.move(false);
+  }
+
+
+  /**
+   * Aligns content block to his content
+   *
+   * @param {left|center|right} alignment
+   */
+  public align(alignment: AlignmentType): void {
+    // check if some alignment is already present, if so just remove them and the new one
+    const classes = this.Editor.BlockManager.currentBlock.holder.classList;
+    if (classes.contains(`align-${alignment}`)) {
+      classes.remove(`align-${alignment}`);
+      return;
+    } else {
+      classes.forEach(cls => {
+        if (cls.includes('align-')) {
+          classes.remove(cls);
+        }
+      });
+
+      classes.add(`align-${alignment}`);
+    }
   }
 
   /**

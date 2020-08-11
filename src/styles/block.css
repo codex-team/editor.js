@@ -77,6 +77,18 @@
   }
 }
 
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-left {
+  text-align: left;
+}
+
 .codex-editor--narrow .ce-block--focused {
   @media (--not-mobile) {
     margin-right: calc(var(--narrow-mode-right-padding) * -1);

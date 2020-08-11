@@ -7,9 +7,9 @@ export interface BlockTune {
   /**
    * Returns block tune HTMLElement
    *
-   * @return {HTMLElement}
+   * @return {HTMLElement[] | HTMLElement}
    */
-  render(): HTMLElement;
+  render(): HTMLElement[] | HTMLElement;
 }
 
 /**
@@ -18,3 +18,7 @@ export interface BlockTune {
 export interface BlockTuneConstructable {
   new (config: {api: API, settings?: ToolConfig}): BlockTune;
 }
+
+export type AlignmentType = 'right' | 'center' | 'left';
+
+export type AlignmentButtonType = { icon: string; alignment: AlignmentType; t: string; };

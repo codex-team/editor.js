@@ -1,6 +1,7 @@
 import {OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
 import {BlockAPI} from './block';
+import { AlignmentType } from '../block-tunes';
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -10,6 +11,14 @@ export interface Blocks {
    * Remove all blocks from Editor zone
    */
   clear(): void;
+
+
+  /**
+   * Aligns content of the block
+   * @param {AlignmentType} alignment - alignment where the block is aligned to
+   * @returns {void}
+   */
+  align(align: AlignmentType): void;
 
   /**
    * Render passed data
