@@ -558,7 +558,7 @@ export function openTab(url: string): void {
 }
 
 /**
- * Common method for deprecating properties or methods.
+ * Common method for printing a warning about the usage of deprecated property or method.
  * 
  * @param condition - condition for deprecation.
  * @param oldProperty - deprecated property.
