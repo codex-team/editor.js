@@ -565,7 +565,7 @@ export function openTab(url: string): void {
  * @param newProperty - use this property instead of deprecated property.
  */
 export function deprecationAssert(condition: boolean, oldProperty: string, newProperty: string) {
-  const message = `${oldProperty} is deprecated and will be removed in the next major release. Please use ${newProperty} instead.`;
+  const message = `«${oldProperty}» is deprecated and will be removed in the next major release. Please use the «${newProperty}» instead.`;
 
   if (condition) {
     log(message, undefined, LogLevels.WARN);
