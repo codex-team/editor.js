@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.19
+
+- `Fix` - Fixed issue with `editor.blocks.delete(index)` method which throws an error when Eeditor.js is not focused, even after providing a valid index. [#1182](https://github.com/codex-team/editor.js/issues/1182)
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
