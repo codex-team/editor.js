@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.19
+- `Fix` - Fixed the issue of toolbar not disappearing on entering input in Chinese language. [#1196](https://github.com/codex-team/editor.js/issues/1196)
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
