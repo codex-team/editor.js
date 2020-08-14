@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.19
+
+- `Improvements` - Renamed `initialBlock` property to `defaultBlock` and applied the same changes to its respective methods. [#993](https://github.com/codex-team/editor.js/issues/993)
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
