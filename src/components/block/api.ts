@@ -81,10 +81,9 @@ function BlockAPI(block: Block): void {
      * @param {string} methodName - method to call
      * @param {object} param - object with parameters
      *
-     * @returns {any}
+     * @returns {unknown}
      */
-    // eslint-disable-next-line
-    call(methodName: string, param?: object): any {
+    call(methodName: string, param?: object): unknown {
       return block.call(methodName, param);
     },
 
