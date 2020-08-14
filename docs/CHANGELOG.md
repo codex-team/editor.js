@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.19
+
+- `Improvements` - Allows blocks to return the result of call methods, thus allowing them to expose arbitrary data as needed. [#1205](https://github.com/codex-team/editor.js/pull/1205)
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
