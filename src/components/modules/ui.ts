@@ -506,7 +506,7 @@ export default class UI extends Module {
      */
     if (!this.someToolbarOpened && hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
       /**
-       * Insert initial typed Block
+       * Insert the default typed Block
        */
       const newBlock = this.Editor.BlockManager.insert();
 

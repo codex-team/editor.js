@@ -172,7 +172,7 @@ export default class ConversionToolbar extends Module {
 
     /**
      * When current Block name is equals to the replacing tool Name,
-     * than convert this Block back to the initial Block
+     * than convert this Block back to the default Block
      */
     if (currentBlockName === replacingToolName) {
       replacingToolName = this.config.defaultBlock;

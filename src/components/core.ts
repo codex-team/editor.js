@@ -130,11 +130,10 @@ export default class Core {
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
      */
+    _.deprecationAssert(!!config.holderId, 'config.holderId', 'config.holder');
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
       config.holderId = null;
-      _.log('holderId property is deprecated and will be removed in the next major release. ' +
-        'Use holder property instead.', 'warn');
     }
 
     /**
@@ -157,11 +156,11 @@ export default class Core {
 
     _.setLogLevel(this.config.logLevel);
 
-    _.deprecationAssert(Boolean(this.config.initialBlock), 'config.initialBlock', 'config.defaultBlock');
-    
+
     /**
      * If default Block's Tool was not passed, use the Paragraph Tool
      */
+    _.deprecationAssert(Boolean(this.config.initialBlock), 'config.initialBlock', 'config.defaultBlock');
     this.config.defaultBlock = this.config.defaultBlock || this.config.initialBlock || 'paragraph';
 
 

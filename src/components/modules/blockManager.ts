@@ -230,7 +230,7 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts initial block type
+   * @param {string} options.tool - plugin name, by default method inserts the default block type
    * @param {object} options.data - plugin data
    * @param {number} options.index - index where to insert new Block
    * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
@@ -356,7 +356,7 @@ export default class BlockManager extends Module {
     this.currentBlockIndex = this.blocks.length - 1;
 
     /**
-     * Insert initial typed block
+     * Insert the default typed block
      */
     return this.insert();
   }
@@ -443,7 +443,7 @@ export default class BlockManager extends Module {
 
   /**
    * Attention!
-   * After removing insert new initial typed Block and focus on it
+   * After removing insert the new default typed Block and focus on it
    * Removes all blocks
    */
   public removeAllBlocks(): void {
@@ -650,7 +650,7 @@ export default class BlockManager extends Module {
    * Clears Editor
    *
    * @param {boolean} needToAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
-   *                                        we don't need to add empty initial block
+   *                                             we don't need to add ans empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
   public clear(needToAddDefaultBlock = false): void {
