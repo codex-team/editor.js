@@ -2,7 +2,7 @@
 
 ### 2.19
 
-- `Improvements` - Allows blocks to return the result of call methods, thus allowing them to expose arbitrary data as needed. [#1205](https://github.com/codex-team/editor.js/pull/1205)
+- `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
 
 ### 2.18
 
