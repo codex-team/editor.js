@@ -127,7 +127,9 @@ export default class BlocksAPI extends Module {
     /**
      * After Block deletion currentBlock is updated
      */
-    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    }
 
     this.Editor.Toolbar.close();
   }
