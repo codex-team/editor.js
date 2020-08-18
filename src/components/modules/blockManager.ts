@@ -650,7 +650,7 @@ export default class BlockManager extends Module {
    * Clears Editor
    *
    * @param {boolean} needToAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
-   *                                             we don't need to add ans empty default block
+   *                                             we don't need to add an empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
   public clear(needToAddDefaultBlock = false): void {
