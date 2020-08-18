@@ -118,7 +118,7 @@ export default class BlocksAPI extends Module {
 
     /**
      * in case of last block deletion
-     * Insert new initial empty block
+     * Insert the new default empty block
      */
     if (this.Editor.BlockManager.blocks.length === 0) {
       this.Editor.BlockManager.insert();
@@ -172,10 +172,10 @@ export default class BlocksAPI extends Module {
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
-    _.log(
-      '`blocks.stretchBlock()` method is deprecated and will be removed in the next major release. ' +
-      'Use BlockAPI interface instead',
-      'warn'
+    _.deprecationAssert(
+      true,
+      'blocks.stretchBlock()',
+      'BlockAPI'
     );
 
     const block = this.Editor.BlockManager.getBlockByIndex(index);
@@ -197,7 +197,7 @@ export default class BlocksAPI extends Module {
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
   public insert = (
-    type: string = this.config.initialBlock,
+    type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,

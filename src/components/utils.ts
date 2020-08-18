@@ -557,3 +557,18 @@ export function getValidUrl(url: string): string {
 export function openTab(url: string): void {
   window.open(url, '_blank');
 }
+
+/**
+ * Common method for printing a warning about the usage of deprecated property or method.
+ *
+ * @param condition - condition for deprecation.
+ * @param oldProperty - deprecated property.
+ * @param newProperty - the property that should be used instead.
+ */
+export function deprecationAssert(condition: boolean, oldProperty: string, newProperty: string): void {
+  const message = `«${oldProperty}» is deprecated and will be removed in the next major release. Please use the «${newProperty}» instead.`;
+
+  if (condition) {
+    logLabeled(message, 'warn');
+  }
+}
