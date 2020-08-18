@@ -2,6 +2,7 @@
 
 ### 2.19
 
+- `Fix` - Fixed the issue of toolbar not disappearing on entering input in Chinese, Hindi and some other languages. [#1196](https://github.com/codex-team/editor.js/issues/1196)
 - `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
 
 ### 2.18
