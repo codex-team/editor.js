@@ -130,11 +130,10 @@ export default class Core {
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
      */
+    _.deprecationAssert(!!config.holderId, 'config.holderId', 'config.holder');
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
       config.holderId = null;
-      _.log('holderId property is deprecated and will be removed in the next major release. ' +
-        'Use holder property instead.', 'warn');
     }
 
     /**
@@ -157,10 +156,13 @@ export default class Core {
 
     _.setLogLevel(this.config.logLevel);
 
+
     /**
-     * If initial Block's Tool was not passed, use the Paragraph Tool
+     * If default Block's Tool was not passed, use the Paragraph Tool
      */
-    this.config.initialBlock = this.config.initialBlock || 'paragraph';
+    _.deprecationAssert(Boolean(this.config.initialBlock), 'config.initialBlock', 'config.defaultBlock');
+    this.config.defaultBlock = this.config.defaultBlock || this.config.initialBlock || 'paragraph';
+
 
     /**
      * Height of Editor's bottom area that allows to set focus on the last Block
@@ -170,13 +172,13 @@ export default class Core {
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     /**
-     * Initial block type
+     * Default block type
      * Uses in case when there is no blocks passed
      *
      * @type {{type: (*), data: {text: null}}}
      */
-    const initialBlockData = {
-      type: this.config.initialBlock,
+    const defaultBlockData = {
+      type: this.config.defaultBlock,
       data: {},
     };
 
@@ -196,14 +198,14 @@ export default class Core {
     this.config.onChange = this.config.onChange || ((): void => {});
 
     /**
-     * Initialize Blocks to pass data to the Renderer
+     * Initialize default Block to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data)) {
       this.config.data = {} as OutputData;
-      this.config.data.blocks = [ initialBlockData ];
+      this.config.data.blocks = [ defaultBlockData ];
     } else {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ initialBlockData ];
+        this.config.data.blocks = [ defaultBlockData ];
       }
     }
 
