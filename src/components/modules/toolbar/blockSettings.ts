@@ -140,6 +140,10 @@ export default class BlockSettings extends Module {
    * Close Block Settings pane
    */
   public close(): void {
+    if (!this.nodes.wrapper.classList.contains(this.CSS.wrapperOpened)) {
+      return;
+    }
+
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
     /**
@@ -167,6 +171,9 @@ export default class BlockSettings extends Module {
 
     /** Clear focus on active button */
     this.flipper.deactivate();
+
+    /** Dispatch onBlur event manually */
+    this.config.onBlur(this.Editor.API.methods);
   }
 
   /**
