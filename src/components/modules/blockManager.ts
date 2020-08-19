@@ -671,12 +671,12 @@ export default class BlockManager extends Module {
    * Cleans up all the block tools' resources
    * This is called when editor is destroyed
    */
-  public destroy(): void {
-    this.blocks.forEach((block) => {
+  public async destroy(): Promise<void> {
+    await Promise.all(this.blocks.map((block) => {
       if (_.isFunction(block.tool.destroy)) {
-        block.tool.destroy();
+        return block.tool.destroy();
       }
-    });
+    }));
   }
 
   /**
