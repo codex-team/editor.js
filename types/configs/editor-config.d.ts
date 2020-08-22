@@ -25,6 +25,13 @@ export interface EditorConfig {
    * Name should be equal to one of Tool`s keys of passed tools
    * If not specified, Paragraph Tool will be used
    */
+  defaultBlock?: string;
+
+  /**
+   * @deprecated
+   * This property will be deprecated in the next major release. 
+   * Use the 'defaultBlock' property instead.
+   */
   initialBlock?: string;
 
   /**

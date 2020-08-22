@@ -158,7 +158,7 @@ export default class ConversionToolbar extends Module {
   public hasTools(): boolean {
     const tools = Object.keys(this.tools); // available tools in array representation
 
-    return !(tools.length === 1 && tools.shift() === this.config.initialBlock);
+    return !(tools.length === 1 && tools.shift() === this.config.defaultBlock);
   }
 
   /**
@@ -181,10 +181,10 @@ export default class ConversionToolbar extends Module {
 
     /**
      * When current Block name is equals to the replacing tool Name,
-     * than convert this Block back to the initial Block
+     * than convert this Block back to the default Block
      */
     if (currentBlockName === replacingToolName) {
-      replacingToolName = this.config.initialBlock;
+      replacingToolName = this.config.defaultBlock;
     }
 
     /**

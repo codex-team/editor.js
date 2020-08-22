@@ -350,14 +350,14 @@ export default class Tools extends Module {
   }
 
   /**
-   * Check if passed Tool is an instance of Initial Block Tool
+   * Check if passed Tool is an instance of Default Block Tool
    *
    * @param {Tool} tool - Tool to check
    *
    * @returns {boolean}
    */
-  public isInitial(tool): boolean {
-    return tool instanceof this.available[this.config.initialBlock];
+  public isDefault(tool): boolean {
+    return tool instanceof this.available[this.config.defaultBlock];
   }
 
   /**
@@ -371,8 +371,8 @@ export default class Tools extends Module {
     const settings = this.toolsSettings[toolName];
     const config = settings[this.USER_SETTINGS.CONFIG] || {};
 
-    // Pass placeholder to initial Block config
-    if (toolName === this.config.initialBlock && !config.placeholder) {
+    // Pass placeholder to default Block config
+    if (toolName === this.config.defaultBlock && !config.placeholder) {
       config.placeholder = this.config.placeholder;
       settings[this.USER_SETTINGS.CONFIG] = config;
     }
