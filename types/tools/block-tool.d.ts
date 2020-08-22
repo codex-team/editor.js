@@ -117,6 +117,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   conversionConfig?: ConversionConfig;
 
   /**
+   * Is Tool supports read-only mode, this property should return true
+   */
+  isReadOnlySupported?: boolean;
+
+  /**
    * @constructor
    *
    * @param {BlockToolConstructorOptions} config - constructor parameters

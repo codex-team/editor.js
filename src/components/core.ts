@@ -273,8 +273,8 @@ export default class Core {
    */
   public async start(): Promise<void> {
     const modulesToPrepare = [
-      'ReadOnly',
       'Tools',
+      'ReadOnly',
       'UI',
       'Toolbar',
       'InlineToolbar',

@@ -1,4 +1,5 @@
 import Module from '../__module';
+import * as _ from '../utils';
 
 /**
  * @module ReadOnly
@@ -30,6 +31,10 @@ export default class ReadOnly extends Module {
    * Set initial state
    */
   public async prepare(): Promise<void> {
+    if (!this.isToolsReadOnlyCompatible()) {
+      return;
+    }
+
     this.readOnlyEnabled = this.config.readOnly;
   }
 
@@ -40,6 +45,10 @@ export default class ReadOnly extends Module {
    * @param {boolean} state - (optional) read-only state or toggle
    */
   public async toggle(state = !this.readOnlyEnabled): Promise<boolean> {
+    if (!this.isToolsReadOnlyCompatible()) {
+      return false;
+    }
+
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
@@ -65,5 +74,31 @@ export default class ReadOnly extends Module {
     await this.Editor.Renderer.render(savedBlocks.blocks);
 
     return this.readOnlyEnabled;
+  }
+
+  /**
+   * Return true if all tools support read-only mode
+   */
+  private isToolsReadOnlyCompatible(): boolean {
+    const { Tools } = this.Editor;
+    const { blockTools } = Tools;
+    const toolsDontSupportReadOnly: string[] = [];
+
+    Object.entries(blockTools).forEach(([name, tool]) => {
+      if (!Tools.isReadOnlySupported(tool)) {
+        toolsDontSupportReadOnly.push(name);
+      }
+    });
+
+    if (toolsDontSupportReadOnly.length > 0) {
+      _.logLabeled(
+        `To enable read-only mode all connected tools should support it. Tools ${toolsDontSupportReadOnly.join(', ')} don't support read-only mode.`,
+        'warn'
+      );
+
+      return false;
+    }
+
+    return true;
   }
 }

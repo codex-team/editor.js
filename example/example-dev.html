@@ -317,8 +317,9 @@
     /**
      * Toggle read-only example
      */
-    toggleReadOnlyButton.addEventListener('click', function () {
-      const readOnlyState = editor.readonly.toggle();
+    toggleReadOnlyButton.addEventListener('click', async () => {
+      const readOnlyState = await editor.readonly.toggle();
+
       console.log('Read only', readOnlyState ? 'enabled' : 'disabled');
     });
   </script>
