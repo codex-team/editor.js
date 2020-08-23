@@ -567,7 +567,7 @@ export function openTab(url: string): void {
  */
 export function generateId(prefix = ''): string {
   // tslint:disable-next-line:no-bitwise
-  return `${prefix}${(~~(Math.random() * 1e8)).toString(16)}`;
+  return `${prefix}${(Math.floor(Math.random() * 1e8)).toString(16)}`;
 }
 
 /**
