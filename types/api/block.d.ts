@@ -50,9 +50,10 @@ export interface BlockAPI {
   /**
    * Save Block content
    *
+   * @param {boolean} sanitizeDisable
    * @return {Promise<void|SavedData>}
    */
-  save(): Promise<void|SavedData>;
+  save(sanitizeDisable: boolean): Promise<void|SavedData>;
 
   /**
    * Validate Block data

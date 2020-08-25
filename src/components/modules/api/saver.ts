@@ -14,14 +14,14 @@ export default class SaverAPI extends Module {
    */
   public get methods(): Saver {
     return {
-      save: (): Promise<OutputData> => this.save(),
+      save: (sanitizeDisable=true): Promise<OutputData> => this.save(sanitizeDisable),
     };
   }
 
   /**
    * Return Editor's data
    */
-  public save(): Promise<OutputData> {
-    return this.Editor.Saver.save();
+  public save(sanitizeDisable: boolean): Promise<OutputData> {
+    return this.Editor.Saver.save(sanitizeDisable);
   }
 }

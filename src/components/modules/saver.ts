@@ -24,9 +24,10 @@ export default class Saver extends Module {
   /**
    * Composes new chain of Promises to fire them alternatelly
    *
+   * @param {boolean} sanitizeDisable true to desactivate sanitizing blocks
    * @returns {OutputData}
    */
-  public async save(): Promise<OutputData> {
+  public async save(sanitizeDisable: boolean): Promise<OutputData> {
     const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
@@ -40,9 +41,14 @@ export default class Saver extends Module {
       chainData.push(this.getSavedData(block));
     });
 
-    const extractedData = await Promise.all(chainData);
-    const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
-
+    var sanitizedData,extractedData;
+    
+    if(sanitizeDisable) {
+        sanitizedData = await Promise.all(chainData);
+    } else {
+        extractedData = await Promise.all(chainData);
+        sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+    }
     ModificationsObserver.enable();
 
     return this.makeOutput(sanitizedData);
