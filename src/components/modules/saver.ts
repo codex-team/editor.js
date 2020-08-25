@@ -41,13 +41,13 @@ export default class Saver extends Module {
       chainData.push(this.getSavedData(block));
     });
 
-    var sanitizedData,extractedData;
-    
-    if(sanitizeDisable) {
-        sanitizedData = await Promise.all(chainData);
+    let sanitizedData, extractedData;
+
+    if (sanitizeDisable) {
+      sanitizedData = await Promise.all(chainData);
     } else {
-        extractedData = await Promise.all(chainData);
-        sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+      extractedData = await Promise.all(chainData);
+      sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
     }
     ModificationsObserver.enable();
 

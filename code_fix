@@ -1,0 +1,5 @@
+#!/bin/bash
+#eslint has to be installed first with "yarn add eslint"
+#in your eslintrc rule add  "accessor-pairs" : off else you will be annoyed...
+#
+npm run-script lint:fix
