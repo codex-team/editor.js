@@ -1,0 +1,4 @@
+#!/bin/bash
+#yarn has to be installed first
+#
+npm run-script build
