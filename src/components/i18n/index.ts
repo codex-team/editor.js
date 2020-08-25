@@ -61,9 +61,9 @@ export default class I18n {
 
     /**
      * For Console Message to Check Section is defined or not
-     *if (section === undefined) {
+     * if (section === undefined) {
      *  _.logLabeled('I18n: section %o was not found in current dictionary', 'log', namespace);
-     *}
+     * }
      */
 
     if (!section || !section[dictKey]) {
