@@ -1,8 +1,4 @@
 import defaultDictionary from './locales/en/messages.json';
-/**
- * For debugging messages
- *import * as _ from '../utils';
- */
 import { I18nDictionary, Dictionary } from '../../../types/configs';
 import { LeavesDictKeys } from '../../types-internal/i18n-internal-namespace';
 
