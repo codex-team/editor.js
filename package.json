@@ -16,7 +16,7 @@
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
     "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
-    "lint": "eslint src/ --ext .ts",
+    "lint": "eslint src/ --ext .ts --max-warnings 0",
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "svg:win": "if not exist dist md dist && yarn svg",
