@@ -1,8 +1,8 @@
 #!/bin/bash
-#plugin Paragraph is mandantory in src/components/tools/
+#plugin Paragraph is mandantory in src/components/tools/ ...
 DIR="src/components/tools/paragraph"
 if ! [ "$(ls -A $DIR)" ]; then
-#yarn will do a git clone equivlanr to install it 
+#...yarn will do a git clone equivalent to install it 
 yarn install
 yarn pull_tools
 fi
