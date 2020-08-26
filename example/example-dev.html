@@ -35,8 +35,14 @@
         <div class="ce-example__button" id="saveButton">
           editor.save()
         </div>
-        <div class="ce-example__button" id="toggleReadOnlyButton">
-          editor.toggleReadOnly()
+      </div>
+      <div class="ce-example__statusbar">
+        Readonly:
+        <b id="readonly-state">
+          Off
+        </b>
+        <div class="ce-example__statusbar-button" id="toggleReadOnlyButton">
+          toggle
         </div>
       </div>
     </div>
@@ -80,26 +86,14 @@
   <!-- Initialization -->
   <script>
     /**
-     * Saving button
-     */
-    const saveButton = document.getElementById('saveButton');
-
-    /**
-     * Toggle read-only button
-     */
-    const toggleReadOnlyButton = document.getElementById('toggleReadOnlyButton');
-
-    /**
      * To initialize the Editor, create a new instance with configuration object
      * @see docs/installation.md for mode details
      */
-    const readOnly = true;
-
     var editor = new EditorJS({
       /**
-       * Enable read only
+       * Enable/Disable the read only mode
        */
-      readOnly: readOnly,
+      readOnly: false,
 
       /**
        * Wrapper of Editor
@@ -289,15 +283,23 @@
         ]
       },
       onReady: function(){
-        if (!readOnly) {
-          saveButton.click();
-        }
+        saveButton.click();
       },
       onChange: function() {
         console.log('something changed');
       },
     });
 
+    /**
+     * Saving button
+     */
+    const saveButton = document.getElementById('saveButton');
+
+    /**
+     * Toggle read-only button
+     */
+    const toggleReadOnlyButton = document.getElementById('toggleReadOnlyButton');
+    const readOnlyIndicator = document.getElementById('readonly-state');
 
     /**
      * Saving example
@@ -320,7 +322,7 @@
     toggleReadOnlyButton.addEventListener('click', async () => {
       const readOnlyState = await editor.readonly.toggle();
 
-      console.log('Read only', readOnlyState ? 'enabled' : 'disabled');
+      readOnlyIndicator.textContent = readOnlyState ? 'On' : 'Off';
     });
   </script>
 </body>
