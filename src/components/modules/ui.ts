@@ -21,10 +21,10 @@ import Flipper from '../flipper';
  * HTML Elements used for UI
  */
 interface UINodes {
-  holder: HTMLElement,
-  wrapper: HTMLElement,
-  redactor: HTMLElement,
-  loader: HTMLElement,
+  holder: HTMLElement;
+  wrapper: HTMLElement;
+  redactor: HTMLElement;
+  loader: HTMLElement;
 }
 
 /**

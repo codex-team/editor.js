@@ -11,8 +11,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * HTMLElements used for Toolbox UI
  */
 interface ToolboxNodes {
-  toolbox: HTMLElement,
-  buttons: HTMLElement[],
+  toolbox: HTMLElement;
+  buttons: HTMLElement[];
 }
 
 /**

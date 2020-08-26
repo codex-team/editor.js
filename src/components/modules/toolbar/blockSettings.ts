@@ -8,9 +8,9 @@ import SelectionUtils from '../../selection';
  * HTML Elements that used for BlockSettings
  */
 interface BlockSettingsNodes {
-  wrapper: HTMLElement,
-  toolSettings: HTMLElement,
-  defaultSettings: HTMLElement
+  wrapper: HTMLElement;
+  toolSettings: HTMLElement;
+  defaultSettings: HTMLElement;
 }
 
 /**

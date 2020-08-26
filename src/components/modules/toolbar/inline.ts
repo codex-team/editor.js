@@ -11,15 +11,15 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * Inline Toolbar elements
  */
 interface InlineToolbarNodes {
-  wrapper: HTMLElement,
-  buttons: HTMLElement,
-  conversionToggler: HTMLElement,
-  conversionTogglerContent: HTMLElement,
+  wrapper: HTMLElement;
+  buttons: HTMLElement;
+  conversionToggler: HTMLElement;
+  conversionTogglerContent: HTMLElement;
   /**
    * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
    * For example, input for the 'link' tool or textarea for the 'comment' tool
    */
-  actions: HTMLElement,
+  actions: HTMLElement;
 }
 
 /**

@@ -8,16 +8,16 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * HTML Elements used for Toolbar UI
  */
 interface ToolbarNodes {
-  wrapper: HTMLElement,
-  content: HTMLElement,
-  actions: HTMLElement,
+  wrapper: HTMLElement;
+  content: HTMLElement;
+  actions: HTMLElement;
 
   // Content Zone
-  plusButton: HTMLElement,
+  plusButton: HTMLElement;
 
   // Actions Zone
-  blockActionsButtons: HTMLElement,
-  settingsToggler: HTMLElement,
+  blockActionsButtons: HTMLElement;
+  settingsToggler: HTMLElement;
 }
 /**
  *

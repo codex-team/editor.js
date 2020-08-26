@@ -11,8 +11,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * HTML Elements used for ConversionToolbar
  */
 interface ConversionToolbarNodes {
-  wrapper: HTMLElement,
-  tools: HTMLElement,
+  wrapper: HTMLElement;
+  tools: HTMLElement;
 }
 
 /**
