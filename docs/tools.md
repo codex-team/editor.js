@@ -89,6 +89,36 @@ There are few options available by Editor.js.
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `config` | _Object_ | `null` | User's configuration for Plugin.
 
+## Tool prepare and reset
+
+If you need to prepare some data for Tool (eg. load external script, create HTML nodes in the document, etc) you can use static prepare method.
+
+It accepts tools config passed on Editor's initialization as an argument:
+
+```javascript
+class Tool {
+  static prepare(config) {
+    loadScript();
+    insertNodes();
+    ...
+  }
+}
+```
+
+On Editor destroy you can use an opposite method `reset` to clean up all prepared data:
+
+```javascript
+class Tool {
+  static reset() {
+    cleanUpScripts();
+    deleteNodes();
+    ...
+  }
+}
+```
+
+Both methods might be async.
+
 ## Paste handling
 
 Editor.js handles paste on Blocks and provides API for Tools to process the pasted data.
