@@ -1,0 +1,42 @@
+name: Build and publish package to NPM
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: yarn
+      - run: yarn build
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: yarn
+      - run: yarn build
+      - run: yarn publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  notify:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ::set-env name=EMOJI_PACKAGE::$'\xf0\x9f\x93\xa6'
+      - run: echo ::set-env name=PACKAGE_NAME::$(node -p "require('./package.json').name")
+      - run: echo ::set-env name=PACKAGE_VERSION::$(node -p "require('./package.json').version")
+      - run: echo ::set-env name=MESSAGE::"$EMOJI_PACKAGE [$PACKAGE_NAME](https://npmjs.com/package/$PACKAGE_NAME) $PACKAGE_VERSION was published. See a [changelog](https://github.com/codex-team/editor.js/blob/next/docs/CHANGELOG.md)."
+      - run: curl -X POST ${{ secrets.CODEX_BOT_NOTIFY_EDITORJS_PUBLIC_CHAT }} -d "message=$MESSAGE" -d parse_mode=Markdown -d disable_web_page_preview=true
