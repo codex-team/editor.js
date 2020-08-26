@@ -303,15 +303,13 @@
      * Saving example
      */
     saveButton.addEventListener('click', function () {
-      const promise = editor.save();
-
-      if (!promise) {
-        return;
-      }
-
-      promise.then((savedData) => {
-        cPreview.show(savedData, document.getElementById("output"));
-      });
+      editor.save()
+        .then((savedData) => {
+          cPreview.show(savedData, document.getElementById("output"));
+        })
+        .catch((error) => {
+          console.error('Saving error', error);
+        });
     });
 
     /**
