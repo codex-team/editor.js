@@ -172,7 +172,7 @@ export default class Core {
     /**
      * Text direction. If not set, uses ltr
      */
-    this.config.direction = this.config.direction || 'ltr';
+    this.config.i18n.direction = this.config.i18n.direction || 'ltr';
 
     /**
      * Initial block type

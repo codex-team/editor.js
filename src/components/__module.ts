@@ -51,7 +51,7 @@ export default class Module {
    * Returns true if current direction is RTL (Right-To-Left)
    */
   protected isRtl(): boolean {
-    return this.config.direction === 'rtl';
+    return this.config.i18n.direction === 'rtl';
   }
 
 }
