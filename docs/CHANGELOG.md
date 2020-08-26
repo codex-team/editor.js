@@ -1,5 +1,15 @@
 # Changelog
 
+### 2.19
+
+- `Fix` - Fixed issue with Spam clicking the "Click to tune" button duplicates the icons on FireFox. [#1273](https://github.com/codex-team/editor.js/issues/1273)
+- `Fix` - Fixed issue with `editor.blocks.delete(index)` method which throws an error when Editor.js is not focused, even after providing a valid index. [#1182](https://github.com/codex-team/editor.js/issues/1182)
+- `Improvements` - The `initialBlock` property of Editor config is deprecated. Use the `defaultBlock` instead. [#993](https://github.com/codex-team/editor.js/issues/993)
+- `Fix` - Fixed the issue of toolbar not disappearing on entering input in Chinese, Hindi and some other languages. [#1196](https://github.com/codex-team/editor.js/issues/1196)
+- `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
+- `Improvements` - Unuseful log about missed i18n section has been removed [#1269](https://github.com/codex-team/editor.js/issues/1269)
+- `Fix` - Do not stop events propagation if not needed (essential for React synthetic events) [#1051](https://github.com/codex-team/editor.js/issues/1051) [#946](https://github.com/codex-team/editor.js/issues/946)
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
