@@ -2,6 +2,10 @@ import { EditorModules } from '../types-internal/editor-modules';
 import { EditorConfig } from '../../types';
 import { ModuleConfig } from '../types-internal/module-config';
 
+/**
+ * The type <T> of the Module generic.
+ * It describes the structure of nodes used in modules.
+ */
 export type ModuleNodes = {[key: string]: HTMLElement};
 
 /**
