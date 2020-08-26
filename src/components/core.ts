@@ -3,6 +3,7 @@ import * as _ from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
+import { CriticalError } from './errors/critical';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -294,6 +295,9 @@ export default class Core {
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
+          if (e instanceof CriticalError) {
+            throw new Error(e.message);
+          }
           _.log(`Module ${module} was skipped because of %o`, 'warn', e);
         }
         // _.log(`Preparing ${module} module`, 'timeEnd');

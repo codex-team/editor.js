@@ -31,7 +31,7 @@ export default class API extends Module {
       inlineToolbar: this.Editor.InlineToolbarAPI.methods,
       tooltip: this.Editor.TooltipAPI.methods,
       i18n: this.Editor.I18nAPI.methods,
-      readonly: this.Editor.ReadOnlyAPI.methods,
+      readOnly: this.Editor.ReadOnlyAPI.methods,
     } as APIInterfaces;
   }
 

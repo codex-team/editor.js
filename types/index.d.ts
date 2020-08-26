@@ -91,7 +91,7 @@ export interface API {
   inlineToolbar: InlineToolbar;
   tooltip: Tooltip;
   i18n: I18n;
-  readonly: ReadOnly;
+  readOnly: ReadOnly;
 }
 
 /**
@@ -112,7 +112,7 @@ declare class EditorJS {
   public styles: Styles;
   public toolbar: Toolbar;
   public inlineToolbar: InlineToolbar;
-  public readonly: ReadOnly;
+  public readOnly: ReadOnly;
   constructor(configuration?: EditorConfig|string);
 
   /**

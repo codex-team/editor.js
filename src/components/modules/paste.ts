@@ -450,7 +450,7 @@ export default class Paste extends Module {
     }
 
     /**
-     * If Tools is in list of exceptions, skip processing of paste event
+     * If Tools is in list of errors, skip processing of paste event
      */
     if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
       return;

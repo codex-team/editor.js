@@ -722,7 +722,15 @@ export default class UI extends Module {
    * @param {Event} event - selection event
    */
   private selectionChanged(event: Event): void {
+    const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement as Element;
+
+    if (CrossBlockSelection.isCrossBlockSelectionStarted) {
+      // Removes all ranges when any Block is selected
+      if (BlockSelection.anyBlockSelected) {
+        Selection.get().removeAllRanges();
+      }
+    }
 
     /**
      * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
