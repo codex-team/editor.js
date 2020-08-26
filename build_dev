@@ -1,4 +1,9 @@
 #!/bin/bash
 #yarn has to be installed first
 #
+#plugin Paragraph is mandantory
+DIR="src/components/tools/paragraph"
+if ! [ "$(ls -A $DIR)" ]; then
+git clone https://github.com/editor-js/paragraph.git src/components/tools/paragraph
+fi
 npm run-script build:dev
