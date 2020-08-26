@@ -81,10 +81,10 @@ function BlockAPI(block: Block): void {
      * @param {string} methodName - method to call
      * @param {object} param - object with parameters
      *
-     * @returns {void}
+     * @returns {unknown}
      */
-    call(methodName: string, param?: object): void {
-      block.call(methodName, param);
+    call(methodName: string, param?: object): unknown {
+      return block.call(methodName, param);
     },
 
     /**
