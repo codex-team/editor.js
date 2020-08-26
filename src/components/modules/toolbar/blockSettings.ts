@@ -5,6 +5,15 @@ import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 
 /**
+ * HTML Elements that used for BlockSettings
+ */
+interface BlockSettingsNodes {
+  wrapper: HTMLElement,
+  toolSettings: HTMLElement,
+  defaultSettings: HTMLElement
+}
+
+/**
  * Block Settings
  *
  *   ____ Settings Panel ____
@@ -15,7 +24,7 @@ import SelectionUtils from '../../selection';
  *  | ...................... |
  *  |________________________|
  */
-export default class BlockSettings extends Module {
+export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Module Events
    *
@@ -56,15 +65,6 @@ export default class BlockSettings extends Module {
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(this.CSS.wrapperOpened);
   }
-
-  /**
-   * Block settings UI HTML elements
-   */
-  public nodes = {
-    wrapper: null,
-    toolSettings: null,
-    defaultSettings: null,
-  };
 
   /**
    * List of buttons

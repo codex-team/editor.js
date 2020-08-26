@@ -18,6 +18,16 @@ import Block from '../block';
 import Flipper from '../flipper';
 
 /**
+ * HTML Elements used for UI
+ */
+interface UINodes {
+  holder: HTMLElement,
+  wrapper: HTMLElement,
+  redactor: HTMLElement,
+  loader: HTMLElement,
+}
+
+/**
  * @class
  *
  * @classdesc Makes Editor.js UI:
@@ -35,7 +45,7 @@ import Flipper from '../flipper';
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
-export default class UI extends Module {
+export default class UI extends Module<UINodes> {
   /**
    * Editor.js UI CSS class names
    *
@@ -89,16 +99,6 @@ export default class UI extends Module {
    * @type {boolean}
    */
   public isMobile = false;
-
-  /**
-   * HTML Elements used for UI
-   */
-  public nodes = {
-    holder: null,
-    wrapper: null,
-    redactor: null,
-    loader: null,
-  };
 
   /**
    * Cache for center column rectangle info

@@ -8,13 +8,28 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * Inline Toolbar elements
+ */
+interface InlineToolbarNodes {
+  wrapper: HTMLElement,
+  buttons: HTMLElement,
+  conversionToggler: HTMLElement,
+  conversionTogglerContent: HTMLElement,
+  /**
+   * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  actions: HTMLElement,
+}
+
+/**
  * Inline toolbar with actions that modifies selected text fragment
  *
  * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
  * |________________________|
  */
-export default class InlineToolbar extends Module {
+export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * CSS styles
    */
@@ -41,21 +56,6 @@ export default class InlineToolbar extends Module {
    * @type {boolean}
    */
   public opened = false;
-
-  /**
-   * Inline Toolbar elements
-   */
-  public nodes = {
-    wrapper: null,
-    buttons: null,
-    conversionToggler: null,
-    conversionTogglerContent: null,
-    /**
-     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-     * For example, input for the 'link' tool or textarea for the 'comment' tool
-     */
-    actions: null,
-  };
 
   /**
    * Margin above/below the Toolbar

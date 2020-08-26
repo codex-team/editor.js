@@ -8,9 +8,17 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * HTML Elements used for ConversionToolbar
+ */
+interface ConversionToolbarNodes {
+  wrapper: HTMLElement,
+  tools: HTMLElement,
+}
+
+/**
  * Block Converter
  */
-export default class ConversionToolbar extends Module {
+export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   /**
    * CSS getter
    */
@@ -28,14 +36,6 @@ export default class ConversionToolbar extends Module {
       conversionToolActive: 'ce-conversion-tool--active',
     };
   }
-
-  /**
-   * HTML Elements used for UI
-   */
-  public nodes = {
-    wrapper: null,
-    tools: null,
-  };
 
   /**
    * Conversion Toolbar open/close state

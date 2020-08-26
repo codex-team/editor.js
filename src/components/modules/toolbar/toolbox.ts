@@ -8,6 +8,14 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * HTMLElements used for Toolbox UI
+ */
+interface ToolboxNodes {
+  toolbox: HTMLElement,
+  buttons: HTMLElement[],
+}
+
+/**
  * @class Toolbox
  * @classdesc Holder for Tools
  *
@@ -17,7 +25,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {object} CSS     - CSS class names
  *
  */
-export default class Toolbox extends Module {
+export default class Toolbox extends Module<ToolboxNodes> {
   /**
    * CSS styles
    *
@@ -51,14 +59,6 @@ export default class Toolbox extends Module {
    * @type {boolean}
    */
   public opened = false;
-
-  /**
-   * HTMLElements used for Toolbox UI
-   */
-  public nodes = {
-    toolbox: null,
-    buttons: [],
-  };
 
   /**
    * How many tools displayed in Toolbox

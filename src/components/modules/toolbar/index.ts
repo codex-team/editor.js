@@ -5,6 +5,21 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * HTML Elements used for Toolbar UI
+ */
+interface ToolbarNodes {
+  wrapper: HTMLElement,
+  content: HTMLElement,
+  actions: HTMLElement,
+
+  // Content Zone
+  plusButton: HTMLElement,
+
+  // Actions Zone
+  blockActionsButtons: HTMLElement,
+  settingsToggler: HTMLElement,
+}
+/**
  *
  * «Toolbar» is the node that moves up/down over current block
  *
@@ -56,23 +71,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
-export default class Toolbar extends Module {
-  /**
-   * HTML Elements used for Toolbar UI
-   */
-  public nodes = {
-    wrapper: null,
-    content: null,
-    actions: null,
-
-    // Content Zone
-    plusButton: null,
-
-    // Actions Zone
-    blockActionsButtons: null,
-    settingsToggler: null,
-  };
-
+export default class Toolbar extends Module<ToolbarNodes> {
   /**
    * CSS styles
    *
