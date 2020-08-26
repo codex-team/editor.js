@@ -14,7 +14,7 @@ export default class SaverAPI extends Module {
    */
   public get methods(): Saver {
     return {
-      save: (sanitizeDisable = true): Promise<OutputData> => this.save(sanitizeDisable),
+      save: (sanitizeDisable = false): Promise<OutputData> => this.save(sanitizeDisable),
     };
   }
 
