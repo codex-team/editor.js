@@ -355,7 +355,7 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        if (_.isNativeTextInput(currentBlockInput)) {
+        if ($.isNativeInput(currentBlockInput)) {
           /**
            * If input is native text input we need to use it's value
            * Text before the caret stays in the input,
