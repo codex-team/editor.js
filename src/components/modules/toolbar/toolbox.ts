@@ -183,12 +183,19 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
+    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+
+    /**
+     * Hide Toolbox button if Toolbox settings is false
+     */
+    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
+      return;
+    }
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
+    button.innerHTML = (userToolboxSettings && userToolboxSettings.icon) || toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 

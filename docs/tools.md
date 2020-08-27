@@ -78,7 +78,7 @@ var editor = new EditorJS({
     },
     header: Header
   },
-  initialBlock : 'text',
+  defaultBlock : 'text',
 });
 ```
 
@@ -88,6 +88,36 @@ There are few options available by Editor.js.
 | -- | -- | -- | -- |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `config` | _Object_ | `null` | User's configuration for Plugin.
+
+## Tool prepare and reset
+
+If you need to prepare some data for Tool (eg. load external script, create HTML nodes in the document, etc) you can use static prepare method.
+
+It accepts tools config passed on Editor's initialization as an argument:
+
+```javascript
+class Tool {
+  static prepare(config) {
+    loadScript();
+    insertNodes();
+    ...
+  }
+}
+```
+
+On Editor destroy you can use an opposite method `reset` to clean up all prepared data:
+
+```javascript
+class Tool {
+  static reset() {
+    cleanUpScripts();
+    deleteNodes();
+    ...
+  }
+}
+```
+
+Both methods might be async.
 
 ## Paste handling
 
@@ -118,7 +148,7 @@ To handle pasted HTML elements object returned from `pasteConfig` getter should 
 | -- | -- | -- |
 | `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and processed by your `onPaste` method |
 
-For correct work you MUST provide `onPaste` handler at least for `initialBlock` Tool.
+For correct work you MUST provide `onPaste` handler at least for `defaultBlock` Tool.
 
 > Example
 
@@ -144,7 +174,7 @@ Your Tool can analyze text by RegExp patterns to substitute pasted string with d
 
 **Note** Editor will check pattern's full match, so don't forget to handle all available chars in there.
 
-Pattern will be processed only if paste was on `initialBlock` Tool and pasted string length is less than 450 characters.
+Pattern will be processed only if paste was on `defaultBlock` Tool and pasted string length is less than 450 characters.
 
 > Example
 

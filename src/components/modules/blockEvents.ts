@@ -140,12 +140,12 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+    const canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty;
     const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
     const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
-     * For empty Blocks we show Plus button via Toolbox only for initial Blocks
+     * For empty Blocks we show Plus button via Toolbox only for default Blocks
      */
     if (canOpenToolbox) {
       this.activateToolbox();
@@ -209,7 +209,7 @@ export default class BlockEvents extends Module {
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-    Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
     BlockSelection.clearSelection(event);
@@ -254,7 +254,7 @@ export default class BlockEvents extends Module {
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
-      this.Editor.BlockManager.insertInitialBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
+      this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
     } else {
       /**
        * Split the Current Block into two blocks
@@ -268,7 +268,7 @@ export default class BlockEvents extends Module {
     /**
      * If new Block is empty
      */
-    if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+    if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty) {
       /**
        * Show Toolbar
        */
