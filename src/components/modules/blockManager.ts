@@ -668,6 +668,18 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Cleans up all the block tools' resources
+   * This is called when editor is destroyed
+   */
+  public async destroy(): Promise<void> {
+    await Promise.all(this.blocks.map((block) => {
+      if (_.isFunction(block.tool.destroy)) {
+        return block.tool.destroy();
+      }
+    }));
+  }
+
+  /**
    * Bind Events
    *
    * @param {Block} block - Block to which event should be bound

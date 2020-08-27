@@ -40,4 +40,9 @@ export interface BaseToolConstructable {
    * @param data
    */
   prepare?(data: {toolName: string, config: ToolConfig}): void | Promise<void>;
+
+  /**
+   * Tool`s reset method to clean up anything set by prepare. Can be async
+   */
+  reset?(): void | Promise<void>;
 }
