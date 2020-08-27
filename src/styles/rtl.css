@@ -64,10 +64,18 @@
 
 }
 
-.codex-editor--narrow.rtl-editor .ce-toolbar__plus {
-  @media (--not-mobile) {
-    left: 0px;
-    right: 5px;
+.codex-editor--narrow.codex-editor--rtl {
+  .ce-toolbar__plus {
+    @media (--not-mobile) {
+      left: 0px;
+      right: 5px;
+    }
+  }
+
+  .ce-toolbar__actions {
+    @media (--not-mobile) {
+      left: -5px;
+    }
   }
 }
 
