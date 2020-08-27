@@ -26,7 +26,7 @@ import {
   Tooltip,
   I18n,
 } from './api';
-import {OutputData} from './data-formats/output-data';
+import { OutputData } from './data-formats';
 
 /**
  * Interfaces used for development
