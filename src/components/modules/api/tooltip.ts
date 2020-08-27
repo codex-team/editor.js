@@ -8,10 +8,19 @@ import { TooltipContent, TooltipOptions } from 'codex-tooltip';
  */
 export default class TooltipAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'show',
+    'hide',
+    'onHover',
+  ];
+
+  /**
    * Available methods
    */
   public get methods(): Tooltip {
-    return {
+    const methods = {
       show: (element: HTMLElement,
         content: TooltipContent,
         options?: TooltipOptions
@@ -22,6 +31,14 @@ export default class TooltipAPI extends Module {
         options?: TooltipOptions
       ): void => this.onHover(element, content, options),
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

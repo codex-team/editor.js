@@ -9,14 +9,29 @@ import * as _ from '../../utils';
  */
 export default class SaverAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'save',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {Saver}
    */
   public get methods(): Saver {
-    return {
+    const methods = {
       save: (): Promise<OutputData> => this.save(),
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

@@ -8,15 +8,31 @@ import { Selection as SelectionAPIInterface } from '../../../../types/api';
  */
 export default class SelectionAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'findParentTag',
+    'expandToTag',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {SelectionAPIInterface}
    */
   public get methods(): SelectionAPIInterface {
-    return {
+    const methods = {
       findParentTag: (tagName: string, className?: string): HTMLElement | null => this.findParentTag(tagName, className),
       expandToTag: (node: HTMLElement): void => this.expandToTag(node),
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

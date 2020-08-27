@@ -7,15 +7,31 @@ import { InlineToolbar } from '../../../../types/api/inline-toolbar';
  */
 export default class InlineToolbarAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'close',
+    'open',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {InlineToolbar}
    */
   public get methods(): InlineToolbar {
-    return {
+    const methods = {
       close: (): void => this.close(),
       open: (): void => this.open(),
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

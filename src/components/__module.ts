@@ -21,7 +21,8 @@ export default class Module<T extends ModuleNodes = {}> {
   /**
    * Each module can provide some UI elements that will be stored in this property
    */
-  public nodes: T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public nodes: T = {} as any;
 
   /**
    * Editor modules list
@@ -36,6 +37,11 @@ export default class Module<T extends ModuleNodes = {}> {
    * @type {EditorConfig}
    */
   protected config: EditorConfig;
+
+  /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [];
 
   /**
    * This object provides methods to push into set of listeners that being dropped when read-only mode is enabled

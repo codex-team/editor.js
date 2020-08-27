@@ -26,6 +26,11 @@ interface ToolboxNodes {
  *
  */
 export default class Toolbox extends Module<ToolboxNodes> {
+  public nodes = {
+    toolbox: null,
+    buttons: [],
+  }
+
   /**
    * CSS styles
    *

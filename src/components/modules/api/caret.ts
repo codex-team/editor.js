@@ -7,12 +7,24 @@ import { Caret } from '../../../../types/api';
  */
 export default class CaretAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'setToFirstBlock',
+    'setToLastBlock',
+    'setToPreviousBlock',
+    'setToNextBlock',
+    'setToBlock',
+    'focus',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {Caret}
    */
   public get methods(): Caret {
-    return {
+    const methods = {
       setToFirstBlock: this.setToFirstBlock,
       setToLastBlock: this.setToLastBlock,
       setToPreviousBlock: this.setToPreviousBlock,
@@ -20,6 +32,14 @@ export default class CaretAPI extends Module {
       setToBlock: this.setToBlock,
       focus: this.focus,
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

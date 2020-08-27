@@ -7,15 +7,31 @@ import { Listeners } from '../../../../types/api';
  */
 export default class ListenersAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'on',
+    'off',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {Listeners}
    */
   public get methods(): Listeners {
-    return {
+    const methods = {
       on: (element: HTMLElement, eventType, handler, useCapture): void => this.on(element, eventType, handler, useCapture),
       off: (element, eventType, handler, useCapture): void => this.off(element, eventType, handler, useCapture),
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**

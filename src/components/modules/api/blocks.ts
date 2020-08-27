@@ -11,12 +11,30 @@ import BlockAPI from '../../block/api';
  */
 export default class BlocksAPI extends Module {
   /**
+   * Method names that must be decorated
+   */
+  protected decorateList: string[] = [
+    'clear',
+    'render',
+    'renderFromHTML',
+    'delete',
+    'swap',
+    'move',
+    'getBlockByIndex',
+    'getCurrentBlockIndex',
+    'getBlocksCount',
+    'stretchBlock',
+    'insertNewBlock',
+    'insert',
+  ];
+
+  /**
    * Available methods
    *
    * @returns {Blocks}
    */
   public get methods(): Blocks {
-    return {
+    const methods = {
       clear: (): void => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
@@ -30,6 +48,14 @@ export default class BlocksAPI extends Module {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
     };
+
+    for (const method in methods) {
+      if (this.decorateList.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      }
+    }
+
+    return methods;
   }
 
   /**
