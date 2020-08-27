@@ -426,7 +426,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigateNext = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl());
+    const navigateNext = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
     const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
 
     if (isNavigated) {
@@ -484,7 +484,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl());
+    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
     const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();
 
     if (isNavigated) {

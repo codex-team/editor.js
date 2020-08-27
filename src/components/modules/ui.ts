@@ -52,7 +52,7 @@ export default class UI extends Module {
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorLoader: 'codex-editor__loader',
       editorEmpty: 'codex-editor--empty',
-      editorRtlFix: 'rtl-fix',
+      editorRtlFix: 'codex-editor--rtl',
     };
   }
 
@@ -256,7 +256,7 @@ export default class UI extends Module {
      */
     this.nodes.wrapper = $.make('div', [
       this.CSS.editorWrapper,
-      ...(this.isRtl() ? [this.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [this.CSS.editorRtlFix] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 

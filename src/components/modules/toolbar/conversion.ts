@@ -67,7 +67,7 @@ export default class ConversionToolbar extends Module {
   public make(): HTMLElement {
     this.nodes.wrapper = $.make('div', [
       ConversionToolbar.CSS.conversionToolbarWrapper,
-      ...(this.isRtl() ? [this.Editor.UI.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
     ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
