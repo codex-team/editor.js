@@ -11,6 +11,7 @@
 - `Fix` - Tool's `destroy` method is not invoked when `editor.destroy()` is called. [#1047](https://github.com/codex-team/editor.js/issues/1047)
 - `New` - Tool's `reset` static method added to the API to clean up any data added by Tool on initialization
 - `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
+- `Fix` - Fixed issue with enter key in inputs and textareas [#920](https://github.com/codex-team/editor.js/issues/920)
 
 ### 2.18
 
