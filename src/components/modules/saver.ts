@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import { OutputData } from '../../../types';
-import { ValidatedData } from '../../types-internal/block-data';
+import { ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
 
