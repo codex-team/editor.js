@@ -185,6 +185,9 @@ export default class Toolbox extends Module {
 
     const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
 
+    /**
+     * Hide Toolbox button if Toolbox settings is false
+     */
     if ((userToolboxSettings ?? toolToolboxSettings) === false) {
       return;
     }
