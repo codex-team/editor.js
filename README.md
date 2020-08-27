@@ -146,9 +146,8 @@ const EditorJS = require('@editorjs/editorjs');
 ```
 or
 
-using 'import' concept:
 ```javascript
-import EditorJs from (@editorjs/editorjs);
+import EditorJS from '@editorjs/editorjs';
 ```
 
 ##### Option B. Use a CDN
