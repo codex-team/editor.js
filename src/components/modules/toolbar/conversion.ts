@@ -65,7 +65,10 @@ export default class ConversionToolbar extends Module {
    * Create UI of Conversion Toolbar
    */
   public make(): HTMLElement {
-    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
+    this.nodes.wrapper = $.make('div', [
+      ConversionToolbar.CSS.conversionToolbarWrapper,
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
+    ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
@@ -158,7 +161,7 @@ export default class ConversionToolbar extends Module {
    *
    * @param {string} replacingToolName - name of Tool which replaces current
    */
-  public async replaceWithBlock(replacingToolName: string): Promise <void> {
+  public async replaceWithBlock(replacingToolName: string): Promise<void> {
     /**
      * At first, we get current Block data
      *
@@ -295,8 +298,8 @@ export default class ConversionToolbar extends Module {
    * @param {string} title - button title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
-    const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
-    const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
+    const tool = $.make('div', [ConversionToolbar.CSS.conversionTool]);
+    const icon = $.make('div', [ConversionToolbar.CSS.conversionToolIcon]);
 
     tool.dataset.tool = toolName;
     icon.innerHTML = toolIcon;
@@ -307,7 +310,7 @@ export default class ConversionToolbar extends Module {
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
 
-    this.Editor.Listeners.on(tool, 'click', async () => {
+    this.Editor.Listeners.on(tool, 'click', async() => {
       await this.replaceWithBlock(toolName);
     });
   }
