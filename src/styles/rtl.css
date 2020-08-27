@@ -1,4 +1,4 @@
-.codex-editor.rtl-fix {
+.codex-editor.codex-editor--rtl {
   direction: rtl;
 
   .cdx-list {
