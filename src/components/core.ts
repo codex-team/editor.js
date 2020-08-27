@@ -170,11 +170,6 @@ export default class Core {
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     /**
-     * Text direction. If not set, uses ltr
-     */
-    this.config.i18n.direction = this.config.i18n.direction || 'ltr';
-
-    /**
      * Initial block type
      * Uses in case when there is no blocks passed
      *
@@ -215,8 +210,17 @@ export default class Core {
     /**
      * Adjust i18n
      */
-    if (config.i18n && config.i18n.messages) {
+    if (config.i18n?.messages) {
       I18n.setDictionary(config.i18n.messages);
+    }
+
+    /**
+     * Text direction. If not set, uses ltr
+     */
+    if (config.i18n?.direction) {
+      this.config.i18n = {
+        direction: config.i18n?.direction || 'ltr',
+      };
     }
   }
 
