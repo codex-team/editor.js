@@ -10,7 +10,7 @@ import {
   ToolSettings
 } from '../../../types';
 
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import $ from '../dom';
 import * as _ from '../utils';
 import ApiModule from '../modules/api';

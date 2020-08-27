@@ -183,6 +183,7 @@ export const logLabeled = _log.bind(window, true);
 export function isPrintableKey(keyCode: number): boolean {
   return (keyCode > 47 && keyCode < 58) || // number keys
     keyCode === 32 || keyCode === 13 || // Spacebar & return key(s)
+    keyCode === 229 || // processing key input for certain languages — Chinese, Japanese, etc.
     (keyCode > 64 && keyCode < 91) || // letter keys
     (keyCode > 95 && keyCode < 112) || // Numpad keys
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
@@ -558,10 +559,16 @@ export function openTab(url: string): void {
 }
 
 /**
- * Checks if element is "<input />" or "<textarea />"
+ * Common method for printing a warning about the usage of deprecated property or method.
  *
- * @param element - Element to check
+ * @param condition - condition for deprecation.
+ * @param oldProperty - deprecated property.
+ * @param newProperty - the property that should be used instead.
  */
-export function isNativeTextInput(element: Node | HTMLElement): boolean {
-  return element.nodeName === 'INPUT' || element.nodeName === 'TEXTAREA';
+export function deprecationAssert(condition: boolean, oldProperty: string, newProperty: string): void {
+  const message = `«${oldProperty}» is deprecated and will be removed in the next major release. Please use the «${newProperty}» instead.`;
+
+  if (condition) {
+    logLabeled(message, 'warn');
+  }
 }
