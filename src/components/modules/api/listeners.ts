@@ -1,15 +1,15 @@
-import Module from '../../__module';
 import { Listeners } from '../../../../types/api';
+import BaseApiModule from './base';
 
 /**
  * @class ListenersAPI
  * Provides with methods working with DOM Listener
  */
-export default class ListenersAPI extends Module {
+export default class ListenersAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'on',
     'off',
   ];
@@ -20,18 +20,10 @@ export default class ListenersAPI extends Module {
    * @returns {Listeners}
    */
   public get methods(): Listeners {
-    const methods = {
+    return {
       on: (element: HTMLElement, eventType, handler, useCapture): void => this.on(element, eventType, handler, useCapture),
       off: (element, eventType, handler, useCapture): void => this.off(element, eventType, handler, useCapture),
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**

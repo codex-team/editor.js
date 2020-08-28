@@ -2,17 +2,17 @@ import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
-import {APIModule} from "../api";
+import BaseApiModule from './base';
 
 /**
  * @class BlocksAPI
  * provides with methods working with Block
  */
-export default class BlocksAPI extends APIModule {
+export default class BlocksAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'clear',
     'render',
     'renderFromHTML',
@@ -31,7 +31,7 @@ export default class BlocksAPI extends APIModule {
    * @returns {Blocks}
    */
   public get methods(): Blocks {
-    const methods = {
+    return {
       clear: (): void => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
@@ -45,14 +45,6 @@ export default class BlocksAPI extends APIModule {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**

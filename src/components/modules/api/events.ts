@@ -1,11 +1,11 @@
-import Module from '../../__module';
 import { Events } from '../../../../types/api';
+import BaseApiModule from './base';
 
 /**
  * @class EventsAPI
  * provides with methods working with Toolbar
  */
-export default class EventsAPI extends Module {
+export default class EventsAPI extends BaseApiModule {
   /**
    * Available methods
    *

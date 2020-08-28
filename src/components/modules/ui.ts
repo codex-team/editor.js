@@ -275,7 +275,7 @@ export default class UI extends Module<UINodes> {
      */
     this.nodes.wrapper = $.make('div', [
       this.CSS.editorWrapper,
-      ...(this.isRtl ? [this.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 

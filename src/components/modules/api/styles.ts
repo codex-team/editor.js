@@ -1,10 +1,10 @@
-import Module from '../../__module';
 import { Styles } from '../../../../types/api';
+import BaseApiModule from './base';
 
 /**
  *
  */
-export default class StylesAPI extends Module {
+export default class StylesAPI extends BaseApiModule {
   /**
    * Exported classes
    */

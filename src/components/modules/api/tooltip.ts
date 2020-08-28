@@ -1,16 +1,16 @@
-import Module from '../../__module';
 import { Tooltip } from '../../../../types/api';
 import { TooltipContent, TooltipOptions } from 'codex-tooltip';
+import BaseApiModule from './base';
 
 /**
  * @class TooltipAPI
  * @classdesc Tooltip API
  */
-export default class TooltipAPI extends Module {
+export default class TooltipAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'show',
     'hide',
     'onHover',
@@ -20,7 +20,7 @@ export default class TooltipAPI extends Module {
    * Available methods
    */
   public get methods(): Tooltip {
-    const methods = {
+    return {
       show: (element: HTMLElement,
         content: TooltipContent,
         options?: TooltipOptions
@@ -31,14 +31,6 @@ export default class TooltipAPI extends Module {
         options?: TooltipOptions
       ): void => this.onHover(element, content, options),
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**

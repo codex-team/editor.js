@@ -14,7 +14,6 @@ import { SavedData } from '../../../types/data-formats';
 import $ from '../dom';
 import * as _ from '../utils';
 import ApiModule from '../modules/api';
-import SelectionUtils from '../selection';
 import BlockAPI from './api';
 import { ToolType } from '../modules/tools';
 

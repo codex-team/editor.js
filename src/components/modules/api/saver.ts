@@ -1,17 +1,17 @@
-import Module from '../../__module';
 import { Saver } from '../../../../types/api';
 import { OutputData } from '../../../../types';
 import * as _ from '../../utils';
+import BaseApiModule from './base';
 
 /**
  * @class SaverAPI
  * provides with methods to save data
  */
-export default class SaverAPI extends Module {
+export default class SaverAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'save',
   ];
 
@@ -21,17 +21,9 @@ export default class SaverAPI extends Module {
    * @returns {Saver}
    */
   public get methods(): Saver {
-    const methods = {
+    return {
       save: (): Promise<OutputData> => this.save(),
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**

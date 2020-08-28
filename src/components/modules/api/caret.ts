@@ -1,15 +1,15 @@
-import Module from '../../__module';
 import { Caret } from '../../../../types/api';
+import BaseApiModule from './base';
 
 /**
  * @class CaretAPI
  * provides with methods to work with caret
  */
-export default class CaretAPI extends Module {
+export default class CaretAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'setToFirstBlock',
     'setToLastBlock',
     'setToPreviousBlock',
@@ -24,7 +24,7 @@ export default class CaretAPI extends Module {
    * @returns {Caret}
    */
   public get methods(): Caret {
-    const methods = {
+    return {
       setToFirstBlock: this.setToFirstBlock,
       setToLastBlock: this.setToLastBlock,
       setToPreviousBlock: this.setToPreviousBlock,
@@ -32,14 +32,6 @@ export default class CaretAPI extends Module {
       setToBlock: this.setToBlock,
       focus: this.focus,
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**

@@ -1,13 +1,13 @@
-import Module from '../../__module';
 import { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
 import { ToolType } from '../tools';
 import { logLabeled } from '../../utils';
+import BaseApiModule from './base';
 
 /**
  * Provides methods for working with i18n
  */
-export default class I18nAPI extends Module {
+export default class I18nAPI extends BaseApiModule {
   /**
    * Return namespace section for tool or block tune
    *

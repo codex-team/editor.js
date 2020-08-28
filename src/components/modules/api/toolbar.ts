@@ -1,15 +1,15 @@
-import Module from '../../__module';
 import { Toolbar } from '../../../../types/api';
+import BaseApiModule from './base';
 
 /**
  * @class ToolbarAPI
  * Provides methods for working with the Toolbar
  */
-export default class ToolbarAPI extends Module {
+export default class ToolbarAPI extends BaseApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
-  protected methodsToDisableInReadonly: string[] = [
+  public methodsToDisableInReadonly: string[] = [
     'close',
     'open',
   ];
@@ -20,18 +20,10 @@ export default class ToolbarAPI extends Module {
    * @returns {Toolbar}
    */
   public get methods(): Toolbar {
-    const methods = {
+    return {
       close: (): void => this.close(),
       open: (): void => this.open(),
     };
-
-    for (const method in methods) {
-      if (this.methodsToDisableInReadonly.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
-      }
-    }
-
-    return methods;
   }
 
   /**
