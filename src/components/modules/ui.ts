@@ -53,7 +53,7 @@ export default class UI extends Module<UINodes> {
    */
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
-    editorLoader: string; editorEmpty: string;
+    editorLoader: string; editorEmpty: string; editorRtlFix: string;
     } {
     return {
       editorWrapper: 'codex-editor',
@@ -62,6 +62,7 @@ export default class UI extends Module<UINodes> {
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorLoader: 'codex-editor__loader',
       editorEmpty: 'codex-editor--empty',
+      editorRtlFix: 'codex-editor--rtl',
     };
   }
 
@@ -272,7 +273,10 @@ export default class UI extends Module<UINodes> {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper = $.make('div', [
+      this.CSS.editorWrapper,
+      ...(this.isRtl ? [this.CSS.editorRtlFix] : []),
+    ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**

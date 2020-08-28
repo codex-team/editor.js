@@ -120,4 +120,12 @@ export default class Module<T extends ModuleNodes = {}> {
       }
     }
   }
+
+  /**
+   * Returns true if current direction is RTL (Right-To-Left)
+   */
+  protected get isRtl(): boolean {
+    return this.config.i18n.direction === 'rtl';
+  }
+
 }

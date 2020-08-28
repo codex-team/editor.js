@@ -407,6 +407,17 @@ export default class Tools extends Module {
   }
 
   /**
+   * Calls each Tool reset method to clean up anything set by Tool
+   */
+  public destroy(): void {
+    Object.values(this.available).forEach(async tool => {
+      if (_.isFunction(tool.reset)) {
+        await tool.reset();
+      }
+    });
+  }
+
+  /**
    * Binds prepare function of plugins with user or default config
    *
    * @returns {Array} list of functions that needs to be fired sequentially

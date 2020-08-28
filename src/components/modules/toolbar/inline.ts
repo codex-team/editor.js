@@ -47,7 +47,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
-    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
+    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content'
   };
 
   /**
@@ -295,7 +295,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Making DOM
    */
   private make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+    this.nodes.wrapper = $.make('div', [
+      this.CSS.inlineToolbar,
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
+    ]);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
@@ -599,7 +602,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([ name ]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'

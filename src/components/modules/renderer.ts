@@ -90,7 +90,7 @@ export default class Renderer extends Module {
         const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
         const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
 
-        stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
+        stubData.title = toolToolboxSettings.title || (userToolboxSettings && userToolboxSettings.title) || stubData.title;
       }
 
       const stub = BlockManager.insert({

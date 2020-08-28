@@ -55,6 +55,12 @@ export interface BlockTool extends BaseTool {
   onPaste?(event: PasteEvent): void;
 
   /**
+   * Cleanup resources used by your tool here
+   * Called when the editor is destroyed
+   */
+  destroy?(): void;
+  
+  /**
    * Lifecycle hooks
    */
 

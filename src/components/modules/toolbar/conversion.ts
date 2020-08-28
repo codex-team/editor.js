@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
-import { SavedData } from '../../../types-internal/block-data';
+import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -65,7 +65,10 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * Create UI of Conversion Toolbar
    */
   public make(): HTMLElement {
-    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
+    this.nodes.wrapper = $.make('div', [
+      ConversionToolbar.CSS.conversionToolbarWrapper,
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
+    ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
@@ -167,7 +170,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    *
    * @param {string} replacingToolName - name of Tool which replaces current
    */
-  public async replaceWithBlock(replacingToolName: string): Promise <void> {
+  public async replaceWithBlock(replacingToolName: string): Promise<void> {
     /**
      * At first, we get current Block data
      *
@@ -273,10 +276,15 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
       const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
 
+      const userSettings = this.Editor.Tools.USER_SETTINGS;
+      const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+
+      const toolboxSettings = userToolboxSettings ?? toolToolboxSettings;
+
       /**
        * Skip tools that don't pass 'toolbox' property
        */
-      if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
+      if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
         continue;
       }
 
@@ -287,7 +295,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         continue;
       }
 
-      this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
+      this.addTool(toolName, toolboxSettings.icon, toolboxSettings.title);
     }
   }
 
@@ -299,8 +307,8 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * @param {string} title - button title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
-    const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
-    const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
+    const tool = $.make('div', [ConversionToolbar.CSS.conversionTool]);
+    const icon = $.make('div', [ConversionToolbar.CSS.conversionToolIcon]);
 
     tool.dataset.tool = toolName;
     icon.innerHTML = toolIcon;
@@ -311,7 +319,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
 
-    this.Editor.Listeners.on(tool, 'click', async () => {
+    this.Editor.Listeners.on(tool, 'click', async() => {
       await this.replaceWithBlock(toolName);
     });
   }
