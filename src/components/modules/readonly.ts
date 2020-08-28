@@ -86,10 +86,12 @@ export default class ReadOnly extends Module {
   }
 
   /**
-   * @param {Function} method - any method
+   * Function wraps passed method and calls if it is not in read-only mode
+   *
+   * @param {Function} method - decorated function
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public decorator(method: Function): any {
+  public offDecorator(method: Function): any {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (...args: any[]): any => {
       if (!this.isEnabled) {

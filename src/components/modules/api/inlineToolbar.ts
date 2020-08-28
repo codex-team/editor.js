@@ -7,9 +7,9 @@ import { InlineToolbar } from '../../../../types/api/inline-toolbar';
  */
 export default class InlineToolbarAPI extends Module {
   /**
-   * Method names that must be decorated
+   * Method names that should be disabled in the Read-Only mode
    */
-  protected decorateList: string[] = [
+  protected methodsToDisableInReadonly: string[] = [
     'close',
     'open',
   ];
@@ -26,8 +26,8 @@ export default class InlineToolbarAPI extends Module {
     };
 
     for (const method in methods) {
-      if (this.decorateList.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      if (this.methodsToDisableInReadonly.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
       }
     }
 

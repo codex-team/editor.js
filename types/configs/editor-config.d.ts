@@ -29,7 +29,7 @@ export interface EditorConfig {
 
   /**
    * @deprecated
-   * This property will be deprecated in the next major release. 
+   * This property will be deprecated in the next major release.
    * Use the 'defaultBlock' property instead.
    */
   initialBlock?: string;

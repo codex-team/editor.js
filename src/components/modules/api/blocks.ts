@@ -1,28 +1,25 @@
-import Module from '../../__module';
-
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import {APIModule} from "../api";
 
 /**
  * @class BlocksAPI
  * provides with methods working with Block
  */
-export default class BlocksAPI extends Module {
+export default class BlocksAPI extends APIModule {
   /**
-   * Method names that must be decorated
+   * Method names that should be disabled in the Read-Only mode
    */
-  protected decorateList: string[] = [
+  protected methodsToDisableInReadonly: string[] = [
     'clear',
     'render',
     'renderFromHTML',
     'delete',
     'swap',
     'move',
-    'getBlockByIndex',
     'getCurrentBlockIndex',
-    'getBlocksCount',
     'stretchBlock',
     'insertNewBlock',
     'insert',
@@ -50,8 +47,8 @@ export default class BlocksAPI extends Module {
     };
 
     for (const method in methods) {
-      if (this.decorateList.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+      if (this.methodsToDisableInReadonly.includes(method)) {
+        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
       }
     }
 

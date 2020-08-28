@@ -11089,11 +11089,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.nodes = {};
       /**
-       * Method names that must be decorated
-       */
-
-      this.decorateList = [];
-      /**
        * This object provides methods to push into set of listeners that being dropped when read-only mode is enabled
        */
 
@@ -13402,6 +13397,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.config.readOnly = this.config.readOnly || false;
+        this.config.i18n = {};
         /**
          * Adjust i18n
          */
@@ -15626,6 +15622,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var map = {
 	"./api": "./src/components/modules/api/index.ts",
+	"./api.ts": "./src/components/modules/api.ts",
 	"./api/": "./src/components/modules/api/index.ts",
 	"./api/blocks": "./src/components/modules/api/blocks.ts",
 	"./api/blocks.ts": "./src/components/modules/api/blocks.ts",
@@ -15733,6 +15730,72 @@ webpackContext.id = "./src/components/modules sync recursive ^\\.\\/.*$";
 
 /***/ }),
 
+/***/ "./src/components/modules/api.ts":
+/*!***************************************!*\
+  !*** ./src/components/modules/api.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _inherits2, _possibleConstructorReturn2, _getPrototypeOf2, _module) {
+  "use strict";
+
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.APIModule = void 0;
+  _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
+  _inherits2 = _interopRequireDefault(_inherits2);
+  _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
+  _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf2);
+  _module = _interopRequireDefault(_module);
+
+  function _createSuper(Derived) { return function () { var Super = (0, _getPrototypeOf2["default"])(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = (0, _getPrototypeOf2["default"])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2["default"])(this, result); }; }
+
+  function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+  /**
+   * @abstract
+   *
+   * @class APIModule
+   * @classdesc Abstract API module
+   */
+  var APIModule = /*#__PURE__*/function (_Module) {
+    (0, _inherits2["default"])(APIModule, _Module);
+
+    var _super = _createSuper(APIModule);
+
+    function APIModule() {
+      var _this;
+
+      (0, _classCallCheck2["default"])(this, APIModule);
+      _this = _super.apply(this, arguments);
+      /**
+       * Method names that must be decorated
+       */
+
+      _this.methodsToDisableInReadonly = [];
+      return _this;
+    }
+
+    return APIModule;
+  }(_module["default"]);
+
+  _exports.APIModule = APIModule;
+  APIModule.displayName = "APIModule";
+});
+
+/***/ }),
+
 /***/ "./src/components/modules/api/blocks.ts":
 /*!**********************************************!*\
   !*** ./src/components/modules/api/blocks.ts ***!
@@ -15742,12 +15805,12 @@ webpackContext.id = "./src/components/modules sync recursive ^\\.\\/.*$";
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ./../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../block/api */ "./src/components/block/api.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! ./../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../block/api */ "./src/components/block/api.ts"), __webpack_require__(/*! ../api */ "./src/components/modules/api.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _inherits2, _possibleConstructorReturn2, _getPrototypeOf2, _module, _, _api) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _inherits2, _possibleConstructorReturn2, _getPrototypeOf2, _, _api, _api2) {
   "use strict";
 
   var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
@@ -15763,7 +15826,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
   _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf2);
-  _module = _interopRequireDefault(_module);
   _ = _interopRequireWildcard(_);
   _api = _interopRequireDefault(_api);
 
@@ -15775,8 +15837,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @class BlocksAPI
    * provides with methods working with Block
    */
-  var BlocksAPI = /*#__PURE__*/function (_Module) {
-    (0, _inherits2["default"])(BlocksAPI, _Module);
+  var BlocksAPI = /*#__PURE__*/function (_APIModule) {
+    (0, _inherits2["default"])(BlocksAPI, _APIModule);
 
     var _super = _createSuper(BlocksAPI);
 
@@ -15786,10 +15848,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, BlocksAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['clear', 'render', 'renderFromHTML', 'delete', 'swap', 'move', 'getBlockByIndex', 'getCurrentBlockIndex', 'getBlocksCount', 'stretchBlock', 'insertNewBlock', 'insert'];
+      _this.methodsToDisableInReadonly = ['clear', 'render', 'renderFromHTML', 'delete', 'swap', 'move', 'getCurrentBlockIndex', 'stretchBlock', 'insertNewBlock', 'insert'];
       /**
        * Insert new Block
        *
@@ -16054,8 +16116,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -16063,7 +16125,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
     }]);
     return BlocksAPI;
-  }(_module["default"]);
+  }(_api2.APIModule);
 
   _exports["default"] = BlocksAPI;
   BlocksAPI.displayName = "BlocksAPI";
@@ -16121,10 +16183,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, CaretAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['setToFirstBlock', 'setToLastBlock', 'setToPreviousBlock', 'setToNextBlock', 'setToBlock', 'focus'];
+      _this.methodsToDisableInReadonly = ['setToFirstBlock', 'setToLastBlock', 'setToPreviousBlock', 'setToNextBlock', 'setToBlock', 'focus'];
       /**
        * Sets caret to the first Block
        *
@@ -16276,8 +16338,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -16668,10 +16730,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, InlineToolbarAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['close', 'open'];
+      _this.methodsToDisableInReadonly = ['close', 'open'];
       return _this;
     }
     /**
@@ -16714,8 +16776,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -16781,10 +16843,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, ListenersAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['on', 'off'];
+      _this.methodsToDisableInReadonly = ['on', 'off'];
       return _this;
     }
     /**
@@ -16837,8 +16899,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -17168,10 +17230,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, SaverAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['save'];
+      _this.methodsToDisableInReadonly = ['save'];
       return _this;
     }
     /**
@@ -17212,8 +17274,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -17280,10 +17342,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, SelectionAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['findParentTag', 'expandToTag'];
+      _this.methodsToDisableInReadonly = ['findParentTag', 'expandToTag'];
       return _this;
     }
     /**
@@ -17333,8 +17395,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -17491,10 +17553,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, ToolbarAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['close', 'open'];
+      _this.methodsToDisableInReadonly = ['close', 'open'];
       return _this;
     }
     /**
@@ -17537,8 +17599,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -17604,10 +17666,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       (0, _classCallCheck2["default"])(this, TooltipAPI);
       _this = _super.apply(this, arguments);
       /**
-       * Method names that must be decorated
+       * Method names that should be disabled in the Read-Only mode
        */
 
-      _this.decorateList = ['show', 'hide', 'onHover'];
+      _this.methodsToDisableInReadonly = ['show', 'hide', 'onHover'];
       return _this;
     }
     /**
@@ -17668,8 +17730,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
 
         for (var method in methods) {
-          if (this.decorateList.includes(method)) {
-            methods[method] = this.Editor.ReadOnly.decorator(methods[method]);
+          if (this.methodsToDisableInReadonly.includes(method)) {
+            methods[method] = this.Editor.ReadOnly.offDecorator(methods[method]);
           }
         }
 
@@ -23306,13 +23368,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return toggle;
       }()
       /**
-       * @param {Function} method - any method
+       * Function wraps passed method and calls if it is not in read-only mode
+       *
+       * @param {Function} method - decorated function
        */
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     }, {
-      key: "decorator",
-      value: function decorator(method) {
+      key: "offDecorator",
+      value: function offDecorator(method) {
         var _this2 = this;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27162,6 +27226,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       (0, _classCallCheck2["default"])(this, Toolbox);
       _this = _super.apply(this, arguments);
+      /**
+       * Current module HTML Elements
+       */
+
       _this.nodes = {
         toolbox: null,
         buttons: []

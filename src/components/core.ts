@@ -206,6 +206,7 @@ export default class Core {
     }
 
     this.config.readOnly = this.config.readOnly as boolean || false;
+    this.config.i18n = {};
 
     /**
      * Adjust i18n

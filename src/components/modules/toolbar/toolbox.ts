@@ -26,6 +26,9 @@ interface ToolboxNodes {
  *
  */
 export default class Toolbox extends Module<ToolboxNodes> {
+  /**
+   * Current module HTML Elements
+   */
   public nodes = {
     toolbox: null,
     buttons: [],

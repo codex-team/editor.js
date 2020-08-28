@@ -39,11 +39,6 @@ export default class Module<T extends ModuleNodes = {}> {
   protected config: EditorConfig;
 
   /**
-   * Method names that must be decorated
-   */
-  protected decorateList: string[] = [];
-
-  /**
    * This object provides methods to push into set of listeners that being dropped when read-only mode is enabled
    */
   protected readOnlyMutableListeners = {
@@ -127,5 +122,4 @@ export default class Module<T extends ModuleNodes = {}> {
   protected get isRtl(): boolean {
     return this.config.i18n.direction === 'rtl';
   }
-
 }
