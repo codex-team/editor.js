@@ -60,6 +60,12 @@ export default class BlocksAPI extends Module {
   public getBlockByIndex(index: number): BlockAPIInterface {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
+    if (block === undefined) {
+      _.log('Block is `undefined` at index `' + index + '`', 'error');
+
+      return;
+    }
+
     return new BlockAPI(block);
   }
 
