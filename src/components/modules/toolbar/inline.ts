@@ -32,7 +32,7 @@ export default class InlineToolbar extends Module {
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
-    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content'
+    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
   };
 
   /**
@@ -52,16 +52,16 @@ export default class InlineToolbar extends Module {
     conversionTogglerContent: HTMLElement;
     actions: HTMLElement;
   } = {
-      wrapper: null,
-      buttons: null,
-      conversionToggler: null,
-      conversionTogglerContent: null,
-      /**
-       * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-       * For example, input for the 'link' tool or textarea for the 'comment' tool
-       */
-      actions: null,
-    };
+    wrapper: null,
+    buttons: null,
+    conversionToggler: null,
+    conversionTogglerContent: null,
+    /**
+     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+     * For example, input for the 'link' tool or textarea for the 'comment' tool
+     */
+    actions: null,
+  };
 
   /**
    * Margin above/below the Toolbar
@@ -118,7 +118,7 @@ export default class InlineToolbar extends Module {
   public make(): void {
     this.nodes.wrapper = $.make('div', [
       this.CSS.inlineToolbar,
-      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -393,10 +393,10 @@ export default class InlineToolbar extends Module {
    */
   private filterTools(): void {
     const currentSelection = SelectionUtils.get(),
-      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+        currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+        inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
     /**
      * All Inline Toolbar buttons
      *
@@ -538,7 +538,6 @@ export default class InlineToolbar extends Module {
    * Fill Inline Toolbar with Tools
    */
   private addTools(): void {
-    
     this.tools.forEach((toolInstance, toolName) => {
       this.addTool(toolName, toolInstance);
     });
@@ -599,7 +598,7 @@ export default class InlineToolbar extends Module {
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([ name ]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
