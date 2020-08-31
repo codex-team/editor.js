@@ -414,7 +414,7 @@ export default class InlineToolbar extends Module {
 
     /**
      * Filter buttons if Block Tool pass config like inlineToolbar=['link']
-     * Else filter them according to the default inlineTOllbar property.
+     * Else filter them according to the default inlineToolbar property.
      */
     if (Array.isArray(inlineToolbarSettings)) {
       buttons.forEach((button) => {
