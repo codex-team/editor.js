@@ -52,16 +52,16 @@ export default class InlineToolbar extends Module {
     conversionTogglerContent: HTMLElement;
     actions: HTMLElement;
   } = {
-    wrapper: null,
-    buttons: null,
-    conversionToggler: null,
-    conversionTogglerContent: null,
-    /**
-     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-     * For example, input for the 'link' tool or textarea for the 'comment' tool
-     */
-    actions: null,
-  };
+      wrapper: null,
+      buttons: null,
+      conversionToggler: null,
+      conversionTogglerContent: null,
+      /**
+       * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+       * For example, input for the 'link' tool or textarea for the 'comment' tool
+       */
+      actions: null,
+    };
 
   /**
    * Margin above/below the Toolbar
@@ -363,19 +363,40 @@ export default class InlineToolbar extends Module {
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    return toolSettings && (toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS] == undefined || Array.isArray(toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS]) || toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS] == true);
   }
+
+  // /**
+  //  * Sort tools according to the given order in inlineToolbar property
+  //  *
+  //  * @param buttons - buttons property to sort.
+  //  * @param inlineToolbar - inlineToolbar order.
+  //  */
+  // private sortTools(buttons: HTMLElement[], inlineToolbar: string[]): void{
+  //   inlineToolbar.forEach((toolName, i) => {
+  //     buttons.forEach((toolBtn, j) => {
+  //       if (inlineToolbar[i] == buttons[j].dataset.tool) {
+  //         const temp = buttons[i];
+
+  //         buttons[i] = buttons[j];
+
+  //         buttons[j] = temp;
+
+  //         return true;
+  //       }
+  //     });
+  //   });
+  // }
 
   /**
    * Show only allowed Tools
    */
   private filterTools(): void {
     const currentSelection = SelectionUtils.get(),
-        currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-        inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
-
+      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
     /**
      * All Inline Toolbar buttons
      *
@@ -393,10 +414,15 @@ export default class InlineToolbar extends Module {
 
     /**
      * Filter buttons if Block Tool pass config like inlineToolbar=['link']
+     * Else filter them according to the default inlineTOllbar property.
      */
     if (Array.isArray(inlineToolbarSettings)) {
       buttons.forEach((button) => {
         button.hidden = !inlineToolbarSettings.includes(button.dataset.tool);
+      });
+    } else if (Array.isArray(this.config.inlineToolbar)) {
+      buttons.forEach((button) => {
+        button.hidden = !this.config.inlineToolbar.includes(button.dataset.tool);
       });
     }
 
@@ -512,6 +538,7 @@ export default class InlineToolbar extends Module {
    * Fill Inline Toolbar with Tools
    */
   private addTools(): void {
+    
     this.tools.forEach((toolInstance, toolName) => {
       this.addTool(toolName, toolInstance);
     });

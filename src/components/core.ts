@@ -223,6 +223,11 @@ export default class Core {
         direction: config.i18n?.direction || 'ltr',
       };
     }
+
+    /**
+     * InlineToolbar is disabled if set to false.
+     */
+    this.config.inlineToolbar = config.inlineToolbar || [];
   }
 
   /**
