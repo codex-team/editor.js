@@ -14,7 +14,7 @@
 - `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
 - `Fix` - Fixed issue with enter key in inputs and textareas [#920](https://github.com/codex-team/editor.js/issues/920)
 - `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
-- `Fix` - Fixed issue with getBlockByIndex API [#1270](https://github.com/codex-team/editor.js/issues/1270)
+- `Fix` - Fixed bug of getBlockByIndex API[#1270](https://github.com/codex-team/editor.js/issues/1270)
 
 ### 2.18
 
