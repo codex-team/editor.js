@@ -23,7 +23,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
@@ -51,17 +51,15 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Returns Block holder by Block index
+   * Returns BlockAPI object by Block index
    *
    * @param {number} index - index to get
-   *
-   * @returns {HTMLElement}
    */
-  public getBlockByIndex(index: number): BlockAPIInterface {
+  public getBlockByIndex(index: number): BlockAPIInterface | void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (block === undefined) {
-      _.log('Block is `undefined` at index `' + index + '`', 'warn');
+      _.log('There is no block at index `' + index + '`', 'warn');
 
       return;
     }
