@@ -53,5 +53,4 @@ export default class Module {
   protected get isRtl(): boolean {
     return this.config.i18n.direction === 'rtl';
   }
-
 }
