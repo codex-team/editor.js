@@ -257,6 +257,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * Avoid DOM error when splitting blocks. 
+     */
+    if (!this.Editor.Caret.extractFragmentFromCaretPosition()) {
+      return;
+    }
+
     let newCurrent = this.Editor.BlockManager.currentBlock;
 
     /**
