@@ -306,6 +306,10 @@ export default class Core {
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
+          /**
+           * CriticalError's will not be caught
+           * It is used when Editor is rendering in read-only mode with unsupported plugin
+           */
           if (e instanceof CriticalError) {
             throw new Error(e.message);
           }

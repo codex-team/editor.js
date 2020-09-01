@@ -1,11 +1,11 @@
 import { Notifier } from '../../../../types/api';
 import { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  *
  */
-export default class NotifierAPI extends BaseApiModule {
+export default class NotifierAPI extends ApiModule {
   /**
    * Available methods
    */

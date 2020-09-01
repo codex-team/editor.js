@@ -14,53 +14,66 @@ import { ToolType } from '../tools';
  */
 export default class API extends Module {
   /**
+   * Property keeps cached methods so that it is used once for all tools
+   */
+  private methodsCached: APIInterfaces;
+
+  /**
    * Editor.js Core API modules
    */
   public get methods(): APIInterfaces {
-    const apiComponents = {
-      blocks: this.Editor.BlocksAPI,
-      caret: this.Editor.CaretAPI,
-      events: this.Editor.EventsAPI,
-      listeners: this.Editor.ListenersAPI,
-      notifier: this.Editor.NotifierAPI,
-      sanitizer: this.Editor.SanitizerAPI,
-      saver: this.Editor.SaverAPI,
-      selection: this.Editor.SelectionAPI,
-      styles: this.Editor.StylesAPI,
-      toolbar: this.Editor.ToolbarAPI,
-      inlineToolbar: this.Editor.InlineToolbarAPI,
-      tooltip: this.Editor.TooltipAPI,
-      i18n: this.Editor.I18nAPI,
-      readOnly: this.Editor.ReadOnlyAPI,
-    };
+    /**
+     * This getter is called for all tools but it is idempotent
+     * that's why we cache the result
+     */
+    if (!this.methodsCached) {
+      const apiComponents = {
+        blocks: this.Editor.BlocksAPI,
+        caret: this.Editor.CaretAPI,
+        events: this.Editor.EventsAPI,
+        listeners: this.Editor.ListenersAPI,
+        notifier: this.Editor.NotifierAPI,
+        sanitizer: this.Editor.SanitizerAPI,
+        saver: this.Editor.SaverAPI,
+        selection: this.Editor.SelectionAPI,
+        styles: this.Editor.StylesAPI,
+        toolbar: this.Editor.ToolbarAPI,
+        inlineToolbar: this.Editor.InlineToolbarAPI,
+        tooltip: this.Editor.TooltipAPI,
+        i18n: this.Editor.I18nAPI,
+        readOnly: this.Editor.ReadOnlyAPI,
+      };
 
-    const allMethods = {} as APIInterfaces;
+      const allMethods = {} as APIInterfaces;
 
-    for (const apiComponent in apiComponents) {
-      const apiModule = apiComponents[apiComponent];
+      for (const apiComponent in apiComponents) {
+        const apiModule = apiComponents[apiComponent];
 
-      /**
-       * If module provides API-methods
-       */
-      if (apiModule.methods) {
-        const methods = apiModule.methods;
+        /**
+         * If module provides API-methods
+         */
+        if (apiModule.methods) {
+          const methods = apiModule.methods;
 
-        if (apiModule.methodsToDisableInReadonly && apiModule.methodsToDisableInReadonly.length > 0) {
-          this.decorateWithReadOnlyFunction(apiComponent, methods, apiModule.methodsToDisableInReadonly);
+          if (apiModule.methodsToDisableInReadonly && apiModule.methodsToDisableInReadonly.length > 0) {
+            this.decorateWithReadOnlyFunction(apiComponent, methods, apiModule.methodsToDisableInReadonly);
+          }
+
+          allMethods[apiComponent] = methods;
         }
 
-        allMethods[apiComponent] = methods;
+        /**
+         * If module provides CSS-styles
+         */
+        if (apiModule.classes) {
+          allMethods[apiComponent] = apiModule.classes;
+        }
       }
 
-      /**
-       * If module provides CSS-styles
-       */
-      if (apiModule.classes) {
-        allMethods[apiComponent] = apiModule.classes;
-      }
+      this.methodsCached = allMethods;
     }
 
-    return allMethods;
+    return this.methodsCached;
   }
 
   /**

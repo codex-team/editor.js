@@ -1,11 +1,11 @@
 import { Caret } from '../../../../types/api';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class CaretAPI
  * provides with methods to work with caret
  */
-export default class CaretAPI extends BaseApiModule {
+export default class CaretAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

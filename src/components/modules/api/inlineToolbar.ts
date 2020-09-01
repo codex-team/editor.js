@@ -1,11 +1,11 @@
 import { InlineToolbar } from '../../../../types/api/inline-toolbar';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class InlineToolbarAPI
  * Provides methods for working with the Inline Toolbar
  */
-export default class InlineToolbarAPI extends BaseApiModule {
+export default class InlineToolbarAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

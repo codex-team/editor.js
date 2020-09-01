@@ -2,13 +2,13 @@ import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class BlocksAPI
  * provides with methods working with Block
  */
-export default class BlocksAPI extends BaseApiModule {
+export default class BlocksAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */
@@ -19,6 +19,7 @@ export default class BlocksAPI extends BaseApiModule {
     'delete',
     'swap',
     'move',
+    'getBlockByIndex',
     'getCurrentBlockIndex',
     'stretchBlock',
     'insertNewBlock',

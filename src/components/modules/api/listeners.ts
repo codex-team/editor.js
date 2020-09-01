@@ -1,11 +1,11 @@
 import { Listeners } from '../../../../types/api';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class ListenersAPI
  * Provides with methods working with DOM Listener
  */
-export default class ListenersAPI extends BaseApiModule {
+export default class ListenersAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

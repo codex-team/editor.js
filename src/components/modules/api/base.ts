@@ -1,9 +1,10 @@
 import Module from '../../__module';
 
 /**
- * @class BaseApiModule
+ * @class ApiModule
+ * @classdesc Any API-module abstract class
  */
-export default class BaseApiModule extends Module {
+export default abstract class ApiModule extends Module {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

@@ -1,11 +1,11 @@
 import { Toolbar } from '../../../../types/api';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class ToolbarAPI
  * Provides methods for working with the Toolbar
  */
-export default class ToolbarAPI extends BaseApiModule {
+export default class ToolbarAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

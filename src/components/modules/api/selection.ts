@@ -1,12 +1,12 @@
 import SelectionUtils from '../../selection';
 import { Selection as SelectionAPIInterface } from '../../../../types/api';
-import BaseApiModule from './base';
+import ApiModule from './base';
 
 /**
  * @class SelectionAPI
  * Provides with methods working with SelectionUtils
  */
-export default class SelectionAPI extends BaseApiModule {
+export default class SelectionAPI extends ApiModule {
   /**
    * Method names that should be disabled in the Read-Only mode
    */

@@ -13,7 +13,7 @@ import {
 import { SavedData } from '../../../types/data-formats';
 import $ from '../dom';
 import * as _ from '../utils';
-import ApiModule from '../modules/api';
+import ApiModules from '../modules/api';
 import BlockAPI from './api';
 import { ToolType } from '../modules/tools';
 
@@ -49,7 +49,7 @@ interface BlockConstructorOptions {
   /**
    * Editor's API methods
    */
-  api: ApiModule;
+  api: ApiModules;
 
   /**
    * This flag indicates that the Block should be constructed in the read-only mode.
@@ -151,7 +151,7 @@ export default class Block {
   /**
    * Editor`s API module
    */
-  private readonly api: ApiModule;
+  private readonly api: ApiModules;
 
   /**
    * Focused input index
