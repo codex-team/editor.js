@@ -372,13 +372,15 @@ export default class InlineToolbar extends Module {
    * @param inlineToolbar - inlineToolbar order.
    */
   private sortTools(inlineToolbar: string[]): void {
-    const buttons = Array.from(this.nodes.buttons.childNodes);
+    const buttons = Array.from(this.nodes.buttons.children);
 
     buttons.shift();
 
     inlineToolbar.forEach((toolName, i) => {
       buttons.forEach((toolBtn, j) => {
-        if (j > 0 && toolName == toolBtn.dataset.tool) {
+        const _toolBtn = toolBtn as HTMLElement;
+
+        if (j > 0 && toolName == _toolBtn.dataset.tool) {
           const temp = buttons[i];
 
           buttons[i] = buttons[j];
