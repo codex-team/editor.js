@@ -11444,6 +11444,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         var nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
+
+        if (!nextBlock) {
+          return;
+        }
+
         var nextBlockElement = nextBlock.holder;
         var nextBlockCoords = nextBlockElement.getBoundingClientRect();
         var scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
@@ -11582,8 +11587,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         var currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
-        var currentBlockElement = currentBlock.holder;
         var previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
+
+        if (!currentBlock || !previousBlock) {
+          return;
+        }
+
+        var currentBlockElement = currentBlock.holder;
         var previousBlockElement = previousBlock.holder;
         /**
          * Here is two cases:
@@ -13376,6 +13386,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
         this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
         this.config.tools = this.config.tools || {};
+        this.config.i18n = this.config.i18n || {};
         this.config.data = this.config.data || {}; // eslint-disable-next-line @typescript-eslint/no-empty-function
 
         this.config.onReady = this.config.onReady || function () {}; // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -15909,17 +15920,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return this.Editor.BlockManager.currentBlockIndex;
       }
       /**
-       * Returns Block holder by Block index
+       * Returns BlockAPI object by Block index
        *
        * @param {number} index - index to get
-       *
-       * @returns {HTMLElement}
        */
 
     }, {
       key: "getBlockByIndex",
       value: function getBlockByIndex(index) {
         var block = this.Editor.BlockManager.getBlockByIndex(index);
+
+        if (block === undefined) {
+          _.log('There is no block at index `' + index + '`', 'warn');
+
+          return;
+        }
+
         return new _api["default"](block);
       }
       /**

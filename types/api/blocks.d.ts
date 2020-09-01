@@ -50,11 +50,10 @@ export interface Blocks {
   move(toIndex: number, fromIndex?: number): void;
 
   /**
-   * Returns Block holder by Block index
+   * Returns Block API object by passed Block index
    * @param {number} index
-   * @returns {HTMLElement}
    */
-  getBlockByIndex(index: number): BlockAPI;
+  getBlockByIndex(index: number): BlockAPI | void;
 
   /**
    * Returns current Block index
