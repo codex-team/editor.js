@@ -137,6 +137,11 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.input.placeholder = this.i18n.t('Add a link');
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('change', this.changed);
+    this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.keyCode === this.ENTER_KEY) {
+        this.enterPressed(event);
+      }
+    });
 
     return this.nodes.input;
   }
@@ -283,7 +288,6 @@ export default class LinkInlineTool implements InlineTool {
     if (!value.trim()) {
       this.selection.restore();
       this.unlink();
-      event.preventDefault();
       this.closeActions();
     }
 
@@ -305,14 +309,24 @@ export default class LinkInlineTool implements InlineTool {
 
     this.insertLink(value);
 
+    this.selection.collapseToEnd();
+    this.inlineToolbar.close();
+  }
+
+  /**
+   * Enter pressed on input
+   *
+   * @param event
+   */
+  private enterPressed(event: KeyboardEvent): void {
+    this.nodes.input.blur();
+
     /**
      * Preventing events that will be able to happen
      */
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.selection.collapseToEnd();
-    this.inlineToolbar.close();
   }
 
   /**
