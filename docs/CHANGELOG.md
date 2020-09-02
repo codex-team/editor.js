@@ -14,7 +14,8 @@
 - `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
 - `Fix` - Fixed issue with enter key in inputs and textareas [#920](https://github.com/codex-team/editor.js/issues/920)
 - `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
-- `Improvements` - Allows users to provide a default `inlineToolbar` property which will be used for all tools whose `inlineToolbar` property is set to `true`. It can be overriden by the tools' own `inlineToolbar` property. Also, the inline tools will be ordered according to the order of the inline tools in array provided in the `inlineToolbar` property. [#1056](https://github.com/codex-team/editor.js/issues/1056) 
+- `Improvements` - Allows users to provide a default `inlineToolbar` property which will be used for all tools whose `inlineToolbar` property is set to `true`. It can be overriden by the tools' own `inlineToolbar` property. Also, the inline tools will be ordered according to the order of the inline tools in array provided in the `inlineToolbar` property. [#1056](https://github.com/codex-team/editor.js/issues/1056)
+- `Fix` - blocks.getBlockByIndex() API method now returns void for indexes out of range [#1270](https://github.com/codex-team/editor.js/issues/1270)
 
 
 ### 2.18
