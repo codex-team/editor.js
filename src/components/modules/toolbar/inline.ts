@@ -52,16 +52,16 @@ export default class InlineToolbar extends Module {
     conversionTogglerContent: HTMLElement;
     actions: HTMLElement;
   } = {
-    wrapper: null,
-    buttons: null,
-    conversionToggler: null,
-    conversionTogglerContent: null,
-    /**
-     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-     * For example, input for the 'link' tool or textarea for the 'comment' tool
-     */
-    actions: null,
-  };
+      wrapper: null,
+      buttons: null,
+      conversionToggler: null,
+      conversionTogglerContent: null,
+      /**
+       * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+       * For example, input for the 'link' tool or textarea for the 'comment' tool
+       */
+      actions: null,
+    };
 
   /**
    * Margin above/below the Toolbar
@@ -118,7 +118,7 @@ export default class InlineToolbar extends Module {
   public make(): void {
     this.nodes.wrapper = $.make('div', [
       this.CSS.inlineToolbar,
-      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
     ]);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -362,8 +362,16 @@ export default class InlineToolbar extends Module {
     }
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+    const inlineToolbarSettings = toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
 
-    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    /**
+     * Checks if either tool's own inlineToolbar property or config.inlineToolbar property is is an array.
+     * If both are nanything other than arrays, then no inlineToolbar will be displayed.
+     * As there is no way to know which tools or order of tools user wants.
+     */
+    const isInlineToolbarArray = Array.isArray(inlineToolbarSettings) || Array.isArray(this.config.inlineToolbar)
+
+    return toolSettings && isInlineToolbarArray;
   }
 
   /**
@@ -372,10 +380,19 @@ export default class InlineToolbar extends Module {
    * @param inlineToolbar - inlineToolbar order.
    */
   private sortTools(inlineToolbar: string[]): void {
-    const buttons = Array.from(this.nodes.buttons.children);
+    /**
+     * Gets all the button nodes with class `ce-inline-tool`
+     */
+    const buttonNodes = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
 
-    buttons.shift();
+    /**
+     * creates an array of all the button nodes
+     */
+    const buttons = Array.from(buttonNodes);
 
+    /**
+     * sorts the buttons array according to the inlineToolbar property provided by user
+     */
     inlineToolbar.forEach((toolName, i) => {
       buttons.forEach((toolBtn, j) => {
         const _toolBtn = toolBtn as HTMLElement;
@@ -390,11 +407,10 @@ export default class InlineToolbar extends Module {
       });
     });
 
-    while (this.nodes.buttons.childNodes.length > 1) {
-      this.nodes.buttons.removeChild(this.nodes.buttons.lastChild);
-    }
-
-    buttons.forEach((btn) => {
+    /**
+     * appends all the button nodes in sorted order
+     */
+    buttons.forEach(async (btn) => {
       this.nodes.buttons.appendChild(btn);
     });
   }
@@ -403,11 +419,11 @@ export default class InlineToolbar extends Module {
    * Show only allowed Tools
    */
   private filterTools(): void {
-    const currentSelection = SelectionUtils.get(),
-        currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+    const currentSelection = SelectionUtils.get();
+    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
-    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-        inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+    const inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
     /**
      * All Inline Toolbar buttons
      *
@@ -443,7 +459,9 @@ export default class InlineToolbar extends Module {
     /**
      * sort tools according to provided order by user.
      */
-    this.sortTools(inlineToolbar);
+    if (inlineToolbar) {
+      this.sortTools(inlineToolbar);
+    }
 
     /**
      * Tick for removing right-margin from last visible button.
@@ -617,7 +635,7 @@ export default class InlineToolbar extends Module {
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([ name ]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
