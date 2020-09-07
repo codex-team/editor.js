@@ -78,7 +78,7 @@ export default class Core {
         await this.init();
         await this.start();
 
-        _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
+        // _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(async () => {
           await this.render();
@@ -335,6 +335,7 @@ export default class Core {
          *
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
+        // _.log(`Module loading ${[Module.displayName]}`);
         this.moduleInstances[Module.displayName] = new Module({
           config: this.configuration,
         });

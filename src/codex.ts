@@ -6,7 +6,6 @@ import { EditorConfig } from '../types';
  * Apply polyfills
  */
 import '@babel/register';
-
 import 'components/polyfills';
 import Core from './components/core';
 import * as _ from './components/utils';
@@ -42,19 +41,14 @@ export default class EditorJS {
 
   /**
    * @param {EditorConfig|string|undefined} [configuration] - user configuration
+   * @param {() => void} [onReady] - coustom onReady function ( onReady here is overriding which in configuration)
    */
-  constructor(configuration?: EditorConfig|string) {
-    /**
-     * Set default onReady function
-     */
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    let onReady = (): void => {};
-
+  constructor(configuration?: EditorConfig|string, onReady: () => void  = (): void => {}) {
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
      */
     if (typeof configuration === 'object' && typeof configuration.onReady === 'function') {
-      onReady = configuration.onReady;
+      configuration.onReady = onReady;
     }
 
     /**
