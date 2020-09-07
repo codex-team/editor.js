@@ -43,7 +43,7 @@ export default class EditorJS {
    * @param {EditorConfig|string|undefined} [configuration] - user configuration
    * @param {() => void} [onReady] - coustom onReady function ( onReady here is overriding which in configuration)
    */
-  constructor(configuration?: EditorConfig|string, onReady: () => void  = (): void => {}) {
+  constructor(configuration?: EditorConfig|string, onReady: () => void = (): void => {}) {
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
      */
