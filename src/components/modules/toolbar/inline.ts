@@ -92,6 +92,8 @@ export default class InlineToolbar extends Module {
    */
   private flipper: Flipper = null;
 
+  private selection = new SelectionUtils();
+
   /**
    * Inline Toolbar Tools
    *
@@ -659,6 +661,12 @@ export default class InlineToolbar extends Module {
    */
   private toolClicked(tool: InlineTool): void {
     const range = SelectionUtils.range;
+
+    console.log('clicked ==>', range);
+
+    if (this.selection.isFakeBackgroundEnabled) {
+      this.selection.removeFakeBackground();
+    }
 
     tool.surround(range);
     this.checkToolsState();
