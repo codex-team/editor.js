@@ -52,16 +52,16 @@ export default class InlineToolbar extends Module {
     conversionTogglerContent: HTMLElement;
     actions: HTMLElement;
   } = {
-      wrapper: null,
-      buttons: null,
-      conversionToggler: null,
-      conversionTogglerContent: null,
-      /**
-       * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-       * For example, input for the 'link' tool or textarea for the 'comment' tool
-       */
-      actions: null,
-    };
+    wrapper: null,
+    buttons: null,
+    conversionToggler: null,
+    conversionTogglerContent: null,
+    /**
+     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+     * For example, input for the 'link' tool or textarea for the 'comment' tool
+     */
+    actions: null,
+  };
 
   /**
    * Margin above/below the Toolbar
@@ -118,7 +118,7 @@ export default class InlineToolbar extends Module {
   public make(): void {
     this.nodes.wrapper = $.make('div', [
       this.CSS.inlineToolbar,
-      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -637,7 +637,7 @@ export default class InlineToolbar extends Module {
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([ name ]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
