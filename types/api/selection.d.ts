@@ -15,4 +15,39 @@ export interface Selection {
    * @param {HTMLElement} node - tag that should contain selection
    */
   expandToTag(node: HTMLElement): void;
+  /**
+   * clear saved range
+   */
+  clearSaved(): void;
+
+  /**
+   * collapse current selection
+   */
+  collapseToEnd(): void;
+
+  /**
+   * Save selected range
+   */
+  save(): void;
+
+  /**
+   * Restore saved selected range
+   */
+  restore(): void;
+
+  /**
+   * Set fake background to the selected text content 
+   * inorder to change the focus to something else
+   */
+  setFakeBackground(): void;
+
+  /**
+   * Remove fake background which was set earlier
+   */
+  removeFakeBackground(): void;
+
+  /**
+   * Check if fake background is enabled or not
+   */
+  isFakeBackgroundEnabled: boolean;
 }
