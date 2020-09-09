@@ -223,12 +223,6 @@ export default class Core {
         direction: config.i18n?.direction || 'ltr',
       };
     }
-
-    /**
-     * The default order of Inline tools. Will be applied if user will pass the `InlineToolbar: true` through the tool options.
-     * If it is false, the Inline Toolbar will be disabled for all the tools.
-     */
-    this.config.inlineToolbar = config.inlineToolbar || [];
   }
 
   /**

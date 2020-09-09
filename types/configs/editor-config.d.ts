@@ -89,5 +89,5 @@ export interface EditorConfig {
   /**
    * Defines default toolbar for all tools.
    */
-  inlineToolbar?: string[];
+  inlineToolbar?: string[]|boolean;
 }
