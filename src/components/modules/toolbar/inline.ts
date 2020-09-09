@@ -33,7 +33,7 @@ export default class InlineToolbar extends Module {
     conversionToggler: 'ce-inline-toolbar__dropdown',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
-    togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper'
+    togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper',
   };
 
   /**
@@ -48,7 +48,7 @@ export default class InlineToolbar extends Module {
    */
   private nodes: {
     wrapper: HTMLElement;
-    togglerAndButtonsWrapper: HTMLElement,
+    togglerAndButtonsWrapper: HTMLElement;
     buttons: HTMLElement;
     conversionToggler: HTMLElement;
     conversionTogglerContent: HTMLElement;
