@@ -33,6 +33,7 @@ export default class InlineToolbar extends Module {
     conversionToggler: 'ce-inline-toolbar__dropdown',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
+    togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper'
   };
 
   /**
@@ -47,12 +48,14 @@ export default class InlineToolbar extends Module {
    */
   private nodes: {
     wrapper: HTMLElement;
+    togglerAndButtonsWrapper: HTMLElement,
     buttons: HTMLElement;
     conversionToggler: HTMLElement;
     conversionTogglerContent: HTMLElement;
     actions: HTMLElement;
   } = {
     wrapper: null,
+    togglerAndButtonsWrapper: null,
     buttons: null,
     conversionToggler: null,
     conversionTogglerContent: null,
@@ -120,6 +123,10 @@ export default class InlineToolbar extends Module {
       this.CSS.inlineToolbar,
       ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
+    /**
+     * Creates a different wrapper for toggler and buttons.
+     */
+    this.nodes.togglerAndButtonsWrapper = $.make('div', this.CSS.togglerAndButtonsWrapper);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
@@ -135,15 +142,24 @@ export default class InlineToolbar extends Module {
     });
 
     /**
-     * Append Inline Toolbar to the Editor
+     * Append the intermediary wrapper which contains toggler and buttons and button actions.
      */
-    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
+    $.append(this.nodes.wrapper, [this.nodes.togglerAndButtonsWrapper, this.nodes.actions]);
+    /**
+     * Append the inline toolbar to the editor.
+     */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
      * Add button that will allow switching block type
      */
     this.addConversionToggler();
+
+    /**
+     * Add buttons to the intermediary wrapper called togglerAndButtonsWrapper
+     * whihc will be appeneded after the toggler as the toggler is already appended earlier.
+     */
+    $.append(this.nodes.togglerAndButtonsWrapper, this.nodes.buttons);
 
     /**
      * Append Inline Toolbar Tools
@@ -514,7 +530,7 @@ export default class InlineToolbar extends Module {
     this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
     this.nodes.conversionToggler.appendChild(icon);
 
-    this.nodes.buttons.appendChild(this.nodes.conversionToggler);
+    this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
