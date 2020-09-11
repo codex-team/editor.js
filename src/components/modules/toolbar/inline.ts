@@ -384,18 +384,18 @@ export default class InlineToolbar extends Module {
      * Condition 1 : Returns true, if the inlineToolbar property of the block is an array or true;
      * false otherwise.
      */
-    const condition1 = inlineToolbarSettingsForTool == true || Array.isArray(inlineToolbarSettingsForTool);
+    const isInlineToolbarSettingsForToolProvided = inlineToolbarSettingsForTool == true || Array.isArray(inlineToolbarSettingsForTool);
 
     /**
      * Condition 2 : Returns true, if the inlineToolbar property of the block is not set,
      * but the default inlineToolbar property is either an array or true.
      */
-    const condition2 = inlineToolbarSettingsForTool == undefined && this.config.inlineToolbar;
+    const isDefaultInlineToolbarProvided = inlineToolbarSettingsForTool == undefined && this.config.inlineToolbar;
 
     /**
      * If one of the above condition is true, then the inlineToolbar will be displayed.
      */
-    const showInlineToolbar = condition1 || condition2;
+    const showInlineToolbar = isInlineToolbarSettingsForToolProvided || isDefaultInlineToolbarProvided;
 
     /**
      * condition 2 could return an array, so casting it to Boolean.
