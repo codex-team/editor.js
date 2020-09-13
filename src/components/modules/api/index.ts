@@ -8,72 +8,54 @@
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
 import { ToolType } from '../tools';
+import ApiModule from './base';
 
 /**
  * @class API
  */
 export default class API extends Module {
   /**
-   * Property keeps cached methods so that it is used once for all tools
+   * API components
    */
-  private methodsCached: APIInterfaces;
+  public get components(): {[key: string]: ApiModule} {
+    return {
+      blocks: this.Editor.BlocksAPI,
+      caret: this.Editor.CaretAPI,
+      events: this.Editor.EventsAPI,
+      listeners: this.Editor.ListenersAPI,
+      notifier: this.Editor.NotifierAPI,
+      sanitizer: this.Editor.SanitizerAPI,
+      saver: this.Editor.SaverAPI,
+      selection: this.Editor.SelectionAPI,
+      styles: this.Editor.StylesAPI,
+      toolbar: this.Editor.ToolbarAPI,
+      inlineToolbar: this.Editor.InlineToolbarAPI,
+      tooltip: this.Editor.TooltipAPI,
+      i18n: this.Editor.I18nAPI,
+      readOnly: this.Editor.ReadOnlyAPI,
+    };
+  }
 
   /**
    * Editor.js Core API modules
    */
   public get methods(): APIInterfaces {
-    /**
-     * This getter is called for all tools but it is idempotent
-     * that's why we cache the result
-     */
-    if (!this.methodsCached) {
-      const apiComponents = {
-        blocks: this.Editor.BlocksAPI,
-        caret: this.Editor.CaretAPI,
-        events: this.Editor.EventsAPI,
-        listeners: this.Editor.ListenersAPI,
-        notifier: this.Editor.NotifierAPI,
-        sanitizer: this.Editor.SanitizerAPI,
-        saver: this.Editor.SaverAPI,
-        selection: this.Editor.SelectionAPI,
-        styles: this.Editor.StylesAPI,
-        toolbar: this.Editor.ToolbarAPI,
-        inlineToolbar: this.Editor.InlineToolbarAPI,
-        tooltip: this.Editor.TooltipAPI,
-        i18n: this.Editor.I18nAPI,
-        readOnly: this.Editor.ReadOnlyAPI,
-      };
-
-      const allMethods = {} as APIInterfaces;
-
-      for (const apiComponent in apiComponents) {
-        const apiModule = apiComponents[apiComponent];
-
-        /**
-         * If module provides API-methods
-         */
-        if (apiModule.methods) {
-          const methods = apiModule.methods;
-
-          if (apiModule.methodsToDisableInReadonly && apiModule.methodsToDisableInReadonly.length > 0) {
-            this.decorateWithReadOnlyFunction(apiComponent, methods, apiModule.methodsToDisableInReadonly);
-          }
-
-          allMethods[apiComponent] = methods;
-        }
-
-        /**
-         * If module provides CSS-styles
-         */
-        if (apiModule.classes) {
-          allMethods[apiComponent] = apiModule.classes;
-        }
-      }
-
-      this.methodsCached = allMethods;
-    }
-
-    return this.methodsCached;
+    return {
+      blocks: this.Editor.BlocksAPI.methods,
+      caret: this.Editor.CaretAPI.methods,
+      events: this.Editor.EventsAPI.methods,
+      listeners: this.Editor.ListenersAPI.methods,
+      notifier: this.Editor.NotifierAPI.methods,
+      sanitizer: this.Editor.SanitizerAPI.methods,
+      saver: this.Editor.SaverAPI.methods,
+      selection: this.Editor.SelectionAPI.methods,
+      styles: this.Editor.StylesAPI.classes,
+      toolbar: this.Editor.ToolbarAPI.methods,
+      inlineToolbar: this.Editor.InlineToolbarAPI.methods,
+      tooltip: this.Editor.TooltipAPI.methods,
+      i18n: this.Editor.I18nAPI.methods,
+      readOnly: this.Editor.ReadOnlyAPI.methods,
+    };
   }
 
   /**
@@ -100,8 +82,12 @@ export default class API extends Module {
    * @param methods - api module methods
    * @param list - the list of methods that should be decorated
    */
-  private decorateWithReadOnlyFunction(methodGroup, methods, list): void {
+  public decorateWithReadOnlyFunction(methodGroup, methods, list): void {
     for (const method in methods) {
+      if (!Object.prototype.hasOwnProperty.call(methods, method)) {
+        continue;
+      }
+
       if (list.includes(method)) {
         methods[method] = this.Editor.ReadOnly.offDecorator(methods[method], methodGroup);
       }

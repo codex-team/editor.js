@@ -106,7 +106,38 @@ export default class EditorJS {
 
     this.destroy = destroy;
 
-    Object.setPrototypeOf(this, editor.moduleInstances.API.methods);
+    const apiComponents = editor.moduleInstances.API.components;
+    const apiMethods = {};
+
+    for (const apiComponent in apiComponents) {
+      if (!Object.prototype.hasOwnProperty.call(apiComponents, apiComponent)) {
+        continue;
+      }
+
+      const apiModule = apiComponents[apiComponent];
+
+      /**
+       * If module provides API-methods
+       */
+      if (apiModule.methods) {
+        const methods = apiModule.methods;
+
+        if (apiModule.methodsToDisableInReadonly && apiModule.methodsToDisableInReadonly.length > 0) {
+          editor.moduleInstances.API.decorateWithReadOnlyFunction(apiComponent, methods, apiModule.methodsToDisableInReadonly);
+        }
+
+        apiMethods[apiComponent] = methods;
+      }
+
+      /**
+       * If module provides CSS-styles
+       */
+      if (apiModule.classes) {
+        apiMethods[apiComponent] = apiModule.classes;
+      }
+    }
+
+    Object.setPrototypeOf(this, apiMethods);
 
     delete this.exportAPI;
 
@@ -132,7 +163,7 @@ export default class EditorJS {
       .forEach(([key, methods]) => {
         Object.entries(methods)
           .forEach(([name, alias]) => {
-            this[alias] = editor.moduleInstances.API.methods[key][name];
+            this[alias] = apiMethods[key][name];
           });
       });
   }

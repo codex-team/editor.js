@@ -19,8 +19,6 @@ export default class BlocksAPI extends ApiModule {
     'delete',
     'swap',
     'move',
-    'getBlockByIndex',
-    'getCurrentBlockIndex',
     'stretchBlock',
     'insertNewBlock',
     'insert',
@@ -80,7 +78,7 @@ export default class BlocksAPI extends ApiModule {
       return;
     }
 
-    return new BlockAPI(block);
+    return new BlockAPI(block, () => this.Editor.ReadOnly.isEnabled);
   }
 
   /**
