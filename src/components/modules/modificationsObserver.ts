@@ -69,6 +69,7 @@ export default class ModificationsObserver extends Module {
      */
     window.setTimeout(() => {
       this.setObserver();
+      this.updateNativeInputs();
     }, 1000);
   }
 
