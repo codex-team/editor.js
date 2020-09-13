@@ -189,6 +189,7 @@ export default class Core {
 
     this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
     this.config.tools = this.config.tools || {};
+    this.config.i18n = this.config.i18n || {};
     this.config.data = this.config.data || {} as OutputData;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onReady = this.config.onReady || ((): void => {});
@@ -210,8 +211,17 @@ export default class Core {
     /**
      * Adjust i18n
      */
-    if (config.i18n && config.i18n.messages) {
+    if (config.i18n?.messages) {
       I18n.setDictionary(config.i18n.messages);
+    }
+
+    /**
+     * Text direction. If not set, uses ltr
+     */
+    if (config.i18n?.direction) {
+      this.config.i18n = {
+        direction: config.i18n?.direction || 'ltr',
+      };
     }
   }
 

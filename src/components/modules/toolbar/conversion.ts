@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
-import { SavedData } from '../../../types-internal/block-data';
+import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -65,7 +65,10 @@ export default class ConversionToolbar extends Module {
    * Create UI of Conversion Toolbar
    */
   public make(): HTMLElement {
-    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
+    this.nodes.wrapper = $.make('div', [
+      ConversionToolbar.CSS.conversionToolbarWrapper,
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+    ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
@@ -158,7 +161,7 @@ export default class ConversionToolbar extends Module {
    *
    * @param {string} replacingToolName - name of Tool which replaces current
    */
-  public async replaceWithBlock(replacingToolName: string): Promise <void> {
+  public async replaceWithBlock(replacingToolName: string): Promise<void> {
     /**
      * At first, we get current Block data
      *
@@ -264,10 +267,15 @@ export default class ConversionToolbar extends Module {
       const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
       const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
 
+      const userSettings = this.Editor.Tools.USER_SETTINGS;
+      const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+
+      const toolboxSettings = userToolboxSettings ?? toolToolboxSettings;
+
       /**
        * Skip tools that don't pass 'toolbox' property
        */
-      if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
+      if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
         continue;
       }
 
@@ -278,7 +286,7 @@ export default class ConversionToolbar extends Module {
         continue;
       }
 
-      this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
+      this.addTool(toolName, toolboxSettings.icon, toolboxSettings.title);
     }
   }
 

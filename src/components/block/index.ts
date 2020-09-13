@@ -10,11 +10,10 @@ import {
   ToolSettings
 } from '../../../types';
 
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import $ from '../dom';
 import * as _ from '../utils';
 import ApiModule from '../modules/api';
-import SelectionUtils from '../selection';
 import BlockAPI from './api';
 import { ToolType } from '../modules/tools';
 
@@ -621,7 +620,7 @@ export default class Block {
    * Update current input index with selection anchor node
    */
   public updateCurrentInput(): void {
-    this.currentInput = SelectionUtils.anchorNode;
+    this.currentInput = document.activeElement;
   }
 
   /**
@@ -640,6 +639,12 @@ export default class Block {
         attributes: true,
       }
     );
+
+    /**
+     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+     * so we need to track focus events
+     */
+    this.addInputEvents();
   }
 
   /**
@@ -647,6 +652,7 @@ export default class Block {
    */
   public willUnselect(): void {
     this.mutationObserver.disconnect();
+    this.removeInputEvents();
   }
 
   /**
@@ -663,5 +669,38 @@ export default class Block {
     wrapper.appendChild(contentNode);
 
     return wrapper;
+  }
+
+  /**
+   * Is fired when text input or contentEditable is focused
+   */
+  private handleFocus = (): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+  }
+
+  /**
+   * Adds focus event listeners to all inputs and contentEditables
+   */
+  private addInputEvents(): void {
+    this.inputs.forEach(input => {
+      input.addEventListener('focus', this.handleFocus);
+    });
+  }
+
+  /**
+   * removes focus event listeners from all inputs and contentEditables
+   */
+  private removeInputEvents(): void {
+    this.inputs.forEach(input => {
+      input.removeEventListener('focus', this.handleFocus);
+    });
   }
 }

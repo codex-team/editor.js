@@ -116,7 +116,10 @@ export default class InlineToolbar extends Module {
    * Making DOM
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+    this.nodes.wrapper = $.make('div', [
+      this.CSS.inlineToolbar,
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+    ]);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
