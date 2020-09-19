@@ -2,7 +2,6 @@ import Block from './index';
 import { BlockToolData, ToolConfig } from '../../../types/tools';
 import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
-import * as _ from '../utils';
 
 /**
  * Constructs new BlockAPI object
@@ -10,11 +9,9 @@ import * as _ from '../utils';
  * @class
  *
  * @param {Block} block - Block to expose
- * @param {Function} isReadOnlyEnabled - method to check if read-only mode is enabled
  */
 function BlockAPI(
-  block: Block,
-  isReadOnlyEnabled = (): boolean => false
+  block: Block
 ): void {
   const blockAPI: BlockAPIInterface = {
     /**
@@ -68,12 +65,6 @@ function BlockAPI(
      * @param {boolean} state — state to set
      */
     set stretched(state: boolean) {
-      if (isReadOnlyEnabled()) {
-        _.logLabeled(`Read-only mode is enabled, you can't set block's «stretched» property`, 'warn');
-
-        return;
-      }
-
       block.stretched = state;
     },
 
@@ -95,12 +86,6 @@ function BlockAPI(
      * @returns {unknown}
      */
     call(methodName: string, param?: object): unknown {
-      if (isReadOnlyEnabled()) {
-        _.logLabeled(`Read-only mode is enabled, you can't call block's «${methodName}» method`, 'warn');
-
-        return;
-      }
-
       return block.call(methodName, param);
     },
 

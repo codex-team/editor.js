@@ -1,23 +1,11 @@
 import { Caret } from '../../../../types/api';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class CaretAPI
  * provides with methods to work with caret
  */
-export default class CaretAPI extends ApiModule {
-  /**
-   * Method names that should be disabled in the Read-Only mode
-   */
-  public methodsToDisableInReadonly: string[] = [
-    'setToFirstBlock',
-    'setToLastBlock',
-    'setToPreviousBlock',
-    'setToNextBlock',
-    'setToBlock',
-    'focus',
-  ];
-
+export default class CaretAPI extends Module {
   /**
    * Available methods
    *

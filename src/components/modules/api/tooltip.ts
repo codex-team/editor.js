@@ -1,21 +1,12 @@
 import { Tooltip } from '../../../../types/api';
 import { TooltipContent, TooltipOptions } from 'codex-tooltip';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class TooltipAPI
  * @classdesc Tooltip API
  */
-export default class TooltipAPI extends ApiModule {
-  /**
-   * Method names that should be disabled in the Read-Only mode
-   */
-  public methodsToDisableInReadonly: string[] = [
-    'show',
-    'hide',
-    'onHover',
-  ];
-
+export default class TooltipAPI extends Module {
   /**
    * Available methods
    */

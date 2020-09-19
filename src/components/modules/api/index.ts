@@ -8,34 +8,11 @@
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
 import { ToolType } from '../tools';
-import ApiModule from './base';
 
 /**
  * @class API
  */
 export default class API extends Module {
-  /**
-   * API components
-   */
-  public get components(): {[key: string]: ApiModule} {
-    return {
-      blocks: this.Editor.BlocksAPI,
-      caret: this.Editor.CaretAPI,
-      events: this.Editor.EventsAPI,
-      listeners: this.Editor.ListenersAPI,
-      notifier: this.Editor.NotifierAPI,
-      sanitizer: this.Editor.SanitizerAPI,
-      saver: this.Editor.SaverAPI,
-      selection: this.Editor.SelectionAPI,
-      styles: this.Editor.StylesAPI,
-      toolbar: this.Editor.ToolbarAPI,
-      inlineToolbar: this.Editor.InlineToolbarAPI,
-      tooltip: this.Editor.TooltipAPI,
-      i18n: this.Editor.I18nAPI,
-      readOnly: this.Editor.ReadOnlyAPI,
-    };
-  }
-
   /**
    * Editor.js Core API modules
    */
@@ -73,24 +50,5 @@ export default class API extends Module {
         i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, toolType),
       }
     ) as APIInterfaces;
-  }
-
-  /**
-   * Returns decorated list of methods that have read-only restriction
-   *
-   * @param methodGroup - sss
-   * @param methods - api module methods
-   * @param list - the list of methods that should be decorated
-   */
-  public decorateWithReadOnlyFunction(methodGroup, methods, list): void {
-    for (const method in methods) {
-      if (!Object.prototype.hasOwnProperty.call(methods, method)) {
-        continue;
-      }
-
-      if (list.includes(method)) {
-        methods[method] = this.Editor.ReadOnly.offDecorator(methods[method], methodGroup);
-      }
-    }
   }
 }

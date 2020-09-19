@@ -2,28 +2,13 @@ import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class BlocksAPI
  * provides with methods working with Block
  */
-export default class BlocksAPI extends ApiModule {
-  /**
-   * Method names that should be disabled in the Read-Only mode
-   */
-  public methodsToDisableInReadonly: string[] = [
-    'clear',
-    'render',
-    'renderFromHTML',
-    'delete',
-    'swap',
-    'move',
-    'stretchBlock',
-    'insertNewBlock',
-    'insert',
-  ];
-
+export default class BlocksAPI extends Module {
   /**
    * Available methods
    *
@@ -78,7 +63,7 @@ export default class BlocksAPI extends ApiModule {
       return;
     }
 
-    return new BlockAPI(block, () => this.Editor.ReadOnly.isEnabled);
+    return new BlockAPI(block);
   }
 
   /**

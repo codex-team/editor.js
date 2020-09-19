@@ -1,11 +1,11 @@
 import { ReadOnly } from '../../../../types/api';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class ReadOnlyAPI
  * @classdesc ReadOnly API
  */
-export default class ReadOnlyAPI extends ApiModule {
+export default class ReadOnlyAPI extends Module {
   /**
    * Available methods
    */

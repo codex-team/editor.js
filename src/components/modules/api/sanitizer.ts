@@ -1,12 +1,12 @@
 import { Sanitizer } from '../../../../types/api';
 import { SanitizerConfig } from '../../../../types/configs';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class SanitizerAPI
  * Provides Editor.js Sanitizer that allows developers to clean their HTML
  */
-export default class SanitizerAPI extends ApiModule {
+export default class SanitizerAPI extends Module {
   /**
    * Available methods
    *

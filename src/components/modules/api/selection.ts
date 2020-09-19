@@ -1,20 +1,12 @@
 import SelectionUtils from '../../selection';
 import { Selection as SelectionAPIInterface } from '../../../../types/api';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class SelectionAPI
  * Provides with methods working with SelectionUtils
  */
-export default class SelectionAPI extends ApiModule {
-  /**
-   * Method names that should be disabled in the Read-Only mode
-   */
-  public methodsToDisableInReadonly: string[] = [
-    'findParentTag',
-    'expandToTag',
-  ];
-
+export default class SelectionAPI extends Module {
   /**
    * Available methods
    *

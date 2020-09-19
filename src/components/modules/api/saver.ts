@@ -1,20 +1,13 @@
 import { Saver } from '../../../../types/api';
 import { OutputData } from '../../../../types';
 import * as _ from '../../utils';
-import ApiModule from './base';
+import Module from '../../__module';
 
 /**
  * @class SaverAPI
  * provides with methods to save data
  */
-export default class SaverAPI extends ApiModule {
-  /**
-   * Method names that should be disabled in the Read-Only mode
-   */
-  public methodsToDisableInReadonly: string[] = [
-    'save',
-  ];
-
+export default class SaverAPI extends Module {
   /**
    * Available methods
    *

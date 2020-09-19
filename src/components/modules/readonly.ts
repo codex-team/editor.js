@@ -1,6 +1,5 @@
 import Module from '../__module';
 import { CriticalError } from '../errors/critical';
-import * as _ from '../utils';
 
 /**
  * @module ReadOnly
@@ -83,23 +82,5 @@ export default class ReadOnly extends Module {
     await this.Editor.Renderer.render(savedBlocks.blocks);
 
     return this.readOnlyEnabled;
-  }
-
-  /**
-   * Function wraps passed method and calls if it is not in read-only mode
-   *
-   * @param {Function} method - decorated function
-   * @param {string} methodGroup - an api module name — 'blocks', 'caret', etc
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public offDecorator(method: Function, methodGroup = ''): any {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (...args: any[]): any => {
-      if (!this.isEnabled) {
-        return method.call(this, ...args);
-      }
-
-      _.logLabeled(`Read-only mode is enabled, you can't call ${methodGroup ? methodGroup + '.' : ''}${method.name} method`, 'warn');
-    };
   }
 }
