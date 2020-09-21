@@ -108,21 +108,6 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * Set up mouse selection handlers
-   *
-   * @param {MouseEvent} event - mouse down event
-   */
-  public mouseDown(event: MouseEvent): void {
-    /**
-     * Each mouse down on Block must disable selectAll state
-     */
-    if (!SelectionUtils.isCollapsed) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
-    this.Editor.CrossBlockSelection.watchSelection(event);
-  }
-
-  /**
    * Open Toolbox to leaf Tools
    *
    * @param {KeyboardEvent} event - tab keydown event

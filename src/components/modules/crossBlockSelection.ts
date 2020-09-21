@@ -139,14 +139,26 @@ export default class CrossBlockSelection extends Module {
    * @param {MouseEvent} event - mouse down event
    */
   private enableCrossBlockSelection(event: MouseEvent): void {
+    const { UI } = this.Editor;
+
     /**
-     * Each mouse down on Block must disable selectAll state
+     * Each mouse down on must disable selectAll state
      */
     if (!SelectionUtils.isCollapsed) {
       this.Editor.BlockSelection.clearSelection(event);
     }
 
-    this.watchSelection(event);
+    /**
+     * If mouse down is performed inside the editor, we should watch CBS
+     */
+    if (UI.nodes.redactor.contains(event.target as Node)) {
+      this.watchSelection(event);
+    } else {
+      /**
+       * Otherwise, clear selection
+       */
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**
