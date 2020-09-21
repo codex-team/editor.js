@@ -22,7 +22,8 @@
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
-    "checkout_tools": "git submodule foreach git pull origin master"
+    "checkout_tools": "git submodule foreach git pull origin master",
+    "cypress:open": "cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
