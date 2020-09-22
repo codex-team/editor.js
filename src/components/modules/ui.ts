@@ -677,8 +677,10 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    event.stopImmediatePropagation();
-    event.stopPropagation();
+    const stopPropagation = (): void => {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+    };
 
     /**
      * case when user clicks on anchor element
@@ -688,6 +690,8 @@ export default class UI extends Module<UINodes> {
     const ctrlKey = event.metaKey || event.ctrlKey;
 
     if ($.isAnchor(element) && ctrlKey) {
+      stopPropagation();
+
       const href = element.getAttribute('href');
       const validUrl = _.getValidUrl(href);
 
@@ -697,6 +701,8 @@ export default class UI extends Module<UINodes> {
     }
 
     if (!this.Editor.BlockManager.currentBlock) {
+      stopPropagation();
+
       this.Editor.BlockManager.insert();
     }
 
@@ -708,6 +714,8 @@ export default class UI extends Module<UINodes> {
     const isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
 
     if (isDefaultBlock) {
+      stopPropagation();
+
       /**
        * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
        */
