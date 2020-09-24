@@ -3,15 +3,15 @@ import {BlockToolData} from '../tools';
 /**
  * Output of one Tool
  */
-export interface OutputBlockData {
+export interface OutputBlockData<S extends string = string, T extends object = any> {
   /**
    * Too type
    */
-  type: string;
+  type: S;
   /**
    * Saved Block data
    */
-  data: BlockToolData;
+  data: BlockToolData<T>;
 }
 
 export interface OutputData {
