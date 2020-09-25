@@ -13,6 +13,15 @@ import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 function BlockAPI(block: Block): void {
   const blockAPI: BlockAPIInterface = {
     /**
+     * Tool id
+     *
+     * @returns {string}
+     */
+    get id(): string {
+      return block.id;
+    },
+
+    /**
      * Tool name
      *
      * @returns {string}

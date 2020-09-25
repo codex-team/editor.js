@@ -549,6 +549,20 @@ export function getValidUrl(url: string): string {
 }
 
 /**
+ * Creates a UUID v4 version
+ *
+ * @returns {string}
+ */
+export function generateUuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    // tslint:disable: no-bitwise
+    // tslint:disable-next-line: triple-equals
+    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+/**
  * Opens new Tab with passed URL
  *
  * @param {string} url - URL address to redirect

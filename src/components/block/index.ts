@@ -28,6 +28,11 @@ import MoveDownTune from '../block-tunes/block-tune-move-down';
  */
 interface BlockConstructorOptions {
   /**
+   * Tool's id
+   */
+  id: string;
+
+  /**
    * Tool's name
    */
   name: string;
@@ -101,6 +106,11 @@ export default class Block {
       dropTarget: 'ce-block--drop-target',
     };
   }
+
+  /**
+   * unique identifier
+   */
+  public id: string;
 
   /**
    * Block Tool`s name
@@ -194,6 +204,7 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
+   * @param {string} options.id - Tool's unique id
    * @param {string} options.name - Tool name that passed on initialization
    * @param {BlockToolData} options.data - Tool's initial data
    * @param {BlockToolConstructable} options.Tool — Tool's class
@@ -201,12 +212,14 @@ export default class Block {
    * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
    */
   constructor({
+    id,
     name,
     data,
     Tool,
     settings,
     api,
   }: BlockConstructorOptions) {
+    this.id = id;
     this.name = name;
     this.class = Tool;
     this.settings = settings;
@@ -542,6 +555,7 @@ export default class Block {
         measuringEnd = window.performance.now();
 
         return {
+          id: this.id,
           tool: this.name,
           data: finishedExtraction,
           time: measuringEnd - measuringStart,
