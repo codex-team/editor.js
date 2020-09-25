@@ -12,7 +12,7 @@ import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
-import {generateUuidv4} from '../utils';
+import { generateUuidv4 } from '../utils';
 
 /**
  * @typedef {BlockManager} BlockManager
