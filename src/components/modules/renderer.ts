@@ -69,9 +69,6 @@ export default class Renderer extends Module {
     const tool = item.type;
     const data = item.data;
 
-    console.log('BEFORE insertBlock: ' + item.id);
-    console.log('AFTER insertBlock: ' + id);
-
     if (tool in Tools.available) {
       try {
         BlockManager.insert({

@@ -280,8 +280,6 @@ export default class BlockManager extends Module {
       data,
     });
 
-    console.log('INSERT: ' + id + ' (' + tool + ')');
-
     this._blocks.insert(newIndex, block, replace);
 
     if (needToFocus) {
