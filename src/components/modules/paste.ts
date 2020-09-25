@@ -759,10 +759,10 @@ export default class Paste extends Module {
    *
    * @returns {void}
    */
-  private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
+  private insertEditorJSData(blocks: Array<Pick<SavedData, 'id' | 'data' | 'tool'>>): void {
     const { BlockManager, Tools } = this.Editor;
 
-    blocks.forEach(({ tool, data }, i) => {
+    blocks.forEach(({ id, tool, data }, i) => {
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
@@ -772,6 +772,7 @@ export default class Paste extends Module {
       }
 
       BlockManager.insert({
+        id,
         tool,
         data,
         replace: needToReplaceCurrentBlock,

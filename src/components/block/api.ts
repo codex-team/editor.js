@@ -15,6 +15,15 @@ function BlockAPI(
 ): void {
   const blockAPI: BlockAPIInterface = {
     /**
+     * Tool id
+     *
+     * @returns {string}
+     */
+    get id(): string {
+      return block.id;
+    },
+
+    /**
      * Tool name
      *
      * @returns {string}
