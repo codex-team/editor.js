@@ -494,11 +494,10 @@ export default class InlineToolbar extends Module {
       sortedButtons.forEach(async (btn) => {
         this.nodes.buttons.appendChild(btn);
       });
-    }
-    /**
-     * Reset toolbar to its original order on blocks which have specified inlineToolbar property to true
-     */
-    else {
+    } else {
+      /**
+       * Reset toolbar to its original order on blocks which have specified inlineToolbar property to true
+       */
       this.nodes.buttons.innerHTML = '';
       this.addTools();
     }
