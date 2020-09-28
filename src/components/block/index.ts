@@ -96,7 +96,7 @@ export default class Block {
    *
    * @returns {{wrapper: string, content: string}}
    */
-  public static get CSS(): {[name: string]: string} {
+  public static get CSS(): { [name: string]: string } {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
@@ -521,6 +521,30 @@ export default class Block {
   }
 
   /**
+   * Clone Block's data
+   * Groups Tool's clone processing time
+   *
+   * @returns {object}
+   */
+  public async clone(): Promise<void | SavedData> {
+    try {
+      const measuringStart = window.performance.now();
+      const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+      const clonedBlock = this.tool.clone ? (await this.tool.clone(extractedBlock)) : extractedBlock;
+      /** measure promise execution */
+      const measuringEnd = window.performance.now();
+
+      return {
+        tool: this.name,
+        data: clonedBlock,
+        time: measuringEnd - measuringStart,
+      };
+    } catch (error) {
+      _.log(`Cloning proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+    }
+  }
+
+  /**
    * Call plugins merge method
    *
    * @param {BlockToolData} data - data to merge
@@ -535,29 +559,21 @@ export default class Block {
    *
    * @returns {object}
    */
-  public async save(): Promise<void|SavedData> {
-    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+  public async save(): Promise<void | SavedData> {
+    try {
+      const measuringStart = window.performance.now();
+      const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+      /** measure promise execution */
+      const measuringEnd = window.performance.now();
 
-    /**
-     * Measuring execution time
-     */
-    const measuringStart = window.performance.now();
-    let measuringEnd;
-
-    return Promise.resolve(extractedBlock)
-      .then((finishedExtraction) => {
-        /** measure promise execution */
-        measuringEnd = window.performance.now();
-
-        return {
-          tool: this.name,
-          data: finishedExtraction,
-          time: measuringEnd - measuringStart,
-        };
-      })
-      .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
-      });
+      return {
+        tool: this.name,
+        data: extractedBlock,
+        time: measuringEnd - measuringStart,
+      };
+    } catch (error) {
+      _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+    }
   }
 
   /**
@@ -602,7 +618,7 @@ export default class Block {
     ];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
+    return tunesList.map(({ name, Tune }: { name: string; Tune: BlockTuneConstructable }) => {
       return new Tune({
         api: this.api.getMethodsForTool(name, ToolType.Tune),
         settings: this.config,
