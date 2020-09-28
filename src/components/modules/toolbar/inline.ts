@@ -384,13 +384,13 @@ export default class InlineToolbar extends Module {
      * Condition 1 : Returns true, if the inlineToolbar property of the block is an array or true;
      * false otherwise.
      */
-    const isInlineToolbarSettingsForToolProvided = inlineToolbarSettingsForTool == true || Array.isArray(inlineToolbarSettingsForTool);
+    const isInlineToolbarSettingsForToolProvided = inlineToolbarSettingsForTool === true || Array.isArray(inlineToolbarSettingsForTool);
 
     /**
      * Condition 2 : Returns true, if the inlineToolbar property of the block is not set,
      * but the default inlineToolbar property is either an array or true.
      */
-    const isDefaultInlineToolbarProvided = inlineToolbarSettingsForTool == undefined && this.config.inlineToolbar;
+    const isDefaultInlineToolbarProvided = inlineToolbarSettingsForTool === undefined && this.config.inlineToolbar;
 
     /**
      * If one of the above condition is true, then the inlineToolbar will be displayed.
@@ -470,9 +470,11 @@ export default class InlineToolbar extends Module {
 
     let inlineToolbarOrder;
 
+    const isInlineToolbarSettingsForToolTrueOrUndefiend = inlineToolbarSettingsForTool == undefined || inlineToolbarSettingsForTool == true;
+
     if (Array.isArray(inlineToolbarSettingsForTool)) {
       inlineToolbarOrder = inlineToolbarSettingsForTool;
-    } else if (inlineToolbarSettingsForTool == undefined && Array.isArray(this.config.inlineToolbar)) {
+    } else if (isInlineToolbarSettingsForToolTrueOrUndefiend && Array.isArray(this.config.inlineToolbar)) {
       inlineToolbarOrder = this.config.inlineToolbar;
     }
 
@@ -492,6 +494,13 @@ export default class InlineToolbar extends Module {
       sortedButtons.forEach(async (btn) => {
         this.nodes.buttons.appendChild(btn);
       });
+    }
+    /**
+     * Reset toolbar to its original order on blocks which have specified inlineToolbar property to true
+     */
+    else {
+      this.nodes.buttons.innerHTML = '';
+      this.addTools();
     }
 
     /**
