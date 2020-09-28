@@ -120,6 +120,11 @@ declare class EditorJS {
    */
 
   /**
+   * @see Saver.clone
+   */
+  public clone(): Promise<OutputData>;
+
+  /**
    * @see Saver.save
    */
   public save(): Promise<OutputData>;

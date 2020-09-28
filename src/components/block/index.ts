@@ -521,6 +521,29 @@ export default class Block {
   }
 
   /**
+   * Clone Block's data
+   * Groups Tool's clone processing time
+   *
+   * @returns {object}
+   */
+  public async clone(): Promise<void | SavedData> {
+    try {
+      const measuringStart = window.performance.now();
+      const extractedBlock = await (this.tool.clone?.(this.pluginsContent) ?? this.tool.save(this.pluginsContent));
+      /** measure promise execution */
+      const measuringEnd = window.performance.now();
+
+      return {
+        tool: this.name,
+        data: extractedBlock,
+        time: measuringEnd - measuringStart,
+      };
+    } catch (error) {
+      _.log(`Cloning process for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+    }
+  }
+
+  /**
    * Call plugins merge method
    *
    * @param {BlockToolData} data - data to merge
@@ -535,29 +558,21 @@ export default class Block {
    *
    * @returns {object}
    */
-  public async save(): Promise<void|SavedData> {
-    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+  public async save(): Promise<void | SavedData> {
+    try {
+      const measuringStart = window.performance.now();
+      const extractedBlock = await this.tool.save(this.pluginsContent);
+      /** measure promise execution */
+      const measuringEnd = window.performance.now();
 
-    /**
-     * Measuring execution time
-     */
-    const measuringStart = window.performance.now();
-    let measuringEnd;
-
-    return Promise.resolve(extractedBlock)
-      .then((finishedExtraction) => {
-        /** measure promise execution */
-        measuringEnd = window.performance.now();
-
-        return {
-          tool: this.name,
-          data: finishedExtraction,
-          time: measuringEnd - measuringStart,
-        };
-      })
-      .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
-      });
+      return {
+        tool: this.name,
+        data: extractedBlock,
+        time: measuringEnd - measuringStart,
+      };
+    } catch (error) {
+      _.log(`Saving process for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+    }
   }
 
   /**

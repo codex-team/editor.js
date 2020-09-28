@@ -2,6 +2,7 @@
 
 ### 2.19.1
 
+- `New` - Add clone interface to Block Tool [#1463](https://github.com/codex-team/editor.js/pull/1463)
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
 - `Improvements` - Native `typeof`replaced with custom utils methods
 - `Improvements` - Bind shortcuts listeners on the editor wrapper instead of document (#1391)(https://github.com/codex-team/editor.js/issues/1391)

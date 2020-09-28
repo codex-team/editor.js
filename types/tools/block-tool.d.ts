@@ -44,6 +44,13 @@ export interface BlockTool extends BaseTool {
   merge?(blockData: BlockToolData): void;
 
   /**
+   * Clone Block's data
+   * @param {HTMLElement} block - element created by {@link BlockTool#render} function
+   * @return {Promise<BlockToolData>}
+   */
+  clone?(block: HTMLElement): Promise<BlockToolData>;
+
+  /**
    * On paste callback. Fired when pasted content can be substituted by a Tool
    * @param {PasteEvent} event
    */

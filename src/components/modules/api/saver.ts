@@ -15,8 +15,26 @@ export default class SaverAPI extends Module {
    */
   public get methods(): Saver {
     return {
+      clone: (): Promise<OutputData> => this.clone(),
       save: (): Promise<OutputData> => this.save(),
     };
+  }
+
+  /**
+   * Clone Editor's data
+   *
+   * @returns {OutputData}
+   */
+  public clone(): Promise<OutputData> {
+    const errorText = 'Editor\'s content can not be cloned in read-only mode';
+
+    if (this.Editor.ReadOnly.isEnabled) {
+      _.logLabeled(errorText, 'warn');
+
+      return Promise.reject(new Error(errorText));
+    }
+
+    return this.Editor.Saver.clone();
   }
 
   /**

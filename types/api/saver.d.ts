@@ -5,6 +5,13 @@ import {OutputData} from '../data-formats/output-data';
  */
 export interface Saver {
   /**
+   * Clones Editors data and returns promise with it
+   *
+   * @returns {Promise<OutputData>}
+   */
+  clone(): Promise<OutputData>;
+
+  /**
    * Saves Editors data and returns promise with it
    *
    * @returns {Promise<OutputData>}

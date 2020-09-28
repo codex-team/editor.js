@@ -124,6 +124,7 @@ export default class EditorJS {
         emit: 'emit',
       },
       saver: {
+        clone: 'clone',
         save: 'save',
       },
     };

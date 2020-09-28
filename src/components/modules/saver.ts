@@ -22,11 +22,47 @@ declare const VERSION: string;
  */
 export default class Saver extends Module {
   /**
-   * Composes new chain of Promises to fire them alternatelly
+   * Clone Editor's data
+   *
+   * @returns {OutputData}
+   */
+  public async clone(): Promise<OutputData> {
+    return this.makeData('cloned');
+  }
+
+  /**
+   * Composes new chain of Promises to fire them alternately
    *
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
+    return this.makeData('saved');
+  }
+
+  /**
+   * Clones or Saves, and validates
+   *
+   * @param {Block} block - Editor's Tool
+   * @param {'cloned' | 'saved'} type
+   * @returns {ValidatedData} - Tool's validated data
+   */
+  private async getData(block: Block, type: 'cloned' | 'saved'): Promise<ValidatedData> {
+    const blockData = await block[type === 'cloned' ? 'clone' : 'save']();
+    const isValid = blockData ? await block.validate(blockData.data) : false;
+
+    return {
+      ...blockData,
+      isValid,
+    };
+  }
+
+  /**
+   * Creates cloned or saved data
+   *
+   * @param {'cloned' | 'saved'} type
+   * @returns {Promise<OutputData>}
+   */
+  private async makeData(type: 'cloned' | 'saved'): Promise<OutputData> {
     const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
@@ -38,7 +74,7 @@ export default class Saver extends Module {
 
     try {
       blocks.forEach((block: Block) => {
-        chainData.push(this.getSavedData(block));
+        chainData.push(this.getData(block, type));
       });
 
       const extractedData = await Promise.all(chainData);
@@ -48,22 +84,6 @@ export default class Saver extends Module {
     } finally {
       ModificationsObserver.enable();
     }
-  }
-
-  /**
-   * Saves and validates
-   *
-   * @param {Block} block - Editor's Tool
-   * @returns {ValidatedData} - Tool's validated data
-   */
-  private async getSavedData(block: Block): Promise<ValidatedData> {
-    const blockData = await block.save();
-    const isValid = blockData && await block.validate(blockData.data);
-
-    return {
-      ...blockData,
-      isValid,
-    };
   }
 
   /**
