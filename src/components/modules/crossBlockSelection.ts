@@ -64,7 +64,7 @@ export default class CrossBlockSelection extends Module {
    * @param {boolean} next - if true, toggle next block. Previous otherwise
    */
   public toggleBlockSelectedState(next = true): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     if (!this.lastSelectedBlock) {
       this.lastSelectedBlock = this.firstSelectedBlock = BlockManager.currentBlock;
@@ -72,6 +72,8 @@ export default class CrossBlockSelection extends Module {
 
     if (this.firstSelectedBlock === this.lastSelectedBlock) {
       this.firstSelectedBlock.selected = true;
+
+      BlockSelection.clearCache();
       SelectionUtils.get().removeAllRanges();
     }
 
@@ -84,8 +86,12 @@ export default class CrossBlockSelection extends Module {
 
     if (this.lastSelectedBlock.selected !== nextBlock.selected) {
       nextBlock.selected = true;
+
+      BlockSelection.clearCache();
     } else {
       this.lastSelectedBlock.selected = false;
+
+      BlockSelection.clearCache();
     }
 
     this.lastSelectedBlock = nextBlock;
@@ -179,7 +185,7 @@ export default class CrossBlockSelection extends Module {
    * @param {MouseEvent} event - mouse over event
    */
   private onMouseOver = (event: MouseEvent): void => {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node) || this.lastSelectedBlock;
     const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
@@ -198,12 +204,16 @@ export default class CrossBlockSelection extends Module {
       relatedBlock.selected = true;
       targetBlock.selected = true;
 
+      BlockSelection.clearCache();
+
       return;
     }
 
     if (targetBlock === this.firstSelectedBlock) {
       relatedBlock.selected = false;
       targetBlock.selected = false;
+
+      BlockSelection.clearCache();
 
       return;
     }
@@ -221,7 +231,7 @@ export default class CrossBlockSelection extends Module {
    * @param {Block} lastBlock - last block in range
    */
   private toggleBlocksSelectedState(firstBlock: Block, lastBlock: Block): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);
 
@@ -240,6 +250,8 @@ export default class CrossBlockSelection extends Module {
         block !== (shouldntSelectFirstBlock ? firstBlock : lastBlock)
       ) {
         BlockManager.blocks[i].selected = !BlockManager.blocks[i].selected;
+
+        BlockSelection.clearCache();
       }
     }
   }

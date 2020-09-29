@@ -17,6 +17,14 @@ import { SanitizerConfig } from '../../../types/configs';
  *
  */
 export default class BlockSelection extends Module {
+
+  /**
+   * Saves any block selected cache
+   *
+   * @private
+   */
+  private anyBlockSelectedCache: boolean | null = null;
+
   /**
    * Sanitizer Config
    *
@@ -71,6 +79,8 @@ export default class BlockSelection extends Module {
     BlockManager.blocks.forEach((block) => {
       block.selected = state;
     });
+
+    this.clearCache();
   }
 
   /**
@@ -81,7 +91,11 @@ export default class BlockSelection extends Module {
   public get anyBlockSelected(): boolean {
     const { BlockManager } = this.Editor;
 
-    return BlockManager.blocks.some((block) => block.selected === true);
+    if (this.anyBlockSelectedCache === null) {
+      this.anyBlockSelectedCache = BlockManager.blocks.some((block) => block.selected === true);
+    }
+
+    return this.anyBlockSelectedCache;
   }
 
   /**
@@ -201,6 +215,8 @@ export default class BlockSelection extends Module {
     }
 
     block.selected = false;
+
+    this.clearCache();
   }
 
   /**
@@ -318,8 +334,17 @@ export default class BlockSelection extends Module {
 
     block.selected = true;
 
+    this.clearCache();
+
     /** close InlineToolbar when we selected any Block */
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Clear anyBlockSelected cache
+   */
+  public clearCache(): void {
+    this.anyBlockSelectedCache = null;
   }
 
   /**

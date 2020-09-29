@@ -128,6 +128,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
      * Highlight content of a Block we are working with
      */
     this.Editor.BlockManager.currentBlock.selected = true;
+    this.Editor.BlockSelection.clearCache();
 
     /**
      * Fill Tool's settings
