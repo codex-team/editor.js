@@ -143,6 +143,7 @@ export default class Tools extends Module {
       TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
       CONVERSION_CONFIG: 'conversionConfig',
+      IS_READ_ONLY_SUPPORTED: 'isReadOnlySupported',
     };
   }
 
@@ -334,7 +335,11 @@ export default class Tools extends Module {
    *
    * @returns {InlineTool} — instance
    */
-  public constructInline(tool: InlineToolConstructable, name: string, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
+  public constructInline(
+    tool: InlineToolConstructable,
+    name: string,
+    toolSettings: ToolSettings = {} as ToolSettings
+  ): InlineTool {
     const constructorOptions = {
       api: this.Editor.API.getMethodsForTool(name),
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
@@ -390,6 +395,15 @@ export default class Tools extends Module {
       },
       stub: { class: Stub },
     };
+  }
+
+  /**
+   * Returns true if tool supports read-only mode
+   *
+   * @param tool - tool to check
+   */
+  public isReadOnlySupported(tool: BlockToolConstructable): boolean {
+    return tool[this.INTERNAL_SETTINGS.IS_READ_ONLY_SUPPORTED] === true;
   }
 
   /**

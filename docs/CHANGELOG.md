@@ -2,6 +2,7 @@
 
 ### 2.19
 
+- `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)
 - `New` - RTL mode added [#670](https://github.com/codex-team/editor.js/issues/670)
 - `Fix` — Fix problem with types usage [#1183](https://github.com/codex-team/editor.js/issues/1183)
 - `Fix` - Fixed issue with Spam clicking the "Click to tune" button duplicates the icons on FireFox. [#1273](https://github.com/codex-team/editor.js/issues/1273)
@@ -42,7 +43,6 @@
 - `Fix` - `CMD+A` handler removed after Editor.js destroy [#1133](https://github.com/codex-team/editor.js/issues/1133)
 
 >  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
-
 
 ### 2.17
 

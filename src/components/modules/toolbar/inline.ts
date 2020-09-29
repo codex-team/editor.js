@@ -8,13 +8,28 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * Inline Toolbar elements
+ */
+interface InlineToolbarNodes {
+  wrapper: HTMLElement;
+  buttons: HTMLElement;
+  conversionToggler: HTMLElement;
+  conversionTogglerContent: HTMLElement;
+  /**
+   * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  actions: HTMLElement;
+}
+
+/**
  * Inline toolbar with actions that modifies selected text fragment
  *
  * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
  * |________________________|
  */
-export default class InlineToolbar extends Module {
+export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * CSS styles
    */
@@ -41,27 +56,6 @@ export default class InlineToolbar extends Module {
    * @type {boolean}
    */
   public opened = false;
-
-  /**
-   * Inline Toolbar elements
-   */
-  private nodes: {
-    wrapper: HTMLElement;
-    buttons: HTMLElement;
-    conversionToggler: HTMLElement;
-    conversionTogglerContent: HTMLElement;
-    actions: HTMLElement;
-  } = {
-    wrapper: null,
-    buttons: null,
-    conversionToggler: null,
-    conversionTogglerContent: null,
-    /**
-     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-     * For example, input for the 'link' tool or textarea for the 'comment' tool
-     */
-    actions: null,
-  };
 
   /**
    * Margin above/below the Toolbar
@@ -113,59 +107,25 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Making DOM
+   * Module preparation method
    */
-  public make(): void {
-    this.nodes.wrapper = $.make('div', [
-      this.CSS.inlineToolbar,
-      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
-    ]);
-    this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
-    this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
+  public async prepare(): Promise<void> {
+    if (!this.Editor.ReadOnly.isEnabled) {
+      this.make();
+    }
+  }
 
-    // To prevent reset of a selection when click on the wrapper
-    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
-      const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
-
-      // If click is on actions wrapper,
-      // do not prevent default behaviour because actions might include interactive elements
-      if (!isClickedOnActionsWrapper) {
-        event.preventDefault();
-      }
-    });
-
-    /**
-     * Append Inline Toolbar to the Editor
-     */
-    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
-    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-
-    /**
-     * Add button that will allow switching block type
-     */
-    this.addConversionToggler();
-
-    /**
-     * Append Inline Toolbar Tools
-     */
-    this.addTools();
-
-    /**
-     * Prepare conversion toolbar.
-     * If it has any conversion tool then it will be enabled in the Inline Toolbar
-     */
-    this.prepareConversionToolbar();
-
-    /**
-     * Recalculate initial width with all buttons
-     */
-    this.recalculateWidth();
-
-    /**
-     * Allow to leaf buttons by arrows / tab
-     * Buttons will be filled on opening
-     */
-    this.enableFlipper();
+  /**
+   * Toggles read-only mode
+   *
+   * @param {boolean} readOnlyEnabled - read-only mode
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.make();
+    } else {
+      this.destroy();
+    }
   }
 
   /**
@@ -246,6 +206,10 @@ export default class InlineToolbar extends Module {
    * Hides Inline Toolbar
    */
   public close(): void {
+    if (this.Editor.ReadOnly.isEnabled) {
+      return;
+    }
+
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     this.tools.forEach((toolInstance) => {
       if (typeof toolInstance.clear === 'function') {
@@ -315,6 +279,72 @@ export default class InlineToolbar extends Module {
    */
   public containsNode(node: Node): boolean {
     return this.nodes.wrapper.contains(node);
+  }
+
+  /**
+   * Removes UI and its components
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+
+    this.Editor.ConversionToolbar.destroy();
+  }
+
+  /**
+   * Making DOM
+   */
+  private make(): void {
+    this.nodes.wrapper = $.make('div', [
+      this.CSS.inlineToolbar,
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+    ]);
+    this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
+    this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
+
+    // To prevent reset of a selection when click on the wrapper
+    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
+      const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
+
+      // If click is on actions wrapper,
+      // do not prevent default behaviour because actions might include interactive elements
+      if (!isClickedOnActionsWrapper) {
+        event.preventDefault();
+      }
+    });
+
+    /**
+     * Append Inline Toolbar to the Editor
+     */
+    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
+    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    /**
+     * Add button that will allow switching block type
+     */
+    this.addConversionToggler();
+
+    /**
+     * Append Inline Toolbar Tools
+     */
+    this.addTools();
+
+    /**
+     * Prepare conversion toolbar.
+     * If it has any conversion tool then it will be enabled in the Inline Toolbar
+     */
+    this.prepareConversionToolbar();
+
+    /**
+     * Recalculate initial width with all buttons
+     */
+    this.recalculateWidth();
+
+    /**
+     * Allow to leaf buttons by arrows / tab
+     * Buttons will be filled on opening
+     */
+    this.enableFlipper();
   }
 
   /**

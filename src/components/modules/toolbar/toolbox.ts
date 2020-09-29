@@ -8,6 +8,14 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
+ * HTMLElements used for Toolbox UI
+ */
+interface ToolboxNodes {
+  toolbox: HTMLElement;
+  buttons: HTMLElement[];
+}
+
+/**
  * @class Toolbox
  * @classdesc Holder for Tools
  *
@@ -17,7 +25,15 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {object} CSS     - CSS class names
  *
  */
-export default class Toolbox extends Module {
+export default class Toolbox extends Module<ToolboxNodes> {
+  /**
+   * Current module HTML Elements
+   */
+  public nodes = {
+    toolbox: null,
+    buttons: [],
+  }
+
   /**
    * CSS styles
    *
@@ -53,17 +69,6 @@ export default class Toolbox extends Module {
   public opened = false;
 
   /**
-   * HTMLElements used for Toolbox UI
-   */
-  public nodes: {
-    toolbox: HTMLElement;
-    buttons: HTMLElement[];
-  } = {
-    toolbox: null,
-    buttons: [],
-  };
-
-  /**
    * How many tools displayed in Toolbox
    *
    * @type {number}
@@ -82,10 +87,18 @@ export default class Toolbox extends Module {
    */
   public make(): void {
     this.nodes.toolbox = $.make('div', this.CSS.toolbox);
-    $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
     this.enableFlipper();
+  }
+
+  /**
+   * Destroy Module
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+    this.removeAllNodes();
   }
 
   /**
