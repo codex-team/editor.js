@@ -392,12 +392,8 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
     const { currentBlock } = this.Editor.BlockManager;
-    /**
-     * currentBlock!=undefined
-     * To prevent the keyDown when it is null
-     */
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`) || currentBlock != undefined;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
