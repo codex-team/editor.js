@@ -334,6 +334,47 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * @param toolName
+   * @param tool
+   */
+  private inlineToolbarSettings(toolName): string[]|boolean {
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    /**
+     * InlineToolbar property of a particular tool
+     */
+    const inlineToolbarSettingsForTool = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    /**
+     * default inlineToolbar property
+     */
+    const defaultInlineToolbar = this.config.inlineToolbar;
+
+    let inlineToolbar;
+    const isInlineToolbarSettingsForToolTrueOrUndefined = inlineToolbarSettingsForTool == undefined || inlineToolbarSettingsForTool == true;
+
+    /**
+     * Get inline toolbar of a particular tool based on the priority:
+     * 1. inlineToolbar property of a particular tool
+     * 2. Default inlineToolbar property
+     * 3. The order of tools in the main editor constructor provided by user.
+     */
+    if (Array.isArray(inlineToolbarSettingsForTool)) {
+      inlineToolbar = inlineToolbarSettingsForTool;
+    } else if (isInlineToolbarSettingsForToolTrueOrUndefined && Array.isArray(defaultInlineToolbar)) {
+      inlineToolbar = defaultInlineToolbar;
+    }
+
+    if (inlineToolbar) {
+      return inlineToolbar;
+    }
+
+    /**
+     * if no arrays are provided in both the inlineToolbar properties
+     * then return true or false based on the priority.
+     */
+    return defaultInlineToolbar && isInlineToolbarSettingsForToolTrueOrUndefined;
+  }
+
+  /**
    * Need to show Inline Toolbar or not
    */
   private allowedToShow(): boolean {
@@ -377,30 +418,9 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-    const inlineToolbarSettingsForTool = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    const isInlineToolbarAllowedToShow = Boolean(this.inlineToolbarSettings(currentBlock.name));
 
-    /**
-     * Condition 1 : Returns true, if the inlineToolbar property of the block is an array or true;
-     * false otherwise.
-     */
-    const isInlineToolbarSettingsForToolProvided = inlineToolbarSettingsForTool === true || Array.isArray(inlineToolbarSettingsForTool);
-
-    /**
-     * Condition 2 : Returns true, if the inlineToolbar property of the block is not set,
-     * but the default inlineToolbar property is either an array or true.
-     */
-    const isDefaultInlineToolbarProvided = inlineToolbarSettingsForTool === undefined && this.config.inlineToolbar;
-
-    /**
-     * If one of the above condition is true, then the inlineToolbar will be displayed.
-     */
-    const showInlineToolbar = isInlineToolbarSettingsForToolProvided || isDefaultInlineToolbarProvided;
-
-    /**
-     * condition 2 could return an array, so casting it to Boolean.
-     */
-    return Boolean(showInlineToolbar);
+    return isInlineToolbarAllowedToShow;
   }
 
   /**
@@ -446,8 +466,6 @@ export default class InlineToolbar extends Module {
     const currentSelection = SelectionUtils.get();
     const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
-    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-    const inlineToolbarSettingsForTool = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
     /**
      * All Inline Toolbar buttons
      *
@@ -468,17 +486,9 @@ export default class InlineToolbar extends Module {
      * Else filter them according to the default inlineToolbar property.
      */
 
-    let inlineToolbarOrder;
+    const inlineToolbarOrder = this.inlineToolbarSettings(currentBlock.name);
 
-    const isInlineToolbarSettingsForToolTrueOrUndefiend = inlineToolbarSettingsForTool == undefined || inlineToolbarSettingsForTool == true;
-
-    if (Array.isArray(inlineToolbarSettingsForTool)) {
-      inlineToolbarOrder = inlineToolbarSettingsForTool;
-    } else if (isInlineToolbarSettingsForToolTrueOrUndefiend && Array.isArray(this.config.inlineToolbar)) {
-      inlineToolbarOrder = this.config.inlineToolbar;
-    }
-
-    if (inlineToolbarOrder) {
+    if (Array.isArray(inlineToolbarOrder)) {
       buttons.forEach((button) => {
         button.hidden = !inlineToolbarOrder.includes(button.dataset.tool);
       });
