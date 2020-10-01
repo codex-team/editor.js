@@ -1,11 +1,9 @@
 import $ from './dom';
-// eslint-disable-next-line import/no-duplicates
 import * as _ from './utils';
-// eslint-disable-next-line import/no-duplicates
-import { LogLevels } from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
+import { CriticalError } from './errors/critical';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -151,7 +149,7 @@ export default class Core {
     }
 
     if (!this.config.logLevel) {
-      this.config.logLevel = LogLevels.VERBOSE;
+      this.config.logLevel = _.LogLevels.VERBOSE;
     }
 
     _.setLogLevel(this.config.logLevel);
@@ -207,6 +205,9 @@ export default class Core {
         this.config.data.blocks = [ defaultBlockData ];
       }
     }
+
+    this.config.readOnly = this.config.readOnly as boolean || false;
+    this.config.i18n = {};
 
     /**
      * Adjust i18n
@@ -285,13 +286,17 @@ export default class Core {
   public async start(): Promise<void> {
     const modulesToPrepare = [
       'Tools',
+      'ReadOnly',
       'UI',
+      'Toolbar',
+      'InlineToolbar',
       'BlockManager',
       'Paste',
       'DragNDrop',
       'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
+      'CrossBlockSelection',
     ];
 
     await modulesToPrepare.reduce(
@@ -301,6 +306,13 @@ export default class Core {
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
+          /**
+           * CriticalError's will not be caught
+           * It is used when Editor is rendering in read-only mode with unsupported plugin
+           */
+          if (e instanceof CriticalError) {
+            throw new Error(e.message);
+          }
           _.log(`Module ${module} was skipped because of %o`, 'warn', e);
         }
         // _.log(`Preparing ${module} module`, 'timeEnd');

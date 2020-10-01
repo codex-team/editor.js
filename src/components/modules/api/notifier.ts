@@ -1,6 +1,6 @@
-import Module from '../../__module';
 import { Notifier } from '../../../../types/api';
 import { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
+import Module from '../../__module';
 
 /**
  *

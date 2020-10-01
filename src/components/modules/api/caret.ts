@@ -1,5 +1,5 @@
-import Module from '../../__module';
 import { Caret } from '../../../../types/api';
+import Module from '../../__module';
 
 /**
  * @class CaretAPI

@@ -559,6 +559,18 @@ export function openTab(url: string): void {
 }
 
 /**
+ * Returns random generated identifier
+ *
+ * @param {string} prefix - identifier prefix
+ *
+ * @returns {string}
+ */
+export function generateId(prefix = ''): string {
+  // tslint:disable-next-line:no-bitwise
+  return `${prefix}${(Math.floor(Math.random() * 1e8)).toString(16)}`;
+}
+
+/**
  * Common method for printing a warning about the usage of deprecated property or method.
  *
  * @param condition - condition for deprecation.

@@ -1,9 +1,8 @@
-import Module from '../../__module';
-
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import Module from '../../__module';
 
 /**
  * @class BlocksAPI

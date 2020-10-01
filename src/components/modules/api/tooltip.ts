@@ -1,6 +1,6 @@
-import Module from '../../__module';
 import { Tooltip } from '../../../../types/api';
 import { TooltipContent, TooltipOptions } from 'codex-tooltip';
+import Module from '../../__module';
 
 /**
  * @class TooltipAPI

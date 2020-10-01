@@ -10,7 +10,9 @@ import { BlockAPI as BlockAPIInterface } from '../../../types/api';
  *
  * @param {Block} block - Block to expose
  */
-function BlockAPI(block: Block): void {
+function BlockAPI(
+  block: Block
+): void {
   const blockAPI: BlockAPIInterface = {
     /**
      * Tool name
