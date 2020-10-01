@@ -14,6 +14,11 @@ import { CriticalError } from '../errors/critical';
  */
 export default class ReadOnly extends Module {
   /**
+   * Array of tools name which don't support read-only mode
+   */
+  private toolsDontSupportReadOnly: string[] = [];
+
+  /**
    * Value to track read-only state
    *
    * @type {boolean}
@@ -41,10 +46,10 @@ export default class ReadOnly extends Module {
       }
     });
 
-    if (toolsDontSupportReadOnly.length > 0) {
-      throw new CriticalError(
-        `To enable read-only mode all connected tools should support it. Tools ${toolsDontSupportReadOnly.join(', ')} don't support read-only mode.`
-      );
+    this.toolsDontSupportReadOnly = toolsDontSupportReadOnly;
+
+    if (this.config.readOnly && toolsDontSupportReadOnly.length > 0) {
+      this.throwCriticalError();
     }
 
     this.readOnlyEnabled = this.config.readOnly;
@@ -57,6 +62,10 @@ export default class ReadOnly extends Module {
    * @param {boolean} state - (optional) read-only state or toggle
    */
   public async toggle(state = !this.readOnlyEnabled): Promise<boolean> {
+    if (this.toolsDontSupportReadOnly.length > 0) {
+      this.throwCriticalError();
+    }
+
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
@@ -82,5 +91,14 @@ export default class ReadOnly extends Module {
     await this.Editor.Renderer.render(savedBlocks.blocks);
 
     return this.readOnlyEnabled;
+  }
+
+  /**
+   * Throws an error about tools which don't support read-only mode
+   */
+  private throwCriticalError(): never {
+    throw new CriticalError(
+      `To enable read-only mode all connected tools should support it. Tools ${this.toolsDontSupportReadOnly.join(', ')} don't support read-only mode.`
+    );
   }
 }
