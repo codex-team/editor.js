@@ -334,10 +334,11 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * @param toolName
-   * @param tool
+   * Returns inline toolbar for a particular tool
+   *
+   * @param {string} toolName
    */
-  private inlineToolbarSettings(toolName): string[]|boolean {
+  private getInlineToolbarSettings(toolName): string[]|boolean {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     /**
      * InlineToolbar property of a particular tool
@@ -418,9 +419,7 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const isInlineToolbarAllowedToShow = Boolean(this.inlineToolbarSettings(currentBlock.name));
-
-    return isInlineToolbarAllowedToShow;
+    return Boolean(this.getInlineToolbarSettings(currentBlock.name));
   }
 
   /**
@@ -486,7 +485,7 @@ export default class InlineToolbar extends Module {
      * Else filter them according to the default inlineToolbar property.
      */
 
-    const inlineToolbarOrder = this.inlineToolbarSettings(currentBlock.name);
+    const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.name);
 
     if (Array.isArray(inlineToolbarOrder)) {
       buttons.forEach((button) => {
