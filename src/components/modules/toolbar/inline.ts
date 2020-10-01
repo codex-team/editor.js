@@ -419,7 +419,13 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    return Boolean(this.getInlineToolbarSettings(currentBlock.name));
+    /**
+     * getInlineToolbarSettings could return an string[] or boolean.
+     * If the returned value is n array, then that should be considered as true (even if the array is empty).
+     */
+    const isInlineToolbarEnabled = Array.isArray(this.getInlineToolbarSettings(currentBlock.name)) || this.getInlineToolbarSettings(currentBlock.name) === true;
+
+    return isInlineToolbarEnabled;
   }
 
   /**
