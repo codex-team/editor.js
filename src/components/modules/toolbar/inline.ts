@@ -284,6 +284,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
+   * Removes UI and its components
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+
+    this.Editor.ConversionToolbar.destroy();
+  }
+
+  /**
    * Returns inline toolbar for a particular tool
    *
    * @param {string} toolName
@@ -323,16 +333,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * then return true or false based on the priority.
      */
     return defaultInlineToolbar && isInlineToolbarSettingsForToolTrueOrUndefined;
-  }
-
-  /**
-   * Removes UI and its components
-   */
-  public destroy(): void {
-    this.flipper.deactivate();
-    this.flipper = null;
-
-    this.Editor.ConversionToolbar.destroy();
   }
 
   /**
