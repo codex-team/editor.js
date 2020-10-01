@@ -43,7 +43,7 @@ export default class Tools extends Module {
   /**
    * Returns available Tools
    *
-   * @returns {Tool[]}
+   * @returns {Object<Tool>}
    */
   public get available(): { [name: string]: ToolConstructable } {
     return this.toolsAvailable;
@@ -63,7 +63,7 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get inline(): { [name: string]: ToolConstructable } {
+  public get inline(): { [name: string]: InlineToolConstructable } {
     if (this._inlineTools) {
       return this._inlineTools;
     }
