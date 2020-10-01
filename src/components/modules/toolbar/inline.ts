@@ -294,45 +294,73 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
-   * Returns inline toolbar for a particular tool
+   * Returns inline toolbar settings for a particular tool
    *
-   * @param {string} toolName
+   * @param {string} toolName - user specified name of tool
+   * @returns - array of ordered tool names or false
    */
   private getInlineToolbarSettings(toolName): string[]|boolean {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+
     /**
      * InlineToolbar property of a particular tool
      */
-    const inlineToolbarSettingsForTool = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
-    /**
-     * default inlineToolbar property
-     */
-    const defaultInlineToolbar = this.config.inlineToolbar;
-
-    let inlineToolbar;
-    const isInlineToolbarSettingsForToolTrueOrUndefined = inlineToolbarSettingsForTool == undefined || inlineToolbarSettingsForTool == true;
+    const settingsForTool = toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
 
     /**
-     * Get inline toolbar of a particular tool based on the priority:
-     * 1. inlineToolbar property of a particular tool
-     * 2. Default inlineToolbar property
-     * 3. The order of tools in the main editor constructor provided by user.
+     * Custom inlineToolbar settings got from the root of EditorConfig
      */
-    if (Array.isArray(inlineToolbarSettingsForTool)) {
-      inlineToolbar = inlineToolbarSettingsForTool;
-    } else if (isInlineToolbarSettingsForToolTrueOrUndefined && Array.isArray(defaultInlineToolbar)) {
-      inlineToolbar = defaultInlineToolbar;
-    }
+    const commonInlineToolbarSettings = this.config.inlineToolbar;
 
-    if (inlineToolbar) {
-      return inlineToolbar;
+    /**
+     * Whether to enable IT for a particular tool is the decision of the editor user.
+     * He can enable it by the inlineToolbar settings for this tool. To enable, he should pass true or strings[]
+     */
+    const enabledForTool = settingsForTool === true || Array.isArray(settingsForTool);
+
+    /**
+     * Disabled by user
+     */
+    if (!enabledForTool) {
+      return false;
     }
 
     /**
-     * if no arrays are provided in both the inlineToolbar properties
-     * then return true or false based on the priority.
+     * 1st priority.
+     *
+     * If user pass the list of inline tools for the particular tool, return it.
      */
-    return defaultInlineToolbar && isInlineToolbarSettingsForToolTrueOrUndefined;
+    if (Array.isArray(settingsForTool)) {
+      return settingsForTool;
+    }
+
+    /**
+     * 2nd priority.
+     *
+     * If user pass just 'true' for tool, get common inlineToolbar settings
+     * - if common settings is an array, use it
+     * - if common settings is 'true' or not specified, get default order
+     */
+    if (Array.isArray(commonInlineToolbarSettings)) {
+      return commonInlineToolbarSettings;
+    }
+
+    /**
+     * If common settings is 'true' or not specified, get default order
+     */
+    if (commonInlineToolbarSettings === true || commonInlineToolbarSettings === undefined) {
+      const defaultToolsOrder: string[] = Object.entries(this.Editor.Tools.available)
+        .filter(([name, tool]) => {
+          return tool[this.Editor.Tools.INTERNAL_SETTINGS.IS_INLINE];
+        })
+        .map(([name, tool]) => {
+          return name;
+        });
+
+      return defaultToolsOrder;
+    }
+
+    return false;
   }
 
   /**
@@ -519,7 +547,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Filter buttons if Block Tool pass config like inlineToolbar=['link']
      * Else filter them according to the default inlineToolbar property.
      */
-
     const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.name);
 
     if (Array.isArray(inlineToolbarOrder)) {

@@ -97,11 +97,14 @@
        * Wrapper of Editor
        */
       holder: 'editorjs',
-      
+
       /**
-       * InlineToolbar 
+       * Common Inline Toolbar settings
+       * - if true (or not specified), the order from 'tool' property will be used
+       * - if an array of tool names, this order will be used
        */
-      inlineToolbar: ['link', 'italic', 'bold'],
+      // inlineToolbar: ['bold', 'italic', 'link'],
+      // inlineToolbar: true,
 
       /**
        * Tools list
@@ -112,7 +115,7 @@
          */
         header: {
           class: Header,
-          inlineToolbar: true,
+          inlineToolbar: ['link'],
           config: {
             placeholder: 'Header'
           },

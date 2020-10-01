@@ -195,6 +195,10 @@ export default class Core {
     this.config.onChange = this.config.onChange || ((): void => {});
 
     /**
+     * @todo add inlineToolbar
+     */
+
+    /**
      * Initialize default Block to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data)) {
