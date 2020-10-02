@@ -64,7 +64,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private readonly toolbarVerticalMargin: number = 5;
 
   /**
-   * Tools instances
+   * Currently visible tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
 
@@ -86,26 +86,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Instance of class that responses for leafing buttons by arrows/tab
    */
   private flipper: Flipper = null;
-
-  /**
-   * Inline Toolbar Tools
-   *
-   * @returns {Map<string, InlineTool>}
-   */
-  // public get tools(): Map<string, InlineTool> {
-  //   if (!this.toolsInstances || this.toolsInstances.size === 0) {
-  //     const allTools = this.inlineTools;
-  //
-  //     this.toolsInstances = new Map();
-  //     for (const tool in allTools) {
-  //       if (Object.prototype.hasOwnProperty.call(allTools, tool)) {
-  //         this.toolsInstances.set(tool, allTools[tool]);
-  //       }
-  //     }
-  //   }
-  //
-  //   return this.toolsInstances;
-  // }
 
   /**
    * Module preparation method
@@ -204,7 +184,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Hides Inline Toolbar
    */
   public close(): void {
-    if (!this.opened){
+    if (!this.opened) {
       return;
     }
 
@@ -214,6 +194,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     this.toolsInstances.forEach((toolInstance) => {
+      /**
+       * @todo replace 'clear' with 'destroy'
+       */
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -229,6 +212,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Shows Inline Toolbar
    */
   public open(): void {
+    if (this.opened) {
+      return;
+    }
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
@@ -238,15 +224,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Show Inline Toolbar
      */
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-
-    // /**
-    //  * Call 'clear' method for Inline Tools (for example, 'link' want to clear input)
-    //  */
-    // this.tools.forEach((toolInstance: InlineTool) => {
-    //   if (typeof toolInstance.clear === 'function') {
-    //     toolInstance.clear();
-    //   }
-    // });
 
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
@@ -603,8 +580,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       const tool = this.Editor.Tools.constructInline(this.Editor.Tools.inline[toolName], toolName, toolSettings);
 
       this.addTool(toolName, tool);
-      this.toolsInstances.set(toolName, tool);
-
       tool.checkState(SelectionUtils.get());
     });
 
@@ -637,6 +612,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     button.dataset.tool = toolName;
     this.nodes.buttons.appendChild(button);
+    this.toolsInstances.set(toolName, tool);
 
     if (typeof tool.renderActions === 'function') {
       const actions = tool.renderActions();

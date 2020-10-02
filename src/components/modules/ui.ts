@@ -752,6 +752,10 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
+
+    /**
+     * @todo add debounce
+     */
     this.Editor.InlineToolbar.tryToShow(true);
   }
 
