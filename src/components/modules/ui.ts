@@ -397,9 +397,16 @@ export default class UI extends Module {
      *  currentBlock !=undefined
      *  Ignore when KeyDown Element is null
      */
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`) || currentBlock != undefined;
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
+    /**
+     * Transfer event when currentBlock defined and keyDownOnEditor is null
+     */
+    if(currentBlock!== undefined && keyDownOnEditor===null){
+      this.Editor.BlockEvents.keydown(event);
+      return;
+    }
     /**
      * Ignore keydowns on editor and meta keys
      */

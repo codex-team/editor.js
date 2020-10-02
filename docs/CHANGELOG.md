@@ -18,6 +18,7 @@
 - `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
 - `Fix` - blocks.getBlockByIndex() API method now returns void for indexes out of range [#1270](https://github.com/codex-team/editor.js/issues/1270)
 - `Fix` - Fixed the `onChange` callback issue. This method didn't be called for native inputs before some contentedtable element changed [#843](https://github.com/codex-team/editor.js/issues/843)
+- `Fix` - Fixed the `Tab` based which occurs on delimiter,image tool and simple image tool [#1302](https://github.com/codex-team/editor.js/issues/1302).
 
 ### 2.18
 
