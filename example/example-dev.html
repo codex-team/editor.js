@@ -99,6 +99,14 @@
       holder: 'editorjs',
 
       /**
+       * Common Inline Toolbar settings
+       * - if true (or not specified), the order from 'tool' property will be used
+       * - if an array of tool names, this order will be used
+       */
+      // inlineToolbar: ['link', 'marker', 'bold', 'italic'],
+      // inlineToolbar: true,
+
+      /**
        * Tools list
        */
       tools: {
@@ -107,7 +115,7 @@
          */
         header: {
           class: Header,
-          inlineToolbar: ['link'],
+          inlineToolbar: ['marker', 'link'],
           config: {
             placeholder: 'Header'
           },
