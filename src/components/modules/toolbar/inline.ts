@@ -12,6 +12,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  */
 interface InlineToolbarNodes {
   wrapper: HTMLElement;
+  togglerAndButtonsWrapper: HTMLElement;
   buttons: HTMLElement;
   conversionToggler: HTMLElement;
   conversionTogglerContent: HTMLElement;
@@ -42,12 +43,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
-    inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
+    togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper',
   };
 
   /**
@@ -63,7 +64,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private readonly toolbarVerticalMargin: number = 5;
 
   /**
-   * Tools instances
+   * Currently visible tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
 
@@ -85,26 +86,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Instance of class that responses for leafing buttons by arrows/tab
    */
   private flipper: Flipper = null;
-
-  /**
-   * Inline Toolbar Tools
-   *
-   * @returns {Map<string, InlineTool>}
-   */
-  public get tools(): Map<string, InlineTool> {
-    if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = this.inlineTools;
-
-      this.toolsInstances = new Map();
-      for (const tool in allTools) {
-        if (Object.prototype.hasOwnProperty.call(allTools, tool)) {
-          this.toolsInstances.set(tool, allTools[tool]);
-        }
-      }
-    }
-
-    return this.toolsInstances;
-  }
 
   /**
    * Module preparation method
@@ -151,9 +132,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.move();
     this.open();
     this.Editor.Toolbar.close();
-
-    /** Check Tools state for selected fragment */
-    this.checkToolsState();
   }
 
   /**
@@ -206,12 +184,19 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Hides Inline Toolbar
    */
   public close(): void {
+    if (!this.opened) {
+      return;
+    }
+
     if (this.Editor.ReadOnly.isEnabled) {
       return;
     }
 
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    this.tools.forEach((toolInstance) => {
+    this.toolsInstances.forEach((toolInstance) => {
+      /**
+       * @todo replace 'clear' with 'destroy'
+       */
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -227,24 +212,18 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Shows Inline Toolbar
    */
   public open(): void {
+    if (this.opened) {
+      return;
+    }
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
-    this.filterTools();
+    this.addToolsFiltered();
 
     /**
      * Show Inline Toolbar
      */
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-
-    /**
-     * Call 'clear' method for Inline Tools (for example, 'link' want to clear input)
-     */
-    this.tools.forEach((toolInstance: InlineTool) => {
-      if (typeof toolInstance.clear === 'function') {
-        toolInstance.clear();
-      }
-    });
 
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
@@ -292,6 +271,80 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
+   * Returns inline toolbar settings for a particular tool
+   *
+   * @param {string} toolName - user specified name of tool
+   * @returns - array of ordered tool names or false
+   */
+  private getInlineToolbarSettings(toolName): string[]|boolean {
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+
+    /**
+     * InlineToolbar property of a particular tool
+     */
+    const settingsForTool = toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+
+    /**
+     * Whether to enable IT for a particular tool is the decision of the editor user.
+     * He can enable it by the inlineToolbar settings for this tool. To enable, he should pass true or strings[]
+     */
+    const enabledForTool = settingsForTool === true || Array.isArray(settingsForTool);
+
+    /**
+     * Disabled by user
+     */
+    if (!enabledForTool) {
+      return false;
+    }
+
+    /**
+     * 1st priority.
+     *
+     * If user pass the list of inline tools for the particular tool, return it.
+     */
+    if (Array.isArray(settingsForTool)) {
+      return settingsForTool;
+    }
+
+    /**
+     * 2nd priority.
+     *
+     * If user pass just 'true' for tool, get common inlineToolbar settings
+     * - if common settings is an array, use it
+     * - if common settings is 'true' or not specified, get default order
+     */
+
+    /**
+     * Common inlineToolbar settings got from the root of EditorConfig
+     */
+    const commonInlineToolbarSettings = this.config.inlineToolbar;
+
+    /**
+     * If common settings is an array, use it
+     */
+    if (Array.isArray(commonInlineToolbarSettings)) {
+      return commonInlineToolbarSettings;
+    }
+
+    /**
+     * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
+     */
+    if (commonInlineToolbarSettings === true) {
+      const defaultToolsOrder: string[] = Object.entries(this.Editor.Tools.available)
+        .filter(([name, tool]) => {
+          return tool[this.Editor.Tools.INTERNAL_SETTINGS.IS_INLINE];
+        })
+        .map(([name, tool]) => {
+          return name;
+        });
+
+      return defaultToolsOrder;
+    }
+
+    return false;
+  }
+
+  /**
    * Making DOM
    */
   private make(): void {
@@ -299,6 +352,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.CSS.inlineToolbar,
       ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
+    /**
+     * Creates a different wrapper for toggler and buttons.
+     */
+    this.nodes.togglerAndButtonsWrapper = $.make('div', this.CSS.togglerAndButtonsWrapper);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
@@ -314,9 +371,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     });
 
     /**
-     * Append Inline Toolbar to the Editor
+     * Append the intermediary wrapper which contains toggler and buttons and button actions.
      */
-    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
+    $.append(this.nodes.wrapper, [this.nodes.togglerAndButtonsWrapper, this.nodes.actions]);
+    /**
+     * Append the inline toolbar to the editor.
+     */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
@@ -325,9 +385,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.addConversionToggler();
 
     /**
-     * Append Inline Toolbar Tools
+     * Wrapper for the inline tools
+     * Will be appended after the Conversion Toolbar toggler
      */
-    this.addTools();
+    $.append(this.nodes.togglerAndButtonsWrapper, this.nodes.buttons);
 
     /**
      * Prepare conversion toolbar.
@@ -391,59 +452,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return false;
     }
 
-    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-
-    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
-  }
-
-  /**
-   * Show only allowed Tools
-   */
-  private filterTools(): void {
-    const currentSelection = SelectionUtils.get(),
-        currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
-
-    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-        inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
-
     /**
-     * All Inline Toolbar buttons
-     *
-     * @type {HTMLElement[]}
+     * getInlineToolbarSettings could return an string[] (order of tools) or false (Inline Toolbar disabled).
      */
-    const buttons = Array.from(this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`)) as HTMLElement[];
+    const inlineToolbarSettings = this.getInlineToolbarSettings(currentBlock.name);
 
-    /**
-     * Show previously hided
-     */
-    buttons.forEach((button) => {
-      button.hidden = false;
-      button.classList.remove(this.CSS.inlineToolButtonLast);
-    });
-
-    /**
-     * Filter buttons if Block Tool pass config like inlineToolbar=['link']
-     */
-    if (Array.isArray(inlineToolbarSettings)) {
-      buttons.forEach((button) => {
-        button.hidden = !inlineToolbarSettings.includes(button.dataset.tool);
-      });
-    }
-
-    /**
-     * Tick for removing right-margin from last visible button.
-     * Current generation of CSS does not allow to filter :visible elements
-     */
-    const lastVisibleButton = buttons.filter((button) => !button.hidden).pop();
-
-    if (lastVisibleButton) {
-      lastVisibleButton.classList.add(this.CSS.inlineToolButtonLast);
-    }
-
-    /**
-     * Recalculate width because some buttons can be hidden
-     */
-    this.recalculateWidth();
+    return inlineToolbarSettings !== false;
   }
 
   /**
@@ -466,7 +480,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
     this.nodes.conversionToggler.appendChild(icon);
 
-    this.nodes.buttons.appendChild(this.nodes.conversionToggler);
+    this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
@@ -539,12 +553,40 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
 
   /**
-   * Fill Inline Toolbar with Tools
+   * Append only allowed Tools
    */
-  private addTools(): void {
-    this.tools.forEach((toolInstance, toolName) => {
-      this.addTool(toolName, toolInstance);
+  private addToolsFiltered(): void {
+    const currentSelection = SelectionUtils.get();
+    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+
+    /**
+     * Clear buttons list
+     */
+    this.nodes.buttons.innerHTML = '';
+    this.nodes.actions.innerHTML = '';
+    this.toolsInstances = new Map();
+
+    /**
+     * Filter buttons if Block Tool pass config like inlineToolbar=['link']
+     * Else filter them according to the default inlineToolbar property.
+     *
+     * For this moment, inlineToolbarOrder could not be 'false'
+     * because this method will be called only if the Inline Toolbar is enabled
+     */
+    const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.name) as string[];
+
+    inlineToolbarOrder.forEach((toolName) => {
+      const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+      const tool = this.Editor.Tools.constructInline(this.Editor.Tools.inline[toolName], toolName, toolSettings);
+
+      this.addTool(toolName, tool);
+      tool.checkState(SelectionUtils.get());
     });
+
+    /**
+     * Recalculate width because some buttons can be hidden
+     */
+    this.recalculateWidth();
   }
 
   /**
@@ -570,6 +612,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     button.dataset.tool = toolName;
     this.nodes.buttons.appendChild(button);
+    this.toolsInstances.set(toolName, tool);
 
     if (typeof tool.renderActions === 'function') {
       const actions = tool.renderActions();
@@ -698,7 +741,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.tools.forEach((toolInstance) => {
+    this.toolsInstances.forEach((toolInstance) => {
       toolInstance.checkState(SelectionUtils.get());
     });
   }

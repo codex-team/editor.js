@@ -90,4 +90,9 @@ export interface EditorConfig {
    * @param {API} api - editor.js api
    */
   onChange?(api: API): void;
+
+  /**
+   * Defines default toolbar for all tools.
+   */
+  inlineToolbar?: string[]|boolean;
 }
