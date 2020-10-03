@@ -7,5 +7,10 @@ export interface I18nConfig {
   /**
    * Dictionary used for translation
    */
-  messages: I18nDictionary;
+  messages?: I18nDictionary;
+
+  /**
+   * Text direction. If not set, uses ltr
+   */
+  direction?: 'ltr' | 'rtl';
 }

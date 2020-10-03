@@ -120,6 +120,31 @@ body {
   text-decoration: none;
 }
 
+.ce-example__statusbar {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  padding: 8px 15px;
+}
+
+.ce-example__statusbar-button {
+  display: inline-flex;
+  margin-left: 10px;
+  background: #4A9DF8;
+  padding: 6px 12px;
+  box-shadow: 0 7px 8px -4px rgba(137, 207, 255, 0.77);
+  transition: all 150ms ease;
+  cursor: pointer;
+  border-radius: 31px;
+  color: #fff;
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+  text-align: center;
+}
+
 @media all and (max-width: 730px){
   .ce-example__header,
   .ce-example__content{

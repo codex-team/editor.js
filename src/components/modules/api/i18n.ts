@@ -1,8 +1,8 @@
-import Module from '../../__module';
 import { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
 import { ToolType } from '../tools';
 import { logLabeled } from '../../utils';
+import Module from '../../__module';
 
 /**
  * Provides methods for working with i18n

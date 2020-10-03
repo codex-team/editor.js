@@ -93,7 +93,7 @@ export default class BlockEvents extends Module {
    *
    * @param {KeyboardEvent} event - keyup event
    */
-  public keyup(event): void {
+  public keyup(event: KeyboardEvent): void {
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
      */
@@ -105,21 +105,6 @@ export default class BlockEvents extends Module {
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
     this.Editor.UI.checkEmptiness();
-  }
-
-  /**
-   * Set up mouse selection handlers
-   *
-   * @param {MouseEvent} event - mouse down event
-   */
-  public mouseDown(event: MouseEvent): void {
-    /**
-     * Each mouse down on Block must disable selectAll state
-     */
-    if (!SelectionUtils.isCollapsed) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
-    this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
   /**
@@ -157,10 +142,10 @@ export default class BlockEvents extends Module {
   /**
    * Add drop target styles
    *
-   * @param {DragEvent} e - drag over event
+   * @param {DragEvent} event - drag over event
    */
-  public dragOver(e: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
+  public dragOver(event: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
     block.dropTarget = true;
   }
@@ -168,10 +153,10 @@ export default class BlockEvents extends Module {
   /**
    * Remove drop target style
    *
-   * @param {DragEvent} e - drag leave event
+   * @param {DragEvent} event - drag leave event
    */
-  public dragLeave(e: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
+  public dragLeave(event: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
     block.dropTarget = false;
   }
@@ -426,7 +411,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (this.Editor.Caret.navigateNext()) {
+    const navigateNext = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
+    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
+
+    if (isNavigated) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
@@ -481,7 +469,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (this.Editor.Caret.navigatePrevious()) {
+    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
+    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();
+
+    if (isNavigated) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */

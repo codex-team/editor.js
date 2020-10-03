@@ -141,12 +141,25 @@ export default class Paste extends Module {
 
   /**
    * Set onPaste callback and collect tools` paste configurations
-   *
-   * @public
    */
   public async prepare(): Promise<void> {
-    this.setCallback();
     this.processTools();
+    if (!this.Editor.ReadOnly.isEnabled) {
+      this.setCallback();
+    }
+  }
+
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled - read only flag value
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.setCallback();
+    } else {
+      this.unsetCallback();
+    }
   }
 
   /**
@@ -259,6 +272,15 @@ export default class Paste extends Module {
   }
 
   /**
+   * Unset onPaste callback handler
+   */
+  private unsetCallback(): void {
+    const { Listeners } = this.Editor;
+
+    Listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+  }
+
+  /**
    * Get and process tool`s paste configs
    */
   private processTools(): void {
@@ -276,6 +298,7 @@ export default class Paste extends Module {
         api: this.Editor.API.getMethodsForTool(name),
         config: {},
         data: {},
+        readOnly: false,
       }) as BlockTool;
 
       if (tool.pasteConfig === false) {
@@ -427,7 +450,7 @@ export default class Paste extends Module {
     }
 
     /**
-     * If Tools is in list of exceptions, skip processing of paste event
+     * If Tools is in list of errors, skip processing of paste event
      */
     if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
       return;
