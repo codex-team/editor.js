@@ -43,7 +43,7 @@ export default class Tools extends Module {
   /**
    * Returns available Tools
    *
-   * @returns {Object<Tool>}
+   * @returns {object<Tool>}
    */
   public get available(): { [name: string]: ToolConstructable } {
     return this.toolsAvailable;

@@ -54,7 +54,7 @@ export default class UI extends Module<UINodes> {
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
     editorLoader: string; editorEmpty: string; editorRtlFix: string;
-  } {
+    } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
@@ -275,7 +275,7 @@ export default class UI extends Module<UINodes> {
      */
     this.nodes.wrapper = $.make('div', [
       this.CSS.editorWrapper,
-      ...(this.isRtl ? [this.CSS.editorRtlFix] : []),
+      ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
@@ -426,7 +426,6 @@ export default class UI extends Module<UINodes> {
      * Transfer the event when keydowns on editor is null and currentblock is defined
      */
     if (currentBlock !== undefined && keyDownOnEditor === null) {
-
       this.Editor.BlockEvents.keydown(event);
 
       return;
@@ -761,7 +760,6 @@ export default class UI extends Module<UINodes> {
 
       return;
     }
-
 
     /**
      * @todo add debounce
