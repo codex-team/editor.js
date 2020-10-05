@@ -17,9 +17,8 @@ import { SanitizerConfig } from '../../../types/configs';
  *
  */
 export default class BlockSelection extends Module {
-
   /**
-   * Sometimes .anyBlockSelected can be called frequently, 
+   * Sometimes .anyBlockSelected can be called frequently,
    * for example at ui@selectionChange (to clear native browser selection in CBS)
    * We use cache to prevent multiple iterations through all the blocks
    *
