@@ -423,7 +423,7 @@ export default class UI extends Module<UINodes> {
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
-     * Transfer the event when keydowns on editor is null and currentblock is defined
+     * When some block is selected, but the caret is not set inside the editor, treat such keydowns as keydown on selected block.
      */
     if (currentBlock !== undefined && keyDownOnEditor === null) {
       this.Editor.BlockEvents.keydown(event);
