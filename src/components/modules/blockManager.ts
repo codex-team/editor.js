@@ -584,6 +584,11 @@ export default class BlockManager extends Module {
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
 
+      /**
+       * Update current block active input
+       */
+      this.currentBlock.updateCurrentInput();
+
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
