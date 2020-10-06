@@ -52,7 +52,7 @@ export default class ReadOnly extends Module {
       this.throwCriticalError();
     }
 
-    this.readOnlyEnabled = this.config.readOnly;
+    this.toggle(this.config.readOnly);
   }
 
   /**
@@ -62,7 +62,7 @@ export default class ReadOnly extends Module {
    * @param {boolean} state - (optional) read-only state or toggle
    */
   public async toggle(state = !this.readOnlyEnabled): Promise<boolean> {
-    if (this.toolsDontSupportReadOnly.length > 0) {
+    if (state && this.toolsDontSupportReadOnly.length > 0) {
       this.throwCriticalError();
     }
 
