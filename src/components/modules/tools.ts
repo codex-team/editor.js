@@ -157,6 +157,7 @@ export default class Tools extends Module {
       TOOLBOX: 'toolbox',
       ENABLED_INLINE_TOOLS: 'inlineToolbar',
       CONFIG: 'config',
+      BLOCK_TUNE_DISPLAY_DEFAULT: 'blockTuneDisplayDefault',
     };
   }
 

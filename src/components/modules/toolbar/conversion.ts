@@ -167,7 +167,7 @@ export default class ConversionToolbar extends Module {
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-    const { INTERNAL_SETTINGS } = this.Editor.Tools;
+    const { INTERNAL_SETTINGS, USER_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
 
     /**

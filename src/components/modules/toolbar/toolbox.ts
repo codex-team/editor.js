@@ -292,7 +292,7 @@ export default class Toolbox extends Module {
    * @param {string} toolName - Tool name
    */
   private insertNewBlock(tool: BlockToolConstructable, toolName: string): void {
-    const { BlockManager, Caret } = this.Editor;
+    const { BlockManager, Caret, Tools } = this.Editor;
     const { currentBlock } = BlockManager;
 
     const newBlock = BlockManager.insert({
@@ -316,10 +316,33 @@ export default class Toolbox extends Module {
         Caret.setToBlock(BlockManager.nextBlock);
       }
     }
+    this.Editor.Toolbar.close();
+    const toolSettings = Tools.getToolSettings(toolName);
+    if (toolSettings.config?.blockTuneDisplayDefault === true) {
+      // console.log('Open Block Settings');
+
+      this.activateBlockSettings();
+    }
+    // console.log('conversion userSettings >>>>>>>>>>>>>>> ', toolSettings);
 
     /**
      * close toolbar when node is changed
      */
-    this.Editor.Toolbar.close();
+  }
+
+  private activateBlockSettings(): void {
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.BlockManager.currentBlock.focused = true;
+      this.Editor.Toolbar.open(true, false);
+      this.Editor.Toolbar.plusButton.hide();
+    }
+
+    /**
+     * If BlockSettings is not open, then open BlockSettings
+     * Next Tab press will leaf Settings Buttons
+     */
+    if (!this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.open();
+    }
   }
 }
