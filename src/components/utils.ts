@@ -186,7 +186,8 @@ export function isPrintableKey(keyCode: number): boolean {
     (keyCode > 64 && keyCode < 91) || // letter keys
     (keyCode > 95 && keyCode < 112) || // Numpad keys
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
-    (keyCode > 218 && keyCode < 223); // [\]' (in order)
+    (keyCode > 218 && keyCode < 223) || // [\]' (in order)
+    (keyCode > 12592 && keyCode < 12687); //  korean
 }
 
 /**
