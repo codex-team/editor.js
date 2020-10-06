@@ -66,6 +66,8 @@ export default class ReadOnly extends Module {
       this.throwCriticalError();
     }
 
+    const oldState = this.readOnlyEnabled;
+
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
@@ -80,6 +82,13 @@ export default class ReadOnly extends Module {
        * set or toggle read-only state
        */
       this.Editor[name].toggleReadOnly(state);
+    }
+
+    /**
+     * If new state equals old one, do not re-render blocks
+     */
+    if (oldState === state) {
+      return this.readOnlyEnabled;
     }
 
     /**
