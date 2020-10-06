@@ -160,11 +160,8 @@ export default class BlockManager extends Module {
   /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
-   *
-   * @returns {Promise}
    */
-  public async prepare(): Promise<void> {
-    const { Listeners, BlockEvents } = this.Editor;
+  public prepare(): void {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
 
     /**
@@ -185,13 +182,6 @@ export default class BlockManager extends Module {
       set: Blocks.set,
       get: Blocks.get,
     });
-
-    /** Copy event */
-    Listeners.on(
-      document,
-      'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
-    );
   }
 
   /**
@@ -584,6 +574,11 @@ export default class BlockManager extends Module {
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
 
+      /**
+       * Update current block active input
+       */
+      this.currentBlock.updateCurrentInput();
+
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
@@ -731,11 +726,18 @@ export default class BlockManager extends Module {
    * Enables all module handlers and bindings for all Blocks
    */
   private enableModuleBindings(): void {
-    /** Copy and cut */
+    /** Cut event */
     this.readOnlyMutableListeners.on(
       document,
       'cut',
       (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
+    );
+
+    /** Copy event */
+    this.readOnlyMutableListeners.on(
+      document,
+      'copy',
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
     );
 
     this.blocks.forEach((block: Block) => {

@@ -411,7 +411,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigateNext = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
+    const navigateNext = event.keyCode === _.keyCodes.DOWN || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
     const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
 
     if (isNavigated) {
