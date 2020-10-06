@@ -21,6 +21,7 @@ import { ToolType } from '../modules/tools';
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
+import SelectionUtils from '../selection';
 
 /**
  * Interface describes Block class constructor argument
@@ -628,7 +629,11 @@ export default class Block {
    * Update current input index with selection anchor node
    */
   public updateCurrentInput(): void {
-    this.currentInput = document.activeElement;
+    /**
+     * If activeElement is native input, anchorNode points to its parent.
+     * So if it is native input use it instead of anchorNode
+     */
+    this.currentInput = $.isNativeInput(document.activeElement) ? document.activeElement : SelectionUtils.anchorNode;
   }
 
   /**
