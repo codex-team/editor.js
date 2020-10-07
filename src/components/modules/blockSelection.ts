@@ -246,7 +246,9 @@ export default class BlockSelection extends Module {
       BlockManager.insertDefaultBlockAtIndex(indexToInsert, true);
       Caret.setToBlock(BlockManager.currentBlock);
       _.delay(() => {
-        Caret.insertContentAtCaretPosition((reason as KeyboardEvent).key);
+        const eventKey = (reason as KeyboardEvent).key;
+
+        Caret.insertContentAtCaretPosition(eventKey.length > 1 ? '' : eventKey);
       }, 20)();
     }
 
