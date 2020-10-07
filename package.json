@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.1"
+    "codex-tooltip": "^1.0.1",
+    "linkifyjs": "^2.1.9"
   }
 }
