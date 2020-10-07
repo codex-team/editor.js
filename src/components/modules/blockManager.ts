@@ -182,6 +182,13 @@ export default class BlockManager extends Module {
       set: Blocks.set,
       get: Blocks.get,
     });
+
+    /** Copy event */
+    this.Editor.Listeners.on(
+      document,
+      'copy',
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
+    );
   }
 
   /**
@@ -731,13 +738,6 @@ export default class BlockManager extends Module {
       document,
       'cut',
       (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
-    );
-
-    /** Copy event */
-    this.readOnlyMutableListeners.on(
-      document,
-      'copy',
-      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
     );
 
     this.blocks.forEach((block: Block) => {
