@@ -129,6 +129,7 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
   font-size: 12px;
   padding: 8px 15px;
+  z-index: 1;
 }
 
 .ce-example__statusbar-button {
