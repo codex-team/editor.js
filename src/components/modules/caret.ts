@@ -523,6 +523,13 @@ export default class Caret extends Module {
 
     Array.from(wrapper.childNodes).forEach((child: Node) => fragment.appendChild(child));
 
+    /**
+     * If there is no child node, append empty one
+     */
+    if (fragment.childNodes.length === 0) {
+      fragment.appendChild(new Text(''));
+    }
+
     const lastChild = fragment.lastChild;
 
     range.deleteContents();
