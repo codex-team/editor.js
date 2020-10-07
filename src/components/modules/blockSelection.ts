@@ -248,6 +248,12 @@ export default class BlockSelection extends Module {
       _.delay(() => {
         const eventKey = (reason as KeyboardEvent).key;
 
+        /**
+         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentifier).
+         * So we use empty string
+         *
+         * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+         */
         Caret.insertContentAtCaretPosition(eventKey.length > 1 ? '' : eventKey);
       }, 20)();
     }

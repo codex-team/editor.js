@@ -632,8 +632,12 @@ export default class Block {
     /**
      * If activeElement is native input, anchorNode points to its parent.
      * So if it is native input use it instead of anchorNode
+     *
+     * If anchorNode is undefined, also use activeElement
      */
-    this.currentInput = $.isNativeInput(document.activeElement) ? document.activeElement : SelectionUtils.anchorNode;
+    this.currentInput = $.isNativeInput(document.activeElement) || !SelectionUtils.anchorNode
+      ? document.activeElement
+      : SelectionUtils.anchorNode;
   }
 
   /**
