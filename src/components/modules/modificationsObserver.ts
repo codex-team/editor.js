@@ -28,7 +28,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Allows to temporary disable mutations handling
    */
-  private disabled: boolean;
+  private disabled = false;
 
   /**
    * Used to prevent several mutation callback execution
@@ -37,7 +37,10 @@ export default class ModificationsObserver extends Module {
    */
   private mutationDebouncer = _.debounce(() => {
     this.updateNativeInputs();
-    this.config.onChange(this.Editor.API.methods);
+
+    if (typeof this.config.onChange === 'function') {
+      this.config.onChange(this.Editor.API.methods);
+    }
   }, ModificationsObserver.DebounceTimer);
 
   /**
@@ -127,7 +130,7 @@ export default class ModificationsObserver extends Module {
    * @param {MutationRecord[]} mutationList - list of mutations
    * @param {MutationObserver} observer - observer instance
    */
-  private mutationHandler(mutationList: MutationRecord[], observer): void {
+  private mutationHandler(mutationList: MutationRecord[], observer: MutationObserver): void {
     /**
      * Skip mutations in stealth mode
      */

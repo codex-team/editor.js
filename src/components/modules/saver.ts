@@ -36,16 +36,18 @@ export default class Saver extends Module {
      */
     ModificationsObserver.disable();
 
-    blocks.forEach((block: Block) => {
-      chainData.push(this.getSavedData(block));
-    });
+    try {
+      blocks.forEach((block: Block) => {
+        chainData.push(this.getSavedData(block));
+      });
 
-    const extractedData = await Promise.all(chainData);
-    const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+      const extractedData = await Promise.all(chainData);
+      const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
-    ModificationsObserver.enable();
-
-    return this.makeOutput(sanitizedData);
+      return this.makeOutput(sanitizedData);
+    } finally {
+      ModificationsObserver.enable();
+    }
   }
 
   /**
