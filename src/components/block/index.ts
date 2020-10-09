@@ -228,7 +228,7 @@ export default class Block {
       config: this.config,
       api: this.api.getMethodsForTool(name, ToolType.Block),
       block: this.blockAPI,
-      readOnly: readOnly,
+      readOnly,
     });
 
     this.holder = this.compose();
@@ -359,7 +359,7 @@ export default class Block {
    * @returns {boolean}
    */
   public mergeable(): boolean {
-    return typeof this.tool.merge === 'function';
+    return _.isFunction(this.tool.merge);
   }
 
   /**

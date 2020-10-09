@@ -17,9 +17,9 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
-   * @param {boolean} readOnly - render HTML on readonly mode
+   * Creates and returns Tools HTML markup
    */
-  render(readOnly?: boolean): HTMLElement;
+  render(): HTMLElement;
 
   /**
    * Process Tool's element in DOM and return raw data
@@ -59,7 +59,7 @@ export interface BlockTool extends BaseTool {
    * Called when the editor is destroyed
    */
   destroy?(): void;
-  
+
   /**
    * Lifecycle hooks
    */

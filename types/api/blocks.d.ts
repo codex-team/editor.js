@@ -19,7 +19,7 @@ export interface Blocks {
    *
    * @returns {Promise<void>}
    */
-  render(data: OutputData, readOnly: boolean): Promise<void>;
+  render(data: OutputData): Promise<void>;
 
   /**
    * Render passed HTML string

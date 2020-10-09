@@ -292,8 +292,6 @@ export default class Core {
       'InlineToolbar',
       'BlockManager',
       'Paste',
-      'DragNDrop',
-      'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
       'CrossBlockSelection',
@@ -337,7 +335,7 @@ export default class Core {
       /**
        * If module has non-default exports, passed object contains them all and default export as 'default' property
        */
-      const Module = typeof module === 'function' ? module : module.default;
+      const Module = _.isFunction(module) ? module : module.default;
 
       try {
         /**
