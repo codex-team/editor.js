@@ -659,7 +659,7 @@ export default class Block {
 
     /**
      * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events
+     * so we need to track focus events to update current input and clear cache.
      */
     this.addInputEvents();
   }
