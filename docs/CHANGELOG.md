@@ -6,6 +6,7 @@
 - `New` - RTL mode added [#670](https://github.com/codex-team/editor.js/issues/670)
 - `New` - Allows users to provide common `inlineToolbar` property which will be used for all tools whose `inlineToolbar` property is set to `true`. It can be overridden by the tool's own `inlineToolbar` property. Also, inline tools will be ordered according to the order of the inline tools in array provided in the `inlineToolbar` property. [#1056](https://github.com/codex-team/editor.js/issues/1056)
 - `New` - Tool's `reset` static method added to the API to clean up any data added by Tool on initialization
+- `New` - Add clone interface to Block Tool [#1357](https://github.com/codex-team/editor.js/pull/1357)
 - `Improvements` - The `initialBlock` property of Editor config is deprecated. Use the `defaultBlock` instead. [#993](https://github.com/codex-team/editor.js/issues/993)
 - `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
 - `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
