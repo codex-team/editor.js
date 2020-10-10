@@ -5,7 +5,7 @@ import {BlockToolData} from '../tools';
  */
 export interface OutputBlockData<S extends string = string, T extends object = any> {
   /**
-   * Too type
+   * Tool type
    */
   type: S;
   /**
