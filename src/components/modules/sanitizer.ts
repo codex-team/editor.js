@@ -37,7 +37,7 @@ import * as _ from '../utils';
 
 import HTMLJanitor from 'html-janitor';
 import { BlockToolData, InlineToolConstructable, SanitizerConfig } from '../../../types';
-import { SavedData } from '../../../types/data-formats';
+import { SavedData } from '../../types-internal/block-data';
 
 /**
  *

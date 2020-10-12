@@ -160,9 +160,12 @@ export default class BlockManager extends Module {
   /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
+   *
+   * @returns {Promise}
    */
-  public prepare(): void {
+  public async prepare(): Promise<void> {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
+    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -184,30 +187,18 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    this.Editor.Listeners.on(
+    Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
-  }
 
-  /**
-   * Toggle read-only state
-   *
-   * If readOnly is true:
-   *  - Unbind event handlers from created Blocks
-   *
-   * if readOnly is false:
-   *  - Bind event handlers to all existing Blocks
-   *
-   * @param {boolean} readOnlyEnabled - "read only" state
-   */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (!readOnlyEnabled) {
-      this.enableModuleBindings();
-    } else {
-      this.disableModuleBindings();
-    }
+    /** Copy and cut */
+    Listeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
+    );
   }
 
   /**
@@ -220,7 +211,6 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
-    const readOnly = this.Editor.ReadOnly.isEnabled;
     const settings = this.Editor.Tools.getToolSettings(tool);
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
@@ -229,12 +219,9 @@ export default class BlockManager extends Module {
       Tool,
       settings,
       api: this.Editor.API,
-      readOnly,
     });
 
-    if (!readOnly) {
-      this.bindBlockEvents(block);
-    }
+    this.bindEvents(block);
 
     return block;
   }
@@ -243,7 +230,7 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts the default block type
+   * @param {string} options.tool - plugin name, by default method inserts initial block type
    * @param {object} options.data - plugin data
    * @param {number} options.index - index where to insert new Block
    * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
@@ -252,7 +239,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
-    tool = this.config.defaultBlock,
+    tool = this.config.initialBlock,
     data = {},
     index,
     needToFocus = true,
@@ -296,7 +283,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public replace({
-    tool = this.config.defaultBlock,
+    tool = this.config.initialBlock,
     data = {},
   }): Block {
     return this.insert({
@@ -334,7 +321,7 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Insert new default block at passed index
+   * Insert new initial block at passed index
    *
    * @param {number} index - index where Block should be inserted
    * @param {boolean} needToFocus - if true, updates current Block index
@@ -343,8 +330,8 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public insertDefaultBlockAtIndex(index: number, needToFocus = false): Block {
-    const block = this.composeBlock({ tool: this.config.defaultBlock });
+  public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
+    const block = this.composeBlock({ tool: this.config.initialBlock });
 
     this._blocks[index] = block;
 
@@ -369,7 +356,7 @@ export default class BlockManager extends Module {
     this.currentBlockIndex = this.blocks.length - 1;
 
     /**
-     * Insert the default typed block
+     * Insert initial typed block
      */
     return this.insert();
   }
@@ -456,7 +443,7 @@ export default class BlockManager extends Module {
 
   /**
    * Attention!
-   * After removing insert the new default typed Block and focus on it
+   * After removing insert new initial typed Block and focus on it
    * Removes all blocks
    */
   public removeAllBlocks(): void {
@@ -581,11 +568,6 @@ export default class BlockManager extends Module {
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
 
-      /**
-       * Update current block active input
-       */
-      this.currentBlock.updateCurrentInput();
-
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
@@ -667,15 +649,15 @@ export default class BlockManager extends Module {
   /**
    * Clears Editor
    *
-   * @param {boolean} needToAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
-   *                                             we don't need to add an empty default block
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needToAddDefaultBlock = false): void {
+  public clear(needAddInitialBlock = false): void {
     this._blocks.removeAll();
     this.dropPointer();
 
-    if (needToAddDefaultBlock) {
+    if (needAddInitialBlock) {
       this.insert();
     }
 
@@ -686,63 +668,18 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Cleans up all the block tools' resources
-   * This is called when editor is destroyed
-   */
-  public async destroy(): Promise<void> {
-    await Promise.all(this.blocks.map((block) => {
-      if (_.isFunction(block.tool.destroy)) {
-        return block.tool.destroy();
-      }
-    }));
-  }
-
-  /**
-   * Bind Block events
+   * Bind Events
    *
    * @param {Block} block - Block to which event should be bound
    */
-  private bindBlockEvents(block: Block): void {
-    const { BlockEvents } = this.Editor;
+  private bindEvents(block: Block): void {
+    const { BlockEvents, Listeners } = this.Editor;
 
-    this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
-      BlockEvents.keydown(event);
-    }, true);
-
-    this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
-      BlockEvents.keyup(event);
-    });
-
-    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
-      BlockEvents.dragOver(event);
-    });
-
-    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
-      BlockEvents.dragLeave(event);
-    });
-  }
-
-  /**
-   * Disable mutable handlers and bindings
-   */
-  private disableModuleBindings(): void {
-    this.readOnlyMutableListeners.clearAll();
-  }
-
-  /**
-   * Enables all module handlers and bindings for all Blocks
-   */
-  private enableModuleBindings(): void {
-    /** Cut event */
-    this.readOnlyMutableListeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
-    );
-
-    this.blocks.forEach((block: Block) => {
-      this.bindBlockEvents(block);
-    });
+    Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), false);
+    Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
+    Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
+    Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
+    Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
   }
 
   /**

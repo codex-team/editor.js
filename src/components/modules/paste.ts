@@ -9,7 +9,7 @@ import {
   PasteEventDetail
 } from '../../../types';
 import Block from '../block';
-import { SavedData } from '../../../types/data-formats';
+import { SavedData } from '../../types-internal/block-data';
 
 /**
  * Tag substitute object.
@@ -141,25 +141,12 @@ export default class Paste extends Module {
 
   /**
    * Set onPaste callback and collect tools` paste configurations
+   *
+   * @public
    */
   public async prepare(): Promise<void> {
+    this.setCallback();
     this.processTools();
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.setCallback();
-    }
-  }
-
-  /**
-   * Set read-only state
-   *
-   * @param {boolean} readOnlyEnabled - read only flag value
-   */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (!readOnlyEnabled) {
-      this.setCallback();
-    } else {
-      this.unsetCallback();
-    }
   }
 
   /**
@@ -250,8 +237,8 @@ export default class Paste extends Module {
       return;
     }
 
-    const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+    const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.map(
       async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
@@ -272,15 +259,6 @@ export default class Paste extends Module {
   }
 
   /**
-   * Unset onPaste callback handler
-   */
-  private unsetCallback(): void {
-    const { Listeners } = this.Editor;
-
-    Listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
-  }
-
-  /**
    * Get and process tool`s paste configs
    */
   private processTools(): void {
@@ -298,7 +276,6 @@ export default class Paste extends Module {
         api: this.Editor.API.getMethodsForTool(name),
         config: {},
         data: {},
-        readOnly: false,
       }) as BlockTool;
 
       if (tool.pasteConfig === false) {
@@ -450,7 +427,7 @@ export default class Paste extends Module {
     }
 
     /**
-     * If Tools is in list of errors, skip processing of paste event
+     * If Tools is in list of exceptions, skip processing of paste event
      */
     if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
       return;
@@ -480,8 +457,8 @@ export default class Paste extends Module {
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
-    const isCurrentBlockDefault = Tools.isDefault(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.forEach(
       (data, i) => {
@@ -537,7 +514,7 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools, Sanitizer } = this.Editor;
-    const initialTool = this.config.defaultBlock;
+    const initialTool = this.config.initialBlock;
     const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
@@ -599,13 +576,13 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
-    const { defaultBlock } = this.config as {defaultBlock: string};
+    const { initialBlock } = this.config as {initialBlock: string};
 
     if (!plain) {
       return [];
     }
 
-    const tool = defaultBlock;
+    const tool = initialBlock;
 
     return plain
       .split(/\r?\n/)
@@ -645,7 +622,7 @@ export default class Paste extends Module {
       dataToInsert.tool !== currentBlock.name ||
       !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
     ) {
-      this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty);
+      this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
 
       return;
     }
@@ -665,14 +642,14 @@ export default class Paste extends Module {
     const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
     const { content } = dataToInsert;
 
-    const currentBlockIsDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+    const currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
-    if (currentBlockIsDefault && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
+    if (currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
         const needToReplaceCurrentBlock = BlockManager.currentBlock &&
-          Tools.isDefault(BlockManager.currentBlock.tool) &&
+          Tools.isInitial(BlockManager.currentBlock.tool) &&
           BlockManager.currentBlock.isEmpty;
 
         const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
@@ -769,9 +746,9 @@ export default class Paste extends Module {
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
-        const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+        const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
-        needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+        needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
       }
 
       BlockManager.insert({

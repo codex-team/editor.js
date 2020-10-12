@@ -1,5 +1,7 @@
 import Module from '../__module';
+/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
+import { ChainData } from '../utils';
 import { BlockToolConstructable, OutputBlockData } from '../../../types';
 
 /**
@@ -45,7 +47,7 @@ export default class Renderer extends Module {
   public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
-    const sequence = await _.sequence(chainData as _.ChainData[]);
+    const sequence = await _.sequence(chainData as ChainData[]);
 
     this.Editor.UI.checkEmptiness();
 
@@ -58,7 +60,6 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
-   *
    * @returns {Promise<void>}
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
@@ -90,7 +91,7 @@ export default class Renderer extends Module {
         const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
         const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
 
-        stubData.title = toolToolboxSettings.title || (userToolboxSettings && userToolboxSettings.title) || stubData.title;
+        stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
       }
 
       const stub = BlockManager.insert({

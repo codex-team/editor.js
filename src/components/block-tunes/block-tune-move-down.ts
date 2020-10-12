@@ -84,11 +84,6 @@ export default class MoveDownTune implements BlockTune {
     }
 
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
-
-    if (!nextBlock) {
-      return;
-    }
-
     const nextBlockElement = nextBlock.holder;
     const nextBlockCoords = nextBlockElement.getBoundingClientRect();
 

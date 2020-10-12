@@ -40,7 +40,6 @@
     "DataTransfer": true,
     "DOMRect": true,
     "ClientRect": true,
-    "ArrayLike": true,
-    "unknown": true
+    "ArrayLike": true
   }
 }

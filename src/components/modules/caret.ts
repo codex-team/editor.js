@@ -330,10 +330,10 @@ export default class Caret extends Module {
     }
 
     /**
-     * If last block is empty and it is an defaultBlock, set to that.
+     * If last block is empty and it is an initialBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
+    if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -355,30 +355,12 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        if ($.isNativeInput(currentBlockInput)) {
-          /**
-           * If input is native text input we need to use it's value
-           * Text before the caret stays in the input,
-           * while text after the caret is returned as a fragment to be inserted after the block.
-           */
-          const input = currentBlockInput as HTMLInputElement | HTMLTextAreaElement;
-          const newFragment = document.createDocumentFragment();
+        const range = selectRange.cloneRange();
 
-          const inputRemainingText = input.value.substring(0, input.selectionStart);
-          const fragmentText = input.value.substring(input.selectionStart);
+        range.selectNodeContents(currentBlockInput);
+        range.setStart(selectRange.endContainer, selectRange.endOffset);
 
-          newFragment.textContent = fragmentText;
-          input.value = inputRemainingText;
-
-          return newFragment;
-        } else {
-          const range = selectRange.cloneRange();
-
-          range.selectNodeContents(currentBlockInput);
-          range.setStart(selectRange.endContainer, selectRange.endOffset);
-
-          return range.extractContents();
-        }
+        return range.extractContents();
       }
     }
   }
@@ -401,15 +383,15 @@ export default class Caret extends Module {
 
     if (!nextBlock && !nextInput) {
       /**
-       * If there is no nextBlock and currentBlock is default, do not navigate
+       * If there is no nextBlock and currentBlock is initial, do not navigate
        */
-      if (Tools.isDefault(currentBlock.tool)) {
+      if (Tools.isInitial(currentBlock.tool)) {
         return false;
       }
 
       /**
-       * If there is no nextBlock, but currentBlock is not default,
-       * insert new default block at the end and navigate to it
+       * If there is no nextBlock, but currentBlock is not initial,
+       * insert new initial block at the end and navigate to it
        */
       nextBlock = BlockManager.insertAtEnd();
     }
@@ -522,13 +504,6 @@ export default class Caret extends Module {
     wrapper.innerHTML = content;
 
     Array.from(wrapper.childNodes).forEach((child: Node) => fragment.appendChild(child));
-
-    /**
-     * If there is no child node, append empty one
-     */
-    if (fragment.childNodes.length === 0) {
-      fragment.appendChild(new Text(''));
-    }
 
     const lastChild = fragment.lastChild;
 

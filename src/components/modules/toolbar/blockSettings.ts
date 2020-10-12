@@ -5,15 +5,6 @@ import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 
 /**
- * HTML Elements that used for BlockSettings
- */
-interface BlockSettingsNodes {
-  wrapper: HTMLElement;
-  toolSettings: HTMLElement;
-  defaultSettings: HTMLElement;
-}
-
-/**
  * Block Settings
  *
  *   ____ Settings Panel ____
@@ -24,7 +15,7 @@ interface BlockSettingsNodes {
  *  | ...................... |
  *  |________________________|
  */
-export default class BlockSettings extends Module<BlockSettingsNodes> {
+export default class BlockSettings extends Module {
   /**
    * Module Events
    *
@@ -67,6 +58,15 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
+   * Block settings UI HTML elements
+   */
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper: null,
+    toolSettings: null,
+    defaultSettings: null,
+  };
+
+  /**
    * List of buttons
    */
   private buttons: HTMLElement[] = [];
@@ -104,15 +104,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Destroys module
-   */
-  public destroy(): void {
-    this.flipper.deactivate();
-    this.flipper = null;
-    this.removeAllNodes();
-  }
-
-  /**
    * Open Block Settings pane
    */
   public open(): void {
@@ -128,7 +119,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
      * Highlight content of a Block we are working with
      */
     this.Editor.BlockManager.currentBlock.selected = true;
-    this.Editor.BlockSelection.clearCache();
 
     /**
      * Fill Tool's settings

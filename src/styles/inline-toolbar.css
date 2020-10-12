@@ -7,7 +7,6 @@
   will-change: transform, opacity;
   top: 0;
   left: 0;
-  padding: 0 6px;
 
   &--showed {
     opacity: 1;
@@ -38,6 +37,7 @@
 
   &__buttons {
     display: flex;
+    padding: 0 6px;
   }
 
   &__actions {
@@ -80,13 +80,6 @@
     word-spacing: -3px;
     margin-top: 3px;
   }
-
-  &__toggler-and-button-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-  }
 }
 
 .ce-inline-tool {
@@ -103,6 +96,10 @@
 
   .icon {
     height: 12px;
+  }
+
+  &--last {
+    margin-right: 0 !important;
   }
 
   &--link {

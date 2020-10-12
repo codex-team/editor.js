@@ -33,13 +33,6 @@
     }
   }
 
-  &--narrow&--rtl &__redactor {
-    @media (--not-mobile) {
-      margin-left: var(--narrow-mode-right-padding);
-      margin-right: 0;
-    }
-  }
-
   &--narrow .ce-toolbar__actions {
     @media (--not-mobile) {
       right: -5px;

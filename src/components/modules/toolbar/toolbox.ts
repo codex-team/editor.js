@@ -8,14 +8,6 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
- * HTMLElements used for Toolbox UI
- */
-interface ToolboxNodes {
-  toolbox: HTMLElement;
-  buttons: HTMLElement[];
-}
-
-/**
  * @class Toolbox
  * @classdesc Holder for Tools
  *
@@ -25,15 +17,7 @@ interface ToolboxNodes {
  * @property {object} CSS     - CSS class names
  *
  */
-export default class Toolbox extends Module<ToolboxNodes> {
-  /**
-   * Current module HTML Elements
-   */
-  public nodes = {
-    toolbox: null,
-    buttons: [],
-  }
-
+export default class Toolbox extends Module {
   /**
    * CSS styles
    *
@@ -69,6 +53,17 @@ export default class Toolbox extends Module<ToolboxNodes> {
   public opened = false;
 
   /**
+   * HTMLElements used for Toolbox UI
+   */
+  public nodes: {
+    toolbox: HTMLElement;
+    buttons: HTMLElement[];
+  } = {
+    toolbox: null,
+    buttons: [],
+  };
+
+  /**
    * How many tools displayed in Toolbox
    *
    * @type {number}
@@ -87,18 +82,10 @@ export default class Toolbox extends Module<ToolboxNodes> {
    */
   public make(): void {
     this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+    $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
     this.enableFlipper();
-  }
-
-  /**
-   * Destroy Module
-   */
-  public destroy(): void {
-    this.flipper.deactivate();
-    this.flipper = null;
-    this.removeAllNodes();
   }
 
   /**
@@ -196,19 +183,12 @@ export default class Toolbox extends Module<ToolboxNodes> {
     //   return;
     // }
 
-    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
-
-    /**
-     * Hide Toolbox button if Toolbox settings is false
-     */
-    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
-      return;
-    }
+    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = (userToolboxSettings && userToolboxSettings.icon) || toolToolboxSettings.icon;
+    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 
