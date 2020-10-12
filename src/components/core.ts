@@ -1,9 +1,11 @@
 import $ from './dom';
+// eslint-disable-next-line import/no-duplicates
 import * as _ from './utils';
+// eslint-disable-next-line import/no-duplicates
+import { LogLevels } from './utils';
 import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
-import { CriticalError } from './errors/critical';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -128,10 +130,11 @@ export default class Core {
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
      */
-    _.deprecationAssert(!!config.holderId, 'config.holderId', 'config.holder');
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
       config.holderId = null;
+      _.log('holderId property is deprecated and will be removed in the next major release. ' +
+        'Use holder property instead.', 'warn');
     }
 
     /**
@@ -149,16 +152,15 @@ export default class Core {
     }
 
     if (!this.config.logLevel) {
-      this.config.logLevel = _.LogLevels.VERBOSE;
+      this.config.logLevel = LogLevels.VERBOSE;
     }
 
     _.setLogLevel(this.config.logLevel);
 
     /**
-     * If default Block's Tool was not passed, use the Paragraph Tool
+     * If initial Block's Tool was not passed, use the Paragraph Tool
      */
-    _.deprecationAssert(Boolean(this.config.initialBlock), 'config.initialBlock', 'config.defaultBlock');
-    this.config.defaultBlock = this.config.defaultBlock || this.config.initialBlock || 'paragraph';
+    this.config.initialBlock = this.config.initialBlock || 'paragraph';
 
     /**
      * Height of Editor's bottom area that allows to set focus on the last Block
@@ -168,13 +170,13 @@ export default class Core {
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     /**
-     * Default block type
+     * Initial block type
      * Uses in case when there is no blocks passed
      *
      * @type {{type: (*), data: {text: null}}}
      */
-    const defaultBlockData = {
-      type: this.config.defaultBlock,
+    const initialBlockData = {
+      type: this.config.initialBlock,
       data: {},
     };
 
@@ -187,43 +189,29 @@ export default class Core {
 
     this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
     this.config.tools = this.config.tools || {};
-    this.config.i18n = this.config.i18n || {};
     this.config.data = this.config.data || {} as OutputData;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onReady = this.config.onReady || ((): void => {});
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onChange = this.config.onChange || ((): void => {});
-    this.config.inlineToolbar = this.config.inlineToolbar !== undefined ? this.config.inlineToolbar : true;
 
     /**
-     * Initialize default Block to pass data to the Renderer
+     * Initialize Blocks to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data)) {
       this.config.data = {} as OutputData;
-      this.config.data.blocks = [ defaultBlockData ];
+      this.config.data.blocks = [ initialBlockData ];
     } else {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ defaultBlockData ];
+        this.config.data.blocks = [ initialBlockData ];
       }
     }
-
-    this.config.readOnly = this.config.readOnly as boolean || false;
-    this.config.i18n = {};
 
     /**
      * Adjust i18n
      */
-    if (config.i18n?.messages) {
+    if (config.i18n && config.i18n.messages) {
       I18n.setDictionary(config.i18n.messages);
-    }
-
-    /**
-     * Text direction. If not set, uses ltr
-     */
-    if (config.i18n?.direction) {
-      this.config.i18n = {
-        direction: config.i18n?.direction || 'ltr',
-      };
     }
   }
 
@@ -288,16 +276,12 @@ export default class Core {
     const modulesToPrepare = [
       'Tools',
       'UI',
-      'Toolbar',
-      'InlineToolbar',
       'BlockManager',
       'Paste',
       'DragNDrop',
       'ModificationsObserver',
       'BlockSelection',
       'RectangleSelection',
-      'CrossBlockSelection',
-      'ReadOnly',
     ];
 
     await modulesToPrepare.reduce(
@@ -307,13 +291,6 @@ export default class Core {
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
-          /**
-           * CriticalError's will not be caught
-           * It is used when Editor is rendering in read-only mode with unsupported plugin
-           */
-          if (e instanceof CriticalError) {
-            throw new Error(e.message);
-          }
           _.log(`Module ${module} was skipped because of %o`, 'warn', e);
         }
         // _.log(`Preparing ${module} module`, 'timeEnd');

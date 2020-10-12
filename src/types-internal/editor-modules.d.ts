@@ -35,8 +35,6 @@ import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 import CrossBlockSelection from '../components/modules/crossBlockSelection';
 import ConversionToolbar from '../components/modules/toolbar/conversion';
 import TooltipAPI from '../components/modules/api/tooltip';
-import ReadOnly from '../components/modules/readonly';
-import ReadOnlyAPI from '../components/modules/api/readonly';
 import I18nAPI from '../components/modules/api/i18n';
 
 export interface EditorModules {
@@ -77,7 +75,5 @@ export interface EditorModules {
   CrossBlockSelection: CrossBlockSelection;
   NotifierAPI: NotifierAPI;
   TooltipAPI: TooltipAPI;
-  ReadOnly: ReadOnly;
-  ReadOnlyAPI: ReadOnlyAPI;
   I18nAPI: I18nAPI;
 }

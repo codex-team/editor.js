@@ -1,5 +1,5 @@
-import { Toolbar } from '../../../../types/api';
 import Module from '../../__module';
+import { Toolbar } from '../../../../types/api';
 
 /**
  * @class ToolbarAPI

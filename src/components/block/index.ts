@@ -10,10 +10,11 @@ import {
   ToolSettings
 } from '../../../types';
 
-import { SavedData } from '../../../types/data-formats';
+import { SavedData } from '../../types-internal/block-data';
 import $ from '../dom';
 import * as _ from '../utils';
-import ApiModules from '../modules/api';
+import ApiModule from '../modules/api';
+import SelectionUtils from '../selection';
 import BlockAPI from './api';
 import { ToolType } from '../modules/tools';
 
@@ -21,7 +22,6 @@ import { ToolType } from '../modules/tools';
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
-import SelectionUtils from '../selection';
 
 /**
  * Interface describes Block class constructor argument
@@ -50,12 +50,7 @@ interface BlockConstructorOptions {
   /**
    * Editor's API methods
    */
-  api: ApiModules;
-
-  /**
-   * This flag indicates that the Block should be constructed in the read-only mode.
-   */
-  readOnly: boolean;
+  api: ApiModule;
 }
 
 /**
@@ -152,7 +147,7 @@ export default class Block {
   /**
    * Editor`s API module
    */
-  private readonly api: ApiModules;
+  private readonly api: ApiModule;
 
   /**
    * Focused input index
@@ -203,8 +198,7 @@ export default class Block {
    * @param {BlockToolData} options.data - Tool's initial data
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
-   * @param {Module} options.api - Editor API module for pass it to the Block Tunes
-   * @param {boolean} options.readOnly - Read-Only flag
+   * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
    */
   constructor({
     name,
@@ -212,7 +206,6 @@ export default class Block {
     Tool,
     settings,
     api,
-    readOnly,
   }: BlockConstructorOptions) {
     this.name = name;
     this.class = Tool;
@@ -228,7 +221,6 @@ export default class Block {
       config: this.config,
       api: this.api.getMethodsForTool(name, ToolType.Block),
       block: this.blockAPI,
-      readOnly: readOnly,
     });
 
     this.holder = this.compose();
@@ -629,15 +621,7 @@ export default class Block {
    * Update current input index with selection anchor node
    */
   public updateCurrentInput(): void {
-    /**
-     * If activeElement is native input, anchorNode points to its parent.
-     * So if it is native input use it instead of anchorNode
-     *
-     * If anchorNode is undefined, also use activeElement
-     */
-    this.currentInput = $.isNativeInput(document.activeElement) || !SelectionUtils.anchorNode
-      ? document.activeElement
-      : SelectionUtils.anchorNode;
+    this.currentInput = SelectionUtils.anchorNode;
   }
 
   /**
@@ -656,12 +640,6 @@ export default class Block {
         attributes: true,
       }
     );
-
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events
-     */
-    this.addInputEvents();
   }
 
   /**
@@ -669,7 +647,6 @@ export default class Block {
    */
   public willUnselect(): void {
     this.mutationObserver.disconnect();
-    this.removeInputEvents();
   }
 
   /**
@@ -686,38 +663,5 @@ export default class Block {
     wrapper.appendChild(contentNode);
 
     return wrapper;
-  }
-
-  /**
-   * Is fired when text input or contentEditable is focused
-   */
-  private handleFocus = (): void => {
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
-  }
-
-  /**
-   * Adds focus event listeners to all inputs and contentEditables
-   */
-  private addInputEvents(): void {
-    this.inputs.forEach(input => {
-      input.addEventListener('focus', this.handleFocus);
-    });
-  }
-
-  /**
-   * removes focus event listeners from all inputs and contentEditables
-   */
-  private removeInputEvents(): void {
-    this.inputs.forEach(input => {
-      input.removeEventListener('focus', this.handleFocus);
-    });
   }
 }

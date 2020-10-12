@@ -46,6 +46,3 @@
 [submodule "example/tools/warning"]
 	path = example/tools/warning
 	url = https://github.com/editor-js/warning
-[submodule "example/tools/underline"]
-	path = example/tools/underline
-	url = https://github.com/editor-js/underline

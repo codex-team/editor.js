@@ -43,9 +43,9 @@ export default class Tools extends Module {
   /**
    * Returns available Tools
    *
-   * @returns {object<Tool>}
+   * @returns {Tool[]}
    */
-  public get available(): { [name: string]: ToolConstructable } {
+  public get available(): {[name: string]: ToolConstructable} {
     return this.toolsAvailable;
   }
 
@@ -54,7 +54,7 @@ export default class Tools extends Module {
    *
    * @returns {Tool[]}
    */
-  public get unavailable(): { [name: string]: ToolConstructable } {
+  public get unavailable(): {[name: string]: ToolConstructable} {
     return this.toolsUnavailable;
   }
 
@@ -63,7 +63,7 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get inline(): { [name: string]: InlineToolConstructable } {
+  public get inline(): {[name: string]: ToolConstructable} {
     if (this._inlineTools) {
       return this._inlineTools;
     }
@@ -112,7 +112,7 @@ export default class Tools extends Module {
   /**
    * Return editor block tools
    */
-  public get blockTools(): { [name: string]: BlockToolConstructable } {
+  public get blockTools(): {[name: string]: BlockToolConstructable} {
     const tools = Object.entries(this.available).filter(([, tool]) => {
       return !tool[this.INTERNAL_SETTINGS.IS_INLINE];
     });
@@ -134,7 +134,7 @@ export default class Tools extends Module {
    *
    * @returns {object}
    */
-  public get INTERNAL_SETTINGS(): { [name: string]: string } {
+  public get INTERNAL_SETTINGS(): {[name: string]: string} {
     return {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
@@ -143,7 +143,6 @@ export default class Tools extends Module {
       TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
       CONVERSION_CONFIG: 'conversionConfig',
-      IS_READ_ONLY_SUPPORTED: 'isReadOnlySupported',
     };
   }
 
@@ -152,7 +151,7 @@ export default class Tools extends Module {
    *
    * return {object}
    */
-  public get USER_SETTINGS(): { [name: string]: string } {
+  public get USER_SETTINGS(): {[name: string]: string} {
     return {
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
@@ -167,24 +166,24 @@ export default class Tools extends Module {
    *
    * @type {object}
    */
-  public readonly toolsClasses: { [name: string]: ToolConstructable } = {};
+  public readonly toolsClasses: {[name: string]: ToolConstructable} = {};
 
   /**
    * Tools` classes available to use
    */
-  private readonly toolsAvailable: { [name: string]: ToolConstructable } = {};
+  private readonly toolsAvailable: {[name: string]: ToolConstructable} = {};
 
   /**
    * Tools` classes not available to use because of preparation failure
    */
-  private readonly toolsUnavailable: { [name: string]: ToolConstructable } = {};
+  private readonly toolsUnavailable: {[name: string]: ToolConstructable} = {};
 
   /**
    * Tools settings in a map {name: settings, ...}
    *
    * @type {object}
    */
-  private readonly toolsSettings: { [name: string]: ToolSettings } = {};
+  private readonly toolsSettings: {[name: string]: ToolSettings} = {};
 
   /**
    * Cache for the prepared inline tools
@@ -192,7 +191,7 @@ export default class Tools extends Module {
    * @type {null|object}
    * @private
    */
-  private _inlineTools: { [name: string]: ToolConstructable } = {};
+  private _inlineTools: {[name: string]: ToolConstructable} = {};
 
   /**
    * @class
@@ -301,9 +300,9 @@ export default class Tools extends Module {
     /**
      * to see how it works {@link '../utils.ts#sequence'}
      */
-    return _.sequence(sequenceData, (data: { toolName: string }) => {
+    return _.sequence(sequenceData, (data: {toolName: string}) => {
       this.success(data);
-    }, (data: { toolName: string }) => {
+    }, (data: {toolName: string}) => {
       this.fallback(data);
     });
   }
@@ -313,7 +312,7 @@ export default class Tools extends Module {
    *
    * @param {object} data - append tool to available list
    */
-  public success(data: { toolName: string }): void {
+  public success(data: {toolName: string}): void {
     this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
@@ -322,7 +321,7 @@ export default class Tools extends Module {
    *
    * @param {object} data - append tool to unavailable list
    */
-  public fallback(data: { toolName: string }): void {
+  public fallback(data: {toolName: string}): void {
     this.toolsUnavailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
@@ -335,11 +334,7 @@ export default class Tools extends Module {
    *
    * @returns {InlineTool} — instance
    */
-  public constructInline(
-    tool: InlineToolConstructable,
-    name: string,
-    toolSettings: ToolSettings = {} as ToolSettings
-  ): InlineTool {
+  public constructInline(tool: InlineToolConstructable, name: string, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
     const constructorOptions = {
       api: this.Editor.API.getMethodsForTool(name),
       config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
@@ -350,14 +345,14 @@ export default class Tools extends Module {
   }
 
   /**
-   * Check if passed Tool is an instance of Default Block Tool
+   * Check if passed Tool is an instance of Initial Block Tool
    *
    * @param {Tool} tool - Tool to check
    *
    * @returns {boolean}
    */
-  public isDefault(tool): boolean {
-    return tool instanceof this.available[this.config.defaultBlock];
+  public isInitial(tool): boolean {
+    return tool instanceof this.available[this.config.initialBlock];
   }
 
   /**
@@ -371,8 +366,8 @@ export default class Tools extends Module {
     const settings = this.toolsSettings[toolName];
     const config = settings[this.USER_SETTINGS.CONFIG] || {};
 
-    // Pass placeholder to default Block config
-    if (toolName === this.config.defaultBlock && !config.placeholder) {
+    // Pass placeholder to initial Block config
+    if (toolName === this.config.initialBlock && !config.placeholder) {
       config.placeholder = this.config.placeholder;
       settings[this.USER_SETTINGS.CONFIG] = config;
     }
@@ -384,7 +379,7 @@ export default class Tools extends Module {
    * Returns internal tools
    * Includes Bold, Italic, Link and Paragraph
    */
-  public get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings } {
+  public get internalTools(): {[toolName: string]: ToolConstructable|ToolSettings} {
     return {
       bold: { class: BoldInlineTool },
       italic: { class: ItalicInlineTool },
@@ -398,39 +393,18 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns true if tool supports read-only mode
-   *
-   * @param tool - tool to check
-   */
-  public isReadOnlySupported(tool: BlockToolConstructable): boolean {
-    return tool[this.INTERNAL_SETTINGS.IS_READ_ONLY_SUPPORTED] === true;
-  }
-
-  /**
-   * Calls each Tool reset method to clean up anything set by Tool
-   */
-  public destroy(): void {
-    Object.values(this.available).forEach(async tool => {
-      if (_.isFunction(tool.reset)) {
-        await tool.reset();
-      }
-    });
-  }
-
-  /**
    * Binds prepare function of plugins with user or default config
    *
    * @returns {Array} list of functions that needs to be fired sequentially
    */
   private getListOfPrepareFunctions(): Array<{
-    function: (data: { toolName: string; config: ToolConfig }) => void;
-    data: { toolName: string; config: ToolConfig };
+    function: (data: {toolName: string; config: ToolConfig}) => void;
+    data: {toolName: string; config: ToolConfig};
   }> {
     const toolPreparationList: Array<{
-      function: (data: { toolName: string; config: ToolConfig }) => void;
-      data: { toolName: string; config: ToolConfig };
-    }
-    > = [];
+      function: (data: {toolName: string; config: ToolConfig}) => void;
+      data: {toolName: string; config: ToolConfig};}
+      > = [];
 
     for (const toolName in this.toolsClasses) {
       if (Object.prototype.hasOwnProperty.call(this.toolsClasses, toolName)) {
@@ -444,7 +418,7 @@ export default class Tools extends Module {
          */
         toolPreparationList.push({
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          function: typeof toolClass.prepare === 'function' ? toolClass.prepare : (): void => { },
+          function: typeof toolClass.prepare === 'function' ? toolClass.prepare : (): void => {},
           data: {
             toolName,
             config: toolConfig,

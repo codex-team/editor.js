@@ -93,7 +93,7 @@ export default class BlockEvents extends Module {
    *
    * @param {KeyboardEvent} event - keyup event
    */
-  public keyup(event: KeyboardEvent): void {
+  public keyup(event): void {
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
      */
@@ -105,6 +105,21 @@ export default class BlockEvents extends Module {
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
     this.Editor.UI.checkEmptiness();
+  }
+
+  /**
+   * Set up mouse selection handlers
+   *
+   * @param {MouseEvent} event - mouse down event
+   */
+  public mouseDown(event: MouseEvent): void {
+    /**
+     * Each mouse down on Block must disable selectAll state
+     */
+    if (!SelectionUtils.isCollapsed) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
+    this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
   /**
@@ -125,12 +140,12 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty;
+    const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
     const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
     const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
-     * For empty Blocks we show Plus button via Toolbox only for default Blocks
+     * For empty Blocks we show Plus button via Toolbox only for initial Blocks
      */
     if (canOpenToolbox) {
       this.activateToolbox();
@@ -142,10 +157,10 @@ export default class BlockEvents extends Module {
   /**
    * Add drop target styles
    *
-   * @param {DragEvent} event - drag over event
+   * @param {DragEvent} e - drag over event
    */
-  public dragOver(event: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
+  public dragOver(e: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = true;
   }
@@ -153,10 +168,10 @@ export default class BlockEvents extends Module {
   /**
    * Remove drop target style
    *
-   * @param {DragEvent} event - drag leave event
+   * @param {DragEvent} e - drag leave event
    */
-  public dragLeave(event: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
+  public dragLeave(e: DragEvent): void {
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = false;
   }
@@ -194,7 +209,7 @@ export default class BlockEvents extends Module {
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
     BlockSelection.clearSelection(event);
@@ -239,7 +254,7 @@ export default class BlockEvents extends Module {
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
-      this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
+      this.Editor.BlockManager.insertInitialBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
     } else {
       /**
        * Split the Current Block into two blocks
@@ -253,7 +268,7 @@ export default class BlockEvents extends Module {
     /**
      * If new Block is empty
      */
-    if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty) {
+    if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
       /**
        * Show Toolbar
        */
@@ -411,10 +426,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigateNext = event.keyCode === _.keyCodes.DOWN || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
-    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
-
-    if (isNavigated) {
+    if (this.Editor.Caret.navigateNext()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
@@ -469,10 +481,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
-    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();
-
-    if (isNavigated) {
+    if (this.Editor.Caret.navigatePrevious()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */

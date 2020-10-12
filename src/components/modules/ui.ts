@@ -18,16 +18,6 @@ import Block from '../block';
 import Flipper from '../flipper';
 
 /**
- * HTML Elements used for UI
- */
-interface UINodes {
-  holder: HTMLElement;
-  wrapper: HTMLElement;
-  redactor: HTMLElement;
-  loader: HTMLElement;
-}
-
-/**
  * @class
  *
  * @classdesc Makes Editor.js UI:
@@ -45,7 +35,7 @@ interface UINodes {
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
-export default class UI extends Module<UINodes> {
+export default class UI extends Module {
   /**
    * Editor.js UI CSS class names
    *
@@ -53,7 +43,7 @@ export default class UI extends Module<UINodes> {
    */
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
-    editorLoader: string; editorEmpty: string; editorRtlFix: string;
+    editorLoader: string; editorEmpty: string;
     } {
     return {
       editorWrapper: 'codex-editor',
@@ -62,7 +52,6 @@ export default class UI extends Module<UINodes> {
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorLoader: 'codex-editor__loader',
       editorEmpty: 'codex-editor--empty',
-      editorRtlFix: 'codex-editor--rtl',
     };
   }
 
@@ -100,6 +89,15 @@ export default class UI extends Module<UINodes> {
    * @type {boolean}
    */
   public isMobile = false;
+
+  /**
+   * HTML Elements used for UI
+   */
+  public nodes: { [key: string]: HTMLElement } = {
+    holder: null,
+    wrapper: null,
+    redactor: null,
+  };
 
   /**
    * Cache for center column rectangle info
@@ -147,7 +145,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Make main UI elements
      */
-    this.make();
+    await this.make();
 
     /**
      * Loader for rendering process
@@ -157,47 +155,27 @@ export default class UI extends Module<UINodes> {
     /**
      * Append SVG sprite
      */
-    this.appendSVGSprite();
+    await this.appendSVGSprite();
+
+    /**
+     * Make toolbar
+     */
+    await this.Editor.Toolbar.make();
+
+    /**
+     * Make the Inline toolbar
+     */
+    await this.Editor.InlineToolbar.make();
 
     /**
      * Load and append CSS
      */
-    this.loadStyles();
+    await this.loadStyles();
 
     /**
-     * Prepare with read-only state from config
+     * Bind events for the UI elements
      */
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.enableModuleBindings();
-    }
-  }
-
-  /**
-   * Toggle read-only state
-   *
-   * If readOnly is true:
-   *  - removes all listeners from main UI module elements
-   *
-   * if readOnly is false:
-   *  - enables all listeners to UI module elements
-   *
-   * @param {boolean} readOnlyEnabled - "read only" state
-   */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
-    /**
-     * Prepare components based on read-only state
-     */
-    if (!readOnlyEnabled) {
-      /**
-       * Unbind all events
-       */
-      this.enableModuleBindings();
-    } else {
-      /**
-       * Bind events for the UI elements
-       */
-      this.disableModuleBindings();
-    }
+    await this.bindEvents();
   }
 
   /**
@@ -261,8 +239,10 @@ export default class UI extends Module<UINodes> {
 
   /**
    * Makes Editor.js interface
+   *
+   * @returns {Promise<void>}
    */
-  private make(): void {
+  private async make(): Promise<void> {
     /**
      * Element where we need to append Editor.js
      *
@@ -273,10 +253,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper = $.make('div', [
-      this.CSS.editorWrapper,
-      ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
-    ]);
+    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**
@@ -330,46 +307,39 @@ export default class UI extends Module<UINodes> {
   /**
    * Bind events on the Editor.js interface
    */
-  private enableModuleBindings(): void {
-    this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
-      this.redactorClicked(event);
-    }, false);
+  private bindEvents(): void {
+    this.Editor.Listeners.on(
+      this.nodes.redactor,
+      'click',
+      (event) => this.redactorClicked(event as MouseEvent),
+      false
+    );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'mousedown',
+      (event) => this.documentTouched(event as MouseEvent),
+      true
+    );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'touchstart',
+      (event) => this.documentTouched(event as MouseEvent),
+      true
+    );
 
-    this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
-      this.documentTouched(event);
-    }, true);
-
-    this.readOnlyMutableListeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
-      this.documentTouched(event);
-    }, true);
-
-    this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
-      this.documentKeydown(event);
-    }, true);
-
-    this.readOnlyMutableListeners.on(document, 'click', (event: MouseEvent) => {
-      this.documentClicked(event);
-    }, true);
+    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
 
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.readOnlyMutableListeners.on(document, 'selectionchange', (event: Event) => {
+    this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
       this.selectionChanged(event);
     }, true);
 
-    this.readOnlyMutableListeners.on(window, 'resize', () => {
+    this.Editor.Listeners.on(window, 'resize', () => {
       this.resizeDebouncer();
     }, {
       passive: true,
     });
-  }
-
-  /**
-   * Unbind events on the Editor.js interface
-   */
-  private disableModuleBindings(): void {
-    this.readOnlyMutableListeners.clearAll();
   }
 
   /**
@@ -418,18 +388,9 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const { currentBlock } = this.Editor.BlockManager;
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const { currentBlock } = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-
-    /**
-     * When some block is selected, but the caret is not set inside the editor, treat such keydowns as keydown on selected block.
-     */
-    if (currentBlock !== undefined && keyDownOnEditor === null) {
-      this.Editor.BlockEvents.keydown(event);
-
-      return;
-    }
 
     /**
      * Ignore keydowns on editor and meta keys
@@ -462,7 +423,7 @@ export default class UI extends Module<UINodes> {
     if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
@@ -517,6 +478,10 @@ export default class UI extends Module<UINodes> {
      * remove selected blocks
      */
     if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
+      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
       /** Clear selection */
       BlockSelection.clearSelection(event);
 
@@ -541,7 +506,7 @@ export default class UI extends Module<UINodes> {
      */
     if (!this.someToolbarOpened && hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
       /**
-       * Insert the default typed Block
+       * Insert initial typed Block
        */
       const newBlock = this.Editor.BlockManager.insert();
 
@@ -593,6 +558,13 @@ export default class UI extends Module<UINodes> {
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.ConversionToolbar.close();
+    }
+
+    /**
+     * Clear Selection if user clicked somewhere
+     */
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+      this.Editor.BlockSelection.clearSelection(event);
     }
 
     /**
@@ -675,10 +647,8 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    const stopPropagation = (): void => {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-    };
+    event.stopImmediatePropagation();
+    event.stopPropagation();
 
     /**
      * case when user clicks on anchor element
@@ -688,8 +658,6 @@ export default class UI extends Module<UINodes> {
     const ctrlKey = event.metaKey || event.ctrlKey;
 
     if ($.isAnchor(element) && ctrlKey) {
-      stopPropagation();
-
       const href = element.getAttribute('href');
       const validUrl = _.getValidUrl(href);
 
@@ -699,21 +667,17 @@ export default class UI extends Module<UINodes> {
     }
 
     if (!this.Editor.BlockManager.currentBlock) {
-      stopPropagation();
-
       this.Editor.BlockManager.insert();
     }
 
     /**
      * Show the Plus Button if:
-     * - Block is an default-block (Text)
+     * - Block is an initial-block (Text)
      * - Block is empty
      */
-    const isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
+    const isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
 
-    if (isDefaultBlock) {
-      stopPropagation();
-
+    if (isInitialBlock) {
       /**
        * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
        */
@@ -732,15 +696,7 @@ export default class UI extends Module<UINodes> {
    * @param {Event} event - selection event
    */
   private selectionChanged(event: Event): void {
-    const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement as Element;
-
-    if (CrossBlockSelection.isCrossBlockSelectionStarted) {
-      // Removes all ranges when any Block is selected
-      if (BlockSelection.anyBlockSelected) {
-        Selection.get().removeAllRanges();
-      }
-    }
 
     /**
      * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
@@ -757,9 +713,6 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    /**
-     * @todo add debounce
-     */
     this.Editor.InlineToolbar.tryToShow(true);
   }
 

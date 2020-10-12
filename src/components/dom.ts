@@ -296,7 +296,7 @@ export default class Dom {
   }
 
   /**
-   * Check if object is DocumentFragment node
+   * Check if object is DocumentFragmemt node
    *
    * @param {object} node - object to check
    * @returns {boolean}

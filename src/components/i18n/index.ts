@@ -1,4 +1,5 @@
 import defaultDictionary from './locales/en/messages.json';
+import * as _ from '../utils';
 import { I18nDictionary, Dictionary } from '../../../types/configs';
 import { LeavesDictKeys } from '../../types-internal/i18n-internal-namespace';
 
@@ -59,12 +60,9 @@ export default class I18n {
   private static _t(namespace: string, dictKey: string): string {
     const section = I18n.getNamespace(namespace);
 
-    /**
-     * For Console Message to Check Section is defined or not
-     * if (section === undefined) {
-     *  _.logLabeled('I18n: section %o was not found in current dictionary', 'log', namespace);
-     * }
-     */
+    if (section === undefined) {
+      _.logLabeled('I18n: section %o was not found in current dictionary', 'log', namespace);
+    }
 
     if (!section || !section[dictKey]) {
       return dictKey;

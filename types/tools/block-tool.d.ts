@@ -17,11 +17,6 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
-   * @param {boolean} readOnly - render HTML on readonly mode
-   */
-  render(readOnly?: boolean): HTMLElement;
-
-  /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {BlockToolData}
@@ -55,12 +50,6 @@ export interface BlockTool extends BaseTool {
   onPaste?(event: PasteEvent): void;
 
   /**
-   * Cleanup resources used by your tool here
-   * Called when the editor is destroyed
-   */
-  destroy?(): void;
-  
-  /**
    * Lifecycle hooks
    */
 
@@ -93,7 +82,6 @@ export interface BlockToolConstructorOptions<D extends object = any, C extends o
   data: BlockToolData<D>;
   config?: ToolConfig<C>;
   block?: BlockAPI;
-  readOnly: boolean;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
@@ -121,11 +109,6 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Rules that specified how this Tool can be converted into/from another Tool
    */
   conversionConfig?: ConversionConfig;
-
-  /**
-   * Is Tool supports read-only mode, this property should return true
-   */
-  isReadOnlySupported?: boolean;
 
   /**
    * @constructor
