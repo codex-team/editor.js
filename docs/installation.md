@@ -24,10 +24,10 @@ Install the package via NPM or Yarn
 npm i @editorjs/editorjs
 ```
 
-Include module at your application 
+Include module at your application
 
 ```javascript
-const EditorJS = require('@editorjs/editorjs');
+import EditorJS from '@editorjs/editorjs';
 ```
 
 ### Use from CDN
@@ -68,7 +68,7 @@ Check [Editor.js's community](https://github.com/editor-js/) to see Tools exampl
 
 ## Create Editor instance
 
-Create an instance of Editor.js and pass [Configuration Object](../src/types-internal/editor-config.ts). 
+Create an instance of Editor.js and pass [Configuration Object](../src/types-internal/editor-config.ts).
 At least the `holderId` option is required.
 
 ```html
@@ -119,7 +119,7 @@ Editor.js needs a bit of time to initialize. It is an asynchronous action so it 
 
 If you need to know when the editor instance is ready you can use one of the following ways:
 
-##### Pass `onReady` property to the configuration object. 
+##### Pass `onReady` property to the configuration object.
 
 It must be a function:
 
@@ -189,7 +189,7 @@ var editor = new EditorJS({
     * onReady callback
     */
    onReady: () => {console.log('Editor.js is ready to work!')},
-   
+
    /**
     * onChange callback
     */

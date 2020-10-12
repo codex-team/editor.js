@@ -13,10 +13,13 @@ export interface Blocks {
 
   /**
    * Render passed data
-   * @param {OutputData} data
-   * @return {Promise<void>}
+   *
+   * @param {OutputData} data - saved Block data
+   * @param {boolean} readOnly - the flag that should be used to render a block in the read-only mode
+   *
+   * @returns {Promise<void>}
    */
-  render(data: OutputData): Promise<void>;
+  render(data: OutputData, readOnly: boolean): Promise<void>;
 
   /**
    * Render passed HTML string
@@ -47,11 +50,10 @@ export interface Blocks {
   move(toIndex: number, fromIndex?: number): void;
 
   /**
-   * Returns Block holder by Block index
+   * Returns Block API object by passed Block index
    * @param {number} index
-   * @returns {HTMLElement}
    */
-  getBlockByIndex(index: number): BlockAPI;
+  getBlockByIndex(index: number): BlockAPI | void;
 
   /**
    * Returns current Block index
