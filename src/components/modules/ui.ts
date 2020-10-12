@@ -163,13 +163,6 @@ export default class UI extends Module<UINodes> {
      * Load and append CSS
      */
     this.loadStyles();
-
-    /**
-     * Prepare with read-only state from config
-     */
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.enableModuleBindings();
-    }
   }
 
   /**

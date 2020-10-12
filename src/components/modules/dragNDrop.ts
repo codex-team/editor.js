@@ -14,15 +14,6 @@ export default class DragNDrop extends Module {
   private isStartedAtEditor = false;
 
   /**
-   * Bind module. Enable all bindings if it is not read-only mode
-   */
-  public prepare(): void {
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.enableModuleBindings();
-    }
-  }
-
-  /**
    * Toggle read-only state
    *
    * if state is true:

@@ -38,7 +38,7 @@ export default class ModificationsObserver extends Module {
   private mutationDebouncer = _.debounce(() => {
     this.updateNativeInputs();
 
-    if (typeof this.config.onChange === 'function') {
+    if (_.isFunction(this.config.onChange)) {
       this.config.onChange(this.Editor.API.methods);
     }
   }, ModificationsObserver.DebounceTimer);
@@ -60,17 +60,6 @@ export default class ModificationsObserver extends Module {
     this.observer = null;
     this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
     this.mutationDebouncer = null;
-  }
-
-  /**
-   * Preparation method
-   *
-   * @returns {Promise<void>}
-   */
-  public async prepare(): Promise<void> {
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.enableModule();
-    }
   }
 
   /**

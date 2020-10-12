@@ -276,7 +276,7 @@ export function isFunction(fn: any): fn is Function {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isClass(fn: any): boolean {
-  return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
+  return isFunction(fn) && /^\s*class\s+/.test(fn.toString());
 }
 
 /**

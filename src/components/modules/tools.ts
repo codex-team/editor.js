@@ -444,7 +444,7 @@ export default class Tools extends Module {
          */
         toolPreparationList.push({
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          function: typeof toolClass.prepare === 'function' ? toolClass.prepare : (): void => { },
+          function: _.isFunction(toolClass.prepare) ? toolClass.prepare : (): void => { },
           data: {
             toolName,
             config: toolConfig,

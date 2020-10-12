@@ -112,7 +112,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       this.close();
     }
 
-    if (typeof togglingCallback === 'function') {
+    if (_.isFunction(togglingCallback)) {
       this.togglingCallback = togglingCallback;
     }
   }
@@ -136,7 +136,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       }));
       this.flipper.focusFirst();
 
-      if (typeof this.togglingCallback === 'function') {
+      if (_.isFunction(this.togglingCallback)) {
         this.togglingCallback(true);
       }
     }, 50);
@@ -150,7 +150,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     this.flipper.deactivate();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
-    if (typeof this.togglingCallback === 'function') {
+    if (_.isFunction(this.togglingCallback)) {
       this.togglingCallback(false);
     }
   }
@@ -207,7 +207,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     let exportData = '';
     const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
 
-    if (typeof exportProp === 'function') {
+    if (_.isFunction(exportProp)) {
       exportData = exportProp(blockData);
     } else if (typeof exportProp === 'string') {
       exportData = blockData[exportProp];
@@ -234,7 +234,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     let newBlockData = {};
     const importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG].import;
 
-    if (typeof importProp === 'function') {
+    if (_.isFunction(importProp)) {
       newBlockData = importProp(cleaned);
     } else if (typeof importProp === 'string') {
       newBlockData[importProp] = cleaned;

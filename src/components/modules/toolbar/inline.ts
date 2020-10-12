@@ -197,7 +197,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       /**
        * @todo replace 'clear' with 'destroy'
        */
-      if (typeof toolInstance.clear === 'function') {
+      if (_.isFunction(toolInstance.clear)) {
         toolInstance.clear();
       }
     });
@@ -614,7 +614,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.buttons.appendChild(button);
     this.toolsInstances.set(toolName, tool);
 
-    if (typeof tool.renderActions === 'function') {
+    if (_.isFunction(tool.renderActions)) {
       const actions = tool.renderActions();
 
       this.nodes.actions.appendChild(actions);

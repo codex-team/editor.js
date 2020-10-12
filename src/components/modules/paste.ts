@@ -144,9 +144,6 @@ export default class Paste extends Module {
    */
   public async prepare(): Promise<void> {
     this.processTools();
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.setCallback();
-    }
   }
 
   /**
