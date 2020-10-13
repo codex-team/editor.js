@@ -50,6 +50,12 @@ export interface BlockTool extends BaseTool {
   onPaste?(event: PasteEvent): void;
 
   /**
+   * Cleanup resources used by your tool here
+   * Called when the editor is destroyed
+   */
+  destroy?(): void;
+
+  /**
    * Lifecycle hooks
    */
 
@@ -82,6 +88,7 @@ export interface BlockToolConstructorOptions<D extends object = any, C extends o
   data: BlockToolData<D>;
   config?: ToolConfig<C>;
   block?: BlockAPI;
+  readOnly: boolean;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
@@ -109,6 +116,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Rules that specified how this Tool can be converted into/from another Tool
    */
   conversionConfig?: ConversionConfig;
+
+  /**
+   * Is Tool supports read-only mode, this property should return true
+   */
+  isReadOnlySupported?: boolean;
 
   /**
    * @constructor

@@ -70,8 +70,10 @@ export default class MoveUpTune implements BlockTune {
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
-    if (currentBlockIndex === 0) {
+    if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
@@ -81,9 +83,7 @@ export default class MoveUpTune implements BlockTune {
       return;
     }
 
-    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const currentBlockElement = currentBlock.holder;
-    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
     const previousBlockElement = previousBlock.holder;
 
     /**

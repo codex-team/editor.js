@@ -71,9 +71,10 @@ export default class MoveDownTune implements BlockTune {
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
-    if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
+    if (!nextBlock) {
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
@@ -83,7 +84,6 @@ export default class MoveDownTune implements BlockTune {
       return;
     }
 
-    const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
     const nextBlockElement = nextBlock.holder;
     const nextBlockCoords = nextBlockElement.getBoundingClientRect();
 

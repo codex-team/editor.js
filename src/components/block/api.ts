@@ -1,6 +1,6 @@
 import Block from './index';
 import { BlockToolData, ToolConfig } from '../../../types/tools';
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
 /**
@@ -10,7 +10,9 @@ import { BlockAPI as BlockAPIInterface } from '../../../types/api';
  *
  * @param {Block} block - Block to expose
  */
-function BlockAPI(block: Block): void {
+function BlockAPI(
+  block: Block
+): void {
   const blockAPI: BlockAPIInterface = {
     /**
      * Tool name
@@ -81,10 +83,10 @@ function BlockAPI(block: Block): void {
      * @param {string} methodName - method to call
      * @param {object} param - object with parameters
      *
-     * @returns {void}
+     * @returns {unknown}
      */
-    call(methodName: string, param?: object): void {
-      block.call(methodName, param);
+    call(methodName: string, param?: object): unknown {
+      return block.call(methodName, param);
     },
 
     /**
