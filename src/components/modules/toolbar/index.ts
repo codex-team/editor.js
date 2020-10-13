@@ -140,19 +140,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
   }
 
   /**
-   * Module preparation method
-   */
-  public async prepare(): Promise<void> {
-    /**
-     * Bind events on the Toolbar elements
-     */
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.drawUI();
-      this.enableModuleBindings();
-    }
-  }
-
-  /**
    * Toggles read-only mode
    *
    * @param {boolean} readOnlyEnabled - read-only mode

@@ -88,15 +88,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private flipper: Flipper = null;
 
   /**
-   * Module preparation method
-   */
-  public async prepare(): Promise<void> {
-    if (!this.Editor.ReadOnly.isEnabled) {
-      this.make();
-    }
-  }
-
-  /**
    * Toggles read-only mode
    *
    * @param {boolean} readOnlyEnabled - read-only mode
