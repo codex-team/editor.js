@@ -70,21 +70,16 @@ export default class MoveUpTune implements BlockTune {
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
-    if (currentBlockIndex === 0) {
+    if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
       }, 500);
 
-      return;
-    }
-
-    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
-    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
-
-    if (!currentBlock || !previousBlock) {
       return;
     }
 
