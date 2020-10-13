@@ -58,7 +58,7 @@ export default class BlocksAPI extends Module {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (block === undefined) {
-      _.log('There is no block at index `' + index + '`', 'warn');
+      _.logLabeled('There is no block at index `' + index + '`', 'warn');
 
       return;
     }
