@@ -247,8 +247,8 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Returns tool's shortcut
    * It can be specified via internal 'shortcut' static getter or by user settings for tool
    *
-   * @param {string} toolName - name of tool
-   * @param {ToolConstructable} tool - name of tool
+   * @param {string} toolName - tool's name
+   * @param {ToolConstructable} tool - tool's instance
    */
   private getToolShortcut(toolName: string, tool: ToolConstructable): string|null {
     /**
