@@ -284,8 +284,6 @@ export default class Core {
     const modulesToPrepare = [
       'Tools',
       'UI',
-      'Toolbar',
-      'InlineToolbar',
       'BlockManager',
       'Paste',
       'BlockSelection',

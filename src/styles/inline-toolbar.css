@@ -7,7 +7,6 @@
   will-change: transform, opacity;
   top: 0;
   left: 0;
-  padding: 0 6px;
 
   &--showed {
     opacity: 1;
@@ -34,6 +33,12 @@
 
   [hidden] {
     display: none !important;
+  }
+
+  &__toggler-and-button-wrapper {
+    display: flex;
+    width: 100%;
+    padding: 0 6px;
   }
 
   &__buttons {
@@ -79,13 +84,6 @@
     opacity: 0.6;
     word-spacing: -3px;
     margin-top: 3px;
-  }
-
-  &__toggler-and-button-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
   }
 }
 
