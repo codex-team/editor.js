@@ -13,8 +13,10 @@ export interface Blocks {
 
   /**
    * Render passed data
-   * @param {OutputData} data
-   * @return {Promise<void>}
+   *
+   * @param {OutputData} data - saved Block data
+   *
+   * @returns {Promise<void>}
    */
   render(data: OutputData): Promise<void>;
 
@@ -47,11 +49,10 @@ export interface Blocks {
   move(toIndex: number, fromIndex?: number): void;
 
   /**
-   * Returns Block holder by Block index
+   * Returns Block API object by passed Block index
    * @param {number} index
-   * @returns {HTMLElement}
    */
-  getBlockByIndex(index: number): BlockAPI;
+  getBlockByIndex(index: number): BlockAPI | void;
 
   /**
    * Returns current Block index

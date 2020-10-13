@@ -28,7 +28,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Allows to temporary disable mutations handling
    */
-  private disabled: boolean;
+  private disabled = false;
 
   /**
    * Used to prevent several mutation callback execution
@@ -37,7 +37,10 @@ export default class ModificationsObserver extends Module {
    */
   private mutationDebouncer = _.debounce(() => {
     this.updateNativeInputs();
-    this.config.onChange(this.Editor.API.methods);
+
+    if (_.isFunction(this.config.onChange)) {
+      this.config.onChange(this.Editor.API.methods);
+    }
   }, ModificationsObserver.DebounceTimer);
 
   /**
@@ -56,20 +59,20 @@ export default class ModificationsObserver extends Module {
     }
     this.observer = null;
     this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
+    this.mutationDebouncer = null;
   }
 
   /**
-   * Preparation method
+   * Set read-only state
    *
-   * @returns {Promise<void>}
+   * @param {boolean} readOnlyEnabled - read only flag value
    */
-  public async prepare(): Promise<void> {
-    /**
-     * wait till Browser render Editor's Blocks
-     */
-    window.setTimeout(() => {
-      this.setObserver();
-    }, 1000);
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (readOnlyEnabled) {
+      this.disableModule();
+    } else {
+      this.enableModule();
+    }
   }
 
   /**
@@ -116,7 +119,7 @@ export default class ModificationsObserver extends Module {
    * @param {MutationRecord[]} mutationList - list of mutations
    * @param {MutationObserver} observer - observer instance
    */
-  private mutationHandler(mutationList: MutationRecord[], observer): void {
+  private mutationHandler(mutationList: MutationRecord[], observer: MutationObserver): void {
     /**
      * Skip mutations in stealth mode
      */
@@ -167,5 +170,26 @@ export default class ModificationsObserver extends Module {
     this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
 
     this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
+  }
+
+  /**
+   * Sets observer and enables it
+   */
+  private enableModule(): void {
+    /**
+     * wait till Browser render Editor's Blocks
+     */
+    window.setTimeout(() => {
+      this.setObserver();
+      this.updateNativeInputs();
+      this.enable();
+    }, 1000);
+  }
+
+  /**
+   * Disables observer
+   */
+  private disableModule(): void {
+    this.disable();
   }
 }

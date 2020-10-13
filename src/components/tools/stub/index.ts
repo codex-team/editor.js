@@ -1,7 +1,7 @@
 import $ from '../../dom';
 import { API, BlockTool, BlockToolData, BlockToolConstructorOptions } from '../../../../types';
 
-export interface StubData extends BlockToolData{
+export interface StubData extends BlockToolData {
   title: string;
   savedData: BlockToolData;
 }
@@ -11,6 +11,11 @@ export interface StubData extends BlockToolData{
  * It will store its data inside and pass it back with article saving
  */
 export default class Stub implements BlockTool {
+  /**
+   * Notify core that tool supports read-only mode
+   */
+  public static isReadOnlySupported = true;
+
   /**
    * Stub styles
    *

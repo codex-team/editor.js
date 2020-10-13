@@ -25,6 +25,13 @@ export interface EditorConfig {
    * Name should be equal to one of Tool`s keys of passed tools
    * If not specified, Paragraph Tool will be used
    */
+  defaultBlock?: string;
+
+  /**
+   * @deprecated
+   * This property will be deprecated in the next major release.
+   * Use the 'defaultBlock' property instead.
+   */
   initialBlock?: string;
 
   /**
@@ -64,6 +71,11 @@ export interface EditorConfig {
   logLevel?: LogLevels;
 
   /**
+   * Enable read-only mode
+   */
+  readOnly?: boolean;
+
+  /**
    * Internalization config
    */
   i18n?: I18nConfig;
@@ -78,4 +90,9 @@ export interface EditorConfig {
    * @param {API} api - editor.js api
    */
   onChange?(api: API): void;
+
+  /**
+   * Defines default toolbar for all tools.
+   */
+  inlineToolbar?: string[]|boolean;
 }

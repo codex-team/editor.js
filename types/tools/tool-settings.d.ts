@@ -44,6 +44,7 @@ export interface ToolSettings {
 
   /**
    * Tool's Toolbox settings
+   * It will be hidden from Toolbox when false is specified.
    */
-  toolbox?: ToolboxConfig;
+  toolbox?: ToolboxConfig | false;
 }

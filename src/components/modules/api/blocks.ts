@@ -1,9 +1,8 @@
-import Module from '../../__module';
-
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import Module from '../../__module';
 
 /**
  * @class BlocksAPI
@@ -23,7 +22,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
@@ -51,14 +50,18 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Returns Block holder by Block index
+   * Returns BlockAPI object by Block index
    *
    * @param {number} index - index to get
-   *
-   * @returns {HTMLElement}
    */
-  public getBlockByIndex(index: number): BlockAPIInterface {
+  public getBlockByIndex(index: number): BlockAPIInterface | void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block at index `' + index + '`', 'warn');
+
+      return;
+    }
 
     return new BlockAPI(block);
   }
@@ -118,7 +121,7 @@ export default class BlocksAPI extends Module {
 
     /**
      * in case of last block deletion
-     * Insert new initial empty block
+     * Insert the new default empty block
      */
     if (this.Editor.BlockManager.blocks.length === 0) {
       this.Editor.BlockManager.insert();
@@ -127,7 +130,9 @@ export default class BlocksAPI extends Module {
     /**
      * After Block deletion currentBlock is updated
      */
-    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    }
 
     this.Editor.Toolbar.close();
   }
@@ -172,10 +177,10 @@ export default class BlocksAPI extends Module {
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
-    _.log(
-      '`blocks.stretchBlock()` method is deprecated and will be removed in the next major release. ' +
-      'Use BlockAPI interface instead',
-      'warn'
+    _.deprecationAssert(
+      true,
+      'blocks.stretchBlock()',
+      'BlockAPI'
     );
 
     const block = this.Editor.BlockManager.getBlockByIndex(index);
@@ -197,7 +202,7 @@ export default class BlocksAPI extends Module {
    * @param {boolean?} needToFocus - flag to focus inserted Block
    */
   public insert = (
-    type: string = this.config.initialBlock,
+    type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,

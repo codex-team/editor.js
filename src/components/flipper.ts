@@ -259,7 +259,7 @@ export default class Flipper {
       this.iterator.currentItem.click();
     }
 
-    if (typeof this.activateCallback === 'function') {
+    if (_.isFunction(this.activateCallback)) {
       this.activateCallback(this.iterator.currentItem);
     }
 

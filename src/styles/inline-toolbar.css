@@ -35,9 +35,14 @@
     display: none !important;
   }
 
+  &__toggler-and-button-wrapper {
+    display: flex;
+    width: 100%;
+    padding: 0 6px;
+  }
+
   &__buttons {
     display: flex;
-    padding: 0 6px;
   }
 
   &__actions {
@@ -96,10 +101,6 @@
 
   .icon {
     height: 12px;
-  }
-
-  &--last {
-    margin-right: 0 !important;
   }
 
   &--link {

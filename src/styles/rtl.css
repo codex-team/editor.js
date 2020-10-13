@@ -1,0 +1,82 @@
+.codex-editor.codex-editor--rtl {
+  direction: rtl;
+
+  .cdx-list {
+    padding-left: 0;
+    padding-right: 40px;
+  }
+
+  .ce-toolbar {
+    &__plus {
+      right: calc(var(--toolbox-buttons-size) * -1);
+      left: auto;
+    }
+
+    &__actions {
+      right: auto;
+      left: calc(var(--toolbox-buttons-size) * -1);
+
+      @media (--mobile){
+        margin-left: 0;
+        margin-right: auto;
+        padding-right: 0;
+        padding-left: 10px;
+      }
+    }
+  }
+
+  .ce-settings {
+    left: 5px;
+    right: auto;
+
+    &::before{
+      right: auto;
+      left: 25px;
+    }
+
+    &__button {
+      &:not(:nth-child(3n+3)) {
+        margin-left: 3px;
+        margin-right: 0;
+      }
+    }
+  }
+
+  .ce-conversion-tool {
+    &__icon {
+      margin-right: 0px;
+      margin-left: 10px;
+    }
+  }
+
+  .ce-inline-toolbar {
+    &__dropdown {
+      border-right: 0px solid transparent;
+      border-left: 1px solid var(--color-gray-border);
+      margin: 0 -6px 0 6px;
+
+      .icon--toggler-down {
+        margin-left: 0px;
+        margin-right: 4px;
+      }
+    }
+  }
+
+}
+
+.codex-editor--narrow.codex-editor--rtl {
+  .ce-toolbar__plus {
+    @media (--not-mobile) {
+      left: 0px;
+      right: 5px;
+    }
+  }
+
+  .ce-toolbar__actions {
+    @media (--not-mobile) {
+      left: -5px;
+    }
+  }
+}
+
+

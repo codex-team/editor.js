@@ -103,6 +103,7 @@
     color: var(--grayText);
     cursor: pointer;
     background: var(--bg-light);
+    user-select: none;
 
     &:hover {
       color: var(--color-dark);
