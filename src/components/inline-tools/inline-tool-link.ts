@@ -1,9 +1,8 @@
-import SelectionUtils from '../selection';
-
 import $ from '../dom';
 import * as _ from '../utils';
-import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { InlineTool, SanitizerConfig } from '../../../types';
 import { Notifier, Toolbar, I18n } from '../../../types/api';
+
 
 /**
  * Link Tool
@@ -76,9 +75,9 @@ export default class LinkInlineTool implements InlineTool {
   };
 
   /**
-   * SelectionUtils instance
+   * selection api
    */
-  private selection: SelectionUtils;
+  private selection: any;
 
   /**
    * Input opening state
@@ -113,7 +112,7 @@ export default class LinkInlineTool implements InlineTool {
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
     this.i18n = api.i18n;
-    this.selection = new SelectionUtils();
+    this.selection = api.selection;
   }
 
   /**
@@ -259,7 +258,7 @@ export default class LinkInlineTool implements InlineTool {
   private closeActions(clearSavedSelection = true): void {
     if (this.selection.isFakeBackgroundEnabled) {
       // if actions is broken by other selection We need to save new selection
-      const currentSelection = new SelectionUtils();
+      const currentSelection = this.selection;
 
       currentSelection.save();
 

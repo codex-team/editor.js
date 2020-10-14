@@ -723,6 +723,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private toolClicked(tool: InlineTool): void {
     const range = SelectionUtils.range;
+    const selection = this.Editor.API.methods.selection;
+
+    // selection.restore();
 
     tool.surround(range);
     this.checkToolsState();

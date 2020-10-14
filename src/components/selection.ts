@@ -334,12 +334,15 @@ export default class SelectionUtils {
    */
   public save(): void {
     this.savedSelectionRange = SelectionUtils.range;
+    console.log(this.savedSelectionRange);
   }
 
   /**
    * Restore saved SelectionUtils's range
    */
   public restore(): void {
+    console.log(this.savedSelectionRange);
+    
     if (!this.savedSelectionRange) {
       return;
     }
