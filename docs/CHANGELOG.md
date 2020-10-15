@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20
+
+- `Fix` - Prevented duplicated event dispatching when multiple Editor.js instances are launched [#1174](https://github.com/codex-team/editor.js/issues/1174)
+
 ### 2.19
 
 - `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)
