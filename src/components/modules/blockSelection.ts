@@ -155,7 +155,7 @@ export default class BlockSelection extends Module {
     Shortcuts.add({
       name: 'CMD+A',
       handler: (event) => {
-        const { BlockManager, ReadOnly } = this.Editor;
+        const { ReadOnly } = this.Editor;
 
         /**
          * We use Editor's Block selection on CMD+A ShortCut instead of Browsers
@@ -175,7 +175,7 @@ export default class BlockSelection extends Module {
          *
          * Prevent such actions if focus is not inside the Editor
          */
-        if (!BlockManager.currentBlock) {
+        if (!event.target.closest(`.${this.Editor.UI.CSS.editorWrapper}`)?.isEqualNode(this.Editor.UI.nodes.wrapper)) {
           return;
         }
 
