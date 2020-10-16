@@ -10,6 +10,7 @@
 - `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
 - `Fix` - Sanitize pasted block data [#1396](https://github.com/codex-team/editor.js/issues/1396).
 - `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414)
+- `Fix` — Fixed block merging and caret moving when there are spaces at the block edge [#1382](https://github.com/codex-team/editor.js/issues/1382)
 
 
 ### 2.19
