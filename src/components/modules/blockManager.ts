@@ -12,7 +12,6 @@ import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
-import { generateUuidv4 } from '../utils';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -220,7 +219,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, id = generateUuidv4(), data = {} }: {tool: string; id?: string; data?: BlockToolData}): Block {
+  public composeBlock({ tool, id = _.generateUuidv4(), data = {} }: {tool: string; id?: string; data?: BlockToolData}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const settings = this.Editor.Tools.getToolSettings(tool);
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
@@ -254,7 +253,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
-    id = generateUuidv4(),
+    id = _.generateUuidv4(),
     tool = this.config.defaultBlock,
     data = {},
     index,
