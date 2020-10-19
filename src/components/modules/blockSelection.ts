@@ -304,7 +304,12 @@ export default class BlockSelection extends Module {
       fakeClipboard.appendChild(fragment);
     });
 
-    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
+    const savedData = await Promise.all(
+      this.selectedBlocks.map((block) => {
+        block.id = _.generateUuidv4();
+        block.save();
+      })
+    );
 
     const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
       .join('\n\n');
