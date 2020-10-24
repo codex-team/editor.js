@@ -62,7 +62,7 @@ export default class Shortcuts extends Module {
    * @param {string} shortcut - shortcut name
    */
   public remove(shortcut: string): void {
-    const index = this.registeredShortcuts.findIndex((shc) => shc.name === shortcut);
+    const index = this.registeredShortcuts.findIndex(({ name }) => name === shortcut);
 
     if (index === -1 || !this.registeredShortcuts[index]) {
       return;
@@ -70,5 +70,15 @@ export default class Shortcuts extends Module {
 
     this.registeredShortcuts[index].remove();
     this.registeredShortcuts.splice(index, 1);
+  }
+
+  /**
+   * Module destruction
+   * De-registers all Shortcuts
+   */
+  public destroy(): void {
+    while (this.registeredShortcuts.length > 0) {
+      this.remove(this.registeredShortcuts[0].name);
+    }
   }
 }

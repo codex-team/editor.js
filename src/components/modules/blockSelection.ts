@@ -357,17 +357,6 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Module destruction
-   * De-registers Shortcut CMD+A
-   */
-  public destroy(): void {
-    const { Shortcuts } = this.Editor;
-
-    /** Selection shortcut */
-    Shortcuts.remove('CMD+A');
-  }
-
-  /**
    * First CMD+A selects all input content by native behaviour,
    * next CMD+A keypress selects all blocks
    *

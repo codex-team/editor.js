@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20
+
+- `Fix` — Remove Shortcut listeners when destroy() [#1398](https://github.com/codex-team/editor.js/issues/1398)
+
 ### 2.19
 
 - `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)
