@@ -118,6 +118,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   conversionConfig?: ConversionConfig;
 
   /**
+   * Is Tool supports onDataChange event, this property should return true
+   */
+  isOnDataChangeSupported?: boolean;
+
+  /**
    * Is Tool supports read-only mode, this property should return true
    */
   isReadOnlySupported?: boolean;

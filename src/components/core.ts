@@ -76,6 +76,14 @@ export default class Core {
         await this.init();
         await this.start();
 
+        if (this.config.onDataChange) {
+          Object.entries(this.moduleInstances.Tools.blockTools).forEach(([name, tool]) => {
+            if (!tool.isOnDataChangeSupported) {
+              throw new Error(`${name} tool doesn't support onDataChange event. `);
+            }
+          });
+        }
+
         _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(async () => {
@@ -184,7 +192,6 @@ export default class Core {
       b: true,
       a: true,
     } as SanitizerConfig;
-
 
     this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
     this.config.tools = this.config.tools || {};

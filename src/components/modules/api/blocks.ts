@@ -17,6 +17,7 @@ export default class BlocksAPI extends Module {
   public get methods(): Blocks {
     return {
       clear: (): void => this.clear(),
+      onDataChange: (): void => this.onDataChange(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
       delete: (index?: number): void => this.delete(index),
@@ -143,6 +144,15 @@ export default class BlocksAPI extends Module {
   public clear(): void {
     this.Editor.BlockManager.clear(true);
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Fires when OutputData is changed
+   */
+  public onDataChange(): void {
+    if (_.isFunction(this.config.onDataChange)) {
+      this.config.onDataChange(this.Editor.API.methods);
+    }
   }
 
   /**

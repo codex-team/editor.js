@@ -92,6 +92,12 @@ export interface EditorConfig {
   onChange?(api: API): void;
 
   /**
+   * Fires when OutputData is changed
+   * @param {API} api - editor.js api
+   */
+  onDataChange?(api: API): void;
+
+  /**
    * Defines default toolbar for all tools.
    */
   inlineToolbar?: string[]|boolean;

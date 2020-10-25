@@ -26,5 +26,4 @@ export interface Tooltip {
    * @param {TooltipOptions} options
    */
   onHover: (element: HTMLElement, content: TooltipContent, options?: TooltipOptions) => void;
-
 }

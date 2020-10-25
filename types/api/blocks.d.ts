@@ -12,6 +12,11 @@ export interface Blocks {
   clear(): void;
 
   /**
+   * Fires when OutputData is changed
+   */
+  onDataChange(): void;
+  
+  /**
    * Render passed data
    *
    * @param {OutputData} data - saved Block data
