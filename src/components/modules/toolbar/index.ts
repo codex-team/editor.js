@@ -77,7 +77,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    *
    * @returns {object}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
@@ -111,7 +111,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    *
    * @returns {{hide: function(): void, show: function(): void}}
    */
-  public get plusButton(): {hide: () => void; show: () => void} {
+  public get plusButton(): { hide: () => void; show: () => void } {
     return {
       hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: (): void => {
@@ -128,7 +128,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    *
    * @returns {{hide: function(): void, show: function(): void}}
    */
-  private get blockActions(): {hide: () => void; show: () => void} {
+  private get blockActions(): { hide: () => void; show: () => void } {
     return {
       hide: (): void => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
@@ -381,8 +381,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * It is used in Read-Only mode
    */
   private destroy(): void {
-    this.Editor.Toolbox.destroy();
-    this.Editor.BlockSettings.destroy();
     this.removeAllNodes();
   }
 }

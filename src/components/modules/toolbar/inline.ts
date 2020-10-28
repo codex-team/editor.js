@@ -257,8 +257,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   public destroy(): void {
     this.flipper.deactivate();
     this.flipper = null;
-
-    this.Editor.ConversionToolbar.destroy();
   }
 
   /**
@@ -267,7 +265,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {string} toolName - user specified name of tool
    * @returns - array of ordered tool names or false
    */
-  private getInlineToolbarSettings(toolName): string[]|boolean {
+  private getInlineToolbarSettings(toolName): string[] | boolean {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
     /**
