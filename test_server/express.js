@@ -4,8 +4,6 @@ const path = require('path');
 
 const PORT = 8080;
 
-app.use('/assets', express.static(path.join(__dirname, '../example/assets')));
-
 app.get('/editor.js', function (req, res) {
   res.sendFile(path.join(__dirname, '../dist/editor.js'));
 });
