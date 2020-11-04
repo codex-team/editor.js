@@ -255,6 +255,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Removes UI and its components
    */
   public destroy(): void {
+    if (this.Editor.ReadOnly.isEnabled) {
+      return;
+    }
     this.flipper.deactivate();
     this.flipper = null;
   }
