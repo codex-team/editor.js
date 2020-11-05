@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.19.1
+
+- `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380)
+
 ### 2.19
 
 - `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)

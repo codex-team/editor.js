@@ -150,6 +150,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.enableModuleBindings();
     } else {
       this.destroy();
+      this.Editor.Toolbox.destroy();
+      this.Editor.BlockSettings.destroy();
       this.disableModuleBindings();
     }
   }
