@@ -97,6 +97,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.make();
     } else {
       this.destroy();
+      this.Editor.ConversionToolbar.destroy();
     }
   }
 
