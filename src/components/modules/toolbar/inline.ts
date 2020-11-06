@@ -97,6 +97,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.make();
     } else {
       this.destroy();
+      this.Editor.ConversionToolbar.destroy();
     }
   }
 
@@ -255,10 +256,15 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Removes UI and its components
    */
   public destroy(): void {
-    this.flipper.deactivate();
-    this.flipper = null;
+    /**
+     * Sometimes (in read-only mode) there is no Flipper
+     */
+    if (this.flipper) {
+      this.flipper.deactivate();
+      this.flipper = null;
+    }
 
-    this.Editor.ConversionToolbar.destroy();
+    this.removeAllNodes();
   }
 
   /**
@@ -267,7 +273,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {string} toolName - user specified name of tool
    * @returns - array of ordered tool names or false
    */
-  private getInlineToolbarSettings(toolName): string[]|boolean {
+  private getInlineToolbarSettings(toolName): string[] | boolean {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
     /**

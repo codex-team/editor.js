@@ -95,8 +95,14 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * Deactivates flipper and removes all nodes
    */
   public destroy(): void {
-    this.flipper.deactivate();
-    this.flipper = null;
+    /**
+     * Sometimes (in read-only mode) there is no Flipper
+     */
+    if (this.flipper) {
+      this.flipper.deactivate();
+      this.flipper = null;
+    }
+
     this.removeAllNodes();
   }
 
