@@ -2,6 +2,7 @@
 
 ### 2.19.1
 
+- `New` — Add build and publish action, remove and ignore `dist` directory
 - `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380)
 
 ### 2.19
