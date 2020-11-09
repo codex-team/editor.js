@@ -502,7 +502,7 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
