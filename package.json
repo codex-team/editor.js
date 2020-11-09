@@ -1,12 +1,12 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.19.0-next0.1.1",
+  "version": "2.19.0-rc0.1.1",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
   "keywords": [
     "codex editor",
-    "texteditor",
+    "text editor",
     "editor",
     "editor.js",
     "editorjs"
