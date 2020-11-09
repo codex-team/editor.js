@@ -1,5 +1,5 @@
-import Module from '../../__module';
 import { Listeners } from '../../../../types/api';
+import Module from '../../__module';
 
 /**
  * @class ListenersAPI

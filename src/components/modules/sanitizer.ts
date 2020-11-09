@@ -37,7 +37,7 @@ import * as _ from '../utils';
 
 import HTMLJanitor from 'html-janitor';
 import { BlockToolData, InlineToolConstructable, SanitizerConfig } from '../../../types';
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 
 /**
  *
@@ -309,7 +309,7 @@ export default class Sanitizer extends Module {
    * @param {SanitizerConfig} config - config to check
    */
   private isRule(config: SanitizerConfig): boolean {
-    return typeof config === 'object' || typeof config === 'boolean' || typeof config === 'function';
+    return typeof config === 'object' || typeof config === 'boolean' || _.isFunction(config);
   }
 
   /**

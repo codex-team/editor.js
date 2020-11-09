@@ -276,7 +276,7 @@ export function isFunction(fn: any): fn is Function {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isClass(fn: any): boolean {
-  return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
+  return isFunction(fn) && /^\s*class\s+/.test(fn.toString());
 }
 
 /**
@@ -556,6 +556,18 @@ export function getValidUrl(url: string): string {
  */
 export function openTab(url: string): void {
   window.open(url, '_blank');
+}
+
+/**
+ * Returns random generated identifier
+ *
+ * @param {string} prefix - identifier prefix
+ *
+ * @returns {string}
+ */
+export function generateId(prefix = ''): string {
+  // tslint:disable-next-line:no-bitwise
+  return `${prefix}${(Math.floor(Math.random() * 1e8)).toString(16)}`;
 }
 
 /**

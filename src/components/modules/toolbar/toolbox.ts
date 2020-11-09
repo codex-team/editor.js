@@ -1,11 +1,19 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { BlockToolConstructable } from '../../../../types';
+import { BlockToolConstructable, ToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+
+/**
+ * HTMLElements used for Toolbox UI
+ */
+interface ToolboxNodes {
+  toolbox: HTMLElement;
+  buttons: HTMLElement[];
+}
 
 /**
  * @class Toolbox
@@ -17,7 +25,15 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  * @property {object} CSS     - CSS class names
  *
  */
-export default class Toolbox extends Module {
+export default class Toolbox extends Module<ToolboxNodes> {
+  /**
+   * Current module HTML Elements
+   */
+  public nodes = {
+    toolbox: null,
+    buttons: [],
+  }
+
   /**
    * CSS styles
    *
@@ -53,17 +69,6 @@ export default class Toolbox extends Module {
   public opened = false;
 
   /**
-   * HTMLElements used for Toolbox UI
-   */
-  public nodes: {
-    toolbox: HTMLElement;
-    buttons: HTMLElement[];
-  } = {
-    toolbox: null,
-    buttons: [],
-  };
-
-  /**
    * How many tools displayed in Toolbox
    *
    * @type {number}
@@ -82,10 +87,19 @@ export default class Toolbox extends Module {
    */
   public make(): void {
     this.nodes.toolbox = $.make('div', this.CSS.toolbox);
-    $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
     this.enableFlipper();
+  }
+
+  /**
+   * Destroy Module
+   */
+  public destroy(): void {
+    this.flipper.deactivate();
+    this.flipper = null;
+    this.removeAllNodes();
+    this.removeAllShortcuts();
   }
 
   /**
@@ -183,12 +197,19 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
+    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+
+    /**
+     * Hide Toolbox button if Toolbox settings is false
+     */
+    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
+      return;
+    }
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
+    button.innerHTML = (userToolboxSettings && userToolboxSettings.icon) || toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 
@@ -212,17 +233,32 @@ export default class Toolbox extends Module {
       hidingDelay: 200,
     });
 
-    /**
-     * Enable shortcut
-     */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const shortcut = this.getToolShortcut(toolName, tool);
 
-    if (toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]) {
-      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]);
+    if (shortcut) {
+      this.enableShortcut(tool, toolName, shortcut);
     }
 
     /** Increment Tools count */
     this.displayedToolsCount++;
+  }
+
+  /**
+   * Returns tool's shortcut
+   * It can be specified via internal 'shortcut' static getter or by user settings for tool
+   *
+   * @param {string} toolName - tool's name
+   * @param {ToolConstructable} tool - tool's class (not instance)
+   */
+  private getToolShortcut(toolName: string, tool: ToolConstructable): string|null {
+    /**
+     * Enable shortcut
+     */
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const internalToolShortcut = tool[this.Editor.Tools.INTERNAL_SETTINGS.SHORTCUT];
+    const userSpecifiedShortcut = toolSettings ? toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT] : null;
+
+    return userSpecifiedShortcut || internalToolShortcut;
   }
 
   /**
@@ -232,12 +268,13 @@ export default class Toolbox extends Module {
    * @returns {HTMLElement}
    */
   private drawTooltip(toolName: string): HTMLElement {
+    const tool = this.Editor.Tools.available[toolName];
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
     const name = I18n.t(I18nInternalNS.toolNames, userToolboxSettings.title || toolboxSettings.title || toolName);
 
-    let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
+    let shortcut = this.getToolShortcut(toolName, tool);
 
     const tooltip = $.make('div', this.CSS.buttonTooltip);
     const hint = document.createTextNode(_.capitalize(name));
@@ -270,6 +307,24 @@ export default class Toolbox extends Module {
         this.insertNewBlock(tool, toolName);
       },
     });
+  }
+
+  /**
+   * Removes all added shortcuts
+   * Fired when the Read-Only mode is activated
+   */
+  private removeAllShortcuts(): void {
+    const tools = this.Editor.Tools.available;
+
+    for (const toolName in tools) {
+      if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
+        const shortcut = this.getToolShortcut(toolName, tools[toolName]);
+
+        if (shortcut) {
+          this.Editor.Shortcuts.remove(shortcut);
+        }
+      }
+    }
   }
 
   /**

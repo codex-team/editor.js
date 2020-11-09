@@ -53,7 +53,7 @@ export default class EditorJS {
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
      */
-    if (typeof configuration === 'object' && typeof configuration.onReady === 'function') {
+    if (typeof configuration === 'object' && _.isFunction(configuration.onReady)) {
       onReady = configuration.onReady;
     }
 

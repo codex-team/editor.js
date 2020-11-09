@@ -18,6 +18,15 @@ import { SanitizerConfig } from '../../../types/configs';
  */
 export default class BlockSelection extends Module {
   /**
+   * Sometimes .anyBlockSelected can be called frequently,
+   * for example at ui@selectionChange (to clear native browser selection in CBS)
+   * We use cache to prevent multiple iterations through all the blocks
+   *
+   * @private
+   */
+  private anyBlockSelectedCache: boolean | null = null;
+
+  /**
    * Sanitizer Config
    *
    * @returns {SanitizerConfig}
@@ -71,6 +80,8 @@ export default class BlockSelection extends Module {
     BlockManager.blocks.forEach((block) => {
       block.selected = state;
     });
+
+    this.clearCache();
   }
 
   /**
@@ -81,7 +92,11 @@ export default class BlockSelection extends Module {
   public get anyBlockSelected(): boolean {
     const { BlockManager } = this.Editor;
 
-    return BlockManager.blocks.some((block) => block.selected === true);
+    if (this.anyBlockSelectedCache === null) {
+      this.anyBlockSelectedCache = BlockManager.blocks.some((block) => block.selected === true);
+    }
+
+    return this.anyBlockSelectedCache;
   }
 
   /**
@@ -132,15 +147,30 @@ export default class BlockSelection extends Module {
   public prepare(): void {
     const { Shortcuts } = this.Editor;
 
-    /** Selection shortcut */
+    this.selection = new SelectionUtils();
+
+    /**
+     * CMD/CTRL+A selection shortcut
+     */
     Shortcuts.add({
       name: 'CMD+A',
       handler: (event) => {
-        const { BlockManager } = this.Editor;
+        const { BlockManager, ReadOnly } = this.Editor;
+
+        /**
+         * We use Editor's Block selection on CMD+A ShortCut instead of Browsers
+         */
+        if (ReadOnly.isEnabled) {
+          event.preventDefault();
+          this.selectAllBlocks();
+
+          return;
+        }
 
         /**
          * When one page consist of two or more EditorJS instances
-         * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
+         * Shortcut module tries to handle all events.
+         * Thats why Editor's selection works inside the target Editor, but
          * for others error occurs because nothing to select.
          *
          * Prevent such actions if focus is not inside the Editor
@@ -152,8 +182,21 @@ export default class BlockSelection extends Module {
         this.handleCommandA(event);
       },
     });
+  }
 
-    this.selection = new SelectionUtils();
+  /**
+   * Toggle read-only state
+   *
+   *  - Remove all ranges
+   *  - Unselect all Blocks
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    SelectionUtils.get()
+      .removeAllRanges();
+
+    this.allBlocksSelected = false;
   }
 
   /**
@@ -173,6 +216,8 @@ export default class BlockSelection extends Module {
     }
 
     block.selected = false;
+
+    this.clearCache();
   }
 
   /**
@@ -201,7 +246,15 @@ export default class BlockSelection extends Module {
       BlockManager.insertDefaultBlockAtIndex(indexToInsert, true);
       Caret.setToBlock(BlockManager.currentBlock);
       _.delay(() => {
-        Caret.insertContentAtCaretPosition((reason as KeyboardEvent).key);
+        const eventKey = (reason as KeyboardEvent).key;
+
+        /**
+         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentifier).
+         * So we use empty string
+         *
+         * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+         */
+        Caret.insertContentAtCaretPosition(eventKey.length > 1 ? '' : eventKey);
       }, 20)();
     }
 
@@ -290,8 +343,17 @@ export default class BlockSelection extends Module {
 
     block.selected = true;
 
+    this.clearCache();
+
     /** close InlineToolbar when we selected any Block */
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Clear anyBlockSelected cache
+   */
+  public clearCache(): void {
+    this.anyBlockSelectedCache = null;
   }
 
   /**

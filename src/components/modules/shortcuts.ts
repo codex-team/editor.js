@@ -64,6 +64,10 @@ export default class Shortcuts extends Module {
   public remove(shortcut: string): void {
     const index = this.registeredShortcuts.findIndex((shc) => shc.name === shortcut);
 
+    if (index === -1 || !this.registeredShortcuts[index]) {
+      return;
+    }
+
     this.registeredShortcuts[index].remove();
     this.registeredShortcuts.splice(index, 1);
   }

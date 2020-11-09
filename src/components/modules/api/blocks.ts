@@ -1,9 +1,8 @@
-import Module from '../../__module';
-
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import Module from '../../__module';
 
 /**
  * @class BlocksAPI
@@ -23,7 +22,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
@@ -51,14 +50,18 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Returns Block holder by Block index
+   * Returns BlockAPI object by Block index
    *
    * @param {number} index - index to get
-   *
-   * @returns {HTMLElement}
    */
-  public getBlockByIndex(index: number): BlockAPIInterface {
+  public getBlockByIndex(index: number): BlockAPIInterface | void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block at index `' + index + '`', 'warn');
+
+      return;
+    }
 
     return new BlockAPI(block);
   }

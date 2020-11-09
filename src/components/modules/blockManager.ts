@@ -160,12 +160,9 @@ export default class BlockManager extends Module {
   /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
-   *
-   * @returns {Promise}
    */
-  public async prepare(): Promise<void> {
+  public prepare(): void {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
-    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -187,18 +184,30 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    Listeners.on(
+    this.Editor.Listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
     );
+  }
 
-    /** Copy and cut */
-    Listeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
-    );
+  /**
+   * Toggle read-only state
+   *
+   * If readOnly is true:
+   *  - Unbind event handlers from created Blocks
+   *
+   * if readOnly is false:
+   *  - Bind event handlers to all existing Blocks
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.enableModuleBindings();
+    } else {
+      this.disableModuleBindings();
+    }
   }
 
   /**
@@ -211,6 +220,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+    const readOnly = this.Editor.ReadOnly.isEnabled;
     const settings = this.Editor.Tools.getToolSettings(tool);
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
@@ -219,9 +229,12 @@ export default class BlockManager extends Module {
       Tool,
       settings,
       api: this.Editor.API,
+      readOnly,
     });
 
-    this.bindEvents(block);
+    if (!readOnly) {
+      this.bindBlockEvents(block);
+    }
 
     return block;
   }
@@ -568,6 +581,11 @@ export default class BlockManager extends Module {
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
 
+      /**
+       * Update current block active input
+       */
+      this.currentBlock.updateCurrentInput();
+
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
@@ -668,18 +686,63 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Bind Events
+   * Cleans up all the block tools' resources
+   * This is called when editor is destroyed
+   */
+  public async destroy(): Promise<void> {
+    await Promise.all(this.blocks.map((block) => {
+      if (_.isFunction(block.tool.destroy)) {
+        return block.tool.destroy();
+      }
+    }));
+  }
+
+  /**
+   * Bind Block events
    *
    * @param {Block} block - Block to which event should be bound
    */
-  private bindEvents(block: Block): void {
-    const { BlockEvents, Listeners } = this.Editor;
+  private bindBlockEvents(block: Block): void {
+    const { BlockEvents } = this.Editor;
 
-    Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), false);
-    Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
-    Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
-    Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
-    Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+    this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
+      BlockEvents.keydown(event);
+    }, true);
+
+    this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
+      BlockEvents.keyup(event);
+    });
+
+    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+      BlockEvents.dragOver(event);
+    });
+
+    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
+      BlockEvents.dragLeave(event);
+    });
+  }
+
+  /**
+   * Disable mutable handlers and bindings
+   */
+  private disableModuleBindings(): void {
+    this.readOnlyMutableListeners.clearAll();
+  }
+
+  /**
+   * Enables all module handlers and bindings for all Blocks
+   */
+  private enableModuleBindings(): void {
+    /** Cut event */
+    this.readOnlyMutableListeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
+    );
+
+    this.blocks.forEach((block: Block) => {
+      this.bindBlockEvents(block);
+    });
   }
 
   /**
