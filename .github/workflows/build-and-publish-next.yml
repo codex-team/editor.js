@@ -1,9 +1,9 @@
-name: Build and publish package to NPM
+name: Build and publish package to NPM with tag NEXT
 
 on:
   push:
     branches:
-      - 'release/**'
+      - 'next'
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: yarn
       - run: yarn build
-      - run: yarn publish --access=public
+      - run: yarn publish --access=public --tag=next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
