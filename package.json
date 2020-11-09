@@ -12,7 +12,7 @@
     "editorjs"
   ],
   "scripts": {
-    "build": "rimraf dist/* && yarn svg && yarn build:prod",
+    "build": "rimraf dist && yarn svg && yarn build:prod",
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
     "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
@@ -20,7 +20,7 @@
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "svg:win": "if not exist dist md dist && yarn svg",
-    "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
+    "svg": "mkdir dist && svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
     "checkout_tools": "git submodule foreach git pull origin master"
   },
