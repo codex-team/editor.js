@@ -12,15 +12,14 @@
     "editorjs"
   ],
   "scripts": {
-    "build": "rimraf dist && yarn svg && yarn build:prod",
-    "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
+    "clear": "rimraf dist && mkdirp dist",
+    "build": "yarn clear && yarn svg && yarn build:prod",
     "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
     "lint": "eslint src/ --ext .ts  --max-warnings 0",
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
-    "svg:win": "if not exist dist md dist && yarn svg",
-    "svg": "mkdir dist && svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
+    "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
     "checkout_tools": "git submodule foreach git pull origin master"
   },
@@ -52,6 +51,7 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "html-janitor": "^2.0.4",
     "license-webpack-plugin": "^2.1.4",
+    "mkdirp": "^1.0.4",
     "postcss-apply": "^0.12.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
