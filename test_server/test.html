@@ -1,39 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Editor.js Test Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-</head>
 <body>
   <div id="editorjs"></div>
 
   <!-- Load Editor.js's Core -->
   <script src="/editor.js"></script>
-
-  <!-- Initialization -->
-  <script>
-    /**
-     * To initialize the Editor, create a new instance with configuration object
-     * @see docs/installation.md for mode details
-     */
-    var editor = new EditorJS({
-      /**
-       * Enable/Disable the read only mode
-       */
-      readOnly: false,
-
-      /**
-       * Wrapper of Editor
-       */
-      holder: 'editorjs',
-      /**
-       * on change event
-       */
-      onChange: function() {
-        console.log('something changed');
-      }
-    });
-  </script>
 </body>
 </html>
