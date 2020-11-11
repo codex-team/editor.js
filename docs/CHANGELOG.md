@@ -1,8 +1,11 @@
 # Changelog
 
-### 2.20
+### 2.19.1
 
+- `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380).
+- `Fix` - add getter keyword to `block.mergeable` method [#1415](https://github.com/codex-team/editor.js/issues/1415).
 - `Fix` — Remove Shortcut listeners when destroy() [#1398](https://github.com/codex-team/editor.js/issues/1398)
+
 
 ### 2.19
 
