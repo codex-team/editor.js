@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 
 const PORT = 8080;
+const HOST = 'http://localhost';
 
 app.get('/editor.js', function (req, res) {
   res.sendFile(path.join(__dirname, '../../../dist/editor.js'));
@@ -14,4 +15,4 @@ app.get('/', function (req, res) {
 
 app.listen(PORT);
 
-console.log(`Test Server : http://localhost:${PORT}`);
+console.log(`Test Server : ${HOST}:${PORT}`);
