@@ -7,12 +7,12 @@ describe('should initialize editorjs instance correctly', () => {
     });
 
     cy.window().then(window => {
-      const editor = new window.EditorJS({})
+      const editor = new window.EditorJS({});
 
       /**
        * Assert the created editor instance.
        */
-      expect(editor).to.be.instanceOf(window.EditorJS)
-    })
-  })
+      expect(editor).to.be.instanceOf(window.EditorJS);
+    });
+  });
 });
