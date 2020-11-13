@@ -1,0 +1,12 @@
+{
+  "projectId": "tivr7e",
+  "env": {
+    "local_test_server_url": "http://localhost:8080"
+  },
+  "fixturesFolder": "test/cypress/fixtures",
+  "integrationFolder": "test/cypress/integration",
+  "pluginsFile": "test/cypress/plugins/index.js",
+  "screenshotsFolder": "test/cypress/screenshots",
+  "videosFolder": "test/cypress/videos",
+  "supportFile": "test/cypress/support/index.js"
+}
