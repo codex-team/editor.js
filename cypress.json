@@ -4,7 +4,7 @@
     "local_test_server_url": "http://localhost:8080"
   },
   "fixturesFolder": "test/cypress/fixtures",
-  "integrationFolder": "test/cypress/integration",
+  "integrationFolder": "test/cypress/tests",
   "pluginsFile": "test/cypress/plugins/index.js",
   "screenshotsFolder": "test/cypress/screenshots",
   "videosFolder": "test/cypress/videos",
