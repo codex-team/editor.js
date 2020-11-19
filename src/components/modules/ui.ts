@@ -750,7 +750,12 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
+    /**
+     * Set current block when entering to Editor.js by tab key
+     */
+    if (!this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
+    }
 
     /**
      * @todo add debounce
