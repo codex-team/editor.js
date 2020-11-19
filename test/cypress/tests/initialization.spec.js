@@ -13,7 +13,6 @@ describe('should initialize editorjs instance correctly with default holder prop
       expect(editor).to.be.instanceOf(window.EditorJS);
     });
 
-    
     /**
      * Assert if create editor instance is visible or not.
      */

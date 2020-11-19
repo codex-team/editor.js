@@ -12,6 +12,9 @@ function createEditorContainerDiv() {
   return editorContainer;
 }
 
+/**
+ * Before each hook for the cypress tests
+ */
 beforeEach(() => {
   cy.visit(Cypress.env('local_test_server_url'));
 
