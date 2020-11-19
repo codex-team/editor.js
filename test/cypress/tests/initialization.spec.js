@@ -4,21 +4,6 @@ describe('should initialize editorjs instance correctly with default holder prop
       assert.isFunction(window.EditorJS, 'window.EditorJS is a function');
     });
 
-    /**
-     * create a div element for holding editor
-     */
-    cy.document().then((document) => {
-      const editorContainer = document.createElement('div');
-
-      editorContainer.id = 'editorjs';
-      editorContainer.dataset.cy = 'editorjs';
-
-      /**
-       * Prepend the editor container div, so that it will be above the script tag.
-       */
-      document.body.prepend(editorContainer);
-    });
-
     cy.window().then((window) => {
       const editor = new window.EditorJS({});
 
@@ -28,6 +13,7 @@ describe('should initialize editorjs instance correctly with default holder prop
       expect(editor).to.be.instanceOf(window.EditorJS);
     });
 
+    
     /**
      * Assert if create editor instance is visible or not.
      */

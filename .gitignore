@@ -10,5 +10,5 @@ node_modules/*
 npm-debug.log
 yarn-error.log
 
-screenshots
-videos
+test/cypress/screenshots
+test/cypress/videos
