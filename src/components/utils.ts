@@ -234,6 +234,18 @@ export function isBoolean(v: any): v is boolean {
 }
 
 /**
+ * Checks if passed argument is number
+ *
+ * @param {*} v - variable to check
+ *
+ * @returns {boolean}
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isNumber(v: any): v is number {
+  return typeOf(v) === 'number';
+}
+
+/**
  * Checks if passed argument is undefined
  *
  * @param {*} v - variable to check

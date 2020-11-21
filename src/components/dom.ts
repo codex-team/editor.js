@@ -292,6 +292,10 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isElement(node: any): node is Element {
+    if (_.isNumber(node)) {
+      return false;
+    }
+
     return node && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
@@ -303,6 +307,10 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isFragment(node: any): node is DocumentFragment {
+    if (_.isNumber(node)) {
+      return false;
+    }
+
     return node && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
