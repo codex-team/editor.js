@@ -2,11 +2,12 @@
 
 ### 2.19.1
 
+- `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
 - `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380).
 - `Fix` - add getter keyword to `block.mergeable` method [#1415](https://github.com/codex-team/editor.js/issues/1415).
 - `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
 - `Fix` - Sanitize pasted block data [#1396](https://github.com/codex-team/editor.js/issues/1396).
-- `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414)
+- `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414
 
 ### 2.19
 
