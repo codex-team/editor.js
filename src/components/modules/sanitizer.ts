@@ -94,7 +94,7 @@ export default class Sanitizer extends Module {
        * Array: call sanitize for each item
        */
       return this.cleanArray(dataToSanitize, rules);
-    } else if (typeof dataToSanitize === 'object') {
+    } else if (_.isObject(dataToSanitize)) {
       /**
        * Objects: just clean object deeper.
        */
@@ -105,7 +105,7 @@ export default class Sanitizer extends Module {
        *
        * Clean only strings
        */
-      if (typeof dataToSanitize === 'string') {
+      if (_.isString(dataToSanitize)) {
         return this.cleanOneItem(dataToSanitize, rules);
       }
 
@@ -169,7 +169,7 @@ export default class Sanitizer extends Module {
       if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
         const rule = toolRules[fieldName];
 
-        if (typeof rule === 'object') {
+        if (_.isObject(rule)) {
           toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
         } else {
           toolConfig[fieldName] = rule;
@@ -195,7 +195,7 @@ export default class Sanitizer extends Module {
 
     let config = {} as SanitizerConfig;
 
-    if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
+    if (_.isBoolean(enableInlineTools) && enableInlineTools) {
       /**
        * getting all tools sanitizer rule
        */
@@ -292,7 +292,7 @@ export default class Sanitizer extends Module {
    * @returns {string}
    */
   private cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {
-    if (typeof rule === 'object') {
+    if (_.isObject(rule)) {
       return this.clean(taintString, rule);
     } else if (rule === false) {
       return this.clean(taintString, {} as SanitizerConfig);
@@ -309,7 +309,7 @@ export default class Sanitizer extends Module {
    * @param {SanitizerConfig} config - config to check
    */
   private isRule(config: SanitizerConfig): boolean {
-    return typeof config === 'object' || typeof config === 'boolean' || _.isFunction(config);
+    return _.isObject(config) || _.isBoolean(config) || _.isFunction(config);
   }
 
   /**

@@ -304,7 +304,7 @@ export default class Paste extends Module {
         return;
       }
 
-      if (typeof toolInstance.onPaste !== 'function') {
+      if (!_.isFunction(toolInstance.onPaste)) {
         return;
       }
 

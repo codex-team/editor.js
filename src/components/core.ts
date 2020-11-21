@@ -119,7 +119,7 @@ export default class Core {
      * Process zero-configuration or with only holderId
      * Make config object
      */
-    if (typeof config !== 'object') {
+    if (!_.isObject(config)) {
       config = {
         holder: config,
       };
@@ -246,11 +246,11 @@ export default class Core {
     /**
      * Check for a holder element's existence
      */
-    if (typeof holder === 'string' && !$.get(holder)) {
+    if (_.isString(holder) && !$.get(holder)) {
       throw Error(`element with ID «${holder}» is missing. Pass correct holder's ID.`);
     }
 
-    if (holder && typeof holder === 'object' && !$.isElement(holder)) {
+    if (holder && _.isObject(holder) && !$.isElement(holder)) {
       throw Error('holder as HTMLElement if provided must be inherit from Element class.');
     }
   }
