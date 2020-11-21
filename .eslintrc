@@ -6,7 +6,7 @@
     /**
      * Temporary suppress some errors. We need to fix them partially in next patches
      */
-    "import/no-duplicates": ["warn"]
+    "import/no-duplicates": ["warn"],
   },
   "settings": {
     "jsdoc": {
