@@ -223,9 +223,9 @@ export async function sequence(
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
-      await successCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
+      await successCallback(isUndefined(chainData.data) ? chainData.data : {});
     } catch (e) {
-      fallbackCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
+      fallbackCallback(isUndefined(chainData.data) ? chainData.data : {});
     }
   }
 
@@ -264,7 +264,51 @@ export function array(collection: ArrayLike<any>): any[] {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isFunction(fn: any): fn is Function {
-  return typeof fn === 'function';
+  return typeOf(fn) === 'function';
+}
+
+/**
+ * Checks if passed argument is an object
+ *
+ * @param {*} v - object to check
+ *
+ * @returns {boolean}
+ */
+export function isObject(v: any): v is object {
+  return typeOf(v) === 'object';
+}
+
+/**
+ * Checks if passed argument is a string
+ *
+ * @param {*} v - variable to check
+ *
+ * @returns {boolean}
+ */
+export function isString(v: any): v is string {
+  return typeOf(v) === 'string';
+}
+
+/**
+ * Checks if passed argument is boolean
+ *
+ * @param {*} v - variable to check
+ *
+ * @returns {boolean}
+ */
+export function isBoolean(v: any): v is boolean {
+    return typeOf(v) === 'boolean';
+}
+
+/**
+ * Checks if passed argument is undefined
+ *
+ * @param {*} v - variable to check
+ *
+ * @returns {boolean}
+ */
+export function isUndefined(v: any): v is undefined {
+  return typeOf(v) === 'undefined';
 }
 
 /**
