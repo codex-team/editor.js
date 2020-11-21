@@ -7,6 +7,7 @@
      * Temporary suppress some errors. We need to fix them partially in next patches
      */
     "import/no-duplicates": ["warn"],
+    "@typescript-eslint/triple-slash-reference": ["off"]
   },
   "settings": {
     "jsdoc": {
