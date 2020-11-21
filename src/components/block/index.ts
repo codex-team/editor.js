@@ -358,7 +358,7 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  public mergeable(): boolean {
+  public get mergeable(): boolean {
     return _.isFunction(this.tool.merge);
   }
 
