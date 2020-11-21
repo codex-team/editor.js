@@ -24,17 +24,15 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
 
         editorContainer.setAttribute('id', 'editorjs');
         editorContainer.dataset.cy = 'editorjs';
-        editorContainer.style.border = '1px dotted red';
+        editorContainer.style.border = '1px dotted #388AE5';
 
         window.document.body.appendChild(editorContainer);
 
-        setTimeout(() => {
-          const editorInstance: EditorJS = new window.EditorJS(editorConfig);
+        const editorInstance: EditorJS = new window.EditorJS(editorConfig);
 
-          editorInstance.isReady.then(() => {
-            resolve(editorInstance);
-          });
-        }, 100);
+        editorInstance.isReady.then(() => {
+          resolve(editorInstance);
+        });
       });
     });
 });
