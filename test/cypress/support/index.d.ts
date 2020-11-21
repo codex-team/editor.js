@@ -1,19 +1,23 @@
 // in cypress/support/index.d.ts
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
-/// <reference path="./../../../types/index.d.ts" />
 
+import type { EditorConfig } from './../../../types/index';
+import type EditorJS from '../../../types/index'
 
-declare namespace Cypress {
-  import { EditorConfig } from './../../../types';
-  import EditorJS from '../../../types'
+declare global {
+  namespace Cypress {
+    interface Chainable<Subject = any> {
+      /**
+       * Custom command to select DOM element by data-cy attribute.
+       * @param editorConfig - config to pass to the editor
+       * @example cy.createEditor({})
+       */
+      createEditor(editorConfig: EditorConfig): Chainable<EditorJS>
+    }
 
-  interface Chainable {
-    /**
-     * Custom command to select DOM element by data-cy attribute.
-     * @param editorConfig - config to pass to the editor
-     * @example cy.createEditor({})
-    */
-   createEditor(editorConfig: EditorConfig): Chainable<EditorJS>
+    interface ApplicationWindow {
+      EditorJS: typeof EditorJS
+    }
   }
 }

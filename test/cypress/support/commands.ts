@@ -6,7 +6,9 @@
  */
 
 import type { EditorConfig } from './../../../types/index';
-import EditorJS from '../../../dist/editor.js';
+import type EditorJS from '../../../types/index';
+import Chainable = Cypress.Chainable;
+
 /**
  * Create a wrapper and initialize the new instance of editor.js
  * Then return the instance
@@ -14,10 +16,10 @@ import EditorJS from '../../../dist/editor.js';
  * @param editorConfig - config to pass to the editor
  * @returns EditorJS - created instance
  */
-Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): EditorJS => {
+Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainable<EditorJS> => {
   return cy.window()
     .then((window) => {
-      return new Promise((resolve) => {
+      return new Promise((resolve: (instance: EditorJS) => void) => {
         const editorContainer = window.document.createElement('div');
 
         editorContainer.setAttribute('id', 'editorjs');
@@ -27,7 +29,7 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): EditorJS
         window.document.body.appendChild(editorContainer);
 
         setTimeout(() => {
-          const editorInstance = new window.EditorJS(editorConfig);
+          const editorInstance: EditorJS = new window.EditorJS(editorConfig);
 
           editorInstance.isReady.then(() => {
             resolve(editorInstance);

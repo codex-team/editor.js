@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference, spaced-comment
+// eslint-disable-next-line spaced-comment
 /// <reference path="../support/index.d.ts" />
 
 describe('Editor basic initialization', () => {
