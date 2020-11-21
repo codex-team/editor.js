@@ -1,0 +1,14 @@
+{
+    "plugins": [
+        "cypress"
+    ],
+    "env": {
+        "cypress/globals": true
+    },
+    "extends": [
+        "plugin:cypress/recommended"
+    ],
+    "rules": {
+        "cypress/require-data-selectors": 2
+    }
+}

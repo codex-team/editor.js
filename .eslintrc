@@ -2,22 +2,11 @@
   "extends": [
     "codex"
   ],
-  "env": {
-    "cypress/globals": true
-  },
   "rules": {
     /**
      * Temporary suppress some errors. We need to fix them partially in next patches
      */
-    "import/no-duplicates": ["warn"],
-    /**
-     * rules for cypress
-     */
-    "cypress/no-assigning-return-values": "error",
-    "cypress/no-unnecessary-waiting": "error",
-    "cypress/assertion-before-screenshot": "warn",
-    "cypress/no-force": "warn",
-    "cypress/no-async-tests": "error"
+    "import/no-duplicates": ["warn"]
   },
   "settings": {
     "jsdoc": {
@@ -53,8 +42,5 @@
     "ClientRect": true,
     "ArrayLike": true,
     "unknown": true
-  },
-  "plugins": [
-    "cypress"
-  ]
+  }
 }
