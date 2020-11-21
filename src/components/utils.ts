@@ -333,9 +333,9 @@ export async function sequence(
   ): Promise<void> {
     try {
       await chainData.function(chainData.data);
-      await successCallback(isUndefined(chainData.data) ? chainData.data : {});
+      await successCallback(!isUndefined(chainData.data) ? chainData.data : {});
     } catch (e) {
-      fallbackCallback(isUndefined(chainData.data) ? chainData.data : {});
+      fallbackCallback(!isUndefined(chainData.data) ? chainData.data : {});
     }
   }
 

@@ -30258,7 +30258,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
                         case 3:
                           _context2.next = 5;
-                          return successCallback(isUndefined(chainData.data) ? chainData.data : {});
+                          return successCallback(!isUndefined(chainData.data) ? chainData.data : {});
 
                         case 5:
                           _context2.next = 10;
@@ -30267,7 +30267,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                         case 7:
                           _context2.prev = 7;
                           _context2.t0 = _context2["catch"](0);
-                          fallbackCallback(isUndefined(chainData.data) ? chainData.data : {});
+                          fallbackCallback(!isUndefined(chainData.data) ? chainData.data : {});
 
                         case 10:
                         case "end":
