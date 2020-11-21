@@ -34,7 +34,7 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
           editorInstance.isReady.then(() => {
             resolve(editorInstance);
           });
-        }, 200);
+        }, 100);
       });
     });
 });
