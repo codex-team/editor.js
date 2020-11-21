@@ -10,5 +10,8 @@
     ],
     "rules": {
         "cypress/require-data-selectors": 2
+    },
+    "globals": {
+        "EditorJS": true
     }
 }
