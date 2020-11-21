@@ -250,7 +250,7 @@ export default class Tools extends Module {
        * If Tool is an object not a Tool's class then
        * save class and settings separately
        */
-      if (typeof this.config.tools[toolName] === 'object') {
+      if (_.isObject(this.config.tools[toolName])) {
         /**
          * Save Tool's class from 'class' field
          *
