@@ -49,7 +49,7 @@ export default class Shortcuts extends Module {
   public add(shortcut: ShortcutData): void {
     const newShortcut = new Shortcut({
       name: shortcut.name,
-      on: document, // UI.nodes.redactor
+      on: this.Editor.UI.nodes.redactor,
       callback: shortcut.handler,
     });
 
