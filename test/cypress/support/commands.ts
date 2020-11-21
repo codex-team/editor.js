@@ -1,42 +1,38 @@
 /**
  * This file contains custom commands for Cypress.
  * Also it can override the existing commands.
- * 
+ *
  * --------------------------------------------------
  */
 
- import type { EditorConfig } from './../../../types/index';
- import EditorJS from './../../../dist/editor.js';
-
+import type { EditorConfig } from './../../../types/index';
+import EditorJS from '../../../dist/editor.js';
 /**
- * Create a div element for holding editor
+ * Create a wrapper and initialize the new instance of editor.js
+ * Then return the instance
  *
- * @returns editorContainer - div which holds editor
+ * @param editorConfig - config to pass to the editor
+ * @returns EditorJS - created instance
  */
-Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}) => {
-  return cy.document()
-    .then((document) => {
+Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): EditorJS => {
+  return cy.window()
+    .then((window) => {
       return new Promise((resolve) => {
-        const editorContainer = document.createElement('div');
+        const editorContainer = window.document.createElement('div');
 
         editorContainer.setAttribute('id', 'editorjs');
         editorContainer.dataset.cy = 'editorjs';
         editorContainer.style.border = '1px dotted red';
 
-        console.log('body1 children', document.body.children)
-
-        document.body.appendChild(editorContainer);
+        window.document.body.appendChild(editorContainer);
 
         setTimeout(() => {
-          resolve(editorContainer);
+          const editorInstance = new window.EditorJS(editorConfig);
+
+          editorInstance.isReady.then(() => {
+            resolve(editorInstance);
+          });
         }, 200);
       });
-    })
-    .then(() => {
-      console.log('body2 children', document.body.children);
-
-      const editorInstance = new EditorJS(editorConfig);
-
-      return editorInstance.isReady();
     });
 });

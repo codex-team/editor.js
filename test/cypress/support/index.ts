@@ -16,13 +16,4 @@ import './commands';
  */
 beforeEach((): void => {
   cy.visit('test/cypress/fixtures/test.html');
-
-  // cy.document().then((document) => {
-  //   const editorContainer = createEditorContainerDiv();
-
-  //   /**
-  //    * Prepend the editor container div, so that it will be above the script tag.
-  //    */
-  //   document.body.prepend(editorContainer);
-  // });
 });
