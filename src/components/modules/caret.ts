@@ -396,14 +396,22 @@ export default class Caret extends Module {
     const { BlockManager, Tools } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
+    const isAtEnd = this.isAtEnd;
 
     let nextBlock = nextContentfulBlock;
 
     if (!nextBlock && !nextInput) {
       /**
-       * If there is no nextBlock and currentBlock is default, do not navigate
+       * This code allows to exit from the last non-initial tool:
+       * https://github.com/codex-team/editor.js/issues/1103
        */
-      if (Tools.isDefault(currentBlock.tool)) {
+
+      /**
+       * 1. If there is a last block and it is default, do nothing
+       * 2. If there is a last block and it is non-default --> and caret not at the end <--, do nothing
+       *    (https://github.com/codex-team/editor.js/issues/1414)
+       */
+      if (Tools.isDefault(currentBlock.tool) || !isAtEnd) {
         return false;
       }
 
@@ -414,7 +422,7 @@ export default class Caret extends Module {
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    if (force || this.isAtEnd) {
+    if (force || isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock, this.positions.START);
