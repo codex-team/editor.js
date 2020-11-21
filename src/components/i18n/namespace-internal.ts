@@ -1,6 +1,6 @@
 import defaultDictionary from './locales/en/messages.json';
 import { DictNamespaces } from '../../types-internal/i18n-internal-namespace';
-import { typeOf } from '../utils';
+import { isObject, isString } from '../utils';
 
 /**
  * Evaluate messages dictionary and return object for namespace chaining
@@ -12,14 +12,14 @@ function getNamespaces(dict: object, keyPath?: string): DictNamespaces<typeof de
   const result = {};
 
   Object.entries(dict).forEach(([key, section]) => {
-    if (typeOf(section) === 'object') {
+    if (isObject(section)) {
       const newPath = keyPath ? `${keyPath}.${key}` : key;
 
       /**
        * Check current section values, if all of them are strings, so there is the last section
        */
       const isLastSection = Object.values(section).every((sectionValue) => {
-        return typeOf(sectionValue) === 'string';
+        return isString(sectionValue);
       });
 
       /**
