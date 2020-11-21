@@ -11840,7 +11840,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @param {BlockToolData} options.data - Tool's initial data
      * @param {BlockToolConstructable} options.Tool — Tool's class
      * @param {ToolSettings} options.settings - default tool's config
-     * @param {Module} options.api - Editor API module for pass it to the Block Tunes
      * @param {boolean} options.readOnly - Read-Only flag
      */
     function Block(_ref) {
@@ -13770,7 +13769,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "isElement",
       value: function isElement(node) {
-        return node && (0, _.typeOf)(node) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+        return node && _.typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
       }
       /**
        * Check if object is DocumentFragment node
@@ -13783,7 +13782,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "isFragment",
       value: function isFragment(node) {
-        return node && (0, _.typeOf)(node) === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+        return node && _.typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
       }
       /**
        * Check if passed element is contenteditable
@@ -13982,7 +13981,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function containsOnlyInlineElements(data) {
         var wrapper;
 
-        if ((0, _.isString)(data)) {
+        if (_.isString(data)) {
           wrapper = document.createElement('div');
           wrapper.innerHTML = data;
         } else {
@@ -14025,7 +14024,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "getHolder",
       value: function getHolder(element) {
-        if ((0, _.isString)(element)) {
+        if (_.isString(element)) {
           return document.getElementById(element);
         }
 
@@ -24210,7 +24209,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * Array: call sanitize for each item
            */
           return this.cleanArray(dataToSanitize, rules);
-        } else if ((0, _.isObject)(dataToSanitize)) {
+        } else if (_.isObject(dataToSanitize)) {
           /**
            * Objects: just clean object deeper.
            */
@@ -24221,7 +24220,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            *
            * Clean only strings
            */
-          if ((0, _.isString)(dataToSanitize)) {
+          if (_.isString(dataToSanitize)) {
             return this.cleanOneItem(dataToSanitize, rules);
           }
 
@@ -24288,7 +24287,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
             var rule = toolRules[fieldName];
 
-            if ((0, _.isObject)(rule)) {
+            if (_.isObject(rule)) {
               toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
             } else {
               toolConfig[fieldName] = rule;
@@ -24315,7 +24314,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var enableInlineTools = toolsConfig.inlineToolbar || [];
         var config = {};
 
-        if ((0, _.isBoolean)(enableInlineTools) && enableInlineTools) {
+        if (_.isBoolean(enableInlineTools) && enableInlineTools) {
           /**
            * getting all tools sanitizer rule
            */
@@ -24419,7 +24418,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "cleanOneItem",
       value: function cleanOneItem(taintString, rule) {
-        if ((0, _.isObject)(rule)) {
+        if (_.isObject(rule)) {
           return this.clean(taintString, rule);
         } else if (rule === false) {
           return this.clean(taintString, {});
@@ -24438,7 +24437,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "isRule",
       value: function isRule(config) {
-        return (0, _.isObject)(config) || (0, _.isBoolean)(config) || _.isFunction(config);
+        return _.isObject(config) || _.isBoolean(config) || _.isFunction(config);
       }
       /**
        * If developer uses editor's API, then he can customize sanitize restrictions.
@@ -26441,7 +26440,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Returns inline toolbar settings for a particular tool
        *
        * @param {string} toolName - user specified name of tool
-       * @returns - array of ordered tool names or false
+       * @returns {string[] | boolean} array of ordered tool names or false
        */
 
     }, {
@@ -28723,8 +28722,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function enterPressed(event) {
         var _this$Editor3 = this.Editor,
             BlockManager = _this$Editor3.BlockManager,
-            BlockSelection = _this$Editor3.BlockSelection,
-            Caret = _this$Editor3.Caret;
+            BlockSelection = _this$Editor3.BlockSelection;
         var hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
         /**
          * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
@@ -29880,9 +29878,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     value: true
   });
   _exports.setLogLevel = setLogLevel;
-  _exports.isPrintableKey = isPrintableKey;
-  _exports.sequence = sequence;
-  _exports.array = array;
+  _exports.typeOf = typeOf;
   _exports.isFunction = isFunction;
   _exports.isObject = isObject;
   _exports.isString = isString;
@@ -29891,6 +29887,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.isClass = isClass;
   _exports.isEmpty = isEmpty;
   _exports.isPromise = isPromise;
+  _exports.isPrintableKey = isPrintableKey;
+  _exports.sequence = sequence;
+  _exports.array = array;
   _exports.delay = delay;
   _exports.getFileExtension = getFileExtension;
   _exports.isValidMimeType = isValidMimeType;
@@ -29898,7 +29897,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.copyTextToClipboard = copyTextToClipboard;
   _exports.getUserOS = getUserOS;
   _exports.capitalize = capitalize;
-  _exports.typeOf = typeOf;
   _exports.deepMerge = deepMerge;
   _exports.beautifyShortcut = beautifyShortcut;
   _exports.getValidUrl = getValidUrl;
@@ -30074,6 +30072,127 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   var logLabeled = _log.bind(window, true);
   /**
+   * Return string representation of the object type
+   *
+   * @param {*} object - object to get type
+   *
+   * @returns {string}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  _exports.logLabeled = logLabeled;
+
+  function typeOf(object) {
+    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  }
+  /**
+   * Check if passed variable is a function
+   *
+   * @param {*} fn - function to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isFunction(fn) {
+    return typeOf(fn) === 'function';
+  }
+  /**
+   * Checks if passed argument is an object
+   *
+   * @param {*} v - object to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isObject(v) {
+    return typeOf(v) === 'object';
+  }
+  /**
+   * Checks if passed argument is a string
+   *
+   * @param {*} v - variable to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isString(v) {
+    return typeOf(v) === 'string';
+  }
+  /**
+   * Checks if passed argument is boolean
+   *
+   * @param {*} v - variable to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isBoolean(v) {
+    return typeOf(v) === 'boolean';
+  }
+  /**
+   * Checks if passed argument is undefined
+   *
+   * @param {*} v - variable to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isUndefined(v) {
+    return typeOf(v) === 'undefined';
+  }
+  /**
+   * Check if passed function is a class
+   *
+   * @param {Function} fn - function to check
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isClass(fn) {
+    return isFunction(fn) && /^\s*class\s+/.test(fn.toString());
+  }
+  /**
+   * Checks if object is empty
+   *
+   * @param {object} object - object to check
+   *
+   * @returns {boolean}
+   */
+
+
+  function isEmpty(object) {
+    if (!object) {
+      return true;
+    }
+
+    return Object.keys(object).length === 0 && object.constructor === Object;
+  }
+  /**
+   * Check if passed object is a Promise
+   *
+   * @param  {*}  object - object to check
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
+  function isPromise(object) {
+    return Promise.resolve(object) === object;
+  }
+  /**
    * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
    *
    * @param {number} keyCode - key code
@@ -30081,8 +30200,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @returns {boolean}
    */
 
-
-  _exports.logLabeled = logLabeled;
 
   function isPrintableKey(keyCode) {
     return keyCode > 47 && keyCode < 58 || // number keys
@@ -30205,108 +30322,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   function array(collection) {
     return Array.prototype.slice.call(collection);
-  }
-  /**
-   * Check if passed variable is a function
-   *
-   * @param {*} fn - function to check
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-
-  function isFunction(fn) {
-    return typeOf(fn) === 'function';
-  }
-  /**
-   * Checks if passed argument is an object
-   *
-   * @param {*} v - object to check
-   *
-   * @returns {boolean}
-   */
-
-
-  function isObject(v) {
-    return typeOf(v) === 'object';
-  }
-  /**
-   * Checks if passed argument is a string
-   *
-   * @param {*} v - variable to check
-   *
-   * @returns {boolean}
-   */
-
-
-  function isString(v) {
-    return typeOf(v) === 'string';
-  }
-  /**
-   * Checks if passed argument is boolean
-   *
-   * @param {*} v - variable to check
-   *
-   * @returns {boolean}
-   */
-
-
-  function isBoolean(v) {
-    return typeOf(v) === 'boolean';
-  }
-  /**
-   * Checks if passed argument is undefined
-   *
-   * @param {*} v - variable to check
-   *
-   * @returns {boolean}
-   */
-
-
-  function isUndefined(v) {
-    return typeOf(v) === 'undefined';
-  }
-  /**
-   * Check if passed function is a class
-   *
-   * @param {Function} fn - function to check
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-
-  function isClass(fn) {
-    return isFunction(fn) && /^\s*class\s+/.test(fn.toString());
-  }
-  /**
-   * Checks if object is empty
-   *
-   * @param {object} object - object to check
-   *
-   * @returns {boolean}
-   */
-
-
-  function isEmpty(object) {
-    if (!object) {
-      return true;
-    }
-
-    return Object.keys(object).length === 0 && object.constructor === Object;
-  }
-  /**
-   * Check if passed object is a Promise
-   *
-   * @param  {*}  object - object to check
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-
-  function isPromise(object) {
-    return Promise.resolve(object) === object;
   }
   /**
    * Delays method execution
@@ -30450,19 +30465,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     return text[0].toUpperCase() + text.slice(1);
   }
   /**
-   * Return string representation of the object type
-   *
-   * @param {*} object - object to get type
-   *
-   * @returns {string}
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-
-  function typeOf(object) {
-    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
-  }
-  /**
    * Merge to objects recursively
    *
    * @param {object} target - merge target
@@ -30472,10 +30474,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
   function deepMerge(target) {
-    var isObject = function isObject(item) {
-      return item && typeOf(item) === 'object';
-    };
-
     for (var _len = arguments.length, sources = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       sources[_key - 1] = arguments[_key];
     }

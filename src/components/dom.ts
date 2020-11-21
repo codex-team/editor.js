@@ -1,5 +1,4 @@
 import * as _ from './utils';
-import { typeOf, isString } from "./utils";
 
 /**
  * DOM manipulations helper
@@ -293,7 +292,7 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isElement(node: any): node is Element {
-    return node && typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+    return node && _.typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
   /**
@@ -304,7 +303,7 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isFragment(node: any): node is DocumentFragment {
-    return node && typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+    return node && _.typeOf(node) === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
   /**
@@ -533,7 +532,7 @@ export default class Dom {
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
     let wrapper: HTMLElement;
 
-    if (isString(data)) {
+    if (_.isString(data)) {
       wrapper = document.createElement('div');
       wrapper.innerHTML = data;
     } else {
@@ -573,7 +572,7 @@ export default class Dom {
    * @returns {HTMLElement}
    */
   public static getHolder(element: string | HTMLElement): HTMLElement {
-    if (isString(element)) {
+    if (_.isString(element)) {
       return document.getElementById(element);
     }
 

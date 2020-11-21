@@ -38,7 +38,6 @@ import * as _ from '../utils';
 import HTMLJanitor from 'html-janitor';
 import { BlockToolData, InlineToolConstructable, SanitizerConfig } from '../../../types';
 import { SavedData } from '../../../types/data-formats';
-import { isBoolean, isObject, isString } from "../utils";
 
 /**
  *
@@ -95,7 +94,7 @@ export default class Sanitizer extends Module {
        * Array: call sanitize for each item
        */
       return this.cleanArray(dataToSanitize, rules);
-    } else if (isObject(dataToSanitize)) {
+    } else if (_.isObject(dataToSanitize)) {
       /**
        * Objects: just clean object deeper.
        */
@@ -106,7 +105,7 @@ export default class Sanitizer extends Module {
        *
        * Clean only strings
        */
-      if (isString(dataToSanitize)) {
+      if (_.isString(dataToSanitize)) {
         return this.cleanOneItem(dataToSanitize, rules);
       }
 
@@ -170,7 +169,7 @@ export default class Sanitizer extends Module {
       if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
         const rule = toolRules[fieldName];
 
-        if (isObject(rule)) {
+        if (_.isObject(rule)) {
           toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
         } else {
           toolConfig[fieldName] = rule;
@@ -196,7 +195,7 @@ export default class Sanitizer extends Module {
 
     let config = {} as SanitizerConfig;
 
-    if (isBoolean(enableInlineTools) && enableInlineTools) {
+    if (_.isBoolean(enableInlineTools) && enableInlineTools) {
       /**
        * getting all tools sanitizer rule
        */
@@ -293,7 +292,7 @@ export default class Sanitizer extends Module {
    * @returns {string}
    */
   private cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {
-    if (isObject(rule)) {
+    if (_.isObject(rule)) {
       return this.clean(taintString, rule);
     } else if (rule === false) {
       return this.clean(taintString, {} as SanitizerConfig);
@@ -310,7 +309,7 @@ export default class Sanitizer extends Module {
    * @param {SanitizerConfig} config - config to check
    */
   private isRule(config: SanitizerConfig): boolean {
-    return isObject(config) || isBoolean(config) || _.isFunction(config);
+    return _.isObject(config) || _.isBoolean(config) || _.isFunction(config);
   }
 
   /**
