@@ -20,7 +20,8 @@
     "no-string-literal": false,
     "no-empty": false,
     "no-namespace": false,
-    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"]
+    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"],
+    "no-reference": false
   },
   "globals": {
     "require": true
