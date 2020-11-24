@@ -240,6 +240,11 @@ export default class BlocksAPI extends Module {
       _.logLabeled('No Block Selected as Current Block', 'warn');
       return;
     }
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.BlockManager.currentBlock.focused = true;
+      this.Editor.Toolbar.open(true, false);
+      this.Editor.Toolbar.plusButton.hide();
+    }
     if (!this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.open();
     }
