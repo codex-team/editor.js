@@ -28,6 +28,7 @@ export default class BlocksAPI extends Module {
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
+      toggleBlockSettingByIndex: (): void => this.toggleBlockSettingByIndex(),
     };
   }
 
@@ -228,5 +229,23 @@ export default class BlocksAPI extends Module {
     _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
+  }
+
+  /**
+   * Toggles BlockSetting of Current Elements
+   *
+   */
+  public toggleBlockSettingByIndex(): void {
+    if (!this.Editor.BlockManager.currentBlockIndex) {
+      _.logLabeled('No Block Selected as Current Block', 'warn');
+      return;
+    }
+    if (!this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.open();
+    }
+    else {
+      this.Editor.BlockSettings.close();
+      this.Editor.BlockManager.currentBlock.selected = false;
+    }
   }
 }

@@ -1,6 +1,6 @@
-import {OutputData} from '../data-formats/output-data';
-import {BlockToolData, ToolConfig} from '../tools';
-import {BlockAPI} from './block';
+import { OutputData } from '../data-formats/output-data';
+import { BlockToolData, ToolConfig } from '../tools';
+import { BlockAPI } from './block';
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -99,4 +99,8 @@ export interface Blocks {
     needToFocus?: boolean,
   ): void;
 
+  /**
+   * Toggles BlockSetting of Current Elements
+   */
+  toggleBlockSettingByIndex(): void;
 }
