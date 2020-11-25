@@ -28,7 +28,7 @@ export default class BlocksAPI extends Module {
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
-      toggleBlockSettingByIndex: (): void => this.toggleBlockSettingByIndex(),
+      toggleBlockSetting: (state?: boolean): void => this.toggleBlockSetting(state),
     };
   }
 
@@ -232,23 +232,34 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Toggles BlockSetting of Current Elements
+   * Toggles BlockSetting of Current Focused Elements
    *
+   * @param {boolean} state — Forced State of Toggle
    */
-  public toggleBlockSettingByIndex(): void {
+  public toggleBlockSetting(state?: boolean): void {
     if (!this.Editor.BlockManager.currentBlockIndex) {
-      _.logLabeled('No Block Selected as Current Block', 'warn');
+      _.logLabeled('Could\'t toggle the Block Settings because there is no block selected ', 'warn');
+
       return;
     }
+
     if (!this.Editor.Toolbar.opened) {
       this.Editor.BlockManager.currentBlock.focused = true;
       this.Editor.Toolbar.open(true, false);
       this.Editor.Toolbar.plusButton.hide();
     }
-    if (!this.Editor.BlockSettings.opened) {
-      this.Editor.BlockSettings.open();
+
+    /** Check that state is set or not */
+    const canOpenBlockSettings = (state !== undefined) ? state : !this.Editor.BlockSettings.opened;
+
+    /** Check if state same as current state */
+    if (state !== undefined && state === this.Editor.BlockSettings.opened) {
+      return;
     }
-    else {
+
+    if (canOpenBlockSettings) {
+      this.Editor.BlockSettings.open();
+    } else {
       this.Editor.BlockSettings.close();
       this.Editor.BlockManager.currentBlock.selected = false;
     }
