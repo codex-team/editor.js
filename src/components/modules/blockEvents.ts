@@ -125,9 +125,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty;
-    const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
-    const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty(true);
+    const conversionToolbarOpened = !currentBlock.isEmpty(true) && ConversionToolbar.opened;
+    const inlineToolbarOpened = !currentBlock.isEmpty(true) && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
      * For empty Blocks we show Plus button via Toolbox only for default Blocks
@@ -253,7 +253,7 @@ export default class BlockEvents extends Module {
     /**
      * If new Block is empty
      */
-    if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty) {
+    if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty(true)) {
       /**
        * Show Toolbar
        */
@@ -281,7 +281,7 @@ export default class BlockEvents extends Module {
     /**
      * Check if Block should be removed by current Backspace keydown
      */
-    if (currentBlock.selected || (currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput)) {
+    if (currentBlock.selected || (currentBlock.isEmpty(false) && currentBlock.currentInput === currentBlock.firstInput)) {
       event.preventDefault();
 
       const index = BlockManager.currentBlockIndex;
@@ -354,7 +354,7 @@ export default class BlockEvents extends Module {
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
       /** If target Block doesn't contain inputs or empty, remove it */
-      if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
+      if (targetBlock.inputs.length === 0 || targetBlock.isEmpty(true)) {
         BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
 
         Caret.setToBlock(BlockManager.currentBlock);

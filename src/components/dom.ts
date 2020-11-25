@@ -377,12 +377,11 @@ export default class Dom {
    *
    * @description Method checks simple Node without any childs for emptiness
    * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
-   *
    * @param {Node} node - node to check
-   *
+   * @param ignoreSpaces - ignore whitespace from both ends
    * @returns {boolean} true if it is empty
    */
-  public static isNodeEmpty(node: Node): boolean {
+  public static isNodeEmpty(node: Node, ignoreSpaces: boolean): boolean {
     let nodeText;
 
     if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
@@ -392,10 +391,14 @@ export default class Dom {
     if (this.isElement(node) && this.isNativeInput(node)) {
       nodeText = (node as HTMLInputElement).value;
     } else {
-      nodeText = node.textContent.replace('\u200B', '');
+      nodeText = node.textContent?.replace('\u200B', '') ?? '';
     }
 
-    return nodeText.trim().length === 0;
+    if (ignoreSpaces) {
+      nodeText = nodeText.trim();
+    }
+
+    return nodeText.length === 0;
   }
 
   /**
@@ -418,11 +421,11 @@ export default class Dom {
    * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
    *
    * @description Pushes to stack all DOM leafs and checks for emptiness
-   *
    * @param {Node} node - node to check
+   * @param ignoreSpaces - ignore whitespace from both ends
    * @returns {boolean}
    */
-  public static isEmpty(node: Node): boolean {
+  public static isEmpty(node: Node, ignoreSpaces: boolean): boolean {
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
@@ -431,18 +434,18 @@ export default class Dom {
     const treeWalker = [ node ];
 
     while (treeWalker.length > 0) {
-      node = treeWalker.shift();
+      const treeNode = treeWalker.shift();
 
-      if (!node) {
+      if (!treeNode) {
         continue;
       }
 
-      if (this.isLeaf(node) && !this.isNodeEmpty(node)) {
+      if (this.isLeaf(treeNode) && !this.isNodeEmpty(treeNode, ignoreSpaces)) {
         return false;
       }
 
-      if (node.childNodes) {
-        treeWalker.push(...Array.from(node.childNodes));
+      if (treeNode.childNodes) {
+        treeWalker.push(...Array.from(treeNode.childNodes));
       }
     }
 

@@ -139,7 +139,7 @@ export default class BlockManager extends Module {
    * @returns {boolean}
    */
   public get isEditorEmpty(): boolean {
-    return this.blocks.every((block) => block.isEmpty);
+    return this.blocks.every((block) => block.isEmpty(true));
   }
 
   /**
@@ -385,7 +385,7 @@ export default class BlockManager extends Module {
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
     const blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-    if (blockToMerge.isEmpty) {
+    if (blockToMerge.isEmpty(true)) {
       return;
     }
 
@@ -486,7 +486,7 @@ export default class BlockManager extends Module {
      * @todo make object in accordance with Tool
      */
     const data = {
-      text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
+      text: $.isEmpty(wrapper, true) ? '' : wrapper.innerHTML,
     };
 
     /**

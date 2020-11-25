@@ -105,7 +105,7 @@ export default class Caret extends Module {
      *     |adaddad         <-- focus node
      * </div>
      */
-    if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
+    if (firstNode && ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode, true))) {
       const leftSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'left');
       const nothingAtLeft = leftSiblings.every((node) => {
         /**
@@ -121,7 +121,7 @@ export default class Caret extends Module {
         const lineBreakInSafari = node.children.length === 1 && $.isLineBreakTag(node.children[0] as HTMLElement);
         const isLineBreak = regularLineBreak || lineBreakInSafari;
 
-        return $.isEmpty(node) && !isLineBreak;
+        return $.isEmpty(node, true) && !isLineBreak;
       });
 
       if (nothingAtLeft && focusOffset === firstLetterPosition) {
@@ -187,7 +187,7 @@ export default class Caret extends Module {
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      * </div>
      */
-    if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
+    if (lastNode && ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode, true))) {
       const rightSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'right');
       const nothingAtRight = rightSiblings.every((node, i) => {
         /**
@@ -195,7 +195,7 @@ export default class Caret extends Module {
          */
         const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
 
-        return isLastBR || ($.isEmpty(node) && !$.isLineBreakTag(node));
+        return isLastBR || ($.isEmpty(node, true) && !$.isLineBreakTag(node));
       });
 
       if (nothingAtRight && focusOffset === focusNode.textContent.length) {
@@ -337,7 +337,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
+    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty(true)) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();

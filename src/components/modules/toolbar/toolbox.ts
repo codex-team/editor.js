@@ -358,7 +358,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
 
     const newBlock = BlockManager.insert({
       tool: toolName,
-      replace: currentBlock.isEmpty,
+      replace: currentBlock.isEmpty(true),
     });
 
     /**

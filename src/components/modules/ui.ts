@@ -710,7 +710,7 @@ export default class UI extends Module<UINodes> {
       /**
        * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
        */
-      const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+      const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty(true);
 
       if (isEmptyBlock) {
         this.Editor.Toolbar.plusButton.show();

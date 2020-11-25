@@ -248,7 +248,7 @@ export default class Paste extends Module {
     }
 
     const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty(true);
 
     dataToInsert.map(
       async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
@@ -478,7 +478,7 @@ export default class Paste extends Module {
     dataToInsert = dataToInsert.filter((data) => !!data);
 
     const isCurrentBlockDefault = Tools.isDefault(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+    const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty(true);
 
     dataToInsert.forEach(
       (data, i) => {
@@ -585,7 +585,7 @@ export default class Paste extends Module {
           event,
         };
       })
-      .filter((data) => !$.isNodeEmpty(data.content) || $.isSingleTag(data.content));
+      .filter((data) => !$.isNodeEmpty(data.content, true) || $.isSingleTag(data.content));
   }
 
   /**
@@ -642,7 +642,7 @@ export default class Paste extends Module {
       dataToInsert.tool !== currentBlock.name ||
       !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
     ) {
-      this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty);
+      this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty(true));
 
       return;
     }
@@ -670,7 +670,7 @@ export default class Paste extends Module {
       if (blockData) {
         const needToReplaceCurrentBlock = BlockManager.currentBlock &&
           Tools.isDefault(BlockManager.currentBlock.tool) &&
-          BlockManager.currentBlock.isEmpty;
+          BlockManager.currentBlock.isEmpty(true);
 
         const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
@@ -740,7 +740,7 @@ export default class Paste extends Module {
     const { currentBlock } = BlockManager;
     let block: Block;
 
-    if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
+    if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty(true)) {
       block = BlockManager.paste(data.tool, data.event, true);
       Caret.setToBlock(block, Caret.positions.END);
 
@@ -769,7 +769,7 @@ export default class Paste extends Module {
       if (i === 0) {
         const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
 
-        needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
+        needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty(true);
       }
 
       BlockManager.insert({
@@ -838,7 +838,7 @@ export default class Paste extends Module {
     let elementNodeProcessingResult: Node[] | void;
 
     const reducer = (nodes: Node[], node: Node): Node[] => {
-      if ($.isEmpty(node) && !$.isSingleTag(node as HTMLElement)) {
+      if ($.isEmpty(node, true) && !$.isSingleTag(node as HTMLElement)) {
         return nodes;
       }
 
