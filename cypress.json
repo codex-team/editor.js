@@ -1,5 +1,4 @@
 {
-  "projectId": "tivr7e",
   "env": {
   },
   "fixturesFolder": "test/cypress/fixtures",
