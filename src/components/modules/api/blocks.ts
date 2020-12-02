@@ -28,7 +28,7 @@ export default class BlocksAPI extends Module {
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
-      toggleBlockSetting: (state?: boolean): void => this.toggleBlockSetting(state),
+      toggleBlockSetting: (openingState?: boolean): void => this.toggleBlockSetting(openingState),
     };
   }
 
@@ -234,9 +234,9 @@ export default class BlocksAPI extends Module {
   /**
    * Toggles BlockSetting of Current Focused Elements
    *
-   * @param {boolean} state — Forced State of Toggle
+   * @param {boolean} openingState —  opening state of Toggle
    */
-  public toggleBlockSetting(state?: boolean): void {
+  public toggleBlockSetting(openingState?: boolean): void {
     if (!this.Editor.BlockManager.currentBlockIndex) {
       _.logLabeled('Could\'t toggle the Block Settings because there is no block selected ', 'warn');
 
@@ -244,16 +244,15 @@ export default class BlocksAPI extends Module {
     }
 
     if (!this.Editor.Toolbar.opened) {
-      this.Editor.BlockManager.currentBlock.focused = true;
       this.Editor.Toolbar.open(true, false);
       this.Editor.Toolbar.plusButton.hide();
     }
 
-    /** Check that state is set or not */
-    const canOpenBlockSettings = (state !== undefined) ? state : !this.Editor.BlockSettings.opened;
+    /** Check that opening state is set or not */
+    const canOpenBlockSettings = (openingState !== undefined) ? openingState : !this.Editor.BlockSettings.opened;
 
     /** Check if state same as current state */
-    if (state !== undefined && state === this.Editor.BlockSettings.opened) {
+    if (openingState !== undefined && openingState === this.Editor.BlockSettings.opened) {
       return;
     }
 
@@ -261,7 +260,6 @@ export default class BlocksAPI extends Module {
       this.Editor.BlockSettings.open();
     } else {
       this.Editor.BlockSettings.close();
-      this.Editor.BlockManager.currentBlock.selected = false;
     }
   }
 }

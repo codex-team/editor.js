@@ -101,7 +101,7 @@ export interface Blocks {
 
   /**
    * Toggles BlockSetting of Current Focused Elements
-   * @param {boolean} state — Forced State of Toggle
+   * @param {boolean} openingState —  opening state of Toggle
    */
-  toggleBlockSetting(state?: boolean): void;
+  toggleBlockSetting(openingState?: boolean): void;
 }
