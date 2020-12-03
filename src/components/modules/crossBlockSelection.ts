@@ -98,6 +98,10 @@ export default class CrossBlockSelection extends Module {
 
     /** close InlineToolbar when Blocks selected */
     this.Editor.InlineToolbar.close();
+
+    nextBlock.holder.scrollIntoView({
+      block: 'nearest',
+    });
   }
 
   /**
