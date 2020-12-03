@@ -47,7 +47,7 @@ function BlockAPI(
      * @returns {boolean}
      */
     get isEmpty(): boolean {
-      return block.isEmpty;
+      return block.isEmpty(true);
     },
 
     /**

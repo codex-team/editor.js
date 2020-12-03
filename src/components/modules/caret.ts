@@ -45,9 +45,11 @@ export default class Caret extends Module {
   /**
    * Get's deepest first node and checks if offset is zero
    *
+   * @param {boolean} ignoreSpaces - ignore spaces on the left
+   *
    * @returns {boolean}
    */
-  public get isAtStart(): boolean {
+  public isAtStart(ignoreSpaces: boolean): boolean {
     const selection = Selection.get();
     const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
     let focusNode = selection.focusNode;
@@ -69,7 +71,7 @@ export default class Caret extends Module {
      * @type {number}
      */
 
-    let firstLetterPosition = focusNode.textContent.search(/\S/);
+    let firstLetterPosition = ignoreSpaces ? focusNode.textContent.search(/\S/) : 0;
 
     if (firstLetterPosition === -1) { // empty text
       firstLetterPosition = 0;
@@ -103,7 +105,7 @@ export default class Caret extends Module {
      *     |adaddad         <-- focus node
      * </div>
      */
-    if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
+    if (firstNode && ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode, true))) {
       const leftSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'left');
       const nothingAtLeft = leftSiblings.every((node) => {
         /**
@@ -119,7 +121,7 @@ export default class Caret extends Module {
         const lineBreakInSafari = node.children.length === 1 && $.isLineBreakTag(node.children[0] as HTMLElement);
         const isLineBreak = regularLineBreak || lineBreakInSafari;
 
-        return $.isEmpty(node) && !isLineBreak;
+        return $.isEmpty(node, true) && !isLineBreak;
       });
 
       if (nothingAtLeft && focusOffset === firstLetterPosition) {
@@ -137,9 +139,11 @@ export default class Caret extends Module {
   /**
    * Get's deepest last node and checks if offset is last node text length
    *
+   * @param {boolean} ignoreSpaces - ignore spaces on the right
+   *
    * @returns {boolean}
    */
-  public get isAtEnd(): boolean {
+  public isAtEnd(ignoreSpaces: boolean): boolean {
     const selection = Selection.get();
     let focusNode = selection.focusNode;
 
@@ -183,7 +187,7 @@ export default class Caret extends Module {
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      * </div>
      */
-    if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
+    if (lastNode && ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode, true))) {
       const rightSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'right');
       const nothingAtRight = rightSiblings.every((node, i) => {
         /**
@@ -191,7 +195,7 @@ export default class Caret extends Module {
          */
         const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
 
-        return isLastBR || ($.isEmpty(node) && !$.isLineBreakTag(node));
+        return isLastBR || ($.isEmpty(node, true) && !$.isLineBreakTag(node));
       });
 
       if (nothingAtRight && focusOffset === focusNode.textContent.length) {
@@ -205,13 +209,13 @@ export default class Caret extends Module {
      * Why not regular .trim():
      *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
      */
-    const rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
+    const text = ignoreSpaces ? lastNode.textContent.replace(/\s+$/, '') : lastNode.textContent;
 
     /**
      * We use >= comparison for case:
      * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
      */
-    return focusNode === lastNode && focusOffset >= rightTrimmedText.length;
+    return focusNode === lastNode && focusOffset >= text.length;
   }
 
   /**
@@ -333,7 +337,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
+    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty(true)) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -396,7 +400,6 @@ export default class Caret extends Module {
     const { BlockManager, Tools } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
-    const isAtEnd = this.isAtEnd;
 
     let nextBlock = nextContentfulBlock;
 
@@ -411,7 +414,7 @@ export default class Caret extends Module {
        * 2. If there is a last block and it is non-default --> and caret not at the end <--, do nothing
        *    (https://github.com/codex-team/editor.js/issues/1414)
        */
-      if (Tools.isDefault(currentBlock.tool) || !isAtEnd) {
+      if (Tools.isDefault(currentBlock.tool) || !this.isAtEnd(false)) {
         return false;
       }
 
@@ -422,7 +425,7 @@ export default class Caret extends Module {
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    if (force || isAtEnd) {
+    if (force || this.isAtEnd(false)) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock, this.positions.START);
@@ -458,7 +461,7 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force || this.isAtStart) {
+    if (force || this.isAtStart(false)) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
         this.setToBlock(previousContentfulBlock, this.positions.END);

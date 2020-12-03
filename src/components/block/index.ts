@@ -366,9 +366,10 @@ export default class Block {
    * Check block for emptiness
    *
    * @returns {boolean}
+   * @param ignoreSpaces - ignore whitespace from both ends
    */
-  public get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent);
+  public isEmpty(ignoreSpaces: boolean): boolean {
+    const emptyText = $.isEmpty(this.pluginsContent, ignoreSpaces);
     const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
