@@ -1,3 +1,5 @@
+type Option = boolean | { [attr: string]: boolean | string };
+
 export interface SanitizerConfig {
   /**
    * Tag name and params not to be stripped off
@@ -31,5 +33,5 @@ export interface SanitizerConfig {
    *   }
    * }
    */
-  [key: string]: boolean|{[attr: string]: boolean|string}|((el?: Element) => any);
+  [key: string]: Option | ((el: Element) => Option);
 }
