@@ -686,10 +686,13 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Dispatch `removed` lifecycle hooks
    * Cleans up all the block tools' resources
    * This is called when editor is destroyed
    */
   public async destroy(): Promise<void> {
+    this.removeAllBlocks();
+
     await Promise.all(this.blocks.map((block) => {
       if (_.isFunction(block.tool.destroy)) {
         return block.tool.destroy();
