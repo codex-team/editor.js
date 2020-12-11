@@ -144,6 +144,7 @@ export default class Tools extends Module {
       SANITIZE_CONFIG: 'sanitize',
       CONVERSION_CONFIG: 'conversionConfig',
       IS_READ_ONLY_SUPPORTED: 'isReadOnlySupported',
+      IS_PREVENT_DEFAULT_SUPPORTED: 'isPreventDefaultSupported',
     };
   }
 
@@ -404,6 +405,15 @@ export default class Tools extends Module {
    */
   public isReadOnlySupported(tool: BlockToolConstructable): boolean {
     return tool[this.INTERNAL_SETTINGS.IS_READ_ONLY_SUPPORTED] === true;
+  }
+
+  /**
+   * Returns true if tool supports prevent-default mode
+   *
+   * @param tool - tool to check
+   */
+  public isPreventDefaultSupported(tool: BlockToolConstructable): boolean {
+    return tool[this.INTERNAL_SETTINGS.IS_PREVENT_DEFAULT_SUPPORTED] === true;
   }
 
   /**

@@ -1,8 +1,8 @@
 import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
 import { BlockToolData } from './block-tool-data';
-import {BaseTool, BaseToolConstructable} from './tool';
+import { BaseTool, BaseToolConstructable } from './tool';
 import { ToolConfig } from './tool-config';
-import {API, BlockAPI} from '../index';
+import { API, BlockAPI } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
 
@@ -121,6 +121,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Is Tool supports read-only mode, this property should return true
    */
   isReadOnlySupported?: boolean;
+
+  /**
+  * Is Tool prevent default event of editor.js, this property should return true
+  */
+  isPreventDefaultSupported?: boolean;
 
   /**
    * @constructor
