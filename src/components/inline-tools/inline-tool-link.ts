@@ -331,7 +331,7 @@ export default class LinkInlineTool implements InlineTool {
     /**
      * Don't allow spaces
      */
-    return !/\s/.test(str);
+    return !(/\s/.test(str) || str.length === 0);
   }
 
   /**
