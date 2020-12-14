@@ -117,15 +117,15 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    */
   conversionConfig?: ConversionConfig;
 
-  /**
+  /** 
    * Is Tool supports read-only mode, this property should return true
    */
   isReadOnlySupported?: boolean;
 
   /**
-  * Is Tool prevent default event of editor.js, this property should return true
+  * Is Tool handles the default event explicitly,this property should return true 
   */
-  isPreventDefaultSupported?: boolean;
+  preventDefaultEvents?: boolean;
 
   /**
    * @constructor

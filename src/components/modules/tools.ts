@@ -144,7 +144,7 @@ export default class Tools extends Module {
       SANITIZE_CONFIG: 'sanitize',
       CONVERSION_CONFIG: 'conversionConfig',
       IS_READ_ONLY_SUPPORTED: 'isReadOnlySupported',
-      IS_PREVENT_DEFAULT_SUPPORTED: 'isPreventDefaultSupported',
+      PREVENT_DEFAULT_EVENTS: 'preventDefaultEvents',
     };
   }
 
@@ -408,12 +408,12 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns true if tool supports prevent-default mode
+   * Returns true if tool Is Tool handles the default event explicitly
    *
    * @param tool - tool to check
    */
-  public isPreventDefaultSupported(tool: BlockToolConstructable): boolean {
-    return tool[this.INTERNAL_SETTINGS.IS_PREVENT_DEFAULT_SUPPORTED] === true;
+  public preventDefaultEvents(tool: BlockToolConstructable): boolean {
+    return tool[this.INTERNAL_SETTINGS.PREVENT_DEFAULT_EVENTS] === true;
   }
 
   /**

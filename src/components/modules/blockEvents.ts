@@ -17,11 +17,11 @@ export default class BlockEvents extends Module {
    */
   public keydown(event: KeyboardEvent): void {
     /**
-     * return if isPreventDefaultSupported is true
+     * return if PREVENT_DEFAULT_EVENTS is supported by Tool
      */
     const tool = this.Editor.BlockManager.currentBlock.class;
 
-    if (this.Editor.Tools.isPreventDefaultSupported(tool)) {
+    if (tool[this.Editor.Tools.INTERNAL_SETTINGS.PREVENT_DEFAULT_EVENTS]) {
       return;
     }
     /**
