@@ -1,6 +1,6 @@
 # Changelog
 ### 2.19.2
-- `New` - Toolbar toggle API added [#1442](https://github.com/codex-team/editor.js/issues/1421). 
+- `New` -  Toggle API for Block Setting added [#1442](https://github.com/codex-team/editor.js/issues/1421). 
 
 ### 2.19.1
 
