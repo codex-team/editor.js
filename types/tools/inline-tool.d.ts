@@ -43,6 +43,7 @@ export interface InlineTool extends BaseTool {
  */
 export interface InlineToolConstructorOptions {
   api: API;
+  data?: undefined;
   config?: ToolConfig;
 }
 
