@@ -380,6 +380,53 @@ export default class BlockEvents extends Module {
       });
   }
 
+  private scanFromLeftToRight(parentIndex: number, parentX: number, x: number, node: Node) {
+    if (node instanceof Text){
+      const range = document.createRange();
+
+      let prevX = parentX;
+
+      for(let index = 0; index < node.length; index++) {
+        range.setStart(node, index);
+
+        const rect = range.getBoundingClientRect();
+
+        if (Math.abs(x - prevX) < Math.abs(x - rect.x)) {
+          return {
+            index: parentIndex + index
+          };
+        }
+
+        prevX = rect.x;
+      }
+
+      return {
+        index: parentIndex + node.length,
+        prevX
+      };
+    }else {
+      let prevX = parentX;
+      let index = parentIndex;
+  
+      for (const child of Array.from(node.childNodes)) {
+        // TODO: any
+        const result = this.scanFromLeftToRight(index, prevX, x, child);
+  
+        if (result.prevX === undefined) {
+          return result;
+        }
+  
+        prevX = result.prevX;
+        index = result.index;
+      }
+
+      return {
+        index,
+        prevX
+      }
+    }
+  }
+
   /**
    * Handle right and down keyboard keys
    *
@@ -411,8 +458,34 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const navigateNext = event.keyCode === _.keyCodes.DOWN || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
-    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
+    let isNavigated = false;
+
+    if (event.keyCode === _.keyCodes.DOWN) {
+      // TODO: use editor.js API
+      const selectionRect = window.getSelection()?.getRangeAt(0).getBoundingClientRect();
+      const {BlockManager, Caret} = this.Editor;
+      const { currentBlock, nextContentfulBlock } = BlockManager;
+
+      const nextInput = currentBlock.nextInput ?? nextContentfulBlock?.firstInput;
+
+      if (nextInput){
+        const {index} = this.scanFromLeftToRight(0, Number.MAX_VALUE, selectionRect.x, nextInput);
+
+        // TODO: index munus 1
+        Caret.setToInput(nextInput, Caret.positions.DEFAULT, index);
+        currentBlock.updateCurrentInput();;
+
+        isNavigated = true;
+      }else {
+        // insert new block and navigate
+      }
+    } /*else if (event.keyCode === _.keyCodes.UP) {
+      isNavigated = true;
+    }*/ else if ((event.keyCode === _.keyCodes.RIGHT) !== this.isRtl) {
+      isNavigated = this.Editor.Caret.navigateNext();
+    } else {
+      isNavigated = this.Editor.Caret.navigatePrevious();
+    }
 
     if (isNavigated) {
       /**
