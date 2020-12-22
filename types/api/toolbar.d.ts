@@ -16,5 +16,5 @@ export interface Toolbar {
    * Toggles Block Setting of Current Focused Elements
    * @param {boolean} openingState —  opening state of Block Setting
    */
-  toggleBlockSetting(openingState?: boolean): void;
+  toggleBlockSettings(openingState?: boolean): void;
 }

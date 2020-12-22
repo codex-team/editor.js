@@ -15,7 +15,7 @@ export default class ToolbarAPI extends Module {
     return {
       close: (): void => this.close(),
       open: (): void => this.open(),
-      toggleBlockSetting: (openingState?: boolean): void => this.toggleBlockSetting(openingState),
+      toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
     };
   }
 
@@ -38,7 +38,7 @@ export default class ToolbarAPI extends Module {
    *
    * @param {boolean} openingState —  opening state of Block Setting
    */
-  public toggleBlockSetting(openingState?: boolean): void {
+  public toggleBlockSettings(openingState?: boolean): void {
     if (!this.Editor.BlockManager.currentBlockIndex) {
       _.logLabeled('Could\'t toggle the Toolbar because there is no block selected ', 'warn');
 
