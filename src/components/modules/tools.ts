@@ -408,15 +408,6 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns true if the Tool decide to handle key downs manually
-   *
-   * @param tool - tool to check
-   */
-  public isDefaultEventsPrevented(tool: BlockToolConstructable): boolean {
-    return tool[this.INTERNAL_SETTINGS.PREVENT_DEFAULT_EVENTS] === true;
-  }
-
-  /**
    * Calls each Tool reset method to clean up anything set by Tool
    */
   public destroy(): void {
