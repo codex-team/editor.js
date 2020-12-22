@@ -13,7 +13,6 @@ import RawTool from './../../../example/tools/raw/dist/bundle.js';
 import Embed from './../../../example/tools/embed/dist/bundle.js';
 import Table from './../../../example/tools/table/dist/bundle.js';
 
-
 describe('inlineToolbar property', () => {
   const editorConfig = {
     tools: {
@@ -34,20 +33,15 @@ describe('inlineToolbar property', () => {
     },
   };
 
-
   describe('default configuration', () => {
-    beforeEach(() => {
-      if (this.editorInstance) {
-        this.editorInstance.destroy();
-      } else {
-        cy.createEditor(editorConfig).as('editorInstance');
-      }
+    before(() => {
+      cy.createEditor(editorConfig).as('editorInstance');
     });
 
     it('should show only enabled tools with proper order', () => {
       cy.get('[data-cy=editorjs]')
         .get('div.codex-editor')
-        .should('be.visible');
+        .dblclick();
     });
   });
 
