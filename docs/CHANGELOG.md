@@ -1,5 +1,7 @@
 # Changelog
 
+- `Fix` - Fix unstable block cut process [#1489](https://github.com/codex-team/editor.js/issues/1489).
+
 ### 2.19.1
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
