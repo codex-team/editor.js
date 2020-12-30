@@ -31,5 +31,5 @@ export interface SanitizerConfig {
    *   }
    * }
    */
-  [key: string]: boolean|{[attr: string]: boolean|string}|((el: any) => any);
+  [key: string]: boolean|{[attr: string]: boolean|string}|((el?: any) => any);
 }
