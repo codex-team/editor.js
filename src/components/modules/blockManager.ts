@@ -219,11 +219,12 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+  public composeBlock({ tool, id = _.generateUuidv4(), data = {} }: {tool: string; id?: string; data?: BlockToolData}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const settings = this.Editor.Tools.getToolSettings(tool);
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
+      id,
       name: tool,
       data,
       Tool,
@@ -252,12 +253,14 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
+    id = _.generateUuidv4(),
     tool = this.config.defaultBlock,
     data = {},
     index,
     needToFocus = true,
     replace = false,
   }: {
+    id?: string;
     tool?: string;
     data?: BlockToolData;
     index?: number;
@@ -271,6 +274,7 @@ export default class BlockManager extends Module {
     }
 
     const block = this.composeBlock({
+      id,
       tool,
       data,
     });

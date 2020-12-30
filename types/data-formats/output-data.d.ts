@@ -5,6 +5,10 @@ import {BlockToolData} from '../tools';
  */
 export interface OutputBlockData {
   /**
+   * Unique Id of the block
+   */
+  id?: string;
+  /**
    * Too type
    */
   type: string;

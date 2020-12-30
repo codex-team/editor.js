@@ -8,6 +8,11 @@ export interface BlockAPI {
   /**
    * Tool name
    */
+  readonly id: string;
+
+  /**
+   * Tool name
+   */
   readonly name: string;
 
   /**
