@@ -81,7 +81,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({ tool, data, tunes, time, isValid }) => {
+    allExtractedData.forEach(({ id, tool, data, tunes, time, isValid }) => {
       totalTime += time;
 
       /**
@@ -108,6 +108,7 @@ export default class Saver extends Module {
       }
 
       const output = {
+        id,
         type: tool,
         data,
         ...!_.isEmpty(tunes) && {

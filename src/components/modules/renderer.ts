@@ -23,12 +23,14 @@ export default class Renderer extends Module {
    *
    * blocks: [
    *   {
+   *     id   : 'eab2b1cd-a3d3-48d1-aadb-bd821d8ec871',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Hello from Codex!'
    *     }
    *   },
    *   {
+   *     id   : '391a1351-6ec6-473b-8b99-b20507e2d4c2',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Leave feedback if you like it!'
@@ -64,11 +66,12 @@ export default class Renderer extends Module {
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
-    const { type: tool, data, tunes } = item;
+    const { type: tool, data, tunes, id } = item;
 
     if (Tools.available.has(tool)) {
       try {
         BlockManager.insert({
+          id,
           tool,
           data,
           tunes,
@@ -81,6 +84,7 @@ export default class Renderer extends Module {
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {
+          id,
           type: tool,
           data,
         },
@@ -94,6 +98,7 @@ export default class Renderer extends Module {
       }
 
       const stub = BlockManager.insert({
+        id,
         tool: Tools.stubTool,
         data: stubData,
       });
