@@ -1,6 +1,6 @@
 # Editor.js specs
 
-This document will describe various test cases of the editor.js functionality. Features will be organized by modules. Cases covered by tests should be marked by the check mark.
+This document will describe various test cases of editor.js functionality. Features will be organized by modules. Cases covered by tests should be marked by the checkmark.
 
 ## Configuration
 
