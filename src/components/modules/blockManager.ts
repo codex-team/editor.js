@@ -560,10 +560,8 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    *  @param {Node} childNode - look ahead from this node.
-   *
-   *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node): Block {
+  public setCurrentBlockByChildNode(childNode: Node): Block | undefined {
     /**
      * If node is Text TextNode
      */
@@ -573,23 +571,23 @@ export default class BlockManager extends Module {
 
     const parentFirstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
 
-    if (parentFirstLevelBlock) {
-      /**
-       * Update current Block's index
-       *
-       * @type {number}
-       */
-      this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
-
-      /**
-       * Update current block active input
-       */
-      this.currentBlock.updateCurrentInput();
-
-      return this.currentBlock;
-    } else {
-      throw new Error('Can not find a Block from this child Node');
+    if (!parentFirstLevelBlock?.closest(`.${this.Editor.UI.CSS.editorWrapper}`)?.isEqualNode(this.Editor.UI.nodes.wrapper)) {
+      return;
     }
+
+    /**
+     * Update current Block's index
+     *
+     * @type {number}
+     */
+    this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+
+    /**
+     * Update current block active input
+     */
+    this.currentBlock.updateCurrentInput();
+
+    return this.currentBlock;
   }
 
   /**
