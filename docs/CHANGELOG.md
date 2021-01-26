@@ -1,4 +1,5 @@
 # Changelog
+
 ### 2.19.2
 
 - `New` -  `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421). 

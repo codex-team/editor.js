@@ -13,7 +13,7 @@ export interface Toolbar {
   open(): void;
 
   /**
-   * Toggles Block Setting of Current Focused Elements
+   * Toggles Block Setting of the current block
    * @param {boolean} openingState —  opening state of Block Setting
    */
   toggleBlockSettings(openingState?: boolean): void;
