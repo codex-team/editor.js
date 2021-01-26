@@ -1,4 +1,8 @@
-type Option = boolean | { [attr: string]: boolean | string };
+/**
+ * Sanitizer config of each HTML element
+ * @see {@link https://github.com/guardian/html-janitor#options}
+ */
+type TagConfig = boolean | { [attr: string]: boolean | string };
 
 export interface SanitizerConfig {
   /**
@@ -33,5 +37,5 @@ export interface SanitizerConfig {
    *   }
    * }
    */
-  [key: string]: Option | ((el: Element) => Option);
+  [key: string]: TagConfig | ((el: Element) => TagConfig);
 }
