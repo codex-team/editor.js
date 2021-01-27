@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.19.2
+
+- `Improvements` - Add a generic type to ToolSettings [#1516](https://github.com/codex-team/editor.js/issues/1516)
+
+
 ### 2.19.1
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
