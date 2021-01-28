@@ -44,6 +44,7 @@ export {
   BlockToolConstructorOptions,
   BlockTool,
   BlockToolData,
+  DefaultBlockToolData,
   Tool,
   ToolConstructable,
   ToolboxConfig,

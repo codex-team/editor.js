@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolConstructable, BlockToolData, DefaultBlockToolData, PasteEvent } from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -482,10 +482,7 @@ export default class BlockManager extends Module {
 
     wrapper.appendChild(extractedFragment as DocumentFragment);
 
-    /**
-     * @todo make object in accordance with Tool
-     */
-    const data = {
+    const data: DefaultBlockToolData = {
       text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
     };
 
