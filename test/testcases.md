@@ -43,16 +43,17 @@ This document will describe various test cases of the editor.js functionality. F
 
 - [ ] `defaultBlock` property
   - [ ] If `string` passed
-    - [ ] If passed `string` in tools,the passed tool should be used as default tool.
-    - [ ] If passed `string` not in tools,the Paragraph tool should be used as default tool.
+    - [ ] If passed `string` in the `tools` option, the passed tool should be used as the default tool.
+    - [ ] If passed `string` not in the `tools` option, the Paragraph tool should be used as the default tool.
   - [ ] If omitted the Paragraph tool should be used as default tool.
 
 - [ ] `sanitizer` property
   - [ ] If `object` passed
-    -[ ] The Editor.js should be clean the HTML tag according to mentioned configuration.
-  - [ ] If omitted the Editor.js should be initialize with default `sanitizer` configuration, which allow the tags like `paragraph`, `anchor` and `bold` for cleanning HTML.
+    - [ ] The Editor.js should clean the HTML tags according to mentioned configuration.
+  - [ ] If omitted the Editor.js should be initialized with the default `sanitizer` configuration, which allows the tags like `paragraph`, `anchor`, and `bold` for cleaning HTML.
   
 - [ ] `tools` property
   - [ ] If `object` passed
-    -[ ] Editor.js should be initialized with the Passed tools only.
-  - [ ] If omitted Editor.js should be initialized with the Paragraph tool only.
+    - [ ] Editor.js should be initialized with the Passed tools only.
+  - [ ] If omitted 
+    - [ ] Editor.js should be initialized with the Paragraph tool only.
