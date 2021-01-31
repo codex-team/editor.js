@@ -388,44 +388,25 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
+   * @param {boolean} isDownPressed - Is Down key pressed
+   *
    * @returns {boolean}
    */
-  public navigateNext(): boolean {
-    const { BlockManager, Tools } = this.Editor;
-    const { currentBlock, nextContentfulBlock } = BlockManager;
-    const { nextInput } = currentBlock;
-    const isAtEnd = this.isAtEnd;
+  public navigateNext(isDownPressed: boolean): boolean {
+    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isNextLineExisted());
+    const next = shouldNavigateToNext && this.detectNext();
 
-    let nextBlock = nextContentfulBlock;
+    if (next) {
+      const offset = isDownPressed ? next.downOffset : 0;
+      const position = offset === undefined ? this.positions.END : this.positions.DEFAULT;
 
-    if (!nextBlock && !nextInput) {
-      /**
-       * This code allows to exit from the last non-initial tool:
-       * https://github.com/codex-team/editor.js/issues/1103
-       */
-
-      /**
-       * 1. If there is a last block and it is default, do nothing
-       * 2. If there is a last block and it is non-default --> and caret not at the end <--, do nothing
-       *    (https://github.com/codex-team/editor.js/issues/1414)
-       */
-      if (Tools.isDefault(currentBlock.tool) || !isAtEnd) {
-        return false;
-      }
-
-      /**
-       * If there is no nextBlock, but currentBlock is not default,
-       * insert new default block at the end and navigate to it
-       */
-      nextBlock = BlockManager.insertAtEnd();
-    }
-
-    if (isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
-      if (!nextInput) {
-        this.setToBlock(nextBlock, this.positions.START);
+      if (next.nextInput) {
+        // TODO: It may be have a bug with ignore inline tags
+        this.setToInput(next.nextInput, position, offset);
       } else {
-        this.setToInput(nextInput, this.positions.START);
+        // TODO: It may be have a bug with ignore inline tags
+        this.setToBlock(next.nextBlock, position, offset);
       }
 
       return true;
@@ -549,6 +530,73 @@ export default class Caret extends Module {
   }
 
   /**
+   * TODO: JSDoc
+   * TODO: specify return type
+   */
+  private detectNext() {
+    const { BlockManager, Tools } = this.Editor;
+
+    const nextInput = BlockManager.currentBlock.nextInput;
+    let nextBlock = BlockManager.nextContentfulBlock;
+
+    if (!nextBlock && !nextInput) {
+      /**
+       * If there is a last block and it is default, do nothing
+       * This code allows to exit from the last non-initial tool:
+       * https://github.com/codex-team/editor.js/issues/1103
+       */
+      if (Tools.isDefault(BlockManager.currentBlock.tool)) {
+        return false;
+      }
+
+      /**
+       * If there is no nextBlock, but currentBlock is not default,
+       * insert new default block at the end and navigate to it
+       */
+      nextBlock = BlockManager.insertAtEnd();
+    }
+
+    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+      .getBoundingClientRect();
+    const range = new Range();
+    const treeWalker = document.createTreeWalker(nextInput ?? nextBlock.firstInput, NodeFilter.SHOW_TEXT);
+
+    let node = treeWalker.firstChild();
+    let offset = 0;
+    let prevX: number | undefined;
+
+    while (node) {
+      if (!(node instanceof Text)) {
+        throw new Error('Unexpected node type');
+      }
+
+      for (let index = 0; index < node.length; index++) {
+        range.setStart(node, index);
+
+        const boundingClientRect = range.getBoundingClientRect();
+
+        if (prevX !== undefined && Math.abs(currentBoundingClientRect.x - prevX) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)) {
+          return {
+            nextBlock,
+            nextInput,
+            downOffset: offset - 1,
+          };
+        }
+
+        offset++;
+        prevX = boundingClientRect.x;
+      }
+
+      node = treeWalker.nextNode();
+    }
+
+    return {
+      nextBlock,
+      nextInput,
+    };
+  }
+
+  /**
    * Get all first-level (first child of [contenteditabel]) siblings from passed node
    * Then you can check it for emptiness
    *
@@ -590,5 +638,39 @@ export default class Caret extends Module {
     }
 
     return siblings;
+  }
+
+  /**
+   * TODO: JSDoc
+   */
+  private isNextLineExisted(): boolean {
+    const { BlockManager } = this.Editor;
+
+    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+      .getBoundingClientRect();
+    const range = new Range();
+    const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
+
+    let node = treeWalker.firstChild();
+
+    while (node) {
+      if (!(node instanceof Text)) {
+        throw new Error('Unexpected node type');
+      }
+
+      for (let index = 0; index < node.length; index++) {
+        range.setStart(node, index);
+
+        const boundingClientRect = range.getBoundingClientRect();
+
+        if (currentBoundingClientRect.y < boundingClientRect.y) {
+          return true;
+        }
+      }
+
+      node = treeWalker.nextNode();
+    }
+
+    return false;
   }
 }
