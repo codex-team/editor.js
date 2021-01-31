@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.19.2
+
+- `Fix` - Remove force options in Caret.navigateNext() and Caret.navigatePrevious() [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
+
+
 ### 2.19.1
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
