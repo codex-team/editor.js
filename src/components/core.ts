@@ -1,6 +1,6 @@
 import $ from './dom';
 import * as _ from './utils';
-import { EditorConfig, SanitizerConfig } from '../../types';
+import { DefaultBlockToolData, EditorConfig, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
@@ -169,15 +169,19 @@ export default class Core {
      */
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
+    const defaultBlockToolData: DefaultBlockToolData = {
+      text: '',
+    };
+
     /**
      * Default block type
      * Uses in case when there is no blocks passed
      *
-     * @type {{type: (*), data: {text: null}}}
+     * @type {{type: (*), data: DefaultBlockToolData}}
      */
     const defaultBlockData = {
       type: this.config.defaultBlock,
-      data: {},
+      data: defaultBlockToolData,
     };
 
     this.config.placeholder = this.config.placeholder || false;
