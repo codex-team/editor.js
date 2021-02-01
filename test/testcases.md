@@ -26,20 +26,20 @@ This document will describe various test cases of the editor.js functionality. F
 
 - [ ] `placeholder` property
   - [ ] With the empty editor
-    - [ ] If `string` passed, the string should be placed as placeholder to the first empty block only.
+    - [ ] If `string` passed, the string should be placed as a placeholder to the first empty block only.
     - [ ] If `false` passed, the first empty block should be placed without placeholder.
     - [ ] If omitted the first empty block should be placed without placeholder.
 
 - [ ] `minHeight` property
-    - [ ] If `number` passed, the height of editor's bottom area from last Block should be the `number`.
-    - [ ] If omitted the height of editor's bottom area from last Block should be the default `300`.
+    - [ ] If `number` passed, the height of the editor's bottom area from the last Block should be the `number`.
+    - [ ] If omitted the height of editor's bottom area from the last Block should be the default `300`.
 
 - [ ] `logLevel` property
-  - [ ] If `VERBOSE` passed,the editor should outputs all messages to the console.
-  - [ ] If `INFO` passed,the editor should outputs info and debug messages to the console.
-  - [ ] If `WARN` passed,the editor should outputs only warn messages to the console.
-  - [ ] If `ERROR` passed,the editor should outputs only error messages to the console.
-  - [ ] If omitted the editor should outputs all messages to the console.
+  - [ ] If `VERBOSE` passed, the editor should output all messages to the console.
+  - [ ] If `INFO` passed, the editor should output info and debug messages to the console.
+  - [ ] If `WARN` passed, the editor should output only warning messages to the console.
+  - [ ] If `ERROR` passed, the editor should output only error messages to the console.
+  - [ ] If omitted the editor should output all messages to the console.
 
 - [ ] `defaultBlock` property
   - [ ] If `string` passed
