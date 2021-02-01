@@ -252,7 +252,6 @@ export default class Caret extends Module {
         offset = 0;
         break;
       case position === this.positions.END:
-      case offset > contentLength:
         offset = contentLength;
         break;
     }
@@ -261,7 +260,7 @@ export default class Caret extends Module {
      * @todo try to fix via Promises or use querySelectorAll to not to use timeout
      */
     _.delay(() => {
-      this.set(nodeToSet as HTMLElement, offset);
+      this.set(nodeToSet as HTMLElement, offset, element);
     }, 20)();
 
     BlockManager.setCurrentBlockByChildNode(block.holder);
@@ -282,16 +281,16 @@ export default class Caret extends Module {
 
     switch (position) {
       case this.positions.START:
-        this.set(nodeToSet as HTMLElement, 0);
+        this.set(nodeToSet as HTMLElement, 0, input);
         break;
 
       case this.positions.END:
-        this.set(nodeToSet as HTMLElement, $.getContentLength(nodeToSet));
+        this.set(nodeToSet as HTMLElement, $.getContentLength(nodeToSet), input);
         break;
 
       default:
         if (offset) {
-          this.set(nodeToSet as HTMLElement, offset);
+          this.set(nodeToSet as HTMLElement, offset, input);
         }
     }
 
@@ -302,10 +301,26 @@ export default class Caret extends Module {
    * Creates Document Range and sets caret to the element with offset
    *
    * @param {HTMLElement} element - target node.
-   * @param {number} offset - offset
+   * @param {number} offset - offset.
+   * @param {HTMLElement} root - root node. This is nessesary when the offset is larger than the text length.
    */
-  public set(element: HTMLElement, offset = 0): void {
-    const { top, bottom } = Selection.setCursor(element, offset);
+  public set(element: HTMLElement, offset = 0, root: HTMLElement): void {
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+
+    let node = treeWalker.firstChild();
+
+    while (!node.isEqualNode(element)) {
+      node = treeWalker.nextNode();
+    }
+
+    let detectedOffset = offset;
+
+    while ((node as Text).length < detectedOffset) {
+      detectedOffset -= (node as Text).length;
+      node = treeWalker.nextNode();
+    }
+
+    const { top, bottom } = Selection.setCursor(node as HTMLElement, detectedOffset);
 
     /** If new cursor position is not visible, scroll to it */
     const { innerHeight } = window;
@@ -402,10 +417,8 @@ export default class Caret extends Module {
 
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (next.nextInput) {
-        // TODO: It may be have a bug with ignore inline tags
         this.setToInput(next.nextInput, position, offset);
       } else {
-        // TODO: It may be have a bug with ignore inline tags
         this.setToBlock(next.nextBlock, position, offset);
       }
 
@@ -531,9 +544,12 @@ export default class Caret extends Module {
 
   /**
    * TODO: JSDoc
-   * TODO: specify return type
    */
-  private detectNext() {
+  private detectNext(): {
+    nextBlock: Block;
+    nextInput: HTMLElement;
+    downOffset?: number;
+} | false {
     const { BlockManager, Tools } = this.Editor;
 
     const nextInput = BlockManager.currentBlock.nextInput;
