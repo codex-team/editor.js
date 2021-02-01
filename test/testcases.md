@@ -55,5 +55,34 @@ This document will describe various test cases of the editor.js functionality. F
 - [ ] `tools` property
   - [ ] If `object` passed
     - [ ] Editor.js should be initialized with the Passed tools only.
+    - [ ] If `name` property
+      - [ ] Editor.js JSON formate should includes `name` as `type` in block data for mentioned `tool`.
+      - [ ] If `class` property
+        - [ ] Editor.js should initialized the `tool` with it's default Settings.
+      - [ ] If `object` property
+        - [ ] If `class` property
+          - [ ] If `class` passed
+            - [ ] Editor.js should initialize `tool` with `class`.
+          - [ ] If omitted
+            - [ ] Editor.js should throw the `Error`.
+        - [ ] If `config` property
+          - [ ] If `object` passed
+            - [ ] Editor.js should initialize `tool` with `config`.
+          - [ ] If ommited
+            - [ ] Editor.js should initialize `tool` with default `config`.
+        - [ ] If `shortcut` property
+          - [ ] If `String` passed
+            - [ ] Editor.js should append the `tool` when `String` based shortcut pressed.
+          - [ ] If ommited
+            - [ ] Editor.js should initialize `tool` without any `shortcut`.
+        - [ ] If `inilineToolbar` property
+          - [ ] If `true`
+            - [ ] Editor.js should initialize `tool` with default `inilineToolbar`.
+          - [ ] If `false`
+            - [ ] Editor.js should initialize `tool` without `inilineToolbar`.
+          - [ ] If `array`
+            - [ ] Editor.js should initialize `tool` by overriding default `inlineToolbar`.
+          - [ ] If ommited
+            - [ ] Editor.js should initialize `tool` without `inilineToolbar`.
   - [ ] If omitted 
     - [ ] Editor.js should be initialized with the Paragraph tool only.
