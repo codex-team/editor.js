@@ -579,7 +579,7 @@ export default class Caret extends Module {
 
     let node = treeWalker.firstChild();
     let offset = 0;
-    let prevX: number | undefined;
+    let prevBoundingClientRect: DOMRect | undefined;
 
     while (node) {
       if (!(node instanceof Text)) {
@@ -588,10 +588,14 @@ export default class Caret extends Module {
 
       for (let index = 0; index < node.length; index++) {
         range.setStart(node, index);
+        range.setEnd(node, index + 1);
 
         const boundingClientRect = range.getBoundingClientRect();
 
-        if (prevX !== undefined && Math.abs(currentBoundingClientRect.x - prevX) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)) {
+        if (
+          prevBoundingClientRect &&
+          Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
+        ) {
           return {
             nextBlock,
             nextInput,
@@ -600,7 +604,7 @@ export default class Caret extends Module {
         }
 
         offset++;
-        prevX = boundingClientRect.x;
+        prevBoundingClientRect = boundingClientRect;
       }
 
       node = treeWalker.nextNode();
@@ -639,7 +643,7 @@ export default class Caret extends Module {
 
     let node = treeWalker.lastChild();
     let offset = root.textContent.length - 1;
-    let prevX: number | undefined;
+    let prevBoundingClientRect: DOMRect | undefined;
 
     while (node) {
       if (!(node instanceof Text)) {
@@ -648,10 +652,14 @@ export default class Caret extends Module {
 
       for (let index = node.length - 1; index >= 0; index--) {
         range.setStart(node, index);
+        range.setEnd(node, index + 1);
 
         const boundingClientRect = range.getBoundingClientRect();
 
-        if (prevX !== undefined && Math.abs(currentBoundingClientRect.x - prevX) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)) {
+        if (
+          prevBoundingClientRect &&
+          Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
+        ) {
           return {
             previousBlock,
             previousInput,
@@ -660,7 +668,7 @@ export default class Caret extends Module {
         }
 
         offset--;
-        prevX = boundingClientRect.x;
+        prevBoundingClientRect = boundingClientRect;
       }
 
       node = treeWalker.previousNode();
@@ -738,6 +746,7 @@ export default class Caret extends Module {
 
       for (let index = 0; index < node.length; index++) {
         range.setStart(node, index);
+        range.setEnd(node, index + 1);
 
         const boundingClientRect = range.getBoundingClientRect();
 
@@ -773,6 +782,7 @@ export default class Caret extends Module {
 
       for (let index = node.length - 1; index >= 0; index--) {
         range.setStart(node, index);
+        range.setEnd(node, index + 1);
 
         const boundingClientRect = range.getBoundingClientRect();
 
