@@ -8,11 +8,11 @@
 - `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).
 - `Improvements` - Document will be scrolled when blocks are selected with `SHIFT+UP` or `SHIFT+DOWN` [#1447](https://github.com/codex-team/editor.js/issues/1447)
 - `Improvements` - The caret will be set on editor copy/paste [#1470](https://github.com/codex-team/editor.js/pull/1470)
+- `Improvements` - Vertical caret moving with UP or DOWN key [#857](https://github.com/codex-team/editor.js/issues/857).
 - `Fix` - Fix BlockManager.setCurrentBlockByChildNode() with multiple Editor.js instances [#1503](https://github.com/codex-team/editor.js/issues/1503).
 - `Fix` - Fix an unstable block cut process [#1489](https://github.com/codex-team/editor.js/issues/1489).
 - `Fix` - Type definition of the Sanitizer config: the sanitize function now contains param definition [#1491](https://github.com/codex-team/editor.js/pull/1491).
 - `Fix` - Fix unexpected behavior on an empty link pasting [#1348](https://github.com/codex-team/editor.js/issues/1348).
-- `Fix` - Remove force options in Caret.navigateNext() and Caret.navigatePrevious() [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
 
 ### 2.19.1
 
