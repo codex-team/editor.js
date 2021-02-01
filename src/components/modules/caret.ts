@@ -309,8 +309,12 @@ export default class Caret extends Module {
 
     let node = treeWalker.firstChild();
 
-    while (!node.isEqualNode(element)) {
+    while (node && !node.isEqualNode(element)) {
       node = treeWalker.nextNode();
+    }
+
+    if (!node) {
+      node = element;
     }
 
     let detectedOffset = offset;
@@ -413,13 +417,12 @@ export default class Caret extends Module {
 
     if (next) {
       const offset = isDownPressed ? next.downOffset : 0;
-      const position = offset === undefined ? this.positions.END : this.positions.DEFAULT;
 
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (next.nextInput) {
-        this.setToInput(next.nextInput, position, offset);
+        this.setToInput(next.nextInput, this.positions.DEFAULT, offset);
       } else {
-        this.setToBlock(next.nextBlock, position, offset);
+        this.setToBlock(next.nextBlock, this.positions.DEFAULT, offset);
       }
 
       return true;
@@ -542,8 +545,8 @@ export default class Caret extends Module {
    */
   private detectNext(): {
     nextBlock: Block;
-    nextInput: HTMLElement;
-    downOffset?: number;
+    nextInput?: HTMLElement;
+    downOffset: number;
 } | false {
     const { BlockManager, Tools } = this.Editor;
 
@@ -606,6 +609,7 @@ export default class Caret extends Module {
     return {
       nextBlock,
       nextInput,
+      downOffset: root.textContent.length,
     };
   }
 
@@ -614,8 +618,8 @@ export default class Caret extends Module {
    */
   private detectPrevious(): {
     previousBlock: Block;
-    previousInput: HTMLElement;
-    upOffset?: number;
+    previousInput?: HTMLElement;
+    upOffset: number;
 } | false {
     const { BlockManager } = this.Editor;
 
@@ -665,6 +669,7 @@ export default class Caret extends Module {
     return {
       previousBlock,
       previousInput,
+      upOffset: 0,
     };
   }
 
