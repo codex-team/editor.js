@@ -433,27 +433,22 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
+   * @param {boolean} isUpPressed - Is Up key pressed
+   *
    * @returns {boolean}
    */
-  public navigatePrevious(): boolean {
-    const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
+  public navigatePrevious(isUpPressed: boolean): boolean {
+    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isPreviousLineExisted());
+    const previous = shouldNavigateToPrevious && this.detectPrevious();
 
-    if (!currentBlock) {
-      return false;
-    }
+    if (previous) {
+      const position = isUpPressed ? this.positions.DEFAULT : this.positions.END;
 
-    const { previousInput } = currentBlock;
-
-    if (!previousContentfulBlock && !previousInput) {
-      return false;
-    }
-
-    if (this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
-      if (!previousInput) {
-        this.setToBlock(previousContentfulBlock, this.positions.END);
+      if (previous.previousInput) {
+        this.setToInput(previous.previousInput, position, previous.upOffset);
       } else {
-        this.setToInput(previousInput, this.positions.END);
+        this.setToBlock(previous.previousBlock, position, previous.upOffset);
       }
 
       return true;
@@ -543,7 +538,7 @@ export default class Caret extends Module {
   }
 
   /**
-   * TODO: JSDoc
+   * Detect next position from current position
    */
   private detectNext(): {
     nextBlock: Block;
@@ -574,8 +569,10 @@ export default class Caret extends Module {
 
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
+
     const range = new Range();
-    const treeWalker = document.createTreeWalker(nextInput ?? nextBlock.firstInput, NodeFilter.SHOW_TEXT);
+    const root = nextInput ?? nextBlock.firstInput;
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
     let node = treeWalker.firstChild();
     let offset = 0;
@@ -609,6 +606,65 @@ export default class Caret extends Module {
     return {
       nextBlock,
       nextInput,
+    };
+  }
+
+  /**
+   * Detect previous position from current position
+   */
+  private detectPrevious(): {
+    previousBlock: Block;
+    previousInput: HTMLElement;
+    upOffset?: number;
+} | false {
+    const { BlockManager } = this.Editor;
+
+    const previousInput = BlockManager.currentBlock.previousInput;
+    const previousBlock = BlockManager.previousContentfulBlock;
+
+    if (!previousBlock && !previousInput) {
+      return false;
+    }
+
+    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+      .getBoundingClientRect();
+
+    const range = new Range();
+    const root = previousInput ?? previousBlock.firstInput;
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+
+    let node = treeWalker.lastChild();
+    let offset = root.textContent.length - 1;
+    let prevX: number | undefined;
+
+    while (node) {
+      if (!(node instanceof Text)) {
+        throw new Error('Unexpected node type');
+      }
+
+      for (let index = node.length - 1; index >= 0; index--) {
+        range.setStart(node, index);
+
+        const boundingClientRect = range.getBoundingClientRect();
+
+        if (prevX !== undefined && Math.abs(currentBoundingClientRect.x - prevX) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)) {
+          return {
+            previousBlock,
+            previousInput,
+            upOffset: offset + 1,
+          };
+        }
+
+        offset--;
+        prevX = boundingClientRect.x;
+      }
+
+      node = treeWalker.previousNode();
+    }
+
+    return {
+      previousBlock,
+      previousInput,
     };
   }
 
@@ -657,13 +713,14 @@ export default class Caret extends Module {
   }
 
   /**
-   * TODO: JSDoc
+   * Judge if next line is existed
    */
   private isNextLineExisted(): boolean {
     const { BlockManager } = this.Editor;
 
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
+
     const range = new Range();
     const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
 
@@ -685,6 +742,41 @@ export default class Caret extends Module {
       }
 
       node = treeWalker.nextNode();
+    }
+
+    return false;
+  }
+
+  /**
+   * Judge if previous line is existed
+   */
+  private isPreviousLineExisted(): boolean {
+    const { BlockManager } = this.Editor;
+
+    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+      .getBoundingClientRect();
+
+    const range = new Range();
+    const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
+
+    let node = treeWalker.lastChild();
+
+    while (node) {
+      if (!(node instanceof Text)) {
+        throw new Error('Unexpected node type');
+      }
+
+      for (let index = node.length - 1; index >= 0; index--) {
+        range.setStart(node, index);
+
+        const boundingClientRect = range.getBoundingClientRect();
+
+        if (boundingClientRect.y < currentBoundingClientRect.y) {
+          return true;
+        }
+      }
+
+      node = treeWalker.previousNode();
     }
 
     return false;

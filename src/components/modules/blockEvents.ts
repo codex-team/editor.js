@@ -363,7 +363,7 @@ export default class BlockEvents extends Module {
         return;
       }
 
-      if (Caret.navigatePrevious()) {
+      if (Caret.navigatePrevious(false)) {
         Toolbar.close();
       }
 
@@ -413,7 +413,7 @@ export default class BlockEvents extends Module {
     }
 
     const navigateNext = isDownPressed || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
-    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext(isDownPressed) : this.Editor.Caret.navigatePrevious();
+    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext(isDownPressed) : this.Editor.Caret.navigatePrevious(false);
 
     if (isNavigated) {
       /**
@@ -462,16 +462,17 @@ export default class BlockEvents extends Module {
     this.Editor.BlockManager.clearFocused();
     this.Editor.Toolbar.close();
 
+    const isUpPressed = event.keyCode === _.keyCodes.UP;
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
-    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+    if (event.shiftKey && isUpPressed && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
 
       return;
     }
 
-    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
-    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext(false);
+    const navigatePrevious = isUpPressed || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
+    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious(isUpPressed) : this.Editor.Caret.navigateNext(false);
 
     if (isNavigated) {
       /**
