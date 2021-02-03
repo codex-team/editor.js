@@ -1,5 +1,7 @@
 # Changelog
 
+- `New` - Prevent default actions of Editor.js in Tool using `preventDefeaultEvent` Getter [#1433](https://github.com/codex-team/editor.js/issues/1433)
+
 ### 2.19.1
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
