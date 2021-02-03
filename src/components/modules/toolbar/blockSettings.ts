@@ -173,8 +173,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Remove highlighted content of a Block we are working with
      */
-    this.Editor.BlockManager.currentBlock.selected = false;
-
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.currentBlock.selected = false;
+    }
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';

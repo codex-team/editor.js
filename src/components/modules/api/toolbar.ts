@@ -39,26 +39,25 @@ export default class ToolbarAPI extends Module {
    * @param {boolean} openingState —  opening state of Block Setting
    */
   public toggleBlockSettings(openingState?: boolean): void {
-    if (!this.Editor.BlockManager.currentBlockIndex) {
+    if (this.Editor.BlockManager.currentBlockIndex === -1) {
       _.logLabeled('Could\'t toggle the Toolbar because there is no block selected ', 'warn');
 
       return;
     }
 
-    if (!this.Editor.Toolbar.opened) {
-      this.Editor.Toolbar.open(true, false);
-      this.Editor.Toolbar.plusButton.hide();
-    }
-
     /** Check that opening state is set or not */
-    const canOpenBlockSettings = (openingState !== undefined) ? openingState : !this.Editor.BlockSettings.opened;
+    const canOpenBlockSettings = openingState ?? !this.Editor.BlockSettings.opened;
 
     /** Check if state same as current state */
-    if (openingState !== undefined && openingState === this.Editor.BlockSettings.opened) {
+    if (openingState === this.Editor.BlockSettings.opened) {
       return;
     }
 
     if (canOpenBlockSettings) {
+      if (!this.Editor.Toolbar.opened) {
+        this.Editor.Toolbar.open(true, false);
+        this.Editor.Toolbar.plusButton.hide();
+      }
       this.Editor.BlockSettings.open();
     } else {
       this.Editor.BlockSettings.close();
