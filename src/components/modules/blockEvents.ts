@@ -17,7 +17,7 @@ export default class BlockEvents extends Module {
    */
   public keydown(event: KeyboardEvent): void {
     /**
-     * return if default actions of editor.js should be disabled by Tool
+     * Return if the default actions of the Editor.js is disabled
      */
     const tool = this.Editor.BlockManager.currentBlock.class;
 

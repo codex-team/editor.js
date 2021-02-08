@@ -123,7 +123,7 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   isReadOnlySupported?: boolean;
 
   /**
-  * This property should return true,if default actions of editor.js should be disabled by Tool 
+  * Set to true, To disable the default actions of the Editor.js For Tool
   */
   preventDefaultEvents?: boolean;
 
