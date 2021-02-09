@@ -174,7 +174,7 @@ export default class Core {
      * @type {{type: (*), data: {text: null}}}
      */
     const defaultBlockData = {
-      id: _.generateUuidv4(),
+      id: _.generateBlockId(),
       type: this.config.defaultBlock,
       data: {},
     };

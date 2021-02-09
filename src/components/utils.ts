@@ -612,7 +612,7 @@ export function getValidUrl(url: string): string {
  *
  * @returns {string}
  */
-export function generateUuidv4(): string {
+function uuidv4(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     // tslint:disable: no-bitwise
     // tslint:disable-next-line: triple-equals
@@ -620,6 +620,15 @@ export function generateUuidv4(): string {
 
     return v.toString(16);
   });
+}
+
+/**
+ * Create a block id
+ *
+ * @returns {string}
+ */
+export function generateBlockId(): string {
+  return uuidv4();
 }
 
 /**

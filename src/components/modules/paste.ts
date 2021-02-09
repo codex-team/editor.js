@@ -759,7 +759,7 @@ export default class Paste extends Module {
    *
    * @returns {void}
    */
-  private insertEditorJSData(blocks: Array<Pick<SavedData, 'id' | 'data' | 'tool'>>): void {
+  private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
     const { BlockManager, Sanitizer, Tools } = this.Editor;
     const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks);
 
