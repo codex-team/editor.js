@@ -24,7 +24,7 @@ import ToolsCollection from '../tools/collection';
  */
 interface BlockConstructorOptions {
   /**
-   * Tool's id
+   * Block's id
    */
   id: string;
 
@@ -104,7 +104,7 @@ export default class Block {
   }
 
   /**
-   * unique identifier
+   * Block unique identifier
    */
   public id: string;
 
