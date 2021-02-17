@@ -25,6 +25,9 @@
        </div>
      </div>
      <div class="ce-example__content ce-example__content--with-bg _ce-example__content--small">
+       <div id="hint-core" style="text-align: center; padding-top: 20px">
+         No core bundle file found. Run <code class="inline-code">yarn build</code>
+       </div>
       <div class="ce-example-multiple">
         <div id="editorjs1"></div>
         <div id="editorjs2"></div>
@@ -38,7 +41,7 @@
    </div>
 
    <!-- Load Editor.js's Core -->
-   <script src="../dist/editor.js"></script>
+   <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true"></script>
 
    <!-- Initialization -->
    <script>
