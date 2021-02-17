@@ -69,6 +69,12 @@ body {
   padding: 0 15px;
 }
 
+.ce-example__content--with-bg {
+  background: #f4f4f4;
+  max-width: none;
+  margin-top: -30px;
+}
+
 .ce-example__output {
   background: #1B202B;
   overflow-x: auto;
@@ -186,4 +192,17 @@ body {
 
 .ce-example h4.ce-header {
   font-size: 18px;
+}
+
+.ce-example-multiple {
+  display: grid;
+  grid-template-columns: calc(50% - 15px) calc(50% - 15px);
+  gap: 30px;
+  padding: 30px;
+}
+
+.ce-example-multiple > div {
+  background: #fff;
+  border-radius: 7px;
+  padding: 30px;
 }
