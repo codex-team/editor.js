@@ -1,5 +1,7 @@
 # Changelog
 
+### 2.19.2
+
 - `Fix` - Fix BlockManager.setCurrentBlockByChildNode() with multiple Editor.js instances [#1503](https://github.com/codex-team/editor.js/issues/1503).
 
 ### 2.19.1

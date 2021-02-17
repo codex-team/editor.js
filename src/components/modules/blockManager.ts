@@ -559,7 +559,8 @@ export default class BlockManager extends Module {
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
-   *  @param {Node} childNode - look ahead from this node.
+   * @param {Node} childNode - look ahead from this node.
+   * @returns can return undefined in case when the passed child note is not a part of the current editor instance
    */
   public setCurrentBlockByChildNode(childNode: Node): Block | undefined {
     /**
@@ -571,7 +572,20 @@ export default class BlockManager extends Module {
 
     const parentFirstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
 
-    if (!parentFirstLevelBlock?.closest(`.${this.Editor.UI.CSS.editorWrapper}`)?.isEqualNode(this.Editor.UI.nodes.wrapper)) {
+    if (!parentFirstLevelBlock) {
+      return;
+    }
+
+    /**
+     * Support multiple Editor.js instances,
+     * by checking whether the found block belongs to the current instance
+     *
+     * @see {@link Ui#documentTouched}
+     */
+    const editorWrapper = parentFirstLevelBlock.closest(`.${this.Editor.UI.CSS.editorWrapper}`);
+    const isBlockBelongsToCurrentInstance = editorWrapper?.isEqualNode(this.Editor.UI.nodes.wrapper);
+
+    if (!isBlockBelongsToCurrentInstance) {
       return;
     }
 
