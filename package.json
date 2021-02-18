@@ -14,7 +14,7 @@
   "scripts": {
     "clear": "rimraf dist && mkdirp dist",
     "build": "yarn clear && yarn svg && yarn build:webpack:prod",
-    "build:watch": "yarn clear && yarn svg && yarn build:webpack:dev",
+    "build:dev": "yarn clear && yarn svg && yarn build:webpack:dev",
     "build:webpack:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:webpack:prod": "webpack --mode production",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
