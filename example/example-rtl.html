@@ -27,7 +27,10 @@
   </div>
   <div class="ce-example__content _ce-example__content--small">
     <div id="editorjs"></div>
-    <div id="hint" style="text-align: center;">
+    <div id="hint-core" style="text-align: center;">
+      No core bundle file found. Run <code class="inline-code">yarn build</code>
+    </div>
+    <div id="hint-tools" style="text-align: center;">
       No submodules found. Run <code class="inline-code">yarn pull_tools</code>
     </div>
     <div class="ce-example__button" id="saveButton">
@@ -50,7 +53,7 @@
  Read more in Tool's README file. For example:
  https://github.com/editor-js/header#installation
  -->
-<script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint').hidden = true"></script><!-- Header -->
+<script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint-tools').hidden = true"></script><!-- Header -->
 <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
 <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
 <script src="./tools/list/dist/bundle.js"></script><!-- List -->
@@ -67,7 +70,7 @@
 <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
 
 <!-- Load Editor.js's Core -->
-<script src="../dist/editor.js"></script>
+<script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true"></script>
 
 <!-- Initialization -->
 <script>
