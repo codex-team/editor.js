@@ -30,7 +30,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @returns {{opened: string, closed: string}}
    */
-  public get events(): {opened: string; closed: string} {
+  public get events(): { opened: string; closed: string } {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -42,7 +42,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -170,7 +170,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     }
 
     this.selection.clearSaved();
-
+    /**
+     * Remove highlighted content of a Block we are working with
+     */
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.currentBlock.selected = false;
+    }
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';

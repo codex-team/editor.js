@@ -167,7 +167,7 @@ export default class BlockEvents extends Module {
    *
    * @param {ClipboardEvent} event - clipboard event
    */
-  public handleCommandC(event: ClipboardEvent): void {
+  public handleCommandC(event: ClipboardEvent): Promise<void> {
     const { BlockSelection } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
@@ -175,7 +175,7 @@ export default class BlockEvents extends Module {
     }
 
     // Copy Selected Blocks
-    BlockSelection.copySelectedBlocks(event);
+    return BlockSelection.copySelectedBlocks(event);
   }
 
   /**
@@ -183,14 +183,14 @@ export default class BlockEvents extends Module {
    *
    * @param {ClipboardEvent} event - clipboard event
    */
-  public handleCommandX(event: ClipboardEvent): void {
+  public async handleCommandX(event: ClipboardEvent): Promise<void> {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    BlockSelection.copySelectedBlocks(event);
+    await BlockSelection.copySelectedBlocks(event);
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
