@@ -7,6 +7,7 @@
 - `Improvements` - Remove unused `force` option in `Caret.navigateNext()` and `Caret.navigatePrevious()` [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
 - `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).
 - `Improvements` - Document will be scrolled when blocks are selected with `SHIFT+UP` or `SHIFT+DOWN` [#1447](https://github.com/codex-team/editor.js/issues/1447)
+- `Improvements` - The caret will be set on editor copy/paste [#1470](https://github.com/codex-team/editor.js/pull/1470)
 - `Fix` - Fix BlockManager.setCurrentBlockByChildNode() with multiple Editor.js instances [#1503](https://github.com/codex-team/editor.js/issues/1503).
 - `Fix` - Fix an unstable block cut process [#1489](https://github.com/codex-team/editor.js/issues/1489).
 - `Fix` - Type definition of the Sanitizer config: the sanitize function now contains param definition [#1491](https://github.com/codex-team/editor.js/pull/1491).
@@ -16,7 +17,7 @@
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
 - `Improvements` - Native `typeof`replaced with custom utils methods
-- `Improvements` - Bind shortcuts listeners on the editor wrapper instead of document (#1391)(https://github.com/codex-team/editor.js/issues/1391)
+- `Improvements` - Bind shortcuts listeners on the editor wrapper instead of document [#1391](https://github.com/codex-team/editor.js/issues/1391)
 - `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380).
 - `Fix` - add getter keyword to `block.mergeable` method [#1415](https://github.com/codex-team/editor.js/issues/1415).
 - `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
