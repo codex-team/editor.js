@@ -251,7 +251,7 @@ export default class Core {
     }
 
     if (holder && _.isObject(holder) && !$.isElement(holder)) {
-      throw Error('holder as HTMLElement if provided must be inherit from Element class.');
+      throw Error('«holder» value must be an Element node');
     }
   }
 

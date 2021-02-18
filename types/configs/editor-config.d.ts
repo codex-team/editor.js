@@ -11,7 +11,7 @@ export interface EditorConfig {
   holderId?: string | HTMLElement;
 
   /**
-   * Element where Editor will be append
+   * Element where Editor will be appended
    */
   holder?: string | HTMLElement;
 
