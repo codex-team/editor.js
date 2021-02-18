@@ -291,6 +291,8 @@ export default class LinkInlineTool implements InlineTool {
       this.unlink();
       event.preventDefault();
       this.closeActions();
+
+      return;
     }
 
     if (!this.validateURL(value)) {
@@ -331,7 +333,7 @@ export default class LinkInlineTool implements InlineTool {
     /**
      * Don't allow spaces
      */
-    return !(/\s/.test(str) || str.length === 0);
+    return !/\s/.test(str);
   }
 
   /**
