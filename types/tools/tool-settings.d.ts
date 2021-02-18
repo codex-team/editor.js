@@ -18,8 +18,10 @@ export interface ToolboxConfig {
 
 /**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}
+ *
+ * @template Config - the structure describing a config object supported by the tool
  */
-export interface ToolSettings {
+export interface ToolSettings <Config extends object = any> {
 
   /**
    * Tool's class
@@ -29,7 +31,7 @@ export interface ToolSettings {
   /**
    * User configuration object that will be passed to the Tool's constructor
    */
-  config?: ToolConfig;
+  config?: ToolConfig<Config>;
 
   /**
    * Is need to show Inline Toolbar.

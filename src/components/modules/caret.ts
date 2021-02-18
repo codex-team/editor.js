@@ -388,11 +388,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} force - force navigation even if caret is not at the end
-   *
    * @returns {boolean}
    */
-  public navigateNext(force = false): boolean {
+  public navigateNext(): boolean {
     const { BlockManager, Tools } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
@@ -422,7 +420,7 @@ export default class Caret extends Module {
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    if (force || isAtEnd) {
+    if (isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock, this.positions.START);
@@ -441,11 +439,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} force - force navigation even if caret is not at the start
-   *
    * @returns {boolean}
    */
-  public navigatePrevious(force = false): boolean {
+  public navigatePrevious(): boolean {
     const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
 
     if (!currentBlock) {
@@ -458,7 +454,7 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force || this.isAtStart) {
+    if (this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
         this.setToBlock(previousContentfulBlock, this.positions.END);
