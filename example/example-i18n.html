@@ -28,6 +28,9 @@
   </div>
   <div class="ce-example__content _ce-example__content--small">
     <div id="editorjs"></div>
+    <div id="hint-core" style="text-align: center;">
+      No core bundle file found. Run <code class="inline-code">yarn build</code>
+    </div>
 
     <div class="ce-example__button" id="saveButton">
       editor.save()
@@ -58,7 +61,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
 
 <!-- Load Editor.js's Core -->
-<script src="../dist/editor.js"></script>
+<script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true"></script>
 
 <!-- Initialization -->
 <script>
