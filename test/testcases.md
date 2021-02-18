@@ -76,7 +76,7 @@ This document will describe various test cases of the editor.js functionality. F
         - [ ] If `array`
           - [ ] Editor.js should show the Inline Toolbar for this tool with a passed list of tools and their order.
         - [ ] If omitted
-          [ ] Editor.js should not show the Inline Toolbar for this tool.
+          - [ ] Editor.js should not show the Inline Toolbar for this tool.
       - [ ] Checking the `toolbox` property
         - [ ] If it contains `title`, this title should be used as a tool title
         - [ ] If it contains `icon`, this HTML code (maybe SVG) should be used as a tool icon
