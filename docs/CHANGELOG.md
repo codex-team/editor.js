@@ -5,8 +5,10 @@
 - `Improvements` - A generic type for Tool config added [#1516](https://github.com/codex-team/editor.js/issues/1516)
 - `Improvements` - Remove unused `force` option in `Caret.navigateNext()` and `Caret.navigatePrevious()` [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
 - `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).
+- `Improvements` - Document will be scrolled when blocks are selected with `SHIFT+UP` or `SHIFT+DOWN` [#1447](https://github.com/codex-team/editor.js/issues/1447)
 - `Fix` - Fix BlockManager.setCurrentBlockByChildNode() with multiple Editor.js instances [#1503](https://github.com/codex-team/editor.js/issues/1503).
 - `Fix` - Fix an unstable block cut process [#1489](https://github.com/codex-team/editor.js/issues/1489).
+- `Fix` - Type definition of the Sanitizer config: the sanitize function now contains param definition [#1491](https://github.com/codex-team/editor.js/pull/1491).
 
 ### 2.19.1
 
@@ -18,7 +20,6 @@
 - `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
 - `Fix` - Sanitize pasted block data [#1396](https://github.com/codex-team/editor.js/issues/1396).
 - `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414)
-
 
 ### 2.19
 
