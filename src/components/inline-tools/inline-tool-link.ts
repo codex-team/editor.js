@@ -291,6 +291,8 @@ export default class LinkInlineTool implements InlineTool {
       this.unlink();
       event.preventDefault();
       this.closeActions();
+
+      return;
     }
 
     if (!this.validateURL(value)) {

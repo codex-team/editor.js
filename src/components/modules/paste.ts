@@ -760,7 +760,7 @@ export default class Paste extends Module {
    * @returns {void}
    */
   private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
-    const { BlockManager, Sanitizer, Tools } = this.Editor;
+    const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
     const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks);
 
     sanitizedBlocks.forEach(({ tool, data }, i) => {
@@ -772,11 +772,13 @@ export default class Paste extends Module {
         needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
       }
 
-      BlockManager.insert({
+      const block = BlockManager.insert({
         tool,
         data,
         replace: needToReplaceCurrentBlock,
       });
+
+      Caret.setToBlock(block, Caret.positions.END);
     });
   }
 
