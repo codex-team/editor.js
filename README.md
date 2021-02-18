@@ -129,7 +129,6 @@ Choose the most usable method of getting Editor for you.
 
 - Node package
 - Source from CDN
-- Local file from project
 
 ##### Option A. NPM install
 
@@ -157,9 +156,7 @@ For example, place this in your HTML:
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
 ```
 
-##### Option C. Save source within your project
-
-Copy the [editor.js](dist/editor.js) file to your project and load it.
+Or download the bundle file and use it from your server.
 
 ```html
 <script src="editor.js"></script>
