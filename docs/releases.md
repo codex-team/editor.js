@@ -58,10 +58,9 @@ Do not forget to mark this release as a pre-release!
 Let's imagine that package version is `2.19.0` and you want to add some bug fixes and publish an update as `2.19.1`.
 
 1. Merge a single update or a few pulls with fixes to the main branch `next`.
-2. Bump the version up to `2.19.1-rc.0`. For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
+2. Bump the version up to `2.19.1-rc.0` in the package.json. For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
 3. Create a new release on the releases page with tag `v2.19.1-rc.0` and mark "This is pre-release" checkbox.
 [Action](.github/workflows/publish.yml) will automatically push the package to NPM with tag `next`.
 4. When you ready to publish a release, remove suffix from version name, push changes and create a new release with tag `v2.19.1`.
 Same action will publish a new package as `latest` update.
 5. Merge branch `next` to `master` and celebrate the release. You're rock!
-
