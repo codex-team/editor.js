@@ -26,6 +26,8 @@ Pre-release versions may contain additional `-rc.*` suffix.
 
 ## Release publishing
 
+> 👉 Stable versions are published to releases from `master` branch.
+
 There is an [action](.github/workflows/publish.yml) that fired on a new release publishing on GitHub.
 
 After update merging, when a new package version is ready to be published,
@@ -41,7 +43,9 @@ This package version will be published to NPM with default `latest` tag.
 
 ### Release candidate publishing
 
-If you want to publish release candidate version, use suffix `-rc.*` for package version in package.json file and git tag.
+> 👉 Release candidate versions are published to releases from default `next` branch.
+
+If you want to publish release candidate version, use suffix `-rc.*` for package version in package.json file and in tag on releases page.
 
 This package version will be published to NPM with `next` tag.
 
@@ -61,6 +65,6 @@ Let's imagine that package version is `2.19.0` and you want to add some bug fixe
 2. Bump the version up to `2.19.1-rc.0` in the package.json. For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
 3. Create a new release on the releases page with tag `v2.19.1-rc.0` and mark "This is pre-release" checkbox.
 [Action](.github/workflows/publish.yml) will automatically push the package to NPM with tag `next`.
-4. When you ready to publish a release, remove suffix from version name, push changes and create a new release with tag `v2.19.1`.
+4. When you ready to publish a release, remove suffix from version name in package.json (`2.19.1-rc.0` -> `v2.19.1`) and push changes.
+5. Merge branch `next` to `master` and create a new release with tag `v2.19.1`.
 Same action will publish a new package as `latest` update.
-5. Merge branch `next` to `master` and celebrate the release. You're rock!
