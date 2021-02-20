@@ -8,9 +8,7 @@ on:
 
 jobs:
   release-draft:
-    if: github.event.pull_request.merged == true &&
-      | github.event.label.name == 'release' &&
-      | github.event.label.name == 'pre-release'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       # Checkout to target branch
