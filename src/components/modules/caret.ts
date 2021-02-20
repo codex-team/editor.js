@@ -604,55 +604,42 @@ export default class Caret extends Module {
 
     const range = new Range();
     const root = input ?? block.firstInput;
-    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
-    let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
     let offset = isNext ? 0 : root.textContent.length - 1;
     let prevBoundingClientRect: DOMRect | undefined;
 
-    while (node) {
-      if (!(node instanceof Text)) {
-        throw new Error('Unexpected node type');
-      }
-
-      let index = isNext ? 0 : node.length - 1;
-
-      while (isNext ? index < node.length : index >= 0) {
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
-
-        const boundingClientRect = range.getBoundingClientRect();
-
-        if (
-          prevBoundingClientRect &&
-          Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
-        ) {
-          return {
-            block,
-            input,
-            offset: offset + (isNext ? -1 : 1),
-          };
-        }
-
-        prevBoundingClientRect = boundingClientRect;
-
-        if (isNext) {
-          index++;
-          offset++;
-        } else {
-          index--;
-          offset--;
-        }
-      }
-
-      node = isNext ? treeWalker.nextNode() : treeWalker.previousNode();
-    }
-
-    return {
+    let position = {
       block,
       input,
       offset: isNext ? root.textContent.length : 0,
     };
+
+    this.iterateTextNodeChars(root, isNext, (textNode, index) => {
+      range.setStart(textNode, index);
+      range.setEnd(textNode, index + 1);
+
+      const boundingClientRect = range.getBoundingClientRect();
+
+      if (
+        prevBoundingClientRect &&
+        Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
+      ) {
+        position = {
+          block,
+          input,
+          offset: offset + (isNext ? -1 : 1),
+        };
+
+        return true;
+      }
+
+      prevBoundingClientRect = boundingClientRect;
+      isNext ? offset++ : offset--;
+
+      return false;
+    });
+
+    return position;
   }
 
   /**
@@ -706,12 +693,33 @@ export default class Caret extends Module {
    */
   private isLineExisted(isNext: boolean): boolean {
     const { BlockManager } = this.Editor;
+    const range = new Range();
 
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
-    const range = new Range();
-    const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
+    const isBroken = this.iterateTextNodeChars(BlockManager.currentBlock.currentInput, isNext, (textNode, index) => {
+      range.setStart(textNode, index);
+      range.setEnd(textNode, index + 1);
+
+      const boundingClientRect = range.getBoundingClientRect();
+
+      if (isNext && currentBoundingClientRect.y < boundingClientRect.y) {
+        return true;
+      }
+
+      if (!isNext && boundingClientRect.y < currentBoundingClientRect.y) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return isBroken;
+  }
+
+  private iterateTextNodeChars(root: Node, isNext: boolean, callback: (textNode: Text, index: number) => boolean): boolean {
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
     let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
 
@@ -723,16 +731,9 @@ export default class Caret extends Module {
       let index = isNext ? 0 : node.length - 1;
 
       while (isNext ? index < node.length : index >= 0) {
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
+        const shouldBreak = callback(node, index);
 
-        const boundingClientRect = range.getBoundingClientRect();
-
-        if (isNext && currentBoundingClientRect.y < boundingClientRect.y) {
-          return true;
-        }
-
-        if (!isNext && boundingClientRect.y < currentBoundingClientRect.y) {
+        if (shouldBreak) {
           return true;
         }
 
