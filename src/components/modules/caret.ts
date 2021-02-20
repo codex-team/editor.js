@@ -614,7 +614,7 @@ export default class Caret extends Module {
       offset: isNext ? root.textContent.length : 0,
     };
 
-    this.iterateTextNodeChars(root, isNext, (textNode, index) => {
+    this.walkTextNodeChars(root, isNext, (textNode, index) => {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
 
@@ -633,8 +633,8 @@ export default class Caret extends Module {
         return true;
       }
 
-      prevBoundingClientRect = boundingClientRect;
       isNext ? offset++ : offset--;
+      prevBoundingClientRect = boundingClientRect;
 
       return false;
     });
@@ -698,7 +698,7 @@ export default class Caret extends Module {
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
-    const isBroken = this.iterateTextNodeChars(BlockManager.currentBlock.currentInput, isNext, (textNode, index) => {
+    const isBroken = this.walkTextNodeChars(BlockManager.currentBlock.currentInput, isNext, (textNode, index) => {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
 
@@ -718,7 +718,16 @@ export default class Caret extends Module {
     return isBroken;
   }
 
-  private iterateTextNodeChars(root: Node, isNext: boolean, callback: (textNode: Text, index: number) => boolean): boolean {
+  /**
+   * Walk the characters in text nodes
+   *
+   * @param {Node} root - The root of TreeWalker
+   * @param {boolean} isNext - if true, walk to next node. Previous otherwise
+   * @param {boolean} callback - Function to execute on each characters. returns that walking should be broken.
+   *
+   * @returns {boolean} - Is walking broken.
+   */
+  private walkTextNodeChars(root: Node, isNext: boolean, callback: (textNode: Text, index: number) => boolean): boolean {
     const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
     let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
