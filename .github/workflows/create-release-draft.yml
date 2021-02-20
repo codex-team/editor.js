@@ -8,7 +8,9 @@ on:
 
 jobs:
   release-draft:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true &&
+      | github.event.label.name == 'release' &&
+      | github.event.label.name == 'pre-release'
     runs-on: ubuntu-latest
     steps:
       # Checkout to target branch
@@ -44,7 +46,7 @@ jobs:
           release_name: v${{ steps.package.outputs.version }}
           body: "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}"
           draft: true
-          prerelease: false # todo
+          prerelease: ${{ github.event.label.name != 'release' }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
