@@ -117,16 +117,22 @@ export default class Core {
   public set configuration(config: EditorConfig|string) {
     /**
      * Place config into the class property
-     * Process zero-configuration or with only holderId
-     * Make config object
      *
      * @type {EditorConfig}
      */
-    this.config = _.isObject(config) ? {
-      ...config,
-    } : {
-      holder: config,
-    };
+    if (_.isObject(config)) {
+      this.config = {
+        ...config,
+      };
+    } else {
+      /**
+       * Process zero-configuration or with only holderId
+       * Make config object
+       */
+      this.config = {
+        holder: config,
+      };
+    }
 
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
