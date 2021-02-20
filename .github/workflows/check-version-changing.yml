@@ -12,8 +12,7 @@ jobs:
         id: package
         uses: codex-team/action-nodejs-package-info@v1
 
-      - uses: actions/github-script@v3
-        if: steps.package.outputs.version == *"-rc"*
+      - if: steps.package.outputs.version == *"-rc"*
         run: 'RELEASE CANDIDATE!'
 
 
