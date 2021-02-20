@@ -14,6 +14,12 @@ jobs:
         with:
           diff-search: true
 
+      - uses: actions/github-script@v3
+        if: steps.check.outputs.changed != 'true'
+        with:
+          script: |
+            core.setFailed('No version changes')
+
       - name: Log when changed
         if: steps.check.outputs.changed == 'true'
         run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
