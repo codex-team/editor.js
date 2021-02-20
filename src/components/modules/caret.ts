@@ -594,9 +594,9 @@ export default class Caret extends Module {
   /**
    * Detect next or previous position from current position
    *
-   * @param isNext
-   * @param block
-   * @param input
+   * @param {boolean} isNext - if true, detect next line. Previous otherwise
+   * @param {Block} block - next or previous Block
+   * @param {HTMLElement | undefined} input - next or previous Block
    */
   private detectPosition(isNext: boolean, block: Block, input?: HTMLElement): Position {
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
@@ -702,7 +702,7 @@ export default class Caret extends Module {
   /**
    * Judge if next or previous line is existed
    *
-   * @param isNext
+   * @param {boolean} isNext - if true, search next line. Previous otherwise
    */
   private isLineExisted(isNext: boolean): boolean {
     const { BlockManager } = this.Editor;
