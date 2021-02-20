@@ -1,6 +1,6 @@
 import $ from './dom';
 import * as _ from './utils';
-import { EditorConfig, OutputData, SanitizerConfig } from '../../types';
+import { EditorConfig, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
@@ -116,30 +116,26 @@ export default class Core {
    */
   public set configuration(config: EditorConfig|string) {
     /**
+     * Place config into the class property
      * Process zero-configuration or with only holderId
      * Make config object
+     *
+     * @type {EditorConfig}
      */
-    if (!_.isObject(config)) {
-      config = {
-        holder: config,
-      };
-    }
+    this.config = _.isObject(config) ? {
+      ...config,
+    } : {
+      holder: config,
+    };
 
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
      */
-    _.deprecationAssert(!!config.holderId, 'config.holderId', 'config.holder');
-    if (config.holderId && !config.holder) {
-      config.holder = config.holderId;
-      config.holderId = null;
+    _.deprecationAssert(!!this.config.holderId, 'config.holderId', 'config.holder');
+    if (this.config.holderId && !this.config.holder) {
+      this.config.holder = this.config.holderId;
+      this.config.holderId = null;
     }
-
-    /**
-     * Place config into the class property
-     *
-     * @type {EditorConfig}
-     */
-    this.config = config;
 
     /**
      * If holder is empty then set a default value
@@ -188,7 +184,7 @@ export default class Core {
     this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
     this.config.tools = this.config.tools || {};
     this.config.i18n = this.config.i18n || {};
-    this.config.data = this.config.data || {} as OutputData;
+    this.config.data = this.config.data || { blocks: [] };
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.config.onReady = this.config.onReady || ((): void => {});
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -198,13 +194,8 @@ export default class Core {
     /**
      * Initialize default Block to pass data to the Renderer
      */
-    if (_.isEmpty(this.config.data)) {
-      this.config.data = {} as OutputData;
-      this.config.data.blocks = [ defaultBlockData ];
-    } else {
-      if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ defaultBlockData ];
-      }
+    if (_.isEmpty(this.config.data) || !this.config.data.blocks || this.config.data.blocks.length === 0) {
+      this.config.data = { blocks: [ defaultBlockData ] };
     }
 
     this.config.readOnly = this.config.readOnly as boolean || false;
@@ -212,14 +203,14 @@ export default class Core {
     /**
      * Adjust i18n
      */
-    if (config.i18n?.messages) {
-      I18n.setDictionary(config.i18n.messages);
+    if (this.config.i18n?.messages) {
+      I18n.setDictionary(this.config.i18n.messages);
     }
 
     /**
      * Text direction. If not set, uses ltr
      */
-    this.config.i18n.direction = config.i18n?.direction || 'ltr';
+    this.config.i18n.direction = this.config.i18n?.direction || 'ltr';
   }
 
   /**
