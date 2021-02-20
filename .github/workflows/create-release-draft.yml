@@ -67,7 +67,7 @@ jobs:
           release_name: v${{ steps.package.outputs.version }}
           body: "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}"
           draft: true
-          prerelease: contains(steps.package.outputs.version, '-rc')
+          prerelease: ${{ contains(steps.package.outputs.version, '-rc') }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
