@@ -7,10 +7,31 @@ on:
     types: [closed]
 
 jobs:
+  check-version-changing:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          # Pull submodules
+          submodules: 'recursive'
+
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+        with:
+          diff-search: true
+
+      - name: Throw an error and stop workflow if no version changes
+        uses: actions/github-script@v3
+        if: steps.check.outputs.changed != 'true'
+        with:
+          script: |
+            core.setFailed('No version changes')
+
   release-draft:
-    if: github.event.pull_request.merged == true &&
-      | github.event.label.name == 'release' &&
-      | github.event.label.name == 'pre-release'
+    needs: check-version-changing
     runs-on: ubuntu-latest
     steps:
       # Checkout to target branch
@@ -73,6 +94,6 @@ jobs:
 #        uses: codex-team/action-codexbot-notify@v1
 #        with:
 #          webhook: ${{ secrets.CODEX_BOT_NOTIFY_EDITORJS_PUBLIC_CHAT }}
-#          message: '📦 [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) ${{ steps.package.outputs.version }} was published'
+#          message: '🔌 [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) ${{ steps.package.outputs.version }} was published'
 #          parse_mode: 'markdown'
 #          disable_web_page_preview: true
