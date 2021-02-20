@@ -1,7 +1,7 @@
 {
   "name": "@talyguryn/sample-npm-package_editor.js",
   "version": "2.19.2-rc.1",
-  "description": "Editor.js — Native JS, based on API and Open Source",
+  "description": "  Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
   "keywords": [
