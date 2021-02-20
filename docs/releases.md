@@ -26,12 +26,10 @@ Pre-release versions may contain additional `-rc.*` suffix.
 
 ## Release publishing
 
-> 👉 Stable versions are published to releases from `master` branch.
+Drafts for new releases are created automatically via [create-a-release-draft.yml](.github/workflows/create-a-release-draft.yml)
+workflow when pull request to `next` branch was merged with an updated version in the package.json file.
 
-There is an [action](.github/workflows/publish-package-to-npm.yml) that fired on a new release publishing on GitHub.
-
-After update merging, when a new package version is ready to be published,
-create a [new release](https://github.com/codex-team/editor.js/releases/new) with the correct version tag.
+There is a [workflow](.github/workflows/publish-package-to-npm.yml) that fired on a new release publishing on GitHub.
 
 Use target version changelog as a description.
 
@@ -43,9 +41,10 @@ This package version will be published to NPM with default `latest` tag.
 
 ### Release candidate publishing
 
-> 👉 Release candidate versions are published to releases from default `next` branch.
+If you want to publish release candidate version, use suffix `-rc.*` for package
+version in package.json file and in tag on releases page. Workflow will detect it and mark a release as "pre-release".
 
-If you want to publish release candidate version, use suffix `-rc.*` for package version in package.json file and in tag on releases page.
+![](https://capella.pics/796de9eb-bbe0-485c-bc8f-9a4cb76641b7.jpg)
 
 This package version will be published to NPM with `next` tag.
 
@@ -53,18 +52,20 @@ Stable version: `2.19.0`
 Release candidate: `2.19.1-rc.0`, `2.19.1-rc.1`, ...
 Next version: `2.19.1`
 
-Do not forget to mark this release as a pre-release!
-
-![](https://capella.pics/796de9eb-bbe0-485c-bc8f-9a4cb76641b7.jpg)
-
 ## Example pipeline
 
 Let's imagine that package version is `2.19.0` and you want to add some bug fixes and publish an update as `2.19.1`.
 
-1. Merge a single update or a few pulls with fixes to the default branch `next`.
-2. Bump the version up to `2.19.1-rc.0` in the package.json. For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
-3. Create a new release on the releases page with tag `v2.19.1-rc.0` and mark "This is pre-release" checkbox.
-[Action](.github/workflows/publish-package-to-npm.yml) will automatically push the package to NPM with tag `next`.
-4. When you ready to publish a release, remove suffix from version name in package.json (`2.19.1-rc.0` -> `v2.19.1`) and push changes.
-5. Merge branch `next` to `master` and create a new release with tag `v2.19.1`.
-Same action will publish a new package as `latest` update.
+1. Merge a single update or a few pulls with fixes to the default branch `next`
+and bump the version up to `2.19.1-rc.0` in the package.json.
+For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
+2. Workflow [create-a-release-draft.yml](.github/workflows/create-a-release-draft.yml)
+will automatically create a draft release on GitHub.
+3. Check this new draft release on the releases page. Check tag `v2.19.1-rc.0` and notice "This is pre-release" checkbox
+if it should be for a release candidate versions. Then publish that release.
+4. [Workflow](.github/workflows/publish-package-to-npm.yml) will automatically push the package to NPM with tag `next`.
+5. When you ready to publish a release, remove suffix from version name in package.json (`2.19.1-rc.0` -> `v2.19.1`)
+and push changes. Follow steps 2-4 with workflows and publish a new version as `latest` update.
+6. Merge branch `next` to `master` and save sources for history.
+
+
