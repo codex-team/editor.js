@@ -418,7 +418,7 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigateNext(isDownPressed: boolean): boolean {
-    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isNextLineExisted());
+    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isLineExisted(true));
     const next = shouldNavigateToNext && this.detectNext();
 
     if (next) {
@@ -447,7 +447,7 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigatePrevious(isUpPressed: boolean): boolean {
-    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isPreviousLineExisted());
+    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isLineExisted(false));
     const previous = shouldNavigateToPrevious && this.detectPrevious();
 
     if (previous) {
@@ -592,7 +592,11 @@ export default class Caret extends Module {
   }
 
   /**
-   * Detect position from current position
+   * Detect next or previous position from current position
+   *
+   * @param isNext
+   * @param block
+   * @param input
    */
   private detectPosition(isNext: boolean, block: Block, input?: HTMLElement): Position {
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
@@ -632,10 +636,10 @@ export default class Caret extends Module {
 
         prevBoundingClientRect = boundingClientRect;
 
-        if (isNext){
+        if (isNext) {
           index++;
           offset++;
-        }else {
+        } else {
           index--;
           offset--;
         }
@@ -696,9 +700,11 @@ export default class Caret extends Module {
   }
 
   /**
-   * Judge if next line is existed
+   * Judge if next or previous line is existed
+   *
+   * @param isNext
    */
-  private isNextLineExisted(): boolean {
+  private isLineExisted(isNext: boolean): boolean {
     const { BlockManager } = this.Editor;
 
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
@@ -707,61 +713,33 @@ export default class Caret extends Module {
     const range = new Range();
     const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
 
-    let node = treeWalker.firstChild();
+    let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
 
     while (node) {
       if (!(node instanceof Text)) {
         throw new Error('Unexpected node type');
       }
 
-      for (let index = 0; index < node.length; index++) {
+      let index = isNext ? 0 : node.length - 1;
+
+      while (isNext ? index < node.length : index >= 0) {
         range.setStart(node, index);
         range.setEnd(node, index + 1);
 
         const boundingClientRect = range.getBoundingClientRect();
 
-        if (currentBoundingClientRect.y < boundingClientRect.y) {
+        if (isNext && currentBoundingClientRect.y < boundingClientRect.y) {
           return true;
         }
-      }
 
-      node = treeWalker.nextNode();
-    }
-
-    return false;
-  }
-
-  /**
-   * Judge if previous line is existed
-   */
-  private isPreviousLineExisted(): boolean {
-    const { BlockManager } = this.Editor;
-
-    const currentBoundingClientRect = Selection.get().getRangeAt(0)
-      .getBoundingClientRect();
-
-    const range = new Range();
-    const treeWalker = document.createTreeWalker(BlockManager.currentBlock.currentInput, NodeFilter.SHOW_TEXT);
-
-    let node = treeWalker.lastChild();
-
-    while (node) {
-      if (!(node instanceof Text)) {
-        throw new Error('Unexpected node type');
-      }
-
-      for (let index = node.length - 1; index >= 0; index--) {
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
-
-        const boundingClientRect = range.getBoundingClientRect();
-
-        if (boundingClientRect.y < currentBoundingClientRect.y) {
+        if (!isNext && boundingClientRect.y < currentBoundingClientRect.y) {
           return true;
         }
+
+        isNext ? index++ : index--;
       }
 
-      node = treeWalker.previousNode();
+      node = isNext ? treeWalker.nextNode() : treeWalker.previousNode();
     }
 
     return false;
