@@ -15,6 +15,12 @@ import Block from '../block';
 import $ from '../dom';
 import * as _ from '../utils';
 
+interface Position {
+  block: Block;
+  input?: HTMLElement;
+  offset: number;
+}
+
 /**
  * @typedef {Caret} Caret
  */
@@ -416,13 +422,13 @@ export default class Caret extends Module {
     const next = shouldNavigateToNext && this.detectNext();
 
     if (next) {
-      const offset = isDownPressed ? next.downOffset : 0;
+      const offset = isDownPressed ? next.offset : 0;
 
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
-      if (next.nextInput) {
-        this.setToInput(next.nextInput, this.positions.DEFAULT, offset);
+      if (next.input) {
+        this.setToInput(next.input, this.positions.DEFAULT, offset);
       } else {
-        this.setToBlock(next.nextBlock, this.positions.DEFAULT, offset);
+        this.setToBlock(next.block, this.positions.DEFAULT, offset);
       }
 
       return true;
@@ -448,10 +454,10 @@ export default class Caret extends Module {
       const position = isUpPressed ? this.positions.DEFAULT : this.positions.END;
 
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
-      if (previous.previousInput) {
-        this.setToInput(previous.previousInput, position, previous.upOffset);
+      if (previous.input) {
+        this.setToInput(previous.input, position, previous.offset);
       } else {
-        this.setToBlock(previous.previousBlock, position, previous.upOffset);
+        this.setToBlock(previous.block, position, previous.offset);
       }
 
       return true;
@@ -543,11 +549,7 @@ export default class Caret extends Module {
   /**
    * Detect next position from current position
    */
-  private detectNext(): {
-    nextBlock: Block;
-    nextInput?: HTMLElement;
-    downOffset: number;
-} | false {
+  private detectNext(): Position | false {
     const { BlockManager, Tools } = this.Editor;
 
     const nextInput = BlockManager.currentBlock.nextInput;
@@ -570,61 +572,13 @@ export default class Caret extends Module {
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    const currentBoundingClientRect = Selection.get().getRangeAt(0)
-      .getBoundingClientRect();
-
-    const range = new Range();
-    const root = nextInput ?? nextBlock.firstInput;
-    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-
-    let node = treeWalker.firstChild();
-    let offset = 0;
-    let prevBoundingClientRect: DOMRect | undefined;
-
-    while (node) {
-      if (!(node instanceof Text)) {
-        throw new Error('Unexpected node type');
-      }
-
-      for (let index = 0; index < node.length; index++) {
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
-
-        const boundingClientRect = range.getBoundingClientRect();
-
-        if (
-          prevBoundingClientRect &&
-          Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
-        ) {
-          return {
-            nextBlock,
-            nextInput,
-            downOffset: offset - 1,
-          };
-        }
-
-        offset++;
-        prevBoundingClientRect = boundingClientRect;
-      }
-
-      node = treeWalker.nextNode();
-    }
-
-    return {
-      nextBlock,
-      nextInput,
-      downOffset: root.textContent.length,
-    };
+    return this.detectPosition(true, nextBlock, nextInput);
   }
 
   /**
    * Detect previous position from current position
    */
-  private detectPrevious(): {
-    previousBlock: Block;
-    previousInput?: HTMLElement;
-    upOffset: number;
-} | false {
+  private detectPrevious(): Position | false {
     const { BlockManager } = this.Editor;
 
     const previousInput = BlockManager.currentBlock.previousInput;
@@ -634,15 +588,22 @@ export default class Caret extends Module {
       return false;
     }
 
+    return this.detectPosition(false, previousBlock, previousInput);
+  }
+
+  /**
+   * Detect position from current position
+   */
+  private detectPosition(isNext: boolean, block: Block, input?: HTMLElement): Position {
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
     const range = new Range();
-    const root = previousInput ?? previousBlock.firstInput;
+    const root = input ?? block.firstInput;
     const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
-    let node = treeWalker.lastChild();
-    let offset = root.textContent.length - 1;
+    let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
+    let offset = isNext ? 0 : root.textContent.length - 1;
     let prevBoundingClientRect: DOMRect | undefined;
 
     while (node) {
@@ -650,7 +611,9 @@ export default class Caret extends Module {
         throw new Error('Unexpected node type');
       }
 
-      for (let index = node.length - 1; index >= 0; index--) {
+      let index = isNext ? 0 : node.length - 1;
+
+      while (isNext ? index < node.length : index >= 0) {
         range.setStart(node, index);
         range.setEnd(node, index + 1);
 
@@ -661,23 +624,30 @@ export default class Caret extends Module {
           Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
         ) {
           return {
-            previousBlock,
-            previousInput,
-            upOffset: offset + 1,
+            block,
+            input,
+            offset: offset + (isNext ? -1 : 1),
           };
         }
 
-        offset--;
         prevBoundingClientRect = boundingClientRect;
+
+        if (isNext){
+          index++;
+          offset++;
+        }else {
+          index--;
+          offset--;
+        }
       }
 
-      node = treeWalker.previousNode();
+      node = isNext ? treeWalker.nextNode() : treeWalker.previousNode();
     }
 
     return {
-      previousBlock,
-      previousInput,
-      upOffset: 0,
+      block,
+      input,
+      offset: isNext ? root.textContent.length : 0,
     };
   }
 
