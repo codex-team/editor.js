@@ -8,6 +8,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - if: contains(steps.package.outputs.version, '-rc')
+        run: 'echo "RELEASE CANDIDATE!"'
+
+
+
+
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v1
