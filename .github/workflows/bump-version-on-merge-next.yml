@@ -1,4 +1,4 @@
-name: Check version and bump
+name: Bump version on merge
 
 on:
   pull_request:
