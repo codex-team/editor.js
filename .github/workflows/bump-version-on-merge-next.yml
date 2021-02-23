@@ -1,22 +1,22 @@
-name: Check for a version changing
+name: Check version and bump
 
-on: push
+on:
+  pull_request:
+    branches:
+      - next
+    types: [closed]
 
 jobs:
-  label:
+  # If pull request was merged then we should check for a package version update
+  check-version-changing:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      # Checkout to target branch
       - uses: actions/checkout@v2
-
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1
-
-      - if: contains(steps.package.outputs.version, '-rc')
-        run: 'echo "RELEASE CANDIDATE!"'
-
-
-
+        with:
+          # Pull submodules
+          submodules: 'recursive'
 
       - name: Check if version has been updated
         id: check
@@ -24,16 +24,87 @@ jobs:
         with:
           diff-search: true
 
-      - uses: actions/github-script@v3
-        if: steps.check.outputs.changed != 'true'
+      - name: Throw an error and stop workflow if version was changed
+        uses: actions/github-script@v3
+        if: steps.check.outputs.changed == 'true'
         with:
           script: |
-            core.setFailed('No version changes')
+            core.setFailed('Version was changed. Do nothing.')
 
-      - name: Log when changed
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+  bump-version:
+    needs: check-version-changing
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          # Pull submodules
+          submodules: 'recursive'
 
-      - name: Log when unchanged
-        if: steps.check.outputs.changed == 'false'
-        run: 'echo "No version change :/"'
+      # Setup node environment
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15
+          registry-url: https://registry.npmjs.org/
+
+      # Bump version to the next prerelease (patch) with rc suffix
+      - name: Suggest a next version
+        run: yarn version --prerelease --preid rc --no-git-tag-version
+
+      # Get package new version name
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+
+#      - name: Create commits
+#        run: |
+#          git config user.name 'Peter Evans'
+#          git config user.email 'peter-evans@users.noreply.github.com'
+#          date +%s > report.txt
+#          git commit -am "Modify tracked file during workflow"
+#          date +%s > new-report.txt
+#          git add -A
+#          git commit -m "Add untracked file during workflow"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Bump version
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: auto-bump-version
+          delete-branch: true
+          title: "Bump version up to ${{ steps.package.outputs.version }}"
+          body: |
+            Auto-generated bump version suggestion because of PR:
+            ${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}
+
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: v${{ steps.package.outputs.version }}
+#          release_name: v${{ steps.package.outputs.version }}
+#
+#          # Fill release description from pull request body name
+#          body: "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}"
+#
+#          # Save as a draft release
+#          draft: true
+#
+#          # If version name contains "-rc" suffix than mark a "pre-release" checkbox
+#          prerelease: ${{ contains(steps.package.outputs.version, '-rc') }}
+
+#      # Build and upload target Editor.js build to release as artifact
+#      - name: Upload Release Asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: dist/editor.js
+#          asset_name: editor.js
+#          asset_content_type: application/javascript
