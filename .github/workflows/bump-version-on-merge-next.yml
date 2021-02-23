@@ -59,6 +59,7 @@ jobs:
         with:
           commit-message: Bump version
           committer: GitHub <noreply@github.com>
+          author: GitHub <noreply@github.com>
           branch: auto-bump-version
           delete-branch: true
           title: "Bump version up to ${{ steps.package.outputs.version }}"
