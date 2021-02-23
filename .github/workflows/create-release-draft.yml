@@ -1,4 +1,4 @@
-name: Create release draft
+name: Create a release draft
 
 on:
   pull_request:
@@ -7,6 +7,7 @@ on:
     types: [closed]
 
 jobs:
+  # If pull request was merged then we should check for a package version update
   check-version-changing:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -30,6 +31,7 @@ jobs:
           script: |
             core.setFailed('No version changes')
 
+  # Create a new draft release
   release-draft:
     needs: check-version-changing
     runs-on: ubuntu-latest
@@ -50,9 +52,11 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      # Build Editor.js
       - name: Build output files
         run: yarn build
 
+      # Get package version name
       - name: Get package info
         id: package
         uses: codex-team/action-nodejs-package-info@v1
@@ -65,10 +69,17 @@ jobs:
         with:
           tag_name: v${{ steps.package.outputs.version }}
           release_name: v${{ steps.package.outputs.version }}
+
+          # Fill release description from pull request body name
           body: "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}"
+
+          # Save as a draft release
           draft: true
+
+          # If version name contains "-rc" suffix than mark a "pre-release" checkbox
           prerelease: ${{ contains(steps.package.outputs.version, '-rc') }}
 
+      # Build and upload target Editor.js build to release as artifact
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
