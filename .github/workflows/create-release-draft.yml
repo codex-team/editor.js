@@ -90,6 +90,7 @@ jobs:
           asset_name: editor.js
           asset_content_type: application/javascript
 
+      # Send a notification message
       - name: Send a message
         uses: codex-team/action-codexbot-notify@v1
         with:
