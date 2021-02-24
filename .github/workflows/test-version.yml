@@ -1,0 +1,93 @@
+name: Check version on merge (alpha)
+
+on:
+  pull_request:
+    branches:
+      - next
+    types: [closed]
+
+jobs:
+  # If pull request was merged then we should check for a package version update
+  check-version-changing:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          # Pull submodules
+          submodules: 'recursive'
+
+      # Get package new version name
+      - name: Get package info
+        id: packageNew
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - name: Get the output
+        run: |
+          echo "name: ${{ steps.packageNew.outputs.name }}"
+          echo "version: ${{ steps.packageNew.outputs.version }}"
+          echo "npmjs-link: ${{ steps.packageNew.outputs.npmjs-link }}"
+
+      - name: Checkout to the base commit before merge
+        run: git checkout ${{ github.event.pull_request.base.sha }}
+
+      # Get package old version name
+      - name: Get package info
+        id: packageOld
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - name: Get the output
+        run: |
+          echo "name: ${{ steps.packageOld.outputs.name }}"
+          echo "version: ${{ steps.packageOld.outputs.version }}"
+          echo "npmjs-link: ${{ steps.packageOld.outputs.npmjs-link }}"
+#
+#      - name: Check if version has been updated
+#        id: check
+#        uses: EndBug/version-check@v1
+#        with:
+#          diff-search: true
+#
+      - name: Throw an error and stop workflow if version was changed
+        uses: actions/github-script@v3
+        if: ${{ steps.packageOld.outputs.version }} == ${{ steps.packageNew.outputs.version }}
+        with:
+          script: |
+            core.setFailed('No version changes.')
+#
+#  bump-version:
+#    needs: check-version-changing
+#    runs-on: ubuntu-latest
+#    steps:
+#      # Checkout to target branch
+#      - uses: actions/checkout@v2
+#
+#      # Setup node environment
+#      - uses: actions/setup-node@v1
+#        with:
+#          node-version: 15
+#          registry-url: https://registry.npmjs.org/
+#
+#      # Bump version to the next prerelease (patch) with rc suffix
+#      - name: Suggest the new version
+#        run: yarn version --prerelease --preid rc --no-git-tag-version
+#
+#      # Get package new version name
+#      - name: Get package info
+#        id: package
+#        uses: codex-team/action-nodejs-package-info@v1
+#
+#      # Create pull request with changes
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v3
+#        with:
+#          commit-message: Bump version
+#          committer: GitHub <noreply@github.com>
+#          author: GitHub <noreply@github.com>
+#          branch: auto-bump-version
+#          delete-branch: true
+#          title: "Bump version up to ${{ steps.package.outputs.version }}"
+#          body: |
+#            Auto-generated bump version suggestion because of PR:
+#            **${{ github.event.pull_request.title }}** #${{ github.event.pull_request.number }}
