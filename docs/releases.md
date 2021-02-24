@@ -52,20 +52,29 @@ Stable version: `2.19.0`
 Release candidate: `2.19.1-rc.0`, `2.19.1-rc.1`, ...
 Next version: `2.19.1`
 
+## Auto-bump version
+
+After each PR merge to the `next` branch [bump-version-on-merge-next.yml](.github/workflows/bump-version-on-merge-next.yml)
+workflow will check if a package version was updated. If there is no update then it will open a new PR with a next
+prerelease version.
+
+You can edit version (and PR name of course) if you need to publish not a pre-release version or any other.
+
 ## Example pipeline
 
 Let's imagine that package version is `2.19.0` and you want to add some bug fixes and publish an update as `2.19.1`.
 
-1. Merge a single update or a few pulls with fixes to the default branch `next`
-and bump the version up to `2.19.1-rc.0` in the package.json.
-For the rest rc updates you should bump version number in suffix (to `2.19.1-rc.1` etc).
-2. Workflow [create-a-release-draft.yml](.github/workflows/create-a-release-draft.yml)
+1. Merge a single update or a few pulls with fixes to the default branch `next`.
+2. Workflow [bump-version-on-merge-next.yml](.github/workflows/bump-version-on-merge-next.yml) will bump the version up
+to `2.19.1-rc.0` in the package.json and open a new pull request.
+3. After bump version PR merge, the workflow [create-a-release-draft.yml](.github/workflows/create-a-release-draft.yml)
 will automatically create a draft release on GitHub.
-3. Check this new draft release on the releases page. Check tag `v2.19.1-rc.0` and notice "This is pre-release" checkbox
+4. Check this new draft release on the releases page. Check tag `v2.19.1-rc.0` and notice "This is pre-release" checkbox
 if it should be for a release candidate versions. Then publish that release.
-4. [Workflow](.github/workflows/publish-package-to-npm.yml) will automatically push the package to NPM with tag `next`.
-5. When you ready to publish a release, remove suffix from version name in package.json (`2.19.1-rc.0` -> `v2.19.1`)
-and push changes. Follow steps 2-4 with workflows and publish a new version as `latest` update.
-6. Merge branch `next` to `master` and save sources for history.
+5. [Workflow](.github/workflows/publish-package-to-npm.yml) will automatically push the package to NPM with tag `next`.
+6. When you ready to publish a release, remove suffix from version name in package.json (`2.19.1-rc.0` -> `v2.19.1`)
+in pull request from workflow [bump-version-on-merge-next.yml](.github/workflows/bump-version-on-merge-next.yml).
+Follow steps 3-5 with workflows and publish a new version as `latest` update.
+7. Merge branch `next` to `master` and save sources for history.
 
 
