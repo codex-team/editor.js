@@ -30,7 +30,7 @@ jobs:
           echo "npmjs-link: ${{ steps.packageNew.outputs.npmjs-link }}"
 
       - name: Checkout to the base commit before merge
-        run: git checkout ${{ github.event.pull_request.base.sha }}
+        run: git switch --detach ${{ github.event.pull_request.base.sha }}
 
       # Get package old version name
       - name: Get package info
