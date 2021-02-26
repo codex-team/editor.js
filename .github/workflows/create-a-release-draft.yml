@@ -15,21 +15,29 @@ jobs:
       # Checkout to target branch
       - uses: actions/checkout@v2
         with:
-          # Pull submodules
-          submodules: 'recursive'
+          fetch-depth: 0
 
-      - name: Check if version has been updated
-        id: check
-        uses: EndBug/version-check@v1
-        with:
-          diff-search: true
+      # Get package new version name
+      - name: Get package info
+        id: packageNew
+        uses: codex-team/action-nodejs-package-info@v1
 
-      - name: Throw an error and stop workflow if no version changes
+      # Checkout to the base commit before merge
+      - name: Checkout to the base commit before merge
+        run: git checkout ${{ github.event.pull_request.base.sha }}
+
+      # Get package old version name
+      - name: Get package info
+        id: packageOld
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Stop workflow if version was not changed
+      - name: Stop workflow if version was not changed
         uses: actions/github-script@v3
-        if: steps.check.outputs.changed != 'true'
+        if: steps.packageOld.outputs.version == steps.packageNew.outputs.version
         with:
           script: |
-            core.setFailed('No version changes')
+            core.setFailed('No version changes. ${{ steps.packageOld.outputs.version }}')
 
   # Create a new draft release
   release-draft:
@@ -89,3 +97,12 @@ jobs:
           asset_path: dist/editor.js
           asset_name: editor.js
           asset_content_type: application/javascript
+
+      # Send a notification message
+      - name: Send a message
+        uses: codex-team/action-codexbot-notify@v1
+        with:
+          webhook: ${{ secrets.CODEX_BOT_WEBHOOK_FRONTEND }}
+          message: '🦥 [Draft release v${{ steps.package.outputs.version }}](${{ steps.create_release.outputs.html_url }}) for package [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) has been created. Add changelog and publish it!'
+          parse_mode: 'markdown'
+          disable_web_page_preview: true
