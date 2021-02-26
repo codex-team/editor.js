@@ -60,7 +60,7 @@ prerelease version.
 
 ### How it works
 
-Bump version command to be run in workflow.
+The command for bumping a version will be running in a workflow.
 
 `yarn version --prerelease --preid rc --no-git-tag-version`
 
