@@ -66,9 +66,10 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Bump version
-          committer: GitHub <noreply@github.com>
-          author: GitHub <noreply@github.com>
+          committer: github-actions <action@github.com>
+          author: github-actions <action@github.com>
           branch: auto-bump-version
+          base: ${{ steps.vars.outputs.base_branch }}
           delete-branch: true
           title: "Bump version up to ${{ steps.package.outputs.version }}"
           body: |
