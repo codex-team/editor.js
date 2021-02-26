@@ -1,4 +1,3 @@
-import Module from '../__module';
 import * as _ from '../utils';
 
 /**
@@ -36,11 +35,9 @@ export interface ListenerData {
 }
 
 /**
- * Editor.js Listeners module
+ * Editor.js Listeners helper
  *
- * @module Listeners
- *
- * Module-decorator for event listeners assignment
+ * Decorator for event listeners assignment
  *
  * @author Codex Team
  * @version 2.0.0
@@ -50,7 +47,7 @@ export interface ListenerData {
  * @typedef {Listeners} Listeners
  * @property {ListenerData[]} allListeners - listeners store
  */
-export default class Listeners extends Module {
+export default class Listeners {
   /**
    * Stores all listeners data to find/remove/process it
    *
