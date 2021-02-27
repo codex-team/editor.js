@@ -12,6 +12,7 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
+import Sanitizer from '../utils/sanitizer';
 
 /**
  *
@@ -292,12 +293,13 @@ export default class BlockSelection extends Module {
     e.preventDefault();
 
     const fakeClipboard = $.make('div');
+    const sanitizer = new Sanitizer();
 
     this.selectedBlocks.forEach((block) => {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const cleanHTML = sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;

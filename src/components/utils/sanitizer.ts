@@ -7,16 +7,13 @@
  * @version 2.0.0
  *
  * @example
- *  Module can be used within two ways:
- *     1) When you have an instance
- *         - this.Editor.Sanitizer.clean(yourTaintString);
- *     2) As static method
- *         - EditorJS.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
+ *
+ * const sanitizer = new Sanitizer()
+ * sanitizer.clean(yourTaintString, yourConfig);
  *
  * {@link SanitizerConfig}
  */
 
-import Module from '../__module';
 import * as _ from '../utils';
 
 /**
@@ -36,35 +33,27 @@ import * as _ from '../utils';
  */
 
 import HTMLJanitor from 'html-janitor';
-import { BlockToolData, InlineToolConstructable, SanitizerConfig } from '../../../types';
+import { BlockToolData, SanitizerConfig } from '../../../types';
 import { SavedData } from '../../../types/data-formats';
 
 /**
  *
  */
-export default class Sanitizer extends Module {
-  /**
-   * Memoize tools config
-   */
-  private configCache: {[toolName: string]: SanitizerConfig} = {};
-
-  /**
-   * Cached inline tools config
-   */
-  private inlineToolsConfigCache: SanitizerConfig | null = null;
-
+export default class Sanitizer {
   /**
    * Sanitize Blocks
    *
    * Enumerate blocks and clean data
    *
-   * @param {Array<{tool, data: BlockToolData}>} blocksData - blocks' data to sanitize
+   * @param blocksData - blocks' data to sanitize
+   * @param sanitizeConfig — sanitize config to use or function to get config for Tool
    */
   public sanitizeBlocks(
-    blocksData: Array<Pick<SavedData, 'data' | 'tool'>>
+    blocksData: Array<Pick<SavedData, 'data' | 'tool'>>,
+    sanitizeConfig: (toolName: string) => SanitizerConfig | SanitizerConfig
   ): Array<Pick<SavedData, 'data' | 'tool'>> {
     return blocksData.map((block) => {
-      const toolConfig = this.composeToolConfig(block.tool);
+      const toolConfig = _.isFunction(sanitizeConfig) ? sanitizeConfig(block.tool) : sanitizeConfig;
 
       if (_.isEmpty(toolConfig)) {
         return block;
@@ -133,114 +122,6 @@ export default class Sanitizer extends Module {
     const sanitizerInstance = this.createHTMLJanitorInstance(sanitizerConfig);
 
     return sanitizerInstance.clean(taintString);
-  }
-
-  /**
-   * Merge with inline tool config
-   *
-   * @param {string} toolName - tool name
-   *
-   * @returns {SanitizerConfig}
-   */
-  public composeToolConfig(toolName: string): SanitizerConfig {
-    /**
-     * If cache is empty, then compose tool config and put it to the cache object
-     */
-    if (this.configCache[toolName]) {
-      return this.configCache[toolName];
-    }
-
-    const sanitizeGetter = this.Editor.Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG;
-    const toolClass = this.Editor.Tools.available[toolName];
-    const baseConfig = this.getInlineToolsConfig(toolName);
-
-    /**
-     * If Tools doesn't provide sanitizer config or it is empty
-     */
-    if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
-      return baseConfig;
-    }
-
-    const toolRules = toolClass.sanitize;
-
-    const toolConfig = {} as SanitizerConfig;
-
-    for (const fieldName in toolRules) {
-      if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
-        const rule = toolRules[fieldName];
-
-        if (_.isObject(rule)) {
-          toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
-        } else {
-          toolConfig[fieldName] = rule;
-        }
-      }
-    }
-    this.configCache[toolName] = toolConfig;
-
-    return toolConfig;
-  }
-
-  /**
-   * Returns Sanitizer config
-   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-   * otherwise get only enabled
-   *
-   * @param {string} name - Inline Tool name
-   */
-  public getInlineToolsConfig(name: string): SanitizerConfig {
-    const { Tools } = this.Editor;
-    const toolsConfig = Tools.getToolSettings(name);
-    const enableInlineTools = toolsConfig.inlineToolbar || [];
-
-    let config = {} as SanitizerConfig;
-
-    if (_.isBoolean(enableInlineTools) && enableInlineTools) {
-      /**
-       * getting all tools sanitizer rule
-       */
-      config = this.getAllInlineToolsConfig();
-    } else {
-      /**
-       * getting only enabled
-       */
-      (enableInlineTools as string[]).map((inlineToolName) => {
-        config = Object.assign(
-          config,
-          Tools.inline[inlineToolName][Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG]
-        ) as SanitizerConfig;
-      });
-    }
-
-    /**
-     * Allow linebreaks
-     */
-    config['br'] = true;
-    config['wbr'] = true;
-
-    return config;
-  }
-
-  /**
-   * Return general config for all inline tools
-   */
-  public getAllInlineToolsConfig(): SanitizerConfig {
-    const { Tools } = this.Editor;
-
-    if (this.inlineToolsConfigCache) {
-      return this.inlineToolsConfigCache;
-    }
-
-    const config: SanitizerConfig = {} as SanitizerConfig;
-
-    Object.entries(Tools.inline)
-      .forEach(([, inlineTool]: [string, InlineToolConstructable]) => {
-        Object.assign(config, inlineTool[Tools.INTERNAL_SETTINGS.SANITIZE_CONFIG]);
-      });
-
-    this.inlineToolsConfigCache = config;
-
-    return this.inlineToolsConfigCache;
   }
 
   /**

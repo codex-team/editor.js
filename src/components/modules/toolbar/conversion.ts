@@ -6,6 +6,7 @@ import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Sanitizer from '../../utils/sanitizer';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -187,6 +188,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
+    const sanitizer = new Sanitizer();
 
     /**
      * When current Block name is equals to the replacing tool Name,
@@ -227,7 +229,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = this.Editor.Sanitizer.clean(
+    const cleaned: string = sanitizer.clean(
       exportData,
       replacingTool.sanitize
     );

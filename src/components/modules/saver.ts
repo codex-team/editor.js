@@ -10,6 +10,7 @@ import { OutputData } from '../../../types';
 import { ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
+import Sanitizer from '../utils/sanitizer';
 
 declare const VERSION: string;
 
@@ -27,9 +28,10 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
+    const { BlockManager, ModificationsObserver, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
+    const sanitizer = new Sanitizer();
 
     /**
      * Disable modifications observe while saving
@@ -42,7 +44,7 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData);
-      const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+      const sanitizedData = await sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool);
 
       return this.makeOutput(sanitizedData);
     } finally {

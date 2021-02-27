@@ -5,7 +5,9 @@ import {
   BlockToolConstructable,
   EditorConfig,
   InlineTool,
-  InlineToolConstructable, Tool,
+  InlineToolConstructable,
+  SanitizerConfig,
+  Tool,
   ToolConfig,
   ToolConstructable,
   ToolSettings
@@ -193,6 +195,18 @@ export default class Tools extends Module {
    * @private
    */
   private _inlineTools: { [name: string]: ToolConstructable } = {};
+
+  /**
+   * Cache for Tools' sanitizer configurations
+   *
+   * @private
+   */
+  private sanitizeConfigsCache: {[toolName: string]: SanitizerConfig} = {};
+
+  /**
+   * Cache for Inline Tools' sanitizer configuration
+   */
+  private inlineToolsSanitizeConfigCache: SanitizerConfig | undefined;
 
   /**
    * @class
@@ -404,6 +418,107 @@ export default class Tools extends Module {
    */
   public isReadOnlySupported(tool: BlockToolConstructable): boolean {
     return tool[this.INTERNAL_SETTINGS.IS_READ_ONLY_SUPPORTED] === true;
+  }
+
+  /**
+   * Merge Tool's sanitize config with available inline tools configs
+   *
+   * @param toolName — tool name
+   */
+  public composeSanitizeConfigForTool(toolName: string): SanitizerConfig {
+    if (this.sanitizeConfigsCache[toolName]) {
+      return this.sanitizeConfigsCache[toolName];
+    }
+
+    const sanitizeGetter = this.INTERNAL_SETTINGS.SANITIZE_CONFIG;
+    const toolClass = this.available[toolName];
+    const baseConfig = this.getInlineToolsSanitizeConfigForBlock(toolName);
+
+    /**
+     * If Tools doesn't provide sanitizer config or it is empty
+     */
+    if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
+      return baseConfig;
+    }
+
+    const toolRules = toolClass.sanitize;
+
+    const toolConfig = {} as SanitizerConfig;
+
+    for (const fieldName in toolRules) {
+      if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
+        const rule = toolRules[fieldName];
+
+        if (_.isObject(rule)) {
+          toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
+        } else {
+          toolConfig[fieldName] = rule;
+        }
+      }
+    }
+
+    this.sanitizeConfigsCache[toolName] = toolConfig;
+
+    return toolConfig;
+  }
+
+  /**
+   * Returns Sanitizer config for Block Tool
+   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
+   * otherwise get only enabled
+   *
+   * @param name — Inline Tool name
+   */
+  public getInlineToolsSanitizeConfigForBlock(name: string): SanitizerConfig {
+    const toolsConfig = this.getToolSettings(name);
+    const enableInlineTools = toolsConfig.inlineToolbar || [];
+
+    let config = {} as SanitizerConfig;
+
+    if (_.isBoolean(enableInlineTools) && enableInlineTools) {
+      /**
+       * getting all tools sanitizer rule
+       */
+      config = this.getAllInlineToolsSanitizeConfig();
+    } else {
+      /**
+       * getting only enabled
+       */
+      (enableInlineTools as string[]).map((inlineToolName) => {
+        config = Object.assign(
+          config,
+          this.inline[inlineToolName][this.INTERNAL_SETTINGS.SANITIZE_CONFIG]
+        ) as SanitizerConfig;
+      });
+    }
+
+    /**
+     * Allow linebreaks
+     */
+    config['br'] = true;
+    config['wbr'] = true;
+
+    return config;
+  }
+
+  /**
+   * Return general Sanitizer config for all inline tools
+   */
+  public getAllInlineToolsSanitizeConfig(): SanitizerConfig {
+    if (this.inlineToolsSanitizeConfigCache) {
+      return this.inlineToolsSanitizeConfigCache;
+    }
+
+    const config: SanitizerConfig = {} as SanitizerConfig;
+
+    Object.entries(this.inline)
+      .forEach(([, inlineTool]: [string, InlineToolConstructable]) => {
+        Object.assign(config, inlineTool[this.INTERNAL_SETTINGS.SANITIZE_CONFIG]);
+      });
+
+    this.inlineToolsSanitizeConfigCache = config;
+
+    return this.inlineToolsSanitizeConfigCache;
   }
 
   /**
