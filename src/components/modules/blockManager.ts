@@ -560,7 +560,7 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    * @param {Node} childNode - look ahead from this node.
-   * @returns can return undefined in case when the passed child note is not a part of the current editor instance
+   * @returns {Block | undefined} can return undefined in case when the passed child note is not a part of the current editor instance
    */
   public setCurrentBlockByChildNode(childNode: Node): Block | undefined {
     /**
