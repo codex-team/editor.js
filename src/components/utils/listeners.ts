@@ -111,7 +111,7 @@ export default class Listeners {
     existingListeners.forEach((listener, i) => {
       const index = this.allListeners.indexOf(existingListeners[i]);
 
-      if (index > 0) {
+      if (index > -1) {
         this.allListeners.splice(index, 1);
 
         listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
