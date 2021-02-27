@@ -1,0 +1,108 @@
+name: Create a release draft
+
+on:
+  pull_request:
+    branches:
+      - next
+    types: [closed]
+
+jobs:
+  # If pull request was merged then we should check for a package version update
+  check-version-changing:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Get package new version name
+      - name: Get package info
+        id: packageNew
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Checkout to the base commit before merge
+      - name: Checkout to the base commit before merge
+        run: git checkout ${{ github.event.pull_request.base.sha }}
+
+      # Get package old version name
+      - name: Get package info
+        id: packageOld
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Stop workflow if version was not changed
+      - name: Stop workflow if version was not changed
+        uses: actions/github-script@v3
+        if: steps.packageOld.outputs.version == steps.packageNew.outputs.version
+        with:
+          script: |
+            core.setFailed('No version changes. ${{ steps.packageOld.outputs.version }}')
+
+  # Create a new draft release
+  release-draft:
+    needs: check-version-changing
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          # Pull submodules
+          submodules: 'recursive'
+
+      # Setup node environment
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15
+          registry-url: https://registry.npmjs.org/
+
+      # Prepare, build and publish project
+      - name: Install dependencies
+        run: yarn
+
+      # Build Editor.js
+      - name: Build output files
+        run: yarn build
+
+      # Get package version name
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.package.outputs.version }}
+          release_name: v${{ steps.package.outputs.version }}
+
+          # Fill release description from pull request body name
+          body: "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}"
+
+          # Save as a draft release
+          draft: true
+
+          # If version name contains "-rc" suffix than mark a "pre-release" checkbox
+          prerelease: ${{ contains(steps.package.outputs.version, '-rc') }}
+
+      # Build and upload target Editor.js build to release as artifact
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/editor.js
+          asset_name: editor.js
+          asset_content_type: application/javascript
+
+      # Send a notification message
+      - name: Send a message
+        uses: codex-team/action-codexbot-notify@v1
+        with:
+          webhook: ${{ secrets.CODEX_BOT_WEBHOOK_FRONTEND }}
+          message: '🦥 [Draft release v${{ steps.package.outputs.version }}](${{ steps.create_release.outputs.html_url }}) for package [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) has been created. Add changelog and publish it!'
+          parse_mode: 'markdown'
+          disable_web_page_preview: true
