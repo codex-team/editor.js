@@ -13,7 +13,6 @@ import Tooltip from '../components/modules/tooltip';
 import DragNDrop from '../components/modules/dragNDrop';
 import ModificationsObserver from '../components/modules/modificationsObserver';
 import Renderer from '../components/modules/renderer';
-import Sanitizer from '../components/utils/sanitizer';
 import Tools from '../components/modules/tools';
 import API from '../components/modules/api/index';
 import Caret from '../components/modules/caret';
@@ -56,7 +55,6 @@ export interface EditorModules {
   DragNDrop: DragNDrop;
   ModificationsObserver: ModificationsObserver;
   Renderer: Renderer;
-  Sanitizer: Sanitizer;
   Tools: Tools;
   API: API;
   Caret: Caret;
