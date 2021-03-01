@@ -599,14 +599,14 @@ export default class Caret extends Module {
    * @param {HTMLElement | undefined} input - next or previous Tool's input
    */
   private detectPosition(direction: 'next' | 'previous', block: Block, input?: HTMLElement): Position {
-    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+    const caretBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
     const range = new Range();
     const root = input ?? block.firstInput;
 
     let offset = direction === 'next' ? 0 : root.textContent.length - 1;
-    let prevBoundingClientRect: DOMRect | undefined;
+    let previousBoundingClientRect: DOMRect | undefined;
 
     let position = {
       block,
@@ -618,12 +618,12 @@ export default class Caret extends Module {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
 
-      const boundingClientRect = range.getBoundingClientRect();
+      const currentBoundingClientRect = range.getBoundingClientRect();
 
-      if (
-        prevBoundingClientRect &&
-        Math.abs(currentBoundingClientRect.x - prevBoundingClientRect.x) < Math.abs(currentBoundingClientRect.x - boundingClientRect.x)
-      ) {
+      const currentXDistance = Math.abs(caretBoundingClientRect.x - currentBoundingClientRect.x);
+      const previousXDistance = previousBoundingClientRect && Math.abs(caretBoundingClientRect.x - previousBoundingClientRect.x);
+
+      if (previousXDistance !== undefined && previousXDistance < currentXDistance) {
         position = {
           block,
           input,
@@ -634,7 +634,7 @@ export default class Caret extends Module {
       }
 
       direction === 'next' ? offset++ : offset--;
-      prevBoundingClientRect = boundingClientRect;
+      previousBoundingClientRect = currentBoundingClientRect;
 
       return false;
     });
