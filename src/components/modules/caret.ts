@@ -693,7 +693,7 @@ export default class Caret extends Module {
     const { BlockManager } = this.Editor;
     const range = new Range();
 
-    const currentBoundingClientRect = Selection.get().getRangeAt(0)
+    const caretBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
     const isBroken = this.walkTextNodeChars(BlockManager.currentBlock.currentInput, direction, (textNode, index) => {
@@ -702,11 +702,17 @@ export default class Caret extends Module {
 
       const boundingClientRect = range.getBoundingClientRect();
 
-      if (direction === 'next' && currentBoundingClientRect.y < boundingClientRect.y) {
+      /**
+       * Search a next line by finding a character below the caret.
+       */
+      if (direction === 'next' && caretBoundingClientRect.y < boundingClientRect.y) {
         return true;
       }
 
-      if (direction === 'previous' && boundingClientRect.y < currentBoundingClientRect.y) {
+      /**
+       * Search a previous line by finding a character above the caret.
+       */
+      if (direction === 'previous' && boundingClientRect.y < caretBoundingClientRect.y) {
         return true;
       }
 
