@@ -15,9 +15,23 @@ import Block from '../block';
 import $ from '../dom';
 import * as _ from '../utils';
 
+/**
+ * The result of detecting an next or previous line
+ */
 interface Position {
+  /**
+   * Detected Block
+   */
   block: Block;
+
+  /**
+   * Detected Tool's input
+   */
   input?: HTMLElement;
+
+  /**
+   * The detected offset of the block or input
+   */
   offset: number;
 }
 
@@ -417,7 +431,7 @@ export default class Caret extends Module {
    */
   public navigateNext(direction: 'down' | 'right'): boolean {
     const shouldNavigateToNext = this.isAtEnd || (direction === 'down' && !this.isLineExisted('next'));
-    const next = shouldNavigateToNext && this.detectNext();
+    const next = shouldNavigateToNext && this.detectNextLinePosition();
 
     if (next) {
       const offset = direction === 'down' ? next.offset : 0;
@@ -446,7 +460,7 @@ export default class Caret extends Module {
    */
   public navigatePrevious(direction: 'left' | 'up'): boolean {
     const shouldNavigateToPrevious = this.isAtStart || (direction === 'up' && !this.isLineExisted('previous'));
-    const previous = shouldNavigateToPrevious && this.detectPrevious();
+    const previous = shouldNavigateToPrevious && this.detectPreviousLinePosition();
 
     if (previous) {
       const position = direction === 'up' ? this.positions.DEFAULT : this.positions.END;
@@ -545,9 +559,9 @@ export default class Caret extends Module {
   }
 
   /**
-   * Detect next position from current position
+   * Detect an next line position from the caret position
    */
-  private detectNext(): Position | false {
+  private detectNextLinePosition(): Position | false {
     const { BlockManager, Tools } = this.Editor;
 
     const nextInput = BlockManager.currentBlock.nextInput;
@@ -574,9 +588,9 @@ export default class Caret extends Module {
   }
 
   /**
-   * Detect previous position from current position
+   * Detect a previous line position from the caret position
    */
-  private detectPrevious(): Position | false {
+  private detectPreviousLinePosition(): Position | false {
     const { BlockManager } = this.Editor;
 
     const previousInput = BlockManager.currentBlock.previousInput;
@@ -590,7 +604,7 @@ export default class Caret extends Module {
   }
 
   /**
-   * Detect next or previous position from current position
+   * Detect an next or previous line position from the caret position
    *
    * @param {'next' | 'previous'} direction - the direction of detection
    * @param {Block} block - next or previous Block
