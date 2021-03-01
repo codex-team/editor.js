@@ -418,7 +418,7 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigateNext(isDownPressed: boolean): boolean {
-    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isLineExisted(true));
+    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isLineExisted('next'));
     const next = shouldNavigateToNext && this.detectNext();
 
     if (next) {
@@ -447,7 +447,7 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigatePrevious(isUpPressed: boolean): boolean {
-    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isLineExisted(false));
+    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isLineExisted('previous'));
     const previous = shouldNavigateToPrevious && this.detectPrevious();
 
     if (previous) {
@@ -572,7 +572,7 @@ export default class Caret extends Module {
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    return this.detectPosition(true, nextBlock, nextInput);
+    return this.detectPosition('next', nextBlock, nextInput);
   }
 
   /**
@@ -588,33 +588,33 @@ export default class Caret extends Module {
       return false;
     }
 
-    return this.detectPosition(false, previousBlock, previousInput);
+    return this.detectPosition('previous', previousBlock, previousInput);
   }
 
   /**
    * Detect next or previous position from current position
    *
-   * @param {boolean} isNext - if true, detect next line. Previous otherwise
+   * @param {'next' | 'previous'} direction - the direction of detection
    * @param {Block} block - next or previous Block
-   * @param {HTMLElement | undefined} input - next or previous Block
+   * @param {HTMLElement | undefined} input - next or previous Tool's input
    */
-  private detectPosition(isNext: boolean, block: Block, input?: HTMLElement): Position {
+  private detectPosition(direction: 'next' | 'previous', block: Block, input?: HTMLElement): Position {
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
     const range = new Range();
     const root = input ?? block.firstInput;
 
-    let offset = isNext ? 0 : root.textContent.length - 1;
+    let offset = direction === 'next' ? 0 : root.textContent.length - 1;
     let prevBoundingClientRect: DOMRect | undefined;
 
     let position = {
       block,
       input,
-      offset: isNext ? root.textContent.length : 0,
+      offset: direction === 'next' ? root.textContent.length : 0,
     };
 
-    this.walkTextNodeChars(root, isNext, (textNode, index) => {
+    this.walkTextNodeChars(root, direction, (textNode, index) => {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
 
@@ -627,13 +627,13 @@ export default class Caret extends Module {
         position = {
           block,
           input,
-          offset: offset + (isNext ? -1 : 1),
+          offset: offset + (direction === 'next' ? -1 : 1),
         };
 
         return true;
       }
 
-      isNext ? offset++ : offset--;
+      direction === 'next' ? offset++ : offset--;
       prevBoundingClientRect = boundingClientRect;
 
       return false;
@@ -689,26 +689,26 @@ export default class Caret extends Module {
   /**
    * Judge if next or previous line is existed
    *
-   * @param {boolean} isNext - if true, search next line. Previous otherwise
+   * @param {'next' | 'previous'} direction - the direction of searching
    */
-  private isLineExisted(isNext: boolean): boolean {
+  private isLineExisted(direction: 'next' | 'previous'): boolean {
     const { BlockManager } = this.Editor;
     const range = new Range();
 
     const currentBoundingClientRect = Selection.get().getRangeAt(0)
       .getBoundingClientRect();
 
-    const isBroken = this.walkTextNodeChars(BlockManager.currentBlock.currentInput, isNext, (textNode, index) => {
+    const isBroken = this.walkTextNodeChars(BlockManager.currentBlock.currentInput, direction, (textNode, index) => {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
 
       const boundingClientRect = range.getBoundingClientRect();
 
-      if (isNext && currentBoundingClientRect.y < boundingClientRect.y) {
+      if (direction === 'next' && currentBoundingClientRect.y < boundingClientRect.y) {
         return true;
       }
 
-      if (!isNext && boundingClientRect.y < currentBoundingClientRect.y) {
+      if (direction === 'previous' && boundingClientRect.y < currentBoundingClientRect.y) {
         return true;
       }
 
@@ -722,34 +722,34 @@ export default class Caret extends Module {
    * Walk the characters in text nodes
    *
    * @param {Node} root - The root of TreeWalker
-   * @param {boolean} isNext - if true, walk to next node. Previous otherwise
+   * @param {'next' | 'previous'} direction - the direction of walking
    * @param {boolean} callback - Function to execute on each characters. returns that walking should be broken.
    *
    * @returns {boolean} - Is walking broken.
    */
-  private walkTextNodeChars(root: Node, isNext: boolean, callback: (textNode: Text, index: number) => boolean): boolean {
+  private walkTextNodeChars(root: Node, direction: 'next' | 'previous', callback: (textNode: Text, index: number) => boolean): boolean {
     const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
-    let node = isNext ? treeWalker.firstChild() : treeWalker.lastChild();
+    let node = direction === 'next' ? treeWalker.firstChild() : treeWalker.lastChild();
 
     while (node) {
       if (!(node instanceof Text)) {
         throw new Error('Unexpected node type');
       }
 
-      let index = isNext ? 0 : node.length - 1;
+      let index = direction === 'next' ? 0 : node.length - 1;
 
-      while (isNext ? index < node.length : index >= 0) {
+      while (direction === 'next' ? index < node.length : index >= 0) {
         const shouldBreak = callback(node, index);
 
         if (shouldBreak) {
           return true;
         }
 
-        isNext ? index++ : index--;
+        direction === 'next' ? index++ : index--;
       }
 
-      node = isNext ? treeWalker.nextNode() : treeWalker.previousNode();
+      node = direction === 'next' ? treeWalker.nextNode() : treeWalker.previousNode();
     }
 
     return false;
