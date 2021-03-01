@@ -413,16 +413,16 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} isDownPressed - Is Down key pressed
+   * @param {'down' | 'right'} direction - the direction of navigation
    *
    * @returns {boolean}
    */
-  public navigateNext(isDownPressed: boolean): boolean {
-    const shouldNavigateToNext = this.isAtEnd || (isDownPressed && !this.isLineExisted('next'));
+  public navigateNext(direction: 'down' | 'right'): boolean {
+    const shouldNavigateToNext = this.isAtEnd || (direction === 'down' && !this.isLineExisted('next'));
     const next = shouldNavigateToNext && this.detectNext();
 
     if (next) {
-      const offset = isDownPressed ? next.offset : 0;
+      const offset = direction === 'down' ? next.offset : 0;
 
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (next.input) {
@@ -442,16 +442,16 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} isUpPressed - Is Up key pressed
+   * @param {'left' | 'up'} direction - the direction of navigation
    *
    * @returns {boolean}
    */
-  public navigatePrevious(isUpPressed: boolean): boolean {
-    const shouldNavigateToPrevious = this.isAtStart || (isUpPressed && !this.isLineExisted('previous'));
+  public navigatePrevious(direction: 'left' | 'up'): boolean {
+    const shouldNavigateToPrevious = this.isAtStart || (direction === 'up' && !this.isLineExisted('previous'));
     const previous = shouldNavigateToPrevious && this.detectPrevious();
 
     if (previous) {
-      const position = isUpPressed ? this.positions.DEFAULT : this.positions.END;
+      const position = direction === 'up' ? this.positions.DEFAULT : this.positions.END;
 
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (previous.input) {
