@@ -626,6 +626,9 @@ export default class Caret extends Module {
       offset: direction === 'next' ? root.textContent.length : 0,
     };
 
+    /**
+     * Detect the nearest offset by horizontal position
+     */
     this.walkTextNodeChars(root, direction, (textNode, index) => {
       range.setStart(textNode, index);
       range.setEnd(textNode, index + 1);
@@ -737,7 +740,7 @@ export default class Caret extends Module {
   }
 
   /**
-   * Walk the characters in text nodes
+   * Walk the characters in text nodes, and execute callback for each character
    *
    * @param {Node} root - The root of TreeWalker
    * @param {'next' | 'previous'} direction - the direction of walking
