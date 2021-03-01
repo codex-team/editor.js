@@ -170,12 +170,14 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     }
 
     this.selection.clearSaved();
+
     /**
      * Remove highlighted content of a Block we are working with
      */
-    if (this.Editor.BlockManager.currentBlock) {
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock) {
       this.Editor.BlockManager.currentBlock.selected = false;
     }
+
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';
