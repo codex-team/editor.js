@@ -16,7 +16,7 @@ import $ from '../dom';
 import * as _ from '../utils';
 
 /**
- * The result of detecting an next or previous line
+ * The result of detection an next or previous line
  */
 interface Position {
   /**
@@ -635,17 +635,29 @@ export default class Caret extends Module {
 
       const currentBoundingClientRect = range.getBoundingClientRect();
 
-      const currentXDistance = Math.abs(caretBoundingClientRect.x - currentBoundingClientRect.x);
-      const previousXDistance = previousBoundingClientRect && Math.abs(caretBoundingClientRect.x - previousBoundingClientRect.x);
+      if (previousBoundingClientRect) {
+        const caretX = caretBoundingClientRect.x + (direction === 'previous' ? caretBoundingClientRect.width : 0);
+        const currentX = currentBoundingClientRect.x + (direction === 'previous' ? currentBoundingClientRect.width : 0);
+        const previousX = previousBoundingClientRect.x + (direction === 'previous' ? previousBoundingClientRect.width : 0);
 
-      if (previousXDistance !== undefined && previousXDistance < currentXDistance) {
-        position = {
-          block,
-          input,
-          offset: offset + (direction === 'next' ? -1 : 1),
-        };
+        if (Math.abs(caretX - previousX) < Math.abs(caretX - currentX)) {
+          let detectedOffset = offset + (direction === 'next' ? -1 : 1);
 
-        return true;
+          /**
+           * Set the caret to the right side of detected offset
+           */
+          if (direction === 'previous' && currentBoundingClientRect.y >= previousBoundingClientRect.y) {
+            detectedOffset++;
+          }
+
+          position = {
+            block,
+            input,
+            offset: detectedOffset,
+          };
+
+          return true;
+        }
       }
 
       direction === 'next' ? offset++ : offset--;
@@ -720,7 +732,7 @@ export default class Caret extends Module {
       const boundingClientRect = range.getBoundingClientRect();
 
       /**
-       * Search a next line by finding a character below the caret.
+       * Search an next line by finding a character below the caret.
        */
       if (direction === 'next' && caretBoundingClientRect.y < boundingClientRect.y) {
         return true;
