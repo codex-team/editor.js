@@ -250,15 +250,12 @@ export default class Caret extends Module {
       return;
     }
 
-    const nodeToSet = $.getDeepestNode(element, position === this.positions.END);
-    const contentLength = $.getContentLength(nodeToSet);
-
     switch (true) {
       case position === this.positions.START:
         offset = 0;
         break;
       case position === this.positions.END:
-        offset = contentLength;
+        offset = $.getContentLength(element);
         break;
     }
 
@@ -266,7 +263,7 @@ export default class Caret extends Module {
      * @todo try to fix via Promises or use querySelectorAll to not to use timeout
      */
     _.delay(() => {
-      this.set(nodeToSet as HTMLElement, offset, element);
+      this.set(element, offset);
     }, 20)();
 
     BlockManager.setCurrentBlockByChildNode(block.holder);
@@ -283,20 +280,19 @@ export default class Caret extends Module {
    */
   public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset = 0): void {
     const { currentBlock } = this.Editor.BlockManager;
-    const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
       case this.positions.START:
-        this.set(nodeToSet as HTMLElement, 0, input);
+        this.set(input, 0);
         break;
 
       case this.positions.END:
-        this.set(nodeToSet as HTMLElement, $.getContentLength(nodeToSet), input);
+        this.set(input, $.getContentLength(input));
         break;
 
       default:
         if (offset) {
-          this.set(nodeToSet as HTMLElement, offset, input);
+          this.set(input, offset);
         }
     }
 
@@ -308,29 +304,31 @@ export default class Caret extends Module {
    *
    * @param {HTMLElement} element - target node.
    * @param {number} offset - offset.
-   * @param {HTMLElement} root - root node. This is nessesary when the offset is larger than the text length.
    */
-  public set(element: HTMLElement, offset = 0, root: HTMLElement): void {
-    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  public set(element: HTMLElement, offset = 0): void {
+    const treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
-    let node = treeWalker.firstChild();
-
-    while (node && !node.isEqualNode(element)) {
-      node = treeWalker.nextNode();
-    }
-
-    if (!node) {
-      node = element;
-    }
-
+    let detectedNode = treeWalker.firstChild();
     let detectedOffset = offset;
 
-    while ((node as Text).length < detectedOffset) {
-      detectedOffset -= (node as Text).length;
-      node = treeWalker.nextNode();
+    while (detectedNode) {
+      if (!(detectedNode instanceof Text)) {
+        throw new Error('Unexpected node type');
+      }
+
+      if (detectedNode.length >= detectedOffset) {
+        break;
+      }
+
+      detectedOffset -= detectedNode.length;
+      detectedNode = treeWalker.nextNode();
     }
 
-    const { top, bottom } = Selection.setCursor(node as HTMLElement, detectedOffset);
+    if (!detectedNode) {
+      throw new Error('Out of range');
+    }
+
+    const { top, bottom } = Selection.setCursor(detectedNode as HTMLElement, detectedOffset);
 
     /** If new cursor position is not visible, scroll to it */
     const { innerHeight } = window;
