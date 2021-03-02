@@ -1,6 +1,5 @@
 import UI from '../components/modules/ui';
 import BlockEvents from '../components/modules/blockEvents';
-import Listeners from '../components/modules/listeners';
 import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
 import Toolbox from '../components/modules/toolbar/toolbox';
@@ -44,7 +43,6 @@ export interface EditorModules {
   BlockEvents: BlockEvents;
   BlockSelection: BlockSelection;
   RectangleSelection: RectangleSelection;
-  Listeners: Listeners;
   Toolbar: Toolbar;
   InlineToolbar: InlineToolbar;
   Toolbox: Toolbox;

@@ -397,7 +397,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
     // To prevent reset of a selection when click on the wrapper
-    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
+    this.listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
       const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
 
       // If click is on actions wrapper,
@@ -519,7 +519,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
-    this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
+    this.listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
         /**
          * When ConversionToolbar is opening on activated InlineToolbar flipper
@@ -634,7 +634,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private addTool(toolName: string, tool: InlineTool): void {
     const {
-      Listeners,
       Tools,
       Tooltip,
     } = this.Editor;
@@ -657,7 +656,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.nodes.actions.appendChild(actions);
     }
 
-    Listeners.on(button, 'click', (event) => {
+    this.listeners.on(button, 'click', (event) => {
       this.toolClicked(tool);
       event.preventDefault();
     });
