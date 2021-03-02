@@ -184,7 +184,7 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    this.Editor.Listeners.on(
+    this.listeners.on(
       document,
       'copy',
       (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)

@@ -58,7 +58,7 @@ export default class ModificationsObserver extends Module {
       this.observer.disconnect();
     }
     this.observer = null;
-    this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
+    this.nativeInputs.forEach((input) => this.listeners.off(input, 'input', this.mutationDebouncer));
     this.mutationDebouncer = null;
   }
 
@@ -163,13 +163,13 @@ export default class ModificationsObserver extends Module {
   private updateNativeInputs(): void {
     if (this.nativeInputs) {
       this.nativeInputs.forEach((input) => {
-        this.Editor.Listeners.off(input, 'input');
+        this.listeners.off(input, 'input');
       });
     }
 
     this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
 
-    this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
+    this.nativeInputs.forEach((input) => this.listeners.on(input, 'input', this.mutationDebouncer));
   }
 
   /**

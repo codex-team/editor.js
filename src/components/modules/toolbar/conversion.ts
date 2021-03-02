@@ -327,7 +327,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
 
-    this.Editor.Listeners.on(tool, 'click', async () => {
+    this.listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
   }

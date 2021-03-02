@@ -1,6 +1,7 @@
 import { EditorModules } from '../types-internal/editor-modules';
 import { EditorConfig } from '../../types';
 import { ModuleConfig } from '../types-internal/module-config';
+import Listeners from './utils/listeners';
 
 /**
  * The type <T> of the Module generic.
@@ -39,6 +40,11 @@ export default class Module<T extends ModuleNodes = {}> {
   protected config: EditorConfig;
 
   /**
+   * Util for bind/unbind DOM event listeners
+   */
+  protected listeners: Listeners = new Listeners();
+
+  /**
    * This object provides methods to push into set of listeners that being dropped when read-only mode is enabled
    */
   protected readOnlyMutableListeners = {
@@ -56,10 +62,8 @@ export default class Module<T extends ModuleNodes = {}> {
       handler: (event: Event) => void,
       options: boolean | AddEventListenerOptions = false
     ): void => {
-      const { Listeners } = this.Editor;
-
       this.mutableListenerIds.push(
-        Listeners.on(element, eventType, handler, options)
+        this.listeners.on(element, eventType, handler, options)
       );
     },
 
@@ -67,10 +71,8 @@ export default class Module<T extends ModuleNodes = {}> {
      * Clears all mutable listeners
      */
     clearAll: (): void => {
-      const { Listeners } = this.Editor;
-
       for (const id of this.mutableListenerIds) {
-        Listeners.offById(id);
+        this.listeners.offById(id);
       }
 
       this.mutableListenerIds = [];
