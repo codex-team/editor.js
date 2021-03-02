@@ -263,18 +263,14 @@ export default class Paste extends Module {
    * Set onPaste callback handler
    */
   private setCallback(): void {
-    const { Listeners } = this.Editor;
-
-    Listeners.on(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.on(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
   }
 
   /**
    * Unset onPaste callback handler
    */
   private unsetCallback(): void {
-    const { Listeners } = this.Editor;
-
-    Listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
   }
 
   /**

@@ -225,7 +225,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     /**
      * Add click listener
      */
-    this.Editor.Listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, toolName);
     });
 
