@@ -48,14 +48,19 @@
   &__actions {
   }
 
+  &__dropdown + &__buttons {
+    margin-left: 6px;
+    padding-left: 6px;
+    border-left: 1px solid var(--color-gray-border);
+  }
+
   &__dropdown {
     display: inline-flex;
     height: var(--toolbar-buttons-size);
     padding: 0 9px 0 10px;
-    margin: 0 6px 0 -6px;
+    margin: 0 -6px;
     align-items: center;
     cursor: pointer;
-    border-right: 1px solid var(--color-gray-border);
 
     &:hover {
       background: var(--bg-light);

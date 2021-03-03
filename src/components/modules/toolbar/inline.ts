@@ -580,6 +580,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       tool.checkState(SelectionUtils.get());
     });
 
+    if (inlineToolbarOrder.length == 0) {
+      this.nodes.buttons.hidden = true
+    } else {
+      this.nodes.buttons.hidden = false
+    }
+
     /**
      * Recalculate width because some buttons can be hidden
      */
