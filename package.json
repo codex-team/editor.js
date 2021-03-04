@@ -1,6 +1,7 @@
 {
   "name": "@editorjs/editorjs",
   "version": "2.19.2-rc.1",
+  "tanmer-version": "1.2.1",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
