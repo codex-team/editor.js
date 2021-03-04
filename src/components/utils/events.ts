@@ -1,19 +1,17 @@
-import Module from '../__module';
-
 /**
  * @module eventDispatcher
  *
  * Has two important methods:
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
- *    - {Function off - unsubsribes callback
+ *    - {Function off - unsubscribes callback
  *
  * @version 1.0.0
  *
  * @typedef {Events} Events
  * @property {object} subscribers - all subscribers grouped by event name
  */
-export default class Events extends Module {
+class Events {
   /**
    * Object with events` names as key and array of callback functions as value
    *
@@ -104,3 +102,5 @@ export default class Events extends Module {
     this.subscribers = null;
   }
 }
+
+export default new Events();
