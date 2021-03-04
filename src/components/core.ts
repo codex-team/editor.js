@@ -4,7 +4,6 @@ import { EditorConfig, SanitizerConfig } from '../../types';
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
-import Events from "./utils/events";
 
 /**
  * @typedef {Core} Core - editor core class
