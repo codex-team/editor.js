@@ -44,7 +44,7 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData);
-      const sanitizedData = await sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool);
+      const sanitizedData = await sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool.bind(Tools));
 
       return this.makeOutput(sanitizedData);
     } finally {

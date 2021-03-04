@@ -760,7 +760,7 @@ export default class Paste extends Module {
   private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
     const { BlockManager, Caret, Tools } = this.Editor;
     const sanitizer = new Sanitizer();
-    const sanitizedBlocks = sanitizer.sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool);
+    const sanitizedBlocks = sanitizer.sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool.bind(Tools));
 
     sanitizedBlocks.forEach(({ tool, data }, i) => {
       let needToReplaceCurrentBlock = false;
