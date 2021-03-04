@@ -9,6 +9,7 @@ import Module from '../__module';
 import Block from '../block';
 import * as _ from '../utils';
 import $ from '../dom';
+import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
@@ -146,8 +147,6 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
-
     this.selection = new SelectionUtils();
 
     /**
@@ -182,6 +181,7 @@ export default class BlockSelection extends Module {
 
         this.handleCommandA(event);
       },
+      on: this.Editor.UI.nodes.redactor,
     });
   }
 
@@ -362,10 +362,8 @@ export default class BlockSelection extends Module {
    * De-registers Shortcut CMD+A
    */
   public destroy(): void {
-    const { Shortcuts } = this.Editor;
-
     /** Selection shortcut */
-    Shortcuts.remove('CMD+A');
+    Shortcuts.remove(this.Editor.UI.nodes.redactor, 'CMD+A');
   }
 
   /**
