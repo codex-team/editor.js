@@ -168,7 +168,6 @@ export default class Paste extends Module {
    */
   public async processDataTransfer(dataTransfer: DataTransfer, isDragNDrop = false): Promise<void> {
     const { Tools } = this.Editor;
-    const sanitizer = new Sanitizer();
     const types = dataTransfer.types;
 
     /**
@@ -213,7 +212,7 @@ export default class Paste extends Module {
     }, {});
 
     const customConfig = Object.assign({}, toolsTags, Tools.getAllInlineToolsSanitizeConfig(), { br: {} });
-    const cleanData = sanitizer.clean(htmlData, customConfig);
+    const cleanData = Sanitizer.clean(htmlData, customConfig);
 
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
     if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
@@ -530,7 +529,6 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools } = this.Editor;
-    const sanitizer = new Sanitizer();
     const initialTool = this.config.defaultBlock;
     const wrapper = $.make('DIV');
 
@@ -569,7 +567,7 @@ export default class Paste extends Module {
         }, {});
         const customConfig = Object.assign({}, toolTags, Tools.getInlineToolsSanitizeConfigForBlock(tool));
 
-        content.innerHTML = sanitizer.clean(content.innerHTML, customConfig);
+        content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
 
         const event = this.composePasteEvent('tag', {
           data: content,
@@ -658,7 +656,6 @@ export default class Paste extends Module {
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
     const { BlockManager, Caret, Tools } = this.Editor;
     const { content } = dataToInsert;
-    const sanitizer = new Sanitizer();
 
     const currentBlockIsDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
 
@@ -685,7 +682,7 @@ export default class Paste extends Module {
       document.execCommand(
         'insertHTML',
         false,
-        sanitizer.clean(content.innerHTML, currentToolSanitizeConfig)
+        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig)
       );
     } else {
       this.insertBlock(dataToInsert);
@@ -759,8 +756,7 @@ export default class Paste extends Module {
    */
   private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
     const { BlockManager, Caret, Tools } = this.Editor;
-    const sanitizer = new Sanitizer();
-    const sanitizedBlocks = sanitizer.sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool.bind(Tools));
+    const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool.bind(Tools));
 
     sanitizedBlocks.forEach(({ tool, data }, i) => {
       let needToReplaceCurrentBlock = false;

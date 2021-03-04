@@ -8,8 +8,7 @@
  *
  * @example
  *
- * const sanitizer = new Sanitizer()
- * sanitizer.clean(yourTaintString, yourConfig);
+ * Sanitizer.clean(yourTaintString, yourConfig);
  *
  * {@link SanitizerConfig}
  */
@@ -39,7 +38,7 @@ import { SavedData } from '../../../types/data-formats';
 /**
  *
  */
-export default class Sanitizer {
+class Sanitizer {
   /**
    * Sanitize Blocks
    *
@@ -212,3 +211,5 @@ export default class Sanitizer {
     return null;
   }
 }
+
+export default new Sanitizer();

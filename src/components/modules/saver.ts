@@ -31,7 +31,6 @@ export default class Saver extends Module {
     const { BlockManager, ModificationsObserver, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
-    const sanitizer = new Sanitizer();
 
     /**
      * Disable modifications observe while saving
@@ -44,7 +43,7 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData);
-      const sanitizedData = await sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool.bind(Tools));
+      const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool.bind(Tools));
 
       return this.makeOutput(sanitizedData);
     } finally {

@@ -188,7 +188,6 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
-    const sanitizer = new Sanitizer();
 
     /**
      * When current Block name is equals to the replacing tool Name,
@@ -229,7 +228,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = sanitizer.clean(
+    const cleaned: string = Sanitizer.clean(
       exportData,
       replacingTool.sanitize
     );

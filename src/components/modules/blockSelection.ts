@@ -293,13 +293,12 @@ export default class BlockSelection extends Module {
     e.preventDefault();
 
     const fakeClipboard = $.make('div');
-    const sanitizer = new Sanitizer();
 
     this.selectedBlocks.forEach((block) => {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;

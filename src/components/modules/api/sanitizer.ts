@@ -28,8 +28,6 @@ export default class SanitizerAPI extends Module {
    * @returns {string}
    */
   public clean(taintString: string, config: SanitizerConfig): string {
-    const sanitizer = new Sanitizer();
-
-    return sanitizer.clean(taintString, config);
+    return Sanitizer.clean(taintString, config);
   }
 }
