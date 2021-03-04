@@ -53,7 +53,6 @@ class Shortcuts {
   public add(shortcut: ShortcutData): void {
     const foundShortcut = this.findShortcut(shortcut.on, shortcut.name);
 
-
     if (foundShortcut) {
       throw Error(
         `Shortcut ${shortcut.name} is already registered for ${shortcut.on}. Please remove it before add a new handler.`
@@ -87,7 +86,7 @@ class Shortcuts {
 
     const shortcuts = this.registeredShortcuts.get(element);
 
-    this.registeredShortcuts.set(element, shortcuts.filter(el => el !== shortcut))
+    this.registeredShortcuts.set(element, shortcuts.filter(el => el !== shortcut));
   }
 
   /**
@@ -96,12 +95,12 @@ class Shortcuts {
    * @param element - Element shorcut is set for
    * @param shortcut - shortcut name
    *
-   * @return number - shortcut index if exist
+   * @returns {number} index - shortcut index if exist
    */
   private findShortcut(element: Element, shortcut: string): Shortcut | void {
     const shortcuts = this.registeredShortcuts.get(element) || [];
 
-    return shortcuts.find(({name}) => name === shortcut);
+    return shortcuts.find(({ name }) => name === shortcut);
   }
 }
 

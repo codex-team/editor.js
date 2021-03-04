@@ -116,7 +116,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
         return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
-      .map(([ name, toolClass ]: [string, InlineToolConstructable | ToolSettings]) => {
+      .map(([name, toolClass]: [string, InlineToolConstructable | ToolSettings]) => {
         this.internalTools[name] = _.isFunction(toolClass) ? toolClass : (toolClass as ToolSettings).class;
       });
   }
@@ -220,7 +220,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     Array.from(this.toolsInstances.entries()).forEach(([name, toolInstance]) => {
-      const shortcut = this.getToolShortcut(name)
+      const shortcut = this.getToolShortcut(name);
 
       if (shortcut) {
         Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
@@ -754,7 +754,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         event.preventDefault();
         this.toolClicked(tool);
       },
-      on: this.Editor.UI.nodes.redactor
+      on: this.Editor.UI.nodes.redactor,
     });
   }
 
