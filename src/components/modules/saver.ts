@@ -10,7 +10,7 @@ import { OutputData } from '../../../types';
 import { ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
-import Sanitizer from '../utils/sanitizer';
+import { sanitizeBlocks } from '../utils/sanitizer';
 
 declare const VERSION: string;
 
@@ -43,7 +43,7 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData);
-      const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool.bind(Tools));
+      const sanitizedData = await sanitizeBlocks(extractedData, Tools.composeSanitizeConfigForTool.bind(Tools));
 
       return this.makeOutput(sanitizedData);
     } finally {

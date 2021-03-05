@@ -1,7 +1,7 @@
 import { Sanitizer as ISanitizer } from '../../../../types/api';
 import { SanitizerConfig } from '../../../../types/configs';
 import Module from '../../__module';
-import Sanitizer from '../../utils/sanitizer';
+import { clean } from '../../utils/sanitizer';
 
 /**
  * @class SanitizerAPI
@@ -28,6 +28,6 @@ export default class SanitizerAPI extends Module {
    * @returns {string}
    */
   public clean(taintString: string, config: SanitizerConfig): string {
-    return Sanitizer.clean(taintString, config);
+    return clean(taintString, config);
   }
 }

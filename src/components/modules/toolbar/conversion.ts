@@ -6,7 +6,7 @@ import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
-import Sanitizer from '../../utils/sanitizer';
+import { clean } from '../../utils/sanitizer';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -228,7 +228,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = Sanitizer.clean(
+    const cleaned: string = clean(
       exportData,
       replacingTool.sanitize
     );

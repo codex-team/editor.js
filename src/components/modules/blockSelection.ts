@@ -13,7 +13,7 @@ import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
-import Sanitizer from '../utils/sanitizer';
+import { clean } from '../utils/sanitizer';
 
 /**
  *
@@ -298,7 +298,7 @@ export default class BlockSelection extends Module {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;

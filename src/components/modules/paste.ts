@@ -10,7 +10,7 @@ import {
 } from '../../../types';
 import Block from '../block';
 import { SavedData } from '../../../types/data-formats';
-import Sanitizer from '../utils/sanitizer';
+import { clean, sanitizeBlocks } from '../utils/sanitizer';
 
 /**
  * Tag substitute object.
@@ -212,7 +212,7 @@ export default class Paste extends Module {
     }, {});
 
     const customConfig = Object.assign({}, toolsTags, Tools.getAllInlineToolsSanitizeConfig(), { br: {} });
-    const cleanData = Sanitizer.clean(htmlData, customConfig);
+    const cleanData = clean(htmlData, customConfig);
 
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
     if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
@@ -567,7 +567,7 @@ export default class Paste extends Module {
         }, {});
         const customConfig = Object.assign({}, toolTags, Tools.getInlineToolsSanitizeConfigForBlock(tool));
 
-        content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
+        content.innerHTML = clean(content.innerHTML, customConfig);
 
         const event = this.composePasteEvent('tag', {
           data: content,
@@ -682,7 +682,7 @@ export default class Paste extends Module {
       document.execCommand(
         'insertHTML',
         false,
-        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig)
+        clean(content.innerHTML, currentToolSanitizeConfig)
       );
     } else {
       this.insertBlock(dataToInsert);
@@ -756,7 +756,7 @@ export default class Paste extends Module {
    */
   private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
     const { BlockManager, Caret, Tools } = this.Editor;
-    const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool.bind(Tools));
+    const sanitizedBlocks = sanitizeBlocks(blocks, Tools.composeSanitizeConfigForTool.bind(Tools));
 
     sanitizedBlocks.forEach(({ tool, data }, i) => {
       let needToReplaceCurrentBlock = false;
