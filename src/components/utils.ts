@@ -608,18 +608,19 @@ export function getValidUrl(url: string): string {
 }
 
 /**
- * Creates a UUID v4 version
- *
- * @returns {string}
+ * Creates a nanoid
+ * 
+ * @param t Number to fill array
+ * @returns {string} Id with t characters
  */
-function uuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    // tslint:disable: no-bitwise
-    // tslint:disable-next-line: triple-equals
-    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-
-    return v.toString(16);
-  });
+function nanoid(t = 21): string {
+  let e = "", r = crypto.getRandomValues(new Uint8Array(t));
+  
+  for (; t--; ) {
+    let n = 63 & r[t];
+    e += n < 36 ? n.toString(36) : n < 62 ? (n - 26).toString(36).toUpperCase() : n < 63 ? "_" : "-";
+  }
+  return e;
 }
 
 /**
@@ -628,7 +629,7 @@ function uuidv4(): string {
  * @returns {string}
  */
 export function generateBlockId(): string {
-  return uuidv4();
+  return nanoid();
 }
 
 /**
