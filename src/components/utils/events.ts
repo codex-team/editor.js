@@ -1,5 +1,5 @@
 /**
- * @module eventDispatcher
+ * @class EventDispatcher
  *
  * Has two important methods:
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
@@ -11,7 +11,7 @@
  * @typedef {Events} Events
  * @property {object} subscribers - all subscribers grouped by event name
  */
-class Events {
+export default class EventsDispatcher {
   /**
    * Object with events` names as key and array of callback functions as value
    *
@@ -102,5 +102,3 @@ class Events {
     this.subscribers = null;
   }
 }
-
-export default new Events();

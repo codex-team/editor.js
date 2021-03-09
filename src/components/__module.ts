@@ -2,6 +2,7 @@ import { EditorModules } from '../types-internal/editor-modules';
 import { EditorConfig } from '../../types';
 import { ModuleConfig } from '../types-internal/module-config';
 import Listeners from './utils/listeners';
+import EventsDispatcher from './utils/events';
 
 /**
  * The type <T> of the Module generic.
@@ -38,6 +39,11 @@ export default class Module<T extends ModuleNodes = {}> {
    * @type {EditorConfig}
    */
   protected config: EditorConfig;
+
+  /**
+   * Editor event dispatcher class
+   */
+  protected eventsDispatcher: EventsDispatcher;
 
   /**
    * Util for bind/unbind DOM event listeners
@@ -86,14 +92,17 @@ export default class Module<T extends ModuleNodes = {}> {
 
   /**
    * @class
+   *
    * @param {EditorConfig} config - Editor's config
+   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
    */
-  constructor({ config }: ModuleConfig) {
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
     }
 
     this.config = config;
+    this.eventsDispatcher = eventsDispatcher;
   }
 
   /**

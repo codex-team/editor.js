@@ -1,6 +1,5 @@
 import Module from '../../__module';
-import EventsUtil from '../../utils/events';
-import { Events } from "../../../../types/api";
+import { Events } from '../../../../types/api';
 
 /**
  * @class EventsAPI
@@ -27,7 +26,7 @@ export default class EventsAPI extends Module {
    * @param {Function} callback - event handler
    */
   public on(eventName, callback): void {
-    EventsUtil.on(eventName, callback);
+    this.eventsDispatcher.on(eventName, callback);
   }
 
   /**
@@ -37,7 +36,7 @@ export default class EventsAPI extends Module {
    * @param {object} data - event's data
    */
   public emit(eventName, data): void {
-    EventsUtil.emit(eventName, data);
+    this.eventsDispatcher.emit(eventName, data);
   }
 
   /**
@@ -47,6 +46,6 @@ export default class EventsAPI extends Module {
    * @param {Function} callback - event handler
    */
   public off(eventName, callback): void {
-    EventsUtil.off(eventName, callback);
+    this.eventsDispatcher.off(eventName, callback);
   }
 }

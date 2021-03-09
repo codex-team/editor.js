@@ -3,7 +3,6 @@ import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
-import EventsUtil from '../../utils/events';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -148,7 +147,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.addDefaultSettings();
 
     /** Tell to subscribers that block settings is opened */
-    EventsUtil.emit(this.events.opened);
+    this.eventsDispatcher.emit(this.events.opened);
 
     this.flipper.activate(this.blockTunesButtons);
   }
@@ -184,7 +183,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.nodes.defaultSettings.innerHTML = '';
 
     /** Tell to subscribers that block settings is closed */
-    EventsUtil.emit(this.events.closed);
+    this.eventsDispatcher.emit(this.events.closed);
 
     /** Clear cached buttons */
     this.buttons = [];
