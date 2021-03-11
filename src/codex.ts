@@ -87,6 +87,7 @@ export default class EditorJS {
           if (_.isFunction(moduleInstance.destroy)) {
             moduleInstance.destroy();
           }
+          moduleInstance.listeners.removeAll();
         });
 
       editor = null;
