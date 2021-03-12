@@ -179,26 +179,25 @@ export default class RectangleSelection extends Module {
    * Sets Module necessary event handlers
    */
   private enableModuleBindings(): void {
-    const { Listeners } = this.Editor;
     const { container } = this.genHTML();
 
-    Listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
+    this.listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
       this.processMouseDown(mouseEvent);
     }, false);
 
-    Listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
+    this.listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
     }, false);
 
-    Listeners.on(document.body, 'mouseleave', () => {
+    this.listeners.on(document.body, 'mouseleave', () => {
       this.processMouseLeave();
     });
 
-    Listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
+    this.listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
       this.processScroll(mouseEvent);
     }, false);
 
-    Listeners.on(document.body, 'mouseup', () => {
+    this.listeners.on(document.body, 'mouseup', () => {
       this.processMouseUp();
     }, false);
   }

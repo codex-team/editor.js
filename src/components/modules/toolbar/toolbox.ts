@@ -6,6 +6,7 @@ import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Shortcuts from '../../utils/shortcuts';
 
 /**
  * HTMLElements used for Toolbox UI
@@ -225,7 +226,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     /**
      * Add click listener
      */
-    this.Editor.Listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, toolName);
     });
 
@@ -306,12 +307,13 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
   private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string): void {
-    this.Editor.Shortcuts.add({
+    Shortcuts.add({
       name: shortcut,
       handler: (event: KeyboardEvent) => {
         event.preventDefault();
         this.insertNewBlock(tool, toolName);
       },
+      on: this.Editor.UI.nodes.redactor,
     });
   }
 
@@ -327,7 +329,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
         const shortcut = this.getToolShortcut(toolName, tools[toolName]);
 
         if (shortcut) {
-          this.Editor.Shortcuts.remove(shortcut);
+          Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
         }
       }
     }
