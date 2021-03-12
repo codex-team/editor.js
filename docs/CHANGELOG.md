@@ -16,7 +16,8 @@
 - `Fix` - Fix SanitizerConfig type definition [#1513](https://github.com/codex-team/editor.js/issues/1513)
 - `Refactoring` - The Listeners module now is a util.
 - `Fix` - Editor Config now immutable [#1552](https://github.com/codex-team/editor.js/issues/1552).
-- `Refactoring` - Shortcuts module is util now
+- `Refactoring` - Shortcuts module is util now.
+- `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).
 
 ### 2.19.1
 
