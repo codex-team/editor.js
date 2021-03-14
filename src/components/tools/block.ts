@@ -1,6 +1,12 @@
 import BaseTool, { InternalSettings, UserSettings } from './base';
 import { ToolType } from '../modules/tools';
-import {BlockAPI, BlockTool as IBlockTool, ConversionConfig, PasteConfig, ToolboxConfig} from '../../../types';
+import {
+  BlockAPI,
+  BlockTool as IBlockTool,
+  ConversionConfig,
+  PasteConfig,
+  ToolboxConfig
+} from '../../../types';
 import * as _ from '../utils';
 
 /**

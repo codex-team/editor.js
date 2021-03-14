@@ -2,10 +2,7 @@ import Paragraph from '../../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
 import {
-  BlockToolConstructable,
   EditorConfig,
-  InlineTool as IInlineTool,
-  InlineToolConstructable,
   Tool,
   ToolConfig,
   ToolConstructable,
@@ -19,8 +16,7 @@ import ToolsFactory from '../tools/factory';
 import InlineTool from '../tools/inline';
 import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
-import {debug} from "webpack";
-import {UserSettings} from "../tools/base";
+import { UserSettings } from "../tools/base";
 
 /**
  * @module Editor.js Tools Submodule
