@@ -2,14 +2,14 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import {
-  BlockTool,
-  BlockToolConstructable,
+  BlockAPI,
   PasteConfig,
   PasteEvent,
   PasteEventDetail
 } from '../../../types';
 import Block from '../block';
 import { SavedData } from '../../../types/data-formats';
+import BlockTool from '../tools/block';
 
 /**
  * Tag substitute object.
@@ -247,7 +247,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+    const isCurrentBlockDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
     const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.map(
@@ -285,14 +285,9 @@ export default class Paste extends Module {
   /**
    * Process paste config for each tool
    */
-  private processTool = ([name, tool]: [string, BlockToolConstructable]): void => {
+  private processTool = ([name, tool]: [string, BlockTool]): void => {
     try {
-      const toolInstance = new this.Editor.Tools.blockTools[name]({
-        api: this.Editor.API.getMethodsForTool(name),
-        config: {},
-        data: {},
-        readOnly: false,
-      }) as BlockTool;
+      const toolInstance = this.Editor.Tools.blockTools[name].instance({}, {} as BlockAPI, false);
 
       if (tool.pasteConfig === false) {
         this.exceptionList.push(name);
@@ -464,7 +459,7 @@ export default class Paste extends Module {
   private async processFiles(items: FileList): Promise<void> {
     const { BlockManager, Tools } = this.Editor;
 
-    let dataToInsert: Array<{type: string; event: PasteEvent}>;
+    let dataToInsert: {type: string; event: PasteEvent}[];
 
     dataToInsert = await Promise.all(
       Array
@@ -473,7 +468,7 @@ export default class Paste extends Module {
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
-    const isCurrentBlockDefault = Tools.isDefault(BlockManager.currentBlock.tool);
+    const isCurrentBlockDefault = BlockManager.currentBlock.tool.isDefault;
     const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
     dataToInsert.forEach(
@@ -638,7 +633,7 @@ export default class Paste extends Module {
       dataToInsert.tool !== currentBlock.name ||
       !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
     ) {
-      this.insertBlock(dataToInsert, currentBlock && Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty);
+      this.insertBlock(dataToInsert, currentBlock?.tool.isDefault && currentBlock.isEmpty);
 
       return;
     }
@@ -658,14 +653,14 @@ export default class Paste extends Module {
     const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
     const { content } = dataToInsert;
 
-    const currentBlockIsDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+    const currentBlockIsDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
 
     if (currentBlockIsDefault && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
         const needToReplaceCurrentBlock = BlockManager.currentBlock &&
-          Tools.isDefault(BlockManager.currentBlock.tool) &&
+          BlockManager.currentBlock.tool.isDefault &&
           BlockManager.currentBlock.isEmpty;
 
         const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
@@ -755,7 +750,7 @@ export default class Paste extends Module {
    *
    * @returns {void}
    */
-  private insertEditorJSData(blocks: Array<Pick<SavedData, 'data' | 'tool'>>): void {
+  private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
     const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
     const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks);
 
@@ -763,7 +758,7 @@ export default class Paste extends Module {
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
-        const isCurrentBlockDefault = BlockManager.currentBlock && Tools.isDefault(BlockManager.currentBlock.tool);
+        const isCurrentBlockDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
 
         needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
       }

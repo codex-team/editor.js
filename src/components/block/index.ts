@@ -1,6 +1,6 @@
 import {
   BlockAPI as BlockAPIInterface,
-  BlockTool,
+  BlockTool as IBlockTool,
   BlockToolConstructable,
   BlockToolData,
   BlockTune,
@@ -16,12 +16,13 @@ import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
 import { ToolType } from '../modules/tools';
+import SelectionUtils from '../selection';
+import BlockTool from '../tools/block';
 
 /** Import default tunes */
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
-import SelectionUtils from '../selection';
 
 /**
  * Interface describes Block class constructor argument
@@ -40,12 +41,7 @@ interface BlockConstructorOptions {
   /**
    * Tool's class or constructor function
    */
-  Tool: BlockToolConstructable;
-
-  /**
-   * Tool settings from initial config
-   */
-  settings: ToolSettings;
+  tool: BlockTool;
 
   /**
    * Editor's API methods
@@ -116,6 +112,8 @@ export default class Block {
    * Instance of the Tool Block represents
    */
   public tool: BlockTool;
+
+  public toolInstance: IBlockTool;
 
   /**
    * Class blueprint of the ool Block represents
@@ -209,27 +207,20 @@ export default class Block {
   constructor({
     name,
     data,
-    Tool,
-    settings,
+    tool,
     api,
     readOnly,
   }: BlockConstructorOptions) {
     this.name = name;
-    this.class = Tool;
-    this.settings = settings;
-    this.config = settings.config || {};
+    this.settings = tool.settings;
+    this.config = tool.settings.config || {};
     this.api = api;
     this.blockAPI = new BlockAPI(this);
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
-    this.tool = new Tool({
-      data,
-      config: this.config,
-      api: this.api.getMethodsForTool(name, ToolType.Block),
-      block: this.blockAPI,
-      readOnly,
-    });
+    this.tool = tool;
+    this.toolInstance = tool.instance(data, this.blockAPI, readOnly);
 
     this.holder = this.compose();
     /**
@@ -349,7 +340,7 @@ export default class Block {
    * @returns {object}
    */
   public get sanitize(): SanitizerConfig {
-    return this.tool.sanitize;
+    return this.tool.sanitizeConfig;
   }
 
   /**
@@ -359,7 +350,7 @@ export default class Block {
    * @returns {boolean}
    */
   public get mergeable(): boolean {
-    return _.isFunction(this.tool.merge);
+    return _.isFunction(this.toolInstance.merge);
   }
 
   /**
@@ -502,7 +493,7 @@ export default class Block {
     /**
      * call Tool's method with the instance context
      */
-    if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+    if (this.toolInstance[methodName] && this.toolInstance[methodName] instanceof Function) {
       if (methodName === BlockToolAPI.APPEND_CALLBACK) {
         _.log(
           '`appendCallback` hook is deprecated and will be removed in the next major release. ' +
@@ -513,7 +504,7 @@ export default class Block {
 
       try {
         // eslint-disable-next-line no-useless-call
-        this.tool[methodName].call(this.tool, params);
+        this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
       }
@@ -526,7 +517,7 @@ export default class Block {
    * @param {BlockToolData} data - data to merge
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
-    await this.tool.merge(data);
+    await this.toolInstance.merge(data);
   }
 
   /**
@@ -536,7 +527,7 @@ export default class Block {
    * @returns {object}
    */
   public async save(): Promise<void|SavedData> {
-    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+    const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
 
     /**
      * Measuring execution time
@@ -572,8 +563,8 @@ export default class Block {
   public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
-    if (this.tool.validate instanceof Function) {
-      isValid = await this.tool.validate(data);
+    if (this.toolInstance.validate instanceof Function) {
+      isValid = await this.toolInstance.validate(data);
     }
 
     return isValid;
@@ -680,7 +671,7 @@ export default class Block {
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.tool.render();
+        pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);

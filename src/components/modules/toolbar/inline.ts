@@ -2,12 +2,16 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
+import { InlineTool as IInlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { EditorModules } from '../../../types-internal/editor-modules';
+import { ToolType } from '../tools';
+import BlockTool from '../../tools/block';
+import InlineTool from '../../tools/inline';
+import { InternalSettings } from '../../tools/base';
 
 /**
  * Inline Toolbar elements
@@ -68,7 +72,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Currently visible tools instances
    */
-  private toolsInstances: Map<string, InlineTool>;
+  private toolsInstances: Map<string, IInlineTool>;
 
   /**
    * Buttons List
@@ -111,10 +115,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       .entries(Tools.internalTools)
       .filter(([, toolClass]: [string, ToolConstructable | ToolSettings]) => {
         if (_.isFunction(toolClass)) {
-          return toolClass[Tools.INTERNAL_SETTINGS.IS_INLINE];
+          return toolClass[InternalSettings.IsInline];
         }
 
-        return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
+        return (toolClass as ToolSettings).class[InternalSettings.IsInline];
       })
       .map(([name, toolClass]: [string, InlineToolConstructable | ToolSettings]) => {
         this.internalTools[name] = _.isFunction(toolClass) ? toolClass : (toolClass as ToolSettings).class;
@@ -314,12 +318,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @returns {string[] | boolean} array of ordered tool names or false
    */
   private getInlineToolbarSettings(toolName): string[] | boolean {
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const tool = this.Editor.Tools.available[toolName] as BlockTool;
 
     /**
      * InlineToolbar property of a particular tool
      */
-    const settingsForTool = toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
+    const settingsForTool = tool.enabledInlineTools;
 
     /**
      * Whether to enable IT for a particular tool is the decision of the editor user.
@@ -368,10 +372,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      */
     if (commonInlineToolbarSettings === true) {
       const defaultToolsOrder: string[] = Object.entries(this.Editor.Tools.available)
-        .filter(([name, tool]) => {
-          return tool[this.Editor.Tools.INTERNAL_SETTINGS.IS_INLINE];
+        .filter(([name, t]) => {
+          return t.type === ToolType.Inline;
         })
-        .map(([name, tool]) => {
+        .map(([name]) => {
           return name;
         });
 
@@ -554,7 +558,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * If tool does not provide 'export' rule, hide conversion dropdown
      */
-    const conversionConfig = Tools.available[toolName][Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
+    const conversionConfig = (Tools.available[toolName] as BlockTool).conversionConfig;
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
     this.nodes.conversionToggler.hidden = !exportRuleDefined;
@@ -563,14 +567,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Get icon or title for dropdown
      */
-    const toolSettings = Tools.getToolSettings(toolName);
-    const toolboxSettings = Tools.available[toolName][Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
-    const userToolboxSettings = toolSettings.toolbox || {};
+    const toolboxSettings = (Tools.available[toolName] as BlockTool).toolbox || {};
 
     this.nodes.conversionTogglerContent.innerHTML =
-      userToolboxSettings.icon ||
       toolboxSettings.icon ||
-      userToolboxSettings.title ||
       toolboxSettings.title ||
       _.capitalize(toolName);
   }
@@ -613,8 +613,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.name) as string[];
 
     inlineToolbarOrder.forEach((toolName) => {
-      const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-      const tool = this.Editor.Tools.constructInline(this.Editor.Tools.inline[toolName], toolName, toolSettings);
+      const tool = this.Editor.Tools.inline[toolName].instance();
 
       this.addTool(toolName, tool);
       tool.checkState(SelectionUtils.get());
@@ -632,7 +631,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {string} toolName - name of Tool to add
    * @param {InlineTool} tool - Tool class instance
    */
-  private addTool(toolName: string, tool: InlineTool): void {
+  private addTool(toolName: string, tool: IInlineTool): void {
     const {
       Tools,
       Tooltip,
@@ -673,7 +672,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const tooltipContent = $.make('div');
     const toolTitle = I18n.t(
       I18nInternalNS.toolNames,
-      Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName)
+      Tools.inline[toolName].title || _.capitalize(toolName)
     );
 
     tooltipContent.appendChild($.text(toolTitle));
@@ -702,8 +701,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolSettings = Tools.getToolSettings(toolName);
-    const tool = this.toolsInstances.get(toolName);
+    const tool = Tools.available[toolName];
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
@@ -711,12 +709,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * 3) If shortcut is not set in settings, check Tool's public property
      */
     if (Object.keys(this.internalTools).includes(toolName)) {
-      return this.inlineTools[toolName][Tools.INTERNAL_SETTINGS.SHORTCUT];
-    } else if (toolSettings && toolSettings[Tools.USER_SETTINGS.SHORTCUT]) {
-      return toolSettings[Tools.USER_SETTINGS.SHORTCUT];
-    } else if (tool.shortcut) {
-      return tool.shortcut;
+      return this.inlineTools[toolName][InternalSettings.Shortcut];
     }
+
+    return tool.shortcut;
   }
 
   /**
@@ -725,7 +721,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {InlineTool} tool - Tool instance
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcuts(tool: InlineTool, shortcut: string): void {
+  private enableShortcuts(tool: IInlineTool, shortcut: string): void {
     Shortcuts.add({
       name: shortcut,
       handler: (event) => {
@@ -745,9 +741,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
          */
         // if (SelectionUtils.isCollapsed) return;
 
-        const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-
-        if (!toolSettings || !toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS]) {
+        if (!(this.Editor.Tools.available[currentBlock.name] as BlockTool).enabledInlineTools) {
           return;
         }
 
@@ -763,7 +757,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *
    * @param {InlineTool} tool - Tool's instance
    */
-  private toolClicked(tool: InlineTool): void {
+  private toolClicked(tool: IInlineTool): void {
     const range = SelectionUtils.range;
 
     tool.surround(range);
@@ -783,14 +777,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Get inline tools tools
    * Tools that has isInline is true
    */
-  private get inlineTools(): { [name: string]: InlineTool } {
+  private get inlineTools(): { [name: string]: IInlineTool } {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {
       if (Object.prototype.hasOwnProperty.call(this.Editor.Tools.inline, tool)) {
-        const toolSettings = this.Editor.Tools.getToolSettings(tool);
-
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], tool, toolSettings);
+        result[tool] = this.Editor.Tools.inline[tool].instance();
       }
     }
 

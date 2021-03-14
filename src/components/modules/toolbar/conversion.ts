@@ -182,10 +182,9 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
+    const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-    const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
 
     /**
@@ -201,7 +200,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
+    const replacingTool = this.Editor.Tools.blockTools[replacingToolName];
 
     /**
      * Export property can be:
@@ -211,7 +210,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      * In both cases returning value must be a string
      */
     let exportData = '';
-    const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
+    const exportProp = currentBlockTool.conversionConfig.export;
 
     if (_.isFunction(exportProp)) {
       exportData = exportProp(blockData);
@@ -229,7 +228,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      */
     const cleaned: string = this.Editor.Sanitizer.clean(
       exportData,
-      replacingTool.sanitize
+      replacingTool.sanitizeConfig
     );
 
     /**
@@ -238,7 +237,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      * string — the name of data field to import
      */
     let newBlockData = {};
-    const importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG].import;
+    const importProp = replacingTool.conversionConfig.import;
 
     if (_.isFunction(importProp)) {
       newBlockData = importProp(cleaned);
@@ -277,15 +276,9 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         continue;
       }
 
-      const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
-      const toolClass = tools[toolName] as BlockToolConstructable;
-      const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
-      const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
-
-      const userSettings = this.Editor.Tools.USER_SETTINGS;
-      const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
-
-      const toolboxSettings = userToolboxSettings ?? toolToolboxSettings;
+      const tool = tools[toolName];
+      const toolboxSettings = tool.toolbox;
+      const conversionConfig = tool.conversionConfig;
 
       /**
        * Skip tools that don't pass 'toolbox' property

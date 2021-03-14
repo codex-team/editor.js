@@ -12,6 +12,7 @@ import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import BlockTool from '../tools/block';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -219,15 +220,13 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+  public composeBlock({ tool: name, data = {} }: {tool: string; data?: BlockToolData}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
-    const settings = this.Editor.Tools.getToolSettings(tool);
-    const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
+    const tool = this.Editor.Tools.available[name] as BlockTool;
     const block = new Block({
-      name: tool,
+      name,
       data,
-      Tool,
-      settings,
+      tool,
       api: this.Editor.API,
       readOnly,
     });
@@ -703,8 +702,8 @@ export default class BlockManager extends Module {
    */
   public async destroy(): Promise<void> {
     await Promise.all(this.blocks.map((block) => {
-      if (_.isFunction(block.tool.destroy)) {
-        return block.tool.destroy();
+      if (_.isFunction(block.toolInstance.destroy)) {
+        return block.toolInstance.destroy();
       }
     }));
   }

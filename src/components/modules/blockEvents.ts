@@ -5,6 +5,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
+import BlockTool from '../tools/block';
 
 /**
  *
@@ -125,7 +126,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const canOpenToolbox = Tools.isDefault(currentBlock.tool) && currentBlock.isEmpty;
+    const canOpenToolbox = currentBlock.tool.isDefault && currentBlock.isEmpty;
     const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
     const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
@@ -208,13 +209,13 @@ export default class BlockEvents extends Module {
   private enter(event: KeyboardEvent): void {
     const { BlockManager, Tools, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = Tools.available[currentBlock.name];
+    const tool = Tools.available[currentBlock.name] as BlockTool;
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS]) {
+    if (tool?.isLineBreaksEnabled) {
       return;
     }
 
@@ -253,7 +254,7 @@ export default class BlockEvents extends Module {
     /**
      * If new Block is empty
      */
-    if (this.Editor.Tools.isDefault(newCurrent.tool) && newCurrent.isEmpty) {
+    if (newCurrent.tool.isDefault && newCurrent.isEmpty) {
       /**
        * Show Toolbar
        */
@@ -276,7 +277,7 @@ export default class BlockEvents extends Module {
   private backspace(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = this.Editor.Tools.available[currentBlock.name];
+    const tool = this.Editor.Tools.available[currentBlock.name] as BlockTool;
 
     /**
      * Check if Block should be removed by current Backspace keydown
@@ -314,7 +315,7 @@ export default class BlockEvents extends Module {
      *
      * But if caret is at start of the block, we allow to remove it by backspaces
      */
-    if (tool && tool[this.Editor.Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
+    if (tool.isLineBreaksEnabled && !Caret.isAtStart) {
       return;
     }
 

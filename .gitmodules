@@ -17,7 +17,7 @@
 	path = example/tools/simple-image
 	url = https://github.com/editor-js/simple-image
 [submodule "src/components/tools/paragraph"]
-	path = src/components/tools/paragraph
+	path = src/tools/paragraph
 	url = https://github.com/editor-js/paragraph
 [submodule "example/tools/marker"]
 	path = example/tools/marker

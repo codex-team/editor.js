@@ -702,7 +702,7 @@ export default class UI extends Module<UINodes> {
      * - Block is an default-block (Text)
      * - Block is empty
      */
-    const isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
+    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
 
     if (isDefaultBlock) {
       stopPropagation();

@@ -1,6 +1,7 @@
 import Module from '../__module';
 import * as _ from '../utils';
-import { BlockToolConstructable, OutputBlockData } from '../../../types';
+import { OutputBlockData } from '../../../types';
+import BlockTool from '../tools/block';
 
 /**
  * Editor.js Renderer Module
@@ -87,10 +88,9 @@ export default class Renderer extends Module {
       };
 
       if (tool in Tools.unavailable) {
-        const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
-        const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+        const toolboxSettings = (Tools.unavailable[tool] as BlockTool).toolbox;
 
-        stubData.title = toolToolboxSettings.title || (userToolboxSettings && userToolboxSettings.title) || stubData.title;
+        stubData.title = toolboxSettings?.title || stubData.title;
       }
 
       const stub = BlockManager.insert({

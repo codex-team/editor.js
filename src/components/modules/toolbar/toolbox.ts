@@ -1,12 +1,13 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { BlockToolConstructable, ToolConstructable } from '../../../../types';
+import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
+import BlockTool from '../../tools/block';
 
 /**
  * HTMLElements used for Toolbox UI
@@ -116,9 +117,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - button to activate
    */
   public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
-    const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
-
-    this.insertNewBlock(tool, toolName);
+    this.insertNewBlock(toolName);
   }
 
   /**
@@ -166,7 +165,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
 
     for (const toolName in tools) {
       if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        this.addTool(toolName, tools[toolName] as BlockToolConstructable);
+        this.addTool(toolName, tools[toolName] as BlockTool);
       }
     }
   }
@@ -177,16 +176,13 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - tool name
    * @param {BlockToolConstructable} tool - tool class
    */
-  private addTool(toolName: string, tool: BlockToolConstructable): void {
-    const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
-    const userSettings = this.Editor.Tools.USER_SETTINGS;
-
-    const toolToolboxSettings = tool[internalSettings.TOOLBOX];
+  private addTool(toolName: string, tool: BlockTool): void {
+    const toolToolboxSettings = tool.toolbox;
 
     /**
      * Skip tools that don't pass 'toolbox' property
      */
-    if (_.isEmpty(toolToolboxSettings)) {
+    if (!toolToolboxSettings) {
       return;
     }
 
@@ -204,19 +200,10 @@ export default class Toolbox extends Module<ToolboxNodes> {
     //   return;
     // }
 
-    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
-
-    /**
-     * Hide Toolbox button if Toolbox settings is false
-     */
-    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
-      return;
-    }
-
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = (userToolboxSettings && userToolboxSettings.icon) || toolToolboxSettings.icon;
+    button.innerHTML = toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 
@@ -240,32 +227,14 @@ export default class Toolbox extends Module<ToolboxNodes> {
       hidingDelay: 200,
     });
 
-    const shortcut = this.getToolShortcut(toolName, tool);
+    const shortcut = tool.shortcut;
 
     if (shortcut) {
-      this.enableShortcut(tool, toolName, shortcut);
+      this.enableShortcut(toolName, shortcut);
     }
 
     /** Increment Tools count */
     this.displayedToolsCount++;
-  }
-
-  /**
-   * Returns tool's shortcut
-   * It can be specified via internal 'shortcut' static getter or by user settings for tool
-   *
-   * @param {string} toolName - tool's name
-   * @param {ToolConstructable} tool - tool's class (not instance)
-   */
-  private getToolShortcut(toolName: string, tool: ToolConstructable): string|null {
-    /**
-     * Enable shortcut
-     */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    const internalToolShortcut = tool[this.Editor.Tools.INTERNAL_SETTINGS.SHORTCUT];
-    const userSpecifiedShortcut = toolSettings ? toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT] : null;
-
-    return userSpecifiedShortcut || internalToolShortcut;
   }
 
   /**
@@ -276,12 +245,10 @@ export default class Toolbox extends Module<ToolboxNodes> {
    */
   private drawTooltip(toolName: string): HTMLElement {
     const tool = this.Editor.Tools.available[toolName];
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
-    const userToolboxSettings = toolSettings.toolbox || {};
-    const name = I18n.t(I18nInternalNS.toolNames, userToolboxSettings.title || toolboxSettings.title || toolName);
+    const toolboxSettings = (this.Editor.Tools.available[toolName] as BlockTool).toolbox || {};
+    const name = I18n.t(I18nInternalNS.toolNames, toolboxSettings.title || toolName);
 
-    let shortcut = this.getToolShortcut(toolName, tool);
+    let shortcut = tool.shortcut;
 
     const tooltip = $.make('div', this.CSS.buttonTooltip);
     const hint = document.createTextNode(_.capitalize(name));
@@ -306,12 +273,12 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - Tool name
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string): void {
+  private enableShortcut(toolName: string, shortcut: string): void {
     Shortcuts.add({
       name: shortcut,
       handler: (event: KeyboardEvent) => {
         event.preventDefault();
-        this.insertNewBlock(tool, toolName);
+        this.insertNewBlock(toolName);
       },
       on: this.Editor.UI.nodes.redactor,
     });
@@ -326,7 +293,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
 
     for (const toolName in tools) {
       if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        const shortcut = this.getToolShortcut(toolName, tools[toolName]);
+        const shortcut = tools[toolName].shortcut;
 
         if (shortcut) {
           Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
@@ -351,10 +318,9 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Inserts new block
    * Can be called when button clicked on Toolbox or by ShortcutData
    *
-   * @param {BlockToolConstructable} tool - Tool Class
    * @param {string} toolName - Tool name
    */
-  private insertNewBlock(tool: BlockToolConstructable, toolName: string): void {
+  private insertNewBlock(toolName: string): void {
     const { BlockManager, Caret } = this.Editor;
     const { currentBlock } = BlockManager;
 

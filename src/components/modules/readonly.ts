@@ -41,7 +41,7 @@ export default class ReadOnly extends Module {
     const toolsDontSupportReadOnly: string[] = [];
 
     Object.entries(blockTools).forEach(([name, tool]) => {
-      if (!Tools.isReadOnlySupported(tool)) {
+      if (tool.isReadOnlySupported) {
         toolsDontSupportReadOnly.push(name);
       }
     });
