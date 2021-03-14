@@ -54,7 +54,7 @@ export function sanitizeBlocks(
       return block;
     }
 
-    block.data = this.deepSanitize(block.data, toolConfig) as BlockToolData;
+    block.data = deepSanitize(block.data, toolConfig) as BlockToolData;
 
     return block;
   });
@@ -98,12 +98,12 @@ function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): 
     /**
      * Array: call sanitize for each item
      */
-    return this.cleanArray(dataToSanitize, rules);
+    return cleanArray(dataToSanitize, rules);
   } else if (_.isObject(dataToSanitize)) {
     /**
      * Objects: just clean object deeper.
      */
-    return this.cleanObject(dataToSanitize, rules);
+    return cleanObject(dataToSanitize, rules);
   } else {
     /**
      * Primitives (number|string|boolean): clean this item
@@ -111,7 +111,7 @@ function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): 
      * Clean only strings
      */
     if (_.isString(dataToSanitize)) {
-      return this.cleanOneItem(dataToSanitize, rules);
+      return cleanOneItem(dataToSanitize, rules);
     }
 
     return dataToSanitize;
@@ -126,7 +126,7 @@ function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): 
  * @param {SanitizerConfig} ruleForItem - sanitizer config for array
  */
 function cleanArray(array: Array<object | string>, ruleForItem: SanitizerConfig): Array<object | string> {
-  return array.map((arrayItem) => this.deepSanitize(arrayItem, ruleForItem));
+  return array.map((arrayItem) => deepSanitize(arrayItem, ruleForItem));
 }
 
 /**
@@ -151,9 +151,9 @@ function cleanObject(object: object, rules: SanitizerConfig|{[field: string]: Sa
      *   - if it is a HTML Janitor rule, call with this rule
      *   - otherwise, call with parent's config
      */
-    const ruleForItem = this.isRule(rules[fieldName] as SanitizerConfig) ? rules[fieldName] : rules;
+    const ruleForItem = isRule(rules[fieldName] as SanitizerConfig) ? rules[fieldName] : rules;
 
-    cleanData[fieldName] = this.deepSanitize(currentIterationItem, ruleForItem as SanitizerConfig);
+    cleanData[fieldName] = deepSanitize(currentIterationItem, ruleForItem as SanitizerConfig);
   }
 
   return cleanData;
@@ -169,9 +169,9 @@ function cleanObject(object: object, rules: SanitizerConfig|{[field: string]: Sa
  */
 function cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {
   if (_.isObject(rule)) {
-    return this.clean(taintString, rule);
+    return clean(taintString, rule);
   } else if (rule === false) {
-    return this.clean(taintString, {} as SanitizerConfig);
+    return clean(taintString, {} as SanitizerConfig);
   } else {
     return taintString;
   }
