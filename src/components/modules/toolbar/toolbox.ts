@@ -164,10 +164,8 @@ export default class Toolbox extends Module<ToolboxNodes> {
     const tools = this.Editor.Tools.block;
 
     Array
-      .from(tools.entries())
-      .forEach(([name, tool]) => {
-        this.addTool(name, tool);
-      })
+      .from(tools.values())
+      .forEach((tool) => this.addTool(tool));
   }
 
   /**
@@ -176,7 +174,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - tool name
    * @param {BlockToolConstructable} tool - tool class
    */
-  private addTool(toolName: string, tool: BlockTool): void {
+  private addTool(tool: BlockTool): void {
     const toolToolboxSettings = tool.toolbox;
 
     /**
@@ -187,7 +185,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     }
 
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
-      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', tool.name);
 
       return;
     }
@@ -202,7 +200,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
-    button.dataset.tool = toolName;
+    button.dataset.tool = tool.name;
     button.innerHTML = toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
@@ -214,13 +212,13 @@ export default class Toolbox extends Module<ToolboxNodes> {
      * Add click listener
      */
     this.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
-      this.toolButtonActivate(event, toolName);
+      this.toolButtonActivate(event, tool.name);
     });
 
     /**
      * Add listeners to show/hide toolbox tooltip
      */
-    const tooltipContent = this.drawTooltip(toolName);
+    const tooltipContent = this.drawTooltip(tool);
 
     this.Editor.Tooltip.onHover(button, tooltipContent, {
       placement: 'bottom',
@@ -230,7 +228,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     const shortcut = tool.shortcut;
 
     if (shortcut) {
-      this.enableShortcut(toolName, shortcut);
+      this.enableShortcut(tool.name, shortcut);
     }
 
     /** Increment Tools count */
@@ -243,10 +241,9 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - toolbox tool name
    * @returns {HTMLElement}
    */
-  private drawTooltip(toolName: string): HTMLElement {
-    const tool = this.Editor.Tools.block.get(toolName);
+  private drawTooltip(tool: BlockTool): HTMLElement {
     const toolboxSettings = tool.toolbox || {};
-    const name = I18n.t(I18nInternalNS.toolNames, toolboxSettings.title || toolName);
+    const name = I18n.t(I18nInternalNS.toolNames, toolboxSettings.title || tool.name);
 
     let shortcut = tool.shortcut;
 

@@ -20,7 +20,7 @@ interface TagSubstitute {
    *
    * @type {string}
    */
-  tool: string;
+  tool: BlockTool;
 }
 
 /**
@@ -46,7 +46,7 @@ interface PatternSubstitute {
    *
    * @type {string}
    */
-  tool: string;
+  tool: BlockTool;
 }
 
 /**
@@ -279,18 +279,20 @@ export default class Paste extends Module {
   private processTools(): void {
     const tools = this.Editor.Tools.block;
 
-    Object.entries(tools).forEach(this.processTool);
+    Array
+      .from(tools.values())
+      .forEach(this.processTool);
   }
 
   /**
    * Process paste config for each tool
    */
-  private processTool = ([name, tool]: [string, BlockTool]): void => {
+  private processTool = (tool: BlockTool): void => {
     try {
-      const toolInstance = this.Editor.Tools.block.get(name).instance({}, {} as BlockAPI, false);
+      const toolInstance = tool.instance({}, {} as BlockAPI, false);
 
       if (tool.pasteConfig === false) {
-        this.exceptionList.push(name);
+        this.exceptionList.push(tool.name);
 
         return;
       }
@@ -299,11 +301,9 @@ export default class Paste extends Module {
         return;
       }
 
-      const toolPasteConfig = tool.pasteConfig || {};
-
-      this.getTagsConfig(name, toolPasteConfig);
-      this.getFilesConfig(name, toolPasteConfig);
-      this.getPatternsConfig(name, toolPasteConfig);
+      this.getTagsConfig(tool);
+      this.getFilesConfig(tool);
+      this.getPatternsConfig(tool);
     } catch (e) {
       _.log(
         `Paste handling for «${name}» Tool hasn't been set up because of the error`,
@@ -319,14 +319,14 @@ export default class Paste extends Module {
    * @param {string} name - Tool name
    * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
    */
-  private getTagsConfig(name: string, toolPasteConfig: PasteConfig): void {
-    const tags = toolPasteConfig.tags || [];
+  private getTagsConfig(tool: BlockTool): void {
+    const tags = tool.pasteConfig.tags || [];
 
     tags.forEach((tag) => {
       if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
         _.log(
-          `Paste handler for «${name}» Tool on «${tag}» tag is skipped ` +
-          `because it is already used by «${this.toolsTags[tag].tool}» Tool.`,
+          `Paste handler for «${tool.name}» Tool on «${tag}» tag is skipped ` +
+          `because it is already used by «${this.toolsTags[tag].tool.name}» Tool.`,
           'warn'
         );
 
@@ -334,11 +334,11 @@ export default class Paste extends Module {
       }
 
       this.toolsTags[tag.toUpperCase()] = {
-        tool: name,
+        tool,
       };
     });
 
-    this.tagsByTool[name] = tags.map((t) => t.toUpperCase());
+    this.tagsByTool[tool.name] = tags.map((t) => t.toUpperCase());
   }
 
   /**
@@ -347,8 +347,8 @@ export default class Paste extends Module {
    * @param {string} name - Tool name
    * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
    */
-  private getFilesConfig(name: string, toolPasteConfig: PasteConfig): void {
-    const { files = {} } = toolPasteConfig;
+  private getFilesConfig(tool: BlockTool): void {
+    const { files = {} } = tool.pasteConfig;
     let { extensions, mimeTypes } = files;
 
     if (!extensions && !mimeTypes) {
@@ -356,19 +356,19 @@ export default class Paste extends Module {
     }
 
     if (extensions && !Array.isArray(extensions)) {
-      _.log(`«extensions» property of the onDrop config for «${name}» Tool should be an array`);
+      _.log(`«extensions» property of the onDrop config for «${tool.name}» Tool should be an array`);
       extensions = [];
     }
 
     if (mimeTypes && !Array.isArray(mimeTypes)) {
-      _.log(`«mimeTypes» property of the onDrop config for «${name}» Tool should be an array`);
+      _.log(`«mimeTypes» property of the onDrop config for «${tool.name}» Tool should be an array`);
       mimeTypes = [];
     }
 
     if (mimeTypes) {
       mimeTypes = mimeTypes.filter((type) => {
         if (!_.isValidMimeType(type)) {
-          _.log(`MIME type value «${type}» for the «${name}» Tool is not a valid MIME type`, 'warn');
+          _.log(`MIME type value «${type}» for the «${tool.name}» Tool is not a valid MIME type`, 'warn');
 
           return false;
         }
@@ -377,7 +377,7 @@ export default class Paste extends Module {
       });
     }
 
-    this.toolsFiles[name] = {
+    this.toolsFiles[tool.name] = {
       extensions: extensions || [],
       mimeTypes: mimeTypes || [],
     };
@@ -389,12 +389,12 @@ export default class Paste extends Module {
    * @param {string} name - Tool name
    * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
    */
-  private getPatternsConfig(name: string, toolPasteConfig: PasteConfig): void {
-    if (!toolPasteConfig.patterns || _.isEmpty(toolPasteConfig.patterns)) {
+  private getPatternsConfig(tool: BlockTool): void {
+    if (!tool.pasteConfig.patterns || _.isEmpty(tool.pasteConfig.patterns)) {
       return;
     }
 
-    Object.entries(toolPasteConfig.patterns).forEach(([key, pattern]: [string, RegExp]) => {
+    Object.entries(tool.pasteConfig.patterns).forEach(([key, pattern]: [string, RegExp]) => {
       /** Still need to validate pattern as it provided by user */
       if (!(pattern instanceof RegExp)) {
         _.log(
@@ -406,7 +406,7 @@ export default class Paste extends Module {
       this.toolsPatterns.push({
         key,
         pattern,
-        tool: name,
+        tool,
       });
     });
   }
@@ -525,7 +525,6 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools, Sanitizer } = this.Editor;
-    const initialTool = this.config.defaultBlock;
     const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
@@ -534,7 +533,7 @@ export default class Paste extends Module {
 
     return nodes
       .map((node) => {
-        let content, tool = initialTool, isBlock = false;
+        let content, tool = Tools.defaultTool, isBlock = false;
 
         switch (node.nodeType) {
           /** If node is a document fragment, use temp wrapper to get innerHTML */
@@ -554,7 +553,7 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags } = Tools.block.get(tool).pasteConfig as PasteConfig;
+        const { tags } = tool.pasteConfig;
 
         const toolTags = tags.reduce((result, tag) => {
           result[tag.toLowerCase()] = {};
@@ -572,7 +571,7 @@ export default class Paste extends Module {
         return {
           content,
           isBlock,
-          tool,
+          tool: tool.name,
           event,
         };
       })
@@ -673,7 +672,7 @@ export default class Paste extends Module {
 
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-      const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
+      const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.tool);
 
       document.execCommand(
         'insertHTML',
@@ -714,7 +713,7 @@ export default class Paste extends Module {
 
     return {
       event,
-      tool: pattern.tool,
+      tool: pattern.tool.name,
     };
   }
 
@@ -787,8 +786,8 @@ export default class Paste extends Module {
 
     const element = node as HTMLElement;
 
-    const { tool = '' } = this.toolsTags[element.tagName] || {};
-    const toolTags = this.tagsByTool[tool] || [];
+    const { tool } = this.toolsTags[element.tagName] || {};
+    const toolTags = this.tagsByTool[tool?.name] || [];
 
     const isSubstitutable = tags.includes(element.tagName);
     const isBlockElement = $.blockElements.includes(element.tagName.toLowerCase());

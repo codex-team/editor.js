@@ -122,6 +122,10 @@ export default class Tools extends Module {
     return this._blockTools;
   }
 
+  public get defaultTool(): BlockTool {
+    return this.block.get(this.config.defaultBlock);
+  }
+
   public getInternal(type?: ToolType): Map<string, BlockTool | InlineTool | BlockTune> {
     let tools = Array
       .from(this.available.entries())

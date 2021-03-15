@@ -153,7 +153,7 @@ export default class Sanitizer extends Module {
     }
 
     const tool = this.Editor.Tools.available.get(toolName);
-    const baseConfig = this.getInlineToolsConfig(toolName);
+    const baseConfig = this.getInlineToolsConfig(tool as BlockTool);
 
     /**
      * If Tools doesn't provide sanitizer config or it is empty
@@ -189,9 +189,8 @@ export default class Sanitizer extends Module {
    *
    * @param {string} name - Inline Tool name
    */
-  public getInlineToolsConfig(name: string): SanitizerConfig {
+  public getInlineToolsConfig(tool: BlockTool): SanitizerConfig {
     const { Tools } = this.Editor;
-    const tool = Tools.block.get(name);
     const enableInlineTools = tool.enabledInlineTools || [];
 
     let config = {} as SanitizerConfig;

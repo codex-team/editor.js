@@ -10,6 +10,7 @@ import Shortcuts from '../../utils/shortcuts';
 import {ToolType} from '../tools';
 import InlineTool from '../../tools/inline';
 import {InternalSettings} from '../../tools/base';
+import BlockTool from '../../tools/block';
 
 /**
  * Inline Toolbar elements
@@ -283,9 +284,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {string} toolName - user specified name of tool
    * @returns {string[] | boolean} array of ordered tool names or false
    */
-  private getInlineToolbarSettings(toolName): string[] | boolean {
-    const tool = this.Editor.Tools.block.get(toolName);
-
+  private getInlineToolbarSettings(tool: BlockTool): string[] | boolean {
     /**
      * InlineToolbar property of a particular tool
      */
@@ -454,7 +453,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * getInlineToolbarSettings could return an string[] (order of tools) or false (Inline Toolbar disabled).
      */
-    const inlineToolbarSettings = this.getInlineToolbarSettings(currentBlock.name);
+    const inlineToolbarSettings = this.getInlineToolbarSettings(currentBlock.tool);
 
     return inlineToolbarSettings !== false;
   }
@@ -511,12 +510,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private setConversionTogglerContent(): void {
     const { BlockManager, Tools } = this.Editor;
-    const toolName = BlockManager.currentBlock.name;
+    const { currentBlock } = BlockManager;
+    const toolName = currentBlock.name;
 
     /**
      * If tool does not provide 'export' rule, hide conversion dropdown
      */
-    const conversionConfig = Tools.block.get(toolName).conversionConfig;
+    const conversionConfig = currentBlock.tool.conversionConfig;
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
     this.nodes.conversionToggler.hidden = !exportRuleDefined;
@@ -525,7 +525,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Get icon or title for dropdown
      */
-    const toolboxSettings = Tools.block.get(toolName).toolbox || {};
+    const toolboxSettings = currentBlock.tool.toolbox || {};
 
     this.nodes.conversionTogglerContent.innerHTML =
       toolboxSettings.icon ||
@@ -568,13 +568,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * For this moment, inlineToolbarOrder could not be 'false'
      * because this method will be called only if the Inline Toolbar is enabled
      */
-    const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.name) as string[];
+    const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.tool) as string[];
 
     inlineToolbarOrder.forEach((toolName) => {
-      const tool = this.Editor.Tools.inline.get(toolName).instance();
+      const tool = this.Editor.Tools.inline.get(toolName);
 
-      this.addTool(toolName, tool);
-      tool.checkState(SelectionUtils.get());
+      this.addTool(tool);
     });
 
     /**
@@ -589,39 +588,39 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {string} toolName - name of Tool to add
    * @param {InlineTool} tool - Tool class instance
    */
-  private addTool(toolName: string, tool: IInlineTool): void {
+  private addTool(tool: InlineTool): void {
     const {
-      Tools,
       Tooltip,
     } = this.Editor;
 
-    const button = tool.render();
+    const instance = tool.instance();
+    const button = instance.render();
 
     if (!button) {
-      _.log('Render method must return an instance of Node', 'warn', toolName);
+      _.log('Render method must return an instance of Node', 'warn', tool.name);
 
       return;
     }
 
-    button.dataset.tool = toolName;
+    button.dataset.tool = tool.name;
     this.nodes.buttons.appendChild(button);
-    this.toolsInstances.set(toolName, tool);
+    this.toolsInstances.set(tool.name, instance);
 
-    if (_.isFunction(tool.renderActions)) {
-      const actions = tool.renderActions();
+    if (_.isFunction(instance.renderActions)) {
+      const actions = instance.renderActions();
 
       this.nodes.actions.appendChild(actions);
     }
 
     this.listeners.on(button, 'click', (event) => {
-      this.toolClicked(tool);
+      this.toolClicked(instance);
       event.preventDefault();
     });
 
-    const shortcut = this.getToolShortcut(toolName);
+    const shortcut = this.getToolShortcut(tool.name);
 
     if (shortcut) {
-      this.enableShortcuts(tool, shortcut);
+      this.enableShortcuts(instance, shortcut);
     }
 
     /**
@@ -630,7 +629,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const tooltipContent = $.make('div');
     const toolTitle = I18n.t(
       I18nInternalNS.toolNames,
-      Tools.inline.get(toolName).title || _.capitalize(toolName)
+      tool.title || _.capitalize(tool.name)
     );
 
     tooltipContent.appendChild($.text(toolTitle));
@@ -645,6 +644,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       placement: 'top',
       hidingDelay: 100,
     });
+
+    instance.checkState(SelectionUtils.get());
   }
 
   /**

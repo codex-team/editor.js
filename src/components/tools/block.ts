@@ -58,6 +58,6 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   public get pasteConfig(): PasteConfig {
-    return this.constructable[InternalSettings.PasteConfig]
+    return this.constructable[InternalSettings.PasteConfig] || {}
   }
 }
