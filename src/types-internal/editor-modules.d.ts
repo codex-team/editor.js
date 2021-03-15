@@ -4,7 +4,6 @@ import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
 import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
-import Shortcuts from '../components/modules/shortcuts';
 import Paste from '../components/modules/paste';
 import Notifier from '../components/modules/notifier';
 import Tooltip from '../components/modules/tooltip';
@@ -47,7 +46,6 @@ export interface EditorModules {
   Toolbox: Toolbox;
   BlockSettings: BlockSettings;
   ConversionToolbar: ConversionToolbar;
-  Shortcuts: Shortcuts;
   Paste: Paste;
   DragNDrop: DragNDrop;
   ModificationsObserver: ModificationsObserver;
