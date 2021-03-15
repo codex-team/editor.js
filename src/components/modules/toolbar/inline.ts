@@ -69,6 +69,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private readonly toolbarVerticalMargin: number = 5;
 
   /**
+   * TODO: Get rid of this
+   *
    * Currently visible tools instances
    */
   private toolsInstances: Map<string, IInlineTool>;

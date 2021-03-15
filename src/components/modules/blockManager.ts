@@ -702,9 +702,7 @@ export default class BlockManager extends Module {
    */
   public async destroy(): Promise<void> {
     await Promise.all(this.blocks.map((block) => {
-      if (_.isFunction(block.toolInstance.destroy)) {
-        return block.toolInstance.destroy();
-      }
+      return block.destroy();
     }));
   }
 

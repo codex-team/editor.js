@@ -106,34 +106,27 @@ export default class Block {
   /**
    * Block Tool`s name
    */
-  public name: string;
+  public readonly name: string;
 
   /**
    * Instance of the Tool Block represents
    */
-  public tool: BlockTool;
-
-  public toolInstance: IBlockTool;
-
-  /**
-   * Class blueprint of the ool Block represents
-   */
-  public class: BlockToolConstructable;
+  public readonly tool: BlockTool;
 
   /**
    * User Tool configuration
    */
-  public settings: ToolConfig;
+  public readonly settings: ToolConfig;
 
   /**
    * Wrapper for Block`s content
    */
-  public holder: HTMLDivElement;
+  public readonly holder: HTMLDivElement;
 
   /**
    * Tunes used by Tool
    */
-  public tunes: BlockTune[];
+  public readonly tunes: BlockTune[];
 
   /**
    * Tool's user configuration
@@ -146,6 +139,11 @@ export default class Block {
    * @type {HTMLElement[]}
    */
   private cachedInputs: HTMLElement[] = [];
+
+  /**
+   * Tool class instance
+   */
+  private readonly toolInstance: IBlockTool;
 
   /**
    * Editor`s API module
@@ -661,6 +659,24 @@ export default class Block {
   public willUnselect(): void {
     this.mutationObserver.disconnect();
     this.removeInputEvents();
+  }
+
+  /**
+   * Call Tool instance destroy method
+   */
+  public destroy() {
+    if (_.isFunction(this.toolInstance.destroy)) {
+      this.toolInstance.destroy()
+    }
+  }
+
+  /**
+   * Call Tool instance renderSettings method
+   */
+  public renderSettings(): HTMLElement | undefined {
+    if (_.isFunction(this.toolInstance.renderSettings)) {
+      return this.toolInstance.renderSettings()
+    }
   }
 
   /**
