@@ -281,15 +281,15 @@ export default class Tools extends Module {
 
   public getTunesForTool(tool: BlockTool): BlockTune[] {
     const names = tool.enabledBlockTunes;
-    const internalTunes = this.getInternal(ToolType.Tune) as Map<string, BlockTune>;
+    const internalTunes = Array.from(this.getInternal(ToolType.Tune).values()) as BlockTune[];
 
     if (Array.isArray(names)) {
       return names
         .map(name => this.tunes.get(name))
-        .concat(Array.from(internalTunes.values()))
+        .concat(internalTunes);
     }
 
-    return []
+    return internalTunes;
   }
 
   /**
