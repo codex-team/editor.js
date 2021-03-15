@@ -14,6 +14,8 @@ import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
 import Stub from '../tools/stub';
+import { ModuleConfig } from '../../types-internal/module-config';
+import EventsDispatcher from '../utils/events';
 
 /**
  * @module Editor.js Tools Submodule
@@ -198,9 +200,13 @@ export default class Tools extends Module {
    * @class
    *
    * @param {EditorConfig} config - Editor's configuration
+   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
    */
-  constructor({ config }) {
-    super({ config });
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
 
     this.toolsClasses = {};
 

@@ -147,7 +147,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.addDefaultSettings();
 
     /** Tell to subscribers that block settings is opened */
-    this.Editor.Events.emit(this.events.opened);
+    this.eventsDispatcher.emit(this.events.opened);
 
     this.flipper.activate(this.blockTunesButtons);
   }
@@ -183,7 +183,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.nodes.defaultSettings.innerHTML = '';
 
     /** Tell to subscribers that block settings is closed */
-    this.Editor.Events.emit(this.events.closed);
+    this.eventsDispatcher.emit(this.events.closed);
 
     /** Clear cached buttons */
     this.buttons = [];
