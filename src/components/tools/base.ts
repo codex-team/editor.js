@@ -1,7 +1,7 @@
 import { ToolType } from '../modules/tools';
 import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import {API, SanitizerConfig} from '../../../types';
-import * as _ from '../utils'
+import { API, SanitizerConfig } from '../../../types';
+import * as _ from '../utils';
 
 export enum UserSettings {
   Shortcut = 'shortcut',
@@ -32,7 +32,7 @@ interface ConstructorOptions {
   api: API;
   defaultTool: string;
   isInternal: boolean;
-  defaultPlaceholder?: string | false
+  defaultPlaceholder?: string | false;
 }
 
 /**
@@ -48,6 +48,11 @@ export default abstract class BaseTool<Type extends Tool> {
    * Tool name specified in EditorJS config
    */
   public name: string;
+
+  /**
+   * Flag show is current Tool internal or not
+   */
+  public readonly isInternal: boolean;
 
   /**
    * EditorJS API for current Tool
@@ -70,15 +75,21 @@ export default abstract class BaseTool<Type extends Tool> {
   protected defaultTool: string;
 
   /**
-   * Flag show is current Tool internal or not
-   */
-  public readonly isInternal: boolean;
-
-  /**
    * Default placeholder specified in EditorJS user configuration
    */
   protected defaultPlaceholder?: string | false;
 
+  /**
+   * @class
+   *
+   * @param name - Tool name
+   * @param constructable - Tool constructable blueprint
+   * @param config - user specified Tool config
+   * @param api - EditorJS API module
+   * @param defaultTool - default Tool name
+   * @param isInternal - is current Tool internal
+   * @param defaultPlaceholder - default user specified placeholder
+   */
   constructor({
     name,
     constructable,
@@ -86,7 +97,7 @@ export default abstract class BaseTool<Type extends Tool> {
     api,
     defaultTool,
     isInternal = false,
-    defaultPlaceholder
+    defaultPlaceholder,
   }: ConstructorOptions) {
     this.api = api;
     this.name = name;
@@ -126,7 +137,7 @@ export default abstract class BaseTool<Type extends Tool> {
     if (_.isFunction(this.constructable.prepare)) {
       return this.constructable.prepare({
         toolName: this.name,
-        config: this.settings
+        config: this.settings,
       });
     }
   }
@@ -157,6 +168,7 @@ export default abstract class BaseTool<Type extends Tool> {
 
   /**
    * Constructs new Tool instance from constructable blueprint
+   *
    * @param args
    */
   public abstract instance(...args: any[]): Type;

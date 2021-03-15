@@ -2,14 +2,14 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import {InlineTool as IInlineTool} from '../../../../types';
+import { InlineTool as IInlineTool } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
-import {I18nInternalNS} from '../../i18n/namespace-internal';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import {ToolType} from '../tools';
+import { ToolType } from '../tools';
 import InlineTool from '../../tools/inline';
-import {InternalSettings} from '../../tools/base';
+import { InternalSettings } from '../../tools/base';
 import BlockTool from '../../tools/block';
 
 /**
@@ -283,7 +283,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Returns inline toolbar settings for a particular tool
    *
-   * @param {string} toolName - user specified name of tool
+   * @param tool - BlockTool object
    * @returns {string[] | boolean} array of ordered tool names or false
    */
   private getInlineToolbarSettings(tool: BlockTool): string[] | boolean {
@@ -511,7 +511,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Changes Conversion Dropdown content for current block's Tool
    */
   private setConversionTogglerContent(): void {
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager } = this.Editor;
     const { currentBlock } = BlockManager;
     const toolName = currentBlock.name;
 
@@ -587,8 +587,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Add tool button and activate clicks
    *
-   * @param {string} toolName - name of Tool to add
-   * @param {InlineTool} tool - Tool class instance
+   * @param {InlineTool} tool - InlineTool object
    */
   private addTool(tool: InlineTool): void {
     const {
@@ -746,7 +745,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     Array
       .from(this.Editor.Tools.inline.entries())
       .forEach(([name, tool]) => {
-        result[name] = tool.instance()
+        result[name] = tool.instance();
       });
 
     return result;

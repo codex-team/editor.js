@@ -292,7 +292,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         }
 
         this.addTool(name, toolboxSettings.icon, toolboxSettings.title);
-      })
+      });
   }
 
   /**

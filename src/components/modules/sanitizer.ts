@@ -187,7 +187,7 @@ export default class Sanitizer extends Module {
    * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
    * otherwise get only enabled
    *
-   * @param {string} name - Inline Tool name
+   * @param tool - BlockTool object
    */
   public getInlineToolsConfig(tool: BlockTool): SanitizerConfig {
     const { Tools } = this.Editor;

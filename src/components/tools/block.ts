@@ -3,6 +3,7 @@ import { ToolType } from '../modules/tools';
 import {
   BlockAPI,
   BlockTool as IBlockTool,
+  BlockToolData,
   ConversionConfig,
   PasteConfig,
   ToolboxConfig
@@ -25,7 +26,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * @param block - BlockAPI for current Block
    * @param readOnly - True if Editor is in read-only mode
    */
-  public instance(data: any, block: BlockAPI, readOnly: boolean): IBlockTool {
+  public instance(data: BlockToolData, block: BlockAPI, readOnly: boolean): IBlockTool {
     // eslint-disable-next-line new-cap
     return new this.constructable({
       data,
@@ -86,6 +87,6 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Returns Tool paste configuration
    */
   public get pasteConfig(): PasteConfig {
-    return this.constructable[InternalSettings.PasteConfig] || {}
+    return this.constructable[InternalSettings.PasteConfig] || {};
   }
 }

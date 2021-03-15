@@ -286,6 +286,8 @@ export default class Paste extends Module {
 
   /**
    * Process paste config for each tool
+   *
+   * @param tool - BlockTool object
    */
   private processTool = (tool: BlockTool): void => {
     try {
@@ -316,8 +318,7 @@ export default class Paste extends Module {
   /**
    * Get tags to substitute by Tool
    *
-   * @param {string} name - Tool name
-   * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
+   * @param tool - BlockTool object
    */
   private getTagsConfig(tool: BlockTool): void {
     const tags = tool.pasteConfig.tags || [];
@@ -344,8 +345,7 @@ export default class Paste extends Module {
   /**
    * Get files` types and extensions to substitute by Tool
    *
-   * @param {string} name - Tool name
-   * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
+   * @param tool - BlockTool object
    */
   private getFilesConfig(tool: BlockTool): void {
     const { files = {} } = tool.pasteConfig;
@@ -386,8 +386,7 @@ export default class Paste extends Module {
   /**
    * Get RegExp patterns to substitute by Tool
    *
-   * @param {string} name - Tool name
-   * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
+   * @param tool - BlockTool object
    */
   private getPatternsConfig(tool: BlockTool): void {
     if (!tool.pasteConfig.patterns || _.isEmpty(tool.pasteConfig.patterns)) {
@@ -457,7 +456,7 @@ export default class Paste extends Module {
    * @param {FileList} items - pasted or dropped items
    */
   private async processFiles(items: FileList): Promise<void> {
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager } = this.Editor;
 
     let dataToInsert: {type: string; event: PasteEvent}[];
 
@@ -621,7 +620,7 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to inseret
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
-    const { Caret, BlockManager, Tools } = this.Editor;
+    const { Caret, BlockManager } = this.Editor;
     const { currentBlock } = BlockManager;
 
     /**
@@ -750,7 +749,7 @@ export default class Paste extends Module {
    * @returns {void}
    */
   private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
-    const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
+    const { BlockManager, Caret, Sanitizer } = this.Editor;
     const sanitizedBlocks = Sanitizer.sanitizeBlocks(blocks);
 
     sanitizedBlocks.forEach(({ tool, data }, i) => {

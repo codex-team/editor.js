@@ -664,9 +664,9 @@ export default class Block {
   /**
    * Call Tool instance destroy method
    */
-  public destroy() {
+  public destroy(): void {
     if (_.isFunction(this.toolInstance.destroy)) {
-      this.toolInstance.destroy()
+      this.toolInstance.destroy();
     }
   }
 
@@ -675,7 +675,7 @@ export default class Block {
    */
   public renderSettings(): HTMLElement | undefined {
     if (_.isFunction(this.toolInstance.renderSettings)) {
-      return this.toolInstance.renderSettings()
+      return this.toolInstance.renderSettings();
     }
   }
 

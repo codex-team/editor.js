@@ -122,29 +122,16 @@ export default class Tools extends Module {
     return this._blockTools;
   }
 
+  /**
+   * Returns default Tool object
+   */
   public get defaultTool(): BlockTool {
     return this.block.get(this.config.defaultBlock);
   }
 
   /**
-   * Returns internal tools
-   *
-   * @param type - if passed, Tools will be filtered by type
+   * Tools objects factory
    */
-  public getInternal(type?: ToolType): Map<string, BlockTool | InlineTool | BlockTune> {
-    let tools = Array
-      .from(this.available.entries())
-      .filter(([, tool]) => {
-        return tool.isInternal;
-      });
-
-    if (type) {
-      tools = tools.filter(([, tool]) => tool.type === type)
-    }
-
-    return new Map(tools);
-  }
-
   private factory: ToolsFactory;
 
   /**
@@ -176,6 +163,25 @@ export default class Tools extends Module {
   }
 
   /**
+   * Returns internal tools
+   *
+   * @param type - if passed, Tools will be filtered by type
+   */
+  public getInternal(type?: ToolType): Map<string, BlockTool | InlineTool | BlockTune> {
+    let tools = Array
+      .from(this.available.entries())
+      .filter(([, tool]) => {
+        return tool.isInternal;
+      });
+
+    if (type) {
+      tools = tools.filter(([, tool]) => tool.type === type);
+    }
+
+    return new Map(tools);
+  }
+
+  /**
    * Creates instances via passed or default configuration
    *
    * @returns {Promise<void>}
@@ -187,7 +193,6 @@ export default class Tools extends Module {
      * Assign internal tools
      */
     this.config.tools = _.deepMerge({}, this.internalTools, this.config.tools);
-
 
     if (!Object.prototype.hasOwnProperty.call(this.config, 'tools') || Object.keys(this.config.tools).length === 0) {
       throw Error('Can\'t start without tools');
@@ -220,6 +225,47 @@ export default class Tools extends Module {
   }
 
   /**
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
+   */
+  public get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
+    return {
+      bold: {
+        class: BoldInlineTool,
+        isInternal: true,
+      },
+      italic: {
+        class: ItalicInlineTool,
+        isInternal: true,
+      },
+      link: {
+        class: LinkInlineTool,
+        isInternal: true,
+      },
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+        isInternal: true,
+      },
+      stub: {
+        class: Stub,
+        isInternal: true,
+      },
+    };
+  }
+
+  /**
+   * Calls each Tool reset method to clean up anything set by Tool
+   */
+  public destroy(): void {
+    Object.values(this.available).forEach(async tool => {
+      if (_.isFunction(tool.reset)) {
+        await tool.reset();
+      }
+    });
+  }
+
+  /**
    * Success callback
    *
    * @param {object} data - append tool to available list
@@ -238,38 +284,10 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns internal tools
-   * Includes Bold, Italic, Link and Paragraph
-   */
-  public get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
-    return {
-      bold: { class: BoldInlineTool, isInternal: true },
-      italic: { class: ItalicInlineTool, isInternal: true },
-      link: { class: LinkInlineTool, isInternal: true },
-      paragraph: {
-        class: Paragraph,
-        inlineToolbar: true,
-        isInternal: true
-      },
-      stub: { class: Stub, isInternal: true },
-    };
-  }
-
-  /**
-   * Calls each Tool reset method to clean up anything set by Tool
-   */
-  public destroy(): void {
-    Object.values(this.available).forEach(async tool => {
-      if (_.isFunction(tool.reset)) {
-        await tool.reset();
-      }
-    });
-  }
-
-  /**
    * Binds prepare function of plugins with user or default config
    *
    * @returns {Array} list of functions that needs to be fired sequentially
+   * @param config - tools config
    */
   private getListOfPrepareFunctions(config: {[name: string]: ToolSettings}): {
     function: (data: { toolName: string }) => void | Promise<void>;
@@ -284,13 +302,13 @@ export default class Tools extends Module {
       .entries(config)
       .forEach(([toolName, settings]) => {
         toolPreparationList.push({
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           function: _.isFunction(settings.class.prepare) ? settings.class.prepare : (): void => {},
           data: {
-            toolName
-          }
+            toolName,
+          },
         });
       });
-
 
     return toolPreparationList;
   }

@@ -171,8 +171,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
   /**
    * Append Tool to the Toolbox
    *
-   * @param {string} toolName - tool name
-   * @param {BlockToolConstructable} tool - tool class
+   * @param {BlockToolConstructable} tool - BlockTool object
    */
   private addTool(tool: BlockTool): void {
     const toolToolboxSettings = tool.toolbox;
@@ -238,7 +237,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
   /**
    * Draw tooltip for toolbox tools
    *
-   * @param {string} toolName - toolbox tool name
+   * @param tool - BlockTool object
    * @returns {HTMLElement}
    */
   private drawTooltip(tool: BlockTool): HTMLElement {
@@ -266,7 +265,6 @@ export default class Toolbox extends Module<ToolboxNodes> {
   /**
    * Enable shortcut Block Tool implemented shortcut
    *
-   * @param {BlockToolConstructable} tool - Tool class
    * @param {string} toolName - Tool name
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
