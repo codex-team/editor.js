@@ -1,0 +1,53 @@
+name: Publish package to NPM
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          # Pull submodules
+          submodules: 'recursive'
+
+      # Setup node environment
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15
+          registry-url: https://registry.npmjs.org/
+
+      # Prepare, build and publish project
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build output files
+        run: yarn build
+
+      - name: Publish the package
+        run: yarn publish --access=public ${{ github.event.release.prerelease && '--tag=next' || '--tag=latest' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  notify:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+      - name: Send a message
+        uses: codex-team/action-codexbot-notify@v1
+        with:
+          webhook: ${{ secrets.CODEX_BOT_NOTIFY_EDITORJS_PUBLIC_CHAT }}
+          message: '📦 [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) ${{ steps.package.outputs.version }} was published'
+          parse_mode: 'markdown'
+          disable_web_page_preview: true

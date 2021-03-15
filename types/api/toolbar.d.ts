@@ -11,4 +11,10 @@ export interface Toolbar {
    * Opens Toolbar
    */
   open(): void;
+
+  /**
+   * Toggles Block Setting of the current block
+   * @param {boolean} openingState —  opening state of Block Setting
+   */
+  toggleBlockSettings(openingState?: boolean): void;
 }

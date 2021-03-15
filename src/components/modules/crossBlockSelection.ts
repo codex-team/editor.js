@@ -23,9 +23,7 @@ export default class CrossBlockSelection extends Module {
    * @returns {Promise}
    */
   public async prepare(): Promise<void> {
-    const { Listeners } = this.Editor;
-
-    Listeners.on(document, 'mousedown', (event: MouseEvent) => {
+    this.listeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.enableCrossBlockSelection(event);
     });
   }
@@ -40,13 +38,13 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    const { BlockManager, Listeners } = this.Editor;
+    const { BlockManager } = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;
 
-    Listeners.on(document, 'mouseover', this.onMouseOver);
-    Listeners.on(document, 'mouseup', this.onMouseUp);
+    this.listeners.on(document, 'mouseover', this.onMouseOver);
+    this.listeners.on(document, 'mouseup', this.onMouseUp);
   }
 
   /**
@@ -98,6 +96,10 @@ export default class CrossBlockSelection extends Module {
 
     /** close InlineToolbar when Blocks selected */
     this.Editor.InlineToolbar.close();
+
+    nextBlock.holder.scrollIntoView({
+      block: 'nearest',
+    });
   }
 
   /**
@@ -172,10 +174,8 @@ export default class CrossBlockSelection extends Module {
    * Removes the listeners
    */
   private onMouseUp = (): void => {
-    const { Listeners } = this.Editor;
-
-    Listeners.off(document, 'mouseover', this.onMouseOver);
-    Listeners.off(document, 'mouseup', this.onMouseUp);
+    this.listeners.off(document, 'mouseover', this.onMouseOver);
+    this.listeners.off(document, 'mouseup', this.onMouseUp);
   }
 
   /**
