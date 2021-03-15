@@ -209,7 +209,7 @@ export default class BlockEvents extends Module {
   private enter(event: KeyboardEvent): void {
     const { BlockManager, Tools, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = Tools.available[currentBlock.name] as BlockTool;
+    const tool = Tools.block.get(currentBlock.name);
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
@@ -277,7 +277,7 @@ export default class BlockEvents extends Module {
   private backspace(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = this.Editor.Tools.available[currentBlock.name] as BlockTool;
+    const tool = currentBlock.tool;
 
     /**
      * Check if Block should be removed by current Backspace keydown

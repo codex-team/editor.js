@@ -67,7 +67,7 @@ export default class Renderer extends Module {
     const tool = item.type;
     const data = item.data;
 
-    if (tool in Tools.available) {
+    if (Tools.available.has(tool)) {
       try {
         BlockManager.insert({
           tool,
@@ -87,8 +87,8 @@ export default class Renderer extends Module {
         title: tool,
       };
 
-      if (tool in Tools.unavailable) {
-        const toolboxSettings = (Tools.unavailable[tool] as BlockTool).toolbox;
+      if (Tools.unavailable.has(tool)) {
+        const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
 
         stubData.title = toolboxSettings?.title || stubData.title;
       }

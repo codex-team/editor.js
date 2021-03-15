@@ -277,7 +277,7 @@ export default class Paste extends Module {
    * Get and process tool`s paste configs
    */
   private processTools(): void {
-    const tools = this.Editor.Tools.blockTools;
+    const tools = this.Editor.Tools.block;
 
     Object.entries(tools).forEach(this.processTool);
   }
@@ -287,7 +287,7 @@ export default class Paste extends Module {
    */
   private processTool = ([name, tool]: [string, BlockTool]): void => {
     try {
-      const toolInstance = this.Editor.Tools.blockTools[name].instance({}, {} as BlockAPI, false);
+      const toolInstance = this.Editor.Tools.block.get(name).instance({}, {} as BlockAPI, false);
 
       if (tool.pasteConfig === false) {
         this.exceptionList.push(name);
@@ -554,7 +554,7 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags } = Tools.blockTools[tool].pasteConfig as PasteConfig;
+        const { tags } = Tools.block.get(tool).pasteConfig as PasteConfig;
 
         const toolTags = tags.reduce((result, tag) => {
           result[tag.toLowerCase()] = {};

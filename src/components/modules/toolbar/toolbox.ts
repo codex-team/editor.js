@@ -161,13 +161,13 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Iterates available tools and appends them to the Toolbox
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.available;
+    const tools = this.Editor.Tools.block;
 
-    for (const toolName in tools) {
-      if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        this.addTool(toolName, tools[toolName] as BlockTool);
-      }
-    }
+    Array
+      .from(tools.entries())
+      .forEach(([name, tool]) => {
+        this.addTool(name, tool);
+      })
   }
 
   /**
@@ -244,8 +244,8 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @returns {HTMLElement}
    */
   private drawTooltip(toolName: string): HTMLElement {
-    const tool = this.Editor.Tools.available[toolName];
-    const toolboxSettings = (this.Editor.Tools.available[toolName] as BlockTool).toolbox || {};
+    const tool = this.Editor.Tools.block.get(toolName);
+    const toolboxSettings = tool.toolbox || {};
     const name = I18n.t(I18nInternalNS.toolNames, toolboxSettings.title || toolName);
 
     let shortcut = tool.shortcut;
@@ -289,17 +289,17 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Fired when the Read-Only mode is activated
    */
   private removeAllShortcuts(): void {
-    const tools = this.Editor.Tools.available;
+    const tools = this.Editor.Tools.block;
 
-    for (const toolName in tools) {
-      if (Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        const shortcut = tools[toolName].shortcut;
+    Array
+      .from(tools.values())
+      .forEach((tool) => {
+        const shortcut = tool.shortcut;
 
         if (shortcut) {
           Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
         }
-      }
-    }
+      });
   }
 
   /**

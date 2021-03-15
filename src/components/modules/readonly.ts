@@ -37,14 +37,16 @@ export default class ReadOnly extends Module {
    */
   public async prepare(): Promise<void> {
     const { Tools } = this.Editor;
-    const { blockTools } = Tools;
+    const { block } = Tools;
     const toolsDontSupportReadOnly: string[] = [];
 
-    Object.entries(blockTools).forEach(([name, tool]) => {
-      if (tool.isReadOnlySupported) {
-        toolsDontSupportReadOnly.push(name);
-      }
-    });
+    Array
+      .from(block.entries())
+      .forEach(([name, tool]) => {
+        if (tool.isReadOnlySupported) {
+          toolsDontSupportReadOnly.push(name);
+        }
+      });
 
     this.toolsDontSupportReadOnly = toolsDontSupportReadOnly;
 

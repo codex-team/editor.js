@@ -200,7 +200,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const replacingTool = this.Editor.Tools.blockTools[replacingToolName];
+    const replacingTool = this.Editor.Tools.block.get(replacingToolName);
 
     /**
      * Export property can be:
@@ -269,33 +269,30 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * if tools have ability to import
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.blockTools;
+    const tools = this.Editor.Tools.block;
 
-    for (const toolName in tools) {
-      if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        continue;
-      }
+    Array
+      .from(tools.entries())
+      .forEach(([name, tool]) => {
+        const toolboxSettings = tool.toolbox;
+        const conversionConfig = tool.conversionConfig;
 
-      const tool = tools[toolName];
-      const toolboxSettings = tool.toolbox;
-      const conversionConfig = tool.conversionConfig;
+        /**
+         * Skip tools that don't pass 'toolbox' property
+         */
+        if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
+          return;
+        }
 
-      /**
-       * Skip tools that don't pass 'toolbox' property
-       */
-      if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
-        continue;
-      }
+        /**
+         * Skip tools without «import» rule specified
+         */
+        if (!conversionConfig || !conversionConfig.import) {
+          return;
+        }
 
-      /**
-       * Skip tools without «import» rule specified
-       */
-      if (!conversionConfig || !conversionConfig.import) {
-        continue;
-      }
-
-      this.addTool(toolName, toolboxSettings.icon, toolboxSettings.title);
-    }
+        this.addTool(name, toolboxSettings.icon, toolboxSettings.title);
+      })
   }
 
   /**

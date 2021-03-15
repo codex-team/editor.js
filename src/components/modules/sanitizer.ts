@@ -152,7 +152,7 @@ export default class Sanitizer extends Module {
       return this.configCache[toolName];
     }
 
-    const tool = this.Editor.Tools.available[toolName];
+    const tool = this.Editor.Tools.available.get(toolName);
     const baseConfig = this.getInlineToolsConfig(toolName);
 
     /**
@@ -191,7 +191,7 @@ export default class Sanitizer extends Module {
    */
   public getInlineToolsConfig(name: string): SanitizerConfig {
     const { Tools } = this.Editor;
-    const tool = Tools.available[name] as BlockTool;
+    const tool = Tools.block.get(name);
     const enableInlineTools = tool.enabledInlineTools || [];
 
     let config = {} as SanitizerConfig;
@@ -208,7 +208,7 @@ export default class Sanitizer extends Module {
       (enableInlineTools as string[]).map((inlineToolName) => {
         config = Object.assign(
           config,
-          Tools.inline[inlineToolName].sanitizeConfig
+          Tools.inline.get(inlineToolName).sanitizeConfig
         ) as SanitizerConfig;
       });
     }
