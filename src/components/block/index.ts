@@ -39,7 +39,7 @@ interface BlockConstructorOptions {
   data: BlockToolData;
 
   /**
-   * Tool's class or constructor function
+   * Tool object
    */
   tool: BlockTool;
 

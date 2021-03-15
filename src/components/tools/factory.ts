@@ -10,11 +10,22 @@ import {EditorConfig} from '../../../types/configs';
 type ToolConstructor = typeof InlineTool | typeof BlockTool | typeof BlockTune;
 
 /**
- *
+ * Factory to construct classes to work with tools
  */
 export default class ToolsFactory {
+  /**
+   * Tools configuration specified by user
+   */
   private config: {[name: string]: ToolSettings & { isInternal?: boolean }};
+
+  /**
+   * EditorJS API Module
+   */
   private api: API;
+
+  /**
+   * EditorJS configuration
+   */
   private editorConfig: EditorConfig;
 
   constructor(
@@ -27,6 +38,11 @@ export default class ToolsFactory {
     this.editorConfig = editorConfig;
   }
 
+  /**
+   * Returns Tool object based on it's type
+   *
+   * @param name - tool name
+   */
   public get(name: string): InlineTool | BlockTool | BlockTune {
     const { class: constructable, isInternal = false, ...config } = this.config[name];
 
@@ -43,6 +59,10 @@ export default class ToolsFactory {
     });
   }
 
+  /**
+   * Find appropriate Tool object constructor for Tool constructable
+   * @param constructable
+   */
   private getConstructor(constructable: ToolConstructable): [ToolConstructor, ToolType] {
     switch (true) {
       case constructable[InternalSettings.IsInline]:

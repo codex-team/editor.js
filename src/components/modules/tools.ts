@@ -126,6 +126,11 @@ export default class Tools extends Module {
     return this.block.get(this.config.defaultBlock);
   }
 
+  /**
+   * Returns internal tools
+   *
+   * @param type - if passed, Tools will be filtered by type
+   */
   public getInternal(type?: ToolType): Map<string, BlockTool | InlineTool | BlockTune> {
     let tools = Array
       .from(this.available.entries())
@@ -314,6 +319,9 @@ export default class Tools extends Module {
     }
   }
 
+  /**
+   * Unify tools config
+   */
   private prepareConfig(): {[name: string]: ToolSettings} {
     const config: {[name: string]: ToolSettings} = {};
 
