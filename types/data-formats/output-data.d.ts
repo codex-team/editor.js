@@ -1,4 +1,5 @@
 import {BlockToolData} from '../tools';
+import {BlockTuneData} from "../block-tunes/block-tune-data";
 
 /**
  * Output of one Tool
@@ -15,6 +16,8 @@ export interface OutputBlockData<Type extends string = string, Data extends obje
    * Saved Block data
    */
   data: BlockToolData<Data>;
+
+  tunes?: {[name: string]: BlockTuneData};
 }
 
 export interface OutputData {

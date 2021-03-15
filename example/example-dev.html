@@ -80,6 +80,7 @@
 
   <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
+  <script src="./tunes/favorite/index.js"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
   <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true;"></script>
@@ -113,6 +114,8 @@
        * Tools list
        */
       tools: {
+        favorite: FavoriteTune,
+
         /**
          * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
          */
@@ -122,7 +125,8 @@
           config: {
             placeholder: 'Header'
           },
-          shortcut: 'CMD+SHIFT+H'
+          shortcut: 'CMD+SHIFT+H',
+          tunes: ['favorite']
         },
 
         /**
@@ -199,6 +203,9 @@
             data: {
               text: "Editor.js",
               level: 2
+            },
+            tunes: {
+              favorite: true
             }
           },
           {

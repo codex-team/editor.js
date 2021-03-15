@@ -3,10 +3,11 @@ import { ToolType } from '../modules/tools';
 import {
   BlockAPI,
   BlockTool as IBlockTool,
+  BlockToolConstructable,
   BlockToolData,
   ConversionConfig,
   PasteConfig,
-  ToolboxConfig
+  ToolboxConfig,
 } from '../../../types';
 import * as _ from '../utils';
 
@@ -18,6 +19,11 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Tool type — Block
    */
   public type = ToolType.Block;
+
+  /**
+   * Tool's constructable blueprint
+   */
+  protected constructable: BlockToolConstructable;
 
   /**
    * Creates new Tool instance
@@ -81,6 +87,13 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    */
   public get enabledInlineTools(): boolean | string[] {
     return this.config[UserSettings.EnabledInlineTools];
+  }
+
+  /**
+   * Returns enabled tunes for Tool
+   */
+  public get enabledBlockTunes(): boolean | string[] {
+    return this.config[UserSettings.EnabledBlockTunes];
   }
 
   /**

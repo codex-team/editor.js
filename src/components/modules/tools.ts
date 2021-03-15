@@ -16,6 +16,9 @@ import InlineTool from '../tools/inline';
 import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import BaseTool from '../tools/base';
+import MoveDownTune from "../block-tunes/block-tune-move-down";
+import DeleteTune from "../block-tunes/block-tune-delete";
+import MoveUpTune from "../block-tunes/block-tune-move-up";
 
 /**
  * @module Editor.js Tools Submodule
@@ -120,6 +123,16 @@ export default class Tools extends Module {
     this._blockTools = new Map(tools) as Map<string, BlockTool>;
 
     return this._blockTools;
+  }
+
+  public get tunes(): Map<string, BlockTune> {
+    const tools = Array
+      .from(this.available.entries())
+      .filter(([, tool]) => {
+        return tool.type === ToolType.Tune;
+      });
+
+    return new Map(tools) as Map<string, BlockTune>;
   }
 
   /**
@@ -251,7 +264,32 @@ export default class Tools extends Module {
         class: Stub,
         isInternal: true,
       },
+      moveUpTune: {
+        class: MoveUpTune,
+        isInternal: true,
+      },
+      deleteTune: {
+        class: DeleteTune,
+        isInternal: true,
+      },
+      moveDownTune: {
+        class: MoveDownTune,
+        isInternal: true,
+      },
     };
+  }
+
+  public getTunesForTool(tool: BlockTool): BlockTune[] {
+    const names = tool.enabledBlockTunes;
+    const internalTunes = this.getInternal(ToolType.Tune) as Map<string, BlockTune>;
+
+    if (Array.isArray(names)) {
+      return names
+        .map(name => this.tunes.get(name))
+        .concat(Array.from(internalTunes.values()))
+    }
+
+    return []
   }
 
   /**

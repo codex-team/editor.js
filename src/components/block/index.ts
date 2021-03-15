@@ -3,7 +3,7 @@ import {
   BlockTool as IBlockTool,
   BlockToolConstructable,
   BlockToolData,
-  BlockTune,
+  BlockTune as IBlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
   ToolConfig,
@@ -23,16 +23,13 @@ import BlockTool from '../tools/block';
 import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
+import BlockTune from '../tools/tune';
+import {BlockTuneData} from "../../../types/block-tunes/block-tune-data";
 
 /**
  * Interface describes Block class constructor argument
  */
 interface BlockConstructorOptions {
-  /**
-   * Tool's name
-   */
-  name: string;
-
   /**
    * Initial Block data
    */
@@ -52,6 +49,10 @@ interface BlockConstructorOptions {
    * This flag indicates that the Block should be constructed in the read-only mode.
    */
   readOnly: boolean;
+
+  tunes: BlockTune[];
+
+  tunesData: {[name: string]: BlockTuneData};
 }
 
 /**
@@ -145,6 +146,8 @@ export default class Block {
    */
   private readonly toolInstance: IBlockTool;
 
+  private readonly tunesInstances: Map<string, IBlockTune> = new Map();
+
   /**
    * Editor`s API module
    */
@@ -195,7 +198,6 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
-   * @param {string} options.name - Tool name that passed on initialization
    * @param {BlockToolData} options.data - Tool's initial data
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
@@ -203,13 +205,14 @@ export default class Block {
    * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
-    name,
     data,
     tool,
     api,
     readOnly,
+    tunes,
+    tunesData,
   }: BlockConstructorOptions) {
-    this.name = name;
+    this.name = tool.name;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
@@ -220,11 +223,16 @@ export default class Block {
     this.tool = tool;
     this.toolInstance = tool.instance(data, this.blockAPI, readOnly);
 
-    this.holder = this.compose();
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = this.makeTunes();
+    this.tunes = tunes;
+
+    tunes.forEach((tune) => {
+      this.tunesInstances.set(tune.name, tune.instance(tunesData[tune.name], this.blockAPI))
+    });
+
+    this.holder = this.compose();
   }
 
   /**
@@ -526,6 +534,15 @@ export default class Block {
    */
   public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
+    const tunesData: {[name: string]: BlockTuneData} = {}
+
+    Array
+      .from(this.tunesInstances.entries())
+      .forEach(([name, tune]) => {
+        if (_.isFunction(tune.save)) {
+          tunesData[name] = tune.save()
+        }
+      });
 
     /**
      * Measuring execution time
@@ -541,6 +558,7 @@ export default class Block {
         return {
           tool: this.name,
           data: finishedExtraction,
+          tunes: tunesData,
           time: measuringEnd - measuringStart,
         };
       })
@@ -574,7 +592,7 @@ export default class Block {
    *
    * @returns {BlockTune[]}
    */
-  public makeTunes(): BlockTune[] {
+  public makeTunes(): IBlockTune[] {
     const tunesList = [
       {
         name: 'moveUp',
@@ -595,6 +613,8 @@ export default class Block {
       return new Tune({
         api: this.api.getMethodsForTool(name, ToolType.Tune),
         settings: this.config,
+        block: this.blockAPI,
+        data: {}
       });
     });
   }
@@ -607,7 +627,7 @@ export default class Block {
   public renderTunes(): DocumentFragment {
     const tunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach((tune) => {
+    this.tunesInstances.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
 
@@ -690,7 +710,18 @@ export default class Block {
         pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
-    wrapper.appendChild(contentNode);
+
+    let wrappedContentNode: HTMLElement = contentNode;
+
+    Array
+      .from(this.tunesInstances.values())
+      .forEach((tune) => {
+        if (_.isFunction(tune.wrap)) {
+          wrappedContentNode = tune.wrap(wrappedContentNode)
+        }
+      });
+
+    wrapper.appendChild(wrappedContentNode);
 
     return wrapper;
   }

@@ -13,6 +13,7 @@ import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
 import BlockTool from '../tools/block';
+import {BlockTuneData} from '../../../types/block-tunes/block-tune-data';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -220,15 +221,21 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public composeBlock({ tool: name, data = {} }: {tool: string; data?: BlockToolData}): Block {
+  public composeBlock({
+    tool: name,
+    data = {},
+    tunes: tunesData = {}
+  }: {tool: string; data?: BlockToolData, tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.block.get(name);
+    const tunes = this.Editor.Tools.getTunesForTool(tool);
     const block = new Block({
-      name,
       data,
       tool,
       api: this.Editor.API,
       readOnly,
+      tunes,
+      tunesData,
     });
 
     if (!readOnly) {
@@ -256,12 +263,14 @@ export default class BlockManager extends Module {
     index,
     needToFocus = true,
     replace = false,
+    tunes = {},
   }: {
     tool?: string;
     data?: BlockToolData;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
+    tunes?: {[name: string]: BlockTuneData}
   } = {}): Block {
     let newIndex = index;
 
@@ -272,6 +281,7 @@ export default class BlockManager extends Module {
     const block = this.composeBlock({
       tool,
       data,
+      tunes,
     });
 
     this._blocks.insert(newIndex, block, replace);

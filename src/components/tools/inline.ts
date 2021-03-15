@@ -1,6 +1,6 @@
 import BaseTool, { InternalSettings } from './base';
 import { ToolType } from '../modules/tools';
-import { InlineTool as IInlineTool } from '../../../types';
+import { InlineTool as IInlineTool, InlineToolConstructable } from '../../../types';
 
 /**
  * InlineTool object to work with Inline Tools constructables
@@ -10,6 +10,11 @@ export default class InlineTool extends BaseTool<IInlineTool> {
    * Tool type — Inline
    */
   public type = ToolType.Inline;
+
+  /**
+   * Tool's constructable blueprint
+   */
+  protected constructable: InlineToolConstructable;
 
   /**
    * Returns title for Inline Tool if specified by user

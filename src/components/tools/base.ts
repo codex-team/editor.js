@@ -7,6 +7,7 @@ export enum UserSettings {
   Shortcut = 'shortcut',
   Toolbox = 'toolbox',
   EnabledInlineTools = 'inlineToolbar',
+  EnabledBlockTunes = 'tunes',
   Config = 'config',
 }
 

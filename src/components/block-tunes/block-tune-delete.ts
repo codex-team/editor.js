@@ -11,6 +11,9 @@ import $ from '../dom';
  *
  */
 export default class DeleteTune implements BlockTune {
+
+  public static readonly isTune = true;
+
   /**
    * Property that contains Editor.js API methods
    *
