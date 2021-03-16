@@ -1,5 +1,8 @@
 # Changelog
 
+- `Refactoring` - Tooltip module is util now.
+
+
 ### 2.19.3
 
 - `Fix` — Ignore error raised by Shortcut module
