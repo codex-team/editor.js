@@ -16,6 +16,8 @@ import InlineTool from '../tools/inline';
 import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import BaseTool from '../tools/base';
+import Stub from '../tools/stub';
+import EventsDispatcher from '../utils/events';
 
 /**
  * @module Editor.js Tools Submodule
@@ -153,16 +155,11 @@ export default class Tools extends Module {
    * @private
    */
   private _inlineTools: Map<string, InlineTool> = null;
-  private _blockTools: Map<string, BlockTool> = null;
 
   /**
-   * @class
-   *
-   * @param {EditorConfig} config - Editor's configuration
+   * Cache for the prepared block tools
    */
-  constructor({ config }) {
-    super({ config });
-  }
+  private _blockTools: Map<string, BlockTool> = null;
 
   /**
    * Returns internal tools

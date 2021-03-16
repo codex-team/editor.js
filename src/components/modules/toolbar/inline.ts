@@ -621,7 +621,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const shortcut = this.getToolShortcut(tool.name);
 
     if (shortcut) {
-      this.enableShortcuts(instance, shortcut);
+      try {
+        this.enableShortcuts(instance, shortcut);
+      } catch (e) {}
     }
 
     /**
