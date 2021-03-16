@@ -16,8 +16,6 @@ import InlineTool from '../tools/inline';
 import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import BaseTool from '../tools/base';
-import Stub from '../tools/stub';
-import EventsDispatcher from '../utils/events';
 
 /**
  * @module Editor.js Tools Submodule
