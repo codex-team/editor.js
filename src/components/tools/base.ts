@@ -10,27 +10,37 @@ export enum UserSettings {
   Config = 'config',
 }
 
-export enum InternalSettings {
-  IsEnabledLineBreaks = 'enableLineBreaks',
-  IsInline = 'isInline',
-  IsTune = 'isTune',
-  Title = 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
+export enum CommonInternalSettings {
   Shortcut = 'shortcut',
-  Toolbox = 'toolbox',
   SanitizeConfig = 'sanitize',
+
+}
+
+export enum InternalBlockToolSettings {
+  IsEnabledLineBreaks = 'enableLineBreaks',
+  Toolbox = 'toolbox',
   ConversionConfig = 'conversionConfig',
   IsReadOnlySupported = 'isReadOnlySupported',
   PasteConfig = 'pasteConfig'
 }
 
-export type ToolConfig = Omit<ToolSettings, 'class'>
+export enum InternalInlineToolSettings {
+  IsInline = 'isInline',
+  Title = 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
+}
+
+export enum InternalTuneSettings {
+  IsTune = 'isTune',
+}
+
+export type ToolOptions = Omit<ToolSettings, 'class'>
 
 interface ConstructorOptions {
   name: string;
   constructable: ToolConstructable;
-  config: ToolConfig;
+  config: ToolOptions;
   api: API;
-  defaultTool: string;
+  isDefault: boolean;
   isInternal: boolean;
   defaultPlaceholder?: string | false;
 }
@@ -50,9 +60,14 @@ export default abstract class BaseTool<Type extends Tool> {
   public name: string;
 
   /**
-   * Flag show is current Tool internal or not
+   * Flag show is current Tool internal (bundled with EditorJS core) or not
    */
   public readonly isInternal: boolean;
+
+  /**
+   * Flag show is current Tool default or not
+   */
+  public readonly isDefault: boolean;
 
   /**
    * EditorJS API for current Tool
@@ -62,17 +77,12 @@ export default abstract class BaseTool<Type extends Tool> {
   /**
    * Current tool user configuration
    */
-  protected config: ToolConfig;
+  protected config: ToolOptions;
 
   /**
    * Tool's constructable blueprint
    */
   protected constructable: ToolConstructable;
-
-  /**
-   * Editor default tool
-   */
-  protected defaultTool: string;
 
   /**
    * Default placeholder specified in EditorJS user configuration
@@ -95,7 +105,7 @@ export default abstract class BaseTool<Type extends Tool> {
     constructable,
     config,
     api,
-    defaultTool,
+    isDefault,
     isInternal = false,
     defaultPlaceholder,
   }: ConstructorOptions) {
@@ -103,7 +113,7 @@ export default abstract class BaseTool<Type extends Tool> {
     this.name = name;
     this.constructable = constructable;
     this.config = config;
-    this.defaultTool = defaultTool;
+    this.isDefault = isDefault;
     this.isInternal = isInternal;
     this.defaultPlaceholder = defaultPlaceholder;
   }
@@ -111,7 +121,7 @@ export default abstract class BaseTool<Type extends Tool> {
   /**
    * Returns Tool user configuration
    */
-  public get settings(): ToolConfig {
+  public get settings(): ToolOptions {
     const config = this.config[UserSettings.Config] || {};
 
     if (this.isDefault && !('placeholder' in config) && this.defaultPlaceholder) {
@@ -146,7 +156,7 @@ export default abstract class BaseTool<Type extends Tool> {
    * Returns shortcut for Tool (internal or specified by user)
    */
   public get shortcut(): string | undefined {
-    const toolShortcut = this.constructable[InternalSettings.Shortcut];
+    const toolShortcut = this.constructable[CommonInternalSettings.Shortcut];
     const userShortcut = this.settings[UserSettings.Shortcut];
 
     return userShortcut || toolShortcut;
@@ -156,14 +166,7 @@ export default abstract class BaseTool<Type extends Tool> {
    * Returns Tool's sanitizer configuration
    */
   public get sanitizeConfig(): SanitizerConfig {
-    return this.constructable[InternalSettings.SanitizeConfig];
-  }
-
-  /**
-   * Returns true if current Tool is default
-   */
-  public get isDefault(): boolean {
-    return this.name === this.defaultTool;
+    return this.constructable[CommonInternalSettings.SanitizeConfig];
   }
 
   /**

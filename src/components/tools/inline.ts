@@ -1,4 +1,4 @@
-import BaseTool, { InternalSettings } from './base';
+import BaseTool, { InternalInlineToolSettings } from './base';
 import { ToolType } from '../modules/tools';
 import { InlineTool as IInlineTool } from '../../../types';
 
@@ -15,7 +15,7 @@ export default class InlineTool extends BaseTool<IInlineTool> {
    * Returns title for Inline Tool if specified by user
    */
   public get title(): string {
-    return this.constructable[InternalSettings.Title];
+    return this.constructable[InternalInlineToolSettings.Title];
   }
 
   /**

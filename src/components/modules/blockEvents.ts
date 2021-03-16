@@ -5,7 +5,6 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
-import BlockTool from '../tools/block';
 
 /**
  *

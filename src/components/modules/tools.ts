@@ -23,6 +23,8 @@ import BaseTool from '../tools/base';
  * Creates Instances from Plugins and binds external config to the instances
  */
 
+type ToolClass = BlockTool | InlineTool | BlockTune;
+
 /**
  * Class properties:
  *
@@ -47,7 +49,7 @@ export default class Tools extends Module {
    *
    * @returns {object<Tool>}
    */
-  public get available(): Map<string, InlineTool | BlockTool | BlockTune> {
+  public get available(): Map<string, ToolClass> {
     return this.toolsAvailable;
   }
 
@@ -56,7 +58,7 @@ export default class Tools extends Module {
    *
    * @returns {Tool[]}
    */
-  public get unavailable(): Map<string, InlineTool | BlockTool | BlockTune> {
+  public get unavailable(): Map<string, ToolClass> {
     return this.toolsUnavailable;
   }
 
@@ -137,12 +139,12 @@ export default class Tools extends Module {
   /**
    * Tools` classes available to use
    */
-  private readonly toolsAvailable: Map<string, InlineTool | BlockTool | BlockTune> = new Map();
+  private readonly toolsAvailable: Map<string, ToolClass> = new Map();
 
   /**
    * Tools` classes not available to use because of preparation failure
    */
-  private readonly toolsUnavailable: Map<string, InlineTool | BlockTool | BlockTune> = new Map();
+  private readonly toolsUnavailable: Map<string, ToolClass> = new Map();
 
   /**
    * Cache for the prepared inline tools
@@ -167,7 +169,7 @@ export default class Tools extends Module {
    *
    * @param type - if passed, Tools will be filtered by type
    */
-  public getInternal(type?: ToolType): Map<string, BlockTool | InlineTool | BlockTune> {
+  public getInternal(type?: ToolType): Map<string, ToolClass> {
     let tools = Array
       .from(this.available.entries())
       .filter(([, tool]) => {
