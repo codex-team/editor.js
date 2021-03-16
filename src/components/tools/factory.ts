@@ -1,5 +1,5 @@
 import { ToolConstructable, ToolSettings } from '../../../types/tools';
-import { InternalSettings } from './base';
+import { InternalInlineToolSettings, InternalTuneSettings } from './base';
 import InlineTool from './inline';
 import BlockTune from './tune';
 import BlockTool from './block';
@@ -60,7 +60,7 @@ export default class ToolsFactory {
       constructable,
       config,
       api: this.api.getMethodsForTool(name, type),
-      defaultTool: this.editorConfig.defaultBlock,
+      isDefault: name === this.editorConfig.defaultBlock,
       defaultPlaceholder: this.editorConfig.placeholder,
       isInternal,
     });
@@ -73,9 +73,9 @@ export default class ToolsFactory {
    */
   private getConstructor(constructable: ToolConstructable): [ToolConstructor, ToolType] {
     switch (true) {
-      case constructable[InternalSettings.IsInline]:
+      case constructable[InternalInlineToolSettings.IsInline]:
         return [InlineTool, ToolType.Inline];
-      case constructable[InternalSettings.IsTune]:
+      case constructable[InternalTuneSettings.IsTune]:
         return [BlockTune, ToolType.Tune];
       default:
         return [BlockTool, ToolType.Block];

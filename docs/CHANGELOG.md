@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.19.3
+
+- `Fix` — Ignore error raised by Shortcut module
+
 ### 2.19.2
 
 - `New` -  `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
@@ -15,6 +19,7 @@
 - `Fix` - Fix unexpected behavior on an empty link pasting [#1348](https://github.com/codex-team/editor.js/issues/1348).
 - `Fix` - Fix SanitizerConfig type definition [#1513](https://github.com/codex-team/editor.js/issues/1513)
 - `Refactoring` - The Listeners module now is a util.
+- `Refactoring` - The Events module now is a util.
 - `Fix` - Editor Config now immutable [#1552](https://github.com/codex-team/editor.js/issues/1552).
 - `Refactoring` - Shortcuts module is util now.
 - `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).

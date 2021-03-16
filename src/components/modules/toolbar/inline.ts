@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ToolType } from '../tools';
 import InlineTool from '../../tools/inline';
-import { InternalSettings } from '../../tools/base';
+import { CommonInternalSettings } from '../../tools/base';
 import BlockTool from '../../tools/block';
 
 /**
@@ -621,7 +621,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const shortcut = this.getToolShortcut(tool.name);
 
     if (shortcut) {
-      this.enableShortcuts(instance, shortcut);
+      try {
+        this.enableShortcuts(instance, shortcut);
+      } catch (e) {}
     }
 
     /**
@@ -671,7 +673,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const internalTools = Tools.getInternal(ToolType.Inline);
 
     if (Array.from(internalTools.keys()).includes(toolName)) {
-      return this.inlineTools[toolName][InternalSettings.Shortcut];
+      return this.inlineTools[toolName][CommonInternalSettings.Shortcut];
     }
 
     return tool.shortcut;

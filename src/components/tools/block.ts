@@ -1,4 +1,4 @@
-import BaseTool, { InternalSettings, UserSettings } from './base';
+import BaseTool, { InternalBlockToolSettings, UserSettings } from './base';
 import { ToolType } from '../modules/tools';
 import {
   BlockAPI,
@@ -47,21 +47,21 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Returns true if read-only mode is supported by Tool
    */
   public get isReadOnlySupported(): boolean {
-    return this.constructable[InternalSettings.IsReadOnlySupported] === true;
+    return this.constructable[InternalBlockToolSettings.IsReadOnlySupported] === true;
   }
 
   /**
    * Returns true if Tool supports linebreaks
    */
   public get isLineBreaksEnabled(): boolean {
-    return this.constructable[InternalSettings.IsEnabledLineBreaks];
+    return this.constructable[InternalBlockToolSettings.IsEnabledLineBreaks];
   }
 
   /**
    * Returns Tool toolbox configuration (internal or user-specified)
    */
   public get toolbox(): ToolboxConfig {
-    const toolToolboxSettings = this.constructable[InternalSettings.Toolbox] as ToolboxConfig;
+    const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
     const userToolboxSettings = this.settings[UserSettings.Toolbox];
 
     if (_.isEmpty(toolToolboxSettings)) {
@@ -79,7 +79,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Returns Tool conversion configuration
    */
   public get conversionConfig(): ConversionConfig {
-    return this.constructable[InternalSettings.ConversionConfig];
+    return this.constructable[InternalBlockToolSettings.ConversionConfig];
   }
 
   /**
@@ -100,6 +100,6 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Returns Tool paste configuration
    */
   public get pasteConfig(): PasteConfig {
-    return this.constructable[InternalSettings.PasteConfig] || {};
+    return this.constructable[InternalBlockToolSettings.PasteConfig] || {};
   }
 }
