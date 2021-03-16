@@ -7,6 +7,7 @@ import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
+import ITooltip from '../../utils/tooltip';
 
 /**
  * HTMLElements used for Toolbox UI
@@ -40,7 +41,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    *
    * @returns {object.<string, string>}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
@@ -115,7 +116,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {MouseEvent|KeyboardEvent} event - event that activates toolbox button
    * @param {string} toolName - button to activate
    */
-  public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
+  public toolButtonActivate(event: MouseEvent | KeyboardEvent, toolName: string): void {
     const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
 
     this.insertNewBlock(tool, toolName);
@@ -226,7 +227,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     /**
      * Add click listener
      */
-    this.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(button, 'click', (event: KeyboardEvent | MouseEvent) => {
       this.toolButtonActivate(event, toolName);
     });
 
@@ -235,7 +236,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
      */
     const tooltipContent = this.drawTooltip(toolName);
 
-    this.Editor.Tooltip.onHover(button, tooltipContent, {
+    ITooltip.onHover(button, tooltipContent, {
       placement: 'bottom',
       hidingDelay: 200,
     });
@@ -257,7 +258,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - tool's name
    * @param {ToolConstructable} tool - tool's class (not instance)
    */
-  private getToolShortcut(toolName: string, tool: ToolConstructable): string|null {
+  private getToolShortcut(toolName: string, tool: ToolConstructable): string | null {
     /**
      * Enable shortcut
      */

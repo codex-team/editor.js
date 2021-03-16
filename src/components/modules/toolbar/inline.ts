@@ -8,6 +8,7 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { EditorModules } from '../../../types-internal/editor-modules';
+import ITooltip from '../../utils/tooltip';
 
 /**
  * Inline Toolbar elements
@@ -92,7 +93,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Internal inline tools: Link, Bold, Italic
    */
-  private internalTools: {[name: string]: InlineToolConstructable} = {};
+  private internalTools: { [name: string]: InlineToolConstructable } = {};
 
   /**
    * Editor modules setter
@@ -538,7 +539,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     });
 
-    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+    ITooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });
@@ -635,7 +636,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private addTool(toolName: string, tool: InlineTool): void {
     const {
       Tools,
-      Tooltip,
     } = this.Editor;
 
     const button = tool.render();
@@ -666,7 +666,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     if (shortcut) {
       try {
         this.enableShortcuts(tool, shortcut);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     /**
@@ -686,7 +686,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }));
     }
 
-    Tooltip.onHover(button, tooltipContent, {
+    ITooltip.onHover(button, tooltipContent, {
       placement: 'top',
       hidingDelay: 100,
     });

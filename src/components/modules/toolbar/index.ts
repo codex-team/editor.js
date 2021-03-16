@@ -3,7 +3,7 @@ import $ from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
-
+import ITooltip from '../../utils/tooltip';
 /**
  * HTML Elements used for Toolbar UI
  */
@@ -277,7 +277,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       textContent: '⇥ Tab',
     }));
 
-    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
+    ITooltip.onHover(this.nodes.plusButton, tooltipContent);
 
     /**
      * Fill Actions Zone:
@@ -293,7 +293,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
 
-    this.Editor.Tooltip.onHover(
+    ITooltip.onHover(
       this.nodes.settingsToggler,
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {

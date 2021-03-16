@@ -1,6 +1,7 @@
 import { Tooltip } from '../../../../types/api';
 import { TooltipContent, TooltipOptions } from 'codex-tooltip';
 import Module from '../../__module';
+import ITooltip from '../../utils/tooltip';
 
 /**
  * @class TooltipAPI
@@ -32,14 +33,14 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.Editor.Tooltip.show(element, content, options);
+    ITooltip.show(element, content, options);
   }
 
   /**
    * Method hides tooltip on HTML page
    */
   public hide(): void {
-    this.Editor.Tooltip.hide();
+    ITooltip.hide();
   }
 
   /**
@@ -50,6 +51,6 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.Editor.Tooltip.onHover(element, content, options);
+    ITooltip.onHover(element, content, options);
   }
 }
