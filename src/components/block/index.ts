@@ -4,7 +4,6 @@ import {
   BlockToolConstructable,
   BlockToolData,
   BlockTune as IBlockTune,
-  BlockTuneConstructable,
   SanitizerConfig,
   ToolConfig,
   ToolSettings
@@ -15,16 +14,13 @@ import $ from '../dom';
 import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
-import { ToolType } from '../modules/tools';
 import SelectionUtils from '../selection';
 import BlockTool from '../tools/block';
 
 /** Import default tunes */
-import MoveUpTune from '../block-tunes/block-tune-move-up';
-import DeleteTune from '../block-tunes/block-tune-delete';
-import MoveDownTune from '../block-tunes/block-tune-move-down';
 import BlockTune from '../tools/tune';
-import {BlockTuneData} from "../../../types/block-tunes/block-tune-data";
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import ToolsCollection from '../tools/collection';
 
 /**
  * Interface describes Block class constructor argument
@@ -50,8 +46,14 @@ interface BlockConstructorOptions {
    */
   readOnly: boolean;
 
-  tunes: BlockTune[];
+  /**
+   * Tunes for current Block
+   */
+  tunes: ToolsCollection<BlockTune>;
 
+  /**
+   * Tunes data for current Block
+   */
   tunesData: {[name: string]: BlockTuneData};
 }
 
@@ -127,7 +129,7 @@ export default class Block {
   /**
    * Tunes used by Tool
    */
-  public readonly tunes: BlockTune[];
+  public readonly tunes: ToolsCollection<BlockTune>;
 
   /**
    * Tool's user configuration
@@ -147,6 +149,8 @@ export default class Block {
   private readonly toolInstance: IBlockTool;
 
   private readonly tunesInstances: Map<string, IBlockTune> = new Map();
+  private readonly defaultTunesInstances: Map<string, IBlockTune> = new Map();
+  private unavailableTunesData: {[name: string]: BlockTuneData} = {};
 
   /**
    * Editor`s API module
@@ -228,9 +232,7 @@ export default class Block {
      */
     this.tunes = tunes;
 
-    tunes.forEach((tune) => {
-      this.tunesInstances.set(tune.name, tune.instance(tunesData[tune.name], this.blockAPI))
-    });
+    this.composeTunes(tunesData);
 
     this.holder = this.compose();
   }
@@ -534,13 +536,15 @@ export default class Block {
    */
   public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
-    const tunesData: {[name: string]: BlockTuneData} = {}
+    const tunesData: {[name: string]: BlockTuneData} = this.unavailableTunesData;
 
-    Array
-      .from(this.tunesInstances.entries())
+    [
+      ...this.tunesInstances.entries(),
+      ...this.defaultTunesInstances.entries(),
+    ]
       .forEach(([name, tune]) => {
         if (_.isFunction(tune.save)) {
-          tunesData[name] = tune.save()
+          tunesData[name] = tune.save();
         }
       });
 
@@ -587,51 +591,22 @@ export default class Block {
   }
 
   /**
-   * Make an array with default settings
-   * Each block has default tune instance that have states
-   *
-   * @returns {BlockTune[]}
-   */
-  public makeTunes(): IBlockTune[] {
-    const tunesList = [
-      {
-        name: 'moveUp',
-        Tune: MoveUpTune,
-      },
-      {
-        name: 'delete',
-        Tune: DeleteTune,
-      },
-      {
-        name: 'moveDown',
-        Tune: MoveDownTune,
-      },
-    ];
-
-    // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
-      return new Tune({
-        api: this.api.getMethodsForTool(name, ToolType.Tune),
-        settings: this.config,
-        block: this.blockAPI,
-        data: {}
-      });
-    });
-  }
-
-  /**
    * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
    *
    * @returns {DocumentFragment}
    */
-  public renderTunes(): DocumentFragment {
+  public renderTunes(): [DocumentFragment, DocumentFragment] {
     const tunesElement = document.createDocumentFragment();
+    const defaultTunesElement = document.createDocumentFragment();
 
     this.tunesInstances.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
+    this.defaultTunesInstances.forEach((tune) => {
+      $.append(defaultTunesElement, tune.render());
+    });
 
-    return tunesElement;
+    return [tunesElement, defaultTunesElement];
   }
 
   /**
@@ -713,17 +688,42 @@ export default class Block {
 
     let wrappedContentNode: HTMLElement = contentNode;
 
-    Array
-      .from(this.tunesInstances.values())
+    [...this.tunesInstances.values(), ...this.defaultTunesInstances.values()]
       .forEach((tune) => {
         if (_.isFunction(tune.wrap)) {
-          wrappedContentNode = tune.wrap(wrappedContentNode)
+          wrappedContentNode = tune.wrap(wrappedContentNode);
         }
       });
 
     wrapper.appendChild(wrappedContentNode);
 
     return wrapper;
+  }
+
+  /**
+   * Instantiate Block Tunes
+   *
+   * @param tunesData - current Block tunes data
+   * @private
+   */
+  private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
+    [
+      ...this.tunes.external.values(),
+      ...this.tunes.internal.values(),
+    ].forEach((tune) => {
+      const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
+
+      collection.set(tune.name, tune.instance(tunesData[tune.name], this.blockAPI));
+    });
+
+    /**
+     * Check if there is some data for not available tunes
+     */
+    Object.entries(tunesData).forEach(([name, data]) => {
+      if (!this.tunesInstances.has(name)) {
+        this.unavailableTunesData[name] = data;
+      }
+    });
   }
 
   /**

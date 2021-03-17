@@ -1,5 +1,4 @@
-import BaseTool, { InternalInlineToolSettings } from './base';
-import { ToolType } from '../modules/tools';
+import BaseTool, { InternalInlineToolSettings, ToolType } from './base';
 import { InlineTool as IInlineTool, InlineToolConstructable } from '../../../types';
 
 /**
@@ -29,7 +28,7 @@ export default class InlineTool extends BaseTool<IInlineTool> {
   public instance(): IInlineTool {
     // eslint-disable-next-line new-cap
     return new this.constructable({
-      api: this.api,
+      api: this.api.getMethodsForTool(this),
       config: this.settings,
     }) as IInlineTool;
   }

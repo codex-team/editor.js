@@ -7,7 +7,7 @@
  */
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
-import { ToolType } from '../tools';
+import { ToolClass } from '../../tools/collection';
 
 /**
  * @class API
@@ -38,16 +38,13 @@ export default class API extends Module {
   /**
    * Returns Editor.js Core API methods for passed tool
    *
-   * @param toolName - how user name tool. It can be used in some API logic,
-   *                   for example in i18n to provide namespaced dictionary
-   *
-   * @param toolType - 'block' for Block Tool, 'inline' for Inline Tool, 'tune' for Block Tunes
+   * @param tool - tool object
    */
-  public getMethodsForTool(toolName: string, toolType = ToolType.Block): APIInterfaces {
+  public getMethodsForTool(tool: ToolClass): APIInterfaces {
     return Object.assign(
       this.methods,
       {
-        i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, toolType),
+        i18n: this.Editor.I18nAPI.getMethodsForTool(tool),
       }
     ) as APIInterfaces;
   }

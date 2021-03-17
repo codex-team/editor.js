@@ -11,9 +11,8 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
-import BlockTool from '../tools/block';
-import {BlockTuneData} from '../../../types/block-tunes/block-tune-data';
+import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -224,8 +223,8 @@ export default class BlockManager extends Module {
   public composeBlock({
     tool: name,
     data = {},
-    tunes: tunesData = {}
-  }: {tool: string; data?: BlockToolData, tunes?: {[name: string]: BlockTuneData}}): Block {
+    tunes: tunesData = {},
+  }: {tool: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.block.get(name);
     const tunes = this.Editor.Tools.getTunesForTool(tool);
@@ -270,7 +269,7 @@ export default class BlockManager extends Module {
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
-    tunes?: {[name: string]: BlockTuneData}
+    tunes?: {[name: string]: BlockTuneData};
   } = {}): Block {
     let newIndex = index;
 

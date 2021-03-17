@@ -11,8 +11,9 @@ import { API, BlockTune } from '../../../types';
  *
  */
 export default class MoveUpTune implements BlockTune {
-
-
+  /**
+   * Set Tool is Tune
+   */
   public static readonly isTune = true;
 
   /**

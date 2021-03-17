@@ -11,7 +11,9 @@ import $ from '../dom';
  *
  */
 export default class DeleteTune implements BlockTune {
-
+  /**
+   * Set Tool is Tune
+   */
   public static readonly isTune = true;
 
   /**

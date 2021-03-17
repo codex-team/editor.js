@@ -35,8 +35,17 @@ export interface BlockTune {
  * Describes BlockTune class constructor function
  */
 export interface BlockTuneConstructable {
+
+  /**
+   * Flag show Tool is Block Tune
+   */
   isTune: boolean;
 
+  /**
+   * @constructor
+   *
+   * @param config - Block Tune config
+   */
   new(config: {
     api: API,
     settings?: ToolConfig,
@@ -44,7 +53,14 @@ export interface BlockTuneConstructable {
     data: BlockTuneData,
   }): BlockTune;
 
-  prepare?(): Promise<void> | void
+  /**
+   * Tune`s prepare method. Can be async
+   * @param data
+   */
+  prepare?(): Promise<void> | void;
 
-  reset?(): void
+  /**
+   * Tune`s reset method to clean up anything set by prepare. Can be async
+   */
+  reset?(): void | Promise<void>;
 }

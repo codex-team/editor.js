@@ -1,7 +1,29 @@
-import { ToolType } from '../modules/tools';
 import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import { API, SanitizerConfig } from '../../../types';
+import { SanitizerConfig } from '../../../types';
 import * as _ from '../utils';
+import type InlineTool from './inline';
+import type BlockTool from './block';
+import type BlockTune from './tune';
+import API from '../modules/api';
+
+/**
+ * What kind of plugins developers can create
+ */
+export enum ToolType {
+  /**
+   * Block tool
+   */
+  Block,
+  /**
+   * Inline tool
+   */
+  Inline,
+
+  /**
+   * Block tune
+   */
+  Tune,
+}
 
 export enum UserSettings {
   Shortcut = 'shortcut',
@@ -49,7 +71,7 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends Tool> {
+export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
@@ -168,6 +190,27 @@ export default abstract class BaseTool<Type extends Tool> {
    */
   public get sanitizeConfig(): SanitizerConfig {
     return this.constructable[CommonInternalSettings.SanitizeConfig];
+  }
+
+  /**
+   * Returns true if Tools is inline
+   */
+  public isInline(): this is InlineTool {
+    return this.type === ToolType.Inline;
+  }
+
+  /**
+   * Returns true if Tools is block
+   */
+  public isBlock(): this is BlockTool {
+    return this.type === ToolType.Block;
+  }
+
+  /**
+   * Returns true if Tools is tune
+   */
+  public isTune(): this is BlockTune {
+    return this.type === ToolType.Tune;
   }
 
   /**

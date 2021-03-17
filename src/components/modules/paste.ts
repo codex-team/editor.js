@@ -3,7 +3,6 @@ import $ from '../dom';
 import * as _ from '../utils';
 import {
   BlockAPI,
-  PasteConfig,
   PasteEvent,
   PasteEventDetail
 } from '../../../types';
@@ -230,7 +229,7 @@ export default class Paste extends Module {
    * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   public async processText(data: string, isHTML = false): Promise<void> {
-    const { Caret, BlockManager, Tools } = this.Editor;
+    const { Caret, BlockManager } = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
@@ -308,7 +307,7 @@ export default class Paste extends Module {
       this.getPatternsConfig(tool);
     } catch (e) {
       _.log(
-        `Paste handling for «${name}» Tool hasn't been set up because of the error`,
+        `Paste handling for «${tool.name}» Tool hasn't been set up because of the error`,
         'warn',
         e
       );
@@ -397,7 +396,7 @@ export default class Paste extends Module {
       /** Still need to validate pattern as it provided by user */
       if (!(pattern instanceof RegExp)) {
         _.log(
-          `Pattern ${pattern} for «${name}» Tool is skipped because it should be a Regexp instance.`,
+          `Pattern ${pattern} for «${tool.name}» Tool is skipped because it should be a Regexp instance.`,
           'warn'
         );
       }
@@ -648,7 +647,7 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
-    const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
+    const { BlockManager, Caret, Sanitizer } = this.Editor;
     const { content } = dataToInsert;
 
     const currentBlockIsDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;

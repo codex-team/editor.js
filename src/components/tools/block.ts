@@ -1,5 +1,4 @@
-import BaseTool, { InternalBlockToolSettings, UserSettings } from './base';
-import { ToolType } from '../modules/tools';
+import BaseTool, { InternalBlockToolSettings, ToolType, UserSettings } from './base';
 import {
   BlockAPI,
   BlockTool as IBlockTool,
@@ -7,7 +6,7 @@ import {
   BlockToolData,
   ConversionConfig,
   PasteConfig,
-  ToolboxConfig,
+  ToolboxConfig
 } from '../../../types';
 import * as _ from '../utils';
 
@@ -38,7 +37,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       data,
       block,
       readOnly,
-      api: this.api,
+      api: this.api.getMethodsForTool(this),
       config: this.settings,
     }) as IBlockTool;
   }

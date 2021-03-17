@@ -12,7 +12,9 @@ import { API, BlockTune } from '../../../types';
  *
  */
 export default class MoveDownTune implements BlockTune {
-
+  /**
+   * Set Tool is Tune
+   */
   public static readonly isTune = true;
 
   /**

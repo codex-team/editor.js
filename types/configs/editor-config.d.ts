@@ -95,4 +95,9 @@ export interface EditorConfig {
    * Defines default toolbar for all tools.
    */
   inlineToolbar?: string[]|boolean;
+
+  /**
+   * Common BlockTune names
+   */
+  tunes?: string[];
 }
