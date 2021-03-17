@@ -1,7 +1,7 @@
 // eslint-disable-next-line spaced-comment
 /// <reference path="../support/index.d.ts" />
 
-import ToolsCollection from '../../../src/components/tools/collection'
+import ToolsCollection from '../../../src/components/tools/collection';
 import ToolsFactory from '../../../src/components/tools/factory';
 import Paragraph from '../../../src/tools/paragraph/dist/bundle';
 import LinkInlineTool from '../../../src/components/inline-tools/inline-tool-link';
@@ -12,13 +12,13 @@ import BlockTune from '../../../src/components/tools/tune';
 import BaseTool from '../../../src/components/tools/base';
 
 const FakeTool = {
-  isBlock() {
+  isBlock(): boolean {
     return false;
   },
-  isInline() {
+  isInline(): boolean {
     return false;
   },
-  isTune() {
+  isTune(): boolean {
     return false;
   },
   isInternal: false,
@@ -26,27 +26,27 @@ const FakeTool = {
 
 const FakeBlockTool = {
   ...FakeTool,
-  isBlock() {
+  isBlock(): boolean {
     return true;
   },
 };
 
 const FakeInlineTool = {
   ...FakeTool,
-  isInline() {
+  isInline(): boolean {
     return true;
-  }
+  },
 };
 
 const FakeBlockTune = {
   ...FakeTool,
-  isTune() {
+  isTune(): boolean {
     return true;
-  }
+  },
 };
 
-describe('Unit test Tools utilities', () => {
-  context('ToolsFactory', () => {
+describe('Unit test Tools utilities', (): void => {
+  context('ToolsFactory', (): void => {
     let factory;
     const config = {
       paragraph: {
@@ -60,37 +60,37 @@ describe('Unit test Tools utilities', () => {
       },
     };
 
-    beforeEach(() => {
+    beforeEach((): void => {
       factory = new ToolsFactory(
         config,
         {
           placeholder: 'Placeholder',
-          defaultBlock: 'paragraph'
+          defaultBlock: 'paragraph',
         } as any,
         {} as any
       );
     });
 
-    context('.get', () => {
-      it('should return appropriate tool object', () => {
+    context('.get', (): void => {
+      it('should return appropriate tool object', (): void => {
         const tool = factory.get('link');
 
         expect(tool.name).to.be.eq('link');
       });
 
-      it('should return InlineTool object for inline tool', () => {
+      it('should return InlineTool object for inline tool', (): void => {
         const tool = factory.get('link');
 
         expect(tool instanceof InlineTool).to.be.true;
       });
 
-      it('should return BlockTool object for block tool', () => {
+      it('should return BlockTool object for block tool', (): void => {
         const tool = factory.get('paragraph');
 
         expect(tool instanceof BlockTool).to.be.true;
       });
 
-      it('should return BlockTune object for tune', () => {
+      it('should return BlockTune object for tune', (): void => {
         const tool = factory.get('moveUp');
 
         expect(tool instanceof BlockTune).to.be.true;
@@ -98,35 +98,44 @@ describe('Unit test Tools utilities', () => {
     });
   });
 
-  context('ToolsCollection', () => {
+  context('ToolsCollection', (): void => {
     let collection;
     const fakeTools = [
       ['block1', FakeBlockTool],
       ['inline1', FakeInlineTool],
-      ['block2', { ...FakeBlockTool, isInternal: true }],
+      ['block2', {
+        ...FakeBlockTool,
+        isInternal: true,
+      } ],
       ['tune1', FakeBlockTune],
       ['block3', FakeBlockTool],
-      ['inline2', { ...FakeInlineTool, isInternal: true }],
+      ['inline2', {
+        ...FakeInlineTool,
+        isInternal: true,
+      } ],
       ['tune2', FakeBlockTune],
-      ['tune3', { ...FakeBlockTune, isInternal: true }],
+      ['tune3', {
+        ...FakeBlockTune,
+        isInternal: true,
+      } ],
       ['block3', FakeInlineTool],
       ['block4', FakeBlockTool],
     ];
 
-    beforeEach(() => {
+    beforeEach((): void => {
       collection = new ToolsCollection(fakeTools as any);
-    })
+    });
 
-    it('should be instance of Map', () => {
+    it('should be instance of Map', (): void => {
       expect(collection instanceof Map).to.be.true;
     });
 
-    context('.block', () => {
-      it('should return new instance of ToolsCollection', () => {
+    context('.block', (): void => {
+      it('should return new instance of ToolsCollection', (): void => {
         expect(collection.block instanceof ToolsCollection).to.be.true;
       });
 
-      it('result should contain only block tools', () => {
+      it('result should contain only block tools', (): void => {
         expect(
           Array
             .from(
@@ -137,12 +146,12 @@ describe('Unit test Tools utilities', () => {
       });
     });
 
-    context('.inline', () => {
-      it('should return new instance of ToolsCollection', () => {
+    context('.inline', (): void => {
+      it('should return new instance of ToolsCollection', (): void => {
         expect(collection.inline instanceof ToolsCollection).to.be.true;
       });
 
-      it('result should contain only inline tools', () => {
+      it('result should contain only inline tools', (): void => {
         expect(
           Array
             .from(
@@ -153,12 +162,12 @@ describe('Unit test Tools utilities', () => {
       });
     });
 
-    context('.tune', () => {
-      it('should return new instance of ToolsCollection', () => {
+    context('.tune', (): void => {
+      it('should return new instance of ToolsCollection', (): void => {
         expect(collection.tune instanceof ToolsCollection).to.be.true;
       });
 
-      it('result should contain only block tools', () => {
+      it('result should contain only block tools', (): void => {
         expect(
           Array
             .from(
@@ -169,12 +178,12 @@ describe('Unit test Tools utilities', () => {
       });
     });
 
-    context('.internal', () => {
-      it('should return new instance of ToolsCollection', () => {
+    context('.internal', (): void => {
+      it('should return new instance of ToolsCollection', (): void => {
         expect(collection.internal instanceof ToolsCollection).to.be.true;
       });
 
-      it('result should contain only internal tools', () => {
+      it('result should contain only internal tools', (): void => {
         expect(
           Array
             .from(
@@ -185,12 +194,12 @@ describe('Unit test Tools utilities', () => {
       });
     });
 
-    context('.external', () => {
-      it('should return new instance of ToolsCollection', () => {
+    context('.external', (): void => {
+      it('should return new instance of ToolsCollection', (): void => {
         expect(collection.external instanceof ToolsCollection).to.be.true;
       });
 
-      it('result should contain only external tools', () => {
+      it('result should contain only external tools', (): void => {
         expect(
           Array
             .from(
@@ -201,9 +210,9 @@ describe('Unit test Tools utilities', () => {
       });
     });
 
-    context('mixed access', () => {
-      context('.tune.internal', () => {
-        it('should return only internal tunes', () => {
+    context('mixed access', (): void => {
+      context('.tune.internal', (): void => {
+        it('should return only internal tunes', (): void => {
           expect(
             Array
               .from(
@@ -214,8 +223,8 @@ describe('Unit test Tools utilities', () => {
         });
       });
 
-      context('.external.block', () => {
-        it('should return only external block tools', () => {
+      context('.external.block', (): void => {
+        it('should return only external block tools', (): void => {
           expect(
             Array
               .from(
@@ -226,5 +235,5 @@ describe('Unit test Tools utilities', () => {
         });
       });
     });
-  })
+  });
 });

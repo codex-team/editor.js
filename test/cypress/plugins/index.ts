@@ -1,17 +1,17 @@
 /**
  * This file contains connection of Cypres plugins
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-// export default function(on, config): void {}
-module.exports = (on, config) => {
-  require('@cypress/code-coverage/task')(on, config);
+import codeCoverageTask from '@cypress/code-coverage/task';
+import preprocessor from '@cypress/webpack-preprocessor';
+import webpackConfig from '../../../webpack.config.js';
 
-  const preprocessor = require('@cypress/webpack-preprocessor');
+module.exports = (on, config): any => {
+  codeCoverageTask(on, config);
 
   const options = preprocessor.defaultOptions;
 
   options.typescript = require.resolve('typescript');
-  options.webpackOptions = require('../../../webpack.config.js')({}, { mode: 'test' });
+  options.webpackOptions = webpackConfig({}, { mode: 'test' });
 
   on('file:preprocessor', preprocessor(options));
 
