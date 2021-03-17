@@ -7,7 +7,7 @@ import EventsDispatcher from '../../utils/events';
 import { EditorConfig } from '../../../../types';
 /**
  * @class TooltipAPI
- * @classdesc Tooltip
+ * @classdesc Tooltip API
  */
 export default class TooltipAPI extends Module {
   /**
