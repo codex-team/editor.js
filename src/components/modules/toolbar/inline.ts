@@ -2,13 +2,15 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings } from '../../../../types';
+import { InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings, EditorConfig } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { EditorModules } from '../../../types-internal/editor-modules';
-import ITooltip from '../../utils/tooltip';
+import Tooltip from '../../utils/tooltip';
+import { ModuleConfig } from '../../../types-internal/module-config';
+import EventsDispatcher from '../../utils/events';
 
 /**
  * Inline Toolbar elements
@@ -94,6 +96,24 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Internal inline tools: Link, Bold, Italic
    */
   private internalTools: { [name: string]: InlineToolConstructable } = {};
+
+  /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   *
+   * @param {EditorConfig} config - Editor's config
+   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+    this.tooltip = new Tooltip();
+  }
 
   /**
    * Editor modules setter
@@ -539,7 +559,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     });
 
-    ITooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+    this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });
@@ -686,7 +706,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }));
     }
 
-    ITooltip.onHover(button, tooltipContent, {
+    this.tooltip.onHover(button, tooltipContent, {
       placement: 'top',
       hidingDelay: 100,
     });

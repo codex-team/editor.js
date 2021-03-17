@@ -1,17 +1,38 @@
-import { Tooltip } from '../../../../types/api';
+import { Tooltip as ITooltip } from '../../../../types/api';
 import { TooltipContent, TooltipOptions } from 'codex-tooltip';
 import Module from '../../__module';
-import ITooltip from '../../utils/tooltip';
-
+import { ModuleConfig } from '../../../types-internal/module-config';
+import Tooltip from '../../utils/tooltip';
+import EventsDispatcher from '../../utils/events';
+import { EditorConfig } from '../../../../types';
 /**
  * @class TooltipAPI
- * @classdesc Tooltip API
+ * @classdesc Tooltip
  */
 export default class TooltipAPI extends Module {
   /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   *
+   * @param {EditorConfig} config - Editor's config
+   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+
+    this.tooltip = new Tooltip();
+  }
+
+  /**
    * Available methods
    */
-  public get methods(): Tooltip {
+  public get methods(): ITooltip {
     return {
       show: (element: HTMLElement,
         content: TooltipContent,
@@ -33,14 +54,14 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    ITooltip.show(element, content, options);
+    this.tooltip.show(element, content, options);
   }
 
   /**
    * Method hides tooltip on HTML page
    */
   public hide(): void {
-    ITooltip.hide();
+    this.tooltip.hide();
   }
 
   /**
@@ -51,6 +72,6 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    ITooltip.onHover(element, content, options);
+    this.tooltip.onHover(element, content, options);
   }
 }

@@ -1,13 +1,15 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { BlockToolConstructable, ToolConstructable } from '../../../../types';
+import { BlockToolConstructable, ToolConstructable, EditorConfig } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import ITooltip from '../../utils/tooltip';
+import Tooltip from '../../utils/tooltip';
+import { ModuleConfig } from '../../../types-internal/module-config';
+import EventsDispatcher from '../../utils/events';
 
 /**
  * HTMLElements used for Toolbox UI
@@ -83,6 +85,24 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
+
+  /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   *
+   * @param {EditorConfig} config - Editor's config
+   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+    this.tooltip = new Tooltip();
+  }
 
   /**
    * Makes the Toolbox
@@ -236,7 +256,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
      */
     const tooltipContent = this.drawTooltip(toolName);
 
-    ITooltip.onHover(button, tooltipContent, {
+    this.tooltip.onHover(button, tooltipContent, {
       placement: 'bottom',
       hidingDelay: 200,
     });

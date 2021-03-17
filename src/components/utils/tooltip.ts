@@ -9,7 +9,7 @@ import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
  *
  * Decorates any tooltip module like adapter
  */
-class Tooltip {
+export default class Tooltip {
   /**
    * Tooltips lib: CodeX Tooltips
    *
@@ -46,5 +46,3 @@ class Tooltip {
     this.lib.onHover(element, content, options);
   }
 }
-
-export default new Tooltip();
