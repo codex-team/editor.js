@@ -43,7 +43,7 @@ export default class ReadOnly extends Module {
     Array
       .from(blockTools.entries())
       .forEach(([name, tool]) => {
-        if (tool.isReadOnlySupported) {
+        if (!tool.isReadOnlySupported) {
           toolsDontSupportReadOnly.push(name);
         }
       });
