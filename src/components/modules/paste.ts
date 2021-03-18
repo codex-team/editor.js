@@ -3,7 +3,6 @@ import $ from '../dom';
 import * as _ from '../utils';
 import {
   BlockAPI,
-  PasteConfig,
   PasteEvent,
   PasteEventDetail
 } from '../../../types';
@@ -18,7 +17,6 @@ interface TagSubstitute {
   /**
    * Name of related Tool
    *
-   * @type {string}
    */
   tool: BlockTool;
 }
@@ -29,22 +27,16 @@ interface TagSubstitute {
 interface PatternSubstitute {
   /**
    * Pattern`s key
-   *
-   * @type {string}
    */
   key: string;
 
   /**
    * Pattern regexp
-   *
-   * @type {RegExp}
    */
   pattern: RegExp;
 
   /**
    * Name of related Tool
-   *
-   * @type {string}
    */
   tool: BlockTool;
 }
@@ -277,7 +269,7 @@ export default class Paste extends Module {
    * Get and process tool`s paste configs
    */
   private processTools(): void {
-    const tools = this.Editor.Tools.block;
+    const tools = this.Editor.Tools.blockTools;
 
     Array
       .from(tools.values())
@@ -648,7 +640,7 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
-    const { BlockManager, Caret, Sanitizer, Tools } = this.Editor;
+    const { BlockManager, Caret, Sanitizer } = this.Editor;
     const { content } = dataToInsert;
 
     const currentBlockIsDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;

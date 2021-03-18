@@ -3,33 +3,90 @@ import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
 import { API, SanitizerConfig } from '../../../types';
 import * as _ from '../utils';
 
+/**
+ * Enum of Tool options provided by user
+ */
 export enum UserSettings {
+  /**
+   * Shortcut for Tool
+   */
   Shortcut = 'shortcut',
+  /**
+   * Toolbox config for Tool
+   */
   Toolbox = 'toolbox',
+  /**
+   * Enabled Inline Tools for Block Tool
+   */
   EnabledInlineTools = 'inlineToolbar',
+  /**
+   * Tool configuration
+   */
   Config = 'config',
 }
 
+/**
+ * Enum of Tool options provided by Tool
+ */
 export enum CommonInternalSettings {
+  /**
+   * Shortcut for Tool
+   */
   Shortcut = 'shortcut',
+  /**
+   * Sanitize configuration for Tool
+   */
   SanitizeConfig = 'sanitize',
 
 }
 
+/**
+ * Enum of Tool optoins provided by Block Tool
+ */
 export enum InternalBlockToolSettings {
+  /**
+   * Is linebreaks enabled for Tool
+   */
   IsEnabledLineBreaks = 'enableLineBreaks',
+  /**
+   * Tool Toolbox config
+   */
   Toolbox = 'toolbox',
+  /**
+   * Tool conversion config
+   */
   ConversionConfig = 'conversionConfig',
+  /**
+   * Is readonly mode supported for Tool
+   */
   IsReadOnlySupported = 'isReadOnlySupported',
+  /**
+   * Tool paste config
+   */
   PasteConfig = 'pasteConfig'
 }
 
+/**
+ * Enum of Tool options provided by Inline Tool
+ */
 export enum InternalInlineToolSettings {
+  /**
+   * Flag specifies Tool is inline
+   */
   IsInline = 'isInline',
+  /**
+   * Inline Tool title for toolbar
+   */
   Title = 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
 }
 
+/**
+ * Enum of Tool options provided by Block Tune
+ */
 export enum InternalTuneSettings {
+  /**
+   * Flag specifies Tool is Block Tune
+   */
   IsTune = 'isTune',
 }
 

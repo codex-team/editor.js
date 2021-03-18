@@ -338,7 +338,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
      */
     if (commonInlineToolbarSettings === true) {
-      return Array.from(this.Editor.Tools.inline.keys());
+      return Array.from(this.Editor.Tools.inlineTools.keys());
     }
 
     return false;
@@ -573,7 +573,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.tool) as string[];
 
     inlineToolbarOrder.forEach((toolName) => {
-      const tool = this.Editor.Tools.inline.get(toolName);
+      const tool = this.Editor.Tools.inlineTools.get(toolName);
 
       this.addTool(tool);
     });
@@ -663,7 +663,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const tool = Tools.inline.get(toolName);
+    const tool = Tools.inlineTools.get(toolName);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
@@ -745,7 +745,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const result = {};
 
     Array
-      .from(this.Editor.Tools.inline.entries())
+      .from(this.Editor.Tools.inlineTools.entries())
       .forEach(([name, tool]) => {
         result[name] = tool.instance();
       });

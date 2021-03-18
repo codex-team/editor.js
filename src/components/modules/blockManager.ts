@@ -222,7 +222,7 @@ export default class BlockManager extends Module {
    */
   public composeBlock({ tool: name, data = {} }: {tool: string; data?: BlockToolData}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
-    const tool = this.Editor.Tools.block.get(name);
+    const tool = this.Editor.Tools.blockTools.get(name);
     const block = new Block({
       name,
       data,

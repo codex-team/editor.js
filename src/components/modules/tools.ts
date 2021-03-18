@@ -67,7 +67,7 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get inline(): Map<string, InlineTool> {
+  public get inlineTools(): Map<string, InlineTool> {
     if (this._inlineTools) {
       return this._inlineTools;
     }
@@ -108,7 +108,7 @@ export default class Tools extends Module {
   /**
    * Return editor block tools
    */
-  public get block(): Map<string, BlockTool> {
+  public get blockTools(): Map<string, BlockTool> {
     if (this._blockTools) {
       return this._blockTools;
     }
@@ -128,7 +128,7 @@ export default class Tools extends Module {
    * Returns default Tool object
    */
   public get defaultTool(): BlockTool {
-    return this.block.get(this.config.defaultBlock);
+    return this.blockTools.get(this.config.defaultBlock);
   }
 
   /**
@@ -215,9 +215,9 @@ export default class Tools extends Module {
      * to see how it works {@link '../utils.ts#sequence'}
      */
     return _.sequence(sequenceData, (data: { toolName: string }) => {
-      this.success(data);
+      this.toolPrepareMethodSuccess(data);
     }, (data: { toolName: string }) => {
-      this.fallback(data);
+      this.toolPrepareMethodFallback(data);
     });
   }
 
@@ -263,20 +263,20 @@ export default class Tools extends Module {
   }
 
   /**
-   * Success callback
+   * Tool prepare method success callback
    *
    * @param {object} data - append tool to available list
    */
-  private success(data: { toolName: string }): void {
+  private toolPrepareMethodSuccess(data: { toolName: string }): void {
     this.toolsAvailable.set(data.toolName, this.factory.get(data.toolName));
   }
 
   /**
-   * Fail callback
+   * Tool prepare method fail callback
    *
    * @param {object} data - append tool to unavailable list
    */
-  private fallback(data: { toolName: string }): void {
+  private toolPrepareMethodFallback(data: { toolName: string }): void {
     this.toolsUnavailable.set(data.toolName, this.factory.get(data.toolName));
   }
 
