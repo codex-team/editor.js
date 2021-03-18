@@ -161,7 +161,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Iterates available tools and appends them to the Toolbox
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.block;
+    const tools = this.Editor.Tools.blockTools;
 
     Array
       .from(tools.values())
@@ -284,7 +284,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Fired when the Read-Only mode is activated
    */
   private removeAllShortcuts(): void {
-    const tools = this.Editor.Tools.block;
+    const tools = this.Editor.Tools.blockTools;
 
     Array
       .from(tools.values())

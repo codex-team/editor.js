@@ -200,7 +200,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const replacingTool = this.Editor.Tools.block.get(replacingToolName);
+    const replacingTool = this.Editor.Tools.blockTools.get(replacingToolName);
 
     /**
      * Export property can be:
@@ -269,7 +269,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * if tools have ability to import
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.block;
+    const tools = this.Editor.Tools.blockTools;
 
     Array
       .from(tools.entries())
