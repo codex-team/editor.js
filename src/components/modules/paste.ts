@@ -17,7 +17,6 @@ interface TagSubstitute {
   /**
    * Name of related Tool
    *
-   * @type {string}
    */
   tool: BlockTool;
 }
@@ -28,22 +27,16 @@ interface TagSubstitute {
 interface PatternSubstitute {
   /**
    * Pattern`s key
-   *
-   * @type {string}
    */
   key: string;
 
   /**
    * Pattern regexp
-   *
-   * @type {RegExp}
    */
   pattern: RegExp;
 
   /**
    * Name of related Tool
-   *
-   * @type {string}
    */
   tool: BlockTool;
 }
@@ -276,7 +269,7 @@ export default class Paste extends Module {
    * Get and process tool`s paste configs
    */
   private processTools(): void {
-    const tools = this.Editor.Tools.block;
+    const tools = this.Editor.Tools.blockTools;
 
     Array
       .from(tools.values())

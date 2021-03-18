@@ -207,7 +207,7 @@ export default class Sanitizer extends Module {
       (enableInlineTools as string[]).map((inlineToolName) => {
         config = Object.assign(
           config,
-          Tools.inline.get(inlineToolName).sanitizeConfig
+          Tools.inlineTools.get(inlineToolName).sanitizeConfig
         ) as SanitizerConfig;
       });
     }
@@ -233,7 +233,7 @@ export default class Sanitizer extends Module {
 
     const config: SanitizerConfig = {} as SanitizerConfig;
 
-    Object.entries(Tools.inline)
+    Object.entries(Tools.inlineTools)
       .forEach(([, inlineTool]: [string, InlineTool]) => {
         Object.assign(config, inlineTool.sanitizeConfig);
       });

@@ -68,15 +68,15 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get inline(): ToolsCollection<InlineTool> {
-    return this.available.inline;
+  public get inlineTools(): ToolsCollection<InlineTool> {
+    return this.available.inlineTools;
   }
 
   /**
    * Return editor block tools
    */
-  public get block(): ToolsCollection<BlockTool> {
-    return this.available.block;
+  public get blockTools(): ToolsCollection<BlockTool> {
+    return this.available.blockTools;
   }
 
   /**
@@ -84,15 +84,15 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get tunes(): ToolsCollection<BlockTune> {
-    return this.available.tune;
+  public get blockTunes(): ToolsCollection<BlockTune> {
+    return this.available.blockTunes;
   }
 
   /**
    * Returns default Tool object
    */
   public get defaultTool(): BlockTool {
-    return this.block.get(this.config.defaultBlock);
+    return this.blockTools.get(this.config.defaultBlock);
   }
 
   /**
@@ -114,7 +114,7 @@ export default class Tools extends Module {
    * Returns internal tools
    */
   public get internal(): ToolsCollection {
-    return this.available.internal;
+    return this.available.internalTools;
   }
 
   /**
@@ -154,9 +154,9 @@ export default class Tools extends Module {
      * to see how it works {@link '../utils.ts#sequence'}
      */
     return _.sequence(sequenceData, (data: { toolName: string }) => {
-      this.success(data);
+      this.toolPrepareMethodSuccess(data);
     }, (data: { toolName: string }) => {
-      this.fallback(data);
+      this.toolPrepareMethodFallback(data);
     });
   }
 
@@ -217,9 +217,9 @@ export default class Tools extends Module {
     if (Array.isArray(names)) {
       return new ToolsCollection<BlockTune>(
         Array
-          .from(this.tunes.entries())
+          .from(this.blockTunes.entries())
           .filter(([, tune]) => names.includes(tune.name))
-          .concat([ ...this.tunes.internal.entries() ])
+          .concat([ ...this.blockTunes.internalTools.entries() ])
       );
     }
 
@@ -228,13 +228,13 @@ export default class Tools extends Module {
     if (Array.isArray(defaultTuneNames)) {
       return new ToolsCollection<BlockTune>(
         Array
-          .from(this.tunes.entries())
+          .from(this.blockTunes.entries())
           .filter(([, tune]) => defaultTuneNames.includes(tune.name))
-          .concat([ ...this.tunes.internal.entries() ])
+          .concat([ ...this.blockTunes.internalTools.entries() ])
       );
     }
 
-    return this.tunes.internal;
+    return this.blockTunes.internalTools;
   }
 
   /**
@@ -249,11 +249,11 @@ export default class Tools extends Module {
   }
 
   /**
-   * Success callback
+   * Tool prepare method success callback
    *
    * @param {object} data - append tool to available list
    */
-  private success(data: { toolName: string }): void {
+  private toolPrepareMethodSuccess(data: { toolName: string }): void {
     const tool = this.factory.get(data.toolName);
 
     if (tool.isInline()) {
@@ -280,11 +280,11 @@ export default class Tools extends Module {
   }
 
   /**
-   * Fail callback
+   * Tool prepare method fail callback
    *
    * @param {object} data - append tool to unavailable list
    */
-  private fallback(data: { toolName: string }): void {
+  private toolPrepareMethodFallback(data: { toolName: string }): void {
     this.toolsUnavailable.set(data.toolName, this.factory.get(data.toolName));
   }
 

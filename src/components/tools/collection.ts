@@ -11,7 +11,7 @@ export default class ToolsCollection<V extends ToolClass = ToolClass> extends Ma
   /**
    * Returns Block Tools collection
    */
-  public get block(): ToolsCollection<BlockTool> {
+  public get blockTools(): ToolsCollection<BlockTool> {
     const tools = Array
       .from(this.entries())
       .filter(([, tool]) => tool.isBlock()) as [string, BlockTool][];
@@ -22,7 +22,7 @@ export default class ToolsCollection<V extends ToolClass = ToolClass> extends Ma
   /**
    * Returns Inline Tools collection
    */
-  public get inline(): ToolsCollection<InlineTool> {
+  public get inlineTools(): ToolsCollection<InlineTool> {
     const tools = Array
       .from(this.entries())
       .filter(([, tool]) => tool.isInline()) as [string, InlineTool][];
@@ -33,7 +33,7 @@ export default class ToolsCollection<V extends ToolClass = ToolClass> extends Ma
   /**
    * Returns Block Tunes collection
    */
-  public get tune(): ToolsCollection<BlockTune> {
+  public get blockTunes(): ToolsCollection<BlockTune> {
     const tools = Array
       .from(this.entries())
       .filter(([, tool]) => tool.isTune()) as [string, BlockTune][];
@@ -44,7 +44,7 @@ export default class ToolsCollection<V extends ToolClass = ToolClass> extends Ma
   /**
    * Returns internal Tools collection
    */
-  public get internal(): ToolsCollection<V> {
+  public get internalTools(): ToolsCollection<V> {
     const tools = Array
       .from(this.entries())
       .filter(([, tool]) => tool.isInternal);
@@ -55,7 +55,7 @@ export default class ToolsCollection<V extends ToolClass = ToolClass> extends Ma
   /**
    * Returns Tools collection provided by user
    */
-  public get external(): ToolsCollection<V> {
+  public get externalTools(): ToolsCollection<V> {
     const tools = Array
       .from(this.entries())
       .filter(([, tool]) => !tool.isInternal);
