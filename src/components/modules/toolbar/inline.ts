@@ -669,7 +669,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * 2) For external tools, check tool's settings
      * 3) If shortcut is not set in settings, check Tool's public property
      */
-    const internalTools = Tools.internal.inline;
+    const internalTools = Tools.internal.inlineTools;
 
     if (Array.from(internalTools.keys()).includes(toolName)) {
       return this.inlineTools[toolName][CommonInternalSettings.Shortcut];

@@ -69,14 +69,14 @@ export default class Tools extends Module {
    * @returns {object} - object of Inline Tool's classes
    */
   public get inlineTools(): ToolsCollection<InlineTool> {
-    return this.available.inline;
+    return this.available.inlineTools;
   }
 
   /**
    * Return editor block tools
    */
   public get blockTools(): ToolsCollection<BlockTool> {
-    return this.available.block;
+    return this.available.blockTools;
   }
 
   /**
@@ -84,8 +84,8 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get tunes(): ToolsCollection<BlockTune> {
-    return this.available.tune;
+  public get blockTunes(): ToolsCollection<BlockTune> {
+    return this.available.blockTunes;
   }
 
   /**
@@ -114,7 +114,7 @@ export default class Tools extends Module {
    * Returns internal tools
    */
   public get internal(): ToolsCollection {
-    return this.available.internal;
+    return this.available.internalTools;
   }
 
   /**
@@ -217,9 +217,9 @@ export default class Tools extends Module {
     if (Array.isArray(names)) {
       return new ToolsCollection<BlockTune>(
         Array
-          .from(this.tunes.entries())
+          .from(this.blockTunes.entries())
           .filter(([, tune]) => names.includes(tune.name))
-          .concat([ ...this.tunes.internal.entries() ])
+          .concat([ ...this.blockTunes.internalTools.entries() ])
       );
     }
 
@@ -228,13 +228,13 @@ export default class Tools extends Module {
     if (Array.isArray(defaultTuneNames)) {
       return new ToolsCollection<BlockTune>(
         Array
-          .from(this.tunes.entries())
+          .from(this.blockTunes.entries())
           .filter(([, tune]) => defaultTuneNames.includes(tune.name))
-          .concat([ ...this.tunes.internal.entries() ])
+          .concat([ ...this.blockTunes.internalTools.entries() ])
       );
     }
 
-    return this.tunes.internal;
+    return this.blockTunes.internalTools;
   }
 
   /**

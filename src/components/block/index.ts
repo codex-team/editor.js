@@ -708,8 +708,8 @@ export default class Block {
    */
   private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
     [
-      ...this.tunes.external.values(),
-      ...this.tunes.internal.values(),
+      ...this.tunes.externalTools.values(),
+      ...this.tunes.internalTools.values(),
     ].forEach((tune) => {
       const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
 
