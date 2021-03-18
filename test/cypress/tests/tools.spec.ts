@@ -130,80 +130,80 @@ describe('Unit test Tools utilities', (): void => {
       expect(collection instanceof Map).to.be.true;
     });
 
-    context('.block', (): void => {
+    context('.blockTools', (): void => {
       it('should return new instance of ToolsCollection', (): void => {
-        expect(collection.block instanceof ToolsCollection).to.be.true;
+        expect(collection.blockTools instanceof ToolsCollection).to.be.true;
       });
 
       it('result should contain only block tools', (): void => {
         expect(
           Array
             .from(
-              collection.block.values()
+              collection.blockTools.values()
             )
             .every((tool: BlockTool) => tool.isBlock())
         ).to.be.true;
       });
     });
 
-    context('.inline', (): void => {
+    context('.inlineTools', (): void => {
       it('should return new instance of ToolsCollection', (): void => {
-        expect(collection.inline instanceof ToolsCollection).to.be.true;
+        expect(collection.inlineTools instanceof ToolsCollection).to.be.true;
       });
 
       it('result should contain only inline tools', (): void => {
         expect(
           Array
             .from(
-              collection.inline.values()
+              collection.inlineTools.values()
             )
             .every((tool: InlineTool) => tool.isInline())
         ).to.be.true;
       });
     });
 
-    context('.tune', (): void => {
+    context('.blockTunes', (): void => {
       it('should return new instance of ToolsCollection', (): void => {
-        expect(collection.tune instanceof ToolsCollection).to.be.true;
+        expect(collection.blockTunes instanceof ToolsCollection).to.be.true;
       });
 
       it('result should contain only block tools', (): void => {
         expect(
           Array
             .from(
-              collection.tune.values()
+              collection.blockTunes.values()
             )
             .every((tool: BlockTune) => tool.isTune())
         ).to.be.true;
       });
     });
 
-    context('.internal', (): void => {
+    context('.internalTools', (): void => {
       it('should return new instance of ToolsCollection', (): void => {
-        expect(collection.internal instanceof ToolsCollection).to.be.true;
+        expect(collection.internalTools instanceof ToolsCollection).to.be.true;
       });
 
       it('result should contain only internal tools', (): void => {
         expect(
           Array
             .from(
-              collection.internal.values()
+              collection.internalTools.values()
             )
             .every((tool: BaseTool) => tool.isInternal)
         ).to.be.true;
       });
     });
 
-    context('.external', (): void => {
+    context('.externalTools', (): void => {
       it('should return new instance of ToolsCollection', (): void => {
-        expect(collection.external instanceof ToolsCollection).to.be.true;
+        expect(collection.externalTools instanceof ToolsCollection).to.be.true;
       });
 
       it('result should contain only external tools', (): void => {
         expect(
           Array
             .from(
-              collection.external.values()
+              collection.externalTools.values()
             )
             .every((tool: BaseTool) => !tool.isInternal)
         ).to.be.true;
@@ -211,24 +211,24 @@ describe('Unit test Tools utilities', (): void => {
     });
 
     context('mixed access', (): void => {
-      context('.tune.internal', (): void => {
+      context('.blockTunes.internalTools', (): void => {
         it('should return only internal tunes', (): void => {
           expect(
             Array
               .from(
-                collection.tune.internal.values()
+                collection.blockTunes.internalTools.values()
               )
               .every((tool: BlockTune) => tool.isTune() && tool.isInternal)
           ).to.be.true;
         });
       });
 
-      context('.external.block', (): void => {
+      context('.externalTools.blockTools', (): void => {
         it('should return only external block tools', (): void => {
           expect(
             Array
               .from(
-                collection.external.block.values()
+                collection.externalTools.blockTools.values()
               )
               .every((tool: BlockTool) => tool.isBlock() && !tool.isInternal)
           ).to.be.true;
