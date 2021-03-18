@@ -161,48 +161,6 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns internal tools
-   * Includes Bold, Italic, Link and Paragraph
-   */
-  public get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
-    return {
-      bold: {
-        class: BoldInlineTool,
-        isInternal: true,
-      },
-      italic: {
-        class: ItalicInlineTool,
-        isInternal: true,
-      },
-      link: {
-        class: LinkInlineTool,
-        isInternal: true,
-      },
-      paragraph: {
-        class: Paragraph,
-        inlineToolbar: true,
-        isInternal: true,
-      },
-      stub: {
-        class: Stub,
-        isInternal: true,
-      },
-      moveUpTune: {
-        class: MoveUpTune,
-        isInternal: true,
-      },
-      deleteTune: {
-        class: DeleteTune,
-        isInternal: true,
-      },
-      moveDownTune: {
-        class: MoveDownTune,
-        isInternal: true,
-      },
-    };
-  }
-
-  /**
    * Returns Block Tunes for passed Tool
    *
    * @param tool - Tool object
@@ -246,6 +204,48 @@ export default class Tools extends Module {
         await tool.reset();
       }
     });
+  }
+
+  /**
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
+   */
+  private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
+    return {
+      bold: {
+        class: BoldInlineTool,
+        isInternal: true,
+      },
+      italic: {
+        class: ItalicInlineTool,
+        isInternal: true,
+      },
+      link: {
+        class: LinkInlineTool,
+        isInternal: true,
+      },
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+        isInternal: true,
+      },
+      stub: {
+        class: Stub,
+        isInternal: true,
+      },
+      moveUpTune: {
+        class: MoveUpTune,
+        isInternal: true,
+      },
+      deleteTune: {
+        class: DeleteTune,
+        isInternal: true,
+      },
+      moveDownTune: {
+        class: MoveDownTune,
+        isInternal: true,
+      },
+    };
   }
 
   /**
