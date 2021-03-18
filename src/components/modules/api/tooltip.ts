@@ -16,9 +16,9 @@ export default class TooltipAPI extends Module {
   private tooltip: Tooltip;
   /**
    * @class
-   *
-   * @param {EditorConfig} config - Editor's config
-   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
+   * @param {object} moduleConfiguration - Module Configuration
+   * @param {EditorConfig} moduleConfiguration.config - Editor's config
+   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({
