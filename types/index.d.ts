@@ -105,8 +105,6 @@ declare class EditorJS {
 
   public blocks: Blocks;
   public caret: Caret;
-  public events: Events;
-  public listeners: Listeners;
   public sanitizer: Sanitizer;
   public saver: Saver;
   public selection: Selection;

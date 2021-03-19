@@ -4,6 +4,7 @@ import { DefaultBlockToolData, EditorConfig, SanitizerConfig } from '../../types
 import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
+import EventsDispatcher from './utils/events';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -52,6 +53,11 @@ export default class Core {
    * Promise that resolves when all core modules are prepared and UI is rendered on the page
    */
   public isReady: Promise<void>;
+
+  /**
+   * Event Dispatcher util
+   */
+  private eventsDispatcher: EventsDispatcher = new EventsDispatcher();
 
   /**
    * @param {EditorConfig} config - user configuration
@@ -342,6 +348,7 @@ export default class Core {
          */
         this.moduleInstances[Module.displayName] = new Module({
           config: this.configuration,
+          eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
         _.log(`Module ${Module.displayName} skipped because`, 'warn', e);
