@@ -1,5 +1,5 @@
 /**
- * TextRange interface fot IE9-
+ * TextRange interface for IE9-
  */
 import * as _ from './utils';
 import $ from './dom';

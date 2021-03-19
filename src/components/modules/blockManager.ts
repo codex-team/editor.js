@@ -184,7 +184,7 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    this.Editor.Listeners.on(
+    this.listeners.on(
       document,
       'copy',
       (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
@@ -719,7 +719,7 @@ export default class BlockManager extends Module {
 
     this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
       BlockEvents.keydown(event);
-    }, true);
+    });
 
     this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
       BlockEvents.keyup(event);

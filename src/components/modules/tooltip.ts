@@ -5,7 +5,6 @@ import Module from '../__module';
  * Use external module CodeX Tooltip
  */
 import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
-import { ModuleConfig } from '../../types-internal/module-config';
 
 /**
  * Tooltip
@@ -19,14 +18,6 @@ export default class Tooltip extends Module {
    * @see https://github.com/codex-team/codex.tooltips
    */
   private lib: CodeXTooltips = new CodeXTooltips();
-
-  /**
-   * @class
-   * @param {EditorConfig} - Editor's config
-   */
-  constructor({ config }: ModuleConfig) {
-    super({ config });
-  }
 
   /**
    * Shows tooltip on element with passed HTML content
