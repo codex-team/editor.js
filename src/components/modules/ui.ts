@@ -691,30 +691,30 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    if (!this.Editor.BlockManager.currentBlock) {
+    const isClickedBottom = event.target instanceof Element && event.target.isEqualNode(this.nodes.redactor);
+
+    if (isClickedBottom) {
       stopPropagation();
 
-      this.Editor.BlockManager.insert();
-    }
-
-    /**
-     * Show the Plus Button if:
-     * - Block is an default-block (Text)
-     * - Block is empty
-     */
-    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
-
-    if (isDefaultBlock) {
-      stopPropagation();
+      const { BlockManager, Caret, Toolbar } = this.Editor;
 
       /**
-       * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+       * Insert a default-block at the bottom if:
+       * - last-block is not a default-block (Text)
+       *   to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+       * - Or, default-block is not empty
        */
-      const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
-
-      if (isEmptyBlock) {
-        this.Editor.Toolbar.plusButton.show();
+      if (BlockManager.lastBlock.tool.isDefault || !BlockManager.lastBlock.isEmpty) {
+        BlockManager.insertAtEnd();
       }
+
+      /**
+       * Set the caret and toolbar to empty Block
+       */
+      Caret.setToTheLastBlock();
+
+      Toolbar.move();
+      Toolbar.plusButton.show();
     }
   }
 

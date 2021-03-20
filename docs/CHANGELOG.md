@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
