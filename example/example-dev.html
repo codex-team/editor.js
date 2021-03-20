@@ -310,6 +310,37 @@
       },
     });
 
+    setTimeout(async () => {
+      await editor.blocks.render({
+        blocks: [
+          {
+            type: "header",
+            data: {
+              text: "Editor.js",
+              level: 2
+            }
+          },
+          {
+            type : 'paragraph',
+            data : {
+              text : 'Edited. Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration.'
+            }
+          },
+          {
+            type : 'list',
+            data : {
+              items : [
+                'It is a block-styled editor',
+                'It returns clean data output in JSON',
+                'Designed to be extendable and pluggable with a simple API',
+              ],
+              style: 'unordered'
+            }
+          },
+        ]
+      });
+    }, 3000);
+
     /**
      * Saving button
      */

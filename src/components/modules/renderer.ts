@@ -1,3 +1,4 @@
+import * as Diff from 'diff';
 import Module from '../__module';
 import * as _ from '../utils';
 import { OutputBlockData } from '../../../types';
@@ -44,6 +45,18 @@ export default class Renderer extends Module {
    * @param {OutputBlockData[]} blocks - blocks to render
    */
   public async render(blocks: OutputBlockData[]): Promise<void> {
+    const currentOutputData = await this.Editor.Saver.save();
+
+    const change = Diff.diffArrays(currentOutputData.blocks, blocks, {
+      // TODO: use fast-deep-equal
+      comparator: (currentBlock, block) => JSON.stringify(currentBlock) === JSON.stringify(block)
+    });
+
+    console.log(change);
+
+    // Remove it, and implement the diff render
+    this.Editor.BlockManager.clear();
+
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
     const sequence = await _.sequence(chainData as _.ChainData[]);
