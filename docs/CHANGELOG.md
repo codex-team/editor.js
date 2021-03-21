@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Improvements` - Optimize the rendering by using a diffing algorithm [#1074](https://github.com/codex-team/editor.js/issues/1074)
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
