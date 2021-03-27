@@ -5,6 +5,9 @@ import BlockTune from '../../../../src/components/tools/tune';
 import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 
 describe('BlockTune', () => {
+  /**
+   * Mock for BlockTune constructor options
+   */
   const options = {
     name: 'blockTune',
     constructable: class {
@@ -126,7 +129,7 @@ describe('BlockTune', () => {
       expect(options.constructable.reset).to.be.calledOnce;
     });
 
-    it('should not fail if Tool prepare method is not exist', () => {
+    it('should not fail if Tool reset method is not exist', () => {
       const tool = new BlockTune({
         ...options,
         constructable: {},

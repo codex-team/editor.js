@@ -4,6 +4,9 @@ import { ToolType } from '../../../../src/components/tools/base';
 import InlineTool from '../../../../src/components/tools/inline';
 
 describe('InlineTool', () => {
+  /**
+   * Mock for InlineTool constructor options
+   */
   const options = {
     name: 'inlineTool',
     constructable: class {
@@ -141,7 +144,7 @@ describe('InlineTool', () => {
       expect(options.constructable.reset).to.be.calledOnce;
     });
 
-    it('should not fail if Tool prepare method is not exist', () => {
+    it('should not fail if Tool reset method is not exist', () => {
       const tool = new InlineTool({
         ...options,
         constructable: {},

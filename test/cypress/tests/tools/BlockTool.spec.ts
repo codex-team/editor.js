@@ -4,6 +4,9 @@ import { ToolType } from '../../../../src/components/tools/base';
 import BlockTool from '../../../../src/components/tools/block';
 
 describe('BlockTool', () => {
+  /**
+   * Mock for BlockTool constructor options
+   */
   const options = {
     name: 'blockTool',
     constructable: class {
@@ -221,7 +224,7 @@ describe('BlockTool', () => {
       expect(options.constructable.reset).to.be.calledOnce;
     });
 
-    it('should not fail if Tool prepare method is not exist', () => {
+    it('should not fail if Tool reset method is not exist', () => {
       const tool = new BlockTool({
         ...options,
         constructable: {},

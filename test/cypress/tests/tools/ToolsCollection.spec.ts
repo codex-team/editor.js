@@ -38,8 +38,15 @@ const FakeBlockTune = {
   },
 };
 
+/**
+ * Unit tests for ToolsCollection class
+ */
 describe('ToolsCollection', (): void => {
   let collection;
+
+  /**
+   * Mock for Tools in collection
+   */
   const fakeTools = [
     ['block1', FakeBlockTool],
     ['inline1', FakeInlineTool],

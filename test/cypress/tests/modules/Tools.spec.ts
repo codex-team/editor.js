@@ -1,7 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import Tools from '../../../../src/components/modules/tools';
-import {EditorConfig} from "../../../../types";
+import { EditorConfig } from '../../../../types';
 import BlockTool from '../../../../src/components/tools/block';
 
 describe('Tools module', () => {
@@ -9,6 +9,11 @@ describe('Tools module', () => {
     tools: {},
   };
 
+  /**
+   * Construct Tools module for testing purposes
+   *
+   * @param config - Editor config
+   */
   function constructModule(config: EditorConfig = defaultConfig): Tools {
     const module = new Tools({
       config,
@@ -16,9 +21,13 @@ describe('Tools module', () => {
     } as any);
 
     const APIMethods = {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       method(): void {},
     };
 
+    /**
+     * Module state should be Editor modules, so we mock required ones only
+     */
     module.state = {
       API: {
         getMethodsForTool(): typeof APIMethods {
@@ -73,8 +82,8 @@ describe('Tools module', () => {
         defaultBlock: 'withoutPrepare',
         tools: {
           withSuccessfulPrepare: class {
-            public static prepare(): void {
-            }
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            public static prepare(): void {}
           } as any,
           withFailedPrepare: class {
             public static prepare(): void {
@@ -86,10 +95,18 @@ describe('Tools module', () => {
           inlineTool: class {
             public static isInline = true
 
-            public render() {}
-            public surround() {}
-            public checkState() {}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            public render(): void {}
+
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            public surround(): void {}
+
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            public checkState(): void {}
           } as any,
+          /**
+           * This tool will be unavailable as it doesn't have required methods
+           */
           unavailableInlineTool: class {
             public static isInline = true;
           } as any,
