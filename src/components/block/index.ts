@@ -148,8 +148,20 @@ export default class Block {
    */
   private readonly toolInstance: IBlockTool;
 
+  /**
+   * User provided Block Tunes instances
+   */
   private readonly tunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * Editor provided Block Tunes instances
+   */
   private readonly defaultTunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * If there is saved data for Tune which is not available at the moment,
+   * we will store it here and provide back on save so data is not lost
+   */
   private unavailableTunesData: {[name: string]: BlockTuneData} = {};
 
   /**
@@ -544,7 +556,11 @@ export default class Block {
     ]
       .forEach(([name, tune]) => {
         if (_.isFunction(tune.save)) {
-          tunesData[name] = tune.save();
+          try {
+            tunesData[name] = tune.save();
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
+          }
         }
       });
 
@@ -686,12 +702,25 @@ export default class Block {
 
     contentNode.appendChild(pluginsContent);
 
+    /**
+     * Block Tunes might wrap Block's content node to provide any UI changes
+     *
+     * <tune2wrapper>
+     *   <tune1wrapper>
+     *     <blockContent />
+     *   </tune1wrapper>
+     * </tune2wrapper>
+     */
     let wrappedContentNode: HTMLElement = contentNode;
 
     [...this.tunesInstances.values(), ...this.defaultTunesInstances.values()]
       .forEach((tune) => {
         if (_.isFunction(tune.wrap)) {
-          wrappedContentNode = tune.wrap(wrappedContentNode);
+          try {
+            wrappedContentNode = tune.wrap(wrappedContentNode);
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} wrap method throws an Error %o`, 'warn', e);
+          }
         }
       });
 
@@ -707,10 +736,7 @@ export default class Block {
    * @private
    */
   private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
-    [
-      ...this.tunes.externalTools.values(),
-      ...this.tunes.internalTools.values(),
-    ].forEach((tune) => {
+    Array.from(this.tunes.values()).forEach((tune) => {
       const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
 
       collection.set(tune.name, tune.instance(tunesData[tune.name], this.blockAPI));
