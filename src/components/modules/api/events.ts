@@ -3,7 +3,7 @@ import { Events } from '../../../../types/api';
 
 /**
  * @class EventsAPI
- * provides with methods working with Toolbar
+ * provides with methods to work with Events
  */
 export default class EventsAPI extends Module {
   /**
