@@ -1,5 +1,5 @@
-import $ from '../../dom';
-import { API, BlockTool, BlockToolData, BlockToolConstructorOptions } from '../../../../types';
+import $ from '../../components/dom';
+import { API, BlockTool, BlockToolConstructorOptions, BlockToolData } from '../../../types';
 
 export interface StubData extends BlockToolData {
   title: string;

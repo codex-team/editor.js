@@ -229,8 +229,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Add Tool's settings
    */
   private addToolSettings(): void {
-    if (_.isFunction(this.Editor.BlockManager.currentBlock.tool.renderSettings)) {
-      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
+    const settingsElement = this.Editor.BlockManager.currentBlock.renderSettings();
+
+    if (settingsElement) {
+      $.append(this.nodes.toolSettings, settingsElement);
     }
   }
 
