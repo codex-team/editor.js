@@ -17,7 +17,6 @@ import BlockAPI from './api';
 import SelectionUtils from '../selection';
 import BlockTool from '../tools/block';
 
-/** Import default tunes */
 import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
