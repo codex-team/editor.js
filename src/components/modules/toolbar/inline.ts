@@ -40,6 +40,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public CSS = {
     inlineToolbar: 'ce-inline-toolbar',
+    inlineToolbarVisibleChildren: 'ce-inline-toolbar--visible-children',
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
     inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
     inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
@@ -134,9 +135,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Move Toolbar to the selected text
+   *
+   * @param rect
    */
-  public move(): void {
-    const selectionRect = SelectionUtils.rect as DOMRect;
+  public move(rect?: DOMRect): void {
+    const selectionRect = rect || SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
