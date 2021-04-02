@@ -1,4 +1,4 @@
-# Tools for the Inline Toolbar
+# Block Tunes
 
 Similar with [Tools](tools.md) represented Blocks, you can create Block Tunes and connect it to particular Tool or for all Tools.
 
