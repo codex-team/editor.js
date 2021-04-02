@@ -278,5 +278,5 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    *
    * @param args
    */
-  public abstract instance(...args: any[]): Type;
+  public abstract create(...args: any[]): Type;
 }

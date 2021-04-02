@@ -144,7 +144,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Add default settings that presents for all Blocks
      */
-    this.addExternalTunes();
+    this.addTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -237,9 +237,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Add external tunes: provided by user and default ones
+   * Add tunes: provided by user and default ones
    */
-  private addExternalTunes(): void {
+  private addTunes(): void {
     const [toolTunes, defaultTunes] = this.Editor.BlockManager.currentBlock.renderTunes();
 
     $.append(this.nodes.toolSettings, toolTunes);

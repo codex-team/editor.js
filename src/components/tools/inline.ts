@@ -25,7 +25,7 @@ export default class InlineTool extends BaseTool<IInlineTool> {
   /**
    * Constructs new InlineTool instance from constructable
    */
-  public instance(): IInlineTool {
+  public create(): IInlineTool {
     // eslint-disable-next-line new-cap
     return new this.constructable({
       api: this.api.getMethodsForTool(this),

@@ -593,7 +593,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       Tooltip,
     } = this.Editor;
 
-    const instance = tool.instance();
+    const instance = tool.create();
     const button = instance.render();
 
     if (!button) {
@@ -746,7 +746,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     Array
       .from(this.Editor.Tools.inlineTools.entries())
       .forEach(([name, tool]) => {
-        result[name] = tool.instance();
+        result[name] = tool.create();
       });
 
     return result;

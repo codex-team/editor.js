@@ -236,7 +236,7 @@ export default class Block {
     this.mutationObserver = new MutationObserver(this.didMutated);
 
     this.tool = tool;
-    this.toolInstance = tool.instance(data, this.blockAPI, readOnly);
+    this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
     /**
      * @type {BlockTune[]}
@@ -738,7 +738,7 @@ export default class Block {
     Array.from(this.tunes.values()).forEach((tune) => {
       const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
 
-      collection.set(tune.name, tune.instance(tunesData[tune.name], this.blockAPI));
+      collection.set(tune.name, tune.create(tunesData[tune.name], this.blockAPI));
     });
 
     /**

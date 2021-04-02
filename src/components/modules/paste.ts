@@ -283,7 +283,7 @@ export default class Paste extends Module {
    */
   private processTool = (tool: BlockTool): void => {
     try {
-      const toolInstance = tool.instance({}, {} as BlockAPI, false);
+      const toolInstance = tool.create({}, {} as BlockAPI, false);
 
       if (tool.pasteConfig === false) {
         this.exceptionList.push(tool.name);
