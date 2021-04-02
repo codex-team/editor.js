@@ -17,6 +17,9 @@ export interface OutputBlockData<Type extends string = string, Data extends obje
    */
   data: BlockToolData<Data>;
 
+  /**
+   * Block Tunes data 
+   */
   tunes?: {[name: string]: BlockTuneData};
 }
 
