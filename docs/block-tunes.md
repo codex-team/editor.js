@@ -2,11 +2,13 @@
 
 Similar with [Tools](tools.md) represented Blocks, you can create Block Tunes and connect it to particular Tool or for all Tools.
 
+Block Tunes allows you to set any additional options to Blocks. For example, with corresponded Block Tunes you can mark Block as «spoiler», give it an anchor, set a background, and so on.
+
 ## Base structure
 
-Tune's class should have a `isTune` property (static getter) set tu `true`.
+Tune's class should have the `isTune` property (static getter) set to `true`.
 
-Block Tune must implement render method which returns an HTML Element inserted to block settings.
+Block Tune must implement the `render()` method which returns an HTML Element that will be appended to the Block Settings panel.
 
 - `render()` — create a button
 
@@ -91,7 +93,7 @@ type | description |
 
 ### static prepare()
 
-If you need to prepare some data for Tune (eg. load external script, create HTML nodes in the document, etc) you can use static prepare method.
+If you need to prepare some data for Tune (eg. load external script, create HTML nodes in the document, etc) you can use the static `prepare()` method.
 
 It accepts tunes config passed on Editor's initialization as an argument:
 
