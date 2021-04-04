@@ -608,7 +608,7 @@ export default class Block {
   /**
    * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
    *
-   * @returns {DocumentFragment}
+   * @returns {DocumentFragment[]}
    */
   public renderTunes(): [DocumentFragment, DocumentFragment] {
     const tunesElement = document.createDocumentFragment();
