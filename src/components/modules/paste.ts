@@ -222,7 +222,7 @@ export default class Paste extends Module {
    * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   public async processText(data: string, isHTML = false): Promise<void> {
-    const { Caret, BlockManager, Tools } = this.Editor;
+    const { Caret, BlockManager } = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
@@ -283,7 +283,7 @@ export default class Paste extends Module {
    */
   private processTool = (tool: BlockTool): void => {
     try {
-      const toolInstance = tool.instance({}, {} as BlockAPI, false);
+      const toolInstance = tool.create({}, {} as BlockAPI, false);
 
       if (tool.pasteConfig === false) {
         this.exceptionList.push(tool.name);
@@ -300,7 +300,7 @@ export default class Paste extends Module {
       this.getPatternsConfig(tool);
     } catch (e) {
       _.log(
-        `Paste handling for «${name}» Tool hasn't been set up because of the error`,
+        `Paste handling for «${tool.name}» Tool hasn't been set up because of the error`,
         'warn',
         e
       );
@@ -389,7 +389,7 @@ export default class Paste extends Module {
       /** Still need to validate pattern as it provided by user */
       if (!(pattern instanceof RegExp)) {
         _.log(
-          `Pattern ${pattern} for «${name}» Tool is skipped because it should be a Regexp instance.`,
+          `Pattern ${pattern} for «${tool.name}» Tool is skipped because it should be a Regexp instance.`,
           'warn'
         );
       }

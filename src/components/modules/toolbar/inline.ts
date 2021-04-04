@@ -7,7 +7,6 @@ import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import { ToolType } from '../tools';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
 import BlockTool from '../../tools/block';
@@ -594,7 +593,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       Tooltip,
     } = this.Editor;
 
-    const instance = tool.instance();
+    const instance = tool.create();
     const button = instance.render();
 
     if (!button) {
@@ -670,7 +669,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * 2) For external tools, check tool's settings
      * 3) If shortcut is not set in settings, check Tool's public property
      */
-    const internalTools = Tools.getInternal(ToolType.Inline);
+    const internalTools = Tools.internal.inlineTools;
 
     if (Array.from(internalTools.keys()).includes(toolName)) {
       return this.inlineTools[toolName][CommonInternalSettings.Shortcut];
@@ -747,7 +746,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     Array
       .from(this.Editor.Tools.inlineTools.entries())
       .forEach(([name, tool]) => {
-        result[name] = tool.instance();
+        result[name] = tool.create();
       });
 
     return result;

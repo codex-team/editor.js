@@ -1,9 +1,11 @@
 {
   "env": {
+    "NODE_ENV": "test"
   },
   "fixturesFolder": "test/cypress/fixtures",
   "integrationFolder": "test/cypress/tests",
   "screenshotsFolder": "test/cypress/screenshots",
   "videosFolder": "test/cypress/videos",
-  "supportFile": "test/cypress/support/index.ts"
+  "supportFile": "test/cypress/support/index.ts",
+  "pluginsFile": "test/cypress/plugins/index.ts"
 }

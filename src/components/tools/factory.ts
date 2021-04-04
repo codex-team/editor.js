@@ -4,7 +4,6 @@ import InlineTool from './inline';
 import BlockTune from './tune';
 import BlockTool from './block';
 import API from '../modules/api';
-import { ToolType } from '../modules/tools';
 import { EditorConfig } from '../../../types/configs';
 
 type ToolConstructor = typeof InlineTool | typeof BlockTool | typeof BlockTune;
@@ -53,13 +52,13 @@ export default class ToolsFactory {
   public get(name: string): InlineTool | BlockTool | BlockTune {
     const { class: constructable, isInternal = false, ...config } = this.config[name];
 
-    const [Constructor, type] = this.getConstructor(constructable);
+    const Constructor = this.getConstructor(constructable);
 
     return new Constructor({
       name,
       constructable,
       config,
-      api: this.api.getMethodsForTool(name, type),
+      api: this.api,
       isDefault: name === this.editorConfig.defaultBlock,
       defaultPlaceholder: this.editorConfig.placeholder,
       isInternal,
@@ -71,14 +70,14 @@ export default class ToolsFactory {
    *
    * @param constructable - Tools constructable
    */
-  private getConstructor(constructable: ToolConstructable): [ToolConstructor, ToolType] {
+  private getConstructor(constructable: ToolConstructable): ToolConstructor {
     switch (true) {
       case constructable[InternalInlineToolSettings.IsInline]:
-        return [InlineTool, ToolType.Inline];
+        return InlineTool;
       case constructable[InternalTuneSettings.IsTune]:
-        return [BlockTune, ToolType.Tune];
+        return BlockTune;
       default:
-        return [BlockTool, ToolType.Block];
+        return BlockTool;
     }
   }
 }

@@ -1,8 +1,8 @@
-import BaseTool, { InternalBlockToolSettings, UserSettings } from './base';
-import { ToolType } from '../modules/tools';
+import BaseTool, { InternalBlockToolSettings, ToolType, UserSettings } from './base';
 import {
   BlockAPI,
   BlockTool as IBlockTool,
+  BlockToolConstructable,
   BlockToolData,
   ConversionConfig,
   PasteConfig,
@@ -20,19 +20,24 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   public type = ToolType.Block;
 
   /**
+   * Tool's constructable blueprint
+   */
+  protected constructable: BlockToolConstructable;
+
+  /**
    * Creates new Tool instance
    *
    * @param data - Tool data
    * @param block - BlockAPI for current Block
    * @param readOnly - True if Editor is in read-only mode
    */
-  public instance(data: BlockToolData, block: BlockAPI, readOnly: boolean): IBlockTool {
+  public create(data: BlockToolData, block: BlockAPI, readOnly: boolean): IBlockTool {
     // eslint-disable-next-line new-cap
     return new this.constructable({
       data,
       block,
       readOnly,
-      api: this.api,
+      api: this.api.getMethodsForTool(this),
       config: this.settings,
     }) as IBlockTool;
   }
@@ -56,7 +61,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    */
   public get toolbox(): ToolboxConfig {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
-    const userToolboxSettings = this.settings[UserSettings.Toolbox];
+    const userToolboxSettings = this.config[UserSettings.Toolbox];
 
     if (_.isEmpty(toolToolboxSettings)) {
       return;
@@ -81,6 +86,13 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    */
   public get enabledInlineTools(): boolean | string[] {
     return this.config[UserSettings.EnabledInlineTools];
+  }
+
+  /**
+   * Returns enabled tunes for Tool
+   */
+  public get enabledBlockTunes(): boolean | string[] {
+    return this.config[UserSettings.EnabledBlockTunes];
   }
 
   /**

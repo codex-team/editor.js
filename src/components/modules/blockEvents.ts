@@ -118,7 +118,7 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { BlockManager, InlineToolbar, ConversionToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {

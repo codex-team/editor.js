@@ -3,8 +3,7 @@ import {
   BlockTool as IBlockTool,
   BlockToolConstructable,
   BlockToolData,
-  BlockTune,
-  BlockTuneConstructable,
+  BlockTune as IBlockTune,
   SanitizerConfig,
   ToolConfig,
   ToolSettings
@@ -15,24 +14,17 @@ import $ from '../dom';
 import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
-import { ToolType } from '../modules/tools';
 import SelectionUtils from '../selection';
 import BlockTool from '../tools/block';
 
-/** Import default tunes */
-import MoveUpTune from '../block-tunes/block-tune-move-up';
-import DeleteTune from '../block-tunes/block-tune-delete';
-import MoveDownTune from '../block-tunes/block-tune-move-down';
+import BlockTune from '../tools/tune';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import ToolsCollection from '../tools/collection';
 
 /**
  * Interface describes Block class constructor argument
  */
 interface BlockConstructorOptions {
-  /**
-   * Tool's name
-   */
-  name: string;
-
   /**
    * Initial Block data
    */
@@ -52,6 +44,16 @@ interface BlockConstructorOptions {
    * This flag indicates that the Block should be constructed in the read-only mode.
    */
   readOnly: boolean;
+
+  /**
+   * Tunes for current Block
+   */
+  tunes: ToolsCollection<BlockTune>;
+
+  /**
+   * Tunes data for current Block
+   */
+  tunesData: {[name: string]: BlockTuneData};
 }
 
 /**
@@ -126,7 +128,7 @@ export default class Block {
   /**
    * Tunes used by Tool
    */
-  public readonly tunes: BlockTune[];
+  public readonly tunes: ToolsCollection<BlockTune>;
 
   /**
    * Tool's user configuration
@@ -144,6 +146,22 @@ export default class Block {
    * Tool class instance
    */
   private readonly toolInstance: IBlockTool;
+
+  /**
+   * User provided Block Tunes instances
+   */
+  private readonly tunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * Editor provided Block Tunes instances
+   */
+  private readonly defaultTunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * If there is saved data for Tune which is not available at the moment,
+   * we will store it here and provide back on save so data is not lost
+   */
+  private unavailableTunesData: {[name: string]: BlockTuneData} = {};
 
   /**
    * Editor`s API module
@@ -195,7 +213,6 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
-   * @param {string} options.name - Tool name that passed on initialization
    * @param {BlockToolData} options.data - Tool's initial data
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
@@ -203,13 +220,14 @@ export default class Block {
    * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
-    name,
     data,
     tool,
     api,
     readOnly,
+    tunes,
+    tunesData,
   }: BlockConstructorOptions) {
-    this.name = name;
+    this.name = tool.name;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
@@ -218,13 +236,16 @@ export default class Block {
     this.mutationObserver = new MutationObserver(this.didMutated);
 
     this.tool = tool;
-    this.toolInstance = tool.instance(data, this.blockAPI, readOnly);
+    this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
-    this.holder = this.compose();
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = this.makeTunes();
+    this.tunes = tunes;
+
+    this.composeTunes(tunesData);
+
+    this.holder = this.compose();
   }
 
   /**
@@ -526,6 +547,21 @@ export default class Block {
    */
   public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
+    const tunesData: {[name: string]: BlockTuneData} = this.unavailableTunesData;
+
+    [
+      ...this.tunesInstances.entries(),
+      ...this.defaultTunesInstances.entries(),
+    ]
+      .forEach(([name, tune]) => {
+        if (_.isFunction(tune.save)) {
+          try {
+            tunesData[name] = tune.save();
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
+          }
+        }
+      });
 
     /**
      * Measuring execution time
@@ -541,6 +577,7 @@ export default class Block {
         return {
           tool: this.name,
           data: finishedExtraction,
+          tunes: tunesData,
           time: measuringEnd - measuringStart,
         };
       })
@@ -569,49 +606,22 @@ export default class Block {
   }
 
   /**
-   * Make an array with default settings
-   * Each block has default tune instance that have states
-   *
-   * @returns {BlockTune[]}
-   */
-  public makeTunes(): BlockTune[] {
-    const tunesList = [
-      {
-        name: 'moveUp',
-        Tune: MoveUpTune,
-      },
-      {
-        name: 'delete',
-        Tune: DeleteTune,
-      },
-      {
-        name: 'moveDown',
-        Tune: MoveDownTune,
-      },
-    ];
-
-    // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
-      return new Tune({
-        api: this.api.getMethodsForTool(name, ToolType.Tune),
-        settings: this.config,
-      });
-    });
-  }
-
-  /**
    * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
    *
-   * @returns {DocumentFragment}
+   * @returns {DocumentFragment[]}
    */
-  public renderTunes(): DocumentFragment {
+  public renderTunes(): [DocumentFragment, DocumentFragment] {
     const tunesElement = document.createDocumentFragment();
+    const defaultTunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach((tune) => {
+    this.tunesInstances.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
+    this.defaultTunesInstances.forEach((tune) => {
+      $.append(defaultTunesElement, tune.render());
+    });
 
-    return tunesElement;
+    return [tunesElement, defaultTunesElement];
   }
 
   /**
@@ -690,9 +700,55 @@ export default class Block {
         pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
-    wrapper.appendChild(contentNode);
+
+    /**
+     * Block Tunes might wrap Block's content node to provide any UI changes
+     *
+     * <tune2wrapper>
+     *   <tune1wrapper>
+     *     <blockContent />
+     *   </tune1wrapper>
+     * </tune2wrapper>
+     */
+    let wrappedContentNode: HTMLElement = contentNode;
+
+    [...this.tunesInstances.values(), ...this.defaultTunesInstances.values()]
+      .forEach((tune) => {
+        if (_.isFunction(tune.wrap)) {
+          try {
+            wrappedContentNode = tune.wrap(wrappedContentNode);
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} wrap method throws an Error %o`, 'warn', e);
+          }
+        }
+      });
+
+    wrapper.appendChild(wrappedContentNode);
 
     return wrapper;
+  }
+
+  /**
+   * Instantiate Block Tunes
+   *
+   * @param tunesData - current Block tunes data
+   * @private
+   */
+  private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
+    Array.from(this.tunes.values()).forEach((tune) => {
+      const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
+
+      collection.set(tune.name, tune.create(tunesData[tune.name], this.blockAPI));
+    });
+
+    /**
+     * Check if there is some data for not available tunes
+     */
+    Object.entries(tunesData).forEach(([name, data]) => {
+      if (!this.tunesInstances.has(name)) {
+        this.unavailableTunesData[name] = data;
+      }
+    });
   }
 
   /**

@@ -15,7 +15,10 @@ import ToolsFactory from '../tools/factory';
 import InlineTool from '../tools/inline';
 import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
-import BaseTool from '../tools/base';
+import MoveDownTune from '../block-tunes/block-tune-move-down';
+import DeleteTune from '../block-tunes/block-tune-delete';
+import MoveUpTune from '../block-tunes/block-tune-move-up';
+import ToolsCollection from '../tools/collection';
 
 /**
  * @module Editor.js Tools Submodule
@@ -49,7 +52,7 @@ export default class Tools extends Module {
    *
    * @returns {object<Tool>}
    */
-  public get available(): Map<string, ToolClass> {
+  public get available(): ToolsCollection {
     return this.toolsAvailable;
   }
 
@@ -58,7 +61,7 @@ export default class Tools extends Module {
    *
    * @returns {Tool[]}
    */
-  public get unavailable(): Map<string, ToolClass> {
+  public get unavailable(): ToolsCollection {
     return this.toolsUnavailable;
   }
 
@@ -67,61 +70,24 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get inlineTools(): Map<string, InlineTool> {
-    if (this._inlineTools) {
-      return this._inlineTools;
-    }
-
-    const tools = Array
-      .from(this.available.entries())
-      .filter(([name, tool]: [string, BaseTool<any>]) => {
-        if (tool.type !== ToolType.Inline) {
-          return false;
-        }
-        /**
-         * Some Tools validation
-         */
-        const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-        const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !tool.instance()[method]);
-
-        if (notImplementedMethods.length) {
-          _.log(
-            `Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`,
-            'warn',
-            notImplementedMethods
-          );
-
-          return false;
-        }
-
-        return true;
-      });
-
-    /**
-     * Cache prepared Tools
-     */
-    this._inlineTools = new Map(tools) as Map<string, InlineTool>;
-
-    return this._inlineTools;
+  public get inlineTools(): ToolsCollection<InlineTool> {
+    return this.available.inlineTools;
   }
 
   /**
    * Return editor block tools
    */
-  public get blockTools(): Map<string, BlockTool> {
-    if (this._blockTools) {
-      return this._blockTools;
-    }
+  public get blockTools(): ToolsCollection<BlockTool> {
+    return this.available.blockTools;
+  }
 
-    const tools = Array
-      .from(this.available.entries())
-      .filter(([, tool]) => {
-        return tool.type === ToolType.Block;
-      });
-
-    this._blockTools = new Map(tools) as Map<string, BlockTool>;
-
-    return this._blockTools;
+  /**
+   * Return available Block Tunes
+   *
+   * @returns {object} - object of Inline Tool's classes
+   */
+  public get blockTunes(): ToolsCollection<BlockTune> {
+    return this.available.blockTunes;
   }
 
   /**
@@ -139,43 +105,18 @@ export default class Tools extends Module {
   /**
    * Tools` classes available to use
    */
-  private readonly toolsAvailable: Map<string, ToolClass> = new Map();
+  private readonly toolsAvailable: ToolsCollection = new ToolsCollection();
 
   /**
    * Tools` classes not available to use because of preparation failure
    */
-  private readonly toolsUnavailable: Map<string, ToolClass> = new Map();
-
-  /**
-   * Cache for the prepared inline tools
-   *
-   * @type {null|object}
-   * @private
-   */
-  private _inlineTools: Map<string, InlineTool> = null;
-
-  /**
-   * Cache for the prepared block tools
-   */
-  private _blockTools: Map<string, BlockTool> = null;
+  private readonly toolsUnavailable: ToolsCollection = new ToolsCollection();
 
   /**
    * Returns internal tools
-   *
-   * @param type - if passed, Tools will be filtered by type
    */
-  public getInternal(type?: ToolType): Map<string, ToolClass> {
-    let tools = Array
-      .from(this.available.entries())
-      .filter(([, tool]) => {
-        return tool.isInternal;
-      });
-
-    if (type) {
-      tools = tools.filter(([, tool]) => tool.type === type);
-    }
-
-    return new Map(tools);
+  public get internal(): ToolsCollection {
+    return this.available.internalTools;
   }
 
   /**
@@ -222,10 +163,56 @@ export default class Tools extends Module {
   }
 
   /**
+   * Returns Block Tunes for passed Tool
+   *
+   * @param tool - Tool object
+   */
+  public getTunesForTool(tool: BlockTool): ToolsCollection<BlockTune> {
+    const names = tool.enabledBlockTunes;
+
+    if (names === false) {
+      return new ToolsCollection<BlockTune>();
+    }
+
+    if (Array.isArray(names)) {
+      return new ToolsCollection<BlockTune>(
+        Array
+          .from(this.blockTunes.entries())
+          .filter(([, tune]) => names.includes(tune.name))
+          .concat([ ...this.blockTunes.internalTools.entries() ])
+      );
+    }
+
+    const defaultTuneNames = this.config.tunes;
+
+    if (Array.isArray(defaultTuneNames)) {
+      return new ToolsCollection<BlockTune>(
+        Array
+          .from(this.blockTunes.entries())
+          .filter(([, tune]) => defaultTuneNames.includes(tune.name))
+          .concat([ ...this.blockTunes.internalTools.entries() ])
+      );
+    }
+
+    return this.blockTunes.internalTools;
+  }
+
+  /**
+   * Calls each Tool reset method to clean up anything set by Tool
+   */
+  public destroy(): void {
+    Object.values(this.available).forEach(async tool => {
+      if (_.isFunction(tool.reset)) {
+        await tool.reset();
+      }
+    });
+  }
+
+  /**
    * Returns internal tools
    * Includes Bold, Italic, Link and Paragraph
    */
-  public get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
+  private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
     return {
       bold: {
         class: BoldInlineTool,
@@ -248,18 +235,19 @@ export default class Tools extends Module {
         class: Stub,
         isInternal: true,
       },
+      moveUpTune: {
+        class: MoveUpTune,
+        isInternal: true,
+      },
+      deleteTune: {
+        class: DeleteTune,
+        isInternal: true,
+      },
+      moveDownTune: {
+        class: MoveDownTune,
+        isInternal: true,
+      },
     };
-  }
-
-  /**
-   * Calls each Tool reset method to clean up anything set by Tool
-   */
-  public destroy(): void {
-    Object.values(this.available).forEach(async tool => {
-      if (_.isFunction(tool.reset)) {
-        await tool.reset();
-      }
-    });
   }
 
   /**
@@ -268,7 +256,29 @@ export default class Tools extends Module {
    * @param {object} data - append tool to available list
    */
   private toolPrepareMethodSuccess(data: { toolName: string }): void {
-    this.toolsAvailable.set(data.toolName, this.factory.get(data.toolName));
+    const tool = this.factory.get(data.toolName);
+
+    if (tool.isInline()) {
+      /**
+       * Some Tools validation
+       */
+      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+      const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !tool.create()[method]);
+
+      if (notImplementedMethods.length) {
+        _.log(
+          `Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`,
+          'warn',
+          notImplementedMethods
+        );
+
+        this.toolsUnavailable.set(tool.name, tool);
+
+        return;
+      }
+    }
+
+    this.toolsAvailable.set(tool.name, tool);
   }
 
   /**
@@ -357,23 +367,4 @@ export default class Tools extends Module {
 
     return config;
   }
-}
-
-/**
- * What kind of plugins developers can create
- */
-export enum ToolType {
-  /**
-   * Block tool
-   */
-  Block,
-  /**
-   * Inline tool
-   */
-  Inline,
-
-  /**
-   * Block tune
-   */
-  Tune,
 }

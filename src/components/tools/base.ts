@@ -1,7 +1,29 @@
-import { ToolType } from '../modules/tools';
 import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import { API, SanitizerConfig } from '../../../types';
+import { SanitizerConfig } from '../../../types';
 import * as _ from '../utils';
+import type InlineTool from './inline';
+import type BlockTool from './block';
+import type BlockTune from './tune';
+import API from '../modules/api';
+
+/**
+ * What kind of plugins developers can create
+ */
+export enum ToolType {
+  /**
+   * Block tool
+   */
+  Block,
+  /**
+   * Inline tool
+   */
+  Inline,
+
+  /**
+   * Block tune
+   */
+  Tune,
+}
 
 /**
  * Enum of Tool options provided by user
@@ -19,6 +41,10 @@ export enum UserSettings {
    * Enabled Inline Tools for Block Tool
    */
   EnabledInlineTools = 'inlineToolbar',
+  /**
+   * Enabled Block Tunes for Block Tool
+   */
+  EnabledBlockTunes = 'tunes',
   /**
    * Tool configuration
    */
@@ -105,7 +131,7 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends Tool> {
+export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
@@ -214,7 +240,7 @@ export default abstract class BaseTool<Type extends Tool> {
    */
   public get shortcut(): string | undefined {
     const toolShortcut = this.constructable[CommonInternalSettings.Shortcut];
-    const userShortcut = this.settings[UserSettings.Shortcut];
+    const userShortcut = this.config[UserSettings.Shortcut];
 
     return userShortcut || toolShortcut;
   }
@@ -227,9 +253,30 @@ export default abstract class BaseTool<Type extends Tool> {
   }
 
   /**
+   * Returns true if Tools is inline
+   */
+  public isInline(): this is InlineTool {
+    return this.type === ToolType.Inline;
+  }
+
+  /**
+   * Returns true if Tools is block
+   */
+  public isBlock(): this is BlockTool {
+    return this.type === ToolType.Block;
+  }
+
+  /**
+   * Returns true if Tools is tune
+   */
+  public isTune(): this is BlockTune {
+    return this.type === ToolType.Tune;
+  }
+
+  /**
    * Constructs new Tool instance from constructable blueprint
    *
    * @param args
    */
-  public abstract instance(...args: any[]): Type;
+  public abstract create(...args: any[]): Type;
 }
