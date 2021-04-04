@@ -240,7 +240,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    */
   public get shortcut(): string | undefined {
     const toolShortcut = this.constructable[CommonInternalSettings.Shortcut];
-    const userShortcut = this.settings[UserSettings.Shortcut];
+    const userShortcut = this.config[UserSettings.Shortcut];
 
     return userShortcut || toolShortcut;
   }

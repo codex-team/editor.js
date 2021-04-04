@@ -61,7 +61,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    */
   public get toolbox(): ToolboxConfig {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
-    const userToolboxSettings = this.settings[UserSettings.Toolbox];
+    const userToolboxSettings = this.config[UserSettings.Toolbox];
 
     if (_.isEmpty(toolToolboxSettings)) {
       return;
