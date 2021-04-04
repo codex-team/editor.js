@@ -332,7 +332,7 @@ describe('BlockTool', () => {
     });
   });
 
-  context('.instance()', () => {
+  context('.create()', () => {
     const tool = new BlockTool(options as any);
     const data = { text: 'text' };
     const blockAPI = {
@@ -341,37 +341,37 @@ describe('BlockTool', () => {
     };
 
     it('should return Tool instance', () => {
-      expect(tool.instance(data, blockAPI as any, false)).to.be.instanceOf(options.constructable);
+      expect(tool.create(data, blockAPI as any, false)).to.be.instanceOf(options.constructable);
     });
 
     it('should return Tool instance with passed data', () => {
-      const instance = tool.instance(data, blockAPI as any, false) as any;
+      const instance = tool.create(data, blockAPI as any, false) as any;
 
       expect(instance.data).to.be.deep.eq(data);
     });
 
     it('should return Tool instance with passed BlockAPI object', () => {
-      const instance = tool.instance(data, blockAPI as any, false) as any;
+      const instance = tool.create(data, blockAPI as any, false) as any;
 
       expect(instance.block).to.be.deep.eq(blockAPI);
     });
 
     it('should return Tool instance with passed readOnly flag', () => {
-      const instance1 = tool.instance(data, blockAPI as any, false) as any;
-      const instance2 = tool.instance(data, blockAPI as any, true) as any;
+      const instance1 = tool.create(data, blockAPI as any, false) as any;
+      const instance2 = tool.create(data, blockAPI as any, true) as any;
 
       expect(instance1.readonly).to.be.eq(false);
       expect(instance2.readonly).to.be.eq(true);
     });
 
     it('should return Tool instance with passed API object', () => {
-      const instance = tool.instance(data, blockAPI as any, false) as any;
+      const instance = tool.create(data, blockAPI as any, false) as any;
 
       expect(instance.api).to.be.deep.eq(options.api.getMethodsForTool());
     });
 
     it('should return Tool instance with passed config', () => {
-      const instance = tool.instance(data, blockAPI as any, false) as any;
+      const instance = tool.create(data, blockAPI as any, false) as any;
 
       expect(instance.config).to.be.deep.eq(options.config.config);
     });

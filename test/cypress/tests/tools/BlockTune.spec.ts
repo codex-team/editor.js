@@ -139,7 +139,7 @@ describe('BlockTune', () => {
     });
   });
 
-  context('.instance()', () => {
+  context('.create()', () => {
     const tool = new BlockTune(options as any);
     const data = { text: 'text' };
     const blockAPI = {
@@ -148,29 +148,29 @@ describe('BlockTune', () => {
     };
 
     it('should return Tool instance', () => {
-      expect(tool.instance(data, blockAPI as any)).to.be.instanceOf(options.constructable);
+      expect(tool.create(data, blockAPI as any)).to.be.instanceOf(options.constructable);
     });
 
     it('should return Tool instance with passed data', () => {
-      const instance = tool.instance(data, blockAPI as any) as any;
+      const instance = tool.create(data, blockAPI as any) as any;
 
       expect(instance.data).to.be.deep.eq(data);
     });
 
     it('should return Tool instance with passed BlockAPI object', () => {
-      const instance = tool.instance(data, blockAPI as any) as any;
+      const instance = tool.create(data, blockAPI as any) as any;
 
       expect(instance.block).to.be.deep.eq(blockAPI);
     });
 
     it('should return Tool instance with passed API object', () => {
-      const instance = tool.instance(data, blockAPI as any) as any;
+      const instance = tool.create(data, blockAPI as any) as any;
 
       expect(instance.api).to.be.deep.eq(options.api.getMethodsForTool());
     });
 
     it('should return Tool instance with passed settings', () => {
-      const instance = tool.instance(data, blockAPI as any) as any;
+      const instance = tool.create(data, blockAPI as any) as any;
 
       expect(instance.settings).to.be.deep.eq(options.config.config);
     });

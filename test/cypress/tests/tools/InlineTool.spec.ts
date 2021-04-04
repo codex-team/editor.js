@@ -174,21 +174,21 @@ describe('InlineTool', () => {
     });
   });
 
-  context('.instance()', () => {
+  context('.create()', () => {
     const tool = new InlineTool(options as any);
 
     it('should return Tool instance', () => {
-      expect(tool.instance()).to.be.instanceOf(options.constructable);
+      expect(tool.create()).to.be.instanceOf(options.constructable);
     });
 
     it('should return Tool instance with passed API object', () => {
-      const instance = tool.instance() as any;
+      const instance = tool.create() as any;
 
       expect(instance.api).to.be.deep.eq(options.api.getMethodsForTool());
     });
 
     it('should return Tool instance with passed config', () => {
-      const instance = tool.instance() as any;
+      const instance = tool.create() as any;
 
       expect(instance.config).to.be.deep.eq(options.config.config);
     });
