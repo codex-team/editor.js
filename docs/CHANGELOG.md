@@ -1,5 +1,7 @@
 # Changelog
 
+- `Refactoring` - Notifier module now is a util.
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
