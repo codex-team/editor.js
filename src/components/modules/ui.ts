@@ -395,6 +395,10 @@ export default class UI extends Module<UINodes> {
         this.backspacePressed(event);
         break;
 
+        case _.keyCodes.DELETE:
+          this.deletePressed(event);
+          break;
+
       case _.keyCodes.ESC:
         this.escapePressed(event);
         break;
@@ -463,6 +467,35 @@ export default class UI extends Module<UINodes> {
       /**
        * Stop propagations
        * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+       * with CMD+A or RectangleSelection and they can be handled on document event
+       */
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  /**
+   * @param {KeyboardEvent} event - keyboard event
+   */
+  private deletePressed(event: KeyboardEvent): void {
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
+
+    /**
+     * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
+     * remove selected blocks
+     */
+    if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
+      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
+
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global deletePressed because they may occur
        * with CMD+A or RectangleSelection and they can be handled on document event
        */
       event.preventDefault();
