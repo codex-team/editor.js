@@ -5,7 +5,7 @@ import InlineToolbar from '../components/modules/toolbar/inline';
 import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
 import Paste from '../components/modules/paste';
-import Notifier from '../components/modules/notifier';
+import Notifier from '../components/utils/notifier';
 import Tooltip from '../components/modules/tooltip';
 import DragNDrop from '../components/modules/dragNDrop';
 import ModificationsObserver from '../components/modules/modificationsObserver';
