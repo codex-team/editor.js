@@ -395,9 +395,9 @@ export default class UI extends Module<UINodes> {
         this.backspacePressed(event);
         break;
 
-        case _.keyCodes.DELETE:
-          this.deletePressed(event);
-          break;
+      case _.keyCodes.DELETE:
+        this.deletePressed(event);
+        break;
 
       case _.keyCodes.ESC:
         this.escapePressed(event);
