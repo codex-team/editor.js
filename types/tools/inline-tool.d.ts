@@ -1,5 +1,5 @@
 import {BaseTool, BaseToolConstructable} from './tool';
-import {API, ToolConfig} from "../index";
+import {API, ToolConfig} from '../index';
 /**
  * Base structure for the Inline Toolbar Tool
  */

@@ -6,6 +6,8 @@
  * behavior that modifies Cypress.
  */
 
+import '@cypress/code-coverage/support';
+
 /**
  * File with the helpful commands
  */
