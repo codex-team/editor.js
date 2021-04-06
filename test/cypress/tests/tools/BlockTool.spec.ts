@@ -131,10 +131,21 @@ describe('BlockTool', () => {
     });
   });
 
-  it('.sanitizeConfig should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  describe('.sanitizeConfig', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+      expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+    });
+
+    it('should return empty object by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        constructable: class {},
+      } as any);
+
+      expect(tool.sanitizeConfig).to.be.deep.eq({});
+    });
   });
 
   it('.isBlock() should return true', () => {
@@ -179,10 +190,24 @@ describe('BlockTool', () => {
     expect(tool.pasteConfig).to.be.deep.eq(options.constructable.pasteConfig);
   });
 
-  it('.enabledInlineTools should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  describe('.enabledInlineTools', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+      expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+    });
+
+    it('should return true by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          inlineToolbar: undefined,
+        },
+      } as any);
+
+      expect(tool.enabledInlineTools).to.be.true;
+    });
   });
 
   it('.enabledBlockTunes should return correct value', () => {

@@ -249,7 +249,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    * Returns Tool's sanitizer configuration
    */
   public get sanitizeConfig(): SanitizerConfig {
-    return this.constructable[CommonInternalSettings.SanitizeConfig];
+    return this.constructable[CommonInternalSettings.SanitizeConfig] || {};
   }
 
   /**
