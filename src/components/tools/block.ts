@@ -85,7 +85,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * Returns enabled inline tools for Tool
    */
   public get enabledInlineTools(): boolean | string[] {
-    return this.config[UserSettings.EnabledInlineTools] || true;
+    return this.config[UserSettings.EnabledInlineTools] || false;
   }
 
   /**

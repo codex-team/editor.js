@@ -197,7 +197,7 @@ describe('BlockTool', () => {
       expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
     });
 
-    it('should return true by default', () => {
+    it('should return false by default', () => {
       const tool = new BlockTool({
         ...options,
         config: {
@@ -206,7 +206,7 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool.enabledInlineTools).to.be.true;
+      expect(tool.enabledInlineTools).to.be.false;
     });
   });
 
