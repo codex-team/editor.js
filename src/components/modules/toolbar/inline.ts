@@ -2,12 +2,11 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool, InlineToolConstructable, ToolConstructable, ToolSettings, EditorConfig } from '../../../../types';
+import { InlineTool as IInlineTool, EditorConfig } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import { EditorModules } from '../../../types-internal/editor-modules';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import EventsDispatcher from '../../utils/events';
@@ -611,10 +610,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {InlineTool} tool - InlineTool object
    */
   private addTool(tool: InlineTool): void {
-    const {
-      Tools,
-    } = this.Editor;
-
     const instance = tool.create();
     const button = instance.render();
 
