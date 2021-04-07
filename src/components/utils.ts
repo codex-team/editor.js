@@ -659,7 +659,13 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
   const originalMethod = descriptor[propertyToOverride];
   const cacheKey = `#${propertyKey}Cache`;
 
+  /**
+   * Override get or value descriptor property to cache return value
+   */
   descriptor[propertyToOverride] = function (...args: Arguments): Value {
+    /**
+     * If there is no cache, create it
+     */
     if (this[cacheKey] === undefined) {
       this[cacheKey] = originalMethod.apply(this, ...args);
     }
@@ -667,6 +673,9 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
     return this[cacheKey];
   };
 
+  /**
+   * If get accessor has been overridden, we need to override set accessor to clear cache
+   */
   if (propertyToOverride === 'get' && descriptor.set) {
     const originalSet = descriptor.set;
 

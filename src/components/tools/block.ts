@@ -133,6 +133,11 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       if (Object.prototype.hasOwnProperty.call(toolRules, fieldName)) {
         const rule = toolRules[fieldName];
 
+        /**
+         * If rule is object, merge it with Inline Tools configuration
+         *
+         * Otherwise pass as it is
+         */
         if (_.isObject(rule)) {
           toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
         } else {

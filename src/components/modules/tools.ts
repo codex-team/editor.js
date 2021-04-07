@@ -319,20 +319,34 @@ export default class Tools extends Module {
    * @param tool - Block Tool
    */
   private assignInlineToolsToBlockTool(tool: BlockTool): void {
+    /**
+     * If common inlineToolbar property is false no Inline Tools should be assigned
+     */
     if (this.config.inlineToolbar === false) {
       return;
     }
 
+    /**
+     * If user pass just 'true' for tool, get common inlineToolbar settings
+     * - if common settings is an array, use it
+     * - if common settings is 'true' or not specified, get default order
+     */
     if (tool.enabledInlineTools === true) {
       tool.inlineTools = new ToolsCollection<InlineTool>(
         Array.isArray(this.config.inlineToolbar)
           ? this.config.inlineToolbar.map(name => [name, this.inlineTools.get(name)])
+          /**
+           * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
+           */
           : Array.from(this.inlineTools.entries())
       );
 
       return;
     }
 
+    /**
+     * If user pass the list of inline tools for the particular tool, return it.
+     */
     if (Array.isArray(tool.enabledInlineTools)) {
       tool.inlineTools = new ToolsCollection<InlineTool>(
         tool.enabledInlineTools.map(name => [name, this.inlineTools.get(name)])

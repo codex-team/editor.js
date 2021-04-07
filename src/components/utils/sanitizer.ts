@@ -1,14 +1,13 @@
 /**
  * CodeX Sanitizer
  *
- * @module Sanitizer
  * Clears HTML from taint tags
  *
  * @version 2.0.0
  *
  * @example
  *
- * Sanitizer.clean(yourTaintString, yourConfig);
+ * clean(yourTaintString, yourConfig);
  *
  * {@link SanitizerConfig}
  */
@@ -45,7 +44,7 @@ import { SavedData } from '../../../types/data-formats';
  */
 export function sanitizeBlocks(
   blocksData: Array<Pick<SavedData, 'data' | 'tool'>>,
-  sanitizeConfig: (toolName: string) => SanitizerConfig | SanitizerConfig
+  sanitizeConfig: SanitizerConfig | ((toolName: string) => SanitizerConfig)
 ): Array<Pick<SavedData, 'data' | 'tool'>> {
   return blocksData.map((block) => {
     const toolConfig = _.isFunction(sanitizeConfig) ? sanitizeConfig(block.tool) : sanitizeConfig;
