@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Fix` — Fix copy in FireFox [1625](https://github.com/codex-team/editor.js/issues/1625)
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added

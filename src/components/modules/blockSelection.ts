@@ -285,7 +285,7 @@ export default class BlockSelection extends Module {
    *
    * @returns {Promise<void>}
    */
-  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
+  public copySelectedBlocks(e: ClipboardEvent): void {
     /**
      * Prevent default copy
      */
@@ -304,15 +304,22 @@ export default class BlockSelection extends Module {
       fakeClipboard.appendChild(fragment);
     });
 
-    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
-
     const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
       .join('\n\n');
     const textHTML = fakeClipboard.innerHTML;
 
     e.clipboardData.setData('text/plain', textPlain);
     e.clipboardData.setData('text/html', textHTML);
-    e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+
+    Promise
+      .all(this.selectedBlocks.map((block) => block.save()))
+      .then(savedData => {
+        try {
+          e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+        } catch (err) {
+          // In Firefox we can't set data in async function
+        }
+      });
   }
 
   /**
