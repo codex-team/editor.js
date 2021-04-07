@@ -27,7 +27,7 @@ export default class ListenersAPI extends Module {
    * @param {boolean} useCapture - capture event or not
    */
   public on(element: HTMLElement, eventType: string, handler: () => void, useCapture?: boolean): void {
-    this.Editor.Listeners.on(element, eventType, handler, useCapture);
+    this.listeners.on(element, eventType, handler, useCapture);
   }
 
   /**
@@ -39,6 +39,6 @@ export default class ListenersAPI extends Module {
    * @param {boolean} useCapture - capture event or not
    */
   public off(element: Element, eventType: string, handler: () => void, useCapture?: boolean): void {
-    this.Editor.Listeners.off(element, eventType, handler, useCapture);
+    this.listeners.off(element, eventType, handler, useCapture);
   }
 }

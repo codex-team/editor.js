@@ -40,6 +40,12 @@ export interface ToolSettings <Config extends object = any> {
   inlineToolbar?: boolean | string[];
 
   /**
+   * BlockTunes for Tool
+   * Can accept array of tune names or boolean.
+   */
+  tunes?: boolean | string[];
+
+  /**
    * Define shortcut that will render Tool
    */
   shortcut?: string;

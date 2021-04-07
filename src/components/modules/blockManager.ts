@@ -11,7 +11,8 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -184,7 +185,7 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    this.Editor.Listeners.on(
+    this.listeners.on(
       document,
       'copy',
       (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
@@ -219,17 +220,21 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+  public composeBlock({
+    tool: name,
+    data = {},
+    tunes: tunesData = {},
+  }: {tool: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
-    const settings = this.Editor.Tools.getToolSettings(tool);
-    const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
+    const tool = this.Editor.Tools.blockTools.get(name);
+    const tunes = this.Editor.Tools.getTunesForTool(tool);
     const block = new Block({
-      name: tool,
       data,
-      Tool,
-      settings,
+      tool,
       api: this.Editor.API,
       readOnly,
+      tunes,
+      tunesData,
     });
 
     if (!readOnly) {
@@ -257,12 +262,14 @@ export default class BlockManager extends Module {
     index,
     needToFocus = true,
     replace = false,
+    tunes = {},
   }: {
     tool?: string;
     data?: BlockToolData;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
+    tunes?: {[name: string]: BlockTuneData};
   } = {}): Block {
     let newIndex = index;
 
@@ -273,6 +280,7 @@ export default class BlockManager extends Module {
     const block = this.composeBlock({
       tool,
       data,
+      tunes,
     });
 
     this._blocks.insert(newIndex, block, replace);
@@ -560,7 +568,7 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    * @param {Node} childNode - look ahead from this node.
-   * @returns can return undefined in case when the passed child note is not a part of the current editor instance
+   * @returns {Block | undefined} can return undefined in case when the passed child note is not a part of the current editor instance
    */
   public setCurrentBlockByChildNode(childNode: Node): Block | undefined {
     /**
@@ -703,9 +711,7 @@ export default class BlockManager extends Module {
    */
   public async destroy(): Promise<void> {
     await Promise.all(this.blocks.map((block) => {
-      if (_.isFunction(block.tool.destroy)) {
-        return block.tool.destroy();
-      }
+      return block.destroy();
     }));
   }
 
@@ -719,7 +725,7 @@ export default class BlockManager extends Module {
 
     this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
       BlockEvents.keydown(event);
-    }, true);
+    });
 
     this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
       BlockEvents.keyup(event);

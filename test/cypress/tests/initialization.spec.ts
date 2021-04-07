@@ -9,7 +9,7 @@ describe('Editor basic initialization', () => {
     const editorConfig = {};
 
     beforeEach(() => {
-      if (this.editorInstance) {
+      if (this && this.editorInstance) {
         this.editorInstance.destroy();
       } else {
         cy.createEditor(editorConfig).as('editorInstance');

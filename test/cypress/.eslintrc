@@ -1,12 +1,14 @@
 {
     "plugins": [
-        "cypress"
+        "cypress",
+        "chai-friendly"
     ],
     "env": {
         "cypress/globals": true
     },
     "extends": [
-        "plugin:cypress/recommended"
+        "plugin:cypress/recommended",
+        "plugin:chai-friendly/recommended"
     ],
     "rules": {
         "cypress/require-data-selectors": 2
