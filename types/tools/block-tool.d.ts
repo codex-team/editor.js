@@ -38,7 +38,7 @@ export interface BlockTool extends BaseTool {
 
   /**
    * Method that specified how to merge two Blocks with same type.
-   * Called by backspace at the beginning of the Block
+   * Called by backspace at the beginning of the Block or delete at the end of the Block
    * @param {BlockToolData} blockData
    */
   merge?(blockData: BlockToolData): void;
