@@ -1,8 +1,13 @@
 # Changelog
 
+### 2.20.1
+
+- `Refactoring` - Tooltip module is util now.
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
+
 
 ### 2.19.3
 
