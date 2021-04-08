@@ -53,13 +53,11 @@ This document will describe various test cases of the editor.js functionality. F
   - [ ] If omitted the Editor.js should be initialized with the default `sanitizer` configuration, which allows the tags like `paragraph`, `anchor`, and `bold` for cleaning HTML.
 
 - [ ] `tools` property
-  - [ ] If omitted
-    - [ ] Editor.js should be initialized with the Paragraph tool only.
+  - [ ] If omitted,the Editor.js should be initialized with the Paragraph tool only.
   - [ ] If `object` passed
     - [ ] Editor.js should be initialized with all the passed tools.
     - [ ] The keys of the object should be represented as `type` fields for corresponded blocks in output JSON
-    - [ ] If value is a JavaScript class
-      - [ ] This class should be used as a tool
+    - [ ] If value is a JavaScript class, the class should be used as a tool
     - [ ] If value is an `object`
       - [ ] Checking the `class` property
         - [ ] If omitted, the tool should be skipped with a warning in a console.
@@ -69,14 +67,42 @@ This document will describe various test cases of the editor.js functionality. F
       - [ ] Checking the `shortcut` property
         - [ ] If `string` passed Editor.js should append the `tool` when such keys combination executed.
       - [ ] Checking the `inilineToolbar` property
-        - [ ] If `true`
-          - [ ] Editor.js should show the Inline Toolbar for this tool with [common](https://editorjs.io/configuration#inline-toolbar-order) settings.
-        - [ ] If `false`
-          - [ ] Editor.js should not show the Inline Toolbar for this tool.
-        - [ ] If `array`
-          - [ ] Editor.js should show the Inline Toolbar for this tool with a passed list of tools and their order.
-        - [ ] If omitted
-          - [ ] Editor.js should not show the Inline Toolbar for this tool.
+        - [ ] If `true` passed, the Editor.js should show the Inline Toolbar for this tool with [common](https://editorjs.io/configuration#inline-toolbar-order) settings.
+        - [ ] If `false` passed, the Editor.js should not show the Inline Toolbar for this tool.
+        - [ ] If `array` passed, the Editor.js should show the Inline Toolbar for this tool with a passed list of tools and their order.
+        - [ ] If omitted, the Editor.js should not show the Inline Toolbar for this tool.
       - [ ] Checking the `toolbox` property
         - [ ] If it contains `title`, this title should be used as a tool title
         - [ ] If it contains `icon`, this HTML code (maybe SVG) should be used as a tool icon
+
+- [ ] `onReady` property
+  - [ ] If `function` passed, the Editor.js should call the `function` when it's ready to work.
+  - [ ] If omitted, the Editor.js should be initialized with the `tools` only.
+
+- [ ] `onChange` property
+  - [ ] If `function` passed,the Editor.js should call the `function` when something changed in Editor.js DOM.
+  - [ ] If omitted, the Editor.js should be initialized with the `tools` only.
+
+- [ ] `data` property
+  - [ ] If omitted
+    - [ ] the Editor.js should be initialized with the `tools` only.
+    - [ ] the Editor.js should be empty.
+  - [ ] If `object` passed
+    - [ ] Checking the `blocks` property
+      - [ ] If `array` of `object` passed,
+        - [ ] for each `object` 
+          - [ ] Checking the `type` and `data` property
+            - [ ] the Editor.js should be initialize with `block` of class `type`
+            - [ ] If `type` not present in `tools`, the Editor.js should throw an error.
+      - [ ] If omitted
+        - [ ] the Editor.js should be initialized with the `tools` only.
+        - [ ] the Editor.js should be empty.
+
+- [ ] `readOnly` property
+  - [ ] If `true` passed,
+    - [ ] If any `tool` have not readOnly getter defined,The Editor.js should throw an error.
+    - [ ] otherwise, the Editor.js should be initialize with readOnly mode. 
+  - [ ] If `false` passed,the Editor.js should be initialized with the `tools` only.
+  - [ ] If omitted,the Editor.js should be initialized with the `tools` only.
+
+- [ ] `i18n` property

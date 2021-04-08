@@ -691,10 +691,28 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    if (!this.Editor.BlockManager.currentBlock) {
+    const isClickedBottom = event.target instanceof Element && event.target.isEqualNode(this.nodes.redactor);
+
+    if (isClickedBottom) {
       stopPropagation();
 
-      this.Editor.BlockManager.insert();
+      const { BlockManager, Caret, Toolbar } = this.Editor;
+
+      /**
+       * Insert a default-block at the bottom if:
+       * - last-block is not a default-block (Text)
+       *   to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+       * - Or, default-block is not empty
+       */
+      if (!BlockManager.lastBlock.tool.isDefault || !BlockManager.lastBlock.isEmpty) {
+        BlockManager.insertAtEnd();
+      }
+
+      /**
+       * Set the caret and toolbar to empty Block
+       */
+      Caret.setToTheLastBlock();
+      Toolbar.move();
     }
 
     /**
@@ -702,7 +720,7 @@ export default class UI extends Module<UINodes> {
      * - Block is an default-block (Text)
      * - Block is empty
      */
-    const isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
+    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
 
     if (isDefaultBlock) {
       stopPropagation();

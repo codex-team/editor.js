@@ -1,11 +1,11 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import { clean } from '../../utils/sanitizer';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -182,10 +182,9 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
+    const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-    const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
 
     /**
@@ -201,7 +200,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
+    const replacingTool = this.Editor.Tools.blockTools.get(replacingToolName);
 
     /**
      * Export property can be:
@@ -211,7 +210,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      * In both cases returning value must be a string
      */
     let exportData = '';
-    const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
+    const exportProp = currentBlockTool.conversionConfig.export;
 
     if (_.isFunction(exportProp)) {
       exportData = exportProp(blockData);
@@ -227,9 +226,9 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = this.Editor.Sanitizer.clean(
+    const cleaned: string = clean(
       exportData,
-      replacingTool.sanitize
+      replacingTool.sanitizeConfig
     );
 
     /**
@@ -238,7 +237,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      * string — the name of data field to import
      */
     let newBlockData = {};
-    const importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG].import;
+    const importProp = replacingTool.conversionConfig.import;
 
     if (_.isFunction(importProp)) {
       newBlockData = importProp(cleaned);
@@ -272,37 +271,28 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   private addTools(): void {
     const tools = this.Editor.Tools.blockTools;
 
-    for (const toolName in tools) {
-      if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        continue;
-      }
+    Array
+      .from(tools.entries())
+      .forEach(([name, tool]) => {
+        const toolboxSettings = tool.toolbox;
+        const conversionConfig = tool.conversionConfig;
 
-      const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
-      const toolClass = tools[toolName] as BlockToolConstructable;
-      const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
-      const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
+        /**
+         * Skip tools that don't pass 'toolbox' property
+         */
+        if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
+          return;
+        }
 
-      const userSettings = this.Editor.Tools.USER_SETTINGS;
-      const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX];
+        /**
+         * Skip tools without «import» rule specified
+         */
+        if (!conversionConfig || !conversionConfig.import) {
+          return;
+        }
 
-      const toolboxSettings = userToolboxSettings ?? toolToolboxSettings;
-
-      /**
-       * Skip tools that don't pass 'toolbox' property
-       */
-      if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
-        continue;
-      }
-
-      /**
-       * Skip tools without «import» rule specified
-       */
-      if (!conversionConfig || !conversionConfig.import) {
-        continue;
-      }
-
-      this.addTool(toolName, toolboxSettings.icon, toolboxSettings.title);
-    }
+        this.addTool(name, toolboxSettings.icon, toolboxSettings.title);
+      });
   }
 
   /**
