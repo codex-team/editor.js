@@ -24,6 +24,22 @@ declare global {
        * @param data - map with MIME type as a key and data as value
        */
       paste(data: {[type: string]: string}): Chainable<Subject>
+
+      /**
+       * Copy command to dispatch copy event on subject
+       *
+       * @usage
+       * cy.get('div').copy().then(data => {})
+       */
+      copy(): Chainable<{ [type: string]: any }>;
+
+      /**
+       * Cut command to dispatch cut event on subject
+       *
+       * @usage
+       * cy.get('div').cut().then(data => {})
+       */
+      cut(): Chainable<{ [type: string]: any }>;
     }
 
     interface ApplicationWindow {
