@@ -359,13 +359,13 @@ export default class BlockEvents extends Module {
     /**
      * Check if Block should be removed by current Delete keydown
      */
-    if (currentBlock.selected || (currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput)) {
+    if (currentBlock.selected || (currentBlock.isEmpty && currentBlock.currentInput === currentBlock.lastInput)) {
       event.preventDefault();
 
       const index = BlockManager.currentBlockIndex;
 
       if (BlockManager.nextBlock && BlockManager.nextBlock.inputs.length === 0) {
-        /** If previous block doesn't contain inputs, remove it */
+        /** If next block doesn't contain inputs, remove it */
         BlockManager.removeBlock(index + 1);
       } else {
         /** If block is empty, just remove it */
