@@ -29,6 +29,7 @@ export default class BlockEvents extends Module {
       case _.keyCodes.BACKSPACE:
         this.backspace(event);
         break;
+
       case _.keyCodes.DELETE:
         this.deletePressed(event);
         break;
