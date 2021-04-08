@@ -193,7 +193,12 @@ export default class BlockEvents extends Module {
     BlockSelection.copySelectedBlocks(event).then(() => {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      /**
+       * Insert default block in place of removed ones
+       */
+      const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true)
+
+      Caret.setToBlock(insertedBlock, Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
