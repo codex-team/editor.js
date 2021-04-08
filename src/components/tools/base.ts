@@ -175,13 +175,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * @class
    *
-   * @param name - Tool name
-   * @param constructable - Tool constructable blueprint
-   * @param config - user specified Tool config
-   * @param api - EditorJS API module
-   * @param defaultTool - default Tool name
-   * @param isInternal - is current Tool internal
-   * @param defaultPlaceholder - default user specified placeholder
+   * @param {ConstructorOptions} - Constructor options
    */
   constructor({
     name,
@@ -278,5 +272,6 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    *
    * @param args
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public abstract create(...args: any[]): Type;
 }

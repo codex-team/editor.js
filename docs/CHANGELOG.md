@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Refactoring` — Refactoring based on ESLint [#1636](https://github.com/codex-team/editor.js/issues/1636).
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added

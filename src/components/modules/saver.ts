@@ -104,14 +104,13 @@ export default class Saver extends Module {
         return;
       }
 
-      const output: any = {
+      const output = {
         type: tool,
         data,
+        ...!_.isEmpty(tunes) && {
+          tunes,
+        },
       };
-
-      if (!_.isEmpty(tunes)) {
-        output.tunes = tunes;
-      }
 
       blocks.push(output);
     });
