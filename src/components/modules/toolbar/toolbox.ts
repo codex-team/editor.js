@@ -1,7 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { BlockToolConstructable } from '../../../../types';
 import Flipper from '../../flipper';
 import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';

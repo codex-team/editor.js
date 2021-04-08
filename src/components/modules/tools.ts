@@ -1,12 +1,7 @@
 import Paragraph from '../../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
-import {
-  EditorConfig,
-  Tool,
-  ToolConstructable,
-  ToolSettings
-} from '../../../types';
+import { ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';

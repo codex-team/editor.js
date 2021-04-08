@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Refactoring` — Refactoring based on LGTM [#1577](https://github.com/codex-team/editor.js/issues/1577).
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added

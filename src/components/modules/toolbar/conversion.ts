@@ -1,6 +1,5 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
