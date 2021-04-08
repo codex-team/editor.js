@@ -18,6 +18,7 @@ describe('Copy pasting from Editor', () => {
 
   context('pasting', () => {
     it('should paste plain text', () => {
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
