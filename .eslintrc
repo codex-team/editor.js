@@ -9,7 +9,7 @@
     "import/no-duplicates": ["warn"],
     "@typescript-eslint/triple-slash-reference": ["off"],
     "jsdoc/no-undefined-types": ["warn", {"definedTypes": [
-      "ConstructorOptions"
+      "ConstructorOptions",
       "API",
       "BlockToolConstructable",
       "EditorConfig",
