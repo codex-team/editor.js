@@ -5,7 +5,7 @@ import BlockTool from '../../../../src/components/tools/block';
 import InlineTool from '../../../../src/components/tools/inline';
 import ToolsCollection from '../../../../src/components/tools/collection';
 
-describe.only('BlockTool', () => {
+describe('BlockTool', () => {
   /**
    * Mock for BlockTool constructor options
    */
