@@ -27,7 +27,7 @@ import NotifierAPI from '../components/modules/api/notifier';
 import SaverAPI from '../components/modules/api/saver';
 import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
-import RectangleSelection from '../components/modules/RectangleSelection';
+import RectangleSelection from '../components/modules/rectangleSelection';
 import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 import CrossBlockSelection from '../components/modules/crossBlockSelection';
 import ConversionToolbar from '../components/modules/toolbar/conversion';
