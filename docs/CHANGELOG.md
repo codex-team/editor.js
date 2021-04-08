@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.0
+
+- `New` — [Block Tunes API](block-tunes.md) added
+
 ### 2.19.3
 
 - `Fix` — Ignore error raised by Shortcut module

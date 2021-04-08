@@ -13,6 +13,11 @@ import { API, BlockTune } from '../../../types';
  */
 export default class MoveDownTune implements BlockTune {
   /**
+   * Set Tool is Tune
+   */
+  public static readonly isTune = true;
+
+  /**
    * Property that contains Editor.js API methods
    *
    * @see {@link docs/api.md}
