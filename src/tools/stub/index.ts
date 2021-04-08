@@ -60,9 +60,9 @@ export default class Stub implements BlockTool {
    */
   constructor({ data, api }: BlockToolConstructorOptions<StubData>) {
     this.api = api;
-    this.title = data.title || this.api.i18n.t('Error');
+    this.title = ('title' in data && data.title) || this.api.i18n.t('Error');
     this.subtitle = this.api.i18n.t('The block can not be displayed correctly.');
-    this.savedData = data.savedData;
+    this.savedData = 'savedData' in data && data.savedData;
 
     this.wrapper = this.make();
   }

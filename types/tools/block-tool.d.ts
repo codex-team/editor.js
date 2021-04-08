@@ -85,7 +85,7 @@ export interface BlockTool extends BaseTool {
  */
 export interface BlockToolConstructorOptions<D extends object = any, C extends object = any> {
   api: API;
-  data: BlockToolData<D>;
+  data?: BlockToolData<D>;
   config?: ToolConfig<C>;
   block?: BlockAPI;
   readOnly: boolean;
