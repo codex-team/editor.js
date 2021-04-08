@@ -151,8 +151,6 @@ export default class BlocksAPI extends Module {
    * @param {OutputData} data — Saved Editor data
    */
   public render(data: OutputData): Promise<void> {
-    this.Editor.BlockManager.clear();
-
     return this.Editor.Renderer.render(data.blocks);
   }
 

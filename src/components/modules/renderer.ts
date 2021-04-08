@@ -1,3 +1,5 @@
+import * as Diff from 'diff';
+import equal from 'fast-deep-equal';
 import Module from '../__module';
 import * as _ from '../utils';
 import { OutputBlockData } from '../../../types';
@@ -44,13 +46,38 @@ export default class Renderer extends Module {
    * @param {OutputBlockData[]} blocks - blocks to render
    */
   public async render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
+    const currentOutputData = await this.Editor.Saver.save();
 
-    const sequence = await _.sequence(chainData as _.ChainData[]);
+    const changes = Diff.diffArrays(currentOutputData.blocks, blocks, {
+      comparator: equal,
+    });
+
+    changes.forEach((change) => {
+      if (change.added) {
+        change.value.forEach((changeBlock) => {
+          const index = blocks.indexOf(changeBlock);
+
+          if (index === -1) {
+            throw new Error();
+          }
+
+          this.insertBlock(changeBlock, index);
+        });
+      } else if (change.removed) {
+        change.value.forEach((changeBlock) => {
+          const index = currentOutputData.blocks.indexOf(changeBlock);
+
+          if (index === -1) {
+            throw new Error();
+          }
+
+          this.Editor.BlockManager.removeBlock(index);
+          currentOutputData.blocks.splice(index, 1);
+        });
+      }
+    });
 
     this.Editor.UI.checkEmptiness();
-
-    return sequence;
   }
 
   /**
@@ -59,10 +86,9 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
-   *
-   * @returns {Promise<void>}
+   * @param {number} index - index where to insert new Block
    */
-  public async insertBlock(item: OutputBlockData): Promise<void> {
+  private insertBlock(item: OutputBlockData, index: number): void {
     const { Tools, BlockManager } = this.Editor;
     const { type: tool, data, tunes } = item;
 
@@ -71,6 +97,7 @@ export default class Renderer extends Module {
         BlockManager.insert({
           tool,
           data,
+          index,
           tunes,
         });
       } catch (error) {
@@ -96,6 +123,7 @@ export default class Renderer extends Module {
       const stub = BlockManager.insert({
         tool: Tools.stubTool,
         data: stubData,
+        index,
       });
 
       stub.stretched = true;
