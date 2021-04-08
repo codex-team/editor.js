@@ -167,15 +167,16 @@ describe('Copy pasting from Editor', () => {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(() => {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
             const data = JSON.parse(clipboardData['application/x-editor-js']);
 
             expect(data[0].tool).to.eq('paragraph');
-            expect(data[0].data).to.deep.eq({text: 'First block'});
+            expect(data[0].data).to.deep.eq({ text: 'First block' });
             expect(data[1].tool).to.eq('paragraph');
-            expect(data[1].data).to.deep.eq({text: 'Second block'});
+            expect(data[1].data).to.deep.eq({ text: 'Second block' });
           });
         });
     });
@@ -219,6 +220,7 @@ describe('Copy pasting from Editor', () => {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(() => {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
@@ -258,6 +260,7 @@ describe('Copy pasting from Editor', () => {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(() => {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
