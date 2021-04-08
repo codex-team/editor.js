@@ -62,3 +62,55 @@ Cypress.Commands.add('paste', {
 
   return subject;
 });
+
+/**
+ * Copy command to dispatch copy event on subject
+ *
+ * @usage
+ * cy.get('div').copy().then(data => {})
+ */
+Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
+  const clipboardData: {[type: string]: any} = {};
+
+  const copyEvent = Object.assign(new Event('copy', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      setData: (type: string, data: any): void => {
+        console.log(type, data);
+        clipboardData[type] = data;
+      },
+    },
+  });
+
+  subject[0].dispatchEvent(copyEvent);
+
+  return clipboardData;
+});
+
+/**
+ * Cut command to dispatch cut event on subject
+ *
+ * @usage
+ * cy.get('div').cut().then(data => {})
+ */
+Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
+  const clipboardData: {[type: string]: any} = {};
+
+  const copyEvent = Object.assign(new Event('cut', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      setData: (type: string, data: any): void => {
+        console.log(type, data);
+        clipboardData[type] = data;
+      },
+    },
+  });
+
+  subject[0].dispatchEvent(copyEvent);
+
+  return clipboardData;
+});

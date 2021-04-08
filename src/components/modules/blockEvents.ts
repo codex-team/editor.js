@@ -167,7 +167,7 @@ export default class BlockEvents extends Module {
    *
    * @param {ClipboardEvent} event - clipboard event
    */
-  public handleCommandC(event: ClipboardEvent): Promise<void> {
+  public handleCommandC(event: ClipboardEvent): void {
     const { BlockSelection } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
@@ -175,7 +175,7 @@ export default class BlockEvents extends Module {
     }
 
     // Copy Selected Blocks
-    return BlockSelection.copySelectedBlocks(event);
+    BlockSelection.copySelectedBlocks(event);
   }
 
   /**
@@ -183,21 +183,26 @@ export default class BlockEvents extends Module {
    *
    * @param {ClipboardEvent} event - clipboard event
    */
-  public async handleCommandX(event: ClipboardEvent): Promise<void> {
+  public handleCommandX(event: ClipboardEvent): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    await BlockSelection.copySelectedBlocks(event);
+    BlockSelection.copySelectedBlocks(event).then(() => {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-    const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      /**
+       * Insert default block in place of removed ones
+       */
+      const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
 
-    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      Caret.setToBlock(insertedBlock, Caret.positions.START);
 
-    /** Clear selection */
-    BlockSelection.clearSelection(event);
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
+    });
   }
 
   /**

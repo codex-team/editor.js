@@ -125,7 +125,7 @@ export default class SelectionUtils {
 
     let editorZone = null;
 
-    if (selectedNode) {
+    if (selectedNode && selectedNode instanceof Element) {
       editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
     }
 
