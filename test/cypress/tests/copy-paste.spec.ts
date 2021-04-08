@@ -24,6 +24,7 @@ describe('Copy pasting from Editor', () => {
         .paste({
           'text/plain': 'Some plain text',
         })
+        .wait(0)
         .should('contain', 'Some plain text');
     });
 
@@ -161,7 +162,7 @@ describe('Copy pasting from Editor', () => {
         })
         .copy()
         .then(clipboardData => {
-          expect(clipboardData['text/html']).to.eq('<p>First block</p><p>Second block</p>');
+          expect(clipboardData['text/html']).to.match(/<p>First block(<br>)?<\/p><p>Second block(<br>)?<\/p>/);
           expect(clipboardData['text/plain']).to.eq(`First block\n\nSecond block`);
 
           /**
@@ -174,9 +175,9 @@ describe('Copy pasting from Editor', () => {
             const data = JSON.parse(clipboardData['application/x-editor-js']);
 
             expect(data[0].tool).to.eq('paragraph');
-            expect(data[0].data).to.deep.eq({ text: 'First block' });
+            expect(data[0].data.text).to.match(/First block(<br>)?/);
             expect(data[1].tool).to.eq('paragraph');
-            expect(data[1].data).to.deep.eq({ text: 'Second block' });
+            expect(data[1].data.text).to.match(/Second block(<br>)?/);
           });
         });
     });
@@ -214,7 +215,7 @@ describe('Copy pasting from Editor', () => {
         })
         .cut()
         .then(clipboardData => {
-          expect(clipboardData['text/html']).to.eq('<p>First block</p><p>Second block</p>');
+          expect(clipboardData['text/html']).to.match(/<p>First block(<br>)?<\/p><p>Second block(<br>)?<\/p>/);
           expect(clipboardData['text/plain']).to.eq(`First block\n\nSecond block`);
 
           /**
@@ -227,9 +228,9 @@ describe('Copy pasting from Editor', () => {
             const data = JSON.parse(clipboardData['application/x-editor-js']);
 
             expect(data[0].tool).to.eq('paragraph');
-            expect(data[0].data).to.deep.eq({ text: 'First block' });
+            expect(data[0].data.text).to.match(/First block(<br>)?/);
             expect(data[1].tool).to.eq('paragraph');
-            expect(data[1].data).to.deep.eq({ text: 'Second block' });
+            expect(data[1].data.text).to.match(/Second block(<br>)?/);
           });
         });
 
