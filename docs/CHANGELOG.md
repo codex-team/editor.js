@@ -2,6 +2,9 @@
 
 ### 2.20.1
 
+
+- `Fix` — Fix sanitisation problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
+- `Refactoring` - The Sanitizer module is util now.
 - `Refactoring` - Tooltip module is util now.
 
 ### 2.20.0
@@ -15,7 +18,7 @@
 
 ### 2.19.2
 
-- `New` -  `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
+- `New` - `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
 - `Improvements` - A generic type for Tool config added [#1516](https://github.com/codex-team/editor.js/issues/1516)
 - `Improvements` - Remove unused `force` option in `Caret.navigateNext()` and `Caret.navigatePrevious()` [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
 - `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).
@@ -32,6 +35,7 @@
 - `Fix` - Editor Config now immutable [#1552](https://github.com/codex-team/editor.js/issues/1552).
 - `Refactoring` - Shortcuts module is util now.
 - `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).
+
 
 ### 2.19.1
 
