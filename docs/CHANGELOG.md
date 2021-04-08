@@ -2,12 +2,15 @@
 
 ### 2.20.1
 
+
 - `Fix` — Fix sanitisation problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
 - `Refactoring` - The Sanitizer module is util now.
+- `Refactoring` - Tooltip module is util now.
 
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
+
 
 ### 2.19.3
 

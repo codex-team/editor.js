@@ -6,7 +6,6 @@ import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
 import Paste from '../components/modules/paste';
 import Notifier from '../components/modules/notifier';
-import Tooltip from '../components/modules/tooltip';
 import DragNDrop from '../components/modules/dragNDrop';
 import ModificationsObserver from '../components/modules/modificationsObserver';
 import Renderer from '../components/modules/renderer';
@@ -54,7 +53,6 @@ export interface EditorModules {
   Caret: Caret;
   Saver: Saver;
   Notifier: Notifier;
-  Tooltip: Tooltip;
   BlockManager: BlockManager;
   BlocksAPI: BlocksAPI;
   CaretAPI: CaretAPI;
