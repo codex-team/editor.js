@@ -5,7 +5,7 @@ import BlockTool from '../../../../src/components/tools/block';
 import InlineTool from '../../../../src/components/tools/inline';
 import ToolsCollection from '../../../../src/components/tools/collection';
 
-describe('BlockTool', () => {
+describe.only('BlockTool', () => {
   /**
    * Mock for BlockTool constructor options
    */
@@ -192,14 +192,14 @@ describe('BlockTool', () => {
         name: 'inlineTool',
         constructable: class {
           public static sanitize = {
-            b: true,
+            a: true,
           }
         },
         api: {},
         config: {},
       } as any);
 
-      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool1], ['inlineTool', inlineTool2] ]);
+      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool1], ['inlineTool2', inlineTool2] ]);
 
       expect(tool.sanitizeConfig).to.be.deep.eq(Object.assign(
         {},
