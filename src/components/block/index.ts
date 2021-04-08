@@ -1,12 +1,10 @@
 import {
   BlockAPI as BlockAPIInterface,
   BlockTool as IBlockTool,
-  BlockToolConstructable,
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig,
-  ToolSettings
+  ToolConfig
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
