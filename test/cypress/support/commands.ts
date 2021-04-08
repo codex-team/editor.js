@@ -63,6 +63,12 @@ Cypress.Commands.add('paste', {
   return subject;
 });
 
+/**
+ * Copy command to dispatch copy event on subject
+ *
+ * @usage
+ * cy.get('div').copy().then(data => {})
+ */
 Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
   const clipboardData: {[type: string]: any} = {};
 
@@ -83,6 +89,12 @@ Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
   return clipboardData;
 });
 
+/**
+ * Cut command to dispatch cut event on subject
+ *
+ * @usage
+ * cy.get('div').cut().then(data => {})
+ */
 Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
   const clipboardData: {[type: string]: any} = {};
 
