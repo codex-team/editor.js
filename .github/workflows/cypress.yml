@@ -1,0 +1,33 @@
+name: Tests
+on: [pull_request]
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node14.16.0-chrome89-ff86
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn pull_tools
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: firefox
+          build: yarn build
+  chrome:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn pull_tools
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          build: yarn build
+  edge:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn pull_tools
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: edge
+          build: yarn build

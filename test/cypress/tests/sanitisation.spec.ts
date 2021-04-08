@@ -44,7 +44,7 @@ describe('Output sanitisation', () => {
 
         const text = output.blocks[0].data.text;
 
-        expect(text).to.eq('<b>This text should be bold.</b>');
+        expect(text).to.match(/<b>This text should be bold\.(<br>)?<\/b>/);
       });
     });
 
