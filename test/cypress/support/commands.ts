@@ -36,3 +36,69 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
       });
     });
 });
+
+/**
+ * Paste command to dispatch paste event
+ *
+ * @usage
+ * cy.get('div').paste({'text/plain': 'Text', 'text/html': '<b>Text</b>'})
+ *
+ * @param data - map with MIME type as a key and data as value
+ */
+Cypress.Commands.add('paste', {
+  prevSubject: true,
+}, (subject, data: {[type: string]: string}) => {
+  const pasteEvent = Object.assign(new Event('paste', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      getData: (type): string => data[type],
+      types: Object.keys(data),
+    },
+  });
+
+  subject[0].dispatchEvent(pasteEvent);
+
+  return subject;
+});
+
+Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
+  const clipboardData: {[type: string]: any} = {};
+
+  const copyEvent = Object.assign(new Event('copy', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      setData: (type: string, data: any): void => {
+        console.log(type, data);
+        clipboardData[type] = data;
+      },
+    },
+  });
+
+  subject[0].dispatchEvent(copyEvent);
+
+  return clipboardData;
+});
+
+Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
+  const clipboardData: {[type: string]: any} = {};
+
+  const copyEvent = Object.assign(new Event('cut', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      setData: (type: string, data: any): void => {
+        console.log(type, data);
+        clipboardData[type] = data;
+      },
+    },
+  });
+
+  subject[0].dispatchEvent(copyEvent);
+
+  return clipboardData;
+});

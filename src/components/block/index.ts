@@ -512,7 +512,7 @@ export default class Block {
     /**
      * call Tool's method with the instance context
      */
-    if (this.toolInstance[methodName] && this.toolInstance[methodName] instanceof Function) {
+    if (_.isFunction(this.toolInstance[methodName])) {
       if (methodName === BlockToolAPI.APPEND_CALLBACK) {
         _.log(
           '`appendCallback` hook is deprecated and will be removed in the next major release. ' +

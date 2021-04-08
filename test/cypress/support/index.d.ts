@@ -14,6 +14,19 @@ declare global {
        * @example cy.createEditor({})
        */
       createEditor(editorConfig: EditorConfig): Chainable<EditorJS>
+
+      /**
+       * Paste command to dispatch paste event
+       *
+       * @usage
+       * cy.get('div').paste({'text/plain': 'Text', 'text/html': '<b>Text</b>'})
+       *
+       * @param data - map with MIME type as a key and data as value
+       */
+      paste(data: {[type: string]: string}): Chainable<Subject>
+
+      copy(): Chainable<{ [type: string]: any }>;
+      cut(): Chainable<{ [type: string]: any }>;
     }
 
     interface ApplicationWindow {

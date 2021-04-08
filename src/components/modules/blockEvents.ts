@@ -190,14 +190,14 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    BlockSelection.copySelectedBlocks(event);
+    BlockSelection.copySelectedBlocks(event).then(() => {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-    const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
-    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
-
-    /** Clear selection */
-    BlockSelection.clearSelection(event);
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
+    });
   }
 
   /**

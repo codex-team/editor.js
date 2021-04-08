@@ -285,7 +285,7 @@ export default class BlockSelection extends Module {
    *
    * @returns {Promise<void>}
    */
-  public copySelectedBlocks(e: ClipboardEvent): void {
+  public copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
      * Prevent default copy
      */
@@ -311,7 +311,7 @@ export default class BlockSelection extends Module {
     e.clipboardData.setData('text/plain', textPlain);
     e.clipboardData.setData('text/html', textHTML);
 
-    Promise
+    return Promise
       .all(this.selectedBlocks.map((block) => block.save()))
       .then(savedData => {
         try {
