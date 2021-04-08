@@ -196,7 +196,7 @@ export default class BlockEvents extends Module {
       /**
        * Insert default block in place of removed ones
        */
-      const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true)
+      const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
 
       Caret.setToBlock(insertedBlock, Caret.positions.START);
 
