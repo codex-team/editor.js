@@ -3,6 +3,10 @@ import $ from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Tooltip from '../../utils/tooltip';
+import { ModuleConfig } from '../../../types-internal/module-config';
+import EventsDispatcher from '../../utils/events';
+import { EditorConfig } from '../../../../types';
 
 /**
  * HTML Elements used for Toolbar UI
@@ -72,6 +76,24 @@ interface ToolbarNodes {
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module<ToolbarNodes> {
+  /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   * @param {object} moduleConfiguration - Module Configuration
+   * @param {EditorConfig} moduleConfiguration.config - Editor's config
+   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+    this.tooltip = new Tooltip();
+  }
+
   /**
    * CSS styles
    *
@@ -277,7 +299,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       textContent: '⇥ Tab',
     }));
 
-    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
+    this.tooltip.onHover(this.nodes.plusButton, tooltipContent);
 
     /**
      * Fill Actions Zone:
@@ -293,7 +315,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
 
-    this.Editor.Tooltip.onHover(
+    this.tooltip.onHover(
       this.nodes.settingsToggler,
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {

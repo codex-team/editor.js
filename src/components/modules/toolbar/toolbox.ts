@@ -6,6 +6,9 @@ import { BlockToolAPI } from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
+import Tooltip from '../../utils/tooltip';
+import { ModuleConfig } from '../../../types-internal/module-config';
+import EventsDispatcher from '../../utils/events';
 import BlockTool from '../../tools/block';
 
 /**
@@ -40,7 +43,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
    *
    * @returns {object.<string, string>}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
@@ -82,6 +85,24 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
+
+  /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   * @param {object} moduleConfiguration - Module Configuration
+   * @param {EditorConfig} moduleConfiguration.config - Editor's config
+   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+    this.tooltip = new Tooltip();
+  }
 
   /**
    * Makes the Toolbox
@@ -218,7 +239,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
      */
     const tooltipContent = this.drawTooltip(tool);
 
-    this.Editor.Tooltip.onHover(button, tooltipContent, {
+    this.tooltip.onHover(button, tooltipContent, {
       placement: 'bottom',
       hidingDelay: 200,
     });

@@ -44,11 +44,6 @@ interface BlockConstructorOptions {
   readOnly: boolean;
 
   /**
-   * Tunes for current Block
-   */
-  tunes: ToolsCollection<BlockTune>;
-
-  /**
    * Tunes data for current Block
    */
   tunesData: {[name: string]: BlockTuneData};
@@ -222,7 +217,6 @@ export default class Block {
     tool,
     api,
     readOnly,
-    tunes,
     tunesData,
   }: BlockConstructorOptions) {
     this.name = tool.name;
@@ -239,7 +233,7 @@ export default class Block {
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = tunes;
+    this.tunes = tool.tunes;
 
     this.composeTunes(tunesData);
 

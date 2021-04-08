@@ -36,3 +36,29 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
       });
     });
 });
+
+/**
+ * Paste command to dispatch paste event
+ *
+ * @usage
+ * cy.get('div').paste({'text/plain': 'Text', 'text/html': '<b>Text</b>'})
+ *
+ * @param data - map with MIME type as a key and data as value
+ */
+Cypress.Commands.add('paste', {
+  prevSubject: true,
+}, (subject, data: {[type: string]: string}) => {
+  const pasteEvent = Object.assign(new Event('paste', {
+    bubbles: true,
+    cancelable: true,
+  }), {
+    clipboardData: {
+      getData: (type): string => data[type],
+      types: Object.keys(data),
+    },
+  });
+
+  subject[0].dispatchEvent(pasteEvent);
+
+  return subject;
+});

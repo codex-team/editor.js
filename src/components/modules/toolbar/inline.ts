@@ -2,11 +2,14 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool } from '../../../../types';
+import { InlineTool as IInlineTool, EditorConfig } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
+import Tooltip from '../../utils/tooltip';
+import { ModuleConfig } from '../../../types-internal/module-config';
+import EventsDispatcher from '../../utils/events';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
 import BlockTool from '../../tools/block';
@@ -92,6 +95,24 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Instance of class that responses for leafing buttons by arrows/tab
    */
   private flipper: Flipper = null;
+
+  /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   * @param {object} moduleConfiguration - Module Configuration
+   * @param {EditorConfig} moduleConfiguration.config - Editor's config
+   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+    this.tooltip = new Tooltip();
+  }
 
   /**
    * Toggles read-only mode
@@ -280,70 +301,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
-   * Returns inline toolbar settings for a particular tool
-   *
-   * @param tool - BlockTool object
-   * @returns {string[] | boolean} array of ordered tool names or false
-   */
-  private getInlineToolbarSettings(tool: BlockTool): string[] | boolean {
-    /**
-     * InlineToolbar property of a particular tool
-     */
-    const settingsForTool = tool.enabledInlineTools;
-
-    /**
-     * Whether to enable IT for a particular tool is the decision of the editor user.
-     * He can enable it by the inlineToolbar settings for this tool. To enable, he should pass true or strings[]
-     */
-    const enabledForTool = settingsForTool === true || Array.isArray(settingsForTool);
-
-    /**
-     * Disabled by user
-     */
-    if (!enabledForTool) {
-      return false;
-    }
-
-    /**
-     * 1st priority.
-     *
-     * If user pass the list of inline tools for the particular tool, return it.
-     */
-    if (Array.isArray(settingsForTool)) {
-      return settingsForTool;
-    }
-
-    /**
-     * 2nd priority.
-     *
-     * If user pass just 'true' for tool, get common inlineToolbar settings
-     * - if common settings is an array, use it
-     * - if common settings is 'true' or not specified, get default order
-     */
-
-    /**
-     * Common inlineToolbar settings got from the root of EditorConfig
-     */
-    const commonInlineToolbarSettings = this.config.inlineToolbar;
-
-    /**
-     * If common settings is an array, use it
-     */
-    if (Array.isArray(commonInlineToolbarSettings)) {
-      return commonInlineToolbarSettings;
-    }
-
-    /**
-     * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
-     */
-    if (commonInlineToolbarSettings === true) {
-      return Array.from(this.Editor.Tools.inlineTools.keys());
-    }
-
-    return false;
-  }
-
-  /**
    * Making DOM
    */
   private make(): void {
@@ -451,12 +408,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return false;
     }
 
-    /**
-     * getInlineToolbarSettings could return an string[] (order of tools) or false (Inline Toolbar disabled).
-     */
-    const inlineToolbarSettings = this.getInlineToolbarSettings(currentBlock.tool);
-
-    return inlineToolbarSettings !== false;
+    return currentBlock.tool.inlineTools.size !== 0;
   }
 
   /**
@@ -500,7 +452,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     });
 
-    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+    this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
       placement: 'top',
       hidingDelay: 100,
     });
@@ -562,18 +514,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.actions.innerHTML = '';
     this.toolsInstances = new Map();
 
-    /**
-     * Filter buttons if Block Tool pass config like inlineToolbar=['link']
-     * Else filter them according to the default inlineToolbar property.
-     *
-     * For this moment, inlineToolbarOrder could not be 'false'
-     * because this method will be called only if the Inline Toolbar is enabled
-     */
-    const inlineToolbarOrder = this.getInlineToolbarSettings(currentBlock.tool) as string[];
-
-    inlineToolbarOrder.forEach((toolName) => {
-      const tool = this.Editor.Tools.inlineTools.get(toolName);
-
+    Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
       this.addTool(tool);
     });
 
@@ -589,10 +530,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {InlineTool} tool - InlineTool object
    */
   private addTool(tool: InlineTool): void {
-    const {
-      Tooltip,
-    } = this.Editor;
-
     const instance = tool.create();
     const button = instance.render();
 
@@ -642,7 +579,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }));
     }
 
-    Tooltip.onHover(button, tooltipContent, {
+    this.tooltip.onHover(button, tooltipContent, {
       placement: 'top',
       hidingDelay: 100,
     });
