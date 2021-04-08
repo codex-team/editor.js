@@ -8,6 +8,7 @@
 - `Refactoring` - The Sanitizer module is util now.
 - `Refactoring` - Tooltip module is util now.
 - `Refactoring` — Refactoring based on LGTM [#1577](https://github.com/codex-team/editor.js/issues/1577).
+- `Refactoring` — Refactoring based on ESLint [#1636](https://github.com/codex-team/editor.js/issues/1636).
 
 ### 2.20.0
 
