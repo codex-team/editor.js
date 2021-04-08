@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Fix` - Fix type definition for tool constructor[#1432](https://github.com/codex-team/editor.js/issues/1432)
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
@@ -38,7 +42,6 @@
 - `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
 - `Fix` - Sanitize pasted block data [#1396](https://github.com/codex-team/editor.js/issues/1396).
 - `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414)
-- `Fix` - Fix type definition for tool constructor[#1432](https://github.com/codex-team/editor.js/issues/1432)
 
 ### 2.19
 

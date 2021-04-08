@@ -19,9 +19,9 @@ export interface BlockTool extends BaseTool {
   /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
-   * @return {BlockToolData}
+   * @return {BlockToolData | Promise<BlockToolData>}
    */
-  save(block: HTMLElement): BlockToolData;
+  save(block: HTMLElement): BlockToolData | Promise<BlockToolData>;
 
   /**
    * Create Block's settings block
@@ -85,7 +85,7 @@ export interface BlockTool extends BaseTool {
  */
 export interface BlockToolConstructorOptions<D extends object = any, C extends object = any> {
   api: API;
-  data?: BlockToolData<D>;
+  data: BlockToolData<D>;
   config?: ToolConfig<C>;
   block?: BlockAPI;
   readOnly: boolean;
