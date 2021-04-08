@@ -704,7 +704,7 @@ export default class UI extends Module<UINodes> {
        *   to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
        * - Or, default-block is not empty
        */
-      if (BlockManager.lastBlock.tool.isDefault || !BlockManager.lastBlock.isEmpty) {
+      if (!BlockManager.lastBlock.tool.isDefault || !BlockManager.lastBlock.isEmpty) {
         BlockManager.insertAtEnd();
       }
 
@@ -712,9 +712,27 @@ export default class UI extends Module<UINodes> {
        * Set the caret and toolbar to empty Block
        */
       Caret.setToTheLastBlock();
-
       Toolbar.move();
-      Toolbar.plusButton.show();
+    }
+
+    /**
+     * Show the Plus Button if:
+     * - Block is an default-block (Text)
+     * - Block is empty
+     */
+    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
+
+    if (isDefaultBlock) {
+      stopPropagation();
+
+      /**
+       * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+       */
+      const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+
+      if (isEmptyBlock) {
+        this.Editor.Toolbar.plusButton.show();
+      }
     }
   }
 
