@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.1
+
+- `Fix` - Fix type definition for tool constructor[#1432](https://github.com/codex-team/editor.js/issues/1432)
+
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
