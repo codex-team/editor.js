@@ -436,11 +436,20 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      /** If target Block doesn't contain inputs or empty, remove it */
+      /** If target Block doesn't contain inputs or empty, remove it. This means the user pressed backspace on the blockToMerge */
       if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
         BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
 
         Caret.setToBlock(BlockManager.currentBlock);
+        Toolbar.close();
+
+        return;
+      }
+
+      /** If blockToMerge doesn't contain input or empty, remove it. This means the user pressed delete on the targetBlock */
+      if (blockToMerge.inputs.length === 0 || targetBlock.isEmpty) {
+        BlockManager.removeBlock(BlockManager.currentBlockIndex + 1);
+
         Toolbar.close();
 
         return;
