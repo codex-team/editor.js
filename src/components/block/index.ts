@@ -1,12 +1,10 @@
 import {
   BlockAPI as BlockAPIInterface,
   BlockTool as IBlockTool,
-  BlockToolConstructable,
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig,
-  ToolSettings
+  ToolConfig
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -44,11 +42,6 @@ interface BlockConstructorOptions {
    * This flag indicates that the Block should be constructed in the read-only mode.
    */
   readOnly: boolean;
-
-  /**
-   * Tunes for current Block
-   */
-  tunes: ToolsCollection<BlockTune>;
 
   /**
    * Tunes data for current Block
@@ -224,7 +217,6 @@ export default class Block {
     tool,
     api,
     readOnly,
-    tunes,
     tunesData,
   }: BlockConstructorOptions) {
     this.name = tool.name;
@@ -241,7 +233,7 @@ export default class Block {
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = tunes;
+    this.tunes = tool.tunes;
 
     this.composeTunes(tunesData);
 
@@ -512,7 +504,7 @@ export default class Block {
     /**
      * call Tool's method with the instance context
      */
-    if (this.toolInstance[methodName] && this.toolInstance[methodName] instanceof Function) {
+    if (_.isFunction(this.toolInstance[methodName])) {
       if (methodName === BlockToolAPI.APPEND_CALLBACK) {
         _.log(
           '`appendCallback` hook is deprecated and will be removed in the next major release. ' +

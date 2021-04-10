@@ -1,12 +1,7 @@
 import Paragraph from '../../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
-import {
-  EditorConfig,
-  Tool,
-  ToolConstructable,
-  ToolSettings
-} from '../../../types';
+import { SanitizerConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
@@ -124,7 +119,7 @@ export default class Tools extends Module {
    *
    * @returns {Promise<void>}
    */
-  public prepare(): Promise<void> {
+  public async prepare(): Promise<void> {
     this.validateTools();
 
     /**
@@ -155,46 +150,28 @@ export default class Tools extends Module {
     /**
      * to see how it works {@link '../utils.ts#sequence'}
      */
-    return _.sequence(sequenceData, (data: { toolName: string }) => {
+    await _.sequence(sequenceData, (data: { toolName: string }) => {
       this.toolPrepareMethodSuccess(data);
     }, (data: { toolName: string }) => {
       this.toolPrepareMethodFallback(data);
     });
+
+    this.prepareBlockTools();
   }
 
   /**
-   * Returns Block Tunes for passed Tool
-   *
-   * @param tool - Tool object
+   * Return general Sanitizer config for all inline tools
    */
-  public getTunesForTool(tool: BlockTool): ToolsCollection<BlockTune> {
-    const names = tool.enabledBlockTunes;
+  @_.cacheable
+  public getAllInlineToolsSanitizeConfig(): SanitizerConfig {
+    const config: SanitizerConfig = {} as SanitizerConfig;
 
-    if (names === false) {
-      return new ToolsCollection<BlockTune>();
-    }
+    Array.from(this.inlineTools.values())
+      .forEach(inlineTool => {
+        Object.assign(config, inlineTool.sanitizeConfig);
+      });
 
-    if (Array.isArray(names)) {
-      return new ToolsCollection<BlockTune>(
-        Array
-          .from(this.blockTunes.entries())
-          .filter(([, tune]) => names.includes(tune.name))
-          .concat([ ...this.blockTunes.internalTools.entries() ])
-      );
-    }
-
-    const defaultTuneNames = this.config.tunes;
-
-    if (Array.isArray(defaultTuneNames)) {
-      return new ToolsCollection<BlockTune>(
-        Array
-          .from(this.blockTunes.entries())
-          .filter(([, tune]) => defaultTuneNames.includes(tune.name))
-          .concat([ ...this.blockTunes.internalTools.entries() ])
-      );
-    }
-
-    return this.blockTunes.internalTools;
+    return config;
   }
 
   /**
@@ -318,6 +295,86 @@ export default class Tools extends Module {
       });
 
     return toolPreparationList;
+  }
+
+  /**
+   * Assign enabled Inline Tools and Block Tunes for Block Tool
+   */
+  private prepareBlockTools(): void {
+    Array.from(this.blockTools.values()).forEach(tool => {
+      this.assignInlineToolsToBlockTool(tool);
+      this.assignBlockTunesToBlockTool(tool);
+    });
+  }
+
+  /**
+   * Assign enabled Inline Tools for Block Tool
+   *
+   * @param tool - Block Tool
+   */
+  private assignInlineToolsToBlockTool(tool: BlockTool): void {
+    /**
+     * If common inlineToolbar property is false no Inline Tools should be assigned
+     */
+    if (this.config.inlineToolbar === false) {
+      return;
+    }
+
+    /**
+     * If user pass just 'true' for tool, get common inlineToolbar settings
+     * - if common settings is an array, use it
+     * - if common settings is 'true' or not specified, get default order
+     */
+    if (tool.enabledInlineTools === true) {
+      tool.inlineTools = new ToolsCollection<InlineTool>(
+        Array.isArray(this.config.inlineToolbar)
+          ? this.config.inlineToolbar.map(name => [name, this.inlineTools.get(name)])
+          /**
+           * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
+           */
+          : Array.from(this.inlineTools.entries())
+      );
+
+      return;
+    }
+
+    /**
+     * If user pass the list of inline tools for the particular tool, return it.
+     */
+    if (Array.isArray(tool.enabledInlineTools)) {
+      tool.inlineTools = new ToolsCollection<InlineTool>(
+        tool.enabledInlineTools.map(name => [name, this.inlineTools.get(name)])
+      );
+    }
+  }
+
+  /**
+   * Assign enabled Block Tunes for Block Tool
+   *
+   * @param tool — Block Tool
+   */
+  private assignBlockTunesToBlockTool(tool: BlockTool): void {
+    if (tool.enabledInlineTools === false) {
+      return;
+    }
+
+    if (Array.isArray(tool.enabledBlockTunes)) {
+      tool.tunes = new ToolsCollection<BlockTune>(
+        tool.enabledBlockTunes.map(name => [name, this.blockTunes.get(name)])
+      );
+
+      return;
+    }
+
+    if (Array.isArray(this.config.tunes)) {
+      tool.tunes = new ToolsCollection<BlockTune>(
+        this.config.tunes.map(name => [name, this.blockTunes.get(name)])
+      );
+
+      return;
+    }
+
+    tool.tunes = this.blockTunes.internalTools;
   }
 
   /**
