@@ -1,33 +1,32 @@
 name: Tests
+
 on: [pull_request]
+
 jobs:
-  firefox:
+  cypress:
+    strategy:
+      matrix:
+        browser: [ firefox, chrome, edge ]
+
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node14.16.0-chrome89-ff86
       options: --user 1001
+
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn pull_tools
-      - uses: cypress-io/github-action@v2
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
         with:
-          browser: firefox
-          build: yarn build
-  chrome:
-    runs-on: ubuntu-16.04
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn pull_tools
-      - uses: cypress-io/github-action@v2
+          node-version: 15
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Pull Editor.js Tools
+        run: yarn pull_tools
+
+      - name: Run cypress
+        uses: cypress-io/github-action@v2
         with:
-          browser: chrome
-          build: yarn build
-  edge:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn pull_tools
-      - uses: cypress-io/github-action@v2
-        with:
-          browser: edge
+          browser: ${{ matrix.browser }}
           build: yarn build
