@@ -333,7 +333,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
+    if (lastBlock.tool.isDefault && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -391,7 +391,7 @@ export default class Caret extends Module {
    * @returns {boolean}
    */
   public navigateNext(): boolean {
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
     const isAtEnd = this.isAtEnd;
@@ -409,7 +409,7 @@ export default class Caret extends Module {
        * 2. If there is a last block and it is non-default --> and caret not at the end <--, do nothing
        *    (https://github.com/codex-team/editor.js/issues/1414)
        */
-      if (Tools.isDefault(currentBlock.tool) || !isAtEnd) {
+      if (currentBlock.tool.isDefault || !isAtEnd) {
         return false;
       }
 
@@ -531,7 +531,7 @@ export default class Caret extends Module {
      * If there is no child node, append empty one
      */
     if (fragment.childNodes.length === 0) {
-      fragment.appendChild(new Text(''));
+      fragment.appendChild(new Text());
     }
 
     const lastChild = fragment.lastChild;

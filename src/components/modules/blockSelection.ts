@@ -13,6 +13,7 @@ import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
+import { clean } from '../utils/sanitizer';
 
 /**
  *
@@ -285,7 +286,7 @@ export default class BlockSelection extends Module {
    *
    * @returns {Promise<void>}
    */
-  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
+  public copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
      * Prevent default copy
      */
@@ -297,14 +298,12 @@ export default class BlockSelection extends Module {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;
       fakeClipboard.appendChild(fragment);
     });
-
-    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
 
     const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
       .join('\n\n');
@@ -312,7 +311,16 @@ export default class BlockSelection extends Module {
 
     e.clipboardData.setData('text/plain', textPlain);
     e.clipboardData.setData('text/html', textHTML);
-    e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+
+    return Promise
+      .all(this.selectedBlocks.map((block) => block.save()))
+      .then(savedData => {
+        try {
+          e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+        } catch (err) {
+          // In Firefox we can't set data in async function
+        }
+      });
   }
 
   /**

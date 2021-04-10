@@ -10,6 +10,7 @@ import { OutputData } from '../../../types';
 import { ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
+import { sanitizeBlocks } from '../utils/sanitizer';
 
 declare const VERSION: string;
 
@@ -27,7 +28,7 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
+    const { BlockManager, ModificationsObserver, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
 
@@ -42,7 +43,9 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData);
-      const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+      const sanitizedData = await sanitizeBlocks(extractedData, (name) => {
+        return Tools.blockTools.get(name).sanitizeConfig;
+      });
 
       return this.makeOutput(sanitizedData);
     } finally {
@@ -78,7 +81,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({ tool, data, time, isValid }) => {
+    allExtractedData.forEach(({ tool, data, tunes, time, isValid }) => {
       totalTime += time;
 
       /**
@@ -104,10 +107,15 @@ export default class Saver extends Module {
         return;
       }
 
-      blocks.push({
+      const output = {
         type: tool,
         data,
-      });
+        ...!_.isEmpty(tunes) && {
+          tunes,
+        },
+      };
+
+      blocks.push(output);
     });
 
     _.log('Total', 'log', totalTime);

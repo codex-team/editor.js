@@ -1,6 +1,7 @@
 import Module from '../__module';
 import * as _ from '../utils';
-import { BlockToolConstructable, OutputBlockData } from '../../../types';
+import { OutputBlockData } from '../../../types';
+import BlockTool from '../tools/block';
 
 /**
  * Editor.js Renderer Module
@@ -63,14 +64,14 @@ export default class Renderer extends Module {
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
-    const tool = item.type;
-    const data = item.data;
+    const { type: tool, data, tunes } = item;
 
-    if (tool in Tools.available) {
+    if (Tools.available.has(tool)) {
       try {
         BlockManager.insert({
           tool,
           data,
+          tunes,
         });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
@@ -86,11 +87,10 @@ export default class Renderer extends Module {
         title: tool,
       };
 
-      if (tool in Tools.unavailable) {
-        const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
-        const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+      if (Tools.unavailable.has(tool)) {
+        const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
 
-        stubData.title = toolToolboxSettings.title || (userToolboxSettings && userToolboxSettings.title) || stubData.title;
+        stubData.title = toolboxSettings?.title || stubData.title;
       }
 
       const stub = BlockManager.insert({
