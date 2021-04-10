@@ -332,7 +332,6 @@ export default class BlockEvents extends Module {
       SelectionUtils.isCollapsed &&
       currentBlock.currentInput === currentBlock.firstInput &&
       !isFirstBlock;
-
     if (canMergeBlocks) {
       /**
        * preventing browser default behaviour
@@ -372,10 +371,18 @@ export default class BlockEvents extends Module {
         BlockManager.removeBlock();
       }
 
-      Caret.setToBlock(
-        BlockManager.currentBlock,
-        Caret.positions.END
-      );
+      // The removal placed the caret to the previous block, try to put it to the next block (if not the last)
+      if (BlockManager.nextBlock) {
+        Caret.setToBlock(
+          BlockManager.nextBlock,
+          Caret.positions.START
+        );
+      } else {
+        Caret.setToBlock(
+          BlockManager.currentBlock,
+          Caret.positions.END
+        );
+      }
 
       /** Close Toolbar */
       this.Editor.Toolbar.close();
