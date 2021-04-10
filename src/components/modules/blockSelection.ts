@@ -286,7 +286,7 @@ export default class BlockSelection extends Module {
    *
    * @returns {Promise<void>}
    */
-  public copySelectedBlocks(e: ClipboardEvent): Promise<void> {
+  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
      * Prevent default copy
      */
@@ -294,16 +294,16 @@ export default class BlockSelection extends Module {
 
     const fakeClipboard = $.make('div');
 
-    this.selectedBlocks.forEach((block) => {
+    for (const block of this.selectedBlocks) {
       /**
-       * Make <p> tag that holds clean HTML
+       * Make <div> tag that holds clean HTML
        */
-      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
-      const fragment = $.make('p');
+      const cleanHTML = clean(await block.saveAsHTML(), this.sanitizerConfig);
+      const fragment = $.make('div');
 
       fragment.innerHTML = cleanHTML;
       fakeClipboard.appendChild(fragment);
-    });
+    }
 
     const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
       .join('\n\n');
