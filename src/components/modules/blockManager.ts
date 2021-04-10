@@ -391,14 +391,12 @@ export default class BlockManager extends Module {
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
     const blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-    if (blockToMerge.isEmpty) {
-      return;
-    }
+    if (!blockToMerge.isEmpty) {
+      const blockToMergeData = await blockToMerge.data;
 
-    const blockToMergeData = await blockToMerge.data;
-
-    if (!_.isEmpty(blockToMergeData)) {
-      await targetBlock.mergeWith(blockToMergeData);
+      if (!_.isEmpty(blockToMergeData)) {
+        await targetBlock.mergeWith(blockToMergeData);
+      }
     }
 
     this.removeBlock(blockToMergeIndex);
