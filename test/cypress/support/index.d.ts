@@ -41,8 +41,16 @@ declare global {
        */
       cut(): Chainable<{ [type: string]: any }>;
 
+      /**
+       * Calls EditorJS API render method
+       *
+       * @param data — data to render
+       */
       render(data: OutputData): Chainable<EditorJS>;
 
+      /**
+       * Returns current selection range
+       */
       range(): Chainable<Range | null>;
     }
 

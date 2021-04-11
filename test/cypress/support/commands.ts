@@ -37,12 +37,20 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
     });
 });
 
+/**
+ * Calls EditorJS API render method
+ *
+ * @param data — data to render
+ */
 Cypress.Commands.add('render', { prevSubject: true }, async (subject: EditorJS, data: OutputData): Promise<EditorJS> => {
   await subject.render(data);
 
   return subject;
 });
 
+/**
+ * Returns current selection range
+ */
 Cypress.Commands.add('range', { prevSubject: 'optional' }, (subject): Chainable<Range | null> => {
   return cy.window()
     .then(win => {
