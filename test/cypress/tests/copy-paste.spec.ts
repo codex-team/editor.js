@@ -105,7 +105,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
-          'text/html': '<h2>First block</h2><p>Second block</p>',
+          'text/html': '<h2>First block</h2><div>Second block</div>',
         });
 
       cy.get('[data-cy=editorjs]')
@@ -163,7 +163,7 @@ describe('Copy pasting from Editor', () => {
         })
         .copy()
         .then(clipboardData => {
-          expect(clipboardData['text/html']).to.match(/<p>First block(<br>)?<\/p><p>Second block(<br>)?<\/p>/);
+          expect(clipboardData['text/html']).to.match(/<div>First block(<br>)?<\/div><div>Second block(<br>)?<\/div>/);
           expect(clipboardData['text/plain']).to.eq(`First block\n\nSecond block`);
 
           /**
@@ -216,7 +216,7 @@ describe('Copy pasting from Editor', () => {
         })
         .cut()
         .then(clipboardData => {
-          expect(clipboardData['text/html']).to.match(/<p>First block(<br>)?<\/p><p>Second block(<br>)?<\/p>/);
+          expect(clipboardData['text/html']).to.match(/<div>First block(<br>)?<\/div><div>Second block(<br>)?<\/div>/);
           expect(clipboardData['text/plain']).to.eq(`First block\n\nSecond block`);
 
           /**
