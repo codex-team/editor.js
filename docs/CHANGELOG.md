@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.20.2
+
+- `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)
+
 ### 2.20.1
 
 - `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).

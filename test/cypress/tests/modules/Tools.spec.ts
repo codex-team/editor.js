@@ -205,7 +205,7 @@ describe('Tools module', () => {
       });
 
       it('Block Tools should contain default tunes', () => {
-        let tool = module.blockTools.get('blockTool');
+        const tool = module.blockTools.get('blockTool');
 
         expect(tool.tunes.has('deleteTune')).to.be.true;
         expect(tool.tunes.has('moveUpTune')).to.be.true;
