@@ -126,7 +126,7 @@ describe('Copy pasting from Editor', () => {
         });
 
       cy.get('[data-cy=editorjs]')
-        .get('img')
+        .get('img', { timeout: 10000 })
         .should('have.attr', 'src', 'https://codex.so/public/app/img/external/codex2x.png');
     });
   });
