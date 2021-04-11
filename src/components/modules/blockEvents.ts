@@ -332,6 +332,7 @@ export default class BlockEvents extends Module {
       SelectionUtils.isCollapsed &&
       currentBlock.currentInput === currentBlock.firstInput &&
       !isFirstBlock;
+
     if (canMergeBlocks) {
       /**
        * preventing browser default behaviour

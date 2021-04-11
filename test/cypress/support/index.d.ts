@@ -2,7 +2,7 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
-import type { EditorConfig } from './../../../types/index';
+import type {EditorConfig, OutputData} from './../../../types/index';
 import type EditorJS from '../../../types/index'
 
 declare global {
@@ -40,6 +40,10 @@ declare global {
        * cy.get('div').cut().then(data => {})
        */
       cut(): Chainable<{ [type: string]: any }>;
+
+      render(data: OutputData): Chainable<EditorJS>;
+
+      range(): Chainable<Range | null>;
     }
 
     interface ApplicationWindow {

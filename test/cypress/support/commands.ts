@@ -5,7 +5,7 @@
  * --------------------------------------------------
  */
 
-import type { EditorConfig } from './../../../types/index';
+import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index';
 import Chainable = Cypress.Chainable;
 
@@ -34,6 +34,25 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
           resolve(editorInstance);
         });
       });
+    });
+});
+
+Cypress.Commands.add('render', { prevSubject: true }, async (subject: EditorJS, data: OutputData): Promise<EditorJS> => {
+  await subject.render(data);
+
+  return subject;
+});
+
+Cypress.Commands.add('range', { prevSubject: 'optional' }, (subject): Chainable<Range | null> => {
+  return cy.window()
+    .then(win => {
+      const selection = win.getSelection();
+
+      if (selection.rangeCount !== 0) {
+        return selection.getRangeAt(0);
+      }
+
+      return null;
     });
 });
 
