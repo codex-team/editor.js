@@ -296,10 +296,10 @@ export default class BlockSelection extends Module {
 
     for (const block of this.selectedBlocks) {
       /**
-       * Make <div> tag that holds clean HTML
+       * Make <p> tag that holds clean HTML
        */
       const cleanHTML = clean(await block.saveAsHTML(), this.sanitizerConfig);
-      const fragment = $.make('div');
+      const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;
       fakeClipboard.appendChild(fragment);
