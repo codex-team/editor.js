@@ -359,17 +359,21 @@ export default class Tools extends Module {
     }
 
     if (Array.isArray(tool.enabledBlockTunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         tool.enabledBlockTunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
 
     if (Array.isArray(this.config.tunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         this.config.tunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
