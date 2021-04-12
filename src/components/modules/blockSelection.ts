@@ -298,7 +298,7 @@ export default class BlockSelection extends Module {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = clean(await block.saveAsHTML(), this.sanitizerConfig);
+      const cleanHTML = clean(await block.toHTML(), this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;

@@ -2,7 +2,7 @@
 
 ### 2.20.2
 
-- `New` - Add `saveAsHTML()` interface to Block Tool [#1439](https://github.com/codex-team/editor.js/issues/1439).
+- `New` - Add `toHTML()` interface to Block Tool [#1439](https://github.com/codex-team/editor.js/issues/1439).
 
 ### 2.20.1
 

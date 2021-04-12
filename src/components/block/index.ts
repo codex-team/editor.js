@@ -583,12 +583,12 @@ export default class Block {
    *
    * @returns {Promise<string>} - HTML
    */
-  public async saveAsHTML(): Promise<string> {
+  public async toHTML(): Promise<string> {
     let extractedBlock = '';
 
     try {
-      if (this.toolInstance.saveAsHTML) {
-        extractedBlock = await this.toolInstance.saveAsHTML(this.pluginsContent as HTMLElement);
+      if (this.toolInstance.toHTML) {
+        extractedBlock = await this.toolInstance.toHTML(this.pluginsContent as HTMLElement);
       } else {
         extractedBlock = this.holder.innerHTML;
       }

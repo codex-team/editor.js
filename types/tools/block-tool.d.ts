@@ -28,7 +28,7 @@ export interface BlockTool extends BaseTool {
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {Promise<string>} - HTML
    */
-  saveAsHTML?(block: HTMLElement): Promise<string>;
+  toHTML?(block: HTMLElement): Promise<string>;
 
   /**
    * Create Block's settings block
