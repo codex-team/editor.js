@@ -298,6 +298,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.removeAllNodes();
+    this.tooltip.destroy();
   }
 
   /**
