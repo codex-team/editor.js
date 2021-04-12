@@ -579,6 +579,29 @@ export default class Block {
   }
 
   /**
+   * Extracts HTML from Block
+   *
+   * @returns {Promise<string>} - HTML
+   */
+  public async toHTML(): Promise<string> {
+    let extractedBlock = '';
+
+    try {
+      if (this.toolInstance.toHTML) {
+        extractedBlock = await this.toolInstance.toHTML(this.pluginsContent as HTMLElement);
+      } else {
+        extractedBlock = this.holder.innerHTML;
+      }
+    } catch (error) {
+      _.log(`Saving as HTML proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+
+      throw error;
+    }
+
+    return extractedBlock;
+  }
+
+  /**
    * Uses Tool's validation method to check the correctness of output data
    * Tool's validation method is optional
    *
