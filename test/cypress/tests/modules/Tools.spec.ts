@@ -103,6 +103,7 @@ describe('Tools module', () => {
             class: class {} as any,
             inlineToolbar: true,
           },
+          blockToolWithoutSettings: class {} as any,
           inlineTool: class {
             public static isInline = true
 
@@ -204,12 +205,28 @@ describe('Tools module', () => {
         expect(Array.from(module.blockTools.values()).every(tool => tool.isBlock())).to.be.true;
       });
 
+      it('Block Tools should contain default tunes if no settings is specified', () => {
+        const tool = module.blockTools.get('blockToolWithoutSettings');
+
+        expect(tool.tunes.has('deleteTune')).to.be.true;
+        expect(tool.tunes.has('moveUpTune')).to.be.true;
+        expect(tool.tunes.has('moveDownTune')).to.be.true;
+      });
+
+      it('Block Tools should contain default tunes', () => {
+        const tool = module.blockTools.get('blockTool');
+
+        expect(tool.tunes.has('deleteTune')).to.be.true;
+        expect(tool.tunes.has('moveUpTune')).to.be.true;
+        expect(tool.tunes.has('moveDownTune')).to.be.true;
+      });
+
       it('Block Tools should contain tunes in correct order', () => {
         let tool = module.blockTools.get('blockTool');
 
         expect(tool.tunes.has('blockTune')).to.be.true;
         expect(tool.tunes.has('blockTune2')).to.be.true;
-        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune']);
+        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUpTune', 'deleteTune', 'moveDownTune']);
 
         tool = module.blockTools.get('withSuccessfulPrepare');
 

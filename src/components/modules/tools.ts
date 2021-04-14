@@ -354,22 +354,26 @@ export default class Tools extends Module {
    * @param tool — Block Tool
    */
   private assignBlockTunesToBlockTool(tool: BlockTool): void {
-    if (tool.enabledInlineTools === false) {
+    if (tool.enabledBlockTunes === false) {
       return;
     }
 
     if (Array.isArray(tool.enabledBlockTunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         tool.enabledBlockTunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
 
     if (Array.isArray(this.config.tunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         this.config.tunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
