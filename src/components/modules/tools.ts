@@ -354,7 +354,7 @@ export default class Tools extends Module {
    * @param tool — Block Tool
    */
   private assignBlockTunesToBlockTool(tool: BlockTool): void {
-    if (tool.enabledInlineTools === false) {
+    if (tool.enabledBlockTunes === false) {
       return;
     }
 

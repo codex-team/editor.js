@@ -103,6 +103,7 @@ describe('Tools module', () => {
             class: class {} as any,
             inlineToolbar: true,
           },
+          blockToolWithoutSettings: class {} as any,
           inlineTool: class {
             public static isInline = true
 
@@ -202,6 +203,14 @@ describe('Tools module', () => {
         expect(module.blockTools.has('withoutPrepare')).to.be.true;
         expect(module.blockTools.has('withFailedPrepare')).to.be.false;
         expect(Array.from(module.blockTools.values()).every(tool => tool.isBlock())).to.be.true;
+      });
+
+      it('Block Tools should contain default tunes if no settings is specified', () => {
+        const tool = module.blockTools.get('blockToolWithoutSettings');
+
+        expect(tool.tunes.has('deleteTune')).to.be.true;
+        expect(tool.tunes.has('moveUpTune')).to.be.true;
+        expect(tool.tunes.has('moveDownTune')).to.be.true;
       });
 
       it('Block Tools should contain default tunes', () => {
