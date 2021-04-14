@@ -128,6 +128,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
 
     this.removeAllNodes();
     this.removeAllShortcuts();
+    this.tooltip.destroy();
   }
 
   /**

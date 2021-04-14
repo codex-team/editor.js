@@ -30,6 +30,13 @@ export default class TooltipAPI extends Module {
   }
 
   /**
+   * Destroy Module
+   */
+  public destroy(): void {
+    this.tooltip.destroy();
+  }
+
+  /**
    * Available methods
    */
   public get methods(): ITooltip {

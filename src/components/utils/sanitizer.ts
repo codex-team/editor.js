@@ -117,7 +117,6 @@ function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): 
   }
 }
 
-
 /**
  * Clean array
  *
@@ -186,6 +185,3 @@ function cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): strin
 function isRule(config: SanitizerConfig): boolean {
   return _.isObject(config) || _.isBoolean(config) || _.isFunction(config);
 }
-
-
-
