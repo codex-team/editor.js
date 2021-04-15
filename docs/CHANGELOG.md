@@ -4,6 +4,7 @@
 
 - `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)
 - `Fix` - Prevent the leak of codex-tooltip when Editor.js is destroyed [#1475](https://github.com/codex-team/editor.js/issues/1475).
+- `Refactoring` - Notifier module now is a util.
 
 ### 2.20.1
 
@@ -12,7 +13,6 @@
 - `Fix` — Fix copy in FireFox [1625](https://github.com/codex-team/editor.js/issues/1625)
 - `Refactoring` - The Sanitizer module is util now.
 - `Refactoring` - Tooltip module is util now.
-- `Refactoring` - Notifier module now is a util.
 - `Refactoring` — Refactoring based on LGTM [#1577](https://github.com/codex-team/editor.js/issues/1577).
 - `Refactoring` — Refactoring based on ESLint [#1636](https://github.com/codex-team/editor.js/issues/1636).
 
