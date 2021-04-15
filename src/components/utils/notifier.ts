@@ -1,5 +1,3 @@
-import Module from '../__module';
-
 /**
  * Use external package module for notifications
  *
@@ -8,9 +6,9 @@ import Module from '../__module';
 import notifier, { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
 
 /**
- * Notifier module
+ * Util for showing notifications
  */
-export default class Notifier extends Module {
+export default class Notifier {
   /**
    * Show web notification
    *
