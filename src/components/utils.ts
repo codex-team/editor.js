@@ -2,6 +2,7 @@
  * Class Util
  */
 
+import { nanoid } from 'nanoid';
 import Dom from './dom';
 
 /**
@@ -608,27 +609,12 @@ export function getValidUrl(url: string): string {
 }
 
 /**
- * Creates a UUID v4 version
- *
- * @returns {string}
- */
-function uuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    // tslint:disable: no-bitwise
-    // tslint:disable-next-line: triple-equals
-    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-
-    return v.toString(16);
-  });
-}
-
-/**
  * Create a block id
  *
  * @returns {string}
  */
 export function generateBlockId(): string {
-  return uuidv4();
+  return nanoid();
 }
 
 /**

@@ -87,6 +87,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.2"
+    "codex-tooltip": "^1.0.2",
+    "nanoid": "^3.1.22"
   }
 }
