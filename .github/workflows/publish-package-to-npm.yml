@@ -28,8 +28,14 @@ jobs:
       - name: Build output files
         run: yarn build
 
-      - name: Publish the package
-        run: yarn publish --access=public ${{ github.event.release.prerelease && '--tag=next' || '--tag=latest' }}
+      - name: Publish the package with a NEXT tag
+        run: yarn publish --access=public --tag=next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish the package with a LATEST tag if this is not a prerelease version
+        if: !github.event.release.prerelease
+        run: yarn publish --access=public --tag=latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
