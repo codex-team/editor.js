@@ -1,5 +1,5 @@
 import Header from '../../../example/tools/header';
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 
 describe.only('Block ids', () => {
   beforeEach(() => {
