@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.21.0
+- `New` - Blocks now have a unique ID [#873](https://github.com/codex-team/editor.js/issues/873)
+
 ### 2.20.2
 
 - `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)

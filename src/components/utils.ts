@@ -614,7 +614,7 @@ export function getValidUrl(url: string): string {
  * @returns {string}
  */
 export function generateBlockId(): string {
-  return nanoid();
+  return nanoid(10);
 }
 
 /**

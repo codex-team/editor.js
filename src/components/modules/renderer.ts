@@ -23,14 +23,14 @@ export default class Renderer extends Module {
    *
    * blocks: [
    *   {
-   *     id   : 'eab2b1cd-a3d3-48d1-aadb-bd821d8ec871',
+   *     id   : 'oDe-EVrGWA',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Hello from Codex!'
    *     }
    *   },
    *   {
-   *     id   : '391a1351-6ec6-473b-8b99-b20507e2d4c2',
+   *     id   : 'Ld5BJjJCHs',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Leave feedback if you like it!'

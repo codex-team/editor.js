@@ -216,7 +216,7 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
-   * @param {string} options.id - Tool's unique id
+   * @param {string} options.id - block's unique id
    * @param {BlockToolData} options.data - Tool's initial data
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config

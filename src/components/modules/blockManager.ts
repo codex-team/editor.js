@@ -216,6 +216,7 @@ export default class BlockManager extends Module {
    *
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
@@ -248,16 +249,17 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts the default block type
-   * @param {object} options.data - plugin data
-   * @param {number} options.index - index where to insert new Block
-   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
-   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {string} [options.id] - block's unique id
+   * @param {string} [options.tool] - plugin name, by default method inserts the default block type
+   * @param {object} [options.data] - plugin data
+   * @param {number} [options.index] - index where to insert new Block
+   * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
+   * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
   public insert({
-    id = _.generateBlockId(),
+    id,
     tool = this.config.defaultBlock,
     data = {},
     index,
