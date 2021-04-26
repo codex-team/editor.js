@@ -224,7 +224,7 @@ export default class BlockManager extends Module {
   public composeBlock({
     tool: name,
     data = {},
-    id = _.generateBlockId(),
+    id = undefined,
     tunes: tunesData = {},
   }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
@@ -259,7 +259,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
-    id,
+    id = undefined,
     tool = this.config.defaultBlock,
     data = {},
     index,
@@ -519,6 +519,17 @@ export default class BlockManager extends Module {
    */
   public getBlockByIndex(index): Block {
     return this._blocks[index];
+  }
+
+  /**
+   * Returns the Block by passed id
+   *
+   * @param id - id of block to get
+   *
+   * @returns {Block}
+   */
+  public getBlockById(id): Block {
+    return this._blocks.array.find(block => block.id === id);
   }
 
   /**

@@ -24,7 +24,7 @@
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
     "checkout_tools": "git submodule foreach git pull origin master",
-    "test:e2e": "cypress run"
+    "test:e2e": "yarn build && cypress run"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
