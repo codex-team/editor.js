@@ -5,7 +5,7 @@
  * --------------------------------------------------
  */
 
-import type { EditorConfig } from './../../../types/index';
+import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index';
 import Chainable = Cypress.Chainable;
 
@@ -113,4 +113,15 @@ Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
   subject[0].dispatchEvent(copyEvent);
 
   return clipboardData;
+});
+
+/**
+ * Calls EditorJS API render method
+ *
+ * @param data — data to render
+ */
+Cypress.Commands.add('render', { prevSubject: true }, async (subject: EditorJS, data: OutputData): Promise<EditorJS> => {
+  await subject.render(data);
+
+  return subject;
 });

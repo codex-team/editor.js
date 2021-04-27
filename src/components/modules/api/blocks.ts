@@ -23,6 +23,7 @@ export default class BlocksAPI extends Module {
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
+      getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
@@ -61,6 +62,23 @@ export default class BlocksAPI extends Module {
       _.logLabeled('There is no block at index `' + index + '`', 'warn');
 
       return;
+    }
+
+    return new BlockAPI(block);
+  }
+
+  /**
+   * Returns BlockAPI object by Block id
+   *
+   * @param id - id of block to get
+   */
+  public getById(id: string): BlockAPIInterface | null {
+    const block = this.Editor.BlockManager.getBlockById(id);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block with id `' + id + '`', 'warn');
+
+      return null;
     }
 
     return new BlockAPI(block);
