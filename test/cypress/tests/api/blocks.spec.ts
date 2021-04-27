@@ -1,8 +1,6 @@
 /**
  * There will be described test cases of 'blocks.*' API
  */
-import BlockAPI from "../../../../src/components/block/api";
-
 describe('api.blocks', () => {
   const firstBlock = {
     id: 'bwnFX5LoX7',
@@ -38,8 +36,8 @@ describe('api.blocks', () => {
       cy.get('@editorInstance').then(async (editor: any) => {
         const block = editor.blocks.getById(firstBlock.id);
 
-        expect(editor.blocks.getById(firstBlock.id)).not.to.be.undefined;
-        // expect(block).to.be.instanceOf(BlockAPI);
+        expect(block).not.to.be.undefined;
+        expect(block.id).to.be.eq(firstBlock.id);
       });
     });
 
