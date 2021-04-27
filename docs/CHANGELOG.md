@@ -1,7 +1,8 @@
 # Changelog
 
 ### 2.21.0
-- `New` - Blocks now have a unique ID [#873](https://github.com/codex-team/editor.js/issues/873)
+
+- `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
 
 ### 2.20.2
 
