@@ -2,6 +2,7 @@
  * Class Util
  */
 
+import { nanoid } from 'nanoid';
 import Dom from './dom';
 
 /**
@@ -605,6 +606,15 @@ export function getValidUrl(url: string): string {
   } else {
     return window.location.origin + url;
   }
+}
+
+/**
+ * Create a block id
+ *
+ * @returns {string}
+ */
+export function generateBlockId(): string {
+  return nanoid(10);
 }
 
 /**

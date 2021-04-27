@@ -55,6 +55,12 @@ export interface Blocks {
   getBlockByIndex(index: number): BlockAPI | void;
 
   /**
+   * Returns Block API object by passed Block id
+   * @param id - id of the block
+   */
+  getById(id: string): BlockAPI | null;
+
+  /**
    * Returns current Block index
    * @returns {number}
    */

@@ -216,6 +216,7 @@ export default class BlockManager extends Module {
    *
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
@@ -223,11 +224,13 @@ export default class BlockManager extends Module {
   public composeBlock({
     tool: name,
     data = {},
+    id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
     const block = new Block({
+      id,
       data,
       tool,
       api: this.Editor.API,
@@ -246,15 +249,17 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts the default block type
-   * @param {object} options.data - plugin data
-   * @param {number} options.index - index where to insert new Block
-   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
-   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {string} [options.id] - block's unique id
+   * @param {string} [options.tool] - plugin name, by default method inserts the default block type
+   * @param {object} [options.data] - plugin data
+   * @param {number} [options.index] - index where to insert new Block
+   * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
+   * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
   public insert({
+    id = undefined,
     tool = this.config.defaultBlock,
     data = {},
     index,
@@ -262,6 +267,7 @@ export default class BlockManager extends Module {
     replace = false,
     tunes = {},
   }: {
+    id?: string;
     tool?: string;
     data?: BlockToolData;
     index?: number;
@@ -276,6 +282,7 @@ export default class BlockManager extends Module {
     }
 
     const block = this.composeBlock({
+      id,
       tool,
       data,
       tunes,
@@ -512,6 +519,17 @@ export default class BlockManager extends Module {
    */
   public getBlockByIndex(index): Block {
     return this._blocks[index];
+  }
+
+  /**
+   * Returns the Block by passed id
+   *
+   * @param id - id of block to get
+   *
+   * @returns {Block}
+   */
+  public getBlockById(id): Block {
+    return this._blocks.array.find(block => block.id === id);
   }
 
   /**
