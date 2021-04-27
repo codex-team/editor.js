@@ -1,7 +1,9 @@
 /**
  * There will be described test cases of 'blocks.*' API
  */
-describe('Blocks API', () => {
+import BlockAPI from "../../../../src/components/block/api";
+
+describe('api.blocks', () => {
   const firstBlock = {
     id: 'bwnFX5LoX7',
     type: 'paragraph',
@@ -30,11 +32,23 @@ describe('Blocks API', () => {
    */
   describe('.getById()', () => {
     /**
-     * Check that api.blocks.getByUd(id) should return the Block for existed id
+     * Check that api.blocks.getByUd(id) returns the Block for existed id
      */
     it('should return Block API for existed id', () => {
       cy.get('@editorInstance').then(async (editor: any) => {
-        assert.isDefined(editor.blocks.getById(firstBlock.id));
+        const block = editor.blocks.getById(firstBlock.id);
+
+        expect(editor.blocks.getById(firstBlock.id)).not.to.be.undefined;
+        // expect(block).to.be.instanceOf(BlockAPI);
+      });
+    });
+
+    /**
+     * Check that api.blocks.getByUd(id) returns null for the not-existed id
+     */
+    it('should return null for not-existed id', () => {
+      cy.get('@editorInstance').then(async (editor: any) => {
+        expect(editor.blocks.getById('not-existed-id')).to.be.null;
       });
     });
   });
