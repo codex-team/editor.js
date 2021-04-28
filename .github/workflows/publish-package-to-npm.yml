@@ -34,7 +34,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish the package with a LATEST tag if this is not a prerelease version
-        if: !github.event.release.prerelease
+        if: github.event.release.prerelease != true
         run: yarn publish --access=public --tag=latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
