@@ -15,6 +15,10 @@ jobs:
           # Pull submodules
           submodules: 'recursive'
 
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
       # Setup node environment
       - uses: actions/setup-node@v1
         with:
@@ -33,9 +37,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish the package with a LATEST tag if this is not a prerelease version
+      - name: Add LATEST tag for the published package if this is not a prerelease version
         if: github.event.release.prerelease != true
-        run: yarn publish --access=public --tag=latest
+        run: yarn tag add ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
