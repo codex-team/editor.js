@@ -23,6 +23,7 @@ If you like Editor.js you can support project improvements and development of ne
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
 
 <a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/editorjs/sponsor/3/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/3/avatar.svg"></a>
 
  ### Backers
 
