@@ -13,6 +13,7 @@ import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BlockAPI from '../block/api';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -290,6 +291,8 @@ export default class BlockManager extends Module {
 
     this._blocks.insert(newIndex, block, replace);
 
+    this.blockDidMutated(block);
+
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
     } else if (newIndex <= this.currentBlockIndex) {
@@ -426,7 +429,11 @@ export default class BlockManager extends Module {
       throw new Error('Can\'t find a Block to remove');
     }
 
+    const blockToRemove = this._blocks[index];
+
     this._blocks.remove(index);
+
+    this.blockDidMutated(blockToRemove);
 
     if (this.currentBlockIndex >= index) {
       this.currentBlockIndex--;
@@ -689,6 +696,8 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    this.blockDidMutated(this.currentBlock);
   }
 
   /**
@@ -754,6 +763,8 @@ export default class BlockManager extends Module {
     this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
       BlockEvents.dragLeave(event);
     });
+
+    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(affectedBlock));
   }
 
   /**
@@ -788,5 +799,18 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Block mutation callback
+   *
+   * @param block - mutated block
+   */
+  private blockDidMutated(block: Block): Block {
+    if (_.isFunction(this.config.onChange)) {
+      this.config.onChange(this.Editor.API.methods, new BlockAPI(block));
+    }
+
+    return block;
   }
 }

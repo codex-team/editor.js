@@ -28,14 +28,9 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, ModificationsObserver, Tools } = this.Editor;
+    const { BlockManager, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
-
-    /**
-     * Disable modifications observe while saving
-     */
-    ModificationsObserver.disable();
 
     try {
       blocks.forEach((block: Block) => {
@@ -48,9 +43,7 @@ export default class Saver extends Module {
       });
 
       return this.makeOutput(sanitizedData);
-    } finally {
-      ModificationsObserver.enable();
-    }
+    } catch (e) {}
   }
 
   /**

@@ -6,7 +6,6 @@ import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
 import Paste from '../components/modules/paste';
 import DragNDrop from '../components/modules/dragNDrop';
-import ModificationsObserver from '../components/modules/modificationsObserver';
 import Renderer from '../components/modules/renderer';
 import Tools from '../components/modules/tools';
 import API from '../components/modules/api/index';
@@ -45,7 +44,6 @@ export interface EditorModules {
   ConversionToolbar: ConversionToolbar;
   Paste: Paste;
   DragNDrop: DragNDrop;
-  ModificationsObserver: ModificationsObserver;
   Renderer: Renderer;
   Tools: Tools;
   API: API;

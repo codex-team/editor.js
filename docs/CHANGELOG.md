@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.0
+
+- `New` - `onChange` callback now receive Block API object of affected block
+
 ### 2.21.0
 
 - `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
