@@ -75,7 +75,7 @@ use 'move' instead)
 
 `insertNewBlock()` - __Deprecated__ insert new Block after working place
 
-`insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
+`insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean, tunes?: {[name: string]: BlockTuneData})` - insert new Block with passed parameters
 
 #### SanitizerAPI
 
