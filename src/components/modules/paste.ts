@@ -662,7 +662,7 @@ export default class Paste extends Module {
 
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-      const currentToolSanitizeConfig = BlockManager.currentBlock.tool.sanitizeConfig;
+      const currentToolSanitizeConfig = BlockManager.currentBlock.tool.baseSanitizeConfig;
 
       document.execCommand(
         'insertHTML',
@@ -739,7 +739,7 @@ export default class Paste extends Module {
    *
    * @returns {void}
    */
-  private insertEditorJSData(blocks: Pick<SavedData, 'id' | 'data' | 'tool'>[]): void {
+  private insertEditorJSData(blocks: Pick<SavedData, 'data' | 'tool'>[]): void {
     const { BlockManager, Caret, Tools } = this.Editor;
     const sanitizedBlocks = sanitizeBlocks(blocks, (name) =>
       Tools.blockTools.get(name).sanitizeConfig
