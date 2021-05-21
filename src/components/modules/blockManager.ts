@@ -522,13 +522,22 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Returns an index for passed Block
+   *
+   * @param block - block to find index
+   */
+  public getBlockIndex(block: Block): number {
+    return this._blocks.indexOf(block);
+  }
+
+  /**
    * Returns the Block by passed id
    *
    * @param id - id of block to get
    *
    * @returns {Block}
    */
-  public getBlockById(id): Block {
+  public getBlockById(id): Block | undefined {
     return this._blocks.array.find(block => block.id === id);
   }
 

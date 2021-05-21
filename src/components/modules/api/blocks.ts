@@ -29,6 +29,7 @@ export default class BlocksAPI extends Module {
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
+      update: this.update,
     };
   }
 
@@ -246,5 +247,33 @@ export default class BlocksAPI extends Module {
     _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
+  }
+
+  /**
+   * Updates block data by id
+   *
+   * @param id - id of the block to update
+   * @param data - the new data
+   */
+  public update = (id: string, data: BlockToolData): void => {
+    const { BlockManager } = this.Editor;
+    const block = BlockManager.getBlockById(id);
+
+    if (!block) {
+      _.log('blocks.update(): Block with passed id was not found', 'warn');
+
+      return;
+    }
+
+    const blockIndex = BlockManager.getBlockIndex(block);
+
+    BlockManager.insert({
+      id: block.id,
+      tool: block.name,
+      data,
+      index: blockIndex,
+      replace: true,
+      tunes: block.tunes,
+    });
   }
 }

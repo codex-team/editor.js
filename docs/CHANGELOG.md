@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.0
+
+- `New` - API method `blocks.update(id, data)` added.
+
 ### 2.21.0
 
 - `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
