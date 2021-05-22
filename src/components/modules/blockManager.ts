@@ -291,6 +291,9 @@ export default class BlockManager extends Module {
 
     this._blocks.insert(newIndex, block, replace);
 
+    /**
+     * Force call of didMutated event on Block insertion
+     */
     this.blockDidMutated(block);
 
     if (needToFocus) {
@@ -433,6 +436,9 @@ export default class BlockManager extends Module {
 
     this._blocks.remove(index);
 
+    /**
+     * Force call of didMutated event on Block removal
+     */
     this.blockDidMutated(blockToRemove);
 
     if (this.currentBlockIndex >= index) {
@@ -697,6 +703,9 @@ export default class BlockManager extends Module {
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
 
+    /**
+     * Force call of didMutated event on Block movement
+     */
     this.blockDidMutated(this.currentBlock);
   }
 
@@ -807,9 +816,7 @@ export default class BlockManager extends Module {
    * @param block - mutated block
    */
   private blockDidMutated(block: Block): Block {
-    if (_.isFunction(this.config.onChange)) {
-      this.config.onChange(this.Editor.API.methods, new BlockAPI(block));
-    }
+    this.Editor.ModificationsObserver.onChange(new BlockAPI(block));
 
     return block;
   }

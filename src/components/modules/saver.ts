@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import { OutputData } from '../../../types';
-import { ValidatedData } from '../../../types/data-formats';
+import {SavedData, ValidatedData} from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
 import { sanitizeBlocks } from '../utils/sanitizer';
@@ -28,22 +28,31 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager, Tools, ModificationsObserver } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
 
     try {
+      /**
+       * Disable onChange callback on save to not to spam those events
+       */
+      ModificationsObserver.disable();
+
       blocks.forEach((block: Block) => {
         chainData.push(this.getSavedData(block));
       });
 
-      const extractedData = await Promise.all(chainData);
+      const extractedData = await Promise.all(chainData) as Array<Pick<SavedData, 'data' | 'tool'>>;
       const sanitizedData = await sanitizeBlocks(extractedData, (name) => {
         return Tools.blockTools.get(name).sanitizeConfig;
       });
 
       return this.makeOutput(sanitizedData);
-    } catch (e) {}
+    } catch (e) {
+      _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
+    } finally {
+      ModificationsObserver.enable();
+    }
   }
 
   /**
