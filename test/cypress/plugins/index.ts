@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* tslint:disable:no-var-requires */
 /**
  * This file contains connection of Cypres plugins
@@ -6,7 +7,7 @@ const webpackConfig = require('../../../webpack.config.js');
 const preprocessor = require('@cypress/webpack-preprocessor');
 const codeCoverageTask = require('@cypress/code-coverage/task');
 
-module.exports = (on, config): any => {
+module.exports = (on, config): unknown => {
   /**
    * Add Cypress task to get code coverage
    */

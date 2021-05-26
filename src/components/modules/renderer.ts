@@ -48,7 +48,14 @@ export default class Renderer extends Module {
   public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
+    /**
+     * Disable onChange callback on render to not to spam those events
+     */
+    this.Editor.ModificationsObserver.disable();
+
     const sequence = await _.sequence(chainData as _.ChainData[]);
+
+    this.Editor.ModificationsObserver.enable();
 
     this.Editor.UI.checkEmptiness();
 

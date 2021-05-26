@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {API, LogLevels, OutputData} from '../index';
+import {API, BlockAPI, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
 
@@ -88,8 +88,9 @@ export interface EditorConfig {
   /**
    * Fires when something changed in DOM
    * @param {API} api - editor.js api
+   * @param block - changed block API
    */
-  onChange?(api: API): void;
+  onChange?(api: API, block: BlockAPI): void;
 
   /**
    * Defines default toolbar for all tools.
