@@ -367,6 +367,11 @@ export default class BlockManager extends Module {
 
     this._blocks[index] = block;
 
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(block);
+
     if (needToFocus) {
       this.currentBlockIndex = index;
     } else if (index <= this.currentBlockIndex) {

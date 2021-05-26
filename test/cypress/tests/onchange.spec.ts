@@ -97,6 +97,7 @@ describe('onChange callback', () => {
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-settings__button--delete')
+      .click()
       .click();
 
     cy.get('@onChange').should('be.called');
