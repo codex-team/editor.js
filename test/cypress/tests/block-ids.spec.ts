@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Header from '../../../example/tools/header';
 import { nanoid } from 'nanoid';
 

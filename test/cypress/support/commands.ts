@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * This file contains custom commands for Cypress.
  * Also it can override the existing commands.
@@ -40,7 +41,7 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
 /**
  * Paste command to dispatch paste event
  *
- * @usage
+ * Usage
  * cy.get('div').paste({'text/plain': 'Text', 'text/html': '<b>Text</b>'})
  *
  * @param data - map with MIME type as a key and data as value
@@ -66,7 +67,7 @@ Cypress.Commands.add('paste', {
 /**
  * Copy command to dispatch copy event on subject
  *
- * @usage
+ * Usage:
  * cy.get('div').copy().then(data => {})
  */
 Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
@@ -92,7 +93,7 @@ Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
 /**
  * Cut command to dispatch cut event on subject
  *
- * @usage
+ * Usage:
  * cy.get('div').cut().then(data => {})
  */
 Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {

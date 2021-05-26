@@ -9,10 +9,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import EventsDispatcher from '../../utils/events';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
-import BlockTool from '../../tools/block';
 
 /**
  * Inline Toolbar elements

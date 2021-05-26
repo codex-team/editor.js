@@ -2,6 +2,7 @@
 
 ### 2.22.0
 
+- `New` - `onChange` callback now receive Block API object of affected block
 - `New` - API method `blocks.update(id, data)` added.
 
 ### 2.21.0
