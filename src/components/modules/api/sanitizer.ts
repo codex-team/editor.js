@@ -11,7 +11,7 @@ export default class SanitizerAPI extends Module {
   /**
    * Available methods
    *
-   * @returns {Sanitizer}
+   * @returns {SanitizerConfig}
    */
   public get methods(): ISanitizer {
     return {

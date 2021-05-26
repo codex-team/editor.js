@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import { OutputData } from '../../../types';
-import {SavedData, ValidatedData} from '../../../types/data-formats';
+import { SavedData, ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
 import { sanitizeBlocks } from '../utils/sanitizer';

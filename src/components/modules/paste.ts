@@ -639,7 +639,7 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
-    const { BlockManager, Caret, Tools } = this.Editor;
+    const { BlockManager, Caret } = this.Editor;
     const { content } = dataToInsert;
 
     const currentBlockIsDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
