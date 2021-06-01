@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-ignore,@typescript-eslint/no-explicit-any,jsdoc/require-jsdoc */
 import Tools from '../../../../src/components/modules/tools';
 import { EditorConfig } from '../../../../types';
 import BlockTool from '../../../../src/components/tools/block';
@@ -86,8 +86,8 @@ describe('Tools module', () => {
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               public static prepare(): void {}
             } as any,
-            inlineToolbar: ['inlineTool2'],
-            tunes: ['blockTune2']
+            inlineToolbar: [ 'inlineTool2' ],
+            tunes: [ 'blockTune2' ],
           },
           withFailedPrepare: class {
             public static prepare(): void {

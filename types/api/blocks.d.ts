@@ -105,4 +105,12 @@ export interface Blocks {
     needToFocus?: boolean,
   ): void;
 
+
+  /**
+   * Updates block data by id
+   *
+   * @param id - id of the block to update
+   * @param data - the new data
+   */
+  update(id: string, data: BlockToolData): void;
 }
