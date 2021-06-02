@@ -290,18 +290,32 @@ export default class BlockEvents extends Module {
 
       const index = BlockManager.currentBlockIndex;
 
-      if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
-        /** If previous block doesn't contain inputs, remove it */
+      if (
+        BlockManager.previousBlock &&
+        BlockManager.previousBlock.inputs.length === 0 &&
+        !this.config.ignoreDeleteFullBlockByKey
+      ) {
+        /**
+         * If previous block doesn't contain inputs and deleting full blocks
+         * is allowed, remove it
+         */
         BlockManager.removeBlock(index - 1);
       } else {
         /** If block is empty, just remove it */
         BlockManager.removeBlock();
       }
 
-      Caret.setToBlock(
-        BlockManager.currentBlock,
-        index ? Caret.positions.END : Caret.positions.START
-      );
+      /**
+       * If remaining block has no input field, set caret to next block (if
+       * available)
+       */
+      const hasInput = BlockManager.currentBlock.inputs.length;
+      if (hasInput || BlockManager.nextBlock) {
+          Caret.setToBlock(
+            hasInput ? BlockManager.currentBlock : BlockManager.nextBlock,
+            index && hasInput ? Caret.positions.END : Caret.positions.START
+          );
+      }
 
       /** Close Toolbar */
       this.Editor.Toolbar.close();
@@ -359,7 +373,9 @@ export default class BlockEvents extends Module {
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
       /** If target Block doesn't contain inputs or empty, remove it */
       if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
-        BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
+        if (!this.config.ignoreDeleteFullBlockByKey || targetBlock.isEmpty) {
+          BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
+        }
 
         Caret.setToBlock(BlockManager.currentBlock);
         Toolbar.close();

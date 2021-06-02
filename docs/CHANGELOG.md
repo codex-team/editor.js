@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+- `New` - Config option `ignoreDeleteFullBlockByKey` to disable block deletion via backspace
+
 ### 2.22.0
 
 - `New` - `onChange` callback now receive Block API object of affected block
