@@ -101,4 +101,12 @@ export interface EditorConfig {
    * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
    */
   tunes?: string[];
+
+  /**
+   * If set to true, previous blocks with data will not be removed when
+   * backspace is hit at the beginning of a block. This is useful if you have
+   * "data" blocks which do not have input fields and don't want them to be
+   * accidentally removed by a keystroke.
+   */
+  ignoreDeleteFullBlockByKey?: boolean;
 }
