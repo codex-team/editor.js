@@ -112,7 +112,18 @@ export default class SelectionUtils {
    * @returns {boolean}
    */
   public static get isAtEditor(): boolean {
-    const selection = SelectionUtils.get();
+    return this.isSelectionAtEditor(SelectionUtils.get());
+  }
+
+  /**
+   * Check if passed selection is at Editor's zone
+   *
+   * @param selection - Selectoin object to check
+   */
+  public static isSelectionAtEditor(selection: Selection): boolean {
+    if (!selection) {
+      return false;
+    }
 
     /**
      * Something selected on document
@@ -132,7 +143,35 @@ export default class SelectionUtils {
     /**
      * SelectionUtils is not out of Editor because Editor's wrapper was found
      */
-    return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
+    return editorZone ? editorZone.nodeType === Node.ELEMENT_NODE : false;
+  }
+
+  /**
+   * Check if passed range at Editor zone
+   *
+   * @param range - range to check
+   */
+  public static isRangeAtEditor(range: Range): boolean {
+    if (!range) {
+      return;
+    }
+
+    let selectedNode = range.startContainer as HTMLElement;
+
+    if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+      selectedNode = selectedNode.parentNode as HTMLElement;
+    }
+
+    let editorZone = null;
+
+    if (selectedNode && selectedNode instanceof Element) {
+      editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
+    }
+
+    /**
+     * SelectionUtils is not out of Editor because Editor's wrapper was found
+     */
+    return editorZone ? editorZone.nodeType === Node.ELEMENT_NODE : false;
   }
 
   /**
@@ -150,8 +189,15 @@ export default class SelectionUtils {
    * @returns {Range|null}
    */
   public static get range(): Range | null {
-    const selection = window.getSelection();
+    return this.getRangeFromSelection(this.get());
+  }
 
+  /**
+   * Returns range from passed Selection object
+   *
+   * @param selection - Selection object to get Range from
+   */
+  public static getRangeFromSelection(selection: Selection): Range {
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 

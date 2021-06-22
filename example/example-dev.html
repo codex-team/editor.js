@@ -81,6 +81,7 @@
 
   <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
+  <script src="../../footnotes-tune/dist/bundle.js"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
   <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true;"></script>
@@ -114,6 +115,12 @@
        * Tools list
        */
       tools: {
+
+        footnote: FootnotesTune,
+
+        paragraph: {
+          tunes: ['footnote']
+        },
 
         /**
          * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
@@ -205,10 +212,15 @@
             }
           },
           {
-            type : 'paragraph',
-            id: "b6ji-DvaKb",
-            data : {
-              text : 'Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration.'
+            "id": "b6ji-DvaKb",
+            "type": "paragraph",
+            "data": {
+              "text": "Hey. Meet the new Editor. On this page you can see it in action<sup>1</sup> — try to edit this text. Source code of the page contains the example of connection and configuration."
+            },
+            "tunes": {
+              "footnote": [
+                "Hello world!"
+              ]
             }
           },
           {

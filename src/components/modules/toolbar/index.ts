@@ -5,7 +5,6 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import EventsDispatcher from '../../utils/events';
 import { EditorConfig } from '../../../../types';
 
 /**

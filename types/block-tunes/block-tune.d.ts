@@ -1,4 +1,4 @@
-import {API, BlockAPI, ToolConfig} from '../index';
+import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
 
 /**
@@ -10,7 +10,7 @@ export interface BlockTune {
    *
    * @return {HTMLElement}
    */
-  render(): HTMLElement;
+  render(selectedRange?: Range): HTMLElement;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.
@@ -40,6 +40,8 @@ export interface BlockTuneConstructable {
    * Flag show Tool is Block Tune
    */
   isTune: boolean;
+
+  sanitize?: SanitizerConfig;
 
   /**
    * @constructor
