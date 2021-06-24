@@ -208,17 +208,17 @@ describe('Tools module', () => {
       it('Block Tools should contain default tunes if no settings is specified', () => {
         const tool = module.blockTools.get('blockToolWithoutSettings');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain default tunes', () => {
         const tool = module.blockTools.get('blockTool');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain tunes in correct order', () => {
