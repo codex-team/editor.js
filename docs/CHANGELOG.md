@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.1
+
+- `Fix` — i18n for default tunes not working [#1661](https://github.com/codex-team/editor.js/issues/1661)
+
 ### 2.22.0
 
 - `New` - `onChange` callback now receive Block API object of affected block
