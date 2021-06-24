@@ -226,7 +226,7 @@ describe('Tools module', () => {
 
         expect(tool.tunes.has('blockTune')).to.be.true;
         expect(tool.tunes.has('blockTune2')).to.be.true;
-        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUpTune', 'deleteTune', 'moveDownTune']);
+        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUp', 'delete', 'moveDown']);
 
         tool = module.blockTools.get('withSuccessfulPrepare');
 
