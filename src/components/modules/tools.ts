@@ -212,15 +212,15 @@ export default class Tools extends Module {
         class: Stub,
         isInternal: true,
       },
-      moveUpTune: {
+      moveUp: {
         class: MoveUpTune,
         isInternal: true,
       },
-      deleteTune: {
+      delete: {
         class: DeleteTune,
         isInternal: true,
       },
-      moveDownTune: {
+      moveDown: {
         class: MoveDownTune,
         isInternal: true,
       },
