@@ -754,10 +754,19 @@ export default class UI extends Module<UINodes> {
     }
 
     /**
-     * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
-     * We need to skip such firings
+     * Usual clicks on some controls, for example, Block Tunes Toggler
      */
-    if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
+    if (!focusedElement) {
+      return;
+    }
+
+    /**
+     * Event can be fired on clicks at non-block-content elements,
+     * for example, at the Inline Toolbar or some Block Tune element
+     */
+    const clickedOutsideBlockContent = focusedElement.closest(`.${Block.CSS.content}`) === null;
+
+    if (clickedOutsideBlockContent) {
       /**
        * If new selection is not on Inline Toolbar, we need to close it
        */
@@ -765,7 +774,16 @@ export default class UI extends Module<UINodes> {
         this.Editor.InlineToolbar.close();
       }
 
-      return;
+      /**
+       * Case when we click on external tool elements,
+       * for example some Block Tune element.
+       * If this external content editable element has data-inline-toolbar="true"
+       */
+      const inlineToolbarEnabledForExternalTool = (focusedElement as HTMLElement).dataset.inlineToolbar === 'true';
+
+      if (!inlineToolbarEnabledForExternalTool) {
+        return;
+      }
     }
 
     /**
@@ -775,10 +793,12 @@ export default class UI extends Module<UINodes> {
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
 
+    const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
+
     /**
      * @todo add debounce
      */
-    this.Editor.InlineToolbar.tryToShow(true);
+    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
   }
 
   /**
