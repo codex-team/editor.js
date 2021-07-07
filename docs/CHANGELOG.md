@@ -1,5 +1,14 @@
 # Changelog
 
+### 2.22.1
+
+- `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
+
+### 2.22.0
+
+- `New` - `onChange` callback now receive Block API object of affected block
+- `New` - API method `blocks.update(id, data)` added.
+
 ### 2.21.0
 
 - `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)

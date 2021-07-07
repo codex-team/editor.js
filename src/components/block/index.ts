@@ -18,6 +18,7 @@ import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
+import EventsDispatcher from '../utils/events';
 
 /**
  * Interface describes Block class constructor argument
@@ -80,13 +81,18 @@ export enum BlockToolAPI {
 }
 
 /**
+ * Names of events supported by Block class
+ */
+type BlockEvents = 'didMutated';
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
-export default class Block {
+export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * CSS classes for the Block
    *
@@ -207,6 +213,8 @@ export default class Block {
     this.updateCurrentInput();
 
     this.call(BlockToolAPI.UPDATED);
+
+    this.emit('didMutated', this);
   }, this.modificationDebounceTimer);
 
   /**
@@ -230,6 +238,8 @@ export default class Block {
     readOnly,
     tunesData,
   }: BlockConstructorOptions) {
+    super();
+
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
@@ -680,6 +690,8 @@ export default class Block {
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    super.destroy();
+
     if (_.isFunction(this.toolInstance.destroy)) {
       this.toolInstance.destroy();
     }
@@ -777,6 +789,13 @@ export default class Block {
   private addInputEvents(): void {
     this.inputs.forEach(input => {
       input.addEventListener('focus', this.handleFocus);
+
+      /**
+       * If input is native input add oninput listener to observe changes
+       */
+      if ($.isNativeInput(input)) {
+        input.addEventListener('input', this.didMutated);
+      }
     });
   }
 
@@ -786,6 +805,10 @@ export default class Block {
   private removeInputEvents(): void {
     this.inputs.forEach(input => {
       input.removeEventListener('focus', this.handleFocus);
+
+      if ($.isNativeInput(input)) {
+        input.removeEventListener('input', this.didMutated);
+      }
     });
   }
 }

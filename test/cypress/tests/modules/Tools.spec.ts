@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-ignore,@typescript-eslint/no-explicit-any,jsdoc/require-jsdoc */
 import Tools from '../../../../src/components/modules/tools';
 import { EditorConfig } from '../../../../types';
 import BlockTool from '../../../../src/components/tools/block';
@@ -86,8 +86,8 @@ describe('Tools module', () => {
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               public static prepare(): void {}
             } as any,
-            inlineToolbar: ['inlineTool2'],
-            tunes: ['blockTune2']
+            inlineToolbar: [ 'inlineTool2' ],
+            tunes: [ 'blockTune2' ],
           },
           withFailedPrepare: class {
             public static prepare(): void {
@@ -208,17 +208,17 @@ describe('Tools module', () => {
       it('Block Tools should contain default tunes if no settings is specified', () => {
         const tool = module.blockTools.get('blockToolWithoutSettings');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain default tunes', () => {
         const tool = module.blockTools.get('blockTool');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain tunes in correct order', () => {
@@ -226,7 +226,7 @@ describe('Tools module', () => {
 
         expect(tool.tunes.has('blockTune')).to.be.true;
         expect(tool.tunes.has('blockTune2')).to.be.true;
-        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUpTune', 'deleteTune', 'moveDownTune']);
+        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUp', 'delete', 'moveDown']);
 
         tool = module.blockTools.get('withSuccessfulPrepare');
 

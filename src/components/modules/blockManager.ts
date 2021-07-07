@@ -13,6 +13,7 @@ import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BlockAPI from '../block/api';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -290,6 +291,11 @@ export default class BlockManager extends Module {
 
     this._blocks.insert(newIndex, block, replace);
 
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(block);
+
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
     } else if (newIndex <= this.currentBlockIndex) {
@@ -361,6 +367,11 @@ export default class BlockManager extends Module {
 
     this._blocks[index] = block;
 
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(block);
+
     if (needToFocus) {
       this.currentBlockIndex = index;
     } else if (index <= this.currentBlockIndex) {
@@ -426,7 +437,14 @@ export default class BlockManager extends Module {
       throw new Error('Can\'t find a Block to remove');
     }
 
+    const blockToRemove = this._blocks[index];
+
     this._blocks.remove(index);
+
+    /**
+     * Force call of didMutated event on Block removal
+     */
+    this.blockDidMutated(blockToRemove);
 
     if (this.currentBlockIndex >= index) {
       this.currentBlockIndex--;
@@ -522,13 +540,22 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Returns an index for passed Block
+   *
+   * @param block - block to find index
+   */
+  public getBlockIndex(block: Block): number {
+    return this._blocks.indexOf(block);
+  }
+
+  /**
    * Returns the Block by passed id
    *
    * @param id - id of block to get
    *
    * @returns {Block}
    */
-  public getBlockById(id): Block {
+  public getBlockById(id): Block | undefined {
     return this._blocks.array.find(block => block.id === id);
   }
 
@@ -689,6 +716,11 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    /**
+     * Force call of didMutated event on Block movement
+     */
+    this.blockDidMutated(this.currentBlock);
   }
 
   /**
@@ -754,6 +786,8 @@ export default class BlockManager extends Module {
     this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
       BlockEvents.dragLeave(event);
     });
+
+    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(affectedBlock));
   }
 
   /**
@@ -788,5 +822,16 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Block mutation callback
+   *
+   * @param block - mutated block
+   */
+  private blockDidMutated(block: Block): Block {
+    this.Editor.ModificationsObserver.onChange(new BlockAPI(block));
+
+    return block;
   }
 }

@@ -6,7 +6,6 @@ import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
 import Paste from '../components/modules/paste';
 import DragNDrop from '../components/modules/dragNDrop';
-import ModificationsObserver from '../components/modules/modificationsObserver';
 import Renderer from '../components/modules/renderer';
 import Tools from '../components/modules/tools';
 import API from '../components/modules/api/index';
@@ -32,6 +31,7 @@ import TooltipAPI from '../components/modules/api/tooltip';
 import ReadOnly from '../components/modules/readonly';
 import ReadOnlyAPI from '../components/modules/api/readonly';
 import I18nAPI from '../components/modules/api/i18n';
+import ModificationsObserver from '../components/modules/modificationsObserver';
 
 export interface EditorModules {
   UI: UI;
@@ -45,7 +45,6 @@ export interface EditorModules {
   ConversionToolbar: ConversionToolbar;
   Paste: Paste;
   DragNDrop: DragNDrop;
-  ModificationsObserver: ModificationsObserver;
   Renderer: Renderer;
   Tools: Tools;
   API: API;
@@ -68,4 +67,5 @@ export interface EditorModules {
   ReadOnly: ReadOnly;
   ReadOnlyAPI: ReadOnlyAPI;
   I18nAPI: I18nAPI;
+  ModificationsObserver: ModificationsObserver;
 }
