@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import { BlockToolData, ToolSettings } from '../../../../types';
 import { ToolType } from '../../../../src/components/tools/base';
