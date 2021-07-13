@@ -449,8 +449,21 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
+
+      const range = SelectionUtils.range;
+      const fakeCursor = $.make('span', 'ce-block__fake-cursor');
+
+      if (range && this.holder.contains(range.startContainer)) {
+        range.collapse();
+        range.insertNode(fakeCursor);
+      }
+
     } else {
       this.holder.classList.remove(Block.CSS.selected);
+
+      const fakeCursor = $.find(this.holder, '.ce-block__fake-cursor');
+
+      fakeCursor && fakeCursor.remove();
     }
   }
 

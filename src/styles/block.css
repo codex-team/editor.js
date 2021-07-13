@@ -75,6 +75,17 @@
   i {
     font-style: italic;
   }
+
+  &__fake-cursor {
+    display: inline-block;
+    height: 1.15em;
+    margin-bottom: -3px;
+    margin-right: -1px;
+
+    border-left: 1px solid black;
+
+    animation: blink 1s steps(2, start) infinite;
+  }
 }
 
 .codex-editor--narrow .ce-block--focused {

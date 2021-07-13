@@ -48,7 +48,7 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
     const pointerEnd = Dom.get(FakePointerID.End);
     const range = new Range();
 
-    if ((!pointerStart || !pointerEnd) && SelectionUtils.isAtEditor) {
+    if (!pointerStart || !pointerEnd || SelectionUtils.isAtEditor) {
       return SelectionUtils.range;
     }
 
