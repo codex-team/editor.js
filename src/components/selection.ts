@@ -35,6 +35,34 @@ interface Document {
  */
 export default class SelectionUtils {
   /**
+   * Selection instances
+   *
+   * @todo Check if this is still relevant
+   */
+  public instance: Selection = null;
+  public selection: Selection = null;
+
+  /**
+   * This property can store SelectionUtils's range for restoring later
+   *
+   * @type {Range|null}
+   */
+  public savedSelectionRange: Range = null;
+
+  /**
+   * Fake background is active
+   *
+   * @returns {boolean}
+   */
+  public isFakeBackgroundEnabled = false;
+
+  /**
+   * Native Document's commands for fake background
+   */
+  private readonly commandBackground: string = 'backColor';
+  private readonly commandRemoveFormat: string = 'removeFormat';
+
+  /**
    * Editor styles
    *
    * @returns {{editorWrapper: string, editorZone: string}}
@@ -282,34 +310,6 @@ export default class SelectionUtils {
   public static get text(): string {
     return window.getSelection ? window.getSelection().toString() : '';
   }
-
-  /**
-   * Selection instances
-   *
-   * @todo Check if this is still relevant
-   */
-  public instance: Selection = null;
-  public selection: Selection = null;
-
-  /**
-   * This property can store SelectionUtils's range for restoring later
-   *
-   * @type {Range|null}
-   */
-  public savedSelectionRange: Range = null;
-
-  /**
-   * Fake background is active
-   *
-   * @returns {boolean}
-   */
-  public isFakeBackgroundEnabled = false;
-
-  /**
-   * Native Document's commands for fake background
-   */
-  private readonly commandBackground: string = 'backColor';
-  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Returns window SelectionUtils

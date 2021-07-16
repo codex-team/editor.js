@@ -27,6 +27,7 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
 
   /**
    * Last selected range
+   *
    * @private
    */
   private lastRange: Range = null;
@@ -84,7 +85,7 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
   /**
    * Selection change event handler
    */
-  private onSelectionChange() {
+  private onSelectionChange(): void {
     if (!SelectionUtils.isAtEditor && SelectionUtils.isRangeAtEditor(this.lastRange)) {
       this.addFakePointer(this.lastRange);
     } else {

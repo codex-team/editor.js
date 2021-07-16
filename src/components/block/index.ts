@@ -457,7 +457,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         range.collapse();
         range.insertNode(fakeCursor);
       }
-
     } else {
       this.holder.classList.remove(Block.CSS.selected);
 
