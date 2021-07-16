@@ -208,17 +208,17 @@ describe('Tools module', () => {
       it('Block Tools should contain default tunes if no settings is specified', () => {
         const tool = module.blockTools.get('blockToolWithoutSettings');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain default tunes', () => {
         const tool = module.blockTools.get('blockTool');
 
-        expect(tool.tunes.has('deleteTune')).to.be.true;
-        expect(tool.tunes.has('moveUpTune')).to.be.true;
-        expect(tool.tunes.has('moveDownTune')).to.be.true;
+        expect(tool.tunes.has('delete')).to.be.true;
+        expect(tool.tunes.has('moveUp')).to.be.true;
+        expect(tool.tunes.has('moveDown')).to.be.true;
       });
 
       it('Block Tools should contain tunes in correct order', () => {
@@ -226,7 +226,7 @@ describe('Tools module', () => {
 
         expect(tool.tunes.has('blockTune')).to.be.true;
         expect(tool.tunes.has('blockTune2')).to.be.true;
-        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUpTune', 'deleteTune', 'moveDownTune']);
+        expect(Array.from(tool.tunes.keys())).to.be.deep.eq(['blockTune2', 'blockTune', 'moveUp', 'delete', 'moveDown']);
 
         tool = module.blockTools.get('withSuccessfulPrepare');
 
