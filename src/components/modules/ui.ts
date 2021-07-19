@@ -340,7 +340,7 @@ export default class UI extends Module<UINodes> {
       this.documentKeydown(event);
     }, true);
 
-    this.readOnlyMutableListeners.on(document, 'click', (event: MouseEvent) => {
+    this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);
 
@@ -591,9 +591,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Clear Selection if user clicked somewhere
      */
-    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -757,6 +755,16 @@ export default class UI extends Module<UINodes> {
      * Usual clicks on some controls, for example, Block Tunes Toggler
      */
     if (!focusedElement) {
+
+      /**
+       * If there is no selected range, close inline toolbar
+       *
+       * @todo Make this method more straightforward
+       */
+      if (!Selection.range) {
+        this.Editor.InlineToolbar.close();
+      }
+
       return;
     }
 

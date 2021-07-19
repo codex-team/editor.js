@@ -18,6 +18,8 @@ enum FakePointerID {
 
 /**
  * SelectionObserver class to work with selection events
+ *
+ * @todo Investigate fake pointer concept
  */
 class SelectionObserver extends EventsDispatcher<SelectionEvents> {
   /**
@@ -45,18 +47,21 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
    * Restore range from fake pointer
    */
   public getSelectedRange(): Range {
-    const pointerStart = Dom.get(FakePointerID.Start);
-    const pointerEnd = Dom.get(FakePointerID.End);
-    const range = new Range();
+    /**
+     * Comment fake pointer for now as it is not needed but might be useful in future
+     */
+    // const pointerStart = Dom.get(FakePointerID.Start);
+    // const pointerEnd = Dom.get(FakePointerID.End);
+    // const range = new Range();
+    //
+    // if (!pointerStart || !pointerEnd || SelectionUtils.isAtEditor) {
+    return SelectionUtils.range;
+    // }
 
-    if (!pointerStart || !pointerEnd || SelectionUtils.isAtEditor) {
-      return SelectionUtils.range;
-    }
-
-    range.setStartAfter(pointerStart);
-    range.setStartBefore(pointerEnd);
-
-    return range;
+    // range.setStartAfter(pointerStart);
+    // range.setStartBefore(pointerEnd);
+    //
+    // return range;
   }
 
   /**
@@ -71,13 +76,13 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
    *  Selection start event handler
    */
   private onSelectionStart(): void {
-    if (!SelectionUtils.isAtEditor) {
-      return;
-    }
-
-    this.removeFakePointer();
-
-    this.lastRange = SelectionUtils.range;
+    // if (!SelectionUtils.isAtEditor) {
+    //   return;
+    // }
+    //
+    // this.removeFakePointer();
+    //
+    // this.lastRange = SelectionUtils.range;
 
     this.emit('start', this.lastRange);
   }
@@ -86,13 +91,13 @@ class SelectionObserver extends EventsDispatcher<SelectionEvents> {
    * Selection change event handler
    */
   private onSelectionChange(): void {
-    if (!SelectionUtils.isAtEditor && SelectionUtils.isRangeAtEditor(this.lastRange)) {
-      this.addFakePointer(this.lastRange);
-    } else {
-      this.removeFakePointer();
-    }
-
-    this.lastRange = SelectionUtils.range;
+    // if (!SelectionUtils.isAtEditor && SelectionUtils.isRangeAtEditor(this.lastRange)) {
+    //   this.addFakePointer(this.lastRange);
+    // } else {
+    //   this.removeFakePointer();
+    // }
+    //
+    // this.lastRange = SelectionUtils.range;
 
     this.emit('change', this.lastRange);
   }

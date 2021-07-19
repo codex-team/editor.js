@@ -107,6 +107,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
+      fakeCursor: 'ce-block__fake-cursor'
     };
   }
 
@@ -202,7 +203,18 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = _.debounce((): void => {
+  private didMutated = _.debounce((mutations: MutationRecord[]): void => {
+
+    /**
+     * In case fake cursor is added or removed, do not trigger didMutated event
+     */
+    if (mutations.some(({ addedNodes = [], removedNodes }) => {
+      return [...Array.from(addedNodes), ...Array.from(removedNodes)]
+        .some(node => $.isElement(node) && node.matches(`.${Block.CSS.fakeCursor}`));
+    })) {
+      return;
+    }
+
     /**
      * Drop cache
      */
@@ -451,7 +463,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       this.holder.classList.add(Block.CSS.selected);
 
       const range = SelectionUtils.range;
-      const fakeCursor = $.make('span', 'ce-block__fake-cursor');
+      const fakeCursor = $.make('span', Block.CSS.fakeCursor);
 
       if (range && this.holder.contains(range.startContainer)) {
         range.collapse();
@@ -460,7 +472,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     } else {
       this.holder.classList.remove(Block.CSS.selected);
 
-      const fakeCursor = $.find(this.holder, '.ce-block__fake-cursor');
+      const fakeCursor = $.find(this.holder, `.${Block.CSS.fakeCursor}`);
 
       fakeCursor && fakeCursor.remove();
     }
