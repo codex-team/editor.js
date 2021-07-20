@@ -116,7 +116,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
-   * Returns sanitize configuration for Block Tool including conifgs from Inline Tools
+   * Returns sanitize configuration for Block Tool including configs from related Inline Tools and Block Tunes
    */
   @_.cacheable
   public get sanitizeConfig(): SanitizerConfig {

@@ -41,6 +41,9 @@ export interface BlockTuneConstructable {
    */
   isTune: boolean;
 
+  /**
+   * Tune's sanitize configuration
+   */
   sanitize?: SanitizerConfig;
 
   /**
