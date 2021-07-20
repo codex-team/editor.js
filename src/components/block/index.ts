@@ -19,7 +19,6 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import SelectionObserver from '../utils/selectionObserver';
 
 /**
  * Interface describes Block class constructor argument
@@ -655,7 +654,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const defaultTunesElement = document.createDocumentFragment();
 
     this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render(SelectionObserver.getSelectedRange()));
+      $.append(tunesElement, tune.render());
     });
     this.defaultTunesInstances.forEach((tune) => {
       $.append(defaultTunesElement, tune.render());

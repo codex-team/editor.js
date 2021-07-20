@@ -10,7 +10,7 @@ export interface BlockTune {
    *
    * @return {HTMLElement}
    */
-  render(selectedRange?: Range): HTMLElement;
+  render(): HTMLElement;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.
@@ -50,7 +50,7 @@ export interface BlockTuneConstructable {
    */
   new(config: {
     api: API,
-    settings?: ToolConfig,
+    config?: ToolConfig,
     block: BlockAPI,
     data: BlockTuneData,
   }): BlockTune;
