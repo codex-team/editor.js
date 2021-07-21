@@ -154,7 +154,7 @@ Please see more information at [sanitizer page](sanitizer.md).
 
 ```javascript
 class Tune {
-  static get reset() {
+  static get sanitize() {
     return {
       sup: true
     }
