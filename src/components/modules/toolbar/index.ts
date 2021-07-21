@@ -348,6 +348,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
   private enableModuleBindings(): void {
     /**
      * Settings toggler
+     *
+     * mousedown is used because on click selection is lost in Safari and FF
      */
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
       /**
