@@ -693,12 +693,12 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    const isClickedBottom = event.target instanceof Element
-      && event.target.isEqualNode(this.nodes.redactor)
+    const isClickedBottom = event.target instanceof Element &&
+      event.target.isEqualNode(this.nodes.redactor) &&
       /**
        * If there is cross block selection started, target will be equal to redactor so we need additional check
        */
-      && !BlockSelection.anyBlockSelected;
+      !BlockSelection.anyBlockSelected;
 
     if (isClickedBottom) {
       stopPropagation();
