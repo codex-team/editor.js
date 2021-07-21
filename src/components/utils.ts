@@ -429,14 +429,12 @@ export function isValidMimeType(type: string): boolean {
  * @param {boolean} immediate - call now
  * @returns {Function}
  */
-export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
+export function debounce(func: (...args: unknown[]) => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
-  return (): void => {
+  return (...args: unknown[]): void => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const context = this,
-        // eslint-disable-next-line prefer-rest-params
-        args = arguments;
+    const context = this;
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const later = () => {
