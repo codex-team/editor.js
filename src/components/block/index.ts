@@ -201,7 +201,19 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = _.debounce((): void => {
+  private didMutated = _.debounce((mutations: MutationRecord[]): void => {
+    const shouldFireUpdate = !mutations.some(({ addedNodes = [], removedNodes }) => {
+      return [...Array.from(addedNodes), ...Array.from(removedNodes)]
+        .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
+    });
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
     /**
      * Drop cache
      */
@@ -448,8 +460,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
+
+      SelectionUtils.addFakeCursor(this.holder);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
+
+      SelectionUtils.removeFakeCursor(this.holder);
     }
   }
 
