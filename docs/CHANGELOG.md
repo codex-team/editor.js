@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.2
+
+- `Fix` — Block's destroy method is called on block deletion
+
 ### 2.22.1
 
 - `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
