@@ -3,7 +3,6 @@
 ### 2.22.2
 
 - `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
-- `Improvement` — Now if Block selected with CBS fake cursor will appear to show the last caret position
 - `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
 - `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
 - `Fix` *Types* - Add common type for internal and external Tools configuration
