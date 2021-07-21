@@ -355,6 +355,36 @@ export default class SelectionUtils {
   }
 
   /**
+   * Adds fake cursor to the current range
+   *
+   * @param [container] - if passed cursor will be added only if container contains current range
+   */
+  public static addFakeCursor(container?: HTMLElement): void {
+    const range = SelectionUtils.range;
+    const fakeCursor = $.make('span', 'codex-editor__fake-cursor');
+
+    fakeCursor.dataset.mutationFree = 'true';
+
+    if (!range || (container && !container.contains(range.startContainer))) {
+      return;
+    }
+
+    range.collapse();
+    range.insertNode(fakeCursor);
+  }
+
+  /**
+   * Removes fake cursor from a container
+   *
+   * @param container - container to look for
+   */
+  public static removeFakeCursor(container: HTMLElement = document.body): void {
+    const fakeCursor = $.find(container, `.codex-editor__fake-cursor`);
+
+    fakeCursor && fakeCursor.remove();
+  }
+
+  /**
    * Removes fake background
    */
   public removeFakeBackground(): void {

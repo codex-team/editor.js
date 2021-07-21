@@ -106,7 +106,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
-      fakeCursor: 'ce-block__fake-cursor'
     };
   }
 
@@ -203,16 +202,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when DOM mutation has been happened
    */
   private didMutated = _.debounce((mutations: MutationRecord[]): void => {
-
-    const isFakeCursorToggled = mutations.some(({ addedNodes = [], removedNodes }) => {
+    const shouldFireUpdate = !mutations.some(({ addedNodes = [], removedNodes }) => {
       return [...Array.from(addedNodes), ...Array.from(removedNodes)]
-        .some(node => $.isElement(node) && node.matches(`.${Block.CSS.fakeCursor}`));
+        .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
     });
 
     /**
-     * In case fake cursor is added or removed, do not trigger didMutated event
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
      */
-    if (isFakeCursorToggled) {
+    if (!shouldFireUpdate) {
       return;
     }
 
@@ -463,11 +461,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
 
-      this.addFakeCursor();
+      SelectionUtils.addFakeCursor(this.holder);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
 
-      this.removeFakeCursor();
+      SelectionUtils.removeFakeCursor(this.holder);
     }
   }
 
@@ -828,31 +826,5 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         input.removeEventListener('input', this.didMutated);
       }
     });
-  }
-
-  /**
-   * Adds fake cursor to the current range
-   *
-   * @private
-   */
-  private addFakeCursor(): void {
-    const range = SelectionUtils.range;
-    const fakeCursor = $.make('span', Block.CSS.fakeCursor);
-
-    if (range && this.holder.contains(range.startContainer)) {
-      range.collapse();
-      range.insertNode(fakeCursor);
-    }
-  }
-
-  /**
-   * Removes fake cursor from Block's content
-   *
-   * @private
-   */
-  private removeFakeCursor(): void {
-    const fakeCursor = $.find(this.holder, `.${Block.CSS.fakeCursor}`);
-
-    fakeCursor && fakeCursor.remove();
   }
 }

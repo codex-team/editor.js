@@ -755,7 +755,6 @@ export default class UI extends Module<UINodes> {
      * Usual clicks on some controls, for example, Block Tunes Toggler
      */
     if (!focusedElement) {
-
       /**
        * If there is no selected range, close inline toolbar
        *
