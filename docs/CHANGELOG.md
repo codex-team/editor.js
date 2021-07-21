@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.2
+
+- `Fix` - Fix jump to the button of editor zone on CBS
+
 ### 2.22.1
 
 - `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
