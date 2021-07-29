@@ -32,7 +32,7 @@
       display: flex;
       align-content: center;
       margin: 0;
-      max-width: calc(100% - 35px);
+      width: calc(100% - 5px);
     }
   }
 
