@@ -1,4 +1,4 @@
-import {API, BlockAPI, ToolConfig} from '../index';
+import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
 
 /**
@@ -42,13 +42,18 @@ export interface BlockTuneConstructable {
   isTune: boolean;
 
   /**
+   * Tune's sanitize configuration
+   */
+  sanitize?: SanitizerConfig;
+
+  /**
    * @constructor
    *
    * @param config - Block Tune config
    */
   new(config: {
     api: API,
-    settings?: ToolConfig,
+    config?: ToolConfig,
     block: BlockAPI,
     data: BlockTuneData,
   }): BlockTune;

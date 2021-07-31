@@ -35,6 +35,34 @@ interface Document {
  */
 export default class SelectionUtils {
   /**
+   * Selection instances
+   *
+   * @todo Check if this is still relevant
+   */
+  public instance: Selection = null;
+  public selection: Selection = null;
+
+  /**
+   * This property can store SelectionUtils's range for restoring later
+   *
+   * @type {Range|null}
+   */
+  public savedSelectionRange: Range = null;
+
+  /**
+   * Fake background is active
+   *
+   * @returns {boolean}
+   */
+  public isFakeBackgroundEnabled = false;
+
+  /**
+   * Native Document's commands for fake background
+   */
+  private readonly commandBackground: string = 'backColor';
+  private readonly commandRemoveFormat: string = 'removeFormat';
+
+  /**
    * Editor styles
    *
    * @returns {{editorWrapper: string, editorZone: string}}
@@ -112,7 +140,18 @@ export default class SelectionUtils {
    * @returns {boolean}
    */
   public static get isAtEditor(): boolean {
-    const selection = SelectionUtils.get();
+    return this.isSelectionAtEditor(SelectionUtils.get());
+  }
+
+  /**
+   * Check if passed selection is at Editor's zone
+   *
+   * @param selection - Selectoin object to check
+   */
+  public static isSelectionAtEditor(selection: Selection): boolean {
+    if (!selection) {
+      return false;
+    }
 
     /**
      * Something selected on document
@@ -132,7 +171,35 @@ export default class SelectionUtils {
     /**
      * SelectionUtils is not out of Editor because Editor's wrapper was found
      */
-    return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
+    return editorZone ? editorZone.nodeType === Node.ELEMENT_NODE : false;
+  }
+
+  /**
+   * Check if passed range at Editor zone
+   *
+   * @param range - range to check
+   */
+  public static isRangeAtEditor(range: Range): boolean {
+    if (!range) {
+      return;
+    }
+
+    let selectedNode = range.startContainer as HTMLElement;
+
+    if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+      selectedNode = selectedNode.parentNode as HTMLElement;
+    }
+
+    let editorZone = null;
+
+    if (selectedNode && selectedNode instanceof Element) {
+      editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
+    }
+
+    /**
+     * SelectionUtils is not out of Editor because Editor's wrapper was found
+     */
+    return editorZone ? editorZone.nodeType === Node.ELEMENT_NODE : false;
   }
 
   /**
@@ -150,8 +217,15 @@ export default class SelectionUtils {
    * @returns {Range|null}
    */
   public static get range(): Range | null {
-    const selection = window.getSelection();
+    return this.getRangeFromSelection(this.get());
+  }
 
+  /**
+   * Returns range from passed Selection object
+   *
+   * @param selection - Selection object to get Range from
+   */
+  public static getRangeFromSelection(selection: Selection): Range {
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 
@@ -238,34 +312,6 @@ export default class SelectionUtils {
   }
 
   /**
-   * Selection instances
-   *
-   * @todo Check if this is still relevant
-   */
-  public instance: Selection = null;
-  public selection: Selection = null;
-
-  /**
-   * This property can store SelectionUtils's range for restoring later
-   *
-   * @type {Range|null}
-   */
-  public savedSelectionRange: Range = null;
-
-  /**
-   * Fake background is active
-   *
-   * @returns {boolean}
-   */
-  public isFakeBackgroundEnabled = false;
-
-  /**
-   * Native Document's commands for fake background
-   */
-  private readonly commandBackground: string = 'backColor';
-  private readonly commandRemoveFormat: string = 'removeFormat';
-
-  /**
    * Returns window SelectionUtils
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
    *
@@ -306,6 +352,36 @@ export default class SelectionUtils {
     selection.addRange(range);
 
     return range.getBoundingClientRect();
+  }
+
+  /**
+   * Adds fake cursor to the current range
+   *
+   * @param [container] - if passed cursor will be added only if container contains current range
+   */
+  public static addFakeCursor(container?: HTMLElement): void {
+    const range = SelectionUtils.range;
+    const fakeCursor = $.make('span', 'codex-editor__fake-cursor');
+
+    fakeCursor.dataset.mutationFree = 'true';
+
+    if (!range || (container && !container.contains(range.startContainer))) {
+      return;
+    }
+
+    range.collapse();
+    range.insertNode(fakeCursor);
+  }
+
+  /**
+   * Removes fake cursor from a container
+   *
+   * @param container - container to look for
+   */
+  public static removeFakeCursor(container: HTMLElement = document.body): void {
+    const fakeCursor = $.find(container, `.codex-editor__fake-cursor`);
+
+    fakeCursor && fakeCursor.remove();
   }
 
   /**

@@ -1,5 +1,14 @@
 # Changelog
 
+### 2.22.2
+
+- `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
+- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
+- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
+- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Fix` — Block's destroy method is called on block deletion
+- `Fix` - Fix jump to the button of editor zone on CBS
+
 ### 2.22.1
 
 - `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
