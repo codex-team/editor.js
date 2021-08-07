@@ -28,7 +28,7 @@
     "_tools:yarn": "git submodule foreach yarn",
     "_tools:build": "git submodule foreach yarn build",
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
-    "tools:update": "yarn _tools:checkout && yarn _tools:pull && _tools:make",
+    "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run"
   },
   "author": "CodeX",
