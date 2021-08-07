@@ -11,6 +11,7 @@ jobs:
       - run: yarn pull_tools && yarn tools:update
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: firefox
           build: yarn build
   chrome:
@@ -20,6 +21,7 @@ jobs:
       - run: yarn pull_tools && yarn tools:update
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: chrome
           build: yarn build
   edge:
@@ -29,5 +31,6 @@ jobs:
       - run: yarn pull_tools && yarn tools:update
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: edge
           build: yarn build
