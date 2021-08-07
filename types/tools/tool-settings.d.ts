@@ -21,7 +21,7 @@ export interface ToolboxConfig {
  *
  * @template Config - the structure describing a config object supported by the tool
  */
-export interface ToolSettings <Config extends object = any> {
+export interface ExternalToolSettings<Config extends object = any> {
 
   /**
    * Tool's class
@@ -40,6 +40,12 @@ export interface ToolSettings <Config extends object = any> {
   inlineToolbar?: boolean | string[];
 
   /**
+   * BlockTunes for Tool
+   * Can accept array of tune names or boolean.
+   */
+  tunes?: boolean | string[];
+
+  /**
    * Define shortcut that will render Tool
    */
   shortcut?: string;
@@ -50,3 +56,13 @@ export interface ToolSettings <Config extends object = any> {
    */
   toolbox?: ToolboxConfig | false;
 }
+
+/**
+ * For internal Tools 'class' property is optional
+ */
+export type InternalToolSettings<Config extends object = any> = Omit<ExternalToolSettings<Config>, 'class'> & Partial<Pick<ExternalToolSettings<Config>, 'class'>>;
+
+/**
+ * Union of external and internal Tools settings
+ */
+export type ToolSettings<Config extends object = any> = InternalToolSettings<Config> | ExternalToolSettings<Config>;

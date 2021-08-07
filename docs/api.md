@@ -77,6 +77,8 @@ use 'move' instead)
 
 `insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
 
+`update(id: string, data: BlockToolData)` - updates data for the block with passed id
+
 #### SanitizerAPI
 
 `clean(taintString, config)` - method uses HTMLJanitor to clean taint string.

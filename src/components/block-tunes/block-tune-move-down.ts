@@ -13,6 +13,11 @@ import { API, BlockTune } from '../../../types';
  */
 export default class MoveDownTune implements BlockTune {
   /**
+   * Set Tool is Tune
+   */
+  public static readonly isTune = true;
+
+  /**
    * Property that contains Editor.js API methods
    *
    * @see {@link docs/api.md}
@@ -58,7 +63,9 @@ export default class MoveDownTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'));
+    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'), {
+      hidingDelay: 300,
+    });
 
     return moveDownButton;
   }

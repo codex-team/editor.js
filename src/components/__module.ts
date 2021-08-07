@@ -93,8 +93,7 @@ export default class Module<T extends ModuleNodes = {}> {
   /**
    * @class
    *
-   * @param {EditorConfig} config - Editor's config
-   * @param {EventsDispatcher} eventsDispatcher - Editor's event dispatcher
+   * @param {ModuleConfig} - Module config
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     if (new.target === Module) {
