@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.23.0
+
+- `Improvements` - Vertical caret moving with UP or DOWN key [#857](https://github.com/codex-team/editor.js/issues/857).
+
 ### 2.22.2
 
 - `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
@@ -65,7 +69,6 @@
 - `Fix` - Editor Config now immutable [#1552](https://github.com/codex-team/editor.js/issues/1552).
 - `Refactoring` - Shortcuts module is util now.
 - `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).
-
 
 ### 2.19.1
 

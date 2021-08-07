@@ -24,6 +24,7 @@
   },
   "globals": {
     "Node": true,
+    "NodeFilter": true,
     "Range": true,
     "HTMLElement": true,
     "HTMLDivElement": true,

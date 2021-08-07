@@ -68,13 +68,12 @@
   <script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint-tools').hidden = true"></script><!-- Header -->
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
-  <!--  <script src="./tools/list/dist/bundle.js"></script> List -->
-  <script src="./tools/nested-list/dist/nested-list.js"></script><!-- Nested List -->
+  <script src="./tools/list/dist/bundle.js"></script> <!-- List -->
   <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
   <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
-  <script src="./tools/table/dist/bundle.js"></script><!-- Table -->
+  <script src="./tools/table/dist/table.js"></script><!-- Table -->
   <script src="./tools/link/dist/bundle.js"></script><!-- Link -->
   <script src="./tools/raw/dist/bundle.js"></script><!-- Raw -->
   <script src="./tools/warning/dist/bundle.js"></script><!-- Warning -->
@@ -132,7 +131,7 @@
         image: SimpleImage,
 
         list: {
-          class: NestedList,
+          class: List,
           inlineToolbar: true,
           shortcut: 'CMD+SHIFT+L'
         },
@@ -223,18 +222,9 @@
             id: "SSBSguGvP7",
             data : {
               items : [
-                {
-                  content: 'It is a block-styled editor',
-                  items: []
-                },
-                {
-                  content: 'It returns clean data output in JSON',
-                  items: []
-                },
-                {
-                  content: 'Designed to be extendable and pluggable with a simple API',
-                  items: []
-                }
+                'It is a block-styled editor',
+                'It returns clean data output in JSON',
+                'Designed to be extendable and pluggable with a simple API',
               ],
               style: 'unordered'
             }

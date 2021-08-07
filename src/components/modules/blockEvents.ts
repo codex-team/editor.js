@@ -5,6 +5,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
+import { Direction } from './caret';
 
 /**
  *
@@ -367,7 +368,7 @@ export default class BlockEvents extends Module {
         return;
       }
 
-      if (Caret.navigatePrevious()) {
+      if (Caret.navigatePrevious(Direction.Left)) {
         Toolbar.close();
       }
 
@@ -409,14 +410,14 @@ export default class BlockEvents extends Module {
 
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
-    if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
+    if (event.shiftKey && event.keyCode === Direction.Down && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState();
 
       return;
     }
 
-    const navigateNext = event.keyCode === _.keyCodes.DOWN || (event.keyCode === _.keyCodes.RIGHT && !this.isRtl);
-    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious();
+    const navigateNext = event.keyCode === Direction.Down || !this.isRtl;
+    const isNavigated = navigateNext ? this.Editor.Caret.navigateNext(event.keyCode) : this.Editor.Caret.navigatePrevious(Direction.Left);
 
     if (isNavigated) {
       /**
@@ -467,14 +468,14 @@ export default class BlockEvents extends Module {
 
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
-    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+    if (event.shiftKey && event.keyCode === Direction.Up && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
 
       return;
     }
 
-    const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
-    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();
+    const navigatePrevious = event.keyCode === Direction.Up || !this.isRtl;
+    const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious(event.keyCode) : this.Editor.Caret.navigateNext(Direction.Right);
 
     if (isNavigated) {
       /**
