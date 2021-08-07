@@ -25,6 +25,7 @@
     "pull_tools": "git submodule update --init --recursive",
     "tools:checkout": "git submodule foreach git checkout master",
     "tools:pull": "git submodule foreach git pull",
+    "tools:update": "yarn tools:checkout && yarn tools:pull",
     "test:e2e": "yarn build && cypress run"
   },
   "author": "CodeX",
