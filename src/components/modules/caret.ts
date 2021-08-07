@@ -14,6 +14,7 @@ import Module from '../__module';
 import Block from '../block';
 import $ from '../dom';
 import * as _ from '../utils';
+import SelectionUtils from '../selection';
 
 /**
  * The result of detection an next or previous line
@@ -33,6 +34,16 @@ interface Position {
    * The detected offset of the block or input
    */
   offset: number;
+}
+
+/**
+ * Enumeration of possible cursor directions
+ */
+export enum Direction {
+  Left = _.keyCodes.LEFT,
+  Up = _.keyCodes.UP,
+  Right = _.keyCodes.RIGHT,
+  Down = _.keyCodes.DOWN,
 }
 
 /**
@@ -235,6 +246,11 @@ export default class Caret extends Module {
   }
 
   /**
+   * Cache for last caret range bounding client rect
+   */
+  public lastCaretRect: DOMRect | null = null;
+
+  /**
    * Method gets Block instance and puts caret to the text node with offset
    * There two ways that method applies caret position:
    *   - first found text node: sets at the beginning, but you can pass an offset
@@ -257,7 +273,7 @@ export default class Caret extends Module {
         element = block.lastInput;
         break;
       default:
-        element = block.currentInput;
+        element = block.currentInput || block.firstInput;
     }
 
     if (!element) {
@@ -322,30 +338,29 @@ export default class Caret extends Module {
   public set(element: HTMLElement, offset = 0): void {
     const treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
 
-    let detectedNode = treeWalker.firstChild();
+    let detectedNode = treeWalker.firstChild() as Text;
     let detectedOffset = offset;
 
     while (detectedNode) {
-      if (!(detectedNode instanceof Text)) {
-        throw new Error('Unexpected node type');
-      }
-
       if (detectedNode.length >= detectedOffset) {
         break;
       }
 
       detectedOffset -= detectedNode.length;
-      detectedNode = treeWalker.nextNode();
+      detectedNode = treeWalker.nextNode() as Text;
     }
 
-    if (!detectedNode) {
-      throw new Error('Out of range');
-    }
+    let position: DOMRect;
 
-    const { top, bottom } = Selection.setCursor(detectedNode as HTMLElement, detectedOffset);
+    if (detectedNode) {
+      position = Selection.setCursor(detectedNode, detectedOffset);
+    } else if ($.isNativeInput(element) || $.isContentEditable(element)) {
+      position = Selection.setCursor(element, offset);
+    }
 
     /** If new cursor position is not visible, scroll to it */
     const { innerHeight } = window;
+    const { top, bottom } = position;
 
     if (top < 0) {
       window.scrollBy(0, top);
@@ -360,6 +375,8 @@ export default class Caret extends Module {
    * If last block is not empty, append another empty block
    */
   public setToTheLastBlock(): void {
+    this.lastCaretRect = null;
+
     const lastBlock = this.Editor.BlockManager.lastBlock;
 
     if (!lastBlock) {
@@ -429,12 +446,19 @@ export default class Caret extends Module {
    *
    * @returns {boolean}
    */
-  public navigateNext(direction: 'down' | 'right'): boolean {
-    const shouldNavigateToNext = this.isAtEnd || (direction === 'down' && !this.isLineExisted('next'));
+  public navigateNext(direction: Direction): boolean {
+    const shouldNavigateToNext = this.isAtEnd || (direction === Direction.Down && !this.doesLineExist('next'));
+
+    if (direction === Direction.Right || !this.lastCaretRect) {
+      const range = SelectionUtils.range;
+
+      this.lastCaretRect = range?.getBoundingClientRect() || null;
+    }
+
     const next = shouldNavigateToNext && this.detectNextLinePosition();
 
     if (next) {
-      const offset = direction === 'down' ? next.offset : 0;
+      const offset = direction === Direction.Down ? next.offset : 0;
 
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (next.input) {
@@ -458,12 +482,19 @@ export default class Caret extends Module {
    *
    * @returns {boolean}
    */
-  public navigatePrevious(direction: 'left' | 'up'): boolean {
-    const shouldNavigateToPrevious = this.isAtStart || (direction === 'up' && !this.isLineExisted('previous'));
+  public navigatePrevious(direction: Direction): boolean {
+    const shouldNavigateToPrevious = this.isAtStart || (direction === Direction.Up && !this.doesLineExist('previous'));
+
+    if (direction === Direction.Left || !this.lastCaretRect) {
+      const range = SelectionUtils.range;
+
+      this.lastCaretRect = range?.getBoundingClientRect() || null;
+    }
+
     const previous = shouldNavigateToPrevious && this.detectPreviousLinePosition();
 
     if (previous) {
-      const position = direction === 'up' ? this.positions.DEFAULT : this.positions.END;
+      const position = direction === Direction.Up ? this.positions.DEFAULT : this.positions.END;
 
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (previous.input) {
@@ -611,14 +642,8 @@ export default class Caret extends Module {
    * @param {HTMLElement | undefined} input - next or previous Tool's input
    */
   private detectPosition(direction: 'next' | 'previous', block: Block, input?: HTMLElement): Position {
-    const caretBoundingClientRect = Selection.get().getRangeAt(0)
-      .getBoundingClientRect();
-
-    const range = new Range();
+    const caretRange = SelectionUtils.range;
     const root = input ?? block.firstInput;
-
-    let offset = direction === 'next' ? 0 : root.textContent.length - 1;
-    let previousBoundingClientRect: DOMRect | undefined;
 
     let position = {
       block,
@@ -626,19 +651,32 @@ export default class Caret extends Module {
       offset: direction === 'next' ? root.textContent.length : 0,
     };
 
+    if (!caretRange) {
+      return position;
+    }
+
+    const caretBoundingClientRect = this.lastCaretRect || caretRange.getBoundingClientRect();
+
+    const range = new Range();
+
+    let offset = direction === 'next' ? 0 : root.textContent.length - 1;
+    let previousBoundingClientRect: DOMRect | undefined;
+
+    const getXOffset = (rectWidth: number): number => direction === 'previous' ? rectWidth : 0;
+
     /**
      * Detect the nearest offset by horizontal position
      */
     this.walkTextNodeChars(root, direction, (textNode, index) => {
       range.setStart(textNode, index);
-      range.setEnd(textNode, index + 1);
+      range.setEnd(textNode, index);
 
       const currentBoundingClientRect = range.getBoundingClientRect();
 
       if (previousBoundingClientRect) {
-        const caretX = caretBoundingClientRect.x + (direction === 'previous' ? caretBoundingClientRect.width : 0);
-        const currentX = currentBoundingClientRect.x + (direction === 'previous' ? currentBoundingClientRect.width : 0);
-        const previousX = previousBoundingClientRect.x + (direction === 'previous' ? previousBoundingClientRect.width : 0);
+        const caretX = caretBoundingClientRect.x + getXOffset(caretBoundingClientRect.width);
+        const currentX = currentBoundingClientRect.x + getXOffset(currentBoundingClientRect.width);
+        const previousX = previousBoundingClientRect.x + getXOffset(previousBoundingClientRect.width);
 
         if (Math.abs(caretX - previousX) < Math.abs(caretX - currentX)) {
           let detectedOffset = offset + (direction === 'next' ? -1 : 1);
@@ -714,41 +752,28 @@ export default class Caret extends Module {
   }
 
   /**
-   * Judge if next or previous line is existed
+   * Judge if next or previous line exists
    *
    * @param {'next' | 'previous'} direction - the direction of searching
    */
-  private isLineExisted(direction: 'next' | 'previous'): boolean {
-    const { BlockManager } = this.Editor;
-    const range = new Range();
+  private doesLineExist(direction: 'next' | 'previous'): boolean {
+    const { currentBlock } = this.Editor.BlockManager;
+    const range = SelectionUtils.range;
 
-    const caretBoundingClientRect = Selection.get().getRangeAt(0)
-      .getBoundingClientRect();
-
-    const isBroken = this.walkTextNodeChars(BlockManager.currentBlock.currentInput, direction, (textNode, index) => {
-      range.setStart(textNode, index);
-      range.setEnd(textNode, index + 1);
-
-      const boundingClientRect = range.getBoundingClientRect();
-
-      /**
-       * Search an next line by finding a character below the caret.
-       */
-      if (direction === 'next' && caretBoundingClientRect.y < boundingClientRect.y) {
-        return true;
-      }
-
-      /**
-       * Search a previous line by finding a character above the caret.
-       */
-      if (direction === 'previous' && boundingClientRect.y < caretBoundingClientRect.y) {
-        return true;
-      }
-
+    if (!range) {
       return false;
-    });
+    }
 
-    return isBroken;
+    const referenceRange = new Range();
+    const deepestTextNode = $.getDeepestTextNode(currentBlock.currentInput, direction === 'next');
+
+    referenceRange.selectNodeContents(deepestTextNode);
+    referenceRange.collapse(direction === 'previous');
+
+    const { y: currentY } = range.getBoundingClientRect();
+    const { y: referenceY } = referenceRange.getBoundingClientRect();
+
+    return currentY !== referenceY;
   }
 
   /**
@@ -763,13 +788,9 @@ export default class Caret extends Module {
   private walkTextNodeChars(root: Node, direction: 'next' | 'previous', callback: (textNode: Text, index: number) => boolean): boolean {
     const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
-    let node = direction === 'next' ? treeWalker.firstChild() : treeWalker.lastChild();
+    let node = (direction === 'next' ? treeWalker.firstChild() : treeWalker.lastChild()) as Text;
 
     while (node) {
-      if (!(node instanceof Text)) {
-        throw new Error('Unexpected node type');
-      }
-
       let index = direction === 'next' ? 0 : node.length - 1;
 
       while (direction === 'next' ? index < node.length : index >= 0) {
@@ -782,7 +803,7 @@ export default class Caret extends Module {
         direction === 'next' ? index++ : index--;
       }
 
-      node = direction === 'next' ? treeWalker.nextNode() : treeWalker.previousNode();
+      node = (direction === 'next' ? treeWalker.nextNode() : treeWalker.previousNode()) as Text;
     }
 
     return false;

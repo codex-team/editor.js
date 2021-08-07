@@ -612,4 +612,16 @@ export default class Dom {
   public static isAnchor(element: Element): element is HTMLAnchorElement {
     return element.tagName.toLowerCase() === 'a';
   }
+
+  /**
+   * Returns deepest first or last Text node of parent node
+   *
+   * @param parent - node to search
+   * @param atEnd - if true, search from end
+   */
+  public static getDeepestTextNode(parent: Node, atEnd = false): Text {
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+
+    return (atEnd ? walker.lastChild() : walker.firstChild()) as Text;
+  }
 }

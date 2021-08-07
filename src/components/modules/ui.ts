@@ -627,6 +627,14 @@ export default class UI extends Module<UINodes> {
        */
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
+
+      /**
+       * Clear last caret bounding client rect
+       *
+       * @todo Think how to keep this logic inside Caret class
+       */
+      this.Editor.Caret.lastCaretRect = null;
+
       /**
        * Highlight Current Node
        */
