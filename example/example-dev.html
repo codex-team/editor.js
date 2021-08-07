@@ -27,6 +27,11 @@
       </div>
     </div>
     <div class="ce-example__content _ce-example__content--small">
+
+      <div contenteditable="" style="border: 1px solid #ccc; height: 100px; outline: none; padding: 25px; margin: 100px" id="it-test">
+        Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration.
+      </div>
+
       <div id="editorjs"></div>
       <div id="hint-core" style="text-align: center;">
         No core bundle file found. Run <code class="inline-code">yarn build</code>
@@ -68,8 +73,7 @@
   <script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint-tools').hidden = true"></script><!-- Header -->
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
-  <!--  <script src="./tools/list/dist/bundle.js"></script> List -->
-  <script src="./tools/nested-list/dist/nested-list.js"></script><!-- Nested List -->
+  <script src="./tools/list/dist/bundle.js"></script> <!-- List-->
   <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
@@ -132,7 +136,7 @@
         image: SimpleImage,
 
         list: {
-          class: NestedList,
+          class: List,
           inlineToolbar: true,
           shortcut: 'CMD+SHIFT+L'
         },
@@ -223,18 +227,9 @@
             id: "SSBSguGvP7",
             data : {
               items : [
-                {
-                  content: 'It is a block-styled editor',
-                  items: []
-                },
-                {
-                  content: 'It returns clean data output in JSON',
-                  items: []
-                },
-                {
-                  content: 'Designed to be extendable and pluggable with a simple API',
-                  items: []
-                }
+                'It is a block-styled editor',
+                'It returns clean data output in JSON',
+                  'Designed to be extendable and pluggable with a simple API',
               ],
               style: 'unordered'
             }
@@ -317,6 +312,10 @@
       },
       onReady: function(){
         saveButton.click();
+
+        const textarea = document.getElementById('it-test');
+
+        editor.inlineToolbar.bind(textarea, ['link', 'italic', 'marker']);
       },
       onChange: function(api, block) {
         console.log('something changed', block);

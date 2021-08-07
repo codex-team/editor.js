@@ -19,6 +19,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
+import InlineToolbar from "../utils/inlineToolbar";
 
 /**
  * Interface describes Block class constructor argument
@@ -93,6 +94,7 @@ type BlockEvents = 'didMutated';
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block extends EventsDispatcher<BlockEvents> {
+  private inlineToolbar: InlineToolbar;
   /**
    * CSS classes for the Block
    *
@@ -272,6 +274,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.composeTunes(tunesData);
 
     this.holder = this.compose();
+
+    this.prepareInlineToolbar();
   }
 
   /**
@@ -759,6 +763,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     wrapper.appendChild(wrappedContentNode);
 
     return wrapper;
+  }
+
+  private prepareInlineToolbar(){
+    this.inlineToolbar = new InlineToolbar({
+      element: this.holder,
+      isRtl: false, // todo
+      tools: this.tool.inlineTools,
+    });
   }
 
   /**
