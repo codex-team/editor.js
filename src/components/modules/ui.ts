@@ -340,7 +340,7 @@ export default class UI extends Module<UINodes> {
       this.documentKeydown(event);
     }, true);
 
-    this.readOnlyMutableListeners.on(document, 'click', (event: MouseEvent) => {
+    this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);
 
@@ -591,9 +591,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Clear Selection if user clicked somewhere
      */
-    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -664,6 +662,8 @@ export default class UI extends Module<UINodes> {
    *      - otherwise, add a new empty Block and set a Caret to that
    */
   private redactorClicked(event: MouseEvent): void {
+    const { BlockSelection } = this.Editor;
+
     if (!Selection.isCollapsed) {
       return;
     }
@@ -691,10 +691,33 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    if (!this.Editor.BlockManager.currentBlock) {
+    const isClickedBottom = event.target instanceof Element &&
+      event.target.isEqualNode(this.nodes.redactor) &&
+      /**
+       * If there is cross block selection started, target will be equal to redactor so we need additional check
+       */
+      !BlockSelection.anyBlockSelected;
+
+    if (isClickedBottom) {
       stopPropagation();
 
-      this.Editor.BlockManager.insert();
+      const { BlockManager, Caret, Toolbar } = this.Editor;
+
+      /**
+       * Insert a default-block at the bottom if:
+       * - last-block is not a default-block (Text)
+       *   to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+       * - Or, default-block is not empty
+       */
+      if (!BlockManager.lastBlock.tool.isDefault || !BlockManager.lastBlock.isEmpty) {
+        BlockManager.insertAtEnd();
+      }
+
+      /**
+       * Set the caret and toolbar to empty Block
+       */
+      Caret.setToTheLastBlock();
+      Toolbar.move();
     }
 
     /**
@@ -702,7 +725,7 @@ export default class UI extends Module<UINodes> {
      * - Block is an default-block (Text)
      * - Block is empty
      */
-    const isDefaultBlock = this.Editor.Tools.isDefault(this.Editor.BlockManager.currentBlock.tool);
+    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
 
     if (isDefaultBlock) {
       stopPropagation();
@@ -736,10 +759,28 @@ export default class UI extends Module<UINodes> {
     }
 
     /**
-     * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
-     * We need to skip such firings
+     * Usual clicks on some controls, for example, Block Tunes Toggler
      */
-    if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
+    if (!focusedElement) {
+      /**
+       * If there is no selected range, close inline toolbar
+       *
+       * @todo Make this method more straightforward
+       */
+      if (!Selection.range) {
+        this.Editor.InlineToolbar.close();
+      }
+
+      return;
+    }
+
+    /**
+     * Event can be fired on clicks at non-block-content elements,
+     * for example, at the Inline Toolbar or some Block Tune element
+     */
+    const clickedOutsideBlockContent = focusedElement.closest(`.${Block.CSS.content}`) === null;
+
+    if (clickedOutsideBlockContent) {
       /**
        * If new selection is not on Inline Toolbar, we need to close it
        */
@@ -747,7 +788,16 @@ export default class UI extends Module<UINodes> {
         this.Editor.InlineToolbar.close();
       }
 
-      return;
+      /**
+       * Case when we click on external tool elements,
+       * for example some Block Tune element.
+       * If this external content editable element has data-inline-toolbar="true"
+       */
+      const inlineToolbarEnabledForExternalTool = (focusedElement as HTMLElement).dataset.inlineToolbar === 'true';
+
+      if (!inlineToolbarEnabledForExternalTool) {
+        return;
+      }
     }
 
     /**
@@ -757,10 +807,12 @@ export default class UI extends Module<UINodes> {
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
 
+    const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
+
     /**
      * @todo add debounce
      */
-    this.Editor.InlineToolbar.tryToShow(true);
+    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
   }
 
   /**

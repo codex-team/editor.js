@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {API, LogLevels, OutputData} from '../index';
+import {API, BlockAPI, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
 
@@ -53,7 +53,9 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+  tools?: {
+    [toolName: string]: ToolConstructable|ToolSettings;
+  }
 
   /**
    * Data to render on Editor start
@@ -88,11 +90,17 @@ export interface EditorConfig {
   /**
    * Fires when something changed in DOM
    * @param {API} api - editor.js api
+   * @param block - changed block API
    */
-  onChange?(api: API): void;
+  onChange?(api: API, block: BlockAPI): void;
 
   /**
    * Defines default toolbar for all tools.
    */
   inlineToolbar?: string[]|boolean;
+
+  /**
+   * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
+   */
+  tunes?: string[];
 }

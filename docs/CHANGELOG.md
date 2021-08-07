@@ -1,8 +1,50 @@
 # Changelog
 
-### 2.19.4
+### 2.23.0
 
 - `Improvements` - Vertical caret moving with UP or DOWN key [#857](https://github.com/codex-team/editor.js/issues/857).
+
+### 2.22.2
+
+- `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
+- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
+- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
+- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Fix` — Block's destroy method is called on block deletion
+- `Fix` - Fix jump to the button of editor zone on CBS
+
+### 2.22.1
+
+- `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
+
+### 2.22.0
+
+- `New` - `onChange` callback now receive Block API object of affected block
+- `New` - API method `blocks.update(id, data)` added.
+
+### 2.21.0
+
+- `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
+
+### 2.20.2
+
+- `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)
+- `Fix` - Prevent the leak of codex-tooltip when Editor.js is destroyed [#1475](https://github.com/codex-team/editor.js/issues/1475).
+- `Refactoring` - Notifier module now is a util.
+
+### 2.20.1
+
+- `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).
+- `Fix` — Fix sanitisation problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
+- `Fix` — Fix copy in FireFox [1625](https://github.com/codex-team/editor.js/issues/1625)
+- `Refactoring` - The Sanitizer module is util now.
+- `Refactoring` - Tooltip module is util now.
+- `Refactoring` — Refactoring based on LGTM [#1577](https://github.com/codex-team/editor.js/issues/1577).
+- `Refactoring` — Refactoring based on ESLint [#1636](https://github.com/codex-team/editor.js/issues/1636).
+
+### 2.20.0
+
+- `New` — [Block Tunes API](block-tunes.md) added
 
 ### 2.19.3
 
@@ -10,7 +52,7 @@
 
 ### 2.19.2
 
-- `New` -  `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
+- `New` - `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
 - `Improvements` - A generic type for Tool config added [#1516](https://github.com/codex-team/editor.js/issues/1516)
 - `Improvements` - Remove unused `force` option in `Caret.navigateNext()` and `Caret.navigatePrevious()` [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
 - `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).

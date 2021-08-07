@@ -23,11 +23,13 @@ export default class BlocksAPI extends Module {
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
+      getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
+      update: this.update,
     };
   }
 
@@ -61,6 +63,23 @@ export default class BlocksAPI extends Module {
       _.logLabeled('There is no block at index `' + index + '`', 'warn');
 
       return;
+    }
+
+    return new BlockAPI(block);
+  }
+
+  /**
+   * Returns BlockAPI object by Block id
+   *
+   * @param id - id of block to get
+   */
+  public getById(id: string): BlockAPIInterface | null {
+    const block = this.Editor.BlockManager.getBlockById(id);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block with id `' + id + '`', 'warn');
+
+      return null;
     }
 
     return new BlockAPI(block);
@@ -228,5 +247,33 @@ export default class BlocksAPI extends Module {
     _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
     this.insert();
+  }
+
+  /**
+   * Updates block data by id
+   *
+   * @param id - id of the block to update
+   * @param data - the new data
+   */
+  public update = (id: string, data: BlockToolData): void => {
+    const { BlockManager } = this.Editor;
+    const block = BlockManager.getBlockById(id);
+
+    if (!block) {
+      _.log('blocks.update(): Block with passed id was not found', 'warn');
+
+      return;
+    }
+
+    const blockIndex = BlockManager.getBlockIndex(block);
+
+    BlockManager.insert({
+      id: block.id,
+      tool: block.name,
+      data,
+      index: blockIndex,
+      replace: true,
+      tunes: block.tunes,
+    });
   }
 }

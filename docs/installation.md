@@ -193,7 +193,7 @@ var editor = new EditorJS({
    /**
     * onChange callback
     */
-   onChange: () => {console.log('Now I know that Editor\'s content changed!')}
+   onChange: (editorAPI, affectedBlockAPI) => {console.log('Now I know that Editor\'s content changed!')}
 });
 ```
 

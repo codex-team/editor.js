@@ -370,7 +370,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isDefault(lastBlock.tool) && lastBlock.isEmpty) {
+    if (lastBlock.tool.isDefault && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -562,7 +562,7 @@ export default class Caret extends Module {
    * Detect an next line position from the caret position
    */
   private detectNextLinePosition(): Position | false {
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager } = this.Editor;
 
     const nextInput = BlockManager.currentBlock.nextInput;
     let nextBlock = BlockManager.nextContentfulBlock;
@@ -573,7 +573,7 @@ export default class Caret extends Module {
        * This code allows to exit from the last non-initial tool:
        * https://github.com/codex-team/editor.js/issues/1103
        */
-      if (Tools.isDefault(BlockManager.currentBlock.tool)) {
+      if (BlockManager.currentBlock.tool.isDefault) {
         return false;
       }
 
