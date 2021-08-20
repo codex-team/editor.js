@@ -1,12 +1,12 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
 import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Block from '../../block';
+import { clean } from '../../utils/sanitizer';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -75,7 +75,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   public make(): HTMLElement {
     this.nodes.wrapper = $.make('div', [
       ConversionToolbar.CSS.conversionToolbarWrapper,
-      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+      ...(this.isRtl ? [this.Editor.UI.CSS.editorRtlFix] : []),
     ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
@@ -252,7 +252,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = this.Editor.Sanitizer.clean(
+    const cleaned: string = clean(
       exportData,
       replacingTool.sanitizeConfig
     );
@@ -302,7 +302,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      *
      * @type {BlockToolConstructable}
      */
-    const selectedBlocks = [ ...this.selectedBlocks ];
+    const selectedBlocks = [...this.selectedBlocks];
     const blocksData = await Promise.all(selectedBlocks.map(async (block) => {
       const savedBlock = await block.save();
 
@@ -453,8 +453,8 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * @param {string} title - button title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
-    const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
-    const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
+    const tool = $.make('div', [ConversionToolbar.CSS.conversionTool]);
+    const icon = $.make('div', [ConversionToolbar.CSS.conversionToolIcon]);
 
     tool.dataset.tool = toolName;
     icon.innerHTML = toolIcon;

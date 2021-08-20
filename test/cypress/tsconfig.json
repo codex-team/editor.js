@@ -4,7 +4,8 @@
       "lib": ["dom", "es2017", "es2018"],
       "moduleResolution": "node",
       "resolveJsonModule": true,
-      "allowSyntheticDefaultImports": true
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true
     },
     "include": [
       "../../**/*.ts"

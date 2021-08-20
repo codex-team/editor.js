@@ -55,6 +55,12 @@ export interface Blocks {
   getBlockByIndex(index: number): BlockAPI | void;
 
   /**
+   * Returns Block API object by passed Block id
+   * @param id - id of the block
+   */
+  getById(id: string): BlockAPI | null;
+
+  /**
    * Returns current Block index
    * @returns {number}
    */
@@ -99,4 +105,12 @@ export interface Blocks {
     needToFocus?: boolean,
   ): void;
 
+
+  /**
+   * Updates block data by id
+   *
+   * @param id - id of the block to update
+   * @param data - the new data
+   */
+  update(id: string, data: BlockToolData): void;
 }

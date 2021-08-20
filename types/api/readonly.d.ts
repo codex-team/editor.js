@@ -9,4 +9,9 @@ export interface ReadOnly {
    * @returns {Promise<boolean>} current value
    */
   toggle: (state?: boolean) => Promise<boolean>;
+
+  /**
+   * Contains current read-only state
+   */
+  isEnabled: boolean;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.20.0",
+  "version": "2.22.2",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -23,8 +23,13 @@
     "lint:tests": "eslint test/ --ext .ts",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
-    "checkout_tools": "git submodule foreach git pull origin master",
-    "test:e2e": "cypress run"
+    "_tools:checkout": "git submodule foreach git checkout master",
+    "_tools:pull": "git submodule foreach git pull",
+    "_tools:yarn": "git submodule foreach yarn",
+    "_tools:build": "git submodule foreach yarn build",
+    "_tools:make": "yarn _tools:yarn && yarn _tools:build",
+    "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
+    "test:e2e": "yarn build && cypress run"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -54,6 +59,7 @@
     "css-loader": "^3.5.3",
     "cssnano": "^4.1.10",
     "cypress": "^6.8.0",
+    "cypress-intellij-reporter": "^0.0.6",
     "eslint": "^6.8.0",
     "eslint-config-codex": "^1.3.3",
     "eslint-loader": "^4.0.2",
@@ -86,6 +92,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.1"
+    "codex-tooltip": "^1.0.2",
+    "nanoid": "^3.1.22"
   }
 }

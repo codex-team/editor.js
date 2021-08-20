@@ -1,6 +1,4 @@
 /* eslint-disable jsdoc/no-undefined-types */
-import Module from '../__module';
-
 /**
  * Use external module CodeX Tooltip
  */
@@ -11,13 +9,20 @@ import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
  *
  * Decorates any tooltip module like adapter
  */
-export default class Tooltip extends Module {
+export default class Tooltip {
   /**
    * Tooltips lib: CodeX Tooltips
    *
    * @see https://github.com/codex-team/codex.tooltips
    */
   private lib: CodeXTooltips = new CodeXTooltips();
+
+  /**
+   * Release the library
+   */
+  public destroy(): void {
+    this.lib.destroy();
+  }
 
   /**
    * Shows tooltip on element with passed HTML content

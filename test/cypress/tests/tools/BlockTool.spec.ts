@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import { BlockToolData, ToolSettings } from '../../../../types';
 import { ToolType } from '../../../../src/components/tools/base';
 import BlockTool from '../../../../src/components/tools/block';
+import InlineTool from '../../../../src/components/tools/inline';
+import ToolsCollection from '../../../../src/components/tools/collection';
 
 describe('BlockTool', () => {
   /**
@@ -11,7 +14,9 @@ describe('BlockTool', () => {
     name: 'blockTool',
     constructable: class {
       public static sanitize = {
-        rule1: 'rule1',
+        rule1: {
+          div: true,
+        },
       }
 
       public static toolbox = {
@@ -131,10 +136,87 @@ describe('BlockTool', () => {
     });
   });
 
-  it('.sanitizeConfig should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  context('.sanitizeConfig', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+      expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+    });
+
+    it('should return composed config if there are enabled inline tools', () => {
+      const tool = new BlockTool(options as any);
+
+      const inlineTool = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            b: true,
+          }
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool] ]);
+
+      const expected = options.constructable.sanitize;
+
+      // tslint:disable-next-line:forin
+      for (const key in expected) {
+        expected[key] = {
+          ...expected[key],
+          b: true,
+        };
+      }
+
+      expect(tool.sanitizeConfig).to.be.deep.eq(expected);
+    });
+
+    it('should return inline tools config if block one is not set', () => {
+      const tool = new BlockTool({
+        ...options,
+        constructable: class {},
+      } as any);
+
+      const inlineTool1 = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            b: true,
+          }
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      const inlineTool2 = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            a: true,
+          }
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool1], ['inlineTool2', inlineTool2] ]);
+
+      expect(tool.sanitizeConfig).to.be.deep.eq(Object.assign(
+        {},
+        inlineTool1.sanitizeConfig,
+        inlineTool2.sanitizeConfig
+      ));
+    });
+
+    it('should return empty object by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        constructable: class {},
+      } as any);
+
+      expect(tool.sanitizeConfig).to.be.deep.eq({});
+    });
   });
 
   it('.isBlock() should return true', () => {
@@ -179,10 +261,24 @@ describe('BlockTool', () => {
     expect(tool.pasteConfig).to.be.deep.eq(options.constructable.pasteConfig);
   });
 
-  it('.enabledInlineTools should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  context('.enabledInlineTools', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+      expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+    });
+
+    it('should return false by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          inlineToolbar: undefined,
+        },
+      } as any);
+
+      expect(tool.enabledInlineTools).to.be.false;
+    });
   });
 
   it('.enabledBlockTunes should return correct value', () => {

@@ -13,6 +13,7 @@ import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BlockAPI from '../block/api';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -216,6 +217,7 @@ export default class BlockManager extends Module {
    *
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
@@ -223,17 +225,17 @@ export default class BlockManager extends Module {
   public composeBlock({
     tool: name,
     data = {},
+    id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
-    const tunes = this.Editor.Tools.getTunesForTool(tool);
     const block = new Block({
+      id,
       data,
       tool,
       api: this.Editor.API,
       readOnly,
-      tunes,
       tunesData,
     });
 
@@ -248,15 +250,17 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts the default block type
-   * @param {object} options.data - plugin data
-   * @param {number} options.index - index where to insert new Block
-   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
-   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {string} [options.id] - block's unique id
+   * @param {string} [options.tool] - plugin name, by default method inserts the default block type
+   * @param {object} [options.data] - plugin data
+   * @param {number} [options.index] - index where to insert new Block
+   * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
+   * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
   public insert({
+    id = undefined,
     tool = this.config.defaultBlock,
     data = {},
     index,
@@ -264,6 +268,7 @@ export default class BlockManager extends Module {
     replace = false,
     tunes = {},
   }: {
+    id?: string;
     tool?: string;
     data?: BlockToolData;
     index?: number;
@@ -278,12 +283,18 @@ export default class BlockManager extends Module {
     }
 
     const block = this.composeBlock({
+      id,
       tool,
       data,
       tunes,
     });
 
     this._blocks.insert(newIndex, block, replace);
+
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(block);
 
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
@@ -356,6 +367,11 @@ export default class BlockManager extends Module {
 
     this._blocks[index] = block;
 
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(block);
+
     if (needToFocus) {
       this.currentBlockIndex = index;
     } else if (index <= this.currentBlockIndex) {
@@ -421,7 +437,15 @@ export default class BlockManager extends Module {
       throw new Error('Can\'t find a Block to remove');
     }
 
+    const blockToRemove = this._blocks[index];
+
+    blockToRemove.destroy();
     this._blocks.remove(index);
+
+    /**
+     * Force call of didMutated event on Block removal
+     */
+    this.blockDidMutated(blockToRemove);
 
     if (this.currentBlockIndex >= index) {
       this.currentBlockIndex--;
@@ -514,6 +538,26 @@ export default class BlockManager extends Module {
    */
   public getBlockByIndex(index): Block {
     return this._blocks[index];
+  }
+
+  /**
+   * Returns an index for passed Block
+   *
+   * @param block - block to find index
+   */
+  public getBlockIndex(block: Block): number {
+    return this._blocks.indexOf(block);
+  }
+
+  /**
+   * Returns the Block by passed id
+   *
+   * @param id - id of block to get
+   *
+   * @returns {Block}
+   */
+  public getBlockById(id): Block | undefined {
+    return this._blocks.array.find(block => block.id === id);
   }
 
   /**
@@ -673,6 +717,11 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    /**
+     * Force call of didMutated event on Block movement
+     */
+    this.blockDidMutated(this.currentBlock);
   }
 
   /**
@@ -738,6 +787,8 @@ export default class BlockManager extends Module {
     this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
       BlockEvents.dragLeave(event);
     });
+
+    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(affectedBlock));
   }
 
   /**
@@ -772,5 +823,16 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Block mutation callback
+   *
+   * @param block - mutated block
+   */
+  private blockDidMutated(block: Block): Block {
+    this.Editor.ModificationsObserver.onChange(new BlockAPI(block));
+
+    return block;
   }
 }
