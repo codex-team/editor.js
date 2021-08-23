@@ -27,7 +27,7 @@ export interface OutputBlockData<Type extends string = string, Data extends obje
   tunes?: {[name: string]: BlockTuneData};
 }
 
-export interface OutputData {
+export interface OutputData<Type extends string = string, Data extends object = any> {
   /**
    * Editor's version
    */
@@ -41,5 +41,5 @@ export interface OutputData {
   /**
    * Saved Blocks
    */
-  blocks: OutputBlockData[];
+  blocks: OutputBlockData<Type, Data>[];
 }
