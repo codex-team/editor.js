@@ -230,7 +230,7 @@ export default class Core {
    *
    * @returns {EditorConfig}
    */
-  public get configuration(): EditorConfig|string {
+  public get configuration(): EditorConfig {
     return this.config;
   }
 
