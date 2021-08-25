@@ -80,7 +80,7 @@ export default class EditorJS {
    * @param {Core} editor — Editor's instance
    */
   public exportAPI(editor: Core): void {
-    const fieldsToExport = [ 'configuration' ];
+    const fieldsToExport = [ 'id', 'configuration' ];
     const destroy = (): void => {
       Object.values(editor.moduleInstances)
         .forEach((moduleInstance) => {

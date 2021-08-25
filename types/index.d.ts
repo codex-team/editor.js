@@ -78,6 +78,7 @@ export { BlockAPI } from './api'
  * So we should create new interface for exporting API type
  */
 export interface API {
+  id: string;
   blocks: Blocks;
   caret: Caret;
   events: Events;
@@ -100,6 +101,7 @@ export interface API {
 declare class EditorJS {
   public static version: string;
 
+  public id: string;
   public isReady: Promise<void>;
 
   public blocks: Blocks;

@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import $ from './dom';
 import * as _ from './utils';
 import { EditorConfig, SanitizerConfig } from '../../types';
@@ -40,6 +41,11 @@ contextRequire.keys().forEach((filename) => {
  */
 export default class Core {
   /**
+   * Editor.js instance ID
+   */
+  public id: string;
+
+  /**
    * Editor configuration passed by user to the constructor
    */
   public config: EditorConfig;
@@ -64,6 +70,8 @@ export default class Core {
    *
    */
   constructor(config?: EditorConfig|string) {
+    this.id = nanoid(10);
+
     /**
      * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
