@@ -12,7 +12,11 @@
   &--showed {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%)
+    transform: translateX(-50%);
+  }
+
+  &:not(&--showed) {
+    top: 0 !important;
   }
 
   &--left-oriented {
