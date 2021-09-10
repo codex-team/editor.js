@@ -410,7 +410,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return false;
     }
 
-    return currentBlock.tool.inlineTools.size !== 0;
+    // .size !== 0
+    return !!currentBlock.tool.inlineTools;
   }
 
   /**
@@ -516,9 +517,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.actions.innerHTML = '';
     this.toolsInstances = new Map();
 
-    Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
-      this.addTool(tool);
-    });
+    const tools = Array.from(currentBlock.tool.inlineTools.values())
+    if (tools && tools.length > 0) {
+      this.nodes.buttons.hidden = false
+      Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
+        this.addTool(tool);
+      });
+    } else {
+      this.nodes.buttons.hidden = true
+    }
+
 
     /**
      * Recalculate width because some buttons can be hidden

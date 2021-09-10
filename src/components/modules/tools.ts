@@ -279,7 +279,7 @@ export default class Tools extends Module {
   }[] {
     const toolPreparationList: {
       function: (data: { toolName: string }) => void | Promise<void>;
-      data: { toolName: string };
+      data: { toolName: string, config: any };
     }[] = [];
 
     Object
@@ -290,6 +290,7 @@ export default class Tools extends Module {
           function: _.isFunction(settings.class.prepare) ? settings.class.prepare : (): void => {},
           data: {
             toolName,
+            config: settings.config
           },
         });
       });

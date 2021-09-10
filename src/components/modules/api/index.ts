@@ -32,6 +32,8 @@ export default class API extends Module {
       tooltip: this.Editor.TooltipAPI.methods,
       i18n: this.Editor.I18nAPI.methods,
       readOnly: this.Editor.ReadOnlyAPI.methods,
+      // TODO 主动修改数据后未触发onChange事件，所以此处公开this.api.ModificationsObserver.onChange()
+      ModificationsObserver: this.Editor.ModificationsObserver,
     };
   }
 

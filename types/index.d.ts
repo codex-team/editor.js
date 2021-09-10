@@ -92,6 +92,7 @@ export interface API {
   tooltip: Tooltip;
   i18n: I18n;
   readOnly: ReadOnly;
+  ModificationsObserver: any;
 }
 
 /**
