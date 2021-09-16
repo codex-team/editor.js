@@ -274,8 +274,8 @@ export default class Tools extends Module {
    * @param config - tools config
    */
   private getListOfPrepareFunctions(config: {[name: string]: ToolSettings}): {
-    function: (data: { toolName: string }) => void | Promise<void>;
-    data: { toolName: string };
+    function: (data: { toolName: string; config: ToolConfig }) => void | Promise<void>;
+    data: { toolName: string; config: ToolConfig };
   }[] {
     const toolPreparationList: {
       function: (data: { toolName: string }) => void | Promise<void>;
