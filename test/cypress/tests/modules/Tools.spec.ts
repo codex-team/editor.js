@@ -72,6 +72,32 @@ describe('Tools module', () => {
 
       expect(err).to.be.instanceOf(Error);
     });
+
+    // eslint-disable-next-line cypress/no-async-tests
+    it('should call Tools prepare method with user config', async () => {
+      class WithSuccessfulPrepare {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        public static prepare = cy.stub()
+      }
+
+      const config = {
+        property: 'value',
+      };
+
+      const module = constructModule({
+        defaultBlock: 'withSuccessfulPrepare',
+        tools: {
+          withSuccessfulPrepare: {
+            class: WithSuccessfulPrepare as any,
+            config,
+          },
+        },
+      });
+
+      await module.prepare();
+
+      expect(WithSuccessfulPrepare.prepare).to.be.calledWithExactly({ toolName: 'withSuccessfulPrepare', config });
+    });
   });
 
   context('collection accessors', () => {
@@ -173,7 +199,7 @@ describe('Tools module', () => {
         expect(module.unavailable).to.be.instanceOf(Map);
       });
 
-      it('should contain only ready to use Tools', () => {
+      it('should contain unavailable Tools', () => {
         expect(module.unavailable.has('withSuccessfulPrepare')).to.be.false;
         expect(module.unavailable.has('withoutPrepare')).to.be.false;
         expect(module.unavailable.has('withFailedPrepare')).to.be.true;

@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.22.3
+
+- `Fix` — Tool config is passed to `prepare` method [editor-js/embed#68](https://github.com/editor-js/embed/issues/68)
+
 ### 2.22.2
 
 - `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
