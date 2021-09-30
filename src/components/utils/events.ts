@@ -27,7 +27,7 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: Events, callback: (data: object) => object): void {
+  public on(eventName: Events, callback: (data: object) => any): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }

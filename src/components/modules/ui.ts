@@ -336,6 +336,21 @@ export default class UI extends Module<UINodes> {
       this.documentTouched(event);
     }, true);
 
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', (event: MouseEvent | TouchEvent) => {
+      const hoveredBlock = (event.target as Element).closest('.ce-block');
+      let emitedBlock;
+
+      if (emitedBlock === hoveredBlock){
+        return;
+      }
+
+      emitedBlock = hoveredBlock;
+      this.eventsDispatcher.emit('block hovered', {
+        block: hoveredBlock,
+      })
+
+    }, true);
+
     this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
       this.documentKeydown(event);
     }, true);

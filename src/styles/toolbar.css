@@ -8,6 +8,7 @@
   transition: opacity 100ms ease;
   will-change: opacity, transform;
   display: none;
+  border: 1px dotted #ccc;
 
   @media (--mobile) {
     @apply --overlay-pane;
@@ -27,6 +28,7 @@
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
+    border: 1px dotted red;
 
     @media (--mobile){
       display: flex;
@@ -39,8 +41,8 @@
   &__plus {
     @apply --toolbox-button;
 
-    position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
+    //position: absolute;
+    //left: calc(var(--toolbox-buttons-size) * -1);
     flex-shrink: 0;
 
     &-shortcut {
@@ -62,8 +64,8 @@
 
   &__plus,
   .ce-toolbox {
-    top: 50%;
-    transform: translateY(-50%);
+    //top: 50%;
+    //transform: translateY(-50%);
   }
 
   /**
@@ -72,9 +74,10 @@
    */
   &__actions {
     position: absolute;
-    right: -30px;
-    top: 5px;
+    left: calc(var(--toolbox-buttons-size) * -1);
+    top: var(--block-padding-vertical);
     opacity: 0;
+    display: flex;
 
     @media (--mobile){
       position: absolute;
@@ -95,12 +98,9 @@
   }
 
   &__settings-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    color: var(--grayText);
+    @apply --toolbox-button;
+
+
     cursor: pointer;
     background: var(--bg-light);
     user-select: none;

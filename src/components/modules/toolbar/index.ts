@@ -210,7 +210,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (!isMobile) {
       const contentOffset = Math.floor(blockHeight / 2);
 
-      this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+      // this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
       this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
     } else {
       toolbarY += blockHeight;
@@ -283,7 +283,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.nodes.plusButton = $.make('div', this.CSS.plusButton);
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
-    $.append(this.nodes.content, this.nodes.plusButton);
+    $.append(this.nodes.actions, this.nodes.plusButton);
 
     this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
       this.plusButtonClicked();
@@ -361,6 +361,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       this.settingsTogglerClicked();
     }, true);
+
+    this.eventsDispatcher.on('block hovered', (data) => {
+      console.log('h', data);
+    });
   }
 
   /**

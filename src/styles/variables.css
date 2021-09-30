@@ -55,6 +55,12 @@
   --toolbox-buttons-size: 34px;
 
   /**
+   * The main `.cdx-block` wrapper has such vertical paddings
+   * And the Block Actions toggler too
+   */
+  --block-padding-vertical: 0.4em;
+
+  /**
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
