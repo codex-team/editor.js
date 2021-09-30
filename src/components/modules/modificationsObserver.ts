@@ -28,13 +28,13 @@ export default class ModificationsObserver extends Module {
   /**
    * Call onChange event passed to Editor.js configuration
    *
-   * @param block - changed Block
+   * @param event - some of our custom change events
    */
-  public onChange(block: BlockAPI): void {
+  public onChange(event: CustomEvent): void {
     if (this.disabled || !_.isFunction(this.config.onChange)) {
       return;
     }
 
-    this.config.onChange(this.Editor.API.methods, block);
+    this.config.onChange(this.Editor.API.methods, event);
   }
 }

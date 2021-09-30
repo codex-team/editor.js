@@ -131,11 +131,6 @@
          */
         image: SimpleImage,
 
-        list: {
-          class: NestedList,
-          inlineToolbar: true,
-          shortcut: 'CMD+SHIFT+L'
-        },
 
         checklist: {
           class: Checklist,
@@ -318,8 +313,8 @@
       onReady: function(){
         saveButton.click();
       },
-      onChange: function(api, block) {
-        console.log('something changed', block);
+      onChange: function(api, event) {
+        console.log('something changed', event);
       },
     });
 

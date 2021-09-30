@@ -6,14 +6,15 @@
  *
  * @version 2.0.0
  */
-import Block, { BlockToolAPI } from '../block';
+import Block, {BlockToolAPI} from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent } from '../../../types';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import {BlockToolData, PasteEvent} from '../../../types';
+import {BlockTuneData} from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
+import {BlockMutationType} from '../../../types/events/block/mutation-type';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -294,7 +295,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(block);
+    this.blockDidMutated(BlockMutationType.Added, block);
 
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
@@ -370,7 +371,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(block);
+    this.blockDidMutated(BlockMutationType.Added, block);
 
     if (needToFocus) {
       this.currentBlockIndex = index;
@@ -445,7 +446,9 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block removal
      */
-    this.blockDidMutated(blockToRemove);
+    this.blockDidMutated(BlockMutationType.Removed, blockToRemove, {
+      index,
+    });
 
     if (this.currentBlockIndex >= index) {
       this.currentBlockIndex--;
@@ -721,7 +724,10 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block movement
      */
-    this.blockDidMutated(this.currentBlock);
+    this.blockDidMutated(BlockMutationType.Moved, this.currentBlock, {
+      fromIndex,
+      toIndex,
+    });
   }
 
   /**
@@ -788,7 +794,7 @@ export default class BlockManager extends Module {
       BlockEvents.dragLeave(event);
     });
 
-    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(affectedBlock));
+    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(BlockMutationType.Changed, affectedBlock));
   }
 
   /**
@@ -828,10 +834,19 @@ export default class BlockManager extends Module {
   /**
    * Block mutation callback
    *
+   * @param mutationType - what happened with block
    * @param block - mutated block
+   * @param details - additional data to pass with change event
    */
-  private blockDidMutated(block: Block): Block {
-    this.Editor.ModificationsObserver.onChange(new BlockAPI(block));
+  private blockDidMutated(mutationType: BlockMutationType, block: Block, details: Record<string, unknown> = {}): Block {
+    const event = new CustomEvent(mutationType, {
+      detail: {
+        target: new BlockAPI(block),
+        ...details,
+      },
+    });
+
+    this.Editor.ModificationsObserver.onChange(event);
 
     return block;
   }
