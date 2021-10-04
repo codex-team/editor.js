@@ -1,48 +1,69 @@
 import Header from '../../../example/tools/header';
+import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
  * @todo Add cases for native inputs changes
+ * @todo debug onChange firing on Block Tune toggling (see below)
  */
 describe('onChange callback', () => {
-  const config = {
-    tools: {
-      header: Header,
-    },
-    onChange: (): void => {
-      console.log('something changed');
-    },
-  };
+  /**
+   * Creates Editor instance
+   *
+   * @param blocks - list of blocks to prefill the editor
+   */
+  function createEditor(blocks = null): void {
+    const config = {
+      tools: {
+        header: Header,
+      },
+      onChange: (): void => {
+        console.log('something changed');
+      },
+      data: blocks ? {
+        blocks,
+      } : null,
+    };
 
-  beforeEach(() => {
-    if (this && this.editorInstance) {
-      this.editorInstance.destroy();
-    } else {
-      cy.spy(config, 'onChange').as('onChange');
+    cy.spy(config, 'onChange').as('onChange');
 
-      cy.createEditor(config).as('editorInstance');
-    }
-  });
+    cy.createEditor(config).as('editorInstance');
+  }
+
+  /**
+   * EditorJS API is passed as the first parameter of the onChange callback
+   */
+  const EditorJSApiMock = Cypress.sinon.match.any;
 
   it('should fire onChange callback on block insertion', () => {
+    createEditor();
+
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
       .type('{enter}');
 
-    cy.get('@onChange').should('be.called');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+    }));
   });
 
   it('should fire onChange callback on typing into block', () => {
+    createEditor();
+
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
       .type('some text');
 
-    cy.get('@onChange').should('be.called');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Changed,
+    }));
   });
 
   it('should fire onChange callback on block replacement', () => {
+    createEditor();
+
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click();
@@ -55,21 +76,25 @@ describe('onChange callback', () => {
       .get('li.ce-toolbox__button[data-tool=header]')
       .click();
 
-    cy.get('@onChange').should('be.calledWithMatch', Cypress.sinon.match.any, Cypress.sinon.match({ name: 'header' }));
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        target: {
+          name: 'header',
+        },
+      },
+    }));
   });
 
   it('should fire onChange callback on tune modifier', () => {
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .click();
-
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-toolbar__plus')
-      .click();
-
-    cy.get('[data-cy=editorjs]')
-      .get('li.ce-toolbox__button[data-tool=header]')
-      .click();
+    createEditor([
+      {
+        type: 'header',
+        data: {
+          text: 'Header block',
+        },
+      },
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -80,13 +105,29 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('span.cdx-settings-button[data-level=1]')
+      .get('span.cdx-settings-button[data-level=4]')
+      .click()
+      /**
+       * For some reason, the first click fires the mutation of removeFakeCursor only, so we need to click again.
+       * Reproduced only in Cypress.
+       *
+       * @todo debug it later
+       */
       .click();
 
-    cy.get('@onChange').should('be.calledWithMatch', Cypress.sinon.match.any, Cypress.sinon.match({ name: 'header' }));
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Changed,
+      detail: {
+        target: {
+          name: 'header',
+        },
+      },
+    }));
   });
 
   it('should fire onChange callback when block is removed', () => {
+    createEditor();
+
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click();
@@ -100,10 +141,14 @@ describe('onChange callback', () => {
       .click()
       .click();
 
-    cy.get('@onChange').should('be.called');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Removed,
+    }));
   });
 
   it('should fire onChange callback when block is moved', () => {
+    createEditor();
+
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
@@ -122,6 +167,12 @@ describe('onChange callback', () => {
       .get('div.ce-tune-move-up')
       .click();
 
-    cy.get('@onChange').should('be.called');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Moved,
+      detail: {
+        fromIndex: 1,
+        toIndex: 0,
+      },
+    }));
   });
 });
