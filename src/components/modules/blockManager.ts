@@ -290,6 +290,16 @@ export default class BlockManager extends Module {
       tunes,
     });
 
+    /**
+     * In case of block replacing (Converting OR from Toolbox or Shortcut on empty block OR on-paste to empty block)
+     * we need to dispatch the 'block-removing' event for the replacing block
+     */
+    if (replace) {
+      this.blockDidMutated(BlockMutationType.Removed, this.getBlockByIndex(newIndex), {
+        index: newIndex,
+      });
+    }
+
     this._blocks.insert(newIndex, block, replace);
 
     /**

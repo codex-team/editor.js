@@ -90,7 +90,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback on block replacement', () => {
+  it('should fire onChange callback on block replacement for both of blocks', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -105,6 +105,16 @@ describe('onChange callback', () => {
       .get('li.ce-toolbox__button[data-tool=header]')
       .click();
 
+    cy.get('@onChange').should('be.calledTwice');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Removed,
+      detail: {
+        index: 0,
+        target: {
+          name: 'paragraph',
+        },
+      },
+    }));
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Added,
       detail: {
