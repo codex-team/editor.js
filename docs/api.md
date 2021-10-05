@@ -35,6 +35,8 @@ API for certain Block methods and properties. You can access it through `editor.
 
 `validate(data: BlockToolData): Promise<boolean>` — calls Tool's validate method if exists
 
+`dispatchChange(): void` - Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback. Can be useful for block changes invisible for editor core.
+
 ## Api object description
 
 Common API interface.
