@@ -1,5 +1,4 @@
 import Module from '../__module';
-import { BlockAPI } from '../../../types';
 import * as _ from '../utils';
 
 /**

@@ -17,8 +17,8 @@ describe('onChange callback', () => {
       tools: {
         header: Header,
       },
-      onChange: (): void => {
-        console.log('something changed');
+      onChange: (api, event): void => {
+        console.log('something changed', api, event);
       },
       data: blocks ? {
         blocks,
@@ -35,7 +35,7 @@ describe('onChange callback', () => {
    */
   const EditorJSApiMock = Cypress.sinon.match.any;
 
-  it('should fire onChange callback on block insertion', () => {
+  it('should fire onChange callback with correct index on block insertion above the current (by pressing Enter at the start)', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -45,6 +45,32 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Added,
+      detail: {
+        target: {
+          name: 'paragraph'
+        },
+        index: 0,
+      },
+    }));
+  });
+
+  it('should fire onChange callback with correct index on block insertion below the current (by pressing enter at the end)', () => {
+    createEditor();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('some text')
+      .type('{enter}');
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        target: {
+          name: 'paragraph'
+        },
+        index: 1,
+      },
     }));
   });
 
@@ -58,6 +84,9 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Changed,
+      detail: {
+        index: 0
+      },
     }));
   });
 
@@ -79,6 +108,7 @@ describe('onChange callback', () => {
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Added,
       detail: {
+        index: 0,
         target: {
           name: 'header',
         },
@@ -86,7 +116,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback on tune modifier', () => {
+  it('should fire onChange callback on tune modifying', () => {
     createEditor([
       {
         type: 'header',
@@ -118,6 +148,7 @@ describe('onChange callback', () => {
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Changed,
       detail: {
+        index: 0,
         target: {
           name: 'header',
         },
@@ -143,6 +174,9 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Removed,
+      detail: {
+        index: 0
+      },
     }));
   });
 

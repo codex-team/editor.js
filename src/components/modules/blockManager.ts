@@ -6,15 +6,15 @@
  *
  * @version 2.0.0
  */
-import Block, {BlockToolAPI} from '../block';
+import Block, { BlockToolAPI } from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import {BlockToolData, PasteEvent} from '../../../types';
-import {BlockTuneData} from '../../../types/block-tunes/block-tune-data';
+import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
-import {BlockMutationType} from '../../../types/events/block/mutation-type';
+import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -295,7 +295,9 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block);
+    this.blockDidMutated(BlockMutationType.Added, block, {
+      index: newIndex,
+    });
 
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
@@ -371,7 +373,9 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block);
+    this.blockDidMutated(BlockMutationType.Added, block, {
+      index,
+    });
 
     if (needToFocus) {
       this.currentBlockIndex = index;
@@ -794,7 +798,11 @@ export default class BlockManager extends Module {
       BlockEvents.dragLeave(event);
     });
 
-    block.on('didMutated', (affectedBlock: Block) => this.blockDidMutated(BlockMutationType.Changed, affectedBlock));
+    block.on('didMutated', (affectedBlock: Block) => {
+      return this.blockDidMutated(BlockMutationType.Changed, affectedBlock, {
+        index: this.getBlockIndex(affectedBlock),
+      });
+    });
   }
 
   /**
