@@ -170,7 +170,12 @@ export default class BlocksAPI extends Module {
    * @param {OutputData} data — Saved Editor data
    */
   public render(data: OutputData): Promise<void> {
-    this.Editor.BlockManager.clear();
+    const needToAddDefaultBlock = !data.blocks.length
+    this.Editor.BlockManager.clear(needToAddDefaultBlock);
+
+    if(needToAddDefaultBlock) {
+      return Promise.resolve()
+    }
 
     return this.Editor.Renderer.render(data.blocks);
   }
