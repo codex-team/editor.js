@@ -1,5 +1,6 @@
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
+import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
@@ -219,19 +220,22 @@ export default class BlocksAPI extends Module {
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param {tunes?} tunes - tune data
    */
   public insert = (
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean
+    needToFocus?: boolean,
+    tunes?: {[name: string]: BlockTuneData}
   ): void => {
     this.Editor.BlockManager.insert({
       tool: type,
       data,
       index,
       needToFocus,
+      tunes: tunes
     });
   }
 
