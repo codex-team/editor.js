@@ -1,5 +1,42 @@
 # Changelog
 
+### 2.23.0
+
+- `Improvement` — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
+- `New` *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+
+### 2.22.3
+
+- `Fix` — Tool config is passed to `prepare` method [editor-js/embed#68](https://github.com/editor-js/embed/issues/68)
+
+### 2.22.2
+
+- `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
+- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
+- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
+- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Fix` — Block's destroy method is called on block deletion
+- `Fix` - Fix jump to the button of editor zone on CBS
+
+### 2.22.1
+
+- `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
+
+### 2.22.0
+
+- `New` - `onChange` callback now receive Block API object of affected block
+- `New` - API method `blocks.update(id, data)` added.
+
+### 2.21.0
+
+- `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
+
+### 2.20.2
+
+- `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)
+- `Fix` - Prevent the leak of codex-tooltip when Editor.js is destroyed [#1475](https://github.com/codex-team/editor.js/issues/1475).
+- `Refactoring` - Notifier module now is a util.
+
 ### 2.20.1
 
 - `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).
@@ -13,7 +50,6 @@
 ### 2.20.0
 
 - `New` — [Block Tunes API](block-tunes.md) added
-
 
 ### 2.19.3
 

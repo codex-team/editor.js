@@ -9,10 +9,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import EventsDispatcher from '../../utils/events';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
-import BlockTool from '../../tools/block';
 
 /**
  * Inline Toolbar elements
@@ -136,10 +134,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Shows Inline Toolbar if something is selected
    *
-   * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
+   * @param [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public tryToShow(needToClose = false): void {
+  public tryToShow(needToClose = false, needToShowConversionToolbar = true): void {
     if (!this.allowedToShow()) {
       if (needToClose) {
         this.close();
@@ -149,7 +148,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.move();
-    this.open();
+    this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
   }
 
@@ -235,8 +234,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Shows Inline Toolbar
+   *
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public open(): void {
+  public open(needToShowConversionToolbar = true): void {
     if (this.opened) {
       return;
     }
@@ -253,7 +254,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    if (this.Editor.ConversionToolbar.hasTools()) {
+    if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
       /**
        * Change Conversion Dropdown content for current tool
        */
@@ -298,6 +299,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.removeAllNodes();
+    this.tooltip.destroy();
   }
 
   /**

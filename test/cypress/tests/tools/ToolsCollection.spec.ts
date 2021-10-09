@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ToolsCollection from '../../../../src/components/tools/collection';
 import BlockTool from '../../../../src/components/tools/block';
 import InlineTool from '../../../../src/components/tools/inline';

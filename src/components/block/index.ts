@@ -18,11 +18,17 @@ import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
+import EventsDispatcher from '../utils/events';
 
 /**
  * Interface describes Block class constructor argument
  */
 interface BlockConstructorOptions {
+  /**
+   * Block's id. Should be passed for existed block, and omitted for a new one.
+   */
+  id?: string;
+
   /**
    * Initial Block data
    */
@@ -75,13 +81,18 @@ export enum BlockToolAPI {
 }
 
 /**
+ * Names of events supported by Block class
+ */
+type BlockEvents = 'didMutated';
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
-export default class Block {
+export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * CSS classes for the Block
    *
@@ -97,6 +108,11 @@ export default class Block {
       dropTarget: 'ce-block--drop-target',
     };
   }
+
+  /**
+   * Block unique identifier
+   */
+  public id: string;
 
   /**
    * Block Tool`s name
@@ -185,7 +201,19 @@ export default class Block {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = _.debounce((): void => {
+  private didMutated = _.debounce((mutations: MutationRecord[] = []): void => {
+    const shouldFireUpdate = !mutations.some(({ addedNodes = [], removedNodes }) => {
+      return [...Array.from(addedNodes), ...Array.from(removedNodes)]
+        .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
+    });
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
     /**
      * Drop cache
      */
@@ -197,6 +225,8 @@ export default class Block {
     this.updateCurrentInput();
 
     this.call(BlockToolAPI.UPDATED);
+
+    this.emit('didMutated', this);
   }, this.modificationDebounceTimer);
 
   /**
@@ -206,20 +236,24 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
+   * @param {string} [options.id] - block's id. Will be generated if omitted.
    * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockToolConstructable} options.Tool — Tool's class
-   * @param {ToolSettings} options.settings - default tool's config
+   * @param {BlockToolConstructable} options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
+    id = _.generateBlockId(),
     data,
     tool,
     api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions) {
+    super();
+
     this.name = tool.name;
+    this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
@@ -426,8 +460,12 @@ export default class Block {
   public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
+
+      SelectionUtils.addFakeCursor(this.holder);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
+
+      SelectionUtils.removeFakeCursor(this.holder);
     }
   }
 
@@ -567,6 +605,7 @@ export default class Block {
         measuringEnd = window.performance.now();
 
         return {
+          id: this.id,
           tool: this.name,
           data: finishedExtraction,
           tunes: tunesData,
@@ -664,9 +703,19 @@ export default class Block {
   }
 
   /**
+   * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+   * Can be useful for block changes invisible for editor core.
+   */
+  public dispatchChange(): void{
+    this.didMutated();
+  }
+
+  /**
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    super.destroy();
+
     if (_.isFunction(this.toolInstance.destroy)) {
       this.toolInstance.destroy();
     }
@@ -764,6 +813,13 @@ export default class Block {
   private addInputEvents(): void {
     this.inputs.forEach(input => {
       input.addEventListener('focus', this.handleFocus);
+
+      /**
+       * If input is native input add oninput listener to observe changes
+       */
+      if ($.isNativeInput(input)) {
+        input.addEventListener('input', this.didMutated);
+      }
     });
   }
 
@@ -773,6 +829,10 @@ export default class Block {
   private removeInputEvents(): void {
     this.inputs.forEach(input => {
       input.removeEventListener('focus', this.handleFocus);
+
+      if ($.isNativeInput(input)) {
+        input.removeEventListener('input', this.didMutated);
+      }
     });
   }
 }

@@ -15,6 +15,14 @@ function BlockAPI(
 ): void {
   const blockAPI: BlockAPIInterface = {
     /**
+     * Block id
+     *
+     * @returns {string}
+     */
+    get id(): string {
+      return block.id;
+    },
+    /**
      * Tool name
      *
      * @returns {string}
@@ -107,6 +115,14 @@ function BlockAPI(
      */
     validate(data: BlockToolData): Promise<boolean> {
       return block.validate(data);
+    },
+
+    /**
+     * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+     * Can be useful for block changes invisible for editor core.
+     */
+    dispatchChange(): void {
+      block.dispatchChange();
     },
   };
 

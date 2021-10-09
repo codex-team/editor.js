@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import { ToolSettings } from '../../../../types';
 import { ToolType } from '../../../../src/components/tools/base';
@@ -15,16 +16,16 @@ describe('BlockTune', () => {
       public static prepare;
 
       public api: object;
-      public settings: ToolSettings;
+      public config: ToolSettings;
       public data: BlockTuneData;
       public block: object;
 
       /**
        *
        */
-      constructor({ api, settings, block, data }) {
+      constructor({ api, config, block, data }) {
         this.api = api;
-        this.settings = settings;
+        this.config = config;
         this.block = block;
         this.data = data;
       }
@@ -172,7 +173,7 @@ describe('BlockTune', () => {
     it('should return Tool instance with passed settings', () => {
       const instance = tool.create(data, blockAPI as any) as any;
 
-      expect(instance.settings).to.be.deep.eq(options.config.config);
+      expect(instance.config).to.be.deep.eq(options.config.config);
     });
   });
 });

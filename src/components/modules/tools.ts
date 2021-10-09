@@ -1,7 +1,7 @@
 import Paragraph from '../../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import * as _ from '../utils';
-import { SanitizerConfig, ToolConstructable, ToolSettings } from '../../../types';
+import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
@@ -212,15 +212,15 @@ export default class Tools extends Module {
         class: Stub,
         isInternal: true,
       },
-      moveUpTune: {
+      moveUp: {
         class: MoveUpTune,
         isInternal: true,
       },
-      deleteTune: {
+      delete: {
         class: DeleteTune,
         isInternal: true,
       },
-      moveDownTune: {
+      moveDown: {
         class: MoveDownTune,
         isInternal: true,
       },
@@ -274,12 +274,12 @@ export default class Tools extends Module {
    * @param config - tools config
    */
   private getListOfPrepareFunctions(config: {[name: string]: ToolSettings}): {
-    function: (data: { toolName: string }) => void | Promise<void>;
-    data: { toolName: string };
+    function: (data: { toolName: string; config: ToolConfig }) => void | Promise<void>;
+    data: { toolName: string; config: ToolConfig };
   }[] {
     const toolPreparationList: {
       function: (data: { toolName: string }) => void | Promise<void>;
-      data: { toolName: string };
+      data: { toolName: string; config: ToolConfig };
     }[] = [];
 
     Object
@@ -290,6 +290,7 @@ export default class Tools extends Module {
           function: _.isFunction(settings.class.prepare) ? settings.class.prepare : (): void => {},
           data: {
             toolName,
+            config: settings.config,
           },
         });
       });
@@ -354,22 +355,26 @@ export default class Tools extends Module {
    * @param tool — Block Tool
    */
   private assignBlockTunesToBlockTool(tool: BlockTool): void {
-    if (tool.enabledInlineTools === false) {
+    if (tool.enabledBlockTunes === false) {
       return;
     }
 
     if (Array.isArray(tool.enabledBlockTunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         tool.enabledBlockTunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
 
     if (Array.isArray(this.config.tunes)) {
-      tool.tunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTune>(
         this.config.tunes.map(name => [name, this.blockTunes.get(name)])
       );
+
+      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }

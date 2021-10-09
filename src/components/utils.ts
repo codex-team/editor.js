@@ -2,6 +2,7 @@
  * Class Util
  */
 
+import { nanoid } from 'nanoid';
 import Dom from './dom';
 
 /**
@@ -428,14 +429,12 @@ export function isValidMimeType(type: string): boolean {
  * @param {boolean} immediate - call now
  * @returns {Function}
  */
-export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
+export function debounce(func: (...args: unknown[]) => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
-  return (): void => {
+  return (...args: unknown[]): void => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const context = this,
-        // eslint-disable-next-line prefer-rest-params
-        args = arguments;
+    const context = this;
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const later = () => {
@@ -608,6 +607,15 @@ export function getValidUrl(url: string): string {
 }
 
 /**
+ * Create a block id
+ *
+ * @returns {string}
+ */
+export function generateBlockId(): string {
+  return nanoid(10);
+}
+
+/**
  * Opens new Tab with passed URL
  *
  * @param {string} url - URL address to redirect
@@ -650,7 +658,7 @@ export function deprecationAssert(condition: boolean, oldProperty: string, newPr
  * @param propertyKey - method or accessor name
  * @param descriptor - property descriptor
  */
-export function cacheable<Target, Value, Arguments extends any[] = any[]>(
+export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]>(
   target: Target,
   propertyKey: string,
   descriptor: PropertyDescriptor
@@ -661,6 +669,8 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
 
   /**
    * Override get or value descriptor property to cache return value
+   *
+   * @param args - method args
    */
   descriptor[propertyToOverride] = function (...args: Arguments): Value {
     /**
@@ -675,11 +685,13 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
 
   /**
    * If get accessor has been overridden, we need to override set accessor to clear cache
+   *
+   * @param value - value to set
    */
   if (propertyToOverride === 'get' && descriptor.set) {
     const originalSet = descriptor.set;
 
-    descriptor.set = function (value: any): void {
+    descriptor.set = function (value: unknown): void {
       delete target[cacheKey];
 
       originalSet.apply(this, value);

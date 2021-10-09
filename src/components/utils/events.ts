@@ -1,3 +1,5 @@
+import { isEmpty } from '../utils';
+
 /**
  * @class EventDispatcher
  *
@@ -11,7 +13,7 @@
  * @typedef {Events} Events
  * @property {object} subscribers - all subscribers grouped by event name
  */
-export default class EventsDispatcher {
+export default class EventsDispatcher<Events extends string = string> {
   /**
    * Object with events` names as key and array of callback functions as value
    *
@@ -25,7 +27,7 @@ export default class EventsDispatcher {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: string, callback: (data: object) => object): void {
+  public on(eventName: Events, callback: (data: object) => object): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -40,7 +42,7 @@ export default class EventsDispatcher {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public once(eventName: string, callback: (data: object) => object): void {
+  public once(eventName: Events, callback: (data: object) => object): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -67,8 +69,8 @@ export default class EventsDispatcher {
    * @param {string} eventName - event name
    * @param {object} data - subscribers get this data when they were fired
    */
-  public emit(eventName: string, data?: object): void {
-    if (!this.subscribers[eventName]) {
+  public emit(eventName: Events, data?: object): void {
+    if (isEmpty(this.subscribers) || !this.subscribers[eventName]) {
       return;
     }
 
@@ -85,7 +87,7 @@ export default class EventsDispatcher {
    * @param {string} eventName - event name
    * @param {Function} callback - event handler
    */
-  public off(eventName: string, callback: (data: object) => object): void {
+  public off(eventName: Events, callback: (data: object) => object): void {
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];

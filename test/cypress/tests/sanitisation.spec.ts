@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 describe('Output sanitisation', () => {
   beforeEach(() => {
     if (this && this.editorInstance) {

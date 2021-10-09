@@ -126,6 +126,7 @@ describe('Copy pasting from Editor', () => {
         });
 
       cy.get('[data-cy=editorjs]')
+        // In Edge test are performed slower, so we need to increase timeout to wait until image is loaded on the page
         .get('img', { timeout: 10000 })
         .should('have.attr', 'src', 'https://codex.so/public/app/img/external/codex2x.png');
     });

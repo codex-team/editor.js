@@ -2,7 +2,11 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
+<<<<<<< HEAD
 import type {EditorConfig, OutputData} from './../../../types/index';
+=======
+import type { EditorConfig, OutputData } from './../../../types/index';
+>>>>>>> next
 import type EditorJS from '../../../types/index'
 
 declare global {
@@ -47,11 +51,6 @@ declare global {
        * @param data — data to render
        */
       render(data: OutputData): Chainable<EditorJS>;
-
-      /**
-       * Returns current selection range
-       */
-      range(): Chainable<Range | null>;
     }
 
     interface ApplicationWindow {

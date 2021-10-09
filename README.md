@@ -20,13 +20,17 @@ If you like Editor.js you can support project improvements and development of ne
 
 ### Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
+Support us by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)]
 
-<a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+<a href="https://humm.earth/" target="_blank"><img src="https://images.opencollective.com/hummearth/2a8406a/logo/256.png" width="64"></a>
+<a href="https://tesen.com/" target="_blank"><img src="https://images.opencollective.com/tesen-media-inc/b90cf6a/logo/256.png" width="64"></a>
+<a href="https://slid.cc/" target="_blank"><img src="https://images.opencollective.com/slid_team/ff564d7/logo/256.png" width="64"></a>
+
+
 
  ### Backers
 
- Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs#backer)]
+ Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)]
 
  <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
 
@@ -239,12 +243,12 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module.
 
-## About team
+# About CodeX
 
-We are CodeX and we build products for developers and makers.
+<img align="right" width="120" height="120" src="https://codex.so/public/app/img/codex-logo.svg" hspace="50">
 
-Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
+CodeX is a team of digital specialists around the world interested in building high-quality open source products on a global market. We are [open](https://codex.so/join) for young people who want to constantly improve their skills and grow professionally with experiments in cutting-edge technologies.
 
-Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
-
-[codex.so](https://codex.so)
+| 🌐 | Join  👋  | Twitter | Instagram |
+| -- | -- | -- | -- |
+| [codex.so](https://codex.so) | [codex.so/join](https://codex.so/join) |[@codex_team](http://twitter.com/codex_team) | [@codex_team](http://instagram.com/codex_team) |

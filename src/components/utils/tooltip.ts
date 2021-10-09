@@ -18,6 +18,13 @@ export default class Tooltip {
   private lib: CodeXTooltips = new CodeXTooltips();
 
   /**
+   * Release the library
+   */
+  public destroy(): void {
+    this.lib.destroy();
+  }
+
+  /**
    * Shows tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element - any HTML element in DOM
