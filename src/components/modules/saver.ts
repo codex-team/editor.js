@@ -7,10 +7,11 @@
  */
 import Module from '../__module';
 import { OutputData } from '../../../types';
-import { SavedData, ValidatedData } from '../../../types/data-formats';
+import { InlineFragment, InlineFragmentsDict, SavedData, ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
-import { sanitizeBlocks } from '../utils/sanitizer';
+import $ from '../dom';
+import { deepSanitize, sanitizeBlocks } from '../utils/sanitizer';
 
 declare const VERSION: string;
 
@@ -43,11 +44,25 @@ export default class Saver extends Module {
       });
 
       const extractedData = await Promise.all(chainData) as Array<Pick<SavedData, 'data' | 'tool'>>;
-      const sanitizedData = await sanitizeBlocks(extractedData, (name) => {
+      const sanitizedData = sanitizeBlocks(extractedData, (name) => {
         return Tools.blockTools.get(name).sanitizeConfig;
       });
+      const withFragments = sanitizedData.map(savedData => {
+        if (savedData.tool === this.Editor.Tools.stubTool) {
+          return savedData;
+        }
 
-      return this.makeOutput(sanitizedData);
+        const fragments = this.extractInlineFragments(savedData.data);
+
+        savedData.data = deepSanitize(savedData.data, {});
+
+        return {
+          ...savedData,
+          fragments,
+        };
+      });
+
+      return this.makeOutput(withFragments);
     } catch (e) {
       _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
     } finally {
@@ -83,7 +98,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({ id, tool, data, tunes, time, isValid }) => {
+    allExtractedData.forEach(({ id, tool, data, tunes, fragments, time, isValid }) => {
       totalTime += time;
 
       /**
@@ -116,6 +131,9 @@ export default class Saver extends Module {
         ...!_.isEmpty(tunes) && {
           tunes,
         },
+        ...!_.isEmpty(fragments) && {
+          fragments,
+        },
       };
 
       blocks.push(output);
@@ -129,5 +147,86 @@ export default class Saver extends Module {
       blocks,
       version: VERSION,
     };
+  }
+
+  /**
+   *
+   * @param data
+   * @private
+   */
+  private extractInlineFragments(data: Pick<SavedData, 'data'>): InlineFragmentsDict {
+    const extractFromString = (str: string): InlineFragment[] => {
+      const template = $.make('template') as HTMLTemplateElement;
+
+      template.innerHTML = str;
+
+      const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+
+      let node: Node | null;
+      let offset = 0;
+      const fragments: InlineFragment[] = [];
+
+      while ((node = walker.nextNode()) !== null) {
+        switch (node.nodeType) {
+          case Node.TEXT_NODE:
+            offset += node.textContent.length;
+            break;
+          case Node.ELEMENT_NODE: {
+            const length = node.textContent.length;
+            const fragment: InlineFragment = {
+              range: [offset, offset + length],
+              element: node.nodeName,
+              attributes: Object.fromEntries(Array.from((node as HTMLElement).attributes).map(attr => ([attr.nodeName, attr.nodeValue]))),
+            };
+
+            fragments.push(fragment);
+
+            break;
+          }
+        }
+      }
+
+      return fragments;
+    };
+
+    const extract = (obj: Record<string, unknown>): InlineFragmentsDict => {
+      const result: InlineFragmentsDict = {};
+
+      Object
+        .entries(obj)
+        .forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            const fragments = value.map(v => extract(v)).filter(fragment => Object.keys(fragment).length > 0);
+
+            if (fragments.length > 0) {
+              result[key] = fragments;
+            }
+
+            return;
+          }
+
+          if (typeof value === 'object') {
+            const fragments = extract(obj);
+
+            if (Object.keys(fragments).length > 0) {
+              result[key] = fragments;
+            }
+
+            return;
+          }
+
+          if (typeof value === 'string') {
+            const fragments = extractFromString(value);
+
+            if (fragments.length > 0) {
+              result[key] = fragments;
+            }
+          }
+        });
+
+      return result;
+    };
+
+    return extract(data);
   }
 }

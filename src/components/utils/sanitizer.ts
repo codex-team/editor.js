@@ -87,7 +87,7 @@ export function clean(taintString: string, customConfig: SanitizerConfig = {} as
  * @param {BlockToolData|object|*} dataToSanitize - taint string or object/array that contains taint string
  * @param {SanitizerConfig} rules - object with sanitizer rules
  */
-function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): object | string {
+export function deepSanitize(dataToSanitize: object | string, rules: SanitizerConfig): object | string {
   /**
    * BlockData It may contain 3 types:
    *  - Array

@@ -15,6 +15,7 @@ import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import { InlineFragment, InlineFragmentsDict, SavedData } from '../../../types/data-formats';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -268,6 +269,7 @@ export default class BlockManager extends Module {
     needToFocus = true,
     replace = false,
     tunes = {},
+    fragments,
   }: {
     id?: string;
     tool?: string;
@@ -276,11 +278,16 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     tunes?: {[name: string]: BlockTuneData};
+    fragments?: InlineFragmentsDict;
   } = {}): Block {
     let newIndex = index;
 
     if (newIndex === undefined) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
+    }
+
+    if (fragments !== undefined) {
+      data = this.insertInlineFragments(data, fragments);
     }
 
     const block = this.composeBlock({
@@ -316,6 +323,89 @@ export default class BlockManager extends Module {
     }
 
     return block;
+  }
+
+  /**
+   *
+   * @param data
+   * @param fragmentsDict
+   * @private
+   */
+  public insertInlineFragments(data: Pick<SavedData, 'data'>, fragmentsDict: InlineFragmentsDict): Pick<SavedData, 'data'> {
+    const insertToString = (str: string, fragments: InlineFragment[]): string => {
+      const template = document.createElement('template');
+
+      template.innerHTML = str;
+
+      const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
+
+      const root = walker.currentNode;
+
+      fragments.forEach(fragment => {
+        let offset = 0;
+        let startOffset = 0;
+        let endOffset = 0;
+        let startNode: Node | null = null;
+        let endNode: Node | null = null;
+
+        while (!startNode || !endNode) {
+          const node = walker.nextNode();
+
+          if (!startNode && offset + node.textContent.length > fragment.range[0]) {
+            startNode = node;
+            startOffset = fragment.range[0] - offset;
+          }
+
+          if (!endNode && offset + node.textContent.length >= fragment.range[1]) {
+            endNode = node;
+            endOffset = fragment.range[1] - offset;
+          }
+
+          offset += node.textContent.length;
+        }
+
+        const range = new Range();
+
+        range.setStart(startNode, startOffset);
+        range.setEnd(endNode, endOffset);
+
+        const element = document.createElement(fragment.element);
+
+        Object.entries(fragment.attributes).map(([name, value]) => element.setAttribute(name, value as string));
+
+        range.surroundContents(element);
+
+        walker.currentNode = root;
+      });
+
+      return template.innerHTML;
+    };
+
+    const insert = (dataToProcess: Record<string, unknown>, fragments: InlineFragmentsDict): Pick<SavedData, 'data'> => {
+      Object
+        .entries(dataToProcess)
+        .forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            dataToProcess[key] = value.map(v => insert(v, fragments[key] as InlineFragmentsDict));
+
+            return;
+          }
+
+          if (typeof value === 'object') {
+            dataToProcess[key] = insert(value as Record<string, unknown>, fragments[key] as InlineFragmentsDict);
+
+            return;
+          }
+
+          if (typeof value === 'string') {
+            dataToProcess[key] = insertToString(value, fragments[key] as InlineFragment[]);
+          }
+        });
+
+      return dataToProcess as Pick<SavedData, 'data'>;
+    };
+
+    return insert(data, fragmentsDict);
   }
 
   /**
