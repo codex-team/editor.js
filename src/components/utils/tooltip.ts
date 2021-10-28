@@ -38,8 +38,8 @@ export default class Tooltip {
   /**
    * Hides tooltip
    */
-  public hide(): void {
-    this.lib.hide();
+  public hide(skipHidingDelay = false): void {
+    this.lib.hide(skipHidingDelay);
   }
 
   /**

@@ -21,7 +21,7 @@
   /**
    * Gray icons hover
    */
-  --color-dark: #1D202B;
+    --color-dark: #1D202B;
 
   /**
    * Blue icons
@@ -52,7 +52,7 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 34px;
+  --toolbox-buttons-size: 26px;
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -98,17 +98,18 @@
    * Styles for Toolbox Buttons and Plus Button
    */
   --toolbox-button: {
-    color: var(--grayText);
+    color: var(--color-dark);
     cursor: pointer;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
+    border-radius: 3px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
 
     &:hover,
     &--active {
-      color: var(--color-active-icon);
+      background-color: var(--bg-light);
     }
 
     &--active{

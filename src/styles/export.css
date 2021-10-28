@@ -3,6 +3,10 @@
  */
 .cdx-block {
   padding: var(--block-padding-vertical) 0;
+
+  &::-webkit-input-placeholder {
+    line-height:normal!important;
+  }
 }
 
 /**

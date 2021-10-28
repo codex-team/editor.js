@@ -282,10 +282,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Toolbox
      */
     this.nodes.plusButton = $.make('div', this.CSS.plusButton);
-    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
+    $.append(this.nodes.plusButton, $.svg('plus', 16, 16));
     $.append(this.nodes.actions, this.nodes.plusButton);
 
     this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
+      this.tooltip.hide(true);
       this.plusButtonClicked();
     }, false);
 
@@ -299,7 +300,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       textContent: '⇥ Tab',
     }));
 
-    this.tooltip.onHover(this.nodes.plusButton, tooltipContent);
+    this.tooltip.onHover(this.nodes.plusButton, tooltipContent, {
+      hidingDelay: 400,
+    });
 
     /**
      * Fill Actions Zone:
@@ -309,7 +312,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
     this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 8, 8);
+    const settingsIcon = $.svg('dots', 16, 16);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
@@ -319,7 +322,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.nodes.settingsToggler,
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
-        placement: 'top',
+        hidingDelay: 400,
       }
     );
 
@@ -360,6 +363,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
       e.stopPropagation();
 
       this.settingsTogglerClicked();
+
+      console.log('toggler clicked need close tooltip', this.tooltip.hide);
+
+      this.tooltip.hide(true);
     }, true);
 
     this.eventsDispatcher.on('block hovered', (data) => {

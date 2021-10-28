@@ -8,7 +8,6 @@
   transition: opacity 100ms ease;
   will-change: opacity, transform;
   display: none;
-  border: 1px dotted #ccc;
 
   @media (--mobile) {
     @apply --overlay-pane;
@@ -28,7 +27,6 @@
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
-    border: 1px dotted red;
 
     @media (--mobile){
       display: flex;
@@ -74,7 +72,7 @@
    */
   &__actions {
     position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
+    right: 100%;
     top: var(--block-padding-vertical);
     opacity: 0;
     display: flex;
@@ -99,19 +97,11 @@
 
   &__settings-btn {
     @apply --toolbox-button;
-
+    width: 18px;
+    margin: 0 5px;
 
     cursor: pointer;
-    background: var(--bg-light);
     user-select: none;
-
-    &:hover {
-      color: var(--color-dark);
-    }
-
-    @media (--mobile){
-      background: transparent;
-    }
   }
 }
 
