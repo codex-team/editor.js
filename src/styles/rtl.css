@@ -16,12 +16,12 @@
       right: auto;
       left: calc(var(--toolbox-buttons-size) * -1);
 
-      @media (--mobile){
+      /* @media (--mobile){
         margin-left: 0;
         margin-right: auto;
         padding-right: 0;
         padding-left: 10px;
-      }
+      } */
     }
   }
 
