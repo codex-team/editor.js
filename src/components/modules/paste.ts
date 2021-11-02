@@ -552,7 +552,8 @@ export default class Paste extends Module {
         }, {});
         const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
 
-        content.innerHTML = clean(content.innerHTML, customConfig);
+        if(!(/<tbody>/i.test(content.innerHTML)))
+          content.innerHTML = clean(content.innerHTML, customConfig);
 
         const event = this.composePasteEvent('tag', {
           data: content,
