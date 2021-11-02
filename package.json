@@ -30,8 +30,7 @@
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open",
-    "prepare": "yarn build"
+    "test:e2e:open": "yarn build && cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
