@@ -1,6 +1,6 @@
 {
-  "name": "@editorjs/editorjs",
-  "version": "2.23.0-rc.0",
+  "name": "@demoflow/editorjs",
+  "version": "2.0.0",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -93,6 +93,7 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
+    "@editorjs/paragraph": "^2.8.0",
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.2",
     "nanoid": "^3.1.22"
