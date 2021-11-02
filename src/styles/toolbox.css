@@ -6,12 +6,12 @@
   display: flex;
   flex-direction: row;
 
-  @media (--mobile){
+  /* @media (--mobile){
     position: static;
     transform: none !important;
     align-items: center;
     overflow-x: auto;
-  }
+  } */
 
   &--opened {
     opacity: 1;

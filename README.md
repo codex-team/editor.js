@@ -9,14 +9,16 @@
 [![Join the chat at https://gitter.im/codex-team/editor.js](https://badges.gitter.im/codex-team/editor.js.svg)](https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
-| --------- | --------- | --------- | --------- | --------- | --------- |
-| Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Edge 12+                                                                                                                                                                                                        | Firefox 18+                                                                                                                                                                                                       | Chrome 49+                                                                                                                                                                                                    | Safari 10+                                                                                                                                                                                                    | Safari 10+                                                                                                                                                                                                                    | Opera 36+                                                                                                                                                                                                 |
+
+Testing...
 
 ## If you like a project 💗💗💗
 
 If you like Editor.js you can support project improvements and development of new features with a donation to our collective.
 
- 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+👉 [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
 
 ### Sponsors
 
@@ -26,13 +28,11 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
 <a href="https://tesen.com/" target="_blank"><img src="https://images.opencollective.com/tesen-media-inc/b90cf6a/logo/256.png" width="64"></a>
 <a href="https://slid.cc/" target="_blank"><img src="https://images.opencollective.com/slid_team/ff564d7/logo/256.png" width="64"></a>
 
+### Backers
 
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)]
 
- ### Backers
-
- Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)]
-
- <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
+<a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
 
 ### Contributors
 
@@ -71,15 +71,14 @@ How to use the Editor after [Installation](https://editorjs.io/getting-started).
 - Press `TAB` or click on the Plus Button to view the Toolbox
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
-
- ![](https://github.com/editor-js/list/raw/master/assets/example.gif)
+![](https://github.com/editor-js/list/raw/master/assets/example.gif)
 
 - Select a text fragment and apply a style or insert a link from the Inline Toolbar
 
 ![](https://capella.pics/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
 
 - Use the «three-dots» button on the right to open Block Settings. From here, you can move and delete a Block
-or apply a Tool's settings, if it provided. For example, you can set a Heading level or List style.
+  or apply a Tool's settings, if it provided. For example, you can set a Heading level or List style.
 
 ![](https://capella.pics/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)
 
@@ -87,14 +86,14 @@ or apply a Tool's settings, if it provided. For example, you can set a Heading l
 
 A few shortcuts are preset as available.
 
-Shortcut | Action | Restrictions
--- | -- | --
-`TAB` | Show/leaf a Toolbox. | On empty block
-`SHIFT+TAB` | Leaf back a Toolbox. | While Toolbox is opened
-`ENTER` | Create a Block | While Toolbox is opened and some Tool is selected
-`CMD+B` | Bold style | On selection
-`CMD+I` | Italic style | On selection
-`CMD+K` | Insert a link | On selection
+| Shortcut    | Action               | Restrictions                                      |
+| ----------- | -------------------- | ------------------------------------------------- |
+| `TAB`       | Show/leaf a Toolbox. | On empty block                                    |
+| `SHIFT+TAB` | Leaf back a Toolbox. | While Toolbox is opened                           |
+| `ENTER`     | Create a Block       | While Toolbox is opened and some Tool is selected |
+| `CMD+B`     | Bold style           | On selection                                      |
+| `CMD+I`     | Italic style         | On selection                                      |
+| `CMD+K`     | Insert a link        | On selection                                      |
 
 Each Tool can also have its own shortcuts. These are specified in the configuration of the Tool, for example:
 
@@ -104,18 +103,16 @@ var editor = new EditorJS({
   tools: {
     header: {
       class: Header,
-      shortcut: 'CMD+SHIFT+H'
+      shortcut: "CMD+SHIFT+H",
     },
     list: {
       class: List,
-      shortcut: 'CMD+SHIFT+L'
-    }
-  }
+      shortcut: "CMD+SHIFT+L",
+    },
+  },
   //...
- });
-
+});
 ```
-
 
 ## Installation Guide
 
@@ -145,7 +142,7 @@ npm i @editorjs/editorjs
 Include module in your application
 
 ```javascript
-import EditorJS from '@editorjs/editorjs';
+import EditorJS from "@editorjs/editorjs";
 ```
 
 ##### Option B. Use a CDN
@@ -193,34 +190,34 @@ var editor = new EditorJS(); /** Zero-configuration */
 
 // equals
 
-var editor = new EditorJS('editorjs');
-````
+var editor = new EditorJS("editorjs");
+```
 
 Or pass a whole settings object.
 
 ```javascript
 var editor = new EditorJS({
-    /**
-     * Create a holder for the Editor and pass its ID
-     */
-    holder : 'editorjs',
+  /**
+   * Create a holder for the Editor and pass its ID
+   */
+  holder: "editorjs",
 
-    /**
-     * Available Tools list.
-     * Pass Tool's class or Settings object for each Tool you want to use
-     */
-    tools: {
-        header: {
-          class: Header,
-          inlineToolbar : true
-        },
-        // ...
+  /**
+   * Available Tools list.
+   * Pass Tool's class or Settings object for each Tool you want to use
+   */
+  tools: {
+    header: {
+      class: Header,
+      inlineToolbar: true,
     },
+    // ...
+  },
 
-    /**
-     * Previously saved data that should be rendered
-     */
-    data: {}
+  /**
+   * Previously saved data that should be rendered
+   */
+  data: {},
 });
 ```
 
@@ -229,10 +226,9 @@ var editor = new EditorJS({
 Call `editor.save()` and handle returned Promise with saved data.
 
 ```javascript
-editor.save()
-  .then((savedData) => {
-    console.log(savedData);
-  });
+editor.save().then((savedData) => {
+  console.log(savedData);
+});
 ```
 
 ### Example
@@ -249,6 +245,6 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 CodeX is a team of digital specialists around the world interested in building high-quality open source products on a global market. We are [open](https://codex.so/join) for young people who want to constantly improve their skills and grow professionally with experiments in cutting-edge technologies.
 
-| 🌐 | Join  👋  | Twitter | Instagram |
-| -- | -- | -- | -- |
-| [codex.so](https://codex.so) | [codex.so/join](https://codex.so/join) |[@codex_team](http://twitter.com/codex_team) | [@codex_team](http://instagram.com/codex_team) |
+| 🌐                           | Join 👋                                | Twitter                                      | Instagram                                      |
+| ---------------------------- | -------------------------------------- | -------------------------------------------- | ---------------------------------------------- |
+| [codex.so](https://codex.so) | [codex.so/join](https://codex.so/join) | [@codex_team](http://twitter.com/codex_team) | [@codex_team](http://instagram.com/codex_team) |

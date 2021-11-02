@@ -5,20 +5,20 @@
   min-width: 114px;
   box-sizing: content-box;
 
-  @media (--mobile){
+  /* @media (--mobile){
     bottom: 40px;
     right: -11px;
     top: auto;
-  }
+  } */
 
   &::before{
     left: auto;
     right: 12px;
 
-    @media (--mobile){
+    /* @media (--mobile){
       bottom: -5px;
       top: auto;
-    }
+    } */
   }
 
   display: none;
