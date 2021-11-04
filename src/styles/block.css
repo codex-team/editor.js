@@ -1,6 +1,4 @@
 .ce-block {
-  box-shadow: inset 0 0 0 1px #eff2f5;
-
   &:first-of-type {
     margin-top: 0;
   }
@@ -31,7 +29,6 @@
     max-width: var(--content-width);
     margin: 0 auto;
     transition: background-color 150ms ease;
-    box-shadow: inset 0 0 0 1px #eee;
   }
 
   &--drop-target &__content {

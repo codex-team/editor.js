@@ -1,5 +1,5 @@
 <!--
- Use this page for debugging purposes.
+ Use this page is for debugging purposes.
 
  Editor Tools are loaded as git-submodules.
  You can pull modules by running `yarn pull_tools` and start experimenting.
@@ -26,7 +26,7 @@
         <a href="https://editorjs.io/creating-a-block-tool" target="_blank">API</a>
       </div>
     </div>
-    <div class="ce-example__content _ce-example__content--small">
+    <div class="ce-example__content">
       <div id="editorjs"></div>
       <div id="hint-core" style="text-align: center;">
         No core bundle file found. Run <code class="inline-code">yarn build</code>
@@ -38,12 +38,27 @@
         editor.save()
       </div>
       <div class="ce-example__statusbar">
-        Readonly:
-        <b id="readonly-state">
-          Off
-        </b>
-        <div class="ce-example__statusbar-button" id="toggleReadOnlyButton">
-          toggle
+        <div class="ce-example__statusbar-item">
+          Readonly:
+          <b id="readonly-state">
+            Off
+          </b>
+          &nbsp;
+          <div class="ce-example__statusbar-button" id="toggleReadOnlyButton">
+            toggle
+          </div>
+        </div>
+        <div class="ce-example__statusbar-item">
+          <div class="ce-example__statusbar-button" id="showBlocksBoundariesButton">
+            <span data-toggled-text="Hide">Show</span>
+            blocks boundaries
+          </div>
+        </div>
+        <div class="ce-example__statusbar-item">
+          <div class="ce-example__statusbar-button" id="enableThinModeButton">
+            <span data-toggled-text="Disable">Enable</span>
+            thin mode
+          </div>
         </div>
       </div>
     </div>
@@ -88,10 +103,10 @@
   <!-- Initialization -->
   <script>
     /**
-     * To initialize the Editor, create a new instance with configuration object
-     * @see docs/installation.md for mode details
+     * Editor init config
+     * @see https://editorjs.io/configuration
      */
-    var editor = new EditorJS({
+    const editorConfig = {
       /**
        * Enable/Disable the read only mode
        */
@@ -200,7 +215,7 @@
             type: "header",
             data: {
               text: "Editor.js",
-              level: 2
+              level: 1
             }
           },
           {
@@ -215,7 +230,7 @@
             id: "7ItVl5biRo",
             data: {
               text: "Key features",
-              level: 3
+              level: 2
             }
           },
           {
@@ -244,7 +259,7 @@
             id: "QZFox1m_ul",
             data: {
               text: "What does it mean «block-styled editor»",
-              level: 3
+              level: 2
             }
           },
           {
@@ -266,7 +281,7 @@
             id: "1sYMhUrznu",
             data: {
               text: "What does it mean clean data output",
-              level: 3
+              level: 2
             }
           },
           {
@@ -321,7 +336,12 @@
       onChange: function(api, block) {
         console.log('something changed', block);
       },
-    });
+    }
+    /**
+     * To initialize the Editor, create a new instance with configuration object
+     * @see docs/installation.md for mode details
+     */
+    var editor = new EditorJS(editorConfig);
 
     /**
      * Saving button
@@ -355,6 +375,28 @@
 
       readOnlyIndicator.textContent = readOnlyState ? 'On' : 'Off';
     });
+
+    /**
+     * Button for displaying blocks borders. Useful for UI development
+     */
+    const showBlocksBoundariesButton = document.getElementById("showBlocksBoundariesButton");
+
+    showBlocksBoundariesButton.addEventListener('click', () => {
+      document.body.classList.toggle("show-block-boundaries")
+    })
+
+    /**
+     * Button for enabling the 'Thin' mode
+     */
+    const enableThinModeButton = document.getElementById("enableThinModeButton");
+
+    enableThinModeButton.addEventListener('click', () => {
+      document.body.classList.toggle("thin-mode")
+
+      editor.destroy();
+
+      editor = new EditorJS(editorConfig);
+    })
   </script>
 </body>
 </html>

@@ -706,12 +706,21 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
+    const lastBlock = this.Editor.BlockManager.getBlockByIndex(-1);
+    const lastBlockBottomCoord = $.offset(lastBlock.holder).bottom;
+    const clickedCoord = event.pageY;
+
     const isClickedBottom = event.target instanceof Element &&
       event.target.isEqualNode(this.nodes.redactor) &&
       /**
        * If there is cross block selection started, target will be equal to redactor so we need additional check
        */
-      !BlockSelection.anyBlockSelected;
+      !BlockSelection.anyBlockSelected &&
+
+      /**
+       * Prevent caret jumping (to last block) when clicking between blocks
+       */
+      lastBlockBottomCoord < clickedCoord;
 
     if (isClickedBottom) {
       stopPropagation();

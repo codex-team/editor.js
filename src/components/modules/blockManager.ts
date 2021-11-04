@@ -532,11 +532,15 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
-   * @param {number} index - index to get
+   * @param {number} index - index to get. -1 to get last
    *
    * @returns {Block}
    */
   public getBlockByIndex(index): Block {
+    if (index === -1) {
+      index = this._blocks.length - 1;
+    }
+
     return this._blocks[index];
   }
 
