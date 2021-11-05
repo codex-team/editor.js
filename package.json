@@ -1,6 +1,6 @@
 {
   "name": "@demoflow/editor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
