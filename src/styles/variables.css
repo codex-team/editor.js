@@ -21,12 +21,12 @@
   /**
    * Gray icons hover
    */
-  --color-dark: #1D202B;
+  --color-dark: #1d202b;
 
   /**
    * Blue icons
    */
-  --color-active-icon: #388AE5;
+  --color-active-icon: #388ae5;
 
   /**
    * Gray border, loaders
@@ -42,7 +42,7 @@
   /**
    * In narrow mode, we increase right zone contained Block Actions button
    */
-  --narrow-mode-right-padding: 50px;
+  --narrow-mode-right-padding: 0px;
 
   /**
    * Toolbar buttons height and width
@@ -57,13 +57,13 @@
   /**
    * Confirm deletion bg
    */
-  --color-confirm: #E24A4A;
+  --color-confirm: #e24a4a;
 
   --overlay-pane: {
     position: absolute;
-    background-color: #FFFFFF;
-    border: 1px solid #EAEAEA;
-    box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 3px 15px -3px rgba(13, 20, 33, 0.13);
     border-radius: 4px;
     z-index: 2;
 
@@ -86,7 +86,7 @@
         margin-left: 0;
       }
     }
-  };
+  }
 
   /**
    * Styles for Toolbox Buttons and Plus Button
@@ -105,12 +105,11 @@
       color: var(--color-active-icon);
     }
 
-    &--active{
+    &--active {
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
-
-  };
+  }
 
   /**
    * Styles for Settings Button in Toolbar
@@ -150,5 +149,5 @@
         animation-duration: 250ms;
       }
     }
-  };
+  }
 }
