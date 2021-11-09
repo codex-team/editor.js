@@ -89,7 +89,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({
       config,
-      eventsDispatcher,
+      eventsDispatcher
     });
     this.tooltip = new Tooltip();
   }
@@ -115,7 +115,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       // Actions Zone
       blockActionsButtons: 'ce-toolbar__actions-buttons',
-      settingsToggler: 'ce-toolbar__settings-btn',
+      settingsToggler: 'ce-toolbar__settings-btn'
     };
   }
 
@@ -135,13 +135,14 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   public get plusButton(): { hide: () => void; show: () => void } {
     return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      hide: (): void =>
+        this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: (): void => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
         }
         this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      },
+      }
     };
   }
 
@@ -157,7 +158,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       },
       show: (): void => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
-      },
+      }
     };
   }
 
@@ -208,10 +209,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * 2) On mobile — Toolbar at the bottom of Block
      */
     if (!isMobile) {
-      const contentOffset = Math.floor(blockHeight / 2);
-
-      this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
-      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+      this.nodes.plusButton.style.transform = `translate3d(0, 300, 0)`;
+      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, 300, 0)`;
     } else {
       toolbarY += blockHeight;
     }
@@ -219,7 +218,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(toolbarY)}px, 0)`;
+    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(
+      toolbarY
+    )}px, 0)`;
   }
 
   /**
@@ -285,19 +286,28 @@ export default class Toolbar extends Module<ToolbarNodes> {
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
 
-    this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
-      this.plusButtonClicked();
-    }, false);
+    this.readOnlyMutableListeners.on(
+      this.nodes.plusButton,
+      'click',
+      () => {
+        this.plusButtonClicked();
+      },
+      false
+    );
 
     /**
      * Add events to show/hide tooltip for plus button
      */
     const tooltipContent = $.make('div');
 
-    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
-    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
-    }));
+    tooltipContent.appendChild(
+      document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add'))
+    );
+    tooltipContent.appendChild(
+      $.make('div', this.CSS.plusButtonShortcut, {
+        textContent: '⇥ Tab'
+      })
+    );
 
     this.tooltip.onHover(this.nodes.plusButton, tooltipContent);
 
@@ -319,7 +329,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.nodes.settingsToggler,
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
-        placement: 'top',
+        placement: 'top'
       }
     );
 
@@ -351,16 +361,21 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *
      * mousedown is used because on click selection is lost in Safari and FF
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
-      /**
-       * Stop propagation to prevent block selection clearance
-       *
-       * @see UI.documentClicked
-       */
-      e.stopPropagation();
+    this.readOnlyMutableListeners.on(
+      this.nodes.settingsToggler,
+      'mousedown',
+      (e) => {
+        /**
+         * Stop propagation to prevent block selection clearance
+         *
+         * @see UI.documentClicked
+         */
+        e.stopPropagation();
 
-      this.settingsTogglerClicked();
-    }, true);
+        this.settingsTogglerClicked();
+      },
+      true
+    );
   }
 
   /**
