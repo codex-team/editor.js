@@ -1,6 +1,6 @@
 {
   "name": "@demoflow/editor",
-  "version": "1.0.4",
+  "version": "1.0.4-RC1",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -30,7 +30,8 @@
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open"
+    "test:e2e:open": "yarn build && cypress open",
+    "publish:assets": "pm run build && npm publish"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
