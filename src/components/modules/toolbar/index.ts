@@ -208,11 +208,12 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
      * 2) On mobile — Toolbar at the bottom of Block
      */
+    this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, 0, 0)`;
+
     if (!isMobile) {
       this.nodes.plusButton.style.transform = `translate3d(0, 0, 0)`;
-      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, 0, 0)`;
     } else {
-      toolbarY += blockHeight;
+      toolbarY += (blockHeight / 2);
     }
 
     /**

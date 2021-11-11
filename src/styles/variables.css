@@ -1,5 +1,6 @@
 @custom-media --mobile (width <= 650px);
 @custom-media --not-mobile (width >= 651px);
+@custom-media --pmd (width <= 400px);
 
 :root {
   /**

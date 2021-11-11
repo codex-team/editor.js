@@ -52,12 +52,6 @@
     &--hidden {
       display: none;
     }
-
-    /* @media (--mobile){
-      display: inline-flex !important;
-      position: static;
-      transform: none !important;
-    } */
   }
 
   &__plus,
@@ -121,5 +115,8 @@
 .codex-editor--narrow .ce-toolbar__plus {
   @media (--not-mobile) {
     left: 5px;
+  }
+  @media (--pmd){
+    transform: translate(5px, 0);
   }
 }

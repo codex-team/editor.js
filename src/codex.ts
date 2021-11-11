@@ -89,7 +89,6 @@ export default class EditorJS {
           }
           moduleInstance.listeners.removeAll();
         });
-      console.log('in editor');
 
       editor = null;
 
