@@ -67,7 +67,7 @@
    */
   &__actions {
     position: absolute;
-    right: -30px;
+    right: -20px;
     top: 5px;
     opacity: 0;
 
@@ -114,11 +114,5 @@
  * Styles for Narrow mode
  */
 .codex-editor--narrow .ce-toolbar__plus {
-  z-index: 0;
-  @media (--not-mobile) {
-    left: 5px;
-  }
-  @media (--mobile){
-    transform: translate(5px, 0);
-  }
+  transform: translate(0, 0);
 }

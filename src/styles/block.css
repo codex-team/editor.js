@@ -79,8 +79,7 @@
 }
 
 .codex-editor--narrow {
-  margin-left: 5px;
   .ce-block {
-    margin-right: 0;
+    max-width: 90%;
   }
 }
