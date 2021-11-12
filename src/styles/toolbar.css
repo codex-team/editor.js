@@ -3,6 +3,8 @@
   left: 0;
   right: 0;
   top: 0;
+  z-index: 0;
+  max-width: 90%;
   /*opacity: 0;*/
   /*visibility: hidden;*/
   transition: opacity 100ms ease;
@@ -24,10 +26,9 @@
   }
 
   &__content {
-    max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
-
+    max-width: 90%;
     /* @media (--mobile){
       display: flex;
       align-content: center;
@@ -40,7 +41,7 @@
     @apply --toolbox-button;
 
     position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
+    left: 12px;
     flex-shrink: 0;
 
     &-shortcut {
@@ -113,10 +114,11 @@
  * Styles for Narrow mode
  */
 .codex-editor--narrow .ce-toolbar__plus {
+  z-index: 0;
   @media (--not-mobile) {
     left: 5px;
   }
-  @media (--pmd){
+  @media (--mobile){
     transform: translate(5px, 0);
   }
 }

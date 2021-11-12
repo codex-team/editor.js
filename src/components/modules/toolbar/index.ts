@@ -192,6 +192,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }
 
     const currentBlock = this.Editor.BlockManager.currentBlock.holder;
+    const currentBlockIsEmpty = this.Editor.BlockManager.currentBlock.isEmpty;
 
     /**
      * If no one Block selected as a Current
@@ -202,6 +203,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     const { isMobile } = this.Editor.UI;
     const blockHeight = currentBlock.offsetHeight;
+
     let toolbarY = currentBlock.offsetTop;
 
     /**
@@ -213,7 +215,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (!isMobile) {
       this.nodes.plusButton.style.transform = `translate3d(0, 0, 0)`;
     } else {
-      toolbarY += (blockHeight / 2);
+      // if (currentBlockIsEmpty) {
+      //   toolbarY += (blockHeight / 2);
+      // }
     }
 
     /**
