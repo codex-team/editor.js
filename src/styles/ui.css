@@ -5,12 +5,16 @@
   position: relative;
   box-sizing: border-box;
   z-index: 1;
+  overflow-y: auto;
+  background-color: white;
 
   .hide {
     display: none;
   }
 
   &__redactor {
+    height: 100%;
+    margin-right: 0;
     &--hidden {
       display: none;
     }
@@ -41,9 +45,7 @@
   }
 
   &--narrow .ce-toolbar__actions {
-    @media (--not-mobile) {
-      right: -5px;
-    }
+    z-index: 0;
   }
 
   &__loader {

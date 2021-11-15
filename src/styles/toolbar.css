@@ -3,6 +3,8 @@
   left: 0;
   right: 0;
   top: 0;
+  z-index: 0;
+  max-width: 90%;
   /*opacity: 0;*/
   /*visibility: hidden;*/
   transition: opacity 100ms ease;
@@ -24,10 +26,9 @@
   }
 
   &__content {
-    max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
-
+    max-width: 90%;
     /* @media (--mobile){
       display: flex;
       align-content: center;
@@ -40,7 +41,7 @@
     @apply --toolbox-button;
 
     position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
+    left: 12px;
     flex-shrink: 0;
 
     &-shortcut {
@@ -52,12 +53,6 @@
     &--hidden {
       display: none;
     }
-
-    /* @media (--mobile){
-      display: inline-flex !important;
-      position: static;
-      transform: none !important;
-    } */
   }
 
   &__plus,
@@ -72,7 +67,7 @@
    */
   &__actions {
     position: absolute;
-    right: -30px;
+    right: -20px;
     top: 5px;
     opacity: 0;
 
@@ -119,7 +114,5 @@
  * Styles for Narrow mode
  */
 .codex-editor--narrow .ce-toolbar__plus {
-  @media (--not-mobile) {
-    left: 5px;
-  }
+  transform: translate(0, 0);
 }

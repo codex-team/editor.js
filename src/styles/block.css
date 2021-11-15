@@ -1,4 +1,5 @@
 .ce-block {
+  max-width: 90%;
   &:first-of-type {
     margin-top: 0;
   }
@@ -26,7 +27,7 @@
 
   &__content {
     position: relative;
-    max-width: var(--content-width);
+    max-width: 90%;
     margin: 0 auto;
     transition: background-color 150ms ease;
   }
@@ -77,6 +78,8 @@
   }
 }
 
-.codex-editor--narrow .ce-block--focused {
-  padding-right: 0 !important;
+.codex-editor--narrow {
+  .ce-block {
+    max-width: 90%;
+  }
 }

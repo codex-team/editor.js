@@ -204,41 +204,41 @@ export default class Tools extends Module {
     [toolName: string]:
       | ToolConstructable
       | (ToolSettings & { isInternal?: boolean });
-  } {
+      } {
     return {
       bold: {
         class: BoldInlineTool,
-        isInternal: true
+        isInternal: true,
       },
       italic: {
         class: ItalicInlineTool,
-        isInternal: true
+        isInternal: true,
       },
       link: {
         class: LinkInlineTool,
-        isInternal: true
+        isInternal: true,
       },
       paragraph: {
         class: Paragraph,
         inlineToolbar: true,
-        isInternal: true
+        isInternal: true,
       },
       stub: {
         class: Stub,
-        isInternal: true
+        isInternal: true,
       },
       moveUp: {
         class: MoveUpTune,
-        isInternal: true
+        isInternal: true,
       },
       delete: {
         class: DeleteTune,
-        isInternal: true
+        isInternal: true,
       },
       moveDown: {
         class: MoveDownTune,
-        isInternal: true
-      }
+        isInternal: true,
+      },
     };
   }
 
@@ -305,13 +305,11 @@ export default class Tools extends Module {
     Object.entries(config).forEach(([toolName, settings]) => {
       toolPreparationList.push({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        function: _.isFunction(settings.class.prepare)
-          ? settings.class.prepare
-          : (): void => {},
+        function: _.isFunction(settings.class.prepare) ? settings.class.prepare : (): void => {},
         data: {
           toolName,
-          config: settings.config
-        }
+          config: settings.config,
+        },
       });
     });
 
@@ -348,15 +346,15 @@ export default class Tools extends Module {
      */
     if (tool.enabledInlineTools === true) {
       tool.inlineTools = new ToolsCollection<InlineTool>(
+        /**
+         * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
+         */
         Array.isArray(this.config.inlineToolbar)
           ? this.config.inlineToolbar.map((name) => [
-              name,
-              this.inlineTools.get(name)
-            ])
-          : /**
-             * If common settings is 'true' or not specified (will be set as true at core.ts), get the default order
-             */
-            Array.from(this.inlineTools.entries())
+            name,
+            this.inlineTools.get(name),
+          ])
+          : Array.from(this.inlineTools.entries())
       );
 
       return;
@@ -389,7 +387,7 @@ export default class Tools extends Module {
 
       tool.tunes = new ToolsCollection<BlockTune>([
         ...userTunes,
-        ...this.blockTunes.internalTools
+        ...this.blockTunes.internalTools,
       ]);
 
       return;
@@ -402,7 +400,7 @@ export default class Tools extends Module {
 
       tool.tunes = new ToolsCollection<BlockTune>([
         ...userTunes,
-        ...this.blockTunes.internalTools
+        ...this.blockTunes.internalTools,
       ]);
 
       return;
@@ -453,7 +451,7 @@ export default class Tools extends Module {
         config[toolName] = this.config.tools[toolName] as ToolSettings;
       } else {
         config[toolName] = {
-          class: this.config.tools[toolName] as ToolConstructable
+          class: this.config.tools[toolName] as ToolConstructable,
         };
       }
     }

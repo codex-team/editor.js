@@ -89,7 +89,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({
       config,
-      eventsDispatcher
+      eventsDispatcher,
     });
     this.tooltip = new Tooltip();
   }
@@ -115,7 +115,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       // Actions Zone
       blockActionsButtons: 'ce-toolbar__actions-buttons',
-      settingsToggler: 'ce-toolbar__settings-btn'
+      settingsToggler: 'ce-toolbar__settings-btn',
     };
   }
 
@@ -142,7 +142,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
           return;
         }
         this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      }
+      },
     };
   }
 
@@ -158,7 +158,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       },
       show: (): void => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
-      }
+      },
     };
   }
 
@@ -201,18 +201,16 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }
 
     const { isMobile } = this.Editor.UI;
-    const blockHeight = currentBlock.offsetHeight;
-    let toolbarY = currentBlock.offsetTop;
+    const toolbarY = currentBlock.offsetTop;
 
     /**
      * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
      * 2) On mobile — Toolbar at the bottom of Block
      */
+    this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, 0, 0)`;
+
     if (!isMobile) {
-      this.nodes.plusButton.style.transform = `translate3d(0, 300, 0)`;
-      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, 300, 0)`;
-    } else {
-      toolbarY += blockHeight;
+      this.nodes.plusButton.style.transform = `translate3d(0, 0, 0)`;
     }
 
     /**
@@ -305,7 +303,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     );
     tooltipContent.appendChild(
       $.make('div', this.CSS.plusButtonShortcut, {
-        textContent: '⇥ Tab'
+        textContent: '⇥ Tab',
       })
     );
 
@@ -329,7 +327,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.nodes.settingsToggler,
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
-        placement: 'top'
+        placement: 'top',
       }
     );
 

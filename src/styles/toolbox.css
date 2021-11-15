@@ -5,6 +5,7 @@
   will-change: opacity;
   display: flex;
   flex-direction: row;
+  background-color: white;
 
   /* @media (--mobile){
     position: static;
