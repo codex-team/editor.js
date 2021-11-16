@@ -41,6 +41,15 @@ function BlockAPI(
     },
 
     /**
+     * Tool data
+     *
+     * @returns {BlockToolData}
+     */
+    get data(): BlockToolData{
+      return block.data;
+    },
+
+    /**
      * .ce-block element, that wraps plugin contents
      *
      * @returns {HTMLElement}

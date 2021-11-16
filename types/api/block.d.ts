@@ -16,6 +16,11 @@ export interface BlockAPI {
   readonly name: string;
 
   /**
+   * Block data
+   */
+  readonly data: BlockToolData;
+
+  /**
    * Tool config passed on Editor's initialization
    */
   readonly config: ToolConfig;
