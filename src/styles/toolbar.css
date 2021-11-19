@@ -73,7 +73,6 @@
   &__actions {
     position: absolute;
     right: 100%;
-    top: var(--block-padding-vertical);
     opacity: 0;
     display: flex;
 

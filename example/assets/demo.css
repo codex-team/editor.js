@@ -355,10 +355,11 @@ body {
 
 .dark-mode .ce-block--selected .ce-block__content,
 .dark-mode ::selection{
-  background-color: rgba(49, 55, 64, 0.51)
+  background-color: rgba(57, 68, 84, 0.57);
 }
 
 .dark-mode .ce-toolbox__button,
-.dark-mode .ce-toolbar__settings-btn {
+.dark-mode .ce-toolbar__settings-btn,
+.dark-mode .ce-toolbar__plus {
   color: inherit;
 }

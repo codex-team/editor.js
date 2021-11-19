@@ -9,7 +9,6 @@ import { EditorConfig } from '../../../../types';
 import Block from '../../block';
 
 /**
- * @todo remove block margins
  * @todo clear cross block selection on click on block
  * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
  * @todo Debug Thin mode
@@ -222,8 +221,16 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.hoveredBlock = block;
 
     const { isMobile } = this.Editor.UI;
+    const renderedContent = block.pluginsContent;
+    const renderedContentStyle = window.getComputedStyle(renderedContent);
+    const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
     const blockHeight = targetBlockHolder.offsetHeight;
-    let toolbarY = targetBlockHolder.offsetTop;
+
+    /**
+     * Toolbar should be moved to the first line of block text
+     * To do that, we compute the block offset and the padding-top of the plugin content
+     */
+    let toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
 
     /**
      * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
