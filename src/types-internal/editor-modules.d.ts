@@ -2,7 +2,6 @@ import UI from '../components/modules/ui';
 import BlockEvents from '../components/modules/blockEvents';
 import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
-import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
 import Paste from '../components/modules/paste';
 import DragNDrop from '../components/modules/dragNDrop';
@@ -40,7 +39,6 @@ export interface EditorModules {
   RectangleSelection: RectangleSelection;
   Toolbar: Toolbar;
   InlineToolbar: InlineToolbar;
-  Toolbox: Toolbox;
   BlockSettings: BlockSettings;
   ConversionToolbar: ConversionToolbar;
   Paste: Paste;

@@ -1,43 +1,21 @@
-import Module from '../../__module';
-import $ from '../../dom';
-import * as _ from '../../utils';
-import Flipper from '../../flipper';
-import { BlockToolAPI } from '../../block';
-import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
-import Shortcuts from '../../utils/shortcuts';
-import Tooltip from '../../utils/tooltip';
-import { ModuleConfig } from '../../../types-internal/module-config';
-import EventsDispatcher from '../../utils/events';
-import BlockTool from '../../tools/block';
+import $ from '../dom';
+import * as _ from '../utils';
+import Flipper from '../flipper';
+import { BlockToolAPI } from '../block';
+import I18n from '../i18n';
+import { I18nInternalNS } from '../i18n/namespace-internal';
+import Shortcuts from '../utils/shortcuts';
+import Tooltip from '../utils/tooltip';
+import BlockTool from '../tools/block';
+import ToolsCollection from '../tools/collection';
+import {API, BlockAPI} from '../../../types';
 
 /**
- * HTMLElements used for Toolbox UI
+ * Toolbox
+ * This UI element contains list of Block Tools available to be inserted
+ * It appears after click on the Plus Button
  */
-interface ToolboxNodes {
-  toolbox: HTMLElement;
-  buttons: HTMLElement[];
-}
-
-/**
- * @class Toolbox
- * @classdesc Holder for Tools
- *
- * @typedef {Toolbox} Toolbox
- * @property {boolean} opened - opening state
- * @property {object} nodes   - Toolbox nodes
- * @property {object} CSS     - CSS class names
- *
- */
-export default class Toolbox extends Module<ToolboxNodes> {
-  /**
-   * Current module HTML Elements
-   */
-  public nodes = {
-    toolbox: null,
-    buttons: [],
-  }
-
+export default class Toolbox {
   /**
    * CSS styles
    *
@@ -73,6 +51,47 @@ export default class Toolbox extends Module<ToolboxNodes> {
   public opened = false;
 
   /**
+   * Editor API
+   */
+  private api: API;
+
+  /**
+   * Toolbox opening callback
+   */
+  private readonly onOpen: () => void;
+
+  /**
+   * Toolbox closing callback
+   */
+  private readonly onClose: () => void;
+
+  /**
+   * Callback to be fired after the new block added
+   */
+  private readonly onBlockAdded: (addedBlock: BlockAPI) => void;
+
+  /**
+   * List of Tools available. Some of them will be shown in the Toolbox
+   */
+  private tools: ToolsCollection<BlockTool>;
+
+  /**
+   * Element that will be used as parent for Shortcuts keydowns binding
+   */
+  private readonly shortcutsScopeElement: Element;
+
+  /**
+   * Current module HTML Elements
+   */
+  private nodes: {
+    toolbox: HTMLElement;
+    buttons: HTMLElement[];
+  } = {
+    toolbox: null,
+    buttons: [],
+  }
+
+  /**
    * How many tools displayed in Toolbox
    *
    * @type {number}
@@ -90,28 +109,46 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Tooltip utility Instance
    */
   private tooltip: Tooltip;
+
   /**
-   * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * Toolbox constructor
+   *
+   * @param options - available parameters
+   * @param options.api - Editor API methods
+   * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
+   * @param options.shortcutsScopeElement - parent element for Shortcuts scope restriction
+   * @param options.onOpen - opening callback
+   * @param options.onClose - closing callback
+   * @param options.onBlockAdded - block adding callback
    */
-  constructor({ config, eventsDispatcher }: ModuleConfig) {
-    super({
-      config,
-      eventsDispatcher,
-    });
+  constructor({ api, tools, shortcutsScopeElement, onOpen, onClose, onBlockAdded }) {
+    this.api = api;
+    this.tools = tools;
+    this.onOpen = onOpen;
+    this.onClose = onClose;
+    this.onBlockAdded = onBlockAdded;
+    this.shortcutsScopeElement = shortcutsScopeElement;
+
     this.tooltip = new Tooltip();
+  }
+
+  /**
+   * Returns true if the Toolbox has the Flipper activated and the Flipper has selected button
+   */
+  public get flipperHasFocus(): boolean {
+    return this.flipper && this.flipper.currentItem !== null;
   }
 
   /**
    * Makes the Toolbox
    */
-  public make(): void {
+  public make(): Element {
     this.nodes.toolbox = $.make('div', this.CSS.toolbox);
 
     this.addTools();
     this.enableFlipper();
+
+    return this.nodes.toolbox;
   }
 
   /**
@@ -126,7 +163,12 @@ export default class Toolbox extends Module<ToolboxNodes> {
       this.flipper = null;
     }
 
-    this.removeAllNodes();
+    if (this.nodes && this.nodes.toolbox) {
+      this.nodes.toolbox.remove();
+      this.nodes.toolbox = null;
+      this.nodes.buttons = [];
+    }
+
     this.removeAllShortcuts();
     this.tooltip.destroy();
   }
@@ -149,7 +191,10 @@ export default class Toolbox extends Module<ToolboxNodes> {
       return;
     }
 
-    this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
+    if (typeof this.onOpen === 'function') {
+      this.onOpen();
+    }
+
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
 
     this.opened = true;
@@ -160,8 +205,11 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Close Toolbox
    */
   public close(): void {
+    if (typeof this.onClose === 'function') {
+      this.onClose();
+    }
+
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
-    this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
     this.flipper.deactivate();
@@ -182,10 +230,8 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Iterates available tools and appends them to the Toolbox
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.blockTools;
-
     Array
-      .from(tools.values())
+      .from(this.tools.values())
       .forEach((tool) => this.addTool(tool));
   }
 
@@ -231,7 +277,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
     /**
      * Add click listener
      */
-    this.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.api.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, tool.name);
     });
 
@@ -296,7 +342,7 @@ export default class Toolbox extends Module<ToolboxNodes> {
         event.preventDefault();
         this.insertNewBlock(toolName);
       },
-      on: this.Editor.UI.nodes.redactor,
+      on: this.shortcutsScopeElement as HTMLElement,
     });
   }
 
@@ -305,15 +351,13 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * Fired when the Read-Only mode is activated
    */
   private removeAllShortcuts(): void {
-    const tools = this.Editor.Tools.blockTools;
-
     Array
-      .from(tools.values())
+      .from(this.tools.values())
       .forEach((tool) => {
         const shortcut = tool.shortcut;
 
         if (shortcut) {
-          Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
+          Shortcuts.remove(this.shortcutsScopeElement, shortcut);
         }
       });
   }
@@ -337,34 +381,36 @@ export default class Toolbox extends Module<ToolboxNodes> {
    * @param {string} toolName - Tool name
    */
   private insertNewBlock(toolName: string): void {
-    const { BlockManager, Caret } = this.Editor;
-    const { currentBlock } = BlockManager;
+    const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
-    const newBlock = BlockManager.insert({
-      tool: toolName,
-      replace: currentBlock.isEmpty,
-    });
+    if (!currentBlock) {
+      return;
+    }
+
+    const newBlock = this.api.blocks.insert(
+      toolName,
+      undefined,
+      undefined,
+      currentBlockIndex,
+      undefined,
+      currentBlock.isEmpty
+    );
 
     /**
      * Apply callback before inserting html
      */
     newBlock.call(BlockToolAPI.APPEND_CALLBACK);
 
-    this.Editor.Caret.setToBlock(newBlock);
+    this.api.caret.setToBlock(currentBlockIndex);
 
-    /** If new block doesn't contain inpus, insert new paragraph above */
-    if (newBlock.inputs.length === 0) {
-      if (newBlock === BlockManager.lastBlock) {
-        BlockManager.insertAtEnd();
-        Caret.setToBlock(BlockManager.lastBlock);
-      } else {
-        Caret.setToBlock(BlockManager.nextBlock);
-      }
+    if (typeof this.onBlockAdded === 'function'){
+      this.onBlockAdded(newBlock);
     }
 
     /**
      * close toolbar when node is changed
      */
-    this.Editor.Toolbar.close();
+    this.api.toolbar.close();
   }
 }

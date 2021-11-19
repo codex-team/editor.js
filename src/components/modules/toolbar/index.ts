@@ -5,8 +5,9 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import { EditorConfig } from '../../../../types';
+import { BlockAPI, EditorConfig } from '../../../../types';
 import Block from '../../block';
+import Toolbox from '../../ui/toolbox';
 
 /**
  * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
@@ -98,12 +99,22 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Tooltip utility Instance
    */
   private tooltip: Tooltip;
-  private hoveredBlock: any;
+
+  /**
+   * Block near which we display the Toolbox
+   */
+  private hoveredBlock: Block;
+
+  /**
+   * Toolbox class instance
+   */
+  private toolboxInstance: Toolbox;
+
   /**
    * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({
@@ -156,11 +167,30 @@ export default class Toolbar extends Module<ToolbarNodes> {
     return {
       hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: (): void => {
-        if (this.Editor.Toolbox.isEmpty) {
+        if (this.toolboxInstance.isEmpty) {
           return;
         }
         this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
       },
+    };
+  }
+
+  /**
+   * Public interface for accessing the Toolbox
+   */
+  public get toolbox(): {
+    opened: boolean;
+    close: () => void;
+    open: () => void;
+    toggle: () => void;
+    flipperHasFocus: boolean;
+    } {
+    return {
+      opened: this.toolboxInstance.opened,
+      close: (): void => this.toolboxInstance.close(),
+      open: (): void => this.toolboxInstance.open(),
+      toggle: (): void => this.toolboxInstance.toggle(),
+      flipperHasFocus: this.toolboxInstance.flipperHasFocus,
     };
   }
 
@@ -191,7 +221,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.enableModuleBindings();
     } else {
       this.destroy();
-      this.Editor.Toolbox.destroy();
+      this.toolboxInstance.destroy();
       this.Editor.BlockSettings.destroy();
       this.disableModuleBindings();
     }
@@ -206,7 +236,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Close Toolbox when we move toolbar
      */
-    this.Editor.Toolbox.close();
+    this.toolboxInstance.close();
     this.Editor.BlockSettings.close();
 
     const targetBlockHolder = block.holder;
@@ -264,7 +294,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     /** Close components */
     this.blockActions.hide();
-    this.Editor.Toolbox.close();
+    this.toolboxInstance.close();
     this.Editor.BlockSettings.close();
   }
 
@@ -362,13 +392,51 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Appending Toolbar components to itself
      */
-    $.append(this.nodes.content, this.Editor.Toolbox.nodes.toolbox);
+    $.append(this.nodes.content, this.makeToolbox());
     $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
 
     /**
      * Append toolbar to the Editor
      */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+  }
+
+  /**
+   * Creates the Toolbox instance and return it's rendered element
+   */
+  private makeToolbox(): Element {
+    /**
+     * Make the Toolbox
+     */
+    this.toolboxInstance = new Toolbox({
+      api: this.Editor.API.methods,
+      tools: this.Editor.Tools.blockTools,
+      shortcutsScopeElement: this.Editor.UI.nodes.redactor,
+      onOpen: (): void => {
+        this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
+      },
+      onClose: (): void => {
+        this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
+      },
+      onBlockAdded: (addedBlockApi: BlockAPI): void => {
+        const { BlockManager, Caret } = this.Editor;
+        const newBlock = BlockManager.getBlockById(addedBlockApi.id);
+
+        /**
+         * If the new block doesn't contain inputs, insert the new paragraph below
+         */
+        if (newBlock.inputs.length === 0) {
+          if (newBlock === BlockManager.lastBlock) {
+            BlockManager.insertAtEnd();
+            Caret.setToBlock(BlockManager.lastBlock);
+          } else {
+            Caret.setToBlock(BlockManager.nextBlock);
+          }
+        }
+      },
+    });
+
+    return this.toolboxInstance.make()
   }
 
   /**
@@ -381,7 +449,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.Editor.BlockManager.currentBlock = this.hoveredBlock;
 
-    this.Editor.Toolbox.toggle();
+    this.toolboxInstance.toggle();
   }
 
   /**
@@ -403,7 +471,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       this.settingsTogglerClicked();
 
-      this.Editor.Toolbox.close();
+      this.toolboxInstance.close();
 
       this.tooltip.hide(true);
     }, true);
@@ -412,7 +480,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       /**
        * Do not move toolbar if Block Settings or Toolbox opened
        */
-      if (this.Editor.BlockSettings.opened || this.Editor.Toolbox.opened) {
+      if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
         return;
       }
 
@@ -448,7 +516,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Draws Toolbar UI
    *
    * Toolbar contains BlockSettings and Toolbox.
-   * Thats why at first we draw its components and then Toolbar itself
+   * That's why at first we draw its components and then Toolbar itself
    *
    * Steps:
    *  - Make Toolbar dependent components like BlockSettings, Toolbox and so on
@@ -460,11 +528,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Make BlockSettings Panel
      */
     this.Editor.BlockSettings.make();
-
-    /**
-     * Make Toolbox
-     */
-    this.Editor.Toolbox.make();
 
     /**
      * Make Toolbar

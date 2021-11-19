@@ -496,7 +496,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keyboard event
    */
   private needToolbarClosing(event: KeyboardEvent): boolean {
-    const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
+    const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbar.toolbox.opened),
         blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
         inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
         conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
@@ -525,7 +525,7 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbar.moveAndOpen();
     } // else Flipper will leaf through it
 
-    this.Editor.Toolbox.open();
+    this.Editor.Toolbar.toolbox.open();
   }
 
   /**

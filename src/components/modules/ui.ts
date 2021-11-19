@@ -218,15 +218,23 @@ export default class UI extends Module<UINodes> {
    * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
-    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
 
-    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbar.toolbox.opened;
   }
 
   /**
    * Check for some Flipper-buttons is under focus
    */
   public get someFlipperButtonFocused(): boolean {
+    /**
+     * Toolbar has internal module (Toolbox) that has own Flipper,
+     * so we check it manually
+     */
+    if (this.Editor.Toolbar.toolbox.flipperHasFocus) {
+      return true;
+    }
+
     return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
       return moduleClass.flipper instanceof Flipper;
     })
@@ -246,12 +254,12 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
-    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
 
     BlockSettings.close();
     InlineToolbar.close();
     ConversionToolbar.close();
-    Toolbox.close();
+    Toolbar.toolbox.close();
   }
 
   /**
@@ -534,8 +542,8 @@ export default class UI extends Module<UINodes> {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    if (this.Editor.Toolbox.opened) {
-      this.Editor.Toolbox.close();
+    if (this.Editor.Toolbar.toolbox.opened) {
+      this.Editor.Toolbar.toolbox.close();
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.ConversionToolbar.opened) {
