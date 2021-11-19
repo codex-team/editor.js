@@ -8,7 +8,7 @@ import Shortcuts from '../utils/shortcuts';
 import Tooltip from '../utils/tooltip';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import {API, BlockAPI} from '../../../types';
+import { API, BlockAPI } from '../../../types';
 
 /**
  * Toolbox
@@ -111,6 +111,11 @@ export default class Toolbox {
   private tooltip: Tooltip;
 
   /**
+   * Id of listener added used to remove it on destroy()
+   */
+  private clickListenerId: string = null;
+
+  /**
    * Toolbox constructor
    *
    * @param options - available parameters
@@ -168,6 +173,8 @@ export default class Toolbox {
       this.nodes.toolbox = null;
       this.nodes.buttons = [];
     }
+
+    this.api.listeners.offById(this.clickListenerId);
 
     this.removeAllShortcuts();
     this.tooltip.destroy();
@@ -277,7 +284,7 @@ export default class Toolbox {
     /**
      * Add click listener
      */
-    this.api.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.clickListenerId =  this.api.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, tool.name);
     });
 

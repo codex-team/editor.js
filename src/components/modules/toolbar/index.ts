@@ -541,6 +541,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   private destroy(): void {
     this.removeAllNodes();
+    this.toolboxInstance.destroy();
     this.tooltip.destroy();
   }
 }
