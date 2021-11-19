@@ -17,6 +17,8 @@ interface ConversionToolbarNodes {
 
 /**
  * Block Converter
+ *
+ * @todo Make the Conversion Toolbar no-module but a standalone class, like Toolbox
  */
 export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   /**

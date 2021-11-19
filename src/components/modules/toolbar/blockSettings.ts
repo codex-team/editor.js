@@ -24,6 +24,8 @@ interface BlockSettingsNodes {
  *  | .  Default Settings  . |
  *  | ...................... |
  *  |________________________|
+ *
+ *  @todo Make Block Settings no-module but a standalone class, like Toolbox
  */
 export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**

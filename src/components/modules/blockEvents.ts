@@ -542,6 +542,11 @@ export default class BlockEvents extends Module {
      * Next Tab press will leaf Settings Buttons
      */
     if (!this.Editor.BlockSettings.opened) {
+      /**
+       * @todo Debug case when we set caret to the some block,
+       *       hovering another block — wrong settings will be opened.
+       *       To fix it, we should refactor the Block Settings module — make it a standalone class, like the Toolbox
+       */
       this.Editor.BlockSettings.open();
     }
   }

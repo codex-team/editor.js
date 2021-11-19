@@ -5,13 +5,14 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import { BlockAPI, EditorConfig } from '../../../../types';
+import { BlockAPI } from '../../../../types';
 import Block from '../../block';
 import Toolbox from '../../ui/toolbox';
 
 /**
- * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
- *     - make the Toolbox non-module. It should be accessed only via Toolbar
+ * @todo Tab on empty block should open Block Settings of the hoveredBlock (not where caret is set)
+ *          - make Block Settings a standalone module
+ *
  * @todo Debug Thin mode
  * @todo Debug Mobile mode
  *
@@ -188,7 +189,14 @@ export default class Toolbar extends Module<ToolbarNodes> {
     return {
       opened: this.toolboxInstance.opened,
       close: (): void => this.toolboxInstance.close(),
-      open: (): void => this.toolboxInstance.open(),
+      open: (): void => {
+        /**
+         * Set current block to cover the case when the Toolbar showed near hovered Block but caret is set to another Block.
+         */
+        this.Editor.BlockManager.currentBlock = this.hoveredBlock;
+
+        this.toolboxInstance.open();
+      },
       toggle: (): void => this.toolboxInstance.toggle(),
       flipperHasFocus: this.toolboxInstance.flipperHasFocus,
     };
@@ -436,7 +444,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       },
     });
 
-    return this.toolboxInstance.make()
+    return this.toolboxInstance.make();
   }
 
   /**
