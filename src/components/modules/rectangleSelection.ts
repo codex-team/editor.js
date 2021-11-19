@@ -257,6 +257,7 @@ export default class RectangleSelection extends Module {
    * Handle mouse up
    */
   private processMouseUp(): void {
+    this.clearSelection();
     this.endSelection();
   }
 

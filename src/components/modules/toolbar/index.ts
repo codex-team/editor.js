@@ -9,7 +9,6 @@ import { EditorConfig } from '../../../../types';
 import Block from '../../block';
 
 /**
- * @todo clear cross block selection on click on block
  * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
  * @todo Debug Thin mode
  * @todo Debug Mobile mode
