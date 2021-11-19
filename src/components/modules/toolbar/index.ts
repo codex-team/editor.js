@@ -12,6 +12,8 @@ import Block from '../../block';
  * @todo remove block margins
  * @todo clear cross block selection on click on block
  * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
+ * @todo Debug Thin mode
+ * @todo Debug Mobile mode
  *
  * @todo TESTCASE - show toggler after opening and closing the Inline Toolbar
  * @todo TESTCASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
