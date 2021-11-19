@@ -47,6 +47,15 @@ interface UINodes {
  */
 export default class UI extends Module<UINodes> {
   /**
+   * Events could be emitted by this module.
+   */
+  public get events(): { blockHovered: string } {
+    return {
+      blockHovered: 'block-hovered',
+    };
+  }
+
+  /**
    * Editor.js UI CSS class names
    *
    * @returns {{editorWrapper: string, editorZone: string}}
@@ -336,21 +345,6 @@ export default class UI extends Module<UINodes> {
       this.documentTouched(event);
     }, true);
 
-    // this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', (event: MouseEvent | TouchEvent) => {
-    //   const hoveredBlock = (event.target as Element).closest('.ce-block');
-    //   let emitedBlock;
-    //
-    //   if (emitedBlock === hoveredBlock){
-    //     return;
-    //   }
-    //
-    //   emitedBlock = hoveredBlock;
-    //   this.eventsDispatcher.emit('block hovered', {
-    //     block: hoveredBlock,
-    //   })
-    //
-    // }, true);
-
     this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
       this.documentKeydown(event);
     }, true);
@@ -369,6 +363,48 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
     }, {
+      passive: true,
+    });
+
+    /**
+     * Start watching 'block-hovered' events that is used by Toolbar for moving
+     */
+    this.watchBlockHoveredEvents();
+  }
+
+  /**
+   * Listen redactor mousemove to emit 'block-hovered' event
+   */
+  private watchBlockHoveredEvents(): void {
+    /**
+     * Used to not to emit the same block multiple times to the 'block-hovered' event on every mousemove
+     */
+    let blockHoveredEmitted;
+
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', _.throttle((event: MouseEvent | TouchEvent) => {
+      const hoveredBlock = (event.target as Element).closest('.ce-block');
+
+      /**
+       * Do not trigger 'block-hovered' for cross-block selection
+       */
+      if (this.Editor.BlockSelection.anyBlockSelected) {
+        return;
+      }
+
+      if (!hoveredBlock) {
+        return;
+      }
+
+      if (blockHoveredEmitted === hoveredBlock) {
+        return;
+      }
+
+      blockHoveredEmitted = hoveredBlock;
+
+      this.eventsDispatcher.emit(this.events.blockHovered, {
+        block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
+      });
+    }, 20), {
       passive: true,
     });
   }
@@ -563,8 +599,7 @@ export default class UI extends Module<UINodes> {
       /**
        * Move toolbar and show plus button because new Block is empty
        */
-      this.Editor.Toolbar.move();
-      this.Editor.Toolbar.plusButton.show();
+      this.Editor.Toolbar.moveAndOpen(newBlock);
     }
 
     this.Editor.BlockSelection.clearSelection(event);
@@ -592,15 +627,31 @@ export default class UI extends Module<UINodes> {
 
     if (!clickedInsideOfEditor) {
       /**
-       * Clear highlightings and pointer on BlockManager
+       * Clear highlights and pointer on BlockManager
        *
        * Current page might contain several instances
        * Click between instances MUST clear focus, pointers and close toolbars
        */
       this.Editor.BlockManager.dropPointer();
-      this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
-      this.Editor.ConversionToolbar.close();
+    }
+
+    /**
+     * If Block Settings opened, close them by click on document.
+     *
+     * But allow clicking inside Block Settings.
+     * Also, do not process clicks on the Block Settings Toggler, because it has own click listener
+     */
+    const isClickedInsideBlockSettings = this.Editor.BlockSettings.nodes.wrapper.contains(target);
+    const isClickedInsideBlockSettingsToggler = this.Editor.Toolbar.nodes.settingsToggler.contains(target);
+    const doNotProcess = isClickedInsideBlockSettings || isClickedInsideBlockSettingsToggler;
+
+    if (this.Editor.BlockSettings.opened && !doNotProcess) {
+      this.Editor.BlockSettings.close();
+
+      const clickedBlock = this.Editor.BlockManager.getBlockByChildNode(target);
+
+      this.Editor.Toolbar.moveAndOpen(clickedBlock);
     }
 
     /**
@@ -624,7 +675,7 @@ export default class UI extends Module<UINodes> {
     let clickedNode = event.target as HTMLElement;
 
     /**
-     * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+     * If click was fired on Editor`s wrapper, try to get clicked node by elementFromPoint method
      */
     if (clickedNode === this.nodes.redactor) {
       const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
@@ -657,13 +708,9 @@ export default class UI extends Module<UINodes> {
 
     /**
      * Move and open toolbar
+     * (used for showing Block Settings toggler after opening and closing Inline Toolbar)
      */
-    this.Editor.Toolbar.open();
-
-    /**
-     * Hide the Plus Button
-     */
-    this.Editor.Toolbar.plusButton.hide();
+    this.Editor.Toolbar.moveAndOpen();
   }
 
   /**
@@ -741,27 +788,7 @@ export default class UI extends Module<UINodes> {
        * Set the caret and toolbar to empty Block
        */
       Caret.setToTheLastBlock();
-      Toolbar.move();
-    }
-
-    /**
-     * Show the Plus Button if:
-     * - Block is an default-block (Text)
-     * - Block is empty
-     */
-    const isDefaultBlock = this.Editor.BlockManager.currentBlock.tool.isDefault;
-
-    if (isDefaultBlock) {
-      stopPropagation();
-
-      /**
-       * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
-       */
-      const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
-
-      if (isEmptyBlock) {
-        this.Editor.Toolbar.plusButton.show();
-      }
+      Toolbar.moveAndOpen(BlockManager.lastBlock);
     }
   }
 

@@ -10,6 +10,7 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
+import * as _ from "../utils";
 
 /**
  *
@@ -185,17 +186,21 @@ export default class RectangleSelection extends Module {
       this.processMouseDown(mouseEvent);
     }, false);
 
-    this.listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
+    this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
-    }, false);
+    }, 10), {
+      passive: true,
+    });
 
     this.listeners.on(document.body, 'mouseleave', () => {
       this.processMouseLeave();
     });
 
-    this.listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
+    this.listeners.on(window, 'scroll', _.throttle((mouseEvent: MouseEvent) => {
       this.processScroll(mouseEvent);
-    }, false);
+    }, 10), {
+      passive: true,
+    });
 
     this.listeners.on(document.body, 'mouseup', () => {
       this.processMouseUp();
@@ -355,6 +360,11 @@ export default class RectangleSelection extends Module {
     }
 
     this.updateRectangleSize();
+
+    /**
+     * Hide Block Settings Toggler (along with the Toolbar) (if showed) when the Rectangle Selection is activated
+     */
+    this.Editor.Toolbar.close();
 
     if (index === undefined) {
       return;

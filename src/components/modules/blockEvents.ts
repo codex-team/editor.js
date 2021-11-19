@@ -125,9 +125,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const canOpenToolbox = currentBlock.tool.isDefault && currentBlock.isEmpty;
-    const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
-    const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const isEmptyBlock = currentBlock.isEmpty;
+    const canOpenToolbox = currentBlock.tool.isDefault && isEmptyBlock;
+    const conversionToolbarOpened = !isEmptyBlock && ConversionToolbar.opened;
+    const inlineToolbarOpened = !isEmptyBlock && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
      * For empty Blocks we show Plus button via Toolbox only for default Blocks
@@ -255,19 +256,9 @@ export default class BlockEvents extends Module {
     this.Editor.Caret.setToBlock(newCurrent);
 
     /**
-     * If new Block is empty
+     * Show Toolbar
      */
-    if (newCurrent.tool.isDefault && newCurrent.isEmpty) {
-      /**
-       * Show Toolbar
-       */
-      this.Editor.Toolbar.open(false);
-
-      /**
-       * Show Plus Button
-       */
-      this.Editor.Toolbar.plusButton.show();
-    }
+    this.Editor.Toolbar.moveAndOpen(newCurrent);
 
     event.preventDefault();
   }
@@ -531,9 +522,8 @@ export default class BlockEvents extends Module {
    */
   private activateToolbox(): void {
     if (!this.Editor.Toolbar.opened) {
-      this.Editor.Toolbar.open(false, false);
-      this.Editor.Toolbar.plusButton.show();
-    }
+      this.Editor.Toolbar.moveAndOpen();
+    } // else Flipper will leaf through it
 
     this.Editor.Toolbox.open();
   }
@@ -544,8 +534,7 @@ export default class BlockEvents extends Module {
   private activateBlockSettings(): void {
     if (!this.Editor.Toolbar.opened) {
       this.Editor.BlockManager.currentBlock.focused = true;
-      this.Editor.Toolbar.open(true, false);
-      this.Editor.Toolbar.plusButton.hide();
+      this.Editor.Toolbar.moveAndOpen();
     }
 
     /**

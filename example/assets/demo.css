@@ -135,6 +135,12 @@ body {
   z-index: 1;
 }
 
+@media (max-width: 768px) {
+  .ce-example__statusbar {
+    display: none;
+  }
+}
+
 .ce-example__statusbar-item:not(:last-of-type)::after {
   content: '|';
   color: #ddd;

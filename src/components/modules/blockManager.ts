@@ -75,6 +75,15 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Set passed Block as a current
+   *
+   * @param block - block to set as a current
+   */
+  public set currentBlock(block: Block) {
+    this.currentBlockIndex = this.getBlockIndex(block);
+  }
+
+  /**
    * Returns next Block instance
    *
    * @returns {Block|null}
@@ -730,7 +739,7 @@ export default class BlockManager extends Module {
 
   /**
    * Sets current Block Index -1 which means unknown
-   * and clear highlightings
+   * and clear highlights
    */
   public dropPointer(): void {
     this.currentBlockIndex = -1;

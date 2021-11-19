@@ -67,6 +67,11 @@ export interface Blocks {
   getCurrentBlockIndex(): number;
 
   /**
+   * Returns the index of Block by id;
+   */
+  getBlockIndex(blockId: string): number;
+
+  /**
    * Mark Block as stretched
    * @param {number} index - Block to mark
    * @param {boolean} status - stretch status
