@@ -10,6 +10,7 @@ import Block from '../../block';
 
 /**
  * @todo Tab on empty block should insert block in place of hoveredBlock (not where caret is set)
+ *     - make the Toolbox non-module. It should be accessed only via Toolbar
  * @todo Debug Thin mode
  * @todo Debug Mobile mode
  *
@@ -232,15 +233,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
     let toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
 
     /**
-     * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
-     * 2) On mobile — Toolbar at the bottom of Block
+     * On mobile — Toolbar at the bottom of Block
      */
-    if (!isMobile) {
-      const contentOffset = Math.floor(blockHeight / 2);
-
-      // this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
-      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
-    } else {
+    if (isMobile) {
       toolbarY += blockHeight;
     }
 
