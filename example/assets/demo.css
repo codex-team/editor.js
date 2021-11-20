@@ -363,3 +363,7 @@ body {
 .dark-mode .ce-toolbar__plus {
   color: inherit;
 }
+
+.dark-mode .ce-stub {
+  opacity: 0.3;
+}

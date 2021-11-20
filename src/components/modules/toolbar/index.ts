@@ -482,6 +482,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.tooltip.hide(true);
     }, true);
 
+    /**
+     * Subscribe to the 'block-hovered' event
+     */
     this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
       /**
        * Do not move toolbar if Block Settings or Toolbox opened

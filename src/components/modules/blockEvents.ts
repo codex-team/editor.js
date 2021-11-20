@@ -543,8 +543,8 @@ export default class BlockEvents extends Module {
      */
     if (!this.Editor.BlockSettings.opened) {
       /**
-       * @todo Debug case when we set caret to the some block,
-       *       hovering another block — wrong settings will be opened.
+       * @todo Debug the case when we set caret to some block, hovering another block
+       *       — wrong settings will be opened.
        *       To fix it, we should refactor the Block Settings module — make it a standalone class, like the Toolbox
        */
       this.Editor.BlockSettings.open();

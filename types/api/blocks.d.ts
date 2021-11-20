@@ -1,6 +1,6 @@
 import {OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
-import {BlockAPI as BlockAPIInterface, BlockAPI} from './block';
+import {BlockAPI} from './block';
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -110,7 +110,7 @@ export interface Blocks {
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
-  ): BlockAPIInterface;
+  ): BlockAPI;
 
 
   /**
