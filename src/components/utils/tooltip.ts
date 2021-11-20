@@ -37,6 +37,8 @@ export default class Tooltip {
 
   /**
    * Hides tooltip
+   *
+   * @param skipHidingDelay — pass true to immediately hide the tooltip
    */
   public hide(skipHidingDelay = false): void {
     this.lib.hide(skipHidingDelay);

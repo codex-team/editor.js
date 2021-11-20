@@ -10,7 +10,7 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
-import * as _ from "../utils";
+import * as _ from '../utils';
 
 /**
  *

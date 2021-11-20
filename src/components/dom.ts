@@ -617,7 +617,7 @@ export default class Dom {
    * Return element's offset related to the document
    *
    * @todo handle case when editor initialized in scrollable popup
-   * @param el
+   * @param el - element to compute offset
    */
   public static offset(el): {top: number; left: number; right: number; bottom: number} {
     const rect = el.getBoundingClientRect();

@@ -245,8 +245,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.toolboxInstance.close();
     this.Editor.BlockSettings.close();
 
-    const targetBlockHolder = block.holder;
-
     /**
      * If no one Block selected as a Current
      */
@@ -256,6 +254,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     this.hoveredBlock = block;
 
+    const targetBlockHolder = block.holder;
     const { isMobile } = this.Editor.UI;
     const renderedContent = block.pluginsContent;
     const renderedContentStyle = window.getComputedStyle(renderedContent);
