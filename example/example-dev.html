@@ -15,6 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add("dark-mode");
+    }
+  </script>
   <div class="ce-example">
     <div class="ce-example__header">
       <a class="ce-example__header-logo" href="https://codex.so/editor">Editor.js 🤩🧦🤨</a>
@@ -58,6 +63,10 @@
           <div class="ce-example__statusbar-button" id="enableThinModeButton">
             <span data-toggled-text="Disable">Enable</span>
             thin mode
+          </div>
+        </div>
+        <div class="ce-example__statusbar-item ce-example__statusbar-item--right">
+          <div class="ce-example__statusbar-toggler" id="darkThemeToggler">
           </div>
         </div>
       </div>
@@ -396,6 +405,17 @@
       editor.destroy();
 
       editor = new EditorJS(editorConfig);
+    })
+
+    /**
+     * Toggler for toggling the dark mode
+     */
+    const darkThemeToggler = document.getElementById("darkThemeToggler");
+
+    darkThemeToggler.addEventListener('click', () => {
+      document.body.classList.toggle("dark-mode");
+
+      localStorage.setItem('theme', document.body.classList.contains("dark-mode") ? 'dark' : 'default');
     })
   </script>
 </body>
