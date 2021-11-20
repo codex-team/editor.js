@@ -17,24 +17,6 @@ import { API, BlockAPI } from '../../../types';
  */
 export default class Toolbox {
   /**
-   * CSS styles
-   *
-   * @returns {object.<string, string>}
-   */
-  public get CSS(): { [name: string]: string } {
-    return {
-      toolbox: 'ce-toolbox',
-      toolboxButton: 'ce-toolbox__button',
-      toolboxButtonActive: 'ce-toolbox__button--active',
-      toolboxOpened: 'ce-toolbox--opened',
-      openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
-
-      buttonTooltip: 'ce-toolbox-button-tooltip',
-      buttonShortcut: 'ce-toolbox-button-tooltip__shortcut',
-    };
-  }
-
-  /**
    * Returns True if Toolbox is Empty and nothing to show
    *
    * @returns {boolean}
@@ -89,6 +71,23 @@ export default class Toolbox {
   } = {
     toolbox: null,
     buttons: [],
+  }
+
+  /**
+   * CSS styles
+   *
+   * @returns {object.<string, string>}
+   */
+  private static get CSS(): { [name: string]: string } {
+    return {
+      toolbox: 'ce-toolbox',
+      toolboxButton: 'ce-toolbox__button',
+      toolboxButtonActive: 'ce-toolbox__button--active',
+      toolboxOpened: 'ce-toolbox--opened',
+
+      buttonTooltip: 'ce-toolbox-button-tooltip',
+      buttonShortcut: 'ce-toolbox-button-tooltip__shortcut',
+    };
   }
 
   /**
@@ -148,7 +147,7 @@ export default class Toolbox {
    * Makes the Toolbox
    */
   public make(): Element {
-    this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+    this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
 
     this.addTools();
     this.enableFlipper();
@@ -202,7 +201,7 @@ export default class Toolbox {
       this.onOpen();
     }
 
-    this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
+    this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
 
     this.opened = true;
     this.flipper.activate();
@@ -216,7 +215,7 @@ export default class Toolbox {
       this.onClose();
     }
 
-    this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
 
     this.opened = false;
     this.flipper.deactivate();
@@ -271,7 +270,7 @@ export default class Toolbox {
     //   return;
     // }
 
-    const button = $.make('li', [ this.CSS.toolboxButton ]);
+    const button = $.make('li', [ Toolbox.CSS.toolboxButton ]);
 
     button.dataset.tool = tool.name;
     button.innerHTML = toolToolboxSettings.icon;
@@ -284,7 +283,7 @@ export default class Toolbox {
     /**
      * Add click listener
      */
-    this.clickListenerId =  this.api.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.clickListenerId = this.api.listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
       this.toolButtonActivate(event, tool.name);
     });
 
@@ -320,7 +319,7 @@ export default class Toolbox {
 
     let shortcut = tool.shortcut;
 
-    const tooltip = $.make('div', this.CSS.buttonTooltip);
+    const tooltip = $.make('div', Toolbox.CSS.buttonTooltip);
     const hint = document.createTextNode(_.capitalize(name));
 
     tooltip.appendChild(hint);
@@ -328,7 +327,7 @@ export default class Toolbox {
     if (shortcut) {
       shortcut = _.beautifyShortcut(shortcut);
 
-      tooltip.appendChild($.make('div', this.CSS.buttonShortcut, {
+      tooltip.appendChild($.make('div', Toolbox.CSS.buttonShortcut, {
         textContent: shortcut,
       }));
     }
@@ -377,7 +376,7 @@ export default class Toolbox {
 
     this.flipper = new Flipper({
       items: tools,
-      focusedItemClass: this.CSS.toolboxButtonActive,
+      focusedItemClass: Toolbox.CSS.toolboxButtonActive,
     });
   }
 
@@ -395,11 +394,17 @@ export default class Toolbox {
       return;
     }
 
+    /**
+     * On mobile version, we see the Plus Button even near non-empty blocks,
+     * so if current block is not empty, add the new block below the current
+     */
+    const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
+
     const newBlock = this.api.blocks.insert(
       toolName,
       undefined,
       undefined,
-      currentBlockIndex,
+      index,
       undefined,
       currentBlock.isEmpty
     );
@@ -409,9 +414,9 @@ export default class Toolbox {
      */
     newBlock.call(BlockToolAPI.APPEND_CALLBACK);
 
-    this.api.caret.setToBlock(currentBlockIndex);
+    this.api.caret.setToBlock(index);
 
-    if (typeof this.onBlockAdded === 'function'){
+    if (typeof this.onBlockAdded === 'function') {
       this.onBlockAdded(newBlock);
     }
 

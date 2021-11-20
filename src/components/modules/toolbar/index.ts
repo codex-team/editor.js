@@ -10,11 +10,8 @@ import Block from '../../block';
 import Toolbox from '../../ui/toolbox';
 
 /**
- * @todo Tab on empty block should open Block Settings of the hoveredBlock (not where caret is set)
+ * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
  *          - make Block Settings a standalone module
- *
- * @todo Debug Thin mode
- * @todo Debug Mobile mode
  *
  * @todo TESTCASE - show toggler after opening and closing the Inline Toolbar
  * @todo TESTCASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
@@ -138,6 +135,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       actionsOpened: 'ce-toolbar__actions--opened',
 
       toolbarOpened: 'ce-toolbar--opened',
+      openedToolboxHolderModifier: 'codex-editor--toolbox-opened',
 
       // Content Zone
       plusButton: 'ce-toolbar__plus',
@@ -264,17 +262,17 @@ export default class Toolbar extends Module<ToolbarNodes> {
     const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
     const blockHeight = targetBlockHolder.offsetHeight;
 
-    /**
-     * Toolbar should be moved to the first line of block text
-     * To do that, we compute the block offset and the padding-top of the plugin content
-     */
-    let toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
+    let toolbarY;
 
     /**
      * On mobile — Toolbar at the bottom of Block
+     * On Desktop — Toolbar should be moved to the first line of block text
+     *              To do that, we compute the block offset and the padding-top of the plugin content
      */
     if (isMobile) {
-      toolbarY += blockHeight;
+      toolbarY = targetBlockHolder.offsetTop + blockHeight;
+    } else {
+      toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
     }
 
     /**
@@ -421,10 +419,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
       tools: this.Editor.Tools.blockTools,
       shortcutsScopeElement: this.Editor.UI.nodes.redactor,
       onOpen: (): void => {
-        this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
+        this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolboxHolderModifier);
       },
       onClose: (): void => {
-        this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
+        this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
       },
       onBlockAdded: (addedBlockApi: BlockAPI): void => {
         const { BlockManager, Caret } = this.Editor;

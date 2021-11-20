@@ -3,8 +3,6 @@
   left: 0;
   right: 0;
   top: 0;
-  /*opacity: 0;*/
-  /*visibility: hidden;*/
   transition: opacity 100ms ease;
   will-change: opacity, transform;
   display: none;
@@ -32,15 +30,12 @@
       display: flex;
       align-content: center;
       margin: 0;
-      max-width: calc(100% - 35px);
+      max-width: 100%;
     }
   }
 
   &__plus {
     @apply --toolbox-button;
-
-    //position: absolute;
-    //left: calc(var(--toolbox-buttons-size) * -1);
     flex-shrink: 0;
 
     &-shortcut {
@@ -60,12 +55,6 @@
     }
   }
 
-  &__plus,
-  .ce-toolbox {
-    //top: 50%;
-    //transform: translateY(-50%);
-  }
-
   /**
    * Block actions Zone
    * -------------------------
@@ -78,7 +67,7 @@
 
     @media (--mobile){
       position: absolute;
-      right: -28px;
+      right: auto;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
@@ -102,6 +91,10 @@
     cursor: pointer;
     user-select: none;
   }
+}
+
+.codex-editor--toolbox-opened .ce-toolbar__actions {
+  display: none;
 }
 
 /**

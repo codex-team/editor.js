@@ -53,6 +53,7 @@
    * Toolbar Plus Button and Toolbox buttons height and width
    */
   --toolbox-buttons-size: 26px;
+  --toolbox-buttons-size--mobile: 36px;
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -68,14 +69,14 @@
   --overlay-pane: {
     position: absolute;
     background-color: #FFFFFF;
-    border: 1px solid #EAEAEA;
+    border: 1px solid #E8E8EB;
     box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
-    border-radius: 4px;
+    border-radius: 6px;
     z-index: 2;
 
     @media (--mobile){
-      box-shadow: 0 13px 7px -5px rgba(26, 38, 49, 0.09),6px 15px 34px -6px rgba(33, 48, 73, 0.29);
-      border-bottom-color: #d5d7db;
+      box-shadow: 0 8px 6px -6px rgb(33 48 73 / 19%);
+      border-bottom-color: #c7c7c7;
     }
 
     &--left-oriented {
@@ -106,6 +107,11 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
+
+    @media (--mobile){
+      width: var(--toolbox-buttons-size--mobile);
+      height: var(--toolbox-buttons-size--mobile);
+    }
 
     &:hover,
     &--active {
@@ -159,3 +165,4 @@
     }
   };
 }
+
