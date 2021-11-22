@@ -48,11 +48,6 @@ export default class ToolbarAPI extends Module {
     /** Check that opening state is set or not */
     const canOpenBlockSettings = openingState ?? !this.Editor.BlockSettings.opened;
 
-    /** Check if state same as current state */
-    if (openingState === this.Editor.BlockSettings.opened) {
-      return;
-    }
-
     if (canOpenBlockSettings) {
       this.Editor.Toolbar.moveAndOpen();
       this.Editor.BlockSettings.open();
