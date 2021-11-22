@@ -7,7 +7,7 @@ import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { BlockAPI } from '../../../../types';
 import Block from '../../block';
-import Toolbox from '../../ui/toolbox';
+import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -417,28 +417,31 @@ export default class Toolbar extends Module<ToolbarNodes> {
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
       shortcutsScopeElement: this.Editor.UI.nodes.redactor,
-      onOpen: (): void => {
-        this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolboxHolderModifier);
-      },
-      onClose: (): void => {
-        this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
-      },
-      onBlockAdded: (addedBlockApi: BlockAPI): void => {
-        const { BlockManager, Caret } = this.Editor;
-        const newBlock = BlockManager.getBlockById(addedBlockApi.id);
+    });
 
-        /**
-         * If the new block doesn't contain inputs, insert the new paragraph below
-         */
-        if (newBlock.inputs.length === 0) {
-          if (newBlock === BlockManager.lastBlock) {
-            BlockManager.insertAtEnd();
-            Caret.setToBlock(BlockManager.lastBlock);
-          } else {
-            Caret.setToBlock(BlockManager.nextBlock);
-          }
+    this.toolboxInstance.on(ToolboxEvent.Opened, () => {
+      this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolboxHolderModifier);
+    });
+
+    this.toolboxInstance.on(ToolboxEvent.Closed, () => {
+      this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
+    });
+
+    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }: {block: BlockAPI }) => {
+      const { BlockManager, Caret } = this.Editor;
+      const newBlock = BlockManager.getBlockById(block.id);
+
+      /**
+       * If the new block doesn't contain inputs, insert the new paragraph below
+       */
+      if (newBlock.inputs.length === 0) {
+        if (newBlock === BlockManager.lastBlock) {
+          BlockManager.insertAtEnd();
+          Caret.setToBlock(BlockManager.lastBlock);
+        } else {
+          Caret.setToBlock(BlockManager.nextBlock);
         }
-      },
+      }
     });
 
     return this.toolboxInstance.make();

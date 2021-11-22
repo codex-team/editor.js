@@ -9,13 +9,36 @@ import Tooltip from '../utils/tooltip';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API, BlockAPI } from '../../../types';
+import EventsDispatcher from '../utils/events';
+
+/**
+ * Event that can be triggered by the Toolbox
+ */
+export enum ToolboxEvent {
+  /**
+   * When the Toolbox is opened
+   */
+  Opened = 'toolbox-opened',
+
+  /**
+   * When the Toolbox is closed
+   */
+  Closed = 'toolbox-closed',
+
+  /**
+   * When the new Block added by Toolbox
+   */
+  BlockAdded = 'toolbox-block-added',
+}
 
 /**
  * Toolbox
  * This UI element contains list of Block Tools available to be inserted
  * It appears after click on the Plus Button
+ *
+ * @implements EventsDispatcher with some events, see {@link ToolboxEvent}
  */
-export default class Toolbox {
+export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
    * Returns True if Toolbox is Empty and nothing to show
    *
@@ -36,21 +59,6 @@ export default class Toolbox {
    * Editor API
    */
   private api: API;
-
-  /**
-   * Toolbox opening callback
-   */
-  private readonly onOpen: () => void;
-
-  /**
-   * Toolbox closing callback
-   */
-  private readonly onClose: () => void;
-
-  /**
-   * Callback to be fired after the new block added
-   */
-  private readonly onBlockAdded: (addedBlock: BlockAPI) => void;
 
   /**
    * List of Tools available. Some of them will be shown in the Toolbox
@@ -121,16 +129,12 @@ export default class Toolbox {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    * @param options.shortcutsScopeElement - parent element for Shortcuts scope restriction
-   * @param options.onOpen - opening callback
-   * @param options.onClose - closing callback
-   * @param options.onBlockAdded - block adding callback
    */
-  constructor({ api, tools, shortcutsScopeElement, onOpen, onClose, onBlockAdded }) {
+  constructor({ api, tools, shortcutsScopeElement }) {
+    super();
+
     this.api = api;
     this.tools = tools;
-    this.onOpen = onOpen;
-    this.onClose = onClose;
-    this.onBlockAdded = onBlockAdded;
     this.shortcutsScopeElement = shortcutsScopeElement;
 
     this.tooltip = new Tooltip();
@@ -159,6 +163,8 @@ export default class Toolbox {
    * Destroy Module
    */
   public destroy(): void {
+    super.destroy();
+
     /**
      * Sometimes (in read-only mode) there is no Flipper
      */
@@ -197,9 +203,7 @@ export default class Toolbox {
       return;
     }
 
-    if (typeof this.onOpen === 'function') {
-      this.onOpen();
-    }
+    this.emit(ToolboxEvent.Opened);
 
     this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
 
@@ -211,9 +215,7 @@ export default class Toolbox {
    * Close Toolbox
    */
   public close(): void {
-    if (typeof this.onClose === 'function') {
-      this.onClose();
-    }
+    this.emit(ToolboxEvent.Closed);
 
     this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
 
@@ -416,9 +418,9 @@ export default class Toolbox {
 
     this.api.caret.setToBlock(index);
 
-    if (typeof this.onBlockAdded === 'function') {
-      this.onBlockAdded(newBlock);
-    }
+    this.emit(ToolboxEvent.BlockAdded, {
+      block: newBlock,
+    });
 
     /**
      * close toolbar when node is changed
