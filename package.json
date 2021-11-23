@@ -23,7 +23,7 @@
     "lint:tests": "eslint test/ --ext .ts",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive",
-    "_tools:checkout": "git submodule foreach git checkout master",
+    "_tools:checkout": "git submodule foreach 'git checkout master || git checkout main'",
     "_tools:pull": "git submodule foreach git pull",
     "_tools:yarn": "git submodule foreach yarn",
     "_tools:build": "git submodule foreach yarn build",
