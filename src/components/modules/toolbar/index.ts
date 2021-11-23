@@ -416,7 +416,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.toolboxInstance = new Toolbox({
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
-      shortcutsScopeElement: this.Editor.UI.nodes.redactor,
     });
 
     this.toolboxInstance.on(ToolboxEvent.Opened, () => {

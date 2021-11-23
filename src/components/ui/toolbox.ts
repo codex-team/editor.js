@@ -8,7 +8,7 @@ import Shortcuts from '../utils/shortcuts';
 import Tooltip from '../utils/tooltip';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockAPI } from '../../../types';
+import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
 
 /**
@@ -36,7 +36,7 @@ export enum ToolboxEvent {
  * This UI element contains list of Block Tools available to be inserted
  * It appears after click on the Plus Button
  *
- * @implements EventsDispatcher with some events, see {@link ToolboxEvent}
+ * @implements {EventsDispatcher} with some events, see {@link ToolboxEvent}
  */
 export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
@@ -64,11 +64,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * List of Tools available. Some of them will be shown in the Toolbox
    */
   private tools: ToolsCollection<BlockTool>;
-
-  /**
-   * Element that will be used as parent for Shortcuts keydowns binding
-   */
-  private readonly shortcutsScopeElement: Element;
 
   /**
    * Current module HTML Elements
@@ -128,14 +123,12 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param options - available parameters
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
-   * @param options.shortcutsScopeElement - parent element for Shortcuts scope restriction
    */
-  constructor({ api, tools, shortcutsScopeElement }) {
+  constructor({ api, tools }) {
     super();
 
     this.api = api;
     this.tools = tools;
-    this.shortcutsScopeElement = shortcutsScopeElement;
 
     this.tooltip = new Tooltip();
   }
@@ -346,11 +339,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private enableShortcut(toolName: string, shortcut: string): void {
     Shortcuts.add({
       name: shortcut,
+      on: this.api.ui.nodes.redactor,
       handler: (event: KeyboardEvent) => {
         event.preventDefault();
         this.insertNewBlock(toolName);
       },
-      on: this.shortcutsScopeElement as HTMLElement,
     });
   }
 
@@ -365,7 +358,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         const shortcut = tool.shortcut;
 
         if (shortcut) {
-          Shortcuts.remove(this.shortcutsScopeElement, shortcut);
+          Shortcuts.remove(this.api.ui.nodes.redactor, shortcut);
         }
       });
   }

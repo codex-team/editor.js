@@ -30,6 +30,7 @@ import TooltipAPI from '../components/modules/api/tooltip';
 import ReadOnly from '../components/modules/readonly';
 import ReadOnlyAPI from '../components/modules/api/readonly';
 import I18nAPI from '../components/modules/api/i18n';
+import UiAPI from '../components/modules/api/ui';
 import ModificationsObserver from '../components/modules/modificationsObserver';
 
 export interface EditorModules {
@@ -65,5 +66,6 @@ export interface EditorModules {
   ReadOnly: ReadOnly;
   ReadOnlyAPI: ReadOnlyAPI;
   I18nAPI: I18nAPI;
+  UiAPI: UiAPI;
   ModificationsObserver: ModificationsObserver;
 }
