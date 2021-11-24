@@ -1,5 +1,5 @@
-import Header from '../../../example/tools/header';
-import Image from '../../../example/tools/simple-image';
+import Header from '@editorjs/header';
+import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
 
 describe('Copy pasting from Editor', () => {

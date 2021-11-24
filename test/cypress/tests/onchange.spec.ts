@@ -1,4 +1,4 @@
-import Header from '../../../example/tools/header';
+import Header from '@editorjs/header';
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
