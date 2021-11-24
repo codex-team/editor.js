@@ -3,6 +3,7 @@ import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
+import Block from '../../block';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -23,6 +24,8 @@ interface BlockSettingsNodes {
  *  | .  Default Settings  . |
  *  | ...................... |
  *  |________________________|
+ *
+ *  @todo Make Block Settings no-module but a standalone class, like Toolbox
  */
 export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
@@ -120,8 +123,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Open Block Settings pane
+   *
+   * @param targetBlock - near which Block we should open BlockSettings
    */
-  public open(): void {
+  public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
@@ -133,18 +138,18 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Highlight content of a Block we are working with
      */
-    this.Editor.BlockManager.currentBlock.selected = true;
+    targetBlock.selected = true;
     this.Editor.BlockSelection.clearCache();
 
     /**
      * Fill Tool's settings
      */
-    this.addToolSettings();
+    this.addToolSettings(targetBlock);
 
     /**
      * Add default settings that presents for all Blocks
      */
-    this.addTunes();
+    this.addTunes(targetBlock);
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -227,9 +232,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Add Tool's settings
+   *
+   * @param targetBlock - Block to render settings
    */
-  private addToolSettings(): void {
-    const settingsElement = this.Editor.BlockManager.currentBlock.renderSettings();
+  private addToolSettings(targetBlock): void {
+    const settingsElement = targetBlock.renderSettings();
 
     if (settingsElement) {
       $.append(this.nodes.toolSettings, settingsElement);
@@ -238,9 +245,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Add tunes: provided by user and default ones
+   *
+   * @param targetBlock - Block to render its Tunes set
    */
-  private addTunes(): void {
-    const [toolTunes, defaultTunes] = this.Editor.BlockManager.currentBlock.renderTunes();
+  private addTunes(targetBlock): void {
+    const [toolTunes, defaultTunes] = targetBlock.renderTunes();
 
     $.append(this.nodes.toolSettings, toolTunes);
     $.append(this.nodes.defaultSettings, defaultTunes);

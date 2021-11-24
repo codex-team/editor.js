@@ -7,7 +7,7 @@
 
   @media (--mobile){
     bottom: 40px;
-    right: -11px;
+    right: auto;
     top: auto;
   }
 

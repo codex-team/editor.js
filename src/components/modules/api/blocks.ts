@@ -25,6 +25,7 @@ export default class BlocksAPI extends Module {
       getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
       getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
+      getBlockIndex: (id: string): number => this.getBlockIndex(id),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
@@ -49,6 +50,24 @@ export default class BlocksAPI extends Module {
    */
   public getCurrentBlockIndex(): number {
     return this.Editor.BlockManager.currentBlockIndex;
+  }
+
+  /**
+   * Returns the index of Block by id;
+   *
+   * @param id - block id
+   * @returns {number}
+   */
+  public getBlockIndex(id: string): number | undefined {
+    const block = this.Editor.BlockManager.getBlockById(id);
+
+    if (!block) {
+      _.logLabeled('There is no block with id `' + id + '`', 'warn');
+
+      return;
+    }
+
+    return this.Editor.BlockManager.getBlockIndex(block);
   }
 
   /**
@@ -100,12 +119,6 @@ export default class BlocksAPI extends Module {
     );
 
     this.Editor.BlockManager.swap(fromIndex, toIndex);
-
-    /**
-     * Move toolbar
-     * DO not close the settings
-     */
-    this.Editor.Toolbar.move(false);
   }
 
   /**
@@ -116,12 +129,6 @@ export default class BlocksAPI extends Module {
    */
   public move(toIndex: number, fromIndex?: number): void {
     this.Editor.BlockManager.move(toIndex, fromIndex);
-
-    /**
-     * Move toolbar
-     * DO not close the settings
-     */
-    this.Editor.Toolbar.move(false);
   }
 
   /**
@@ -212,27 +219,32 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Insert new Block
+   * Insert new Block and returns it's API
    *
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param replace - pass true to replace the Block existed under passed index
    */
   public insert = (
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
-    needToFocus?: boolean
-  ): void => {
-    this.Editor.BlockManager.insert({
+    needToFocus?: boolean,
+    replace?: boolean
+  ): BlockAPIInterface => {
+    const insertedBlock = this.Editor.BlockManager.insert({
       tool: type,
       data,
       index,
       needToFocus,
+      replace,
     });
+
+    return new BlockAPI(insertedBlock);
   }
 
   /**
