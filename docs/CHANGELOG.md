@@ -2,8 +2,24 @@
 
 ### 2.23.0
 
-- `Improvement` — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
-- `New` *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+- `Improvement` — *EditorConfig* — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
+- `New` — *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+- `Improvement` — *UI* — Block Tunes toggler moved to the left
+- `Improvement` — *UI* — Block Actions (BT toggler + Plus Button) will appear on block hovering instead of click
+- `Improvement` — *UI* — Block Tunes toggler icon and Plus button icon updated
+- `Improvement` — *Dev Example Page* — The menu with helpful buttons added to the bottom of the screen
+- `Improvement` — *Dev Example Page* — The 'dark' theme added. Now we can code at night more comfortably.
+- `Improvement` — *Rectangle Selection* — paint optimized
+- `Fix` — *Rectangle Selection* — the first click after RS was not clear selection state. Now does.
+- `Improvement` — *Blocks API* — toolbar moving logic removed from `blocks.move()` and `blocks.swap()` methods. Instead, you should use Toolbar API (it was used by MoveUp and MoveDown tunes, they were updated).
+- `New` — *Blocks API* — The `getBlockIndex()` method added
+- `New` — *Blocks API* — the `insert()` method now has the `replace: boolean` parameter
+- `New` — *Blocks API* —  the `insert()` method now returns the inserted `Block API`
+- `New` — *Listeners API* — the `on()` method now returns the listener id.
+- `New` — *Listeners API* — the new `offById()` method added
+- `New` — `API` — The new `UiApi` section was added. It allows accessing some editor UI nodes and methods.
+- `Refactoring` — Toolbox became a standalone class instead of a Module. It can be accessed only through the Toolbar module.
+- `Refactoring` — CI flow optimized.
 
 ### 2.22.3
 
