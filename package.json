@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.22.3",
+  "version": "2.23.0-rc.0",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -29,7 +29,8 @@
     "_tools:build": "git submodule foreach yarn build",
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
-    "test:e2e": "yarn build && cypress run"
+    "test:e2e": "yarn build && cypress run",
+    "test:e2e:open": "yarn build && cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
