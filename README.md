@@ -14,6 +14,12 @@
 
 Testing...
 
+## Troubleshooting (@Demoflow)
+
+If you run into errors while attempting to run webpack, such as files or modules not existing in test files, see if the submodules need to be updated:
+First, `npm run pull_tools`.
+If that doesn't fix it, try `npm run tools:update` followed by `npm run pull_tools`. This will rebuild the submodules and check out to the most recent commit.
+
 ## If you like a project 💗💗💗
 
 If you like Editor.js you can support project improvements and development of new features with a donation to our collective.
