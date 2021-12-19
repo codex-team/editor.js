@@ -237,16 +237,16 @@ export default class BlockManager extends Module {
     data = {},
     id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+  }: {tool: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData};id?: string}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
     const block = new Block({
-      id,
       data,
       tool,
       api: this.Editor.API,
       readOnly,
       tunesData,
+      id,
     });
 
     if (!readOnly) {
@@ -270,21 +270,21 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
-    id = undefined,
     tool = this.config.defaultBlock,
     data = {},
     index,
     needToFocus = true,
     replace = false,
     tunes = {},
+    id,
   }: {
-    id?: string;
     tool?: string;
     data?: BlockToolData;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
     tunes?: {[name: string]: BlockTuneData};
+    id?: string;
   } = {}): Block {
     let newIndex = index;
 
@@ -293,10 +293,10 @@ export default class BlockManager extends Module {
     }
 
     const block = this.composeBlock({
-      id,
       tool,
       data,
       tunes,
+      id,
     });
 
     /**

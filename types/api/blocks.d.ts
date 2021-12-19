@@ -105,13 +105,13 @@ export interface Blocks {
    * @param {boolean?} replace - should the existed Block on that index be replaced or not
    */
   insert(
-    id?: string,
     type?: string,
     data?: BlockToolData,
     config?: ToolConfig,
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
+    id?: string,
   ): BlockAPI;
 
 

@@ -230,21 +230,21 @@ export default class BlocksAPI extends Module {
    * @param replace - pass true to replace the Block existed under passed index
    */
   public insert = (
-    id?: string,
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
     needToFocus?: boolean,
-    replace?: boolean
+    replace?: boolean,
+    id?: string,
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
-      id,
       tool: type,
       data,
       index,
       needToFocus,
       replace,
+      id
     });
 
     return new BlockAPI(insertedBlock);
