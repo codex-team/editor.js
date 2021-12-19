@@ -396,8 +396,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
 
     const newBlock = this.api.blocks.insert(
+       undefined,
       toolName,
-      undefined,
+      undefined,  
       undefined,
       index,
       undefined,

@@ -221,6 +221,7 @@ export default class BlocksAPI extends Module {
   /**
    * Insert new Block and returns it's API
    *
+   * @param {string} id — block id:: optional 
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
@@ -229,6 +230,7 @@ export default class BlocksAPI extends Module {
    * @param replace - pass true to replace the Block existed under passed index
    */
   public insert = (
+    id?: string,
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
@@ -237,6 +239,7 @@ export default class BlocksAPI extends Module {
     replace?: boolean
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
+      id,
       tool: type,
       data,
       index,

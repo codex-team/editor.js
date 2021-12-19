@@ -96,6 +96,7 @@ export interface Blocks {
   /**
    * Insert new Block and return inserted Block API
    *
+   * @param {string} id — block id: if no id then it will generate one
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
@@ -104,6 +105,7 @@ export interface Blocks {
    * @param {boolean?} replace - should the existed Block on that index be replaced or not
    */
   insert(
+    id?: string,
     type?: string,
     data?: BlockToolData,
     config?: ToolConfig,
