@@ -681,6 +681,18 @@ export default class BlockManager extends Module {
     /**
      * Update current block active input
      */
+
+    /**
+     * Fix: when we have multiple instances and
+     * currentBlockIndex is -1.
+     * 
+     * The method updateCurrentInput fails because the index not exists
+     * in the array
+     */
+
+     if(this.currentBlockIndex < 0) {
+      return;
+    }
     this.currentBlock.updateCurrentInput();
 
     return this.currentBlock;
