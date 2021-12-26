@@ -1,4 +1,4 @@
-import Header from '../../../example/tools/header';
+import Header from '@editorjs/header';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**

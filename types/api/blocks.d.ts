@@ -67,6 +67,11 @@ export interface Blocks {
   getCurrentBlockIndex(): number;
 
   /**
+   * Returns the index of Block by id;
+   */
+  getBlockIndex(blockId: string): number;
+
+  /**
    * Mark Block as stretched
    * @param {number} index - Block to mark
    * @param {boolean} status - stretch status
@@ -89,13 +94,14 @@ export interface Blocks {
   insertNewBlock(): void;
 
   /**
-   * Insert new Block
+   * Insert new Block and return inserted Block API
    *
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param {boolean?} replace - should the existed Block on that index be replaced or not
    */
   insert(
     type?: string,
@@ -103,7 +109,8 @@ export interface Blocks {
     config?: ToolConfig,
     index?: number,
     needToFocus?: boolean,
-  ): void;
+    replace?: boolean,
+  ): BlockAPI;
 
 
   /**

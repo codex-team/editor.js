@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool, EditorConfig } from '../../../../types';
+import { InlineTool as IInlineTool } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -100,9 +100,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private tooltip: Tooltip;
   /**
    * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({

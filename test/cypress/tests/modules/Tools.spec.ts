@@ -96,7 +96,10 @@ describe('Tools module', () => {
 
       await module.prepare();
 
-      expect(WithSuccessfulPrepare.prepare).to.be.calledWithExactly({ toolName: 'withSuccessfulPrepare', config });
+      expect(WithSuccessfulPrepare.prepare).to.be.calledWithExactly({
+        toolName: 'withSuccessfulPrepare',
+        config,
+      });
     });
   });
 

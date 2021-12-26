@@ -49,3 +49,6 @@
 [submodule "example/tools/underline"]
 	path = example/tools/underline
 	url = https://github.com/editor-js/underline
+[submodule "example/tools/nested-list"]
+	path = example/tools/nested-list
+	url = https://github.com/editor-js/nested-list
