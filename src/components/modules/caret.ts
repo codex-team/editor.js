@@ -53,7 +53,7 @@ export default class Caret extends Module {
     let focusNode = selection.focusNode;
 
     /** In case lastNode is native input */
-    if ($.isNativeInput(firstNode)) {
+    if ($.isNativeInput(firstNode) && typeof firstNode.selectionEnd !== "undefined") {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
