@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { isFunction } from '../../../src/components/utils';
 
 function syncFunction(): void {}
