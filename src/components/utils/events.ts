@@ -1,25 +1,25 @@
-import Module from '../__module';
+import { isEmpty } from '../utils';
 
 /**
- * @module eventDispatcher
+ * @class EventDispatcher
  *
  * Has two important methods:
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
- *    - {Function off - unsubsribes callback
+ *    - {Function off - unsubscribes callback
  *
  * @version 1.0.0
  *
  * @typedef {Events} Events
  * @property {object} subscribers - all subscribers grouped by event name
  */
-export default class Events extends Module {
+export default class EventsDispatcher<Events extends string = string> {
   /**
    * Object with events` names as key and array of callback functions as value
    *
    * @type {{}}
    */
-  private subscribers: {[name: string]: Array<(data?: object) => object>} = {};
+  private subscribers: {[name: string]: Array<(data?: object) => unknown>} = {};
 
   /**
    * Subscribe any event on callback
@@ -27,7 +27,7 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: string, callback: (data: object) => object): void {
+  public on(eventName: Events, callback: (data: object) => unknown): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -42,12 +42,12 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public once(eventName: string, callback: (data: object) => object): void {
+  public once(eventName: Events, callback: (data: object) => unknown): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
 
-    const wrappedCallback = (data: object): object => {
+    const wrappedCallback = (data: object): unknown => {
       const result = callback(data);
 
       const indexOfHandler = this.subscribers[eventName].indexOf(wrappedCallback);
@@ -69,8 +69,8 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {object} data - subscribers get this data when they were fired
    */
-  public emit(eventName: string, data?: object): void {
-    if (!this.subscribers[eventName]) {
+  public emit(eventName: Events, data?: object): void {
+    if (isEmpty(this.subscribers) || !this.subscribers[eventName]) {
       return;
     }
 
@@ -87,7 +87,7 @@ export default class Events extends Module {
    * @param {string} eventName - event name
    * @param {Function} callback - event handler
    */
-  public off(eventName: string, callback: (data: object) => object): void {
+  public off(eventName: Events, callback: (data: object) => unknown): void {
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];
@@ -98,7 +98,7 @@ export default class Events extends Module {
 
   /**
    * Destroyer
-   * clears subsribers list
+   * clears subscribers list
    */
   public destroy(): void {
     this.subscribers = null;

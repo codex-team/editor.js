@@ -1,3 +1,9 @@
+/**
+ * Sanitizer config of each HTML element
+ * @see {@link https://github.com/guardian/html-janitor#options}
+ */
+type TagConfig = boolean | { [attr: string]: boolean | string };
+
 export interface SanitizerConfig {
   /**
    * Tag name and params not to be stripped off
@@ -31,5 +37,5 @@ export interface SanitizerConfig {
    *   }
    * }
    */
-  [key: string]: boolean|{[attr: string]: boolean|string}|(() => any);
+  [key: string]: TagConfig | ((el: Element) => TagConfig);
 }

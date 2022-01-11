@@ -11,7 +11,10 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BlockAPI from '../block/api';
+import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -70,6 +73,15 @@ export default class BlockManager extends Module {
    */
   public get currentBlock(): Block {
     return this._blocks[this.currentBlockIndex];
+  }
+
+  /**
+   * Set passed Block as a current
+   *
+   * @param block - block to set as a current
+   */
+  public set currentBlock(block: Block) {
+    this.currentBlockIndex = this.getBlockIndex(block);
   }
 
   /**
@@ -160,12 +172,9 @@ export default class BlockManager extends Module {
   /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
-   *
-   * @returns {Promise}
    */
-  public async prepare(): Promise<void> {
+  public prepare(): void {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
-    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -187,18 +196,30 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    Listeners.on(
+    this.listeners.on(
       document,
       'copy',
-      (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
     );
+  }
 
-    /** Copy and cut */
-    Listeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
-    );
+  /**
+   * Toggle read-only state
+   *
+   * If readOnly is true:
+   *  - Unbind event handlers from created Blocks
+   *
+   * if readOnly is false:
+   *  - Bind event handlers to all existing Blocks
+   *
+   * @param {boolean} readOnlyEnabled - "read only" state
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
+    if (!readOnlyEnabled) {
+      this.enableModuleBindings();
+    } else {
+      this.disableModuleBindings();
+    }
   }
 
   /**
@@ -206,22 +227,31 @@ export default class BlockManager extends Module {
    *
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
+   * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
-    const settings = this.Editor.Tools.getToolSettings(tool);
-    const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
+  public composeBlock({
+    tool: name,
+    data = {},
+    id = undefined,
+    tunes: tunesData = {},
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+    const readOnly = this.Editor.ReadOnly.isEnabled;
+    const tool = this.Editor.Tools.blockTools.get(name);
     const block = new Block({
-      name: tool,
+      id,
       data,
-      Tool,
-      settings,
+      tool,
       api: this.Editor.API,
+      readOnly,
+      tunesData,
     });
 
-    this.bindEvents(block);
+    if (!readOnly) {
+      this.bindBlockEvents(block);
+    }
 
     return block;
   }
@@ -230,26 +260,31 @@ export default class BlockManager extends Module {
    * Insert new block into _blocks
    *
    * @param {object} options - insert options
-   * @param {string} options.tool - plugin name, by default method inserts initial block type
-   * @param {object} options.data - plugin data
-   * @param {number} options.index - index where to insert new Block
-   * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
-   * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {string} [options.id] - block's unique id
+   * @param {string} [options.tool] - plugin name, by default method inserts the default block type
+   * @param {object} [options.data] - plugin data
+   * @param {number} [options.index] - index where to insert new Block
+   * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
+   * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
    *
    * @returns {Block}
    */
   public insert({
-    tool = this.config.initialBlock,
+    id = undefined,
+    tool = this.config.defaultBlock,
     data = {},
     index,
     needToFocus = true,
     replace = false,
+    tunes = {},
   }: {
+    id?: string;
     tool?: string;
     data?: BlockToolData;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
+    tunes?: {[name: string]: BlockTuneData};
   } = {}): Block {
     let newIndex = index;
 
@@ -258,11 +293,30 @@ export default class BlockManager extends Module {
     }
 
     const block = this.composeBlock({
+      id,
       tool,
       data,
+      tunes,
     });
 
+    /**
+     * In case of block replacing (Converting OR from Toolbox or Shortcut on empty block OR on-paste to empty block)
+     * we need to dispatch the 'block-removing' event for the replacing block
+     */
+    if (replace) {
+      this.blockDidMutated(BlockMutationType.Removed, this.getBlockByIndex(newIndex), {
+        index: newIndex,
+      });
+    }
+
     this._blocks.insert(newIndex, block, replace);
+
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(BlockMutationType.Added, block, {
+      index: newIndex,
+    });
 
     if (needToFocus) {
       this.currentBlockIndex = newIndex;
@@ -283,7 +337,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public replace({
-    tool = this.config.initialBlock,
+    tool = this.config.defaultBlock,
     data = {},
   }): Block {
     return this.insert({
@@ -321,7 +375,7 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Insert new initial block at passed index
+   * Insert new default block at passed index
    *
    * @param {number} index - index where Block should be inserted
    * @param {boolean} needToFocus - if true, updates current Block index
@@ -330,10 +384,17 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
-    const block = this.composeBlock({ tool: this.config.initialBlock });
+  public insertDefaultBlockAtIndex(index: number, needToFocus = false): Block {
+    const block = this.composeBlock({ tool: this.config.defaultBlock });
 
     this._blocks[index] = block;
+
+    /**
+     * Force call of didMutated event on Block insertion
+     */
+    this.blockDidMutated(BlockMutationType.Added, block, {
+      index,
+    });
 
     if (needToFocus) {
       this.currentBlockIndex = index;
@@ -356,7 +417,7 @@ export default class BlockManager extends Module {
     this.currentBlockIndex = this.blocks.length - 1;
 
     /**
-     * Insert initial typed block
+     * Insert the default typed block
      */
     return this.insert();
   }
@@ -400,7 +461,17 @@ export default class BlockManager extends Module {
       throw new Error('Can\'t find a Block to remove');
     }
 
+    const blockToRemove = this._blocks[index];
+
+    blockToRemove.destroy();
     this._blocks.remove(index);
+
+    /**
+     * Force call of didMutated event on Block removal
+     */
+    this.blockDidMutated(BlockMutationType.Removed, blockToRemove, {
+      index,
+    });
 
     if (this.currentBlockIndex >= index) {
       this.currentBlockIndex--;
@@ -443,7 +514,7 @@ export default class BlockManager extends Module {
 
   /**
    * Attention!
-   * After removing insert new initial typed Block and focus on it
+   * After removing insert the new default typed Block and focus on it
    * Removes all blocks
    */
   public removeAllBlocks(): void {
@@ -487,12 +558,36 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
-   * @param {number} index - index to get
+   * @param {number} index - index to get. -1 to get last
    *
    * @returns {Block}
    */
   public getBlockByIndex(index): Block {
+    if (index === -1) {
+      index = this._blocks.length - 1;
+    }
+
     return this._blocks[index];
+  }
+
+  /**
+   * Returns an index for passed Block
+   *
+   * @param block - block to find index
+   */
+  public getBlockIndex(block: Block): number {
+    return this._blocks.indexOf(block);
+  }
+
+  /**
+   * Returns the Block by passed id
+   *
+   * @param id - id of block to get
+   *
+   * @returns {Block}
+   */
+  public getBlockById(id): Block | undefined {
+    return this._blocks.array.find(block => block.id === id);
   }
 
   /**
@@ -546,11 +641,10 @@ export default class BlockManager extends Module {
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
-   *  @param {Node} childNode - look ahead from this node.
-   *
-   *  @throws Error  - when passed Node is not included at the Block
+   * @param {Node} childNode - look ahead from this node.
+   * @returns {Block | undefined} can return undefined in case when the passed child note is not a part of the current editor instance
    */
-  public setCurrentBlockByChildNode(childNode: Node): Block {
+  public setCurrentBlockByChildNode(childNode: Node): Block | undefined {
     /**
      * If node is Text TextNode
      */
@@ -560,18 +654,36 @@ export default class BlockManager extends Module {
 
     const parentFirstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
 
-    if (parentFirstLevelBlock) {
-      /**
-       * Update current Block's index
-       *
-       * @type {number}
-       */
-      this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
-
-      return this.currentBlock;
-    } else {
-      throw new Error('Can not find a Block from this child Node');
+    if (!parentFirstLevelBlock) {
+      return;
     }
+
+    /**
+     * Support multiple Editor.js instances,
+     * by checking whether the found block belongs to the current instance
+     *
+     * @see {@link Ui#documentTouched}
+     */
+    const editorWrapper = parentFirstLevelBlock.closest(`.${this.Editor.UI.CSS.editorWrapper}`);
+    const isBlockBelongsToCurrentInstance = editorWrapper?.isEqualNode(this.Editor.UI.nodes.wrapper);
+
+    if (!isBlockBelongsToCurrentInstance) {
+      return;
+    }
+
+    /**
+     * Update current Block's index
+     *
+     * @type {number}
+     */
+    this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+
+    /**
+     * Update current block active input
+     */
+    this.currentBlock.updateCurrentInput();
+
+    return this.currentBlock;
   }
 
   /**
@@ -635,11 +747,19 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+
+    /**
+     * Force call of didMutated event on Block movement
+     */
+    this.blockDidMutated(BlockMutationType.Moved, this.currentBlock, {
+      fromIndex,
+      toIndex,
+    });
   }
 
   /**
    * Sets current Block Index -1 which means unknown
-   * and clear highlightings
+   * and clear highlights
    */
   public dropPointer(): void {
     this.currentBlockIndex = -1;
@@ -649,15 +769,15 @@ export default class BlockManager extends Module {
   /**
    * Clears Editor
    *
-   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
-   *                                        we don't need to add empty initial block
+   * @param {boolean} needToAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                             we don't need to add an empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needAddInitialBlock = false): void {
+  public clear(needToAddDefaultBlock = false): void {
     this._blocks.removeAll();
     this.dropPointer();
 
-    if (needAddInitialBlock) {
+    if (needToAddDefaultBlock) {
       this.insert();
     }
 
@@ -668,18 +788,67 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Bind Events
+   * Cleans up all the block tools' resources
+   * This is called when editor is destroyed
+   */
+  public async destroy(): Promise<void> {
+    await Promise.all(this.blocks.map((block) => {
+      return block.destroy();
+    }));
+  }
+
+  /**
+   * Bind Block events
    *
    * @param {Block} block - Block to which event should be bound
    */
-  private bindEvents(block: Block): void {
-    const { BlockEvents, Listeners } = this.Editor;
+  private bindBlockEvents(block: Block): void {
+    const { BlockEvents } = this.Editor;
 
-    Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), false);
-    Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
-    Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
-    Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
-    Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+    this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
+      BlockEvents.keydown(event);
+    });
+
+    this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
+      BlockEvents.keyup(event);
+    });
+
+    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+      BlockEvents.dragOver(event);
+    });
+
+    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
+      BlockEvents.dragLeave(event);
+    });
+
+    block.on('didMutated', (affectedBlock: Block) => {
+      return this.blockDidMutated(BlockMutationType.Changed, affectedBlock, {
+        index: this.getBlockIndex(affectedBlock),
+      });
+    });
+  }
+
+  /**
+   * Disable mutable handlers and bindings
+   */
+  private disableModuleBindings(): void {
+    this.readOnlyMutableListeners.clearAll();
+  }
+
+  /**
+   * Enables all module handlers and bindings for all Blocks
+   */
+  private enableModuleBindings(): void {
+    /** Cut event */
+    this.readOnlyMutableListeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
+    );
+
+    this.blocks.forEach((block: Block) => {
+      this.bindBlockEvents(block);
+    });
   }
 
   /**
@@ -691,5 +860,25 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Block mutation callback
+   *
+   * @param mutationType - what happened with block
+   * @param block - mutated block
+   * @param details - additional data to pass with change event
+   */
+  private blockDidMutated(mutationType: BlockMutationType, block: Block, details: Record<string, unknown> = {}): Block {
+    const event = new CustomEvent(mutationType, {
+      detail: {
+        target: new BlockAPI(block),
+        ...details,
+      },
+    });
+
+    this.Editor.ModificationsObserver.onChange(event);
+
+    return block;
   }
 }

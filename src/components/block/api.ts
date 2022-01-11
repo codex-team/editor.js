@@ -1,6 +1,6 @@
 import Block from './index';
 import { BlockToolData, ToolConfig } from '../../../types/tools';
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
 /**
@@ -10,8 +10,18 @@ import { BlockAPI as BlockAPIInterface } from '../../../types/api';
  *
  * @param {Block} block - Block to expose
  */
-function BlockAPI(block: Block): void {
+function BlockAPI(
+  block: Block
+): void {
   const blockAPI: BlockAPIInterface = {
+    /**
+     * Block id
+     *
+     * @returns {string}
+     */
+    get id(): string {
+      return block.id;
+    },
     /**
      * Tool name
      *
@@ -81,10 +91,10 @@ function BlockAPI(block: Block): void {
      * @param {string} methodName - method to call
      * @param {object} param - object with parameters
      *
-     * @returns {void}
+     * @returns {unknown}
      */
-    call(methodName: string, param?: object): void {
-      block.call(methodName, param);
+    call(methodName: string, param?: object): unknown {
+      return block.call(methodName, param);
     },
 
     /**
@@ -105,6 +115,14 @@ function BlockAPI(block: Block): void {
      */
     validate(data: BlockToolData): Promise<boolean> {
       return block.validate(data);
+    },
+
+    /**
+     * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+     * Can be useful for block changes invisible for editor core.
+     */
+    dispatchChange(): void {
+      block.dispatchChange();
     },
   };
 

@@ -18,6 +18,17 @@ export default class CrossBlockSelection extends Module {
   private lastSelectedBlock: Block;
 
   /**
+   * Module preparation
+   *
+   * @returns {Promise}
+   */
+  public async prepare(): Promise<void> {
+    this.listeners.on(document, 'mousedown', (event: MouseEvent) => {
+      this.enableCrossBlockSelection(event);
+    });
+  }
+
+  /**
    * Sets up listeners
    *
    * @param {MouseEvent} event - mouse down event
@@ -27,13 +38,13 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    const { BlockManager, Listeners } = this.Editor;
+    const { BlockManager } = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;
 
-    Listeners.on(document, 'mouseover', this.onMouseOver);
-    Listeners.on(document, 'mouseup', this.onMouseUp);
+    this.listeners.on(document, 'mouseover', this.onMouseOver);
+    this.listeners.on(document, 'mouseup', this.onMouseUp);
   }
 
   /**
@@ -51,7 +62,7 @@ export default class CrossBlockSelection extends Module {
    * @param {boolean} next - if true, toggle next block. Previous otherwise
    */
   public toggleBlockSelectedState(next = true): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     if (!this.lastSelectedBlock) {
       this.lastSelectedBlock = this.firstSelectedBlock = BlockManager.currentBlock;
@@ -59,6 +70,8 @@ export default class CrossBlockSelection extends Module {
 
     if (this.firstSelectedBlock === this.lastSelectedBlock) {
       this.firstSelectedBlock.selected = true;
+
+      BlockSelection.clearCache();
       SelectionUtils.get().removeAllRanges();
     }
 
@@ -71,14 +84,22 @@ export default class CrossBlockSelection extends Module {
 
     if (this.lastSelectedBlock.selected !== nextBlock.selected) {
       nextBlock.selected = true;
+
+      BlockSelection.clearCache();
     } else {
       this.lastSelectedBlock.selected = false;
+
+      BlockSelection.clearCache();
     }
 
     this.lastSelectedBlock = nextBlock;
 
     /** close InlineToolbar when Blocks selected */
     this.Editor.InlineToolbar.close();
+
+    nextBlock.holder.scrollIntoView({
+      block: 'nearest',
+    });
   }
 
   /**
@@ -121,14 +142,40 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
+   * Enables Cross Block Selection
+   *
+   * @param {MouseEvent} event - mouse down event
+   */
+  private enableCrossBlockSelection(event: MouseEvent): void {
+    const { UI } = this.Editor;
+
+    /**
+     * Each mouse down on must disable selectAll state
+     */
+    if (!SelectionUtils.isCollapsed) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
+
+    /**
+     * If mouse down is performed inside the editor, we should watch CBS
+     */
+    if (UI.nodes.redactor.contains(event.target as Node)) {
+      this.watchSelection(event);
+    } else {
+      /**
+       * Otherwise, clear selection
+       */
+      this.Editor.BlockSelection.clearSelection(event);
+    }
+  }
+
+  /**
    * Mouse up event handler.
    * Removes the listeners
    */
   private onMouseUp = (): void => {
-    const { Listeners } = this.Editor;
-
-    Listeners.off(document, 'mouseover', this.onMouseOver);
-    Listeners.off(document, 'mouseup', this.onMouseUp);
+    this.listeners.off(document, 'mouseover', this.onMouseOver);
+    this.listeners.off(document, 'mouseup', this.onMouseUp);
   }
 
   /**
@@ -138,7 +185,7 @@ export default class CrossBlockSelection extends Module {
    * @param {MouseEvent} event - mouse over event
    */
   private onMouseOver = (event: MouseEvent): void => {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node) || this.lastSelectedBlock;
     const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
@@ -157,12 +204,16 @@ export default class CrossBlockSelection extends Module {
       relatedBlock.selected = true;
       targetBlock.selected = true;
 
+      BlockSelection.clearCache();
+
       return;
     }
 
     if (targetBlock === this.firstSelectedBlock) {
       relatedBlock.selected = false;
       targetBlock.selected = false;
+
+      BlockSelection.clearCache();
 
       return;
     }
@@ -180,7 +231,7 @@ export default class CrossBlockSelection extends Module {
    * @param {Block} lastBlock - last block in range
    */
   private toggleBlocksSelectedState(firstBlock: Block, lastBlock: Block): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);
 
@@ -199,6 +250,8 @@ export default class CrossBlockSelection extends Module {
         block !== (shouldntSelectFirstBlock ? firstBlock : lastBlock)
       ) {
         BlockManager.blocks[i].selected = !BlockManager.blocks[i].selected;
+
+        BlockSelection.clearCache();
       }
     }
   }

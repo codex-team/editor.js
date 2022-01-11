@@ -10,6 +10,7 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
+import * as _ from '../utils';
 
 /**
  *
@@ -97,37 +98,16 @@ export default class RectangleSelection extends Module {
   private overlayRectangle: HTMLDivElement;
 
   /**
+   * Listener identifiers
+   */
+  private listenerIds: string[] = [];
+
+  /**
    * Module Preparation
    * Creating rect and hang handlers
    */
   public prepare(): void {
-    const { Listeners } = this.Editor;
-    const { container } = this.genHTML();
-
-    Listeners.on(container, 'mousedown', (event: MouseEvent) => {
-      if (event.button !== this.MAIN_MOUSE_BUTTON) {
-        return;
-      }
-      this.startSelection(event.pageX, event.pageY);
-    }, false);
-
-    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
-      this.changingRectangle(event);
-      this.scrollByZones(event.clientY);
-    }, false);
-
-    Listeners.on(document.body, 'mouseleave', () => {
-      this.clearSelection();
-      this.endSelection();
-    });
-
-    Listeners.on(window, 'scroll', (event) => {
-      this.changingRectangle(event);
-    }, false);
-
-    Listeners.on(document.body, 'mouseup', () => {
-      this.endSelection();
-    }, false);
+    this.enableModuleBindings();
   }
 
   /**
@@ -194,6 +174,91 @@ export default class RectangleSelection extends Module {
    */
   public clearSelection(): void {
     this.isRectSelectionActivated = false;
+  }
+
+  /**
+   * Sets Module necessary event handlers
+   */
+  private enableModuleBindings(): void {
+    const { container } = this.genHTML();
+
+    this.listeners.on(container, 'mousedown', (mouseEvent: MouseEvent) => {
+      this.processMouseDown(mouseEvent);
+    }, false);
+
+    this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
+      this.processMouseMove(mouseEvent);
+    }, 10), {
+      passive: true,
+    });
+
+    this.listeners.on(document.body, 'mouseleave', () => {
+      this.processMouseLeave();
+    });
+
+    this.listeners.on(window, 'scroll', _.throttle((mouseEvent: MouseEvent) => {
+      this.processScroll(mouseEvent);
+    }, 10), {
+      passive: true,
+    });
+
+    this.listeners.on(document.body, 'mouseup', () => {
+      this.processMouseUp();
+    }, false);
+  }
+
+  /**
+   * Handle mouse down events
+   *
+   * @param {MouseEvent} mouseEvent - mouse event payload
+   */
+  private processMouseDown(mouseEvent: MouseEvent): void {
+    if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
+      return;
+    }
+
+    /**
+     * Do not enable the Rectangle Selection when mouse dragging started some editable input
+     * Used to prevent Rectangle Selection on Block Tune wrappers' inputs that also can be inside the Block
+     */
+    const startedFromContentEditable = (mouseEvent.target as Element).closest($.allInputsSelector) !== null;
+
+    if (!startedFromContentEditable) {
+      this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+    }
+  }
+
+  /**
+   * Handle mouse move events
+   *
+   * @param {MouseEvent} mouseEvent - mouse event payload
+   */
+  private processMouseMove(mouseEvent: MouseEvent): void {
+    this.changingRectangle(mouseEvent);
+    this.scrollByZones(mouseEvent.clientY);
+  }
+
+  /**
+   * Handle mouse leave
+   */
+  private processMouseLeave(): void {
+    this.clearSelection();
+    this.endSelection();
+  }
+
+  /**
+   * @param {MouseEvent} mouseEvent - mouse event payload
+   */
+  private processScroll(mouseEvent: MouseEvent): void {
+    this.changingRectangle(mouseEvent);
+  }
+
+  /**
+   * Handle mouse up
+   */
+  private processMouseUp(): void {
+    this.clearSelection();
+    this.endSelection();
   }
 
   /**
@@ -270,7 +335,7 @@ export default class RectangleSelection extends Module {
    *
    * @param {MouseEvent} event - mouse event
    */
-  private changingRectangle(event): void {
+  private changingRectangle(event: MouseEvent): void {
     if (!this.mousedown) {
       return;
     }
@@ -296,6 +361,11 @@ export default class RectangleSelection extends Module {
     }
 
     this.updateRectangleSize();
+
+    /**
+     * Hide Block Settings Toggler (along with the Toolbar) (if showed) when the Rectangle Selection is activated
+     */
+    this.Editor.Toolbar.close();
 
     if (index === undefined) {
       return;

@@ -1,8 +1,7 @@
 import Module from '../__module';
-/* eslint-disable import/no-duplicates */
 import * as _ from '../utils';
-import { ChainData } from '../utils';
-import { BlockToolConstructable, OutputBlockData } from '../../../types';
+import { OutputBlockData } from '../../../types';
+import BlockTool from '../tools/block';
 
 /**
  * Editor.js Renderer Module
@@ -24,12 +23,14 @@ export default class Renderer extends Module {
    *
    * blocks: [
    *   {
+   *     id   : 'oDe-EVrGWA',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Hello from Codex!'
    *     }
    *   },
    *   {
+   *     id   : 'Ld5BJjJCHs',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Leave feedback if you like it!'
@@ -47,7 +48,14 @@ export default class Renderer extends Module {
   public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
-    const sequence = await _.sequence(chainData as ChainData[]);
+    /**
+     * Disable onChange callback on render to not to spam those events
+     */
+    this.Editor.ModificationsObserver.disable();
+
+    const sequence = await _.sequence(chainData as _.ChainData[]);
+
+    this.Editor.ModificationsObserver.enable();
 
     this.Editor.UI.checkEmptiness();
 
@@ -60,18 +68,20 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
+   *
    * @returns {Promise<void>}
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
-    const tool = item.type;
-    const data = item.data;
+    const { type: tool, data, tunes, id } = item;
 
-    if (tool in Tools.available) {
+    if (Tools.available.has(tool)) {
       try {
         BlockManager.insert({
+          id,
           tool,
           data,
+          tunes,
         });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
@@ -81,20 +91,21 @@ export default class Renderer extends Module {
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {
+          id,
           type: tool,
           data,
         },
         title: tool,
       };
 
-      if (tool in Tools.unavailable) {
-        const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
-        const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+      if (Tools.unavailable.has(tool)) {
+        const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
 
-        stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
+        stubData.title = toolboxSettings?.title || stubData.title;
       }
 
       const stub = BlockManager.insert({
+        id,
         tool: Tools.stubTool,
         data: stubData,
       });

@@ -1,0 +1,77 @@
+name: Bump version on merge
+
+on:
+  pull_request:
+    branches:
+      - next
+    types: [closed]
+
+jobs:
+  # If pull request was merged then we should check for a package version update
+  check-for-no-version-changing:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Get package new version name
+      - name: Get package info
+        id: packageNew
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Checkout to the base commit before merge
+      - name: Checkout to the base commit before merge
+        run: git checkout ${{ github.event.pull_request.base.sha }}
+
+      # Get package old version name
+      - name: Get package info
+        id: packageOld
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Stop workflow and do not bump version if it was changed already
+      - name: Stop workflow and do not bump version if it was changed already
+        uses: actions/github-script@v3
+        if: steps.packageOld.outputs.version != steps.packageNew.outputs.version
+        with:
+          script: |
+            core.setFailed('Version was changed! ${{ steps.packageOld.outputs.version }} -> ${{ steps.packageNew.outputs.version }}')
+
+  bump-version:
+    needs: check-for-no-version-changing
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout to target branch
+      - uses: actions/checkout@v2
+
+      # Setup node environment
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 15
+          registry-url: https://registry.npmjs.org/
+
+      # Bump version to the next prerelease (patch) with rc suffix
+      - name: Suggest the new version
+        run: yarn version --prerelease --preid rc --no-git-tag-version
+
+      # Get package new version name
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1
+
+      # Create pull request with changes
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Bump version
+          committer: github-actions <action@github.com>
+          author: github-actions <action@github.com>
+          branch: auto-bump-version
+          base: ${{ steps.vars.outputs.base_branch }}
+          delete-branch: true
+          title: "Bump version up to ${{ steps.package.outputs.version }}"
+          body: |
+            Auto-generated bump version suggestion because of PR:
+            **${{ github.event.pull_request.title }}** #${{ github.event.pull_request.number }}

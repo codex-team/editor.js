@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {API, LogLevels, OutputData} from '../index';
+import {API, BlockAPI, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
 
@@ -11,7 +11,7 @@ export interface EditorConfig {
   holderId?: string | HTMLElement;
 
   /**
-   * Element where Editor will be append
+   * Element where Editor will be appended
    */
   holder?: string | HTMLElement;
 
@@ -24,6 +24,13 @@ export interface EditorConfig {
    * This Tool will be used as default
    * Name should be equal to one of Tool`s keys of passed tools
    * If not specified, Paragraph Tool will be used
+   */
+  defaultBlock?: string;
+
+  /**
+   * @deprecated
+   * This property will be deprecated in the next major release.
+   * Use the 'defaultBlock' property instead.
    */
   initialBlock?: string;
 
@@ -46,7 +53,9 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+  tools?: {
+    [toolName: string]: ToolConstructable|ToolSettings;
+  }
 
   /**
    * Data to render on Editor start
@@ -64,6 +73,11 @@ export interface EditorConfig {
   logLevel?: LogLevels;
 
   /**
+   * Enable read-only mode
+   */
+  readOnly?: boolean;
+
+  /**
    * Internalization config
    */
   i18n?: I18nConfig;
@@ -76,6 +90,17 @@ export interface EditorConfig {
   /**
    * Fires when something changed in DOM
    * @param {API} api - editor.js api
+   * @param event - custom event describing mutation
    */
-  onChange?(api: API): void;
+  onChange?(api: API, event: CustomEvent): void;
+
+  /**
+   * Defines default toolbar for all tools.
+   */
+  inlineToolbar?: string[]|boolean;
+
+  /**
+   * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
+   */
+  tunes?: string[];
 }

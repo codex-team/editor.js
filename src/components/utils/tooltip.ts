@@ -1,18 +1,16 @@
 /* eslint-disable jsdoc/no-undefined-types */
-import Module from '../__module';
-
 /**
  * Use external module CodeX Tooltip
  */
-import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
-import { ModuleConfig } from '../../types-internal/module-config';
+import CodeXTooltips from 'codex-tooltip';
+import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 
 /**
  * Tooltip
  *
  * Decorates any tooltip module like adapter
  */
-export default class Tooltip extends Module {
+export default class Tooltip {
   /**
    * Tooltips lib: CodeX Tooltips
    *
@@ -21,19 +19,18 @@ export default class Tooltip extends Module {
   private lib: CodeXTooltips = new CodeXTooltips();
 
   /**
-   * @class
-   * @param {EditorConfig} - Editor's config
+   * Release the library
    */
-  constructor({ config }: ModuleConfig) {
-    super({ config });
+  public destroy(): void {
+    this.lib.destroy();
   }
 
   /**
    * Shows tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element - any HTML element in DOM
-   * @param {TooltipContent} content - tooltip's content
-   * @param {TooltipOptions} options - showing settings
+   * @param content - tooltip's content
+   * @param options - showing settings
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
     this.lib.show(element, content, options);
@@ -41,17 +38,19 @@ export default class Tooltip extends Module {
 
   /**
    * Hides tooltip
+   *
+   * @param skipHidingDelay — pass true to immediately hide the tooltip
    */
-  public hide(): void {
-    this.lib.hide();
+  public hide(skipHidingDelay = false): void {
+    this.lib.hide(skipHidingDelay);
   }
 
   /**
    * Binds 'mouseenter' and 'mouseleave' events that shows/hides the Tooltip
    *
    * @param {HTMLElement} element - any HTML element in DOM
-   * @param {TooltipContent} content - tooltip's content
-   * @param {TooltipOptions} options - showing settings
+   * @param content - tooltip's content
+   * @param options - showing settings
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
     this.lib.onHover(element, content, options);

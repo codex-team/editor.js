@@ -1,36 +1,33 @@
 import {
   BlockAPI as BlockAPIInterface,
-  BlockTool,
-  BlockToolConstructable,
+  BlockTool as IBlockTool,
   BlockToolData,
-  BlockTune,
-  BlockTuneConstructable,
+  BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig,
-  ToolSettings
+  ToolConfig
 } from '../../../types';
 
-import { SavedData } from '../../types-internal/block-data';
+import { SavedData } from '../../../types/data-formats';
 import $ from '../dom';
 import * as _ from '../utils';
-import ApiModule from '../modules/api';
-import SelectionUtils from '../selection';
+import ApiModules from '../modules/api';
 import BlockAPI from './api';
-import { ToolType } from '../modules/tools';
+import SelectionUtils from '../selection';
+import BlockTool from '../tools/block';
 
-/** Import default tunes */
-import MoveUpTune from '../block-tunes/block-tune-move-up';
-import DeleteTune from '../block-tunes/block-tune-delete';
-import MoveDownTune from '../block-tunes/block-tune-move-down';
+import BlockTune from '../tools/tune';
+import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import ToolsCollection from '../tools/collection';
+import EventsDispatcher from '../utils/events';
 
 /**
  * Interface describes Block class constructor argument
  */
 interface BlockConstructorOptions {
   /**
-   * Tool's name
+   * Block's id. Should be passed for existed block, and omitted for a new one.
    */
-  name: string;
+  id?: string;
 
   /**
    * Initial Block data
@@ -38,19 +35,24 @@ interface BlockConstructorOptions {
   data: BlockToolData;
 
   /**
-   * Tool's class or constructor function
+   * Tool object
    */
-  Tool: BlockToolConstructable;
-
-  /**
-   * Tool settings from initial config
-   */
-  settings: ToolSettings;
+  tool: BlockTool;
 
   /**
    * Editor's API methods
    */
-  api: ApiModule;
+  api: ApiModules;
+
+  /**
+   * This flag indicates that the Block should be constructed in the read-only mode.
+   */
+  readOnly: boolean;
+
+  /**
+   * Tunes data for current Block
+   */
+  tunesData: {[name: string]: BlockTuneData};
 }
 
 /**
@@ -79,13 +81,18 @@ export enum BlockToolAPI {
 }
 
 /**
+ * Names of events supported by Block class
+ */
+type BlockEvents = 'didMutated';
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
-export default class Block {
+export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * CSS classes for the Block
    *
@@ -103,34 +110,34 @@ export default class Block {
   }
 
   /**
+   * Block unique identifier
+   */
+  public id: string;
+
+  /**
    * Block Tool`s name
    */
-  public name: string;
+  public readonly name: string;
 
   /**
    * Instance of the Tool Block represents
    */
-  public tool: BlockTool;
-
-  /**
-   * Class blueprint of the ool Block represents
-   */
-  public class: BlockToolConstructable;
+  public readonly tool: BlockTool;
 
   /**
    * User Tool configuration
    */
-  public settings: ToolConfig;
+  public readonly settings: ToolConfig;
 
   /**
    * Wrapper for Block`s content
    */
-  public holder: HTMLDivElement;
+  public readonly holder: HTMLDivElement;
 
   /**
    * Tunes used by Tool
    */
-  public tunes: BlockTune[];
+  public readonly tunes: ToolsCollection<BlockTune>;
 
   /**
    * Tool's user configuration
@@ -145,9 +152,30 @@ export default class Block {
   private cachedInputs: HTMLElement[] = [];
 
   /**
+   * Tool class instance
+   */
+  private readonly toolInstance: IBlockTool;
+
+  /**
+   * User provided Block Tunes instances
+   */
+  private readonly tunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * Editor provided Block Tunes instances
+   */
+  private readonly defaultTunesInstances: Map<string, IBlockTune> = new Map();
+
+  /**
+   * If there is saved data for Tune which is not available at the moment,
+   * we will store it here and provide back on save so data is not lost
+   */
+  private unavailableTunesData: {[name: string]: BlockTuneData} = {};
+
+  /**
    * Editor`s API module
    */
-  private readonly api: ApiModule;
+  private readonly api: ApiModules;
 
   /**
    * Focused input index
@@ -173,7 +201,19 @@ export default class Block {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = _.debounce((): void => {
+  private didMutated = _.debounce((mutations: MutationRecord[] = []): void => {
+    const shouldFireUpdate = !mutations.some(({ addedNodes = [], removedNodes }) => {
+      return [...Array.from(addedNodes), ...Array.from(removedNodes)]
+        .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
+    });
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
     /**
      * Drop cache
      */
@@ -185,6 +225,8 @@ export default class Block {
     this.updateCurrentInput();
 
     this.call(BlockToolAPI.UPDATED);
+
+    this.emit('didMutated', this);
   }, this.modificationDebounceTimer);
 
   /**
@@ -194,40 +236,42 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
-   * @param {string} options.name - Tool name that passed on initialization
+   * @param {string} [options.id] - block's id. Will be generated if omitted.
    * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockToolConstructable} options.Tool — Tool's class
-   * @param {ToolSettings} options.settings - default tool's config
-   * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
+   * @param {BlockToolConstructable} options.tool — block's tool
+   * @param options.api - Editor API module for pass it to the Block Tunes
+   * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
-    name,
+    id = _.generateBlockId(),
     data,
-    Tool,
-    settings,
+    tool,
     api,
+    readOnly,
+    tunesData,
   }: BlockConstructorOptions) {
-    this.name = name;
-    this.class = Tool;
-    this.settings = settings;
-    this.config = settings.config || {};
+    super();
+
+    this.name = tool.name;
+    this.id = id;
+    this.settings = tool.settings;
+    this.config = tool.settings.config || {};
     this.api = api;
     this.blockAPI = new BlockAPI(this);
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
-    this.tool = new Tool({
-      data,
-      config: this.config,
-      api: this.api.getMethodsForTool(name, ToolType.Block),
-      block: this.blockAPI,
-    });
+    this.tool = tool;
+    this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
-    this.holder = this.compose();
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = this.makeTunes();
+    this.tunes = tool.tunes;
+
+    this.composeTunes(tunesData);
+
+    this.holder = this.compose();
   }
 
   /**
@@ -341,7 +385,7 @@ export default class Block {
    * @returns {object}
    */
   public get sanitize(): SanitizerConfig {
-    return this.tool.sanitize;
+    return this.tool.sanitizeConfig;
   }
 
   /**
@@ -350,8 +394,8 @@ export default class Block {
    *
    * @returns {boolean}
    */
-  public mergeable(): boolean {
-    return typeof this.tool.merge === 'function';
+  public get mergeable(): boolean {
+    return _.isFunction(this.toolInstance.merge);
   }
 
   /**
@@ -416,8 +460,12 @@ export default class Block {
   public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
+
+      SelectionUtils.addFakeCursor(this.holder);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
+
+      SelectionUtils.removeFakeCursor(this.holder);
     }
   }
 
@@ -494,7 +542,7 @@ export default class Block {
     /**
      * call Tool's method with the instance context
      */
-    if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+    if (_.isFunction(this.toolInstance[methodName])) {
       if (methodName === BlockToolAPI.APPEND_CALLBACK) {
         _.log(
           '`appendCallback` hook is deprecated and will be removed in the next major release. ' +
@@ -505,7 +553,7 @@ export default class Block {
 
       try {
         // eslint-disable-next-line no-useless-call
-        this.tool[methodName].call(this.tool, params);
+        this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
       }
@@ -518,7 +566,7 @@ export default class Block {
    * @param {BlockToolData} data - data to merge
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
-    await this.tool.merge(data);
+    await this.toolInstance.merge(data);
   }
 
   /**
@@ -528,7 +576,22 @@ export default class Block {
    * @returns {object}
    */
   public async save(): Promise<void|SavedData> {
-    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+    const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
+    const tunesData: {[name: string]: BlockTuneData} = this.unavailableTunesData;
+
+    [
+      ...this.tunesInstances.entries(),
+      ...this.defaultTunesInstances.entries(),
+    ]
+      .forEach(([name, tune]) => {
+        if (_.isFunction(tune.save)) {
+          try {
+            tunesData[name] = tune.save();
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
+          }
+        }
+      });
 
     /**
      * Measuring execution time
@@ -542,8 +605,10 @@ export default class Block {
         measuringEnd = window.performance.now();
 
         return {
+          id: this.id,
           tool: this.name,
           data: finishedExtraction,
+          tunes: tunesData,
           time: measuringEnd - measuringStart,
         };
       })
@@ -564,64 +629,45 @@ export default class Block {
   public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
-    if (this.tool.validate instanceof Function) {
-      isValid = await this.tool.validate(data);
+    if (this.toolInstance.validate instanceof Function) {
+      isValid = await this.toolInstance.validate(data);
     }
 
     return isValid;
   }
 
   /**
-   * Make an array with default settings
-   * Each block has default tune instance that have states
-   *
-   * @returns {BlockTune[]}
-   */
-  public makeTunes(): BlockTune[] {
-    const tunesList = [
-      {
-        name: 'moveUp',
-        Tune: MoveUpTune,
-      },
-      {
-        name: 'delete',
-        Tune: DeleteTune,
-      },
-      {
-        name: 'moveDown',
-        Tune: MoveDownTune,
-      },
-    ];
-
-    // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map(({ name, Tune }: {name: string; Tune: BlockTuneConstructable}) => {
-      return new Tune({
-        api: this.api.getMethodsForTool(name, ToolType.Tune),
-        settings: this.config,
-      });
-    });
-  }
-
-  /**
    * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
    *
-   * @returns {DocumentFragment}
+   * @returns {DocumentFragment[]}
    */
-  public renderTunes(): DocumentFragment {
+  public renderTunes(): [DocumentFragment, DocumentFragment] {
     const tunesElement = document.createDocumentFragment();
+    const defaultTunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach((tune) => {
+    this.tunesInstances.forEach((tune) => {
       $.append(tunesElement, tune.render());
     });
+    this.defaultTunesInstances.forEach((tune) => {
+      $.append(defaultTunesElement, tune.render());
+    });
 
-    return tunesElement;
+    return [tunesElement, defaultTunesElement];
   }
 
   /**
    * Update current input index with selection anchor node
    */
   public updateCurrentInput(): void {
-    this.currentInput = SelectionUtils.anchorNode;
+    /**
+     * If activeElement is native input, anchorNode points to its parent.
+     * So if it is native input use it instead of anchorNode
+     *
+     * If anchorNode is undefined, also use activeElement
+     */
+    this.currentInput = $.isNativeInput(document.activeElement) || !SelectionUtils.anchorNode
+      ? document.activeElement
+      : SelectionUtils.anchorNode;
   }
 
   /**
@@ -640,6 +686,12 @@ export default class Block {
         attributes: true,
       }
     );
+
+    /**
+     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+     * so we need to track focus events to update current input and clear cache.
+     */
+    this.addInputEvents();
   }
 
   /**
@@ -647,6 +699,35 @@ export default class Block {
    */
   public willUnselect(): void {
     this.mutationObserver.disconnect();
+    this.removeInputEvents();
+  }
+
+  /**
+   * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+   * Can be useful for block changes invisible for editor core.
+   */
+  public dispatchChange(): void{
+    this.didMutated();
+  }
+
+  /**
+   * Call Tool instance destroy method
+   */
+  public destroy(): void {
+    super.destroy();
+
+    if (_.isFunction(this.toolInstance.destroy)) {
+      this.toolInstance.destroy();
+    }
+  }
+
+  /**
+   * Call Tool instance renderSettings method
+   */
+  public renderSettings(): HTMLElement | undefined {
+    if (_.isFunction(this.toolInstance.renderSettings)) {
+      return this.toolInstance.renderSettings();
+    }
   }
 
   /**
@@ -657,11 +738,101 @@ export default class Block {
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.tool.render();
+        pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
-    wrapper.appendChild(contentNode);
+
+    /**
+     * Block Tunes might wrap Block's content node to provide any UI changes
+     *
+     * <tune2wrapper>
+     *   <tune1wrapper>
+     *     <blockContent />
+     *   </tune1wrapper>
+     * </tune2wrapper>
+     */
+    let wrappedContentNode: HTMLElement = contentNode;
+
+    [...this.tunesInstances.values(), ...this.defaultTunesInstances.values()]
+      .forEach((tune) => {
+        if (_.isFunction(tune.wrap)) {
+          try {
+            wrappedContentNode = tune.wrap(wrappedContentNode);
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} wrap method throws an Error %o`, 'warn', e);
+          }
+        }
+      });
+
+    wrapper.appendChild(wrappedContentNode);
 
     return wrapper;
+  }
+
+  /**
+   * Instantiate Block Tunes
+   *
+   * @param tunesData - current Block tunes data
+   * @private
+   */
+  private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
+    Array.from(this.tunes.values()).forEach((tune) => {
+      const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
+
+      collection.set(tune.name, tune.create(tunesData[tune.name], this.blockAPI));
+    });
+
+    /**
+     * Check if there is some data for not available tunes
+     */
+    Object.entries(tunesData).forEach(([name, data]) => {
+      if (!this.tunesInstances.has(name)) {
+        this.unavailableTunesData[name] = data;
+      }
+    });
+  }
+
+  /**
+   * Is fired when text input or contentEditable is focused
+   */
+  private handleFocus = (): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+  }
+
+  /**
+   * Adds focus event listeners to all inputs and contentEditables
+   */
+  private addInputEvents(): void {
+    this.inputs.forEach(input => {
+      input.addEventListener('focus', this.handleFocus);
+
+      /**
+       * If input is native input add oninput listener to observe changes
+       */
+      if ($.isNativeInput(input)) {
+        input.addEventListener('input', this.didMutated);
+      }
+    });
+  }
+
+  /**
+   * removes focus event listeners from all inputs and contentEditables
+   */
+  private removeInputEvents(): void {
+    this.inputs.forEach(input => {
+      input.removeEventListener('focus', this.handleFocus);
+
+      if ($.isNativeInput(input)) {
+        input.removeEventListener('input', this.didMutated);
+      }
+    });
   }
 }

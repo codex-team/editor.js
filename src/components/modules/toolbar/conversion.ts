@@ -1,16 +1,26 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import { BlockToolConstructable } from '../../../../types';
 import * as _ from '../../utils';
-import { SavedData } from '../../../types-internal/block-data';
+import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import { clean } from '../../utils/sanitizer';
+
+/**
+ * HTML Elements used for ConversionToolbar
+ */
+interface ConversionToolbarNodes {
+  wrapper: HTMLElement;
+  tools: HTMLElement;
+}
 
 /**
  * Block Converter
+ *
+ * @todo Make the Conversion Toolbar no-module but a standalone class, like Toolbox
  */
-export default class ConversionToolbar extends Module {
+export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   /**
    * CSS getter
    */
@@ -28,14 +38,6 @@ export default class ConversionToolbar extends Module {
       conversionToolActive: 'ce-conversion-tool--active',
     };
   }
-
-  /**
-   * HTML Elements used for UI
-   */
-  public nodes: { [key: string]: HTMLElement } = {
-    wrapper: null,
-    tools: null,
-  };
 
   /**
    * Conversion Toolbar open/close state
@@ -65,7 +67,10 @@ export default class ConversionToolbar extends Module {
    * Create UI of Conversion Toolbar
    */
   public make(): HTMLElement {
-    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
+    this.nodes.wrapper = $.make('div', [
+      ConversionToolbar.CSS.conversionToolbarWrapper,
+      ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
+    ]);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
@@ -89,6 +94,21 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
+   * Deactivates flipper and removes all nodes
+   */
+  public destroy(): void {
+    /**
+     * Sometimes (in read-only mode) there is no Flipper
+     */
+    if (this.flipper) {
+      this.flipper.deactivate();
+      this.flipper = null;
+    }
+
+    this.removeAllNodes();
+  }
+
+  /**
    * Toggle conversion dropdown visibility
    *
    * @param {Function} [togglingCallback] — callback that will accept opening state
@@ -100,7 +120,7 @@ export default class ConversionToolbar extends Module {
       this.close();
     }
 
-    if (typeof togglingCallback === 'function') {
+    if (_.isFunction(togglingCallback)) {
       this.togglingCallback = togglingCallback;
     }
   }
@@ -124,7 +144,7 @@ export default class ConversionToolbar extends Module {
       }));
       this.flipper.focusFirst();
 
-      if (typeof this.togglingCallback === 'function') {
+      if (_.isFunction(this.togglingCallback)) {
         this.togglingCallback(true);
       }
     }, 50);
@@ -138,7 +158,7 @@ export default class ConversionToolbar extends Module {
     this.flipper.deactivate();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
-    if (typeof this.togglingCallback === 'function') {
+    if (_.isFunction(this.togglingCallback)) {
       this.togglingCallback(false);
     }
   }
@@ -149,7 +169,7 @@ export default class ConversionToolbar extends Module {
   public hasTools(): boolean {
     const tools = Object.keys(this.tools); // available tools in array representation
 
-    return !(tools.length === 1 && tools.shift() === this.config.initialBlock);
+    return !(tools.length === 1 && tools.shift() === this.config.defaultBlock);
   }
 
   /**
@@ -158,24 +178,23 @@ export default class ConversionToolbar extends Module {
    *
    * @param {string} replacingToolName - name of Tool which replaces current
    */
-  public async replaceWithBlock(replacingToolName: string): Promise <void> {
+  public async replaceWithBlock(replacingToolName: string): Promise<void> {
     /**
      * At first, we get current Block data
      *
      * @type {BlockToolConstructable}
      */
-    const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
+    const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-    const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
 
     /**
      * When current Block name is equals to the replacing tool Name,
-     * than convert this Block back to the initial Block
+     * than convert this Block back to the default Block
      */
     if (currentBlockName === replacingToolName) {
-      replacingToolName = this.config.initialBlock;
+      replacingToolName = this.config.defaultBlock;
     }
 
     /**
@@ -183,7 +202,7 @@ export default class ConversionToolbar extends Module {
      *
      * @type {BlockToolConstructable}
      */
-    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
+    const replacingTool = this.Editor.Tools.blockTools.get(replacingToolName);
 
     /**
      * Export property can be:
@@ -193,11 +212,11 @@ export default class ConversionToolbar extends Module {
      * In both cases returning value must be a string
      */
     let exportData = '';
-    const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
+    const exportProp = currentBlockTool.conversionConfig.export;
 
-    if (typeof exportProp === 'function') {
+    if (_.isFunction(exportProp)) {
       exportData = exportProp(blockData);
-    } else if (typeof exportProp === 'string') {
+    } else if (_.isString(exportProp)) {
       exportData = blockData[exportProp];
     } else {
       _.log('Conversion «export» property must be a string or function. ' +
@@ -209,9 +228,9 @@ export default class ConversionToolbar extends Module {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned: string = this.Editor.Sanitizer.clean(
+    const cleaned: string = clean(
       exportData,
-      replacingTool.sanitize
+      replacingTool.sanitizeConfig
     );
 
     /**
@@ -220,11 +239,11 @@ export default class ConversionToolbar extends Module {
      * string — the name of data field to import
      */
     let newBlockData = {};
-    const importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG].import;
+    const importProp = replacingTool.conversionConfig.import;
 
-    if (typeof importProp === 'function') {
+    if (_.isFunction(importProp)) {
       newBlockData = importProp(cleaned);
-    } else if (typeof importProp === 'string') {
+    } else if (_.isString(importProp)) {
       newBlockData[importProp] = cleaned;
     } else {
       _.log('Conversion «import» property must be a string or function. ' +
@@ -254,32 +273,28 @@ export default class ConversionToolbar extends Module {
   private addTools(): void {
     const tools = this.Editor.Tools.blockTools;
 
-    for (const toolName in tools) {
-      if (!Object.prototype.hasOwnProperty.call(tools, toolName)) {
-        continue;
-      }
+    Array
+      .from(tools.entries())
+      .forEach(([name, tool]) => {
+        const toolboxSettings = tool.toolbox;
+        const conversionConfig = tool.conversionConfig;
 
-      const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
-      const toolClass = tools[toolName] as BlockToolConstructable;
-      const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
-      const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
+        /**
+         * Skip tools that don't pass 'toolbox' property
+         */
+        if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
+          return;
+        }
 
-      /**
-       * Skip tools that don't pass 'toolbox' property
-       */
-      if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
-        continue;
-      }
+        /**
+         * Skip tools without «import» rule specified
+         */
+        if (!conversionConfig || !conversionConfig.import) {
+          return;
+        }
 
-      /**
-       * Skip tools without «import» rule specified
-       */
-      if (!conversionConfig || !conversionConfig.import) {
-        continue;
-      }
-
-      this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
-    }
+        this.addTool(name, toolboxSettings.icon, toolboxSettings.title);
+      });
   }
 
   /**
@@ -302,7 +317,7 @@ export default class ConversionToolbar extends Module {
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
 
-    this.Editor.Listeners.on(tool, 'click', async () => {
+    this.listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
   }

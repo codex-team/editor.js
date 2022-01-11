@@ -3,6 +3,16 @@ import $ from '../../dom';
 import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
+import Block from '../../block';
+
+/**
+ * HTML Elements that used for BlockSettings
+ */
+interface BlockSettingsNodes {
+  wrapper: HTMLElement;
+  toolSettings: HTMLElement;
+  defaultSettings: HTMLElement;
+}
 
 /**
  * Block Settings
@@ -14,14 +24,16 @@ import SelectionUtils from '../../selection';
  *  | .  Default Settings  . |
  *  | ...................... |
  *  |________________________|
+ *
+ *  @todo Make Block Settings no-module but a standalone class, like Toolbox
  */
-export default class BlockSettings extends Module {
+export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Module Events
    *
    * @returns {{opened: string, closed: string}}
    */
-  public get events(): {opened: string; closed: string} {
+  public get events(): { opened: string; closed: string } {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -33,7 +45,7 @@ export default class BlockSettings extends Module {
    *
    * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -56,15 +68,6 @@ export default class BlockSettings extends Module {
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(this.CSS.wrapperOpened);
   }
-
-  /**
-   * Block settings UI HTML elements
-   */
-  public nodes: {[key: string]: HTMLElement} = {
-    wrapper: null,
-    toolSettings: null,
-    defaultSettings: null,
-  };
 
   /**
    * List of buttons
@@ -104,9 +107,26 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Open Block Settings pane
+   * Destroys module
    */
-  public open(): void {
+  public destroy(): void {
+    /**
+     * Sometimes (in read-only mode) there is no Flipper
+     */
+    if (this.flipper) {
+      this.flipper.deactivate();
+      this.flipper = null;
+    }
+
+    this.removeAllNodes();
+  }
+
+  /**
+   * Open Block Settings pane
+   *
+   * @param targetBlock - near which Block we should open BlockSettings
+   */
+  public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
@@ -118,20 +138,21 @@ export default class BlockSettings extends Module {
     /**
      * Highlight content of a Block we are working with
      */
-    this.Editor.BlockManager.currentBlock.selected = true;
+    targetBlock.selected = true;
+    this.Editor.BlockSelection.clearCache();
 
     /**
      * Fill Tool's settings
      */
-    this.addToolSettings();
+    this.addToolSettings(targetBlock);
 
     /**
      * Add default settings that presents for all Blocks
      */
-    this.addDefaultSettings();
+    this.addTunes(targetBlock);
 
     /** Tell to subscribers that block settings is opened */
-    this.Editor.Events.emit(this.events.opened);
+    this.eventsDispatcher.emit(this.events.opened);
 
     this.flipper.activate(this.blockTunesButtons);
   }
@@ -155,12 +176,19 @@ export default class BlockSettings extends Module {
 
     this.selection.clearSaved();
 
+    /**
+     * Remove highlighted content of a Block we are working with
+     */
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.currentBlock.selected = false;
+    }
+
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
     this.nodes.defaultSettings.innerHTML = '';
 
     /** Tell to subscribers that block settings is closed */
-    this.Editor.Events.emit(this.events.closed);
+    this.eventsDispatcher.emit(this.events.closed);
 
     /** Clear cached buttons */
     this.buttons = [];
@@ -204,18 +232,27 @@ export default class BlockSettings extends Module {
 
   /**
    * Add Tool's settings
+   *
+   * @param targetBlock - Block to render settings
    */
-  private addToolSettings(): void {
-    if (typeof this.Editor.BlockManager.currentBlock.tool.renderSettings === 'function') {
-      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
+  private addToolSettings(targetBlock): void {
+    const settingsElement = targetBlock.renderSettings();
+
+    if (settingsElement) {
+      $.append(this.nodes.toolSettings, settingsElement);
     }
   }
 
   /**
-   * Add default settings
+   * Add tunes: provided by user and default ones
+   *
+   * @param targetBlock - Block to render its Tunes set
    */
-  private addDefaultSettings(): void {
-    $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
+  private addTunes(targetBlock): void {
+    const [toolTunes, defaultTunes] = targetBlock.renderTunes();
+
+    $.append(this.nodes.toolSettings, toolTunes);
+    $.append(this.nodes.defaultSettings, defaultTunes);
   }
 
   /**

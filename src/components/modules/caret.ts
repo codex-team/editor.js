@@ -330,10 +330,10 @@ export default class Caret extends Module {
     }
 
     /**
-     * If last block is empty and it is an initialBlock, set to that.
+     * If last block is empty and it is an defaultBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
+    if (lastBlock.tool.isDefault && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -355,12 +355,30 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        const range = selectRange.cloneRange();
+        if ($.isNativeInput(currentBlockInput)) {
+          /**
+           * If input is native text input we need to use it's value
+           * Text before the caret stays in the input,
+           * while text after the caret is returned as a fragment to be inserted after the block.
+           */
+          const input = currentBlockInput as HTMLInputElement | HTMLTextAreaElement;
+          const newFragment = document.createDocumentFragment();
 
-        range.selectNodeContents(currentBlockInput);
-        range.setStart(selectRange.endContainer, selectRange.endOffset);
+          const inputRemainingText = input.value.substring(0, input.selectionStart);
+          const fragmentText = input.value.substring(input.selectionStart);
 
-        return range.extractContents();
+          newFragment.textContent = fragmentText;
+          input.value = inputRemainingText;
+
+          return newFragment;
+        } else {
+          const range = selectRange.cloneRange();
+
+          range.selectNodeContents(currentBlockInput);
+          range.setStart(selectRange.endContainer, selectRange.endOffset);
+
+          return range.extractContents();
+        }
       }
     }
   }
@@ -370,33 +388,39 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} force - force navigation even if caret is not at the end
-   *
    * @returns {boolean}
    */
-  public navigateNext(force = false): boolean {
-    const { BlockManager, Tools } = this.Editor;
+  public navigateNext(): boolean {
+    const { BlockManager } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
+    const isAtEnd = this.isAtEnd;
 
     let nextBlock = nextContentfulBlock;
 
     if (!nextBlock && !nextInput) {
       /**
-       * If there is no nextBlock and currentBlock is initial, do not navigate
+       * This code allows to exit from the last non-initial tool:
+       * https://github.com/codex-team/editor.js/issues/1103
        */
-      if (Tools.isInitial(currentBlock.tool)) {
+
+      /**
+       * 1. If there is a last block and it is default, do nothing
+       * 2. If there is a last block and it is non-default --> and caret not at the end <--, do nothing
+       *    (https://github.com/codex-team/editor.js/issues/1414)
+       */
+      if (currentBlock.tool.isDefault || !isAtEnd) {
         return false;
       }
 
       /**
-       * If there is no nextBlock, but currentBlock is not initial,
-       * insert new initial block at the end and navigate to it
+       * If there is no nextBlock, but currentBlock is not default,
+       * insert new default block at the end and navigate to it
        */
       nextBlock = BlockManager.insertAtEnd();
     }
 
-    if (force || this.isAtEnd) {
+    if (isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock, this.positions.START);
@@ -415,11 +439,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {boolean} force - force navigation even if caret is not at the start
-   *
    * @returns {boolean}
    */
-  public navigatePrevious(force = false): boolean {
+  public navigatePrevious(): boolean {
     const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
 
     if (!currentBlock) {
@@ -432,7 +454,7 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force || this.isAtStart) {
+    if (this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
         this.setToBlock(previousContentfulBlock, this.positions.END);
@@ -504,6 +526,13 @@ export default class Caret extends Module {
     wrapper.innerHTML = content;
 
     Array.from(wrapper.childNodes).forEach((child: Node) => fragment.appendChild(child));
+
+    /**
+     * If there is no child node, append empty one
+     */
+    if (fragment.childNodes.length === 0) {
+      fragment.appendChild(new Text());
+    }
 
     const lastChild = fragment.lastChild;
 

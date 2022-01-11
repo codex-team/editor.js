@@ -2,7 +2,7 @@ import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import * as _ from '../utils';
-import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { InlineTool, SanitizerConfig } from '../../../types';
 import { Notifier, Toolbar, I18n } from '../../../types/api';
 
 /**
@@ -323,6 +323,8 @@ export default class LinkInlineTool implements InlineTool {
       this.unlink();
       event.preventDefault();
       this.closeActions();
+
+      return;
     }
 
     if (!this.validateURL(value)) {

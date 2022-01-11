@@ -12,6 +12,11 @@ import $ from '../dom';
  */
 export default class DeleteTune implements BlockTune {
   /**
+   * Set Tool is Tune
+   */
+  public static readonly isTune = true;
+
+  /**
    * Property that contains Editor.js API methods
    *
    * @see {@link docs/api.md}
@@ -70,7 +75,9 @@ export default class DeleteTune implements BlockTune {
     /**
      * Enable tooltip module
      */
-    this.api.tooltip.onHover(this.nodes.button, this.api.i18n.t('Delete'));
+    this.api.tooltip.onHover(this.nodes.button, this.api.i18n.t('Delete'), {
+      hidingDelay: 300,
+    });
 
     return this.nodes.button;
   }

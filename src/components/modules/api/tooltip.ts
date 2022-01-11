@@ -1,16 +1,43 @@
+import { Tooltip as ITooltip } from '../../../../types/api';
+import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 import Module from '../../__module';
-import { Tooltip } from '../../../../types/api';
-import { TooltipContent, TooltipOptions } from 'codex-tooltip';
-
+import { ModuleConfig } from '../../../types-internal/module-config';
+import Tooltip from '../../utils/tooltip';
 /**
  * @class TooltipAPI
  * @classdesc Tooltip API
  */
 export default class TooltipAPI extends Module {
   /**
+   * Tooltip utility Instance
+   */
+  private tooltip: Tooltip;
+  /**
+   * @class
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+
+    this.tooltip = new Tooltip();
+  }
+
+  /**
+   * Destroy Module
+   */
+  public destroy(): void {
+    this.tooltip.destroy();
+  }
+
+  /**
    * Available methods
    */
-  public get methods(): Tooltip {
+  public get methods(): ITooltip {
     return {
       show: (element: HTMLElement,
         content: TooltipContent,
@@ -32,14 +59,14 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.Editor.Tooltip.show(element, content, options);
+    this.tooltip.show(element, content, options);
   }
 
   /**
    * Method hides tooltip on HTML page
    */
   public hide(): void {
-    this.Editor.Tooltip.hide();
+    this.tooltip.hide();
   }
 
   /**
@@ -50,6 +77,6 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.Editor.Tooltip.onHover(element, content, options);
+    this.tooltip.onHover(element, content, options);
   }
 }

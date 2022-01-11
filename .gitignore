@@ -9,3 +9,11 @@ node_modules/*
 
 npm-debug.log
 yarn-error.log
+
+test/cypress/screenshots
+test/cypress/videos
+
+dist/
+
+coverage/
+.nyc_output/

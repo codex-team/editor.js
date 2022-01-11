@@ -53,7 +53,7 @@ export default class EditorJS {
     /**
      * If `onReady` was passed in `configuration` then redefine onReady function
      */
-    if (typeof configuration === 'object' && typeof configuration.onReady === 'function') {
+    if (_.isObject(configuration) && _.isFunction(configuration.onReady)) {
       onReady = configuration.onReady;
     }
 
@@ -87,6 +87,7 @@ export default class EditorJS {
           if (_.isFunction(moduleInstance.destroy)) {
             moduleInstance.destroy();
           }
+          moduleInstance.listeners.removeAll();
         });
 
       editor = null;

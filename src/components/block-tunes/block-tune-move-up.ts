@@ -12,6 +12,11 @@ import { API, BlockTune } from '../../../types';
  */
 export default class MoveUpTune implements BlockTune {
   /**
+   * Set Tool is Tune
+   */
+  public static readonly isTune = true;
+
+  /**
    * Property that contains Editor.js API methods
    *
    * @see {@link docs/api.md}
@@ -57,7 +62,9 @@ export default class MoveUpTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'));
+    this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'), {
+      hidingDelay: 300,
+    });
 
     return moveUpButton;
   }
@@ -70,8 +77,10 @@ export default class MoveUpTune implements BlockTune {
    */
   public handleClick(event: MouseEvent, button: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
-    if (currentBlockIndex === 0) {
+    if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
@@ -81,9 +90,7 @@ export default class MoveUpTune implements BlockTune {
       return;
     }
 
-    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const currentBlockElement = currentBlock.holder;
-    const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
     const previousBlockElement = previousBlock.holder;
 
     /**
@@ -109,6 +116,8 @@ export default class MoveUpTune implements BlockTune {
 
     /** Change blocks positions */
     this.api.blocks.move(currentBlockIndex - 1);
+
+    this.api.toolbar.toggleBlockSettings(true);
 
     /** Hide the Tooltip */
     this.api.tooltip.hide();

@@ -21,6 +21,7 @@
   &__button {
     @apply --toolbox-button;
     flex-shrink: 0;
+    margin-left: 5px;
   }
 }
 

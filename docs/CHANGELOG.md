@@ -1,5 +1,132 @@
 # Changelog
 
+### 2.23.0
+
+- `Improvement` — *EditorConfig* — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
+- `New` — *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+- `Improvement` — *UI* — Block Tunes toggler moved to the left
+- `Improvement` — *UI* — Block Actions (BT toggler + Plus Button) will appear on block hovering instead of click
+- `Improvement` — *UI* — Block Tunes toggler icon and Plus button icon updated
+- `Improvement` — *Dev Example Page* — The menu with helpful buttons added to the bottom of the screen
+- `Improvement` — *Dev Example Page* — The 'dark' theme added. Now we can code at night more comfortably.
+- `Improvement` — *Rectangle Selection* — paint optimized
+- `Fix` — *Rectangle Selection* — the first click after RS was not clear selection state. Now does.
+- `Improvement` — *Blocks API* — toolbar moving logic removed from `blocks.move()` and `blocks.swap()` methods. Instead, you should use Toolbar API (it was used by MoveUp and MoveDown tunes, they were updated).
+- `New` — *Blocks API* — The `getBlockIndex()` method added
+- `New` — *Blocks API* — the `insert()` method now has the `replace: boolean` parameter
+- `New` — *Blocks API* —  the `insert()` method now returns the inserted `Block API`
+- `New` — *Listeners API* — the `on()` method now returns the listener id.
+- `New` — *Listeners API* — the new `offById()` method added
+- `New` — `API` — The new `UiApi` section was added. It allows accessing some editor UI nodes and methods.
+- `Refactoring` — Toolbox became a standalone class instead of a Module. It can be accessed only through the Toolbar module.
+- `Refactoring` — CI flow optimized.
+
+### 2.22.3
+
+- `Fix` — Tool config is passed to `prepare` method [editor-js/embed#68](https://github.com/editor-js/embed/issues/68)
+
+### 2.22.2
+
+- `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
+- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
+- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
+- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Fix` — Block's destroy method is called on block deletion
+- `Fix` - Fix jump to the button of editor zone on CBS
+
+### 2.22.1
+
+- `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)
+
+### 2.22.0
+
+- `New` - `onChange` callback now receive Block API object of affected block
+- `New` - API method `blocks.update(id, data)` added.
+
+### 2.21.0
+
+- `New` - Blocks now have unique ids [#873](https://github.com/codex-team/editor.js/issues/873)
+
+### 2.20.2
+
+- `Fix` — Append default Tunes if user tunes are provided for Block Tool [#1640](https://github.com/codex-team/editor.js/issues/1640)
+- `Fix` - Prevent the leak of codex-tooltip when Editor.js is destroyed [#1475](https://github.com/codex-team/editor.js/issues/1475).
+- `Refactoring` - Notifier module now is a util.
+
+### 2.20.1
+
+- `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).
+- `Fix` — Fix sanitisation problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
+- `Fix` — Fix copy in FireFox [1625](https://github.com/codex-team/editor.js/issues/1625)
+- `Refactoring` - The Sanitizer module is util now.
+- `Refactoring` - Tooltip module is util now.
+- `Refactoring` — Refactoring based on LGTM [#1577](https://github.com/codex-team/editor.js/issues/1577).
+- `Refactoring` — Refactoring based on ESLint [#1636](https://github.com/codex-team/editor.js/issues/1636).
+
+### 2.20.0
+
+- `New` — [Block Tunes API](block-tunes.md) added
+
+### 2.19.3
+
+- `Fix` — Ignore error raised by Shortcut module
+
+### 2.19.2
+
+- `New` - `toolbar.toggleBlockSettings()` API method added [#1442](https://github.com/codex-team/editor.js/issues/1421).
+- `Improvements` - A generic type for Tool config added [#1516](https://github.com/codex-team/editor.js/issues/1516)
+- `Improvements` - Remove unused `force` option in `Caret.navigateNext()` and `Caret.navigatePrevious()` [#857](https://github.com/codex-team/editor.js/issues/857#issuecomment-770363438).
+- `Improvements` - Remove bundles from the repo [#1541](https://github.com/codex-team/editor.js/pull/1541).
+- `Improvements` - Document will be scrolled when blocks are selected with `SHIFT+UP` or `SHIFT+DOWN` [#1447](https://github.com/codex-team/editor.js/issues/1447)
+- `Improvements` - The caret will be set on editor copy/paste [#1470](https://github.com/codex-team/editor.js/pull/1470)
+- `Improvements` - Added generic types to OutputBlockData [#1551](https://github.com/codex-team/editor.js/issues/1551).
+- `Fix` - Fix BlockManager.setCurrentBlockByChildNode() with multiple Editor.js instances [#1503](https://github.com/codex-team/editor.js/issues/1503).
+- `Fix` - Fix an unstable block cut process [#1489](https://github.com/codex-team/editor.js/issues/1489).
+- `Fix` - Type definition of the Sanitizer config: the sanitize function now contains param definition [#1491](https://github.com/codex-team/editor.js/pull/1491).
+- `Fix` - Fix unexpected behavior on an empty link pasting [#1348](https://github.com/codex-team/editor.js/issues/1348).
+- `Fix` - Fix SanitizerConfig type definition [#1513](https://github.com/codex-team/editor.js/issues/1513)
+- `Refactoring` - The Listeners module now is a util.
+- `Refactoring` - The Events module now is a util.
+- `Fix` - Editor Config now immutable [#1552](https://github.com/codex-team/editor.js/issues/1552).
+- `Refactoring` - Shortcuts module is util now.
+- `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).
+
+
+### 2.19.1
+
+- `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
+- `Improvements` - Native `typeof`replaced with custom utils methods
+- `Improvements` - Bind shortcuts listeners on the editor wrapper instead of document [#1391](https://github.com/codex-team/editor.js/issues/1391)
+- `Fix` - The problem with destroy() method [#1380](https://github.com/codex-team/editor.js/issues/1380).
+- `Fix` - add getter keyword to `block.mergeable` method [#1415](https://github.com/codex-team/editor.js/issues/1415).
+- `Fix` — Fix problem with entering to Editor.js by Tab key [#1393](https://github.com/codex-team/editor.js/issues/1393)
+- `Fix` - Sanitize pasted block data [#1396](https://github.com/codex-team/editor.js/issues/1396).
+- `Fix` - Unnecessary block creation after arrow navigation at last non-default block[#1414](https://github.com/codex-team/editor.js/issues/1414)
+
+### 2.19
+
+- `New` - Read-only mode 🥳 [#837](https://github.com/codex-team/editor.js/issues/837)
+- `New` - RTL mode added [#670](https://github.com/codex-team/editor.js/issues/670)
+- `New` - Allows users to provide common `inlineToolbar` property which will be used for all tools whose `inlineToolbar` property is set to `true`. It can be overridden by the tool's own `inlineToolbar` property. Also, inline tools will be ordered according to the order of the inline tools in array provided in the `inlineToolbar` property. [#1056](https://github.com/codex-team/editor.js/issues/1056)
+- `New` - Tool's `reset` static method added to the API to clean up any data added by Tool on initialization
+- `Improvements` - The `initialBlock` property of Editor config is deprecated. Use the `defaultBlock` instead. [#993](https://github.com/codex-team/editor.js/issues/993)
+- `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
+- `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
+- `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
+- `Fix` — Fix problem with types usage [#1183](https://github.com/codex-team/editor.js/issues/1183)
+- `Fix` - Fixed issue with Spam clicking the "Click to tune" button duplicates the icons on FireFox. [#1273](https://github.com/codex-team/editor.js/issues/1273)
+- `Fix` - Fixed issue with `editor.blocks.delete(index)` method which throws an error when Editor.js is not focused, even after providing a valid index. [#1182](https://github.com/codex-team/editor.js/issues/1182)
+- `Fix` - Fixed the issue of toolbar not disappearing on entering input in Chinese, Hindi and some other languages. [#1196](https://github.com/codex-team/editor.js/issues/1196)
+- `Fix` - Do not stop events propagation if not needed (essential for React synthetic events) [#1051](https://github.com/codex-team/editor.js/issues/1051) [#946](https://github.com/codex-team/editor.js/issues/946)
+- `Fix` - Tool's `destroy` method is not invoked when `editor.destroy()` is called. [#1047](https://github.com/codex-team/editor.js/issues/1047)
+- `Fix` - Fixed issue with enter key in inputs and textareas [#920](https://github.com/codex-team/editor.js/issues/920)
+- `Fix` - blocks.getBlockByIndex() API method now returns void for indexes out of range [#1270](https://github.com/codex-team/editor.js/issues/1270)
+- `Fix` - Fixed the `Tab` key behavior when the caret is not set inside contenteditable element, but the block is selected [#1302](https://github.com/codex-team/editor.js/issues/1302).
+- `Fix` - Fixed the `onChange` callback issue. This method didn't be called for native inputs before some contentedtable element changed [#843](https://github.com/codex-team/editor.js/issues/843)
+- `Fix` - Fixed the `onChange` callback issue. This method didn't be called after the callback throws an exception [#1339](https://github.com/codex-team/editor.js/issues/1339)
+- `Fix` - The internal `shortcut` getter of Tools classes will work now.
+- `Deprecated` — The Inline Tool `clear()` method is deprecated because the new instance of Inline Tools will be created on every showing of the Inline Toolbar
+
 ### 2.18
 
 - `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
@@ -23,7 +150,6 @@
 - `Fix` - `CMD+A` handler removed after Editor.js destroy [#1133](https://github.com/codex-team/editor.js/issues/1133)
 
 >  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
-
 
 ### 2.17
 

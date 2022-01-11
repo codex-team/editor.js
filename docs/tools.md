@@ -59,6 +59,7 @@ Options that Tool can specify. All settings should be passed as static propertie
 | `toolbox` | _Object_ | `undefined` | Pass here `icon` and `title` to display this `Tool` in the Editor's `Toolbox` <br /> `icon` - HTML string with icon for Toolbox <br /> `title` - optional title to display in Toolbox |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, Editor.js won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
+| `isTune` | _Boolean_ | `false` | Describes Tool as a [Block Tune](block-tunes.md) |
 | `sanitize` | _Object_ | `undefined` | Config for automatic sanitizing of saved data. See [Sanitize](#sanitize) section. |
 | `conversionConfig` | _Object_ | `undefined` | Config allows Tool to specify how it can be converted into/from another Tool. See [Conversion config](#conversion-config) section. |
 
@@ -78,7 +79,7 @@ var editor = new EditorJS({
     },
     header: Header
   },
-  initialBlock : 'text',
+  defaultBlock : 'text',
 });
 ```
 
@@ -88,6 +89,36 @@ There are few options available by Editor.js.
 | -- | -- | -- | -- |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `config` | _Object_ | `null` | User's configuration for Plugin.
+
+## Tool prepare and reset
+
+If you need to prepare some data for Tool (eg. load external script, create HTML nodes in the document, etc) you can use static prepare method.
+
+It accepts tools config passed on Editor's initialization as an argument:
+
+```javascript
+class Tool {
+  static prepare(config) {
+    loadScript();
+    insertNodes();
+    ...
+  }
+}
+```
+
+On Editor destroy you can use an opposite method `reset` to clean up all prepared data:
+
+```javascript
+class Tool {
+  static reset() {
+    cleanUpScripts();
+    deleteNodes();
+    ...
+  }
+}
+```
+
+Both methods might be async.
 
 ## Paste handling
 
@@ -118,7 +149,7 @@ To handle pasted HTML elements object returned from `pasteConfig` getter should 
 | -- | -- | -- |
 | `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and processed by your `onPaste` method |
 
-For correct work you MUST provide `onPaste` handler at least for `initialBlock` Tool.
+For correct work you MUST provide `onPaste` handler at least for `defaultBlock` Tool.
 
 > Example
 
@@ -144,7 +175,7 @@ Your Tool can analyze text by RegExp patterns to substitute pasted string with d
 
 **Note** Editor will check pattern's full match, so don't forget to handle all available chars in there.
 
-Pattern will be processed only if paste was on `initialBlock` Tool and pasted string length is less than 450 characters.
+Pattern will be processed only if paste was on `defaultBlock` Tool and pasted string length is less than 450 characters.
 
 > Example
 

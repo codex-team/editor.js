@@ -202,7 +202,7 @@ export default class Dom {
   public static get allInputsSelector(): string {
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    return '[contenteditable], textarea, input:not([type]), ' +
+    return '[contenteditable=true], textarea, input:not([type]), ' +
       allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
   }
 
@@ -292,7 +292,11 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isElement(node: any): node is Element {
-    return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+    if (_.isNumber(node)) {
+      return false;
+    }
+
+    return node && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
   /**
@@ -303,7 +307,11 @@ export default class Dom {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static isFragment(node: any): node is DocumentFragment {
-    return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+    if (_.isNumber(node)) {
+      return false;
+    }
+
+    return node && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
   /**
@@ -532,7 +540,7 @@ export default class Dom {
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
     let wrapper: HTMLElement;
 
-    if (typeof data === 'string') {
+    if (_.isString(data)) {
       wrapper = document.createElement('div');
       wrapper.innerHTML = data;
     } else {
@@ -572,7 +580,7 @@ export default class Dom {
    * @returns {HTMLElement}
    */
   public static getHolder(element: string | HTMLElement): HTMLElement {
-    if (typeof element === 'string') {
+    if (_.isString(element)) {
       return document.getElementById(element);
     }
 
@@ -603,5 +611,27 @@ export default class Dom {
    */
   public static isAnchor(element: Element): element is HTMLAnchorElement {
     return element.tagName.toLowerCase() === 'a';
+  }
+
+  /**
+   * Return element's offset related to the document
+   *
+   * @todo handle case when editor initialized in scrollable popup
+   * @param el - element to compute offset
+   */
+  public static offset(el): {top: number; left: number; right: number; bottom: number} {
+    const rect = el.getBoundingClientRect();
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    const top = rect.top + scrollTop;
+    const left = rect.left + scrollLeft;
+
+    return {
+      top,
+      left,
+      bottom: top + rect.height,
+      right: left + rect.width,
+    };
   }
 }

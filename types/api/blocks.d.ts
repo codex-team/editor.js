@@ -13,8 +13,10 @@ export interface Blocks {
 
   /**
    * Render passed data
-   * @param {OutputData} data
-   * @return {Promise<void>}
+   *
+   * @param {OutputData} data - saved Block data
+   *
+   * @returns {Promise<void>}
    */
   render(data: OutputData): Promise<void>;
 
@@ -47,17 +49,27 @@ export interface Blocks {
   move(toIndex: number, fromIndex?: number): void;
 
   /**
-   * Returns Block holder by Block index
+   * Returns Block API object by passed Block index
    * @param {number} index
-   * @returns {HTMLElement}
    */
-  getBlockByIndex(index: number): BlockAPI;
+  getBlockByIndex(index: number): BlockAPI | void;
+
+  /**
+   * Returns Block API object by passed Block id
+   * @param id - id of the block
+   */
+  getById(id: string): BlockAPI | null;
 
   /**
    * Returns current Block index
    * @returns {number}
    */
   getCurrentBlockIndex(): number;
+
+  /**
+   * Returns the index of Block by id;
+   */
+  getBlockIndex(blockId: string): number;
 
   /**
    * Mark Block as stretched
@@ -82,13 +94,14 @@ export interface Blocks {
   insertNewBlock(): void;
 
   /**
-   * Insert new Block
+   * Insert new Block and return inserted Block API
    *
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param {boolean?} replace - should the existed Block on that index be replaced or not
    */
   insert(
     type?: string,
@@ -96,6 +109,15 @@ export interface Blocks {
     config?: ToolConfig,
     index?: number,
     needToFocus?: boolean,
-  ): void;
+    replace?: boolean,
+  ): BlockAPI;
 
+
+  /**
+   * Updates block data by id
+   *
+   * @param id - id of the block to update
+   * @param data - the new data
+   */
+  update(id: string, data: BlockToolData): void;
 }

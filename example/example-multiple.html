@@ -1,0 +1,76 @@
+
+<!--
+ Use this page for debugging purposes.
+
+ This page can be used for testing multiple editor instances on the same page.
+ -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <title>Editor.js 🤩🧦🤨 example: Multiple instances</title>
+   <link href="assets/demo.css" rel="stylesheet">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+ </head>
+ <body>
+   <div class="ce-example">
+     <div class="ce-example__header">
+       <a class="ce-example__header-logo" href="https://codex.so/editor">Editor.js 🤩🧦🤨</a>
+
+       <div class="ce-example__header-menu">
+         <a href="https://github.com/editor-js" target="_blank">Plugins</a>
+         <a href="https://editorjs.io/usage" target="_blank">Usage</a>
+         <a href="https://editorjs.io/configuration" target="_blank">Configuration</a>
+         <a href="https://editorjs.io/creating-a-block-tool" target="_blank">API</a>
+       </div>
+     </div>
+     <div class="ce-example__content ce-example__content--with-bg _ce-example__content--small">
+       <div id="hint-core" style="text-align: center; padding-top: 20px">
+         No core bundle file found. Run <code class="inline-code">yarn build</code>
+       </div>
+      <div class="ce-example-multiple">
+        <div id="editorjs1"></div>
+        <div id="editorjs2"></div>
+      </div>
+     </div>
+     <div class="ce-example__output">
+       <div class="ce-example__output-footer">
+         <a href="https://codex.so" style="font-weight: bold;">Made by CodeX</a>
+       </div>
+     </div>
+   </div>
+
+   <!-- Load Editor.js's Core -->
+   <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true"></script>
+   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
+
+   <!-- Initialization -->
+   <script>
+     /**
+      * Instance #1
+      */
+     var editor1 = new EditorJS({
+       holder: 'editorjs1',
+       tools: {
+         header: {
+           class: Header,
+           shortcut: 'CMD+SHIFT+H'
+         }
+       }
+     });
+
+     /**
+      * Instance #2
+      */
+      var editor2 = new EditorJS({
+       holder: 'editorjs2',
+       tools: {
+         header: {
+           class: Header,
+           shortcut: 'CMD+SHIFT+H'
+         }
+       }
+     });
+   </script>
+ </body>
+ </html>

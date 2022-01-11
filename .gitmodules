@@ -16,8 +16,8 @@
 [submodule "example/tools/simple-image"]
 	path = example/tools/simple-image
 	url = https://github.com/editor-js/simple-image
-[submodule "src/components/tools/paragraph"]
-	path = src/components/tools/paragraph
+[submodule "src/tools/paragraph"]
+	path = src/tools/paragraph
 	url = https://github.com/editor-js/paragraph
 [submodule "example/tools/marker"]
 	path = example/tools/marker
@@ -49,3 +49,6 @@
 [submodule "example/tools/underline"]
 	path = example/tools/underline
 	url = https://github.com/editor-js/underline
+[submodule "example/tools/nested-list"]
+	path = example/tools/nested-list
+	url = https://github.com/editor-js/nested-list

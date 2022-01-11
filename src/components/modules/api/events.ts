@@ -26,7 +26,7 @@ export default class EventsAPI extends Module {
    * @param {Function} callback - event handler
    */
   public on(eventName, callback): void {
-    this.Editor.Events.on(eventName, callback);
+    this.eventsDispatcher.on(eventName, callback);
   }
 
   /**
@@ -36,7 +36,7 @@ export default class EventsAPI extends Module {
    * @param {object} data - event's data
    */
   public emit(eventName, data): void {
-    this.Editor.Events.emit(eventName, data);
+    this.eventsDispatcher.emit(eventName, data);
   }
 
   /**
@@ -46,6 +46,6 @@ export default class EventsAPI extends Module {
    * @param {Function} callback - event handler
    */
   public off(eventName, callback): void {
-    this.Editor.Events.off(eventName, callback);
+    this.eventsDispatcher.off(eventName, callback);
   }
 }
