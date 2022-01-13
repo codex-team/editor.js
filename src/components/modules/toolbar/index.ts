@@ -182,7 +182,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     close: () => void;
     open: () => void;
     toggle: () => void;
-    flipperHasFocus: boolean;
+    hasFocus: () => boolean;
     } {
     return {
       opened: this.toolboxInstance.opened,
@@ -196,7 +196,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         this.toolboxInstance.open();
       },
       toggle: (): void => this.toolboxInstance.toggle(),
-      flipperHasFocus: this.toolboxInstance.flipperHasFocus,
+      hasFocus: (): boolean => this.toolboxInstance.hasFocus(),
     };
   }
 

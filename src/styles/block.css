@@ -1,4 +1,16 @@
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .ce-block {
+  animation: fade-in 300ms ease forwards;
+
   &:first-of-type {
     margin-top: 0;
   }

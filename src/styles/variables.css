@@ -21,7 +21,7 @@
   /**
    * Gray icons hover
    */
-    --color-dark: #1D202B;
+  --color-dark: #1D202B;
 
   /**
    * Blue icons
@@ -95,6 +95,11 @@
     }
   };
 
+  --button-focused: {
+    box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
+    background: rgba(34, 186, 255, 0.08) !important;
+  };
+
   /**
    * Styles for Toolbox Buttons and Plus Button
    */
@@ -103,7 +108,7 @@
     cursor: pointer;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    border-radius: 3px;
+    border-radius: 7px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -155,8 +160,7 @@
     }
 
     &--focused {
-      box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
-      background: rgba(34, 186, 255, 0.08) !important;
+      @apply --button-focused;
 
       &-animated {
         animation-name: buttonClicked;
@@ -164,5 +168,49 @@
       }
     }
   };
+
+  /**
+   * Element of the Toolbox. Has icon and label
+   */
+  --popover-button: {
+    display: flex;
+    padding: 4px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    align-items: center;
+    border-radius: 7px;
+
+    &:not(:last-of-type){
+      margin-bottom: 1px;
+    }
+
+    &:hover {
+      background-color: var(--bg-light);
+    }
+  };
+
+  /**
+   * Tool icon with border
+   */
+  --tool-icon: {
+    display: inline-flex;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--color-gray-border);
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
 }
 

@@ -121,15 +121,6 @@ export default class Flipper {
   }
 
   /**
-   * Return current focused button
-   *
-   * @returns {HTMLElement|null}
-   */
-  public get currentItem(): HTMLElement|null {
-    return this.iterator.currentItem;
-  }
-
-  /**
    * Focus first item
    */
   public focusFirst(): void {
@@ -142,6 +133,7 @@ export default class Flipper {
    */
   public flipLeft(): void {
     this.iterator.previous();
+    this.flipCallback();
   }
 
   /**
@@ -149,6 +141,14 @@ export default class Flipper {
    */
   public flipRight(): void {
     this.iterator.next();
+    this.flipCallback();
+  }
+
+  /**
+   * Return true if some button is focused
+   */
+  public hasFocus(): boolean {
+    return !!this.iterator.currentItem;
   }
 
   /**
@@ -265,5 +265,16 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  /**
+   * Fired after flipping in any direction
+   */
+  private flipCallback(): void {
+    if (this.iterator.currentItem) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      this.iterator.currentItem.scrollIntoViewIfNeeded();
+    }
   }
 }
