@@ -194,8 +194,8 @@ export function typeOf(object: any): string {
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isFunction(fn: any): fn is Function {
-  return typeOf(fn) === 'function';
+export function isFunction(fn: any): fn is (...args: any[]) => any {
+  return typeOf(fn) === 'function' || typeOf(fn) === 'asyncfunction';
 }
 
 /**
