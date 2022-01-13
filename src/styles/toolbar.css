@@ -93,10 +93,6 @@
   }
 }
 
-.codex-editor--toolbox-opened .ce-toolbar__actions {
-  display: none;
-}
-
 /**
  * Styles for Narrow mode
  */

@@ -1,7 +1,7 @@
 .ce-settings {
   @apply --overlay-pane;
   right: -1px;
-  top: 30px;
+  top: var(--toolbar-buttons-size);
   min-width: 114px;
   box-sizing: content-box;
 

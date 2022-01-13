@@ -112,6 +112,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 
     @media (--mobile){
       width: var(--toolbox-buttons-size--mobile);
@@ -137,9 +138,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
+    width: var(--toolbar-buttons-size);
+    height: var(--toolbar-buttons-size);
+    line-height: var(--toolbar-buttons-size);
     padding: 0 !important;
     text-align: center;
     border-radius: 3px;
