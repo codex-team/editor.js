@@ -64,6 +64,7 @@
     right: 100%;
     opacity: 0;
     display: flex;
+    padding-right: 5px;
 
     @media (--mobile){
       position: absolute;
@@ -77,19 +78,19 @@
     &--opened {
       opacity: 1;
     }
-
-    &-buttons {
-      text-align: right;
-    }
   }
 
   &__settings-btn {
     @apply --toolbox-button;
     width: 18px;
-    margin: 0 5px;
+    margin-left: 5px;
 
     cursor: pointer;
     user-select: none;
+
+    &--hidden {
+      display: none;
+    }
   }
 }
 

@@ -9,6 +9,7 @@
   min-width: 180px;
   max-height: 284px;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
   overscroll-behavior: contain;
@@ -36,22 +37,16 @@
 
   &__item {
     @apply --popover-button;
-    flex-basis: 100%;
-    flex-shrink: 0;
 
     &--focused {
       @apply --button-focused;
     }
 
-
     &-icon {
       @apply --tool-icon;
-      flex-shrink: 0;
     }
 
     &-label {
-      flex-shrink: 0;
-
       &::after {
         content: '';
         width: 25px;
@@ -67,7 +62,6 @@
       letter-spacing: -0.1em;
       padding-right: 5px;
       margin-bottom: -2px;
-      flex-shrink: 0;
       opacity: 0.6;
     }
   }

@@ -1,4 +1,4 @@
 .ce-toolbox {
   top: var(--toolbar-buttons-size);
-  left: calc(-1 * calc(var(--toolbox-buttons-size) * 2));
+  left: 0;
 }

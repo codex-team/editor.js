@@ -33,11 +33,7 @@ interface ToolbarNodes {
   content: HTMLElement;
   actions: HTMLElement;
 
-  // Content Zone
   plusButton: HTMLElement;
-
-  // Actions Zone
-  blockActionsButtons: HTMLElement;
   settingsToggler: HTMLElement;
 }
 /**
@@ -137,14 +133,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
       toolbarOpened: 'ce-toolbar--opened',
       openedToolboxHolderModifier: 'codex-editor--toolbox-opened',
 
-      // Content Zone
       plusButton: 'ce-toolbar__plus',
       plusButtonShortcut: 'ce-toolbar__plus-shortcut',
       plusButtonHidden: 'ce-toolbar__plus--hidden',
-
-      // Actions Zone
-      blockActionsButtons: 'ce-toolbar__actions-buttons',
       settingsToggler: 'ce-toolbar__settings-btn',
+      settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
     };
   }
 
@@ -159,8 +152,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
   /**
    * Plus Button public methods
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
    */
   public get plusButton(): { hide: () => void; show: () => void } {
     return {
@@ -202,10 +193,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
   /**
    * Block actions appearance manipulations
-   *
-   * @returns {{hide: function(): void, show: function(): void}}
    */
-  private get blockActions(): { hide: () => void; show: () => void } {
+  private get blockActions(): { hide: () => void; show: () => void; } {
     return {
       hide: (): void => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
@@ -213,6 +202,16 @@ export default class Toolbar extends Module<ToolbarNodes> {
       show: (): void => {
         this.nodes.actions.classList.add(this.CSS.actionsOpened);
       },
+    };
+  }
+
+  /**
+   * Methods for working with Block Tunes toggler
+   */
+  private get blockTunesToggler(): { hide: () => void; show: () => void } {
+    return {
+      hide: (): void => this.nodes.settingsToggler.classList.add(this.CSS.settingsTogglerHidden),
+      show: (): void => this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerHidden),
     };
   }
 
@@ -286,6 +285,15 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.plusButton.show();
     } else {
       this.plusButton.hide();
+    }
+
+    /**
+     * Do not show Block Tunes Toggler near single and empty block
+     */
+    if (this.Editor.BlockManager.blocks.length === 1 && block.isEmpty) {
+      this.blockTunesToggler.hide();
+    } else {
+      this.blockTunesToggler.show();
     }
 
     this.open();
@@ -378,13 +386,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Remove Block Button
      *  - Settings Panel
      */
-    this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
     this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
     const settingsIcon = $.svg('dots', 16, 16);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
-    $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
-    $.append(this.nodes.actions, this.nodes.blockActionsButtons);
+    $.append(this.nodes.actions, this.nodes.settingsToggler);
 
     this.tooltip.onHover(
       this.nodes.settingsToggler,
@@ -397,7 +403,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Appending Toolbar components to itself
      */
-    $.append(this.nodes.content, this.makeToolbox());
+    $.append(this.nodes.actions, this.makeToolbox());
     $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
 
     /**

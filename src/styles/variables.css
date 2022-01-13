@@ -174,7 +174,11 @@
    * Element of the Toolbox. Has icon and label
    */
   --popover-button: {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto;
+    justify-content: start;
+    white-space: nowrap;
     padding: 4px;
     font-size: 14px;
     line-height: 20px;
