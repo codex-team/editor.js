@@ -1,4 +1,5 @@
 import Header from '@editorjs/header';
+import Code from '@editorjs/code';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
@@ -16,6 +17,7 @@ describe('onChange callback', () => {
     const config = {
       tools: {
         header: Header,
+        code: Code,
       },
       onChange: (api, event): void => {
         console.log('something changed', api, event);
@@ -47,7 +49,7 @@ describe('onChange callback', () => {
       type: BlockMutationType.Added,
       detail: {
         target: {
-          name: 'paragraph'
+          name: 'paragraph',
         },
         index: 0,
       },
@@ -67,7 +69,7 @@ describe('onChange callback', () => {
       type: BlockMutationType.Added,
       detail: {
         target: {
-          name: 'paragraph'
+          name: 'paragraph',
         },
         index: 1,
       },
@@ -85,7 +87,7 @@ describe('onChange callback', () => {
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Changed,
       detail: {
-        index: 0
+        index: 0,
       },
     }));
   });
@@ -185,7 +187,7 @@ describe('onChange callback', () => {
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockMutationType.Removed,
       detail: {
-        index: 0
+        index: 0,
       },
     }));
   });
@@ -216,6 +218,26 @@ describe('onChange callback', () => {
       detail: {
         fromIndex: 1,
         toIndex: 0,
+      },
+    }));
+  });
+
+  it('should fire onChange if something changed inside native input', () => {
+    createEditor([ {
+      type: 'code',
+      data: {
+        code: '',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs')
+      .get('textarea')
+      .type('Some input to the textarea');
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Changed,
+      detail: {
+        index: 0,
       },
     }));
   });
