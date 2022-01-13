@@ -20,6 +20,7 @@
 - `New` — `API` — The new `UiApi` section was added. It allows accessing some editor UI nodes and methods.
 - `Refactoring` — Toolbox became a standalone class instead of a Module. It can be accessed only through the Toolbar module.
 - `Refactoring` — CI flow optimized.
+- `Fix` - Recognize async `onPaste` handlers in tools [#1803](https://github.com/codex-team/editor.js/issues/1803).
 
 ### 2.22.3
 
