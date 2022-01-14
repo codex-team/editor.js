@@ -257,10 +257,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     super();
 
     this.name = tool.name;
-    if(id){
-      this.id = id
-    }else{
-      this.id =  _.generateBlockId()
+    if (id) {
+      this.id = id;
+    } else {
+      this.id = _.generateBlockId();
     }
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
