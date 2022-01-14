@@ -221,13 +221,13 @@ export default class BlocksAPI extends Module {
   /**
    * Insert new Block and returns it's API
    *
-   * @param {string} id — block id:: optional 
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param replace - pass true to replace the Block existed under passed index
+   * @param {string} id — block id, an optional id to be used when inserting a new block, if an id is omitted then a new id will be generated
    */
   public insert = (
     type: string = this.config.defaultBlock,
@@ -236,7 +236,7 @@ export default class BlocksAPI extends Module {
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
-    id?: string,
+    id?: string
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
       tool: type,
@@ -244,7 +244,7 @@ export default class BlocksAPI extends Module {
       index,
       needToFocus,
       replace,
-      id
+      id,
     });
 
     return new BlockAPI(insertedBlock);
