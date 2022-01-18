@@ -168,7 +168,7 @@ export default class Paste extends Module {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const includesFiles = types.includes ? types.includes('Files') : (types as any).contains('Files');
 
-    if (includesFiles) {
+    if (includesFiles && !_.isEmpty(this.toolsFiles)) {
       await this.processFiles(dataTransfer.files);
 
       return;
