@@ -19,7 +19,7 @@
 <img align="right" width="342" src="https://user-images.githubusercontent.com/3684889/152149321-3f9c585d-7d87-4dad-ab14-def0d526e71c.png" hspace="50">
 
 - Collaborative editing
-  - [x] Implement Inline Tools JSON format [#1801](https://github.com/codex-team/editor.js/pull/1801)
+  - [ ] Implement Inline Tools JSON format `In progreess` [#1801](https://github.com/codex-team/editor.js/pull/1801)
   - [ ] Implement Operations creation and transformations
   - [ ] Implement Tools API changes
   - [ ] Implement Server and communication
@@ -27,7 +27,7 @@
 
 - Unified Toolbox
   - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
-  - [ ] Toolbox became vertical
+  - [ ] Toolbox became vertical `In progreess`
   - [ ] Ability to display several Toolbox buttons by the single Tool
   - [ ] Conversion Toolbar uses Unified Toolbox
   - [ ] Block Tunes became vertical
