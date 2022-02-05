@@ -8,8 +8,7 @@
   padding: 4px;
   min-width: 180px;
   max-height: 284px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
   overscroll-behavior: contain;
@@ -35,11 +34,20 @@
     border-bottom-width: 4px;
   }
 
+  &__items {
+    overflow-y: auto;
+    margin-top: 5px;
+  }
+
   &__item {
     @apply --popover-button;
 
     &--focused {
       @apply --button-focused;
+    }
+
+    &--hidden {
+      display: none;
     }
 
     &-icon {

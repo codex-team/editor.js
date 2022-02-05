@@ -14,6 +14,7 @@ import Popover from '../utils/popover';
  * @todo do not show Block Tunes Toggler near only-one block
  * @todo Plus Button should be appeared near all blocks (even non-empty)
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
+ * @todo use i18n for search labels
  */
 
 /**
@@ -120,6 +121,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public make(): Element {
     this.popover = new Popover({
       className: Toolbox.CSS.toolbox,
+      searchable: true,
+      // searchParams: {
+      //   inputPlaceholder: 'Filter',
+      //   noFoundMessage: 'Nothing found'
+      // },
       items: this.toolsToBeDisplayed.map(tool => {
         return {
           icon: tool.toolbox.icon,

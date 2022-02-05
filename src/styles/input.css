@@ -1,0 +1,8 @@
+.cdx-filter-input {
+  background: rgba(232,232,235,0.49);
+  border: 1px solid rgba(226,226,229,0.20);
+  border-radius: 5px;
+  padding: 7px;
+  font-size: 14px;
+  outline: none;
+}

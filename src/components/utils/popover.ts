@@ -1,6 +1,7 @@
 import Dom from '../dom';
 import Listeners from './listeners';
 import Flipper from '../flipper';
+import SearchInput from "./search-input";
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -43,8 +44,10 @@ export default class Popover {
    */
   private nodes: {
     wrapper: HTMLElement;
+    items: HTMLElement;
   } = {
     wrapper: null,
+    items: null,
   }
 
   /**
@@ -63,25 +66,37 @@ export default class Popover {
   private flipper: Flipper;
 
   /**
+   * Pass true to enable local search field
+   */
+  private searchable: boolean;
+  private search: SearchInput;
+
+  /**
    * Style classes
    */
   private static get CSS(): {
     popover: string;
     popoverOpened: string;
+    itemsWrapper: string;
     item: string;
+    itemHidden: string;
     itemFocused: string;
     itemLabel: string;
     itemIcon: string;
     itemSecondaryLabel: string;
+    noFoundMessage: string;
     } {
     return {
       popover: 'ce-popover',
       popoverOpened: 'ce-popover--opened',
+      itemsWrapper: 'ce-popover__items',
       item: 'ce-popover__item',
+      itemHidden: 'ce-popover__item--hidden',
       itemFocused: 'ce-popover__item--focused',
       itemLabel: 'ce-popover__item-label',
       itemIcon: 'ce-popover__item-icon',
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
+      noFoundMessage: 'ce-popover__no-found',
     };
   }
 
@@ -92,9 +107,10 @@ export default class Popover {
    * @param options.items - config for items to be displayed
    * @param options.className - additional class name to be added to the popover wrapper
    */
-  constructor({ items, className }: {items: PopoverItem[]; className?: string}) {
+  constructor({ items, className, searchable }: {items: PopoverItem[]; className?: string, searchable?: boolean}) {
     this.items = items;
     this.className = className || '';
+    this.searchable = searchable;
     this.listeners = new Listeners();
 
     this.render();
@@ -114,6 +130,12 @@ export default class Popover {
   public show(): void {
     this.nodes.wrapper.classList.add(Popover.CSS.popoverOpened);
     this.flipper.activate();
+
+    if (this.searchable) {
+      window.requestAnimationFrame(() => {
+        this.search.focus();
+      });
+    }
   }
 
   /**
@@ -144,9 +166,17 @@ export default class Popover {
   private render(): void {
     this.nodes.wrapper = Dom.make('div', [Popover.CSS.popover, this.className]);
 
+    if (this.searchable) {
+      this.addSearch(this.nodes.wrapper);
+    }
+
+    this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
+
     this.items.forEach(item => {
-      this.nodes.wrapper.appendChild(this.createItem(item));
+      this.nodes.items.appendChild(this.createItem(item));
     });
+
+    this.nodes.wrapper.appendChild(this.nodes.items);
 
     this.listeners.on(this.nodes.wrapper, 'click', (event: KeyboardEvent|MouseEvent) => {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
@@ -155,6 +185,47 @@ export default class Popover {
         this.itemClicked(clickedItem);
       }
     });
+  }
+
+  /**
+   * Adds the s4arch field to passed element
+   *
+   * @param holder - where to append search input
+   */
+  private addSearch(holder: HTMLElement): void {
+    this.search = new SearchInput({
+      items: this.items,
+      onSearch: (filteredItems): void => {
+        const itemsVisible = [];
+
+        this.items.forEach((item, index) => {
+          const itemElement = this.nodes.items.children[index];
+
+          if (filteredItems.includes(item)) {
+            itemsVisible.push(itemElement);
+            itemElement.classList.remove(Popover.CSS.itemHidden);
+          } else {
+            itemElement.classList.add(Popover.CSS.itemHidden);
+          }
+        });
+
+        if (itemsVisible.length === 0) {
+          const noFoundMessage = Dom.make('div', Popover.CSS.noFoundMessage)
+
+        }
+
+        /**
+         * Update flipper items with only visible
+         */
+        this.flipper.deactivate();
+        this.flipper.activate(itemsVisible);
+        this.flipper.focusFirst();
+      },
+    });
+
+    const searchField = this.search.getInput();
+
+    holder.appendChild(searchField);
   }
 
   /**
