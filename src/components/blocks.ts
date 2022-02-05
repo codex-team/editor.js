@@ -181,6 +181,15 @@ export default class Blocks {
     });
 
     block.call(BlockToolAPI.MOVED, event);
+
+    // invoke hook target
+    const targetBlock = this.blocks[fromIndex];
+    const eventTarget: MoveEvent = this.composeBlockEvent('move', {
+      fromIndex: toIndex,
+      toIndex: fromIndex,
+    });
+
+    targetBlock.call(BlockToolAPI.MOVED, eventTarget);
   }
 
   /**

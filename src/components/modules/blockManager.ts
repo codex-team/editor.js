@@ -755,6 +755,15 @@ export default class BlockManager extends Module {
       fromIndex,
       toIndex,
     });
+
+    /**
+     * Force call of didMutated event on target Block movement
+     */
+    const targetBlock = this.getBlockByIndex(fromIndex);
+    this.blockDidMutated(BlockMutationType.Moved, targetBlock, {
+        fromIndex: toIndex,
+        toIndex: fromIndex,
+    });
   }
 
   /**
