@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.23.1
+
+— `Fix` — Incorrect release tag fixed
+
 ### 2.23.0
 
 - `Improvement` — *EditorConfig* — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
