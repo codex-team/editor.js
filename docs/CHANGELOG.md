@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.23.2
+
+— `Fix` — Crash on initialization in the read-only mode [#1968](https://github.com/codex-team/editor.js/issues/1968)
+
 ### 2.23.1
 
 — `Fix` — Incorrect release tag fixed
