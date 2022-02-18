@@ -109,7 +109,7 @@ export default class DomIterator {
       return this.cursor;
     }
 
-    let focusedButtonIndex = this.cursor;
+    let focusedButtonIndex = getActiveToolByCssClass();
 
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
@@ -174,5 +174,16 @@ export default class DomIterator {
      * Return focused button's index
      */
     return focusedButtonIndex;
+
+    function getActiveToolByCssClass(){
+      const activeToolWindow = document.querySelector('.ce-settings--opened');
+      if(!activeToolWindow) return -1;
+      const allButtons = activeToolWindow.querySelectorAll('.cdx-settings-button');
+      for(let i in allButtons){
+        if(!allButtons[i].classList) continue;
+        if(allButtons[i].classList.contains('cdx-settings-button--active')) return Number.parseInt(i) - 1;
+      }
+      return -1;
+    }
   }
 }
