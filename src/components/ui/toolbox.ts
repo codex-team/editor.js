@@ -9,12 +9,12 @@ import Popover from '../utils/popover';
 
 /**
  * @todo check small tools number — there should not be a scroll
- * @todo add search in popover
  * @todo hide toolbar after some toolbox item clicked (and the new block inserted)
- * @todo do not show Block Tunes Toggler near only-one block
- * @todo Plus Button should be appeared near all blocks (even non-empty)
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
  * @todo use i18n for search labels
+ * @todo clear filter on every toolbox opening
+ * @todo arrows inside the search field
+ *
  */
 
 /**
@@ -36,6 +36,8 @@ export enum ToolboxEvent {
    */
   BlockAdded = 'toolbox-block-added',
 }
+
+type toolboxTextLabelsKeys = 'filter'|'nothingFound';
 
 /**
  * Toolbox
@@ -77,6 +79,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private tools: ToolsCollection<BlockTool>;
 
   /**
+   * Text labels used in the Toolbox. Should be passed from the i18n module
+   */
+  private i18nLabels: Record<toolboxTextLabelsKeys, string>;
+
+  /**
    * Current module HTML Elements
    */
   private nodes: {
@@ -108,11 +115,12 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools }) {
+  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<toolboxTextLabelsKeys, string>}) {
     super();
 
     this.api = api;
     this.tools = tools;
+    this.i18nLabels = i18nLabels;
   }
 
   /**
@@ -122,10 +130,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.popover = new Popover({
       className: Toolbox.CSS.toolbox,
       searchable: true,
-      // searchParams: {
-      //   inputPlaceholder: 'Filter',
-      //   noFoundMessage: 'Nothing found'
-      // },
+      filterLabel: this.i18nLabels.filter,
+      nothingFoundLabel: this.i18nLabels.nothingFound,
       items: this.toolsToBeDisplayed.map(tool => {
         return {
           icon: tool.toolbox.icon,

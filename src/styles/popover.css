@@ -6,12 +6,11 @@
   display: flex;
   flex-direction: column;
   padding: 4px;
-  min-width: 180px;
+  min-width: 200px;
   max-height: 284px;
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
-  overscroll-behavior: contain;
 
   @apply --overlay-pane;
 
@@ -37,6 +36,7 @@
   &__items {
     overflow-y: auto;
     margin-top: 5px;
+    overscroll-behavior: contain;
   }
 
   &__item {
@@ -71,6 +71,22 @@
       padding-right: 5px;
       margin-bottom: -2px;
       opacity: 0.6;
+    }
+  }
+
+  &__no-found {
+    @apply --popover-button;
+
+    color: var(--grayText);
+    display: none;
+    cursor: default;
+
+    &--shown {
+      display: block;
+    }
+
+    &:hover {
+      background-color: transparent;
     }
   }
 }

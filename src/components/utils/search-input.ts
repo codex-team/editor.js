@@ -1,5 +1,6 @@
 import Dom from '../dom';
 import Listeners from './listeners';
+import $ from "../dom";
 
 /**
  * Item that could be searched
@@ -12,6 +13,8 @@ interface SearchableItem {
  * Provides search input element and search logic
  */
 export default class SearchInput {
+
+  private wrapper: HTMLElement;
   private input: HTMLInputElement;
   private listeners: Listeners;
   private items: SearchableItem[];
@@ -23,29 +26,37 @@ export default class SearchInput {
    */
   private static get CSS(): {
     input: string;
+    wrapper: string;
     } {
     return {
-      input: 'cdx-filter-input',
+      wrapper: 'cdx-search-field',
+      input: 'cdx-search-field__input',
     };
   }
 
   /**
-   * @param items - searchable items list
-   * @param onSearch - search callback
+   * @param options - available config
+   * @param options.items - searchable items list
+   * @param options.onSearch - search callback
+   * @param options.placeholder - input placeholder
    */
-  constructor({ items, onSearch }: { items: SearchableItem[], onSearch: (items: SearchableItem[]) => void }) {
+  constructor({ items, onSearch, placeholder }: {
+    items: SearchableItem[];
+    onSearch: (items: SearchableItem[]) => void;
+    placeholder: string;
+  }) {
     this.listeners = new Listeners();
     this.items = items;
     this.onSearch = onSearch;
 
-    this.render();
+    this.render(placeholder);
   }
 
   /**
    * Returns search field element
    */
-  public getInput(): HTMLElement {
-    return this.input;
+  public getElement(): HTMLElement {
+    return this.wrapper;
   }
 
   /**
@@ -64,11 +75,19 @@ export default class SearchInput {
 
   /**
    * Creates the search field
+   *
+   * @param placeholder - input placeholder
    */
-  private render(): void {
+  private render(placeholder: string): void {
+    this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
+    const icon = $.svg('search', 16, 16);
+
     this.input = Dom.make('input', SearchInput.CSS.input, {
-      type: 'search',
+      placeholder,
     }) as HTMLInputElement;
+
+    this.wrapper.appendChild(icon);
+    this.wrapper.appendChild(this.input);
 
     this.listeners.on(this.input, 'input', () => {
       this.searchQuery = this.input.value;

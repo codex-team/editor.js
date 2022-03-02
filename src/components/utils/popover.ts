@@ -45,9 +45,11 @@ export default class Popover {
   private nodes: {
     wrapper: HTMLElement;
     items: HTMLElement;
+    nothingFound: HTMLElement;
   } = {
     wrapper: null,
     items: null,
+    nothingFound: null,
   }
 
   /**
@@ -70,6 +72,8 @@ export default class Popover {
    */
   private searchable: boolean;
   private search: SearchInput;
+  private filterLabel: string;
+  private nothingFoundLabel: string;
 
   /**
    * Style classes
@@ -85,6 +89,7 @@ export default class Popover {
     itemIcon: string;
     itemSecondaryLabel: string;
     noFoundMessage: string;
+    noFoundMessageShown: string;
     } {
     return {
       popover: 'ce-popover',
@@ -97,6 +102,7 @@ export default class Popover {
       itemIcon: 'ce-popover__item-icon',
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
       noFoundMessage: 'ce-popover__no-found',
+      noFoundMessageShown: 'ce-popover__no-found--shown',
     };
   }
 
@@ -106,12 +112,23 @@ export default class Popover {
    * @param options - config
    * @param options.items - config for items to be displayed
    * @param options.className - additional class name to be added to the popover wrapper
+   * @param options.filterLabel - label for the search Field
+   * @param options.nothingFoundLabel - label of the 'nothing found' message
    */
-  constructor({ items, className, searchable }: {items: PopoverItem[]; className?: string, searchable?: boolean}) {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel }: {
+    items: PopoverItem[];
+    className?: string;
+    searchable?: boolean;
+    filterLabel: string;
+    nothingFoundLabel: string;
+  }) {
     this.items = items;
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
+
+    this.filterLabel = filterLabel;
+    this.nothingFoundLabel = nothingFoundLabel;
 
     this.render();
     this.enableFlipper();
@@ -177,6 +194,11 @@ export default class Popover {
     });
 
     this.nodes.wrapper.appendChild(this.nodes.items);
+    this.nodes.nothingFound = Dom.make('div', [Popover.CSS.noFoundMessage], {
+      textContent: this.nothingFoundLabel,
+    });
+
+    this.nodes.wrapper.appendChild(this.nodes.nothingFound);
 
     this.listeners.on(this.nodes.wrapper, 'click', (event: KeyboardEvent|MouseEvent) => {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
@@ -195,6 +217,7 @@ export default class Popover {
   private addSearch(holder: HTMLElement): void {
     this.search = new SearchInput({
       items: this.items,
+      placeholder: this.filterLabel,
       onSearch: (filteredItems): void => {
         const itemsVisible = [];
 
@@ -209,10 +232,7 @@ export default class Popover {
           }
         });
 
-        if (itemsVisible.length === 0) {
-          const noFoundMessage = Dom.make('div', Popover.CSS.noFoundMessage)
-
-        }
+        this.nodes.nothingFound.classList.toggle(Popover.CSS.noFoundMessageShown, itemsVisible.length === 0);
 
         /**
          * Update flipper items with only visible
@@ -223,7 +243,7 @@ export default class Popover {
       },
     });
 
-    const searchField = this.search.getInput();
+    const searchField = this.search.getElement();
 
     holder.appendChild(searchField);
   }

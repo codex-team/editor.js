@@ -1,8 +1,36 @@
-.cdx-filter-input {
+img, video, audio, canvas, input,
+select, button, progress { max-width: 100%; }
+
+.cdx-search-field {
   background: rgba(232,232,235,0.49);
   border: 1px solid rgba(226,226,229,0.20);
   border-radius: 5px;
-  padding: 7px;
-  font-size: 14px;
-  outline: none;
+  padding: 4px 7px;
+  display: flex;
+  align-items: center;
+
+  .icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 17px;
+    margin-left: 2px;
+    color: var(--grayText);
+  }
+
+  &__input {
+    font-size: 14px;
+    outline: none;
+    font-weight: 500;
+    font-family: inherit;
+    border: 0;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    line-height: 22px;
+
+    &::placeholder {
+       color: var(--grayText);
+       font-weight: 500;
+    }
+  }
 }

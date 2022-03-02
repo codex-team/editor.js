@@ -431,6 +431,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.toolboxInstance = new Toolbox({
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
+      i18nLabels: {
+        filter: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
+        nothingFound: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Noting found'),
+      },
     });
 
     this.toolboxInstance.on(ToolboxEvent.Opened, () => {
