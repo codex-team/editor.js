@@ -227,7 +227,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.enableModuleBindings();
     } else {
       this.destroy();
-      this.toolboxInstance.destroy();
       this.Editor.BlockSettings.destroy();
       this.disableModuleBindings();
     }
@@ -295,6 +294,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Close the Toolbar
    */
   public close(): void {
+    if (this.Editor.ReadOnly.isEnabled) {
+      return;
+    }
+
     this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
 
     /** Close components */
@@ -551,7 +554,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   private destroy(): void {
     this.removeAllNodes();
-    this.toolboxInstance.destroy();
+    if (this.toolboxInstance) {
+      this.toolboxInstance.destroy();
+    }
     this.tooltip.destroy();
   }
 }
