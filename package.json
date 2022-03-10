@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.22.2",
+  "version": "2.23.2",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -22,14 +22,16 @@
     "lint:fix": "eslint src/ --ext .ts --fix",
     "lint:tests": "eslint test/ --ext .ts",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
+    "ci:pull_paragraph": "git submodule update --init ./src/tools/paragraph",
     "pull_tools": "git submodule update --init --recursive",
-    "_tools:checkout": "git submodule foreach git checkout master",
+    "_tools:checkout": "git submodule foreach 'git checkout master || git checkout main'",
     "_tools:pull": "git submodule foreach git pull",
     "_tools:yarn": "git submodule foreach yarn",
     "_tools:build": "git submodule foreach yarn build",
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
-    "test:e2e": "yarn build && cypress run"
+    "test:e2e": "yarn build && cypress run",
+    "test:e2e:open": "yarn build && cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -48,6 +50,9 @@
     "@codexteam/shortcuts": "^1.1.1",
     "@cypress/code-coverage": "^3.9.2",
     "@cypress/webpack-preprocessor": "^5.6.0",
+    "@editorjs/code": "^2.7.0",
+    "@editorjs/header": "^2.6.1",
+    "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^14.14.35",
     "@types/webpack": "^4.41.12",
     "@types/webpack-env": "^1.15.2",
@@ -92,7 +97,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.2",
+    "codex-tooltip": "^1.0.4",
     "nanoid": "^3.1.22"
   }
 }

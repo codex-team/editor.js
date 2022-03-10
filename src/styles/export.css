@@ -2,7 +2,11 @@
  * Block Tool wrapper
  */
 .cdx-block {
-  padding: 0.4em 0;
+  padding: var(--block-padding-vertical) 0;
+
+  &::-webkit-input-placeholder {
+    line-height:normal!important;
+  }
 }
 
 /**
