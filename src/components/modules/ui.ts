@@ -361,6 +361,10 @@ export default class UI extends Module<UINodes> {
       this.documentClicked(event);
     }, true);
 
+    this.readOnlyMutableListeners.on(document, 'paste', (event: ClipboardEvent) => {
+      this.handlePasteAnyBlockSelected(event);
+    }, true);
+
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
@@ -499,6 +503,27 @@ export default class UI extends Module<UINodes> {
      * Close Toolbar
      */
     this.Editor.Toolbar.close();
+  }
+
+  /**
+   * @param {ClipboardEvent} event - keyboard event
+   */
+  private async handlePasteAnyBlockSelected(event: ClipboardEvent): Promise<void> {
+    const { BlockManager, BlockSelection, Paste, Caret } = this.Editor;
+
+    if (!BlockSelection.anyBlockSelected) {
+      return;
+    }
+    const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
+    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+    await Paste.processDataTransfer(event.clipboardData);
+
+    BlockSelection.clearSelection(event);
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
   }
 
   /**

@@ -664,11 +664,13 @@ export default class Paste extends Module {
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
       const currentToolSanitizeConfig = BlockManager.currentBlock.tool.sanitizeConfig;
 
-      document.execCommand(
-        'insertHTML',
-        false,
-        clean(content.innerHTML, currentToolSanitizeConfig)
-      );
+      _.delay(() => {
+        document.execCommand(
+          'insertHTML',
+          false,
+          clean(content.innerHTML, currentToolSanitizeConfig)
+        );
+      }, 20)();
     } else {
       this.insertBlock(dataToInsert);
     }
