@@ -33,6 +33,16 @@
     border-bottom-width: 4px;
   }
 
+  @media (--mobile){
+    position: fixed;
+    max-width: none;
+    min-width: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+  }
+
   &__items {
     overflow-y: auto;
     margin-top: 5px;

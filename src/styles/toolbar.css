@@ -7,31 +7,14 @@
   will-change: opacity, transform;
   display: none;
 
-  @media (--mobile) {
-    @apply --overlay-pane;
-    padding: 3px;
-    margin-top: 5px;
-  }
-
   &--opened {
     display: block;
-
-    @media (--mobile){
-      display: flex;
-    }
   }
 
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
-
-    @media (--mobile){
-      display: flex;
-      align-content: center;
-      margin: 0;
-      max-width: 100%;
-    }
   }
 
   &__plus {
@@ -49,9 +32,8 @@
     }
 
     @media (--mobile){
-      display: inline-flex !important;
+      @apply --overlay-pane;
       position: static;
-      transform: none !important;
     }
   }
 
@@ -66,30 +48,33 @@
     display: flex;
     padding-right: 5px;
 
-    @media (--mobile){
-      position: absolute;
-      right: auto;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-    }
-
     &--opened {
       opacity: 1;
+    }
+
+    @media (--mobile){
+      right: auto;
     }
   }
 
   &__settings-btn {
     @apply --toolbox-button;
-    width: 18px;
-    margin-left: 5px;
 
+    margin-left: 5px;
     cursor: pointer;
     user-select: none;
 
+    @media (--not-mobile){
+      width: 18px;
+    }
+
     &--hidden {
       display: none;
+    }
+
+    @media (--mobile){
+      @apply --overlay-pane;
+      position: static;
     }
   }
 }
