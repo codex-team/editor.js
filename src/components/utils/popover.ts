@@ -44,12 +44,16 @@ export default class Popover {
    */
   private nodes: {
     wrapper: HTMLElement;
+    popover: HTMLElement;
     items: HTMLElement;
     nothingFound: HTMLElement;
+    overlay: HTMLElement;
   } = {
     wrapper: null,
+    popover: null,
     items: null,
     nothingFound: null,
+    overlay: null,
   }
 
   /**
@@ -90,6 +94,8 @@ export default class Popover {
     itemSecondaryLabel: string;
     noFoundMessage: string;
     noFoundMessageShown: string;
+    popoverOverlay: string;
+    popoverOverlayHidden: string;
     } {
     return {
       popover: 'ce-popover',
@@ -103,6 +109,8 @@ export default class Popover {
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
       noFoundMessage: 'ce-popover__no-found',
       noFoundMessageShown: 'ce-popover__no-found--shown',
+      popoverOverlay: 'ce-popover__overlay',
+      popoverOverlayHidden: 'ce-popover__overlay--hidden',
     };
   }
 
@@ -145,7 +153,8 @@ export default class Popover {
    * Shows the Popover
    */
   public show(): void {
-    this.nodes.wrapper.classList.add(Popover.CSS.popoverOpened);
+    this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
+    this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
     this.flipper.activate();
 
     if (this.searchable) {
@@ -159,7 +168,8 @@ export default class Popover {
    * Hides the Popover
    */
   public hide(): void {
-    this.nodes.wrapper.classList.remove(Popover.CSS.popoverOpened);
+    this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
+    this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
   }
 
@@ -181,10 +191,15 @@ export default class Popover {
    * Makes the UI
    */
   private render(): void {
-    this.nodes.wrapper = Dom.make('div', [Popover.CSS.popover, this.className]);
+    this.nodes.wrapper = Dom.make('div', this.className);
+    this.nodes.popover = Dom.make('div', Popover.CSS.popover);
+    this.nodes.wrapper.appendChild(this.nodes.popover);
+
+    this.nodes.overlay = Dom.make('div', [Popover.CSS.popoverOverlay, Popover.CSS.popoverOverlayHidden]);
+    this.nodes.wrapper.appendChild(this.nodes.overlay);
 
     if (this.searchable) {
-      this.addSearch(this.nodes.wrapper);
+      this.addSearch(this.nodes.popover);
     }
 
     this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
@@ -193,19 +208,23 @@ export default class Popover {
       this.nodes.items.appendChild(this.createItem(item));
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.items);
+    this.nodes.popover.appendChild(this.nodes.items);
     this.nodes.nothingFound = Dom.make('div', [ Popover.CSS.noFoundMessage ], {
       textContent: this.nothingFoundLabel,
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.nothingFound);
+    this.nodes.popover.appendChild(this.nodes.nothingFound);
 
-    this.listeners.on(this.nodes.wrapper, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(this.nodes.popover, 'click', (event: KeyboardEvent|MouseEvent) => {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
 
       if (clickedItem) {
         this.itemClicked(clickedItem);
       }
+    });
+
+    this.listeners.on(this.nodes.overlay, 'click', () => {
+      this.hide();
     });
   }
 

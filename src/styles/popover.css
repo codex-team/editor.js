@@ -11,9 +11,11 @@
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
-
+  
   @apply --overlay-pane;
 
+  z-index: 4;
+  
   flex-wrap: nowrap;
 
   &--opened {
@@ -98,5 +100,24 @@
     &:hover {
       background-color: transparent;
     }
+  }
+
+  @media (--mobile) {
+    &__overlay {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-dark);
+      opacity: 0.5;
+      z-index: 3;
+    }
+  }
+
+  &__overlay--hidden {
+    opacity: 0;
+    z-index: 0;
+    display: none;
   }
 }
