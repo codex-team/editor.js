@@ -1,7 +1,7 @@
 import Dom from '../dom';
 import Listeners from './listeners';
 import Flipper from '../flipper';
-import SearchInput from "./search-input";
+import SearchInput from './search-input';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -194,7 +194,7 @@ export default class Popover {
     });
 
     this.nodes.wrapper.appendChild(this.nodes.items);
-    this.nodes.nothingFound = Dom.make('div', [Popover.CSS.noFoundMessage], {
+    this.nodes.nothingFound = Dom.make('div', [ Popover.CSS.noFoundMessage ], {
       textContent: this.nothingFoundLabel,
     });
 

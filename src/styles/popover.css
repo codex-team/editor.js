@@ -33,7 +33,7 @@
     border-bottom-width: 4px;
   }
 
-  @media (--mobile){
+  @media (--mobile) {
     position: fixed;
     max-width: none;
     min-width: auto;

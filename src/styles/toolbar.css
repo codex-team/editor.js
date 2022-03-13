@@ -4,7 +4,8 @@
   right: 0;
   top: 0;
   transition: opacity 100ms ease;
-  will-change: opacity, transform;
+  will-change: opacity;
+
   display: none;
 
   &--opened {
