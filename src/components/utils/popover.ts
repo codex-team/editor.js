@@ -2,6 +2,7 @@ import Dom from '../dom';
 import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
+import { isMobile } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -96,7 +97,7 @@ export default class Popover {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
-    } {
+  } {
     return {
       popover: 'ce-popover',
       popoverOpened: 'ce-popover--opened',
@@ -160,6 +161,11 @@ export default class Popover {
     if (this.searchable) {
       window.requestAnimationFrame(() => {
         this.search.focus();
+      });
+    }
+    if (isMobile) {
+      this.listeners.on(document, 'scroll', () => {
+        this.hide();
       });
     }
   }
