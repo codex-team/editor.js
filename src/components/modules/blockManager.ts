@@ -237,9 +237,15 @@ export default class BlockManager extends Module {
     data = {},
     id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+    config = {},
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}; config?: any}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
+
+    // default config
+    Object.entries(config).forEach(([prop, value]) => {
+      tool.settings[prop] = value;
+    });
     const block = new Block({
       id,
       data,
@@ -277,6 +283,7 @@ export default class BlockManager extends Module {
     needToFocus = true,
     replace = false,
     tunes = {},
+    config,
   }: {
     id?: string;
     tool?: string;
@@ -285,18 +292,19 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     tunes?: {[name: string]: BlockTuneData};
+    config?: any;
   } = {}): Block {
     let newIndex = index;
 
     if (newIndex === undefined) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
     }
-
     const block = this.composeBlock({
       id,
       tool,
       data,
       tunes,
+      config,
     });
 
     /**
