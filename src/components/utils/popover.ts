@@ -2,7 +2,7 @@ import Dom from '../dom';
 import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
-import { isMobile } from '../utils';
+import EventsDispatcher from './events';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -32,9 +32,19 @@ export interface PopoverItem {
 }
 
 /**
+ * Event that can be triggered by the Popover
+ */
+export enum PopoverEvent {
+  /**
+   * When popover overlay is clicked
+   */
+  OverlayClicked = 'overlay-clicked',
+}
+
+/**
  * Popover is the UI element for displaying vertical lists
  */
-export default class Popover {
+export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Items list to be displayed
    */
@@ -97,7 +107,7 @@ export default class Popover {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
-  } {
+    } {
     return {
       popover: 'ce-popover',
       popoverOpened: 'ce-popover--opened',
@@ -131,6 +141,7 @@ export default class Popover {
     filterLabel: string;
     nothingFoundLabel: string;
   }) {
+    super();
     this.items = items;
     this.className = className || '';
     this.searchable = searchable;
@@ -161,11 +172,6 @@ export default class Popover {
     if (this.searchable) {
       window.requestAnimationFrame(() => {
         this.search.focus();
-      });
-    }
-    if (isMobile) {
-      this.listeners.on(document, 'scroll', () => {
-        this.hide();
       });
     }
   }
@@ -230,7 +236,7 @@ export default class Popover {
     });
 
     this.listeners.on(this.nodes.overlay, 'click', () => {
-      this.hide();
+      this.emit(PopoverEvent.OverlayClicked);
     });
   }
 

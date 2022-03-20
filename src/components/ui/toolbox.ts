@@ -5,7 +5,8 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover';
+import Listeners from '../utils/listeners';
 
 /**
  * @todo check small tools number — there should not be a scroll
@@ -84,6 +85,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private i18nLabels: Record<toolboxTextLabelsKeys, string>;
 
   /**
+   * Listeners util instance
+   */
+   private listeners: Listeners = new Listeners();
+
+  /**
    * Current module HTML Elements
    */
   private nodes: {
@@ -144,6 +150,16 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       }),
     });
 
+    this.popover.on(PopoverEvent.OverlayClicked, () => {
+      this.close();
+    });
+
+    if (_.isMobile) {
+      this.listeners.on(document, 'scroll', () => {
+        this.close();
+      });
+    }
+
     /**
      * Enable tools shortcuts
      */
@@ -175,6 +191,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.api.listeners.offById(this.clickListenerId);
 
     this.removeAllShortcuts();
+    this.listeners.removeAll();
   }
 
   /**
