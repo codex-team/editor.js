@@ -1,5 +1,6 @@
 @custom-media --mobile (width <= 650px);
 @custom-media --not-mobile (width >= 651px);
+@custom-media --can-hover (hover: hover);
 
 :root {
   /**
@@ -119,9 +120,11 @@
       height: var(--toolbox-buttons-size--mobile);
     }
 
-    &:hover,
-    &--active {
-      background-color: var(--bg-light);
+    @media (--can-hover) {
+      &:hover,
+      &--active {
+        background-color: var(--bg-light);
+      }
     }
 
     &--active{
