@@ -142,6 +142,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         return {
           icon: tool.toolbox.icon,
           label: tool.toolbox.title,
+          name: tool.name,
           onClick: (item): void => {
             this.toolButtonActivated(tool.name);
           },

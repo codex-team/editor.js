@@ -19,6 +19,11 @@ export interface PopoverItem {
   label: string;
 
   /**
+   * Item name
+   */
+  name?: string;
+
+  /**
    * Additional displayed text
    */
   secondaryLabel?: string;
@@ -215,7 +220,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
-
     this.items.forEach(item => {
       this.nodes.items.appendChild(this.createItem(item));
     });
@@ -286,6 +290,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private createItem(item: PopoverItem): HTMLElement {
     const el = Dom.make('div', Popover.CSS.item);
+
+    el.setAttribute('data-tool', item.name);
     const label = Dom.make('div', Popover.CSS.itemLabel, {
       innerHTML: item.label,
     });

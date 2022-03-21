@@ -104,7 +104,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('li.ce-toolbox__button[data-tool=header]')
+      .get('div.ce-popover__item[data-tool=header]')
       .click();
 
     cy.get('@onChange').should('be.calledTwice');
