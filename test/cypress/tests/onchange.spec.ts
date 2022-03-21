@@ -173,6 +173,11 @@ describe('onChange callback', () => {
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
+      .click()
+      .type('some text');
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
       .click();
 
     cy.get('[data-cy=editorjs]')
