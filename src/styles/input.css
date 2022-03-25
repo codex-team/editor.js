@@ -4,18 +4,28 @@ select, button, progress { max-width: 100%; }
 .cdx-search-field {
   background: rgba(232,232,235,0.49);
   border: 1px solid rgba(226,226,229,0.20);
-  border-radius: 5px;
-  padding: 4px 7px;
-  display: flex;
-  align-items: center;
+  border-radius: 6px;
+  padding: 3px;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: auto;
 
-  .icon {
-    width: 14px;
-    height: 14px;
-    margin-right: 17px;
-    margin-left: 2px;
-    color: var(--grayText);
+  &__icon {
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+
+    .icon {
+      width: 14px;
+      height: 14px;
+      color: var(--grayText);
+      flex-shrink: 0;
+    }
   }
+
 
   &__input {
     font-size: 14px;
