@@ -181,7 +181,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
     } {
     return {
       opened: this.toolboxInstance.opened,
-      close: (): void => this.toolboxInstance.close(),
+      close: (): void => {
+        this.toolboxInstance.close();
+        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      },
       open: (): void => {
         /**
          * Set current block to cover the case when the Toolbar showed near hovered Block but caret is set to another Block.
