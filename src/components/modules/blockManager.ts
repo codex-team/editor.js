@@ -299,8 +299,6 @@ export default class BlockManager extends Module {
       tunes,
     });
 
-    this._blocks.insert(newIndex, block, replace);
-
     /**
      * In case of block replacing (Converting OR from Toolbox or Shortcut on empty block OR on-paste to empty block)
      * we need to dispatch the 'block-removing' event for the replacing block
@@ -310,6 +308,8 @@ export default class BlockManager extends Module {
         index: newIndex,
       });
     }
+
+    this._blocks.insert(newIndex, block, replace);
 
     /**
      * Force call of didMutated event on Block insertion
