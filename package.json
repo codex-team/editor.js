@@ -31,7 +31,8 @@
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open"
+    "test:e2e:open": "yarn build && cypress open",
+    "devserver:start": "yarn build && node ./devserver.js"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -70,6 +71,7 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-chai-friendly": "^0.6.0",
     "eslint-plugin-cypress": "^2.11.2",
+    "express": "^4.17.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-janitor": "^2.0.4",
     "license-webpack-plugin": "^2.1.4",
