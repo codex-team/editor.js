@@ -3,6 +3,7 @@ import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
+import { isMobile } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -113,6 +114,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
+    documentScrollLocked: string;
     } {
     return {
       popover: 'ce-popover',
@@ -128,6 +130,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
+      documentScrollLocked: 'ce-scroll-locked',
     };
   }
 
@@ -180,6 +183,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
         this.search.focus();
       });
     }
+
+    if (isMobile()) {
+      document.documentElement.classList.add(Popover.CSS.documentScrollLocked);
+    }
   }
 
   /**
@@ -189,6 +196,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
+
+    if (isMobile()) {
+      document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
+    }
   }
 
   /**
