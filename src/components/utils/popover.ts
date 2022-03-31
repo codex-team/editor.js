@@ -20,6 +20,7 @@ export interface PopoverItem {
 
   /**
    * Item name
+   * Used in data attributes needed for cypress tests
    */
   name?: string;
 

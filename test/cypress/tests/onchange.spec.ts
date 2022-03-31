@@ -171,6 +171,9 @@ describe('onChange callback', () => {
   it('should fire onChange callback when block is removed', () => {
     createEditor();
 
+    /**
+     * The only block does not have Tune menu, so need to create at least 2 blocks to test deleting
+     */
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()

@@ -4,7 +4,7 @@
   right: 0;
   top: 0;
   transition: opacity 100ms ease;
-  will-change: opacity;
+  will-change: opacity, top;
 
   display: none;
 
