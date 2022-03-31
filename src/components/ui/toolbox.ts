@@ -155,12 +155,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       this.close();
     });
 
-    if (_.isMobile()) {
-      this.listeners.on(document, 'scroll', () => {
-        this.close();
-      });
-    }
-
     /**
      * Enable tools shortcuts
      */
