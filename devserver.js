@@ -24,11 +24,11 @@ const server = http.createServer(serveStatic([
 server.listen(port, localhost, () => {
   console.log(`
 
- ${wrapInColor('Editor.js 💖', consoleColors.hiColor)} devserver is running ᕕ(⌐■_■)ᕗ ✨
- ---------------------------------------------
- ${wrapInColor('http://' + host + ':' + port + '/example/example-dev.html', consoleColors.fgGreen)}
- ---------------------------------------------
- Page can be opened from any device connected to the same local network.
+${wrapInColor('Editor.js 💖', consoleColors.hiColor)} devserver is running ᕕ(⌐■_■)ᕗ ✨
+---------------------------------------------
+${wrapInColor('http://' + host + ':' + port + '/example/example-dev.html', consoleColors.fgGreen)}
+---------------------------------------------
+Page can be opened from any device connected to the same local network.
 `);
 });
 
