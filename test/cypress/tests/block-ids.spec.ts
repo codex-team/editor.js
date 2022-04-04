@@ -31,7 +31,7 @@ describe.only('Block ids', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-tool=header]')
+      .get('div.ce-popover__item[data-item-name=header]')
       .click();
 
     cy.get('[data-cy=editorjs]')
