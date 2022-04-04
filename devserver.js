@@ -14,14 +14,15 @@ const http = require('http');
 const { networkInterfaces } = require('os');
 
 const port = 3000;
-const localhost = '0.0.0.0';
+const localhost = '127.0.0.1';
+const nonRoutableAddress = '0.0.0.0';
 const host = getHost();
 const server = http.createServer(serveStatic([
   '/example',
   '/dist',
 ]));
 
-server.listen(port, localhost, () => {
+server.listen(port, nonRoutableAddress, () => {
   console.log(`
 
 ${wrapInColor('Editor.js 💖', consoleColors.hiColor)} devserver is running ᕕ(⌐■_■)ᕗ ✨
@@ -30,6 +31,10 @@ ${wrapInColor('http://' + host + ':' + port + '/example/example-dev.html', conso
 ---------------------------------------------
 Page can be opened from any device connected to the same local network.
 `);
+
+  if (host === localhost) {
+    console.log(wrapInColor('Looks like you are not connected to the Internet so you couldn\'t debug the Editor on your mobile phone at the moment.', consoleColors.fgRed));
+  }
 });
 
 /**
@@ -89,6 +94,13 @@ function getHost() {
         results[name].push(net.address);
       }
     }
+  }
+
+  /**
+   * Offline case
+   */
+  if (Object.keys(results).length === 0) {
+    return localhost;
   }
 
   return results['en0'][0];
