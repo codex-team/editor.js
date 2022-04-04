@@ -15,14 +15,19 @@ const host = '0.0.0.0';
 const server = http.createServer(serveStatic(['/example', '/dist']));
 
 server.listen(port, host, () => {
-  console.log(`Server is running on http://${host}:${port}`);
+  console.log(`
+✨ Server is running
+Example page is now accessible at http://${host}:${port}/example/example-dev.html.
+To open example page on any other device belonging to your local network replace 0.0.0.0 with IP address of the server machine in your local network.
+You can get IP address of your machine using ipconfig/ifconfig commands. 
+`);
 });
 
 /**
  * Serves files from specified directories
  *
  * @param {string[]} paths - directories files from which should be served
- * @returns {void}
+ * @returns {Function}
  */
 function serveStatic(paths) {
   return (request, response) => {
@@ -55,15 +60,3 @@ function serveStatic(paths) {
     }
   };
 }
-
-// const express = require('express');
-// const path = require('path');
-// const app = express();
-// const port = 3000;
-
-// app.use('/dist', express.static(path.resolve(__dirname, 'dist')));
-// app.use(express.static(path.resolve(__dirname, 'example')));
-
-// app.listen(port, () => {
-//   console.log(`Listening on port ${port}`);
-// });
