@@ -1,10 +1,12 @@
 /**
- * Server for static files.
+ * Server for testing example page on mobile devices.
+ *
  * Usage:
  *  1. run `yarn devserver:start`
- *  2. get access to files from `/example` or `/dist` on any device in local network.
- *     example: `http://{ip_address}:3000/example/example-dev.html`
+ *  2. Open `http://{ip_address}:3000/example/example-dev.html`
  *     where {ip_address} is IP of your machine.
+ *
+ *  Also, can serve static files from `/example` or `/dist` on any device in local network.
  */
 const path = require('path');
 const fs = require('fs');
@@ -13,14 +15,20 @@ const { networkInterfaces } = require('os');
 
 const port = 3000;
 const localhost = '0.0.0.0';
-const host = getHost()
-const server = http.createServer(serveStatic(['/example', '/dist']));
+const host = getHost();
+const server = http.createServer(serveStatic([
+  '/example',
+  '/dist',
+]));
 
 server.listen(port, localhost, () => {
   console.log(`
-✨ Server is running
-Example page is now accessible at http://${host}:${port}/example/example-dev.html.
-Page can be opened from any device connected to the same local network.
+
+ ${wrapInColor('Editor.js 💖', consoleColors.hiColor)} devserver is running ᕕ(⌐■_■)ᕗ ✨
+ ---------------------------------------------
+ ${wrapInColor('http://' + host + ':' + port + '/example/example-dev.html', consoleColors.fgGreen)}
+ ---------------------------------------------
+ Page can be opened from any device connected to the same local network.
 `);
 });
 
@@ -63,24 +71,46 @@ function serveStatic(paths) {
 }
 
 /**
- * Returns IP address of machine
+ * Returns IP address of a machine
+ *
  * @returns {string}
  */
 function getHost() {
   const nets = networkInterfaces();
-  const results = Object.create(null); // Or just '{}', an empty object
+  const results = {};
 
   for (const name of Object.keys(nets)) {
-      for (const net of nets[name]) {
-          // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-          if (net.family === 'IPv4' && !net.internal) {
-              if (!results[name]) {
-                  results[name] = [];
-              }
-              results[name].push(net.address);
-          }
+    for (const net of nets[name]) {
+      // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+      if (net.family === 'IPv4' && !net.internal) {
+        if (!results[name]) {
+          results[name] = [];
+        }
+        results[name].push(net.address);
       }
+    }
   }
 
-return results['en0'][0]
+  return results['en0'][0];
+}
+
+/**
+ * Terminal output colors
+ */
+const consoleColors = {
+  fgMagenta: 35,
+  fgRed: 31,
+  fgGreen: 32,
+  hiColor: 1,
+};
+
+/**
+ * Set a terminal color to the message
+ *
+ * @param {string} msg - text to wrap
+ * @param {string} color - color
+ * @returns {string}
+ */
+function wrapInColor(msg, color) {
+  return '\x1b[' + color + 'm' + msg + '\x1b[0m';
 }
