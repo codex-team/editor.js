@@ -124,8 +124,7 @@
     }
 
     @media (--can-hover) {
-      &:hover,
-      &--active {
+      &:hover {
         background-color: var(--bg-light);
       }
     }
