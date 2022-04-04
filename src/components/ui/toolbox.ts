@@ -6,7 +6,6 @@ import ToolsCollection from '../tools/collection';
 import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
-import Listeners from '../utils/listeners';
 
 /**
  * @todo check small tools number — there should not be a scroll
@@ -83,11 +82,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Text labels used in the Toolbox. Should be passed from the i18n module
    */
   private i18nLabels: Record<toolboxTextLabelsKeys, string>;
-
-  /**
-   * Listeners util instance
-   */
-   private listeners: Listeners = new Listeners();
 
   /**
    * Current module HTML Elements
@@ -186,7 +180,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.api.listeners.offById(this.clickListenerId);
 
     this.removeAllShortcuts();
-    this.listeners.removeAll();
   }
 
   /**
