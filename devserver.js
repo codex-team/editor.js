@@ -33,7 +33,7 @@ Page can be opened from any device connected to the same local network.
 `);
 
   if (host === localhost) {
-    console.log(wrapInColor('Looks like you are not connected to the Internet so you couldn\'t debug the Editor on your mobile phone at the moment.', consoleColors.fgRed));
+    console.log(wrapInColor('Looks like you are not connected to any Network so you couldn\'t debug the Editor on your mobile device at the moment.', consoleColors.fgRed));
   }
 });
 
