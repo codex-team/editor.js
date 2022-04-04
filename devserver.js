@@ -4,22 +4,23 @@
  *  1. run `yarn devserver:start`
  *  2. get access to files from `/example` or `/dist` on any device in local network.
  *     example: `http://{ip_address}:3000/example/example-dev.html`
- *     where {ip_address} is IP of your machine in local network.
+ *     where {ip_address} is IP of your machine.
  */
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const { networkInterfaces } = require('os');
 
 const port = 3000;
-const host = '0.0.0.0';
+const localhost = '0.0.0.0';
+const host = getHost()
 const server = http.createServer(serveStatic(['/example', '/dist']));
 
-server.listen(port, host, () => {
+server.listen(port, localhost, () => {
   console.log(`
 ✨ Server is running
 Example page is now accessible at http://${host}:${port}/example/example-dev.html.
-To open example page on any other device belonging to your local network replace 0.0.0.0 with IP address of the server machine in your local network.
-You can get IP address of your machine using ipconfig/ifconfig commands. 
+Page can be opened from any device connected to the same local network.
 `);
 });
 
@@ -59,4 +60,27 @@ function serveStatic(paths) {
       response.end(e.toString());
     }
   };
+}
+
+/**
+ * Returns IP address of machine
+ * @returns {string}
+ */
+function getHost() {
+  const nets = networkInterfaces();
+  const results = Object.create(null); // Or just '{}', an empty object
+
+  for (const name of Object.keys(nets)) {
+      for (const net of nets[name]) {
+          // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+          if (net.family === 'IPv4' && !net.internal) {
+              if (!results[name]) {
+                  results[name] = [];
+              }
+              results[name].push(net.address);
+          }
+      }
+  }
+
+return results['en0'][0]
 }
