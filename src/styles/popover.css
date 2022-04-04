@@ -92,6 +92,10 @@
       padding-right: 5px;
       margin-bottom: -2px;
       opacity: 0.6;
+
+      @media (--mobile){
+        display: none;
+      }
     }
   }
 
