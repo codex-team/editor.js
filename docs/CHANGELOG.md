@@ -2,7 +2,8 @@
 
 ### 2.23.3
 
-— `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
+- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
 
 ### 2.23.2
 
