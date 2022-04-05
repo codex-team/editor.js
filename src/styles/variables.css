@@ -196,8 +196,10 @@
       margin-bottom: 1px;
     }
 
-    &:hover {
-      background-color: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
     }
 
     @media (--mobile) {
