@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.23.3
+
+- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+
 ### 2.23.2
 
 — `Fix` — Crash on initialization in the read-only mode [#1968](https://github.com/codex-team/editor.js/issues/1968)

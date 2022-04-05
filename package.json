@@ -31,7 +31,8 @@
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open"
+    "test:e2e:open": "yarn build && cypress open",
+    "devserver:start": "yarn build && node ./devserver.js"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -97,7 +98,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.4",
+    "codex-tooltip": "^1.0.5",
     "nanoid": "^3.1.22"
   }
 }
