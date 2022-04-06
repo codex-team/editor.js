@@ -273,7 +273,8 @@ export default class UI extends Module<UINodes> {
    * Updates --vh variable value, which allows to calculate actual 100vh value for mobile browsers
    */
   private setAppHeightFraction(): void {
-    const doc = document.documentElement
+    const doc = document.documentElement;
+
     doc.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
   }
 

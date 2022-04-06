@@ -1,6 +1,6 @@
 import Dom from '../dom';
 import Listeners from './listeners';
-import $ from "../dom";
+import $ from '../dom';
 
 /**
  * Item that could be searched
@@ -13,7 +13,6 @@ interface SearchableItem {
  * Provides search input element and search logic
  */
 export default class SearchInput {
-
   private wrapper: HTMLElement;
   private input: HTMLInputElement;
   private listeners: Listeners;
