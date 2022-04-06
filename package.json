@@ -52,6 +52,7 @@
     "@cypress/code-coverage": "^3.9.2",
     "@cypress/webpack-preprocessor": "^5.6.0",
     "@editorjs/code": "^2.7.0",
+    "@editorjs/delimiter": "^1.2.0",
     "@editorjs/header": "^2.6.1",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^14.14.35",
