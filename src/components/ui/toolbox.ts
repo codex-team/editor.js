@@ -5,7 +5,7 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover';
 
 /**
  * @todo check small tools number — there should not be a scroll
@@ -136,12 +136,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         return {
           icon: tool.toolbox.icon,
           label: tool.toolbox.title,
+          name: tool.name,
           onClick: (item): void => {
             this.toolButtonActivated(tool.name);
           },
           secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
         };
       }),
+    });
+
+    this.popover.on(PopoverEvent.OverlayClicked, () => {
+      this.close();
     });
 
     /**

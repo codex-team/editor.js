@@ -181,7 +181,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
     } {
     return {
       opened: this.toolboxInstance.opened,
-      close: (): void => this.toolboxInstance.close(),
+      close: (): void => {
+        this.toolboxInstance.close();
+        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      },
       open: (): void => {
         /**
          * Set current block to cover the case when the Toolbar showed near hovered Block but caret is set to another Block.
@@ -279,7 +282,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(toolbarY)}px, 0)`;
+    this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
 
     /**
      * Plus Button should be shown only for __empty__ __default__ block
@@ -506,6 +509,15 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Subscribe to the 'block-hovered' event
      */
     this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+      /**
+       * Do not move Toolbar by hover on mobile view
+       *
+       * @see https://github.com/codex-team/editor.js/issues/1972
+       */
+      if (_.isMobile()) {
+        return;
+      }
+
       /**
        * Do not move toolbar if Block Settings or Toolbox opened
        */

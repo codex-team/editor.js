@@ -1,7 +1,9 @@
 import Dom from '../dom';
 import Listeners from './listeners';
 import Flipper from '../flipper';
-import SearchInput from "./search-input";
+import SearchInput from './search-input';
+import EventsDispatcher from './events';
+import { isMobile } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -18,6 +20,12 @@ export interface PopoverItem {
   label: string;
 
   /**
+   * Item name
+   * Used in data attributes needed for cypress tests
+   */
+  name?: string;
+
+  /**
    * Additional displayed text
    */
   secondaryLabel?: string;
@@ -31,9 +39,19 @@ export interface PopoverItem {
 }
 
 /**
+ * Event that can be triggered by the Popover
+ */
+export enum PopoverEvent {
+  /**
+   * When popover overlay is clicked
+   */
+  OverlayClicked = 'overlay-clicked',
+}
+
+/**
  * Popover is the UI element for displaying vertical lists
  */
-export default class Popover {
+export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Items list to be displayed
    */
@@ -44,12 +62,16 @@ export default class Popover {
    */
   private nodes: {
     wrapper: HTMLElement;
+    popover: HTMLElement;
     items: HTMLElement;
     nothingFound: HTMLElement;
+    overlay: HTMLElement;
   } = {
     wrapper: null,
+    popover: null,
     items: null,
     nothingFound: null,
+    overlay: null,
   }
 
   /**
@@ -90,6 +112,9 @@ export default class Popover {
     itemSecondaryLabel: string;
     noFoundMessage: string;
     noFoundMessageShown: string;
+    popoverOverlay: string;
+    popoverOverlayHidden: string;
+    documentScrollLocked: string;
     } {
     return {
       popover: 'ce-popover',
@@ -103,6 +128,9 @@ export default class Popover {
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
       noFoundMessage: 'ce-popover__no-found',
       noFoundMessageShown: 'ce-popover__no-found--shown',
+      popoverOverlay: 'ce-popover__overlay',
+      popoverOverlayHidden: 'ce-popover__overlay--hidden',
+      documentScrollLocked: 'ce-scroll-locked',
     };
   }
 
@@ -122,6 +150,7 @@ export default class Popover {
     filterLabel: string;
     nothingFoundLabel: string;
   }) {
+    super();
     this.items = items;
     this.className = className || '';
     this.searchable = searchable;
@@ -145,7 +174,8 @@ export default class Popover {
    * Shows the Popover
    */
   public show(): void {
-    this.nodes.wrapper.classList.add(Popover.CSS.popoverOpened);
+    this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
+    this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
     this.flipper.activate();
 
     if (this.searchable) {
@@ -153,14 +183,23 @@ export default class Popover {
         this.search.focus();
       });
     }
+
+    if (isMobile()) {
+      document.documentElement.classList.add(Popover.CSS.documentScrollLocked);
+    }
   }
 
   /**
    * Hides the Popover
    */
   public hide(): void {
-    this.nodes.wrapper.classList.remove(Popover.CSS.popoverOpened);
+    this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
+    this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
+
+    if (isMobile()) {
+      document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
+    }
   }
 
   /**
@@ -181,31 +220,39 @@ export default class Popover {
    * Makes the UI
    */
   private render(): void {
-    this.nodes.wrapper = Dom.make('div', [Popover.CSS.popover, this.className]);
+    this.nodes.wrapper = Dom.make('div', this.className);
+    this.nodes.popover = Dom.make('div', Popover.CSS.popover);
+    this.nodes.wrapper.appendChild(this.nodes.popover);
+
+    this.nodes.overlay = Dom.make('div', [Popover.CSS.popoverOverlay, Popover.CSS.popoverOverlayHidden]);
+    this.nodes.wrapper.appendChild(this.nodes.overlay);
 
     if (this.searchable) {
-      this.addSearch(this.nodes.wrapper);
+      this.addSearch(this.nodes.popover);
     }
 
     this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
-
     this.items.forEach(item => {
       this.nodes.items.appendChild(this.createItem(item));
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.items);
-    this.nodes.nothingFound = Dom.make('div', [Popover.CSS.noFoundMessage], {
+    this.nodes.popover.appendChild(this.nodes.items);
+    this.nodes.nothingFound = Dom.make('div', [ Popover.CSS.noFoundMessage ], {
       textContent: this.nothingFoundLabel,
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.nothingFound);
+    this.nodes.popover.appendChild(this.nodes.nothingFound);
 
-    this.listeners.on(this.nodes.wrapper, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(this.nodes.popover, 'click', (event: KeyboardEvent|MouseEvent) => {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
 
       if (clickedItem) {
         this.itemClicked(clickedItem);
       }
+    });
+
+    this.listeners.on(this.nodes.overlay, 'click', () => {
+      this.emit(PopoverEvent.OverlayClicked);
     });
   }
 
@@ -255,6 +302,8 @@ export default class Popover {
    */
   private createItem(item: PopoverItem): HTMLElement {
     const el = Dom.make('div', Popover.CSS.item);
+
+    el.setAttribute('data-item-name', item.name);
     const label = Dom.make('div', Popover.CSS.itemLabel, {
       innerHTML: item.label,
     });

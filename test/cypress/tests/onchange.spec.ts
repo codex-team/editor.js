@@ -104,7 +104,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('li.ce-toolbox__button[data-tool=header]')
+      .get('div.ce-popover__item[data-item-name=header]')
       .click();
 
     cy.get('@onChange').should('be.calledTwice');
@@ -170,6 +170,14 @@ describe('onChange callback', () => {
 
   it('should fire onChange callback when block is removed', () => {
     createEditor();
+
+    /**
+     * The only block does not have Tune menu, so need to create at least 2 blocks to test deleting
+     */
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('some text');
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
