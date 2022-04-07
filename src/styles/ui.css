@@ -129,8 +129,7 @@
 }
 
 .ce-scroll-locked, .ce-scroll-locked > body {
-  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
-  height: calc(var(--vh) * 100);
+  height: 100vh;
   overflow: hidden;
   /**
    * Mobile Safari fix
