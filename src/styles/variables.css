@@ -129,7 +129,8 @@
       }
     }
 
-    &--active{
+    &--active {
+      background-color: var(--bg-light);
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
