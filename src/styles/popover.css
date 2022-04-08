@@ -1,9 +1,8 @@
 .ce-popover {
   position: absolute;
   opacity: 0;
-  visibility: hidden;
   will-change: opacity, transform;
-  display: flex;
+  display: none; 
   flex-direction: column;
   padding: 4px;
   min-width: 200px;
@@ -19,7 +18,7 @@
 
   &--opened {
      opacity: 1;
-     visibility: visible;
+     display: flex;
      animation: panelShowing 100ms ease;
 
      @media (--mobile) {
