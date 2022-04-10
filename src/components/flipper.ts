@@ -206,18 +206,6 @@ export default class Flipper {
    * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
-    const isCurrentItemIsFocusedInput = this.iterator.currentItem == document.activeElement;
-    const arrowKeysList = [
-      _.keyCodes.LEFT,
-      _.keyCodes.RIGHT,
-      _.keyCodes.UP,
-      _.keyCodes.DOWN,
-    ];
-
-    if (isCurrentItemIsFocusedInput && arrowKeysList.includes(event.keyCode)) {
-      return false;
-    }
-
     return this.activated && this.allowedKeys.indexOf(event.keyCode) !== -1;
   }
 
