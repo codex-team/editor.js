@@ -1,7 +1,19 @@
 import { ActionType } from './ActionType';
-import { OutputData } from '../../../../types';
+import { OutputBlockData } from '../../../../types';
 
-export type Action = {
-  type: ActionType.CHANGE_EDITOR_DATA;
-  data: OutputData;
+type CreateBlockAction = {
+  type: ActionType.CREATE_BLOCK;
+  data: OutputBlockData;
 }
+
+type ChangeBlockDataAction = {
+  type: ActionType.CHANGE_BLOCK_DATA;
+  data: OutputBlockData;
+}
+
+type RemoveBlockAction = {
+  type: ActionType.REMOVE_BLOCK;
+  blockId: string;
+};
+
+export type Action = CreateBlockAction | ChangeBlockDataAction | RemoveBlockAction;
