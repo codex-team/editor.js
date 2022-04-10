@@ -16,4 +16,7 @@ type RemoveBlockAction = {
   blockId: string;
 };
 
+/**
+ * Available action types
+ */
 export type Action = CreateBlockAction | ChangeBlockDataAction | RemoveBlockAction;
