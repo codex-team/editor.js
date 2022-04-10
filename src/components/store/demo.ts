@@ -19,56 +19,57 @@ const onDataChange = (): (() => void) => {
     currentState = store.getState();
 
     console.log('***');
-    console.log('Previous state:', JSON.stringify(prevState));
-    console.log('Current state:', JSON.stringify(currentState));
+    console.log('Previous state:', prevState);
+    console.log('Current state:', currentState);
     console.log('***');
   };
 };
 
 const unsubscribeOnDataChange = store.subscribe(onDataChange());
 
-const data1 = {
-  time: 1649592664578,
-  blocks: [
-    {
-      id: '3JPEqh8_Wc',
-      type: 'header',
-      data: {
-        text: 'Editor.js',
-        level: 2,
-      },
-    },
-    {
-      id: 'AsbMKCuatV',
-      type: 'paragraph',
-      data: {
-        text: 'Hey. Meet the new <b>Editor</b>. On this page you can see it in action — try to edit this text.',
-      },
-    },
-  ],
+const block1 = {
+  id: '3JPEqh8_Wc',
+  type: 'header',
+  data: {
+    text: 'Editor.js',
+    level: 2,
+  },
 };
 
-const data2 = {
-  time: 1649592664578,
-  blocks: [
-    {
-      id: 'AsbMKCuatV',
-      type: 'paragraph',
-      data: {
-        text: 'Hey. Meet the new <b>Editor</b>. On this page you can see it in action — try to edit this text.',
-      },
-    },
-  ],
+const block2 = {
+  id: 'AsbMKCuatV',
+  type: 'paragraph',
+  data: {
+    text: 'Hey. Meet the new <b>Editor</b>. On this page you can see it in action — try to edit this text.',
+  },
+};
+
+const block2Changed = {
+  id: 'AsbMKCuatV',
+  type: 'paragraph',
+  data: {
+    text: 'Hey. Meet the new Editor. On this page you can see it in action — try to edit this text.',
+  },
 };
 
 store.dispatch({
-  type: ActionType.CHANGE_EDITOR_DATA,
-  data: data1,
+  type: ActionType.CREATE_BLOCK,
+  data: block1,
 });
 
 store.dispatch({
-  type: ActionType.CHANGE_EDITOR_DATA,
-  data: data2,
+  type: ActionType.CREATE_BLOCK,
+  data: block2,
+});
+
+store.dispatch({
+  type: ActionType.CHANGE_BLOCK_DATA,
+  data: block2Changed,
+});
+
+store.dispatch({
+  type: ActionType.REMOVE_BLOCK,
+  blockId: block1.id,
 });
 
 unsubscribeOnDataChange();

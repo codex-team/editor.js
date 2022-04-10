@@ -1,5 +1,3 @@
-import { OutputData } from '../../../../types';
+import { OutputBlockData } from '../../../../types';
 
-export type EditorState = {
-  data?: OutputData;
-}
+export type EditorState = Record<string, OutputBlockData>;
