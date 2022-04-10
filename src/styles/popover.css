@@ -1,16 +1,15 @@
 .ce-popover {
   position: absolute;
   opacity: 0;
-  visibility: hidden;
   will-change: opacity, transform;
   display: flex;
   flex-direction: column;
   padding: 4px;
   min-width: 200px;
-  max-height: 284px;
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
+  max-height: 0;
 
   @apply --overlay-pane;
 
@@ -19,7 +18,7 @@
 
   &--opened {
      opacity: 1;
-     visibility: visible;
+     max-height: 284px;
      animation: panelShowing 100ms ease;
 
      @media (--mobile) {
