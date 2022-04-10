@@ -1,14 +1,7 @@
 import { EditorState } from './types/EditorState';
 import { Reducer } from './types/Reducer';
 import { Action } from './types/Action';
-
-interface Store {
-  subscribe: (listener: () => void) => (() => void);
-
-  dispatch: (action: Action) => void;
-
-  getState: () => EditorState;
-}
+import { Store } from './types/Store';
 
 /**
  * Function creates store and returns functions for use it
