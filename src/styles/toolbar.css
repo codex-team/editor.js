@@ -91,9 +91,10 @@
     cursor: pointer;
     user-select: none;
 
-    &.ce-toolbar__settings-btn-dragging {
-      opacity: 0;
-    }
+  }
+
+  &__settings-btn-dragging {
+    opacity: 0;
   }
 }
 
