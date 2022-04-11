@@ -90,9 +90,10 @@ export default class DragNDrop extends Module {
             this.Editor.BlockManager.move(targetIndex + 1);
           }
         }
+
+        return;
       }
 
-      return;
     } catch (_) {}
 
     /**
@@ -108,8 +109,6 @@ export default class DragNDrop extends Module {
 
       this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
     }
-    // const currentBlockIndex = this.Editor.BlockManager.currentBlockIndex;
-    // const nextBlock = this.Editor.BlockManager.getBlockByIndex(currentBlockIndex + 1);
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
   }
