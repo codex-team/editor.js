@@ -148,12 +148,13 @@ export default class BlockEvents extends Module {
   public dragOver(event: DragEvent): void {
     const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
-    const bbox = block.holder.getBoundingClientRect()
+    const bbox = block.holder.getBoundingClientRect();
 
-    if(bbox.top + bbox.height / 2 >= event.clientY)
-      block.dropTargetPlacement = 'top'
-    else
-      block.dropTargetPlacement = 'bottom'
+    if (bbox.top + bbox.height / 2 >= event.clientY) {
+      block.dropTargetPlacement = 'top';
+    } else {
+      block.dropTargetPlacement = 'bottom';
+    }
 
     block.dropTarget = true;
   }

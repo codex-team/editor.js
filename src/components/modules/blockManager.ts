@@ -814,7 +814,7 @@ export default class BlockManager extends Module {
     });
 
     this.readOnlyMutableListeners.on(block.holder, 'dragstart', (event: DragEvent) => {
-      event.preventDefault()
+      event.preventDefault();
     });
 
     this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {

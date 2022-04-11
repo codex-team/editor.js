@@ -527,9 +527,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {'top' | 'bottom'}
    */
   public get dropTargetPlacement(): 'top' | 'bottom' {
-    if(this.holder.classList.contains(Block.CSS.dropTargetTop))
-      return 'top'
-    return 'bottom'
+    if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
+      return 'top';
+    }
+
+    return 'bottom';
   }
 
   /**

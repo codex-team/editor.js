@@ -1,5 +1,3 @@
-import SelectionUtils from '../selection';
-
 import Module from '../__module';
 /**
  *
@@ -72,21 +70,21 @@ export default class DragNDrop extends Module {
     });
 
     try {
-      const dataTransferMessage = JSON.parse(dropEvent.dataTransfer.getData('text/plain'))
+      const dataTransferMessage = JSON.parse(dropEvent.dataTransfer.getData('text/plain'));
 
-      if('droppingBlock' in dataTransferMessage) {
+      if ('droppingBlock' in dataTransferMessage) {
         const currentIndex = this.Editor.BlockManager.currentBlockIndex;
         const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
         const targetIndex = this.Editor.BlockManager.blocks.findIndex(b => b === targetBlock);
 
-        if(targetBlock.dropTargetPlacement === 'top') {
-          if(targetIndex > currentIndex) {
+        if (targetBlock.dropTargetPlacement === 'top') {
+          if (targetIndex > currentIndex) {
             this.Editor.BlockManager.move(targetIndex - 1);
           } else {
             this.Editor.BlockManager.move(targetIndex);
           }
-        } else if(targetBlock.dropTargetPlacement === 'bottom') {
-          if(targetIndex > currentIndex) {
+        } else if (targetBlock.dropTargetPlacement === 'bottom') {
+          if (targetIndex > currentIndex) {
             this.Editor.BlockManager.move(targetIndex);
           } else {
             this.Editor.BlockManager.move(targetIndex + 1);
@@ -95,7 +93,7 @@ export default class DragNDrop extends Module {
       }
 
       return;
-    } catch(_) {}
+    } catch (_) {}
 
     /**
      * Try to set current block by drop target.
