@@ -145,6 +145,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       // Actions Zone
       blockActionsButtons: 'ce-toolbar__actions-buttons',
       settingsToggler: 'ce-toolbar__settings-btn',
+      settingsTogglerDragging: 'ce-toolbar__settings-btn-dragging',
     };
   }
 
@@ -382,7 +383,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Settings Panel
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
-    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
+    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler, { 'draggable': true });
     const settingsIcon = $.svg('dots', 16, 16);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
@@ -466,12 +467,30 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Enable bindings
    */
   private enableModuleBindings(): void {
+
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', (event: DragEvent) => {
+      this.Editor.BlockManager.currentBlock = this.hoveredBlock;
+
+      event.dataTransfer.setData('text/plain', JSON.stringify({
+        droppingBlock: true,
+        blockIndex: this.Editor.BlockManager.currentBlockIndex
+      }))
+
+      this.nodes.settingsToggler.classList.add(this.CSS.settingsTogglerDragging);
+
+      this.tooltip.hide(true);
+    }, true);
+
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', (event: DragEvent) => {
+      this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerDragging);
+    }, true);
+
     /**
      * Settings toggler
      *
-     * mousedown is used because on click selection is lost in Safari and FF
+     * mouseup is used because on click selection is lost in Safari and FF
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mouseup', (e) => {
       /**
        * Stop propagation to prevent block selection clearance
        *

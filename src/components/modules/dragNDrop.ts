@@ -6,14 +6,6 @@ import Module from '../__module';
  */
 export default class DragNDrop extends Module {
   /**
-   * If drag has been started at editor, we save it
-   *
-   * @type {boolean}
-   * @private
-   */
-  private isStartedAtEditor = false;
-
-  /**
    * Toggle read-only state
    *
    * if state is true:
@@ -79,11 +71,31 @@ export default class DragNDrop extends Module {
       block.dropTarget = false;
     });
 
-    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
-      document.execCommand('delete');
-    }
+    try {
+      const dataTransferMessage = JSON.parse(dropEvent.dataTransfer.getData('text/plain'))
 
-    this.isStartedAtEditor = false;
+      if('droppingBlock' in dataTransferMessage) {
+        const currentIndex = this.Editor.BlockManager.currentBlockIndex;
+        const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+        const targetIndex = this.Editor.BlockManager.blocks.findIndex(b => b === targetBlock);
+
+        if(targetBlock.dropTargetPlacement === 'top') {
+          if(targetIndex > currentIndex) {
+            this.Editor.BlockManager.move(targetIndex - 1);
+          } else {
+            this.Editor.BlockManager.move(targetIndex);
+          }
+        } else if(targetBlock.dropTargetPlacement === 'bottom') {
+          if(targetIndex > currentIndex) {
+            this.Editor.BlockManager.move(targetIndex);
+          } else {
+            this.Editor.BlockManager.move(targetIndex + 1);
+          }
+        }
+      }
+
+      return;
+    } catch(_) {}
 
     /**
      * Try to set current block by drop target.
@@ -98,6 +110,8 @@ export default class DragNDrop extends Module {
 
       this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
     }
+    // const currentBlockIndex = this.Editor.BlockManager.currentBlockIndex;
+    // const nextBlock = this.Editor.BlockManager.getBlockByIndex(currentBlockIndex + 1);
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
   }
@@ -106,10 +120,6 @@ export default class DragNDrop extends Module {
    * Handle drag start event
    */
   private processDragStart(): void {
-    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
-      this.isStartedAtEditor = true;
-    }
-
     this.Editor.InlineToolbar.close();
   }
 

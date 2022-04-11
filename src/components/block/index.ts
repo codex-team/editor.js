@@ -106,6 +106,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
+      dropTargetTop: 'ce-block--drop-target-top',
+      dropTargetBottom: 'ce-block--drop-target-bottom',
     };
   }
 
@@ -507,6 +509,27 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
+   * Toggle drop target placement state
+   *
+   * @param {'top' | 'bottom'} state - 'top' or 'bottom' depending on the current class
+   */
+  public set dropTargetPlacement(state) {
+    this.holder.classList.toggle(Block.CSS.dropTargetTop, state === 'top');
+    this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === 'bottom');
+  }
+
+  /**
+   * Return Block's dropTargetPlacement state
+   *
+   * @returns {'top' | 'bottom'}
+   */
+  public get dropTargetPlacement(): 'top' | 'bottom' {
+    if(this.holder.classList.contains(Block.CSS.dropTargetTop))
+      return 'top'
+    return 'bottom'
   }
 
   /**
