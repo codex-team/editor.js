@@ -65,10 +65,6 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
-    BlockManager.blocks.forEach((block) => {
-      block.dropTarget = false;
-    });
-
     try {
       const dataTransferMessage = JSON.parse(dropEvent.dataTransfer.getData('text/plain'));
 
@@ -91,10 +87,20 @@ export default class DragNDrop extends Module {
           }
         }
 
+        //this has to be cleaned after we drop the block
+        BlockManager.blocks.forEach((block) => {
+          block.dropTarget = false;
+        });
+
         return;
       }
 
     } catch (_) {}
+
+    //this has to be cleaned after the try/catch
+    BlockManager.blocks.forEach((block) => {
+      block.dropTarget = false;
+    });
 
     /**
      * Try to set current block by drop target.

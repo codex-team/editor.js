@@ -39,6 +39,7 @@
       position: absolute;
       width: 100%;
       border-bottom: 5px solid #d4ecff;
+      pointer-events: none;
     }
   }
 

@@ -509,6 +509,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
+
+    if(!state) {
+      this.holder.classList.remove(Block.CSS.dropTargetTop);
+      this.holder.classList.remove(Block.CSS.dropTargetBottom);
+    }
   }
 
   /**
@@ -529,9 +534,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public get dropTargetPlacement(): 'top' | 'bottom' {
     if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
       return 'top';
+    } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
+      return 'bottom';
     }
-
-    return 'bottom';
+    return undefined
   }
 
   /**
