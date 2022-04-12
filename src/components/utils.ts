@@ -761,4 +761,27 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
   }
 
   return descriptor;
-};
+}
+
+/**
+ * Deep copy function.
+ *
+ * @param target - Target value to be copied.
+ */
+export function deepCopy<T extends Record<keyof T, unknown>>(target: T): T {
+  if (target === null) {
+    return target;
+  }
+
+  if (typeof target === 'object' && target !== {}) {
+    const cp = { ...target };
+
+    Object.keys(cp).forEach(k => {
+      cp[k] = deepCopy(cp[k]);
+    });
+
+    return cp;
+  }
+
+  return target;
+}

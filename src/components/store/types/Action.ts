@@ -1,20 +1,20 @@
 import { ActionType } from './ActionType';
 import { OutputBlockData } from '../../../../types';
 
-type CreateBlockAction = {
+interface CreateBlockAction {
   type: ActionType.CREATE_BLOCK;
   data: OutputBlockData;
 }
 
-type ChangeBlockDataAction = {
+interface ChangeBlockDataAction {
   type: ActionType.CHANGE_BLOCK_DATA;
   data: OutputBlockData;
 }
 
-type RemoveBlockAction = {
+interface RemoveBlockAction {
   type: ActionType.REMOVE_BLOCK;
   blockId: string;
-};
+}
 
 /**
  * Available action types

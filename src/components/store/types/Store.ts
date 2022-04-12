@@ -4,7 +4,7 @@ import { EditorState } from './EditorState';
 /**
  * Store type contains functions for use it
  */
-export type Store = {
+export interface Store {
   /**
    * Function for subscribing on state changes
    *
