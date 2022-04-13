@@ -340,7 +340,9 @@ export default class SelectionUtils {
       }
 
       element.focus();
-      element.selectionStart = element.selectionEnd = offset;
+      if ($.supportsSelection(element)) {
+        element.selectionStart = element.selectionEnd = offset;
+      }
 
       return element.getBoundingClientRect();
     }
