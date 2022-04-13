@@ -634,4 +634,28 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+
+  /**
+   * Returns true if element supports selection
+   *
+   * @param {*} target - HTML element or string
+   *
+   * @returns {boolean}
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public static supportsSelection(target: any): boolean {
+    const selectionSupportedTypes = [
+      'text',
+      'search',
+      'tel',
+      'url',
+      'password',
+    ];
+
+    if (Dom.isNativeInput(target)) {
+      return selectionSupportedTypes.includes(target.type) || target.tagName === 'textarea';
+    }
+
+    return false;
+  }
 }
