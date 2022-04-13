@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import Delimiter from '@editorjs/delimiter';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
@@ -21,6 +22,32 @@ describe('onChange callback', () => {
       },
       onChange: (api, event): void => {
         console.log('something changed', api, event);
+      },
+      data: blocks ? {
+        blocks,
+      } : null,
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+
+    cy.createEditor(config).as('editorInstance');
+  }
+
+  /**
+   * Creates Editor instance with save inside the onChange event.
+   *
+   * @param blocks - list of blocks to prefill the editor
+   */
+  function createEditorWithSave(blocks = null): void {
+    const config = {
+      tools: {
+        header: Header,
+        code: Code,
+        delimiter: Delimiter,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', api, event);
+        api.saver.save();
       },
       data: blocks ? {
         blocks,
@@ -88,6 +115,53 @@ describe('onChange callback', () => {
       type: BlockMutationType.Changed,
       detail: {
         index: 0,
+      },
+    }));
+  });
+
+  it('should fire onChange callback on block insertion with save inside onChange', () => {
+    createEditorWithSave();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-toolbar__plus')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('li.ce-toolbox__button[data-tool=delimiter]')
+      .click();
+
+    cy.get('@onChange').should('be.calledThrice');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Removed,
+      detail: {
+        index: 0,
+        target: {
+          name: 'paragraph',
+        },
+      },
+    }));
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        index: 0,
+        target: {
+          name: 'delimiter',
+        },
+      },
+    }));
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        index: 1,
+        target: {
+          name: 'paragraph',
+        },
       },
     }));
   });
