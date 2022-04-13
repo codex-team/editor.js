@@ -65,37 +65,32 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
-    try {
-      const dataTransferMessage = JSON.parse(dropEvent.dataTransfer.getData('text/plain'));
+    if (BlockManager.currentDraggingBlock) {
+      const currentIndex = this.Editor.BlockManager.currentDraggingBlockIndex;
+      const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+      const targetIndex = this.Editor.BlockManager.blocks.findIndex(block => block === targetBlock);
 
-      if ('droppingBlock' in dataTransferMessage) {
-        const currentIndex = this.Editor.BlockManager.currentBlockIndex;
-        const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
-        const targetIndex = this.Editor.BlockManager.blocks.findIndex(b => b === targetBlock);
-
-        if (targetBlock.dropTargetPlacement === 'top') {
-          if (targetIndex > currentIndex) {
-            this.Editor.BlockManager.move(targetIndex - 1);
-          } else {
-            this.Editor.BlockManager.move(targetIndex);
-          }
-        } else if (targetBlock.dropTargetPlacement === 'bottom') {
-          if (targetIndex > currentIndex) {
-            this.Editor.BlockManager.move(targetIndex);
-          } else {
-            this.Editor.BlockManager.move(targetIndex + 1);
-          }
+      if (targetBlock.dropTargetPlacement === 'top') {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex - 1);
+        } else {
+          this.Editor.BlockManager.move(targetIndex);
         }
-
-        //this has to be cleaned after we drop the block
-        BlockManager.blocks.forEach((block) => {
-          block.dropTarget = false;
-        });
-
-        return;
+      } else if (targetBlock.dropTargetPlacement === 'bottom') {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex);
+        } else {
+          this.Editor.BlockManager.move(targetIndex + 1);
+        }
       }
 
-    } catch (_) {}
+      //this has to be cleaned after we drop the block
+      BlockManager.blocks.forEach((block) => {
+        block.dropTarget = false;
+      });
+
+      return;
+    }
 
     //this has to be cleaned after the try/catch
     BlockManager.blocks.forEach((block) => {

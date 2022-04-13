@@ -49,6 +49,24 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Returns current Dragging Block index
+   *
+   * @returns {number}
+   */
+   public get currentDraggingBlockIndex(): number {
+    return this._currentDraggingBlockIndex;
+  }
+
+  /**
+   * Set current Dragging Block index and fire Block lifecycle callbacks
+   *
+   * @param {number} newIndex - index of Block to set as current
+   */
+  public set currentDraggingBlockIndex(newIndex: number) {
+    this._currentDraggingBlockIndex = newIndex;
+  }
+
+  /**
    * returns first Block
    *
    * @returns {Block}
@@ -82,6 +100,24 @@ export default class BlockManager extends Module {
    */
   public set currentBlock(block: Block) {
     this.currentBlockIndex = this.getBlockIndex(block);
+  }
+
+  /**
+   * Get current Dragging Block instance
+   *
+   * @returns {Block}
+   */
+   public get currentDraggingBlock(): Block {
+    return this._blocks[this.currentDraggingBlockIndex];
+  }
+
+  /**
+   * Set passed Block as a current
+   *
+   * @param block - block to set as the current Dragging Block
+   */
+  public set currentDraggingBlock(block: Block) {
+    this.currentDraggingBlockIndex = this.getBlockIndex(block);
   }
 
   /**
@@ -160,6 +196,13 @@ export default class BlockManager extends Module {
    * @type {number}
    */
   private _currentBlockIndex = -1;
+
+  /**
+   * Index of current Dragging block
+   *
+   * @type {number}
+   */
+   private _currentDraggingBlockIndex = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
