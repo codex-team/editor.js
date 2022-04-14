@@ -3,7 +3,7 @@ import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
-import { isMobile } from '../utils';
+import { isMobile, keyCodes } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -347,6 +347,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper = new Flipper({
       items: tools,
       focusedItemClass: Popover.CSS.itemFocused,
+      allowedKeys: [
+        keyCodes.TAB,
+        keyCodes.UP,
+        keyCodes.DOWN,
+        keyCodes.ENTER,
+      ],
     });
   }
 }
