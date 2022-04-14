@@ -68,8 +68,13 @@ export default class DragNDrop extends Module {
     if (BlockManager.currentDraggingBlock) {
       const currentIndex = this.Editor.BlockManager.currentDraggingBlockIndex;
       const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
-      const targetIndex = this.Editor.BlockManager.blocks.findIndex(block => block === targetBlock);
 
+      if(!targetBlock) {
+        //This means that we are trying to drop a block without references.
+        return;
+      }
+
+      const targetIndex = this.Editor.BlockManager.blocks.findIndex(block => block === targetBlock);
       if (targetBlock.dropTargetPlacement === 'top') {
         if (targetIndex > currentIndex) {
           this.Editor.BlockManager.move(targetIndex - 1);
