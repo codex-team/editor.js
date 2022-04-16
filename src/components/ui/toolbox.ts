@@ -145,9 +145,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       }),
     });
 
-    this.popover.on(PopoverEvent.OverlayClicked, () => {
-      this.close();
-    });
+    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 
     /**
      * Enable tools shortcuts
@@ -180,6 +178,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.api.listeners.offById(this.clickListenerId);
 
     this.removeAllShortcuts();
+    this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
   }
 
   /**
@@ -224,6 +223,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     } else {
       this.close();
     }
+  }
+
+  /**
+   * Handles overlay click
+   */
+  private onOverlayClicked = (): void => {
+    this.close();
   }
 
   /**
