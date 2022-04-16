@@ -216,7 +216,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     /**
      * Open popover top if there is not enought available space below it
      */
-    if (!this.canPopoverOpenBottom) {
+    if (!this.shouldOpenPopoverBottom) {
       this.nodes.toolbox.style.setProperty('--popover-height', this.popoverHeightCached + 'px');
       this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
     }
@@ -248,15 +248,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   * Checks if there is enough available space to open popover downwards.
+   * Checks if there popover should be opened downwards.
+   * It happens in case there is enough space below or not enough space above
    */
-  private get canPopoverOpenBottom(): boolean {
+  private get shouldOpenPopoverBottom(): boolean {
     const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
-    const popoverBottomEdge = toolboxRect.top + this.popoverHeightCached;
+    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
+    const popoverPotentialBottomEdge = toolboxRect.top + this.popoverHeightCached;
+    const popoverPotentialTopEdge = toolboxRect.top - this.popoverHeightCached;
+    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
 
-    debugger;
-
-    return popoverBottomEdge <= window.innerHeight;
+    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
   }
 
   /**
