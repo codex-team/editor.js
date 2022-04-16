@@ -217,6 +217,25 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
+   * Helps to calculate height of popover while it is not displayed on screen.
+   * Renders invisible clone of popover to get actual height.
+   */
+  public calculateHeight(): number {
+    let height = 0;
+    const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;
+
+    popoverClone.style.visibility = 'hidden';
+    popoverClone.style.position = 'absolute';
+    popoverClone.style.top = '-1000px';
+    popoverClone.classList.add(Popover.CSS.popoverOpened);
+    document.body.appendChild(popoverClone);
+    height = popoverClone.offsetHeight;
+    popoverClone.remove();
+
+    return height;
+  }
+
+  /**
    * Makes the UI
    */
   private render(): void {

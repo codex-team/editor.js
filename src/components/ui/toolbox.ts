@@ -100,6 +100,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private static get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
+      toolboxOpenedTop: 'ce-toolbox--opened-top',
     };
   }
 
@@ -107,6 +108,12 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Id of listener added used to remove it on destroy()
    */
   private clickListenerId: string = null;
+
+  /**
+   * Stores popover height.
+   * Allows not to recalculate height on each popover opening
+   */
+  private popoverHeightCached: number | null = null;
 
   /**
    * Toolbox constructor
@@ -199,8 +206,22 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       return;
     }
 
-    this.popover.show();
+    /**
+     * Calculate popover height on first open
+     */
+    if (this.popoverHeightCached === null) {
+      this.popoverHeightCached = this.popover.calculateHeight();
+    }
 
+    /**
+     * Open popover top if there is not enought available space below it
+     */
+    if (!this.canPopoverOpenBottom) {
+      this.nodes.toolbox.style.setProperty('--popover-height', this.popoverHeightCached + 'px');
+      this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
+    }
+
+    this.popover.show();
     this.opened = true;
     this.emit(ToolboxEvent.Opened);
   }
@@ -210,8 +231,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public close(): void {
     this.popover.hide();
-
     this.opened = false;
+    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpenedTop);
     this.emit(ToolboxEvent.Closed);
   }
 
@@ -224,6 +245,18 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     } else {
       this.close();
     }
+  }
+
+  /**
+   * Checks if there is enough available space to open popover downwards.
+   */
+  private get canPopoverOpenBottom(): boolean {
+    const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
+    const popoverBottomEdge = toolboxRect.top + this.popoverHeightCached;
+
+    debugger;
+
+    return popoverBottomEdge <= window.innerHeight;
   }
 
   /**
