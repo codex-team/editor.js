@@ -303,7 +303,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private createItem(item: PopoverItem): HTMLElement {
     const el = Dom.make('div', Popover.CSS.item);
 
-    el.setAttribute('data-item-name', item.name);
+    el.dataset.itemName = item.name;
     const label = Dom.make('div', Popover.CSS.itemLabel, {
       innerHTML: item.label,
     });
