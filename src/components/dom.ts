@@ -634,4 +634,19 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+
+  /**
+   * read mutationFree from parent
+   * @param el
+   */
+  public static isMutationFree(el: HTMLElement): boolean {
+    let temp = el;
+    while (temp) {
+      if (temp.dataset && temp.dataset.mutationFree === 'true') {
+        return true;
+      }
+      temp = temp.parentElement;
+    }
+    return false;
+  }
 }

@@ -208,7 +208,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         removedNodes,
       }) => {
         return [...Array.from(addedNodes), ...Array.from(removedNodes)]
-          .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
+          .some(node => $.isElement(node) && $.isMutationFree((node as HTMLElement)));
       });
 
     /**
