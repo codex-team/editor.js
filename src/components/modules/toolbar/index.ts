@@ -510,7 +510,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *
      * @see https://github.com/codex-team/editor.js/issues/1972
      */
-    if (!_.isMobile()) {
+    if (!_.isMobileScreen()) {
       /**
        * Subscribe to the 'block-hovered' event
        */

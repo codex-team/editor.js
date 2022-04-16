@@ -3,7 +3,7 @@ import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
-import { isMobile, keyCodes } from '../utils';
+import { isMobileScreen, keyCodes } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -184,7 +184,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       });
     }
 
-    if (isMobile()) {
+    if (isMobileScreen()) {
       document.documentElement.classList.add(Popover.CSS.documentScrollLocked);
     }
   }
@@ -197,7 +197,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
 
-    if (isMobile()) {
+    if (isMobileScreen()) {
       document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
     }
   }
