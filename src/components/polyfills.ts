@@ -97,16 +97,22 @@ if (!Element.prototype.prepend) {
   };
 }
 
+interface Element {
+  /**
+   * Scrolls the current element into the visible area of the browser window
+   *
+   * @param centerIfNeeded - true, if the element should be aligned so it is centered within the visible area of the scrollable ancestor.
+   */
+  scrollIntoViewIfNeeded(centerIfNeeded?: boolean): void;
+}
+
 /**
  * ScrollIntoViewIfNeeded polyfill by KilianSSL (forked from hsablonniere)
  *
  * @see {@link https://gist.github.com/KilianSSL/774297b76378566588f02538631c3137}
+ * @param centerIfNeeded - true, if the element should be aligned so it is centered within the visible area of the scrollable ancestor.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 if (!Element.prototype.scrollIntoViewIfNeeded) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
   Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded): void {
     centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
 

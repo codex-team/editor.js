@@ -256,8 +256,6 @@ export default class Flipper {
    */
   private flipCallback(): void {
     if (this.iterator.currentItem) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       this.iterator.currentItem.scrollIntoViewIfNeeded();
     }
   }

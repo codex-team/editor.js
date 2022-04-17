@@ -506,27 +506,25 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     /**
-     * Subscribe to the 'block-hovered' event
+     * Subscribe to the 'block-hovered' event if currenct view is not mobile
+     *
+     * @see https://github.com/codex-team/editor.js/issues/1972
      */
-    this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+    if (!_.isMobileScreen()) {
       /**
-       * Do not move Toolbar by hover on mobile view
-       *
-       * @see https://github.com/codex-team/editor.js/issues/1972
+       * Subscribe to the 'block-hovered' event
        */
-      if (_.isMobile()) {
-        return;
-      }
+      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+        /**
+         * Do not move toolbar if Block Settings or Toolbox opened
+         */
+        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
+          return;
+        }
 
-      /**
-       * Do not move toolbar if Block Settings or Toolbox opened
-       */
-      if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
-        return;
-      }
-
-      this.moveAndOpen(data.block);
-    });
+        this.moveAndOpen(data.block);
+      });
+    }
   }
 
   /**
