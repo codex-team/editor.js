@@ -1,8 +1,14 @@
 .ce-toolbox {
+  --gap: 8px;
+
   @media (--not-mobile){
     position: absolute;
-    top: var(--toolbar-buttons-size);
+    top: calc(var(--toolbox-buttons-size) + var(--gap));
     left: 0;
+
+    &--opened-top {
+      top: calc(-1 * (var(--gap) + var(--popover-height)));
+    }
   }
 }
 
