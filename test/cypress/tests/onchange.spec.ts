@@ -131,7 +131,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('li.ce-toolbox__button[data-tool=delimiter]')
+      .get('div.ce-popover__item[data-item-name=delimiter]')
       .click();
 
     cy.get('@onChange').should('be.calledThrice');
