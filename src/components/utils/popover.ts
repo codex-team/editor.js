@@ -3,7 +3,7 @@ import Listeners from './listeners';
 import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
-import { isMobile, keyCodes } from '../utils';
+import { isMobile, keyCodes, cacheable } from '../utils';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -220,6 +220,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Helps to calculate height of popover while it is not displayed on screen.
    * Renders invisible clone of popover to get actual height.
    */
+  @cacheable
   public calculateHeight(): number {
     let height = 0;
     const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;

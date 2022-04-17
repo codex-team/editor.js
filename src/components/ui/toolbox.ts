@@ -110,12 +110,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private clickListenerId: string = null;
 
   /**
-   * Stores popover height.
-   * Allows not to recalculate height on each popover opening
-   */
-  private popoverHeightCached: number | null = null;
-
-  /**
    * Toolbox constructor
    *
    * @param options - available parameters
@@ -207,17 +201,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     }
 
     /**
-     * Calculate popover height on first open
-     */
-    if (this.popoverHeightCached === null) {
-      this.popoverHeightCached = this.popover.calculateHeight();
-    }
-
-    /**
      * Open popover top if there is not enought available space below it
      */
     if (!this.shouldOpenPopoverBottom) {
-      this.nodes.toolbox.style.setProperty('--popover-height', this.popoverHeightCached + 'px');
+      this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');
       this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
     }
 
@@ -254,8 +241,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private get shouldOpenPopoverBottom(): boolean {
     const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
     const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
-    const popoverPotentialBottomEdge = toolboxRect.top + this.popoverHeightCached;
-    const popoverPotentialTopEdge = toolboxRect.top - this.popoverHeightCached;
+    const popoverHeight = this.popover.calculateHeight();
+    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
+    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
     const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
 
     return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
