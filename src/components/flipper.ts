@@ -206,7 +206,7 @@ export default class Flipper {
    * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
-    return this.activated && this.allowedKeys.indexOf(event.keyCode) !== -1;
+    return this.activated && this.allowedKeys.includes(event.keyCode);
   }
 
   /**

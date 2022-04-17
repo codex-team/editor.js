@@ -318,7 +318,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     if (item.secondaryLabel) {
       el.appendChild(Dom.make('div', Popover.CSS.itemSecondaryLabel, {
-        innerHTML: item.secondaryLabel,
+        textContent: item.secondaryLabel,
       }));
     }
 
