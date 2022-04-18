@@ -193,10 +193,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Hides the Popover
    */
   public hide(): void {
+    this.search.clear();
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
-    this.search.clear();
 
     if (isMobileScreen()) {
       document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
