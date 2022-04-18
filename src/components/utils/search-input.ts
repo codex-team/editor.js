@@ -68,6 +68,15 @@ export default class SearchInput {
   }
 
   /**
+   * Clears search query and results
+   */
+  public clear(): void {
+    this.input.value = '';
+    this.searchQuery = '';
+    this.onSearch(this.foundItems);
+  }
+
+  /**
    * Clears memory
    */
   public destroy(): void {
