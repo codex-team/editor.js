@@ -8,13 +8,8 @@ import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
 
 /**
- * @todo check small tools number — there should not be a scroll
- * @todo hide toolbar after some toolbox item clicked (and the new block inserted)
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
  * @todo use i18n for search labels
- * @todo clear filter on every toolbox opening
- * @todo arrows inside the search field
- *
  */
 
 /**
@@ -263,6 +258,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     return Array
       .from(this.tools.values())
       .filter(tool => {
+        debugger;
         const toolToolboxSettings = tool.toolbox;
 
         /**
