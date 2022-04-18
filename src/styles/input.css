@@ -1,7 +1,6 @@
-img, video, audio, canvas, input,
-select, button, progress { max-width: 100%; }
-
 .cdx-search-field {
+  --icon-margin-right: 10px;
+
   background: rgba(232,232,235,0.49);
   border: 1px solid rgba(226,226,229,0.20);
   border-radius: 6px;
@@ -16,7 +15,7 @@ select, button, progress { max-width: 100%; }
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 10px;
+    margin-right: var(--icon-margin-right);
 
     .icon {
       width: 14px;
@@ -37,6 +36,7 @@ select, button, progress { max-width: 100%; }
     margin: 0;
     padding: 0;
     line-height: 22px;
+    min-width: calc(100% - var(--toolbox-buttons-size) - var(--icon-margin-right));
 
     &::placeholder {
        color: var(--grayText);
