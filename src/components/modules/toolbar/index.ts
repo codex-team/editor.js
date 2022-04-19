@@ -139,7 +139,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       plusButton: 'ce-toolbar__plus',
       plusButtonShortcut: 'ce-toolbar__plus-shortcut',
-      plusButtonHidden: 'ce-toolbar__plus--hidden',
       settingsToggler: 'ce-toolbar__settings-btn',
       settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
     };
@@ -152,21 +151,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
-  }
-
-  /**
-   * Plus Button public methods
-   */
-  public get plusButton(): { hide: () => void; show: () => void } {
-    return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: (): void => {
-        if (this.toolboxInstance.isEmpty) {
-          return;
-        }
-        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      },
-    };
   }
 
   /**
@@ -283,17 +267,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Move Toolbar to the Top coordinate of Block
      */
     this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
-
-    /**
-     * Plus Button should be shown only for __empty__ __default__ block
-     *
-     * @todo remove methods for hiding/showing the Plus Button as well
-     */
-    // if (block.tool.isDefault && block.isEmpty) {
-    //   this.plusButton.show();
-    // } else {
-    //   this.plusButton.hide();
-    // }
 
     /**
      * Do not show Block Tunes Toggler near single and empty block

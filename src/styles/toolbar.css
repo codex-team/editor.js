@@ -28,10 +28,6 @@
       margin-top: 5px;
     }
 
-    &--hidden {
-      display: none;
-    }
-
     @media (--mobile){
       @apply --overlay-pane;
       position: static;
