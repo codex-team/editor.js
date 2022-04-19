@@ -33,7 +33,6 @@ export default class Saver extends Module {
         chainData = [];
 
     try {
-
       blocks.forEach((block: Block) => {
         chainData.push(this.getSavedData(block));
       });
@@ -46,7 +45,7 @@ export default class Saver extends Module {
       return this.makeOutput(sanitizedData);
     } catch (e) {
       _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
-    } 
+    }
   }
 
   /**

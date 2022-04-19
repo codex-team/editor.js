@@ -1,6 +1,5 @@
 import Dom from '../dom';
 import Listeners from './listeners';
-import $ from '../dom';
 
 /**
  * Item that could be searched
@@ -91,7 +90,7 @@ export default class SearchInput {
   private render(placeholder: string): void {
     this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
     const iconWrapper = Dom.make('div', SearchInput.CSS.icon);
-    const icon = $.svg('search', 16, 16);
+    const icon = Dom.svg('search', 16, 16);
 
     this.input = Dom.make('input', SearchInput.CSS.input, {
       placeholder,

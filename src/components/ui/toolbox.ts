@@ -258,7 +258,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     return Array
       .from(this.tools.values())
       .filter(tool => {
-        debugger;
         const toolToolboxSettings = tool.toolbox;
 
         /**
