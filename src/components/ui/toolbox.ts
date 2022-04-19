@@ -31,7 +31,10 @@ export enum ToolboxEvent {
   BlockAdded = 'toolbox-block-added',
 }
 
-type toolboxTextLabelsKeys = 'filter'|'nothingFound';
+/**
+ * Available i18n dict keys that should be passed to the constructor
+ */
+type toolboxTextLabelsKeys = 'filter' | 'nothingFound';
 
 /**
  * Toolbox
@@ -194,7 +197,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     }
 
     /**
-     * Open popover top if there is not enought available space below it
+     * Open the popover above the button
+     * if there is not enough available space below it
      */
     if (!this.shouldOpenPopoverBottom) {
       this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');

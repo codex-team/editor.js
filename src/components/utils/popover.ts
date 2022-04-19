@@ -92,10 +92,22 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Pass true to enable local search field
    */
-  private searchable: boolean;
+  private readonly searchable: boolean;
+
+  /**
+   * Instance of the Search Input
+   */
   private search: SearchInput;
-  private filterLabel: string;
-  private nothingFoundLabel: string;
+
+  /**
+   * Label for the 'Filter' placeholder
+   */
+  private readonly filterLabel: string;
+
+  /**
+   * Label for the 'Nothing found' message
+   */
+  private readonly nothingFoundLabel: string;
 
   /**
    * Style classes
