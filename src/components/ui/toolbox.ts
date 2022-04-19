@@ -9,7 +9,6 @@ import Popover, { PopoverEvent } from '../utils/popover';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
- * @todo use i18n for search labels
  */
 
 /**
