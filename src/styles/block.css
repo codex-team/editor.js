@@ -9,7 +9,8 @@
 }
 
 .ce-block {
-  animation: fade-in 300ms ease forwards;
+  animation: fade-in 300ms ease;
+  animation-fill-mode: initial;
 
   &:first-of-type {
     margin-top: 0;
