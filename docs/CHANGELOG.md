@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.23.4
+
+- `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
+
 ### 2.23.3
 
 - `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
