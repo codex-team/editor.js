@@ -4,7 +4,7 @@
   background: rgba(232,232,235,0.49);
   border: 1px solid rgba(226,226,229,0.20);
   border-radius: 6px;
-  padding: 3px;
+  padding: 2px;
   display: grid;
   grid-template-columns: auto auto 1fr;
   grid-template-rows: auto;

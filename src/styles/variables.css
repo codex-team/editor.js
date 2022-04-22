@@ -185,7 +185,7 @@
     grid-template-rows: auto;
     justify-content: start;
     white-space: nowrap;
-    padding: 4px;
+    padding: 3px;
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
@@ -205,6 +205,7 @@
 
     @media (--mobile) {
       font-size: 16px;
+      padding: 4px;
     }
   };
 
