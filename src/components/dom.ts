@@ -653,7 +653,7 @@ export default class Dom {
     ];
 
     if (Dom.isNativeInput(target)) {
-      return selectionSupportedTypes.includes(target.type) || target.tagName === 'textarea';
+      return selectionSupportedTypes.includes(target.type) || target.tagName === 'TEXTAREA';
     }
 
     return false;
