@@ -2,6 +2,7 @@ import { EditorState } from '../../../types/store/editorState';
 import { Reducer } from '../../../types/store/reducer';
 import { Action } from '../../../types/store/action';
 import { Store } from '../../../types/store/store';
+import * as _ from '../utils';
 
 /**
  * Function creates store and returns functions for use it
@@ -11,7 +12,7 @@ import { Store } from '../../../types/store/store';
  */
 function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} }): Store {
   const currentReducer = reducer;
-  let state = initialState;
+  let state = _.deepCopy(initialState);
   const currentListeners = [];
 
   /**
