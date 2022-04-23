@@ -1,5 +1,5 @@
-import { ActionType } from '../../../types/store/actionType';
 import store from './index';
+import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
  * Handle changes with previous and current states
@@ -53,22 +53,22 @@ const block2Changed = {
 };
 
 store.dispatch({
-  type: ActionType.CREATE_BLOCK,
+  type: BlockMutationType.Added,
   data: block1,
 });
 
 store.dispatch({
-  type: ActionType.CREATE_BLOCK,
+  type: BlockMutationType.Added,
   data: block2,
 });
 
 store.dispatch({
-  type: ActionType.CHANGE_BLOCK_DATA,
+  type: BlockMutationType.Changed,
   data: block2Changed,
 });
 
 store.dispatch({
-  type: ActionType.REMOVE_BLOCK,
+  type: BlockMutationType.Removed,
   blockId: block1.id,
 });
 
