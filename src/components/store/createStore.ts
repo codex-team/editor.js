@@ -1,7 +1,7 @@
-import { EditorState } from '../../../types/store/EditorState';
-import { Reducer } from '../../../types/store/Reducer';
-import { Action } from '../../../types/store/Action';
-import { Store } from '../../../types/store/Store';
+import { EditorState } from '../../../types/store/editorState';
+import { Reducer } from '../../../types/store/reducer';
+import { Action } from '../../../types/store/action';
+import { Store } from '../../../types/store/store';
 
 /**
  * Function creates store and returns functions for use it

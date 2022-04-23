@@ -1,4 +1,4 @@
-import { ActionType } from './ActionType';
+import { ActionType } from './actionType';
 import { OutputBlockData } from '../index';
 
 interface CreateBlockAction {

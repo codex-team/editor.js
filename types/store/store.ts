@@ -1,5 +1,5 @@
-import { Action } from './Action';
-import { EditorState } from './EditorState';
+import { Action } from './action';
+import { EditorState } from './editorState';
 
 /**
  * Store type contains functions for use it

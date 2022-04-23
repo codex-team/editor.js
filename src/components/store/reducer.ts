@@ -1,6 +1,6 @@
-import { ActionType } from '../../../types/store/ActionType';
-import { EditorState } from '../../../types/store/EditorState';
-import { Action } from '../../../types/store/Action';
+import { ActionType } from '../../../types/store/actionType';
+import { EditorState } from '../../../types/store/editorState';
+import { Action } from '../../../types/store/action';
 import * as _ from '../utils';
 
 const reducer = (state: EditorState, action: Action): EditorState => {
@@ -9,11 +9,11 @@ const reducer = (state: EditorState, action: Action): EditorState => {
   switch (action.type) {
     case ActionType.CREATE_BLOCK:
     case ActionType.CHANGE_BLOCK_DATA:
-      stateCopy[action.data.id] = action.data;
+      stateCopy.blocks[action.data.id] = action.data;
       break;
 
     case ActionType.REMOVE_BLOCK:
-      delete stateCopy[action.blockId];
+      delete stateCopy.blocks[action.blockId];
       break;
   }
 

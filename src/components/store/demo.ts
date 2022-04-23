@@ -1,4 +1,4 @@
-import { ActionType } from '../../../types/store/ActionType';
+import { ActionType } from '../../../types/store/actionType';
 import store from './index';
 
 /**
