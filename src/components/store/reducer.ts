@@ -3,6 +3,13 @@ import { EditorState } from '../../../types/store/editorState';
 import { Action } from '../../../types/store/action';
 import * as _ from '../utils';
 
+/**
+ * Reducer function for Editor.js state
+ * This function applies actions in the current state
+ *
+ * @param state - previous state to apply action
+ * @param action - information about the action in the previous state
+ */
 const reducer = (state: EditorState, action: Action): EditorState => {
   const stateCopy = _.deepCopy(state);
 
