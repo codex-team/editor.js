@@ -1,5 +1,5 @@
 import { ActionType } from './ActionType';
-import { OutputBlockData } from '../../../../types';
+import { OutputBlockData } from '../index';
 
 interface CreateBlockAction {
   type: ActionType.CREATE_BLOCK;

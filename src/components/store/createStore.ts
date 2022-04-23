@@ -1,7 +1,7 @@
-import { EditorState } from './types/EditorState';
-import { Reducer } from './types/Reducer';
-import { Action } from './types/Action';
-import { Store } from './types/Store';
+import { EditorState } from '../../../types/store/EditorState';
+import { Reducer } from '../../../types/store/Reducer';
+import { Action } from '../../../types/store/Action';
+import { Store } from '../../../types/store/Store';
 
 /**
  * Function creates store and returns functions for use it
@@ -9,7 +9,7 @@ import { Store } from './types/Store';
  * @param reducer - current Editor reducer function
  * @param initialState - initial state of the store
  */
-const createStore = (reducer: Reducer, initialState: EditorState = {}): Store => {
+function createStore(reducer: Reducer, initialState: EditorState = {}): Store {
   const currentReducer = reducer;
   let state = initialState;
   const currentListeners = [];
@@ -51,6 +51,6 @@ const createStore = (reducer: Reducer, initialState: EditorState = {}): Store =>
     dispatch,
     getState,
   };
-};
+}
 
 export default createStore;

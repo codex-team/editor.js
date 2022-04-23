@@ -1,4 +1,4 @@
-import { OutputBlockData } from '../../../../types';
+import { OutputBlockData } from '../index';
 
 /**
  * Type of the state object

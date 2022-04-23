@@ -1,6 +1,6 @@
-import { ActionType } from './types/ActionType';
-import { EditorState } from './types/EditorState';
-import { Action } from './types/Action';
+import { ActionType } from '../../../types/store/ActionType';
+import { EditorState } from '../../../types/store/EditorState';
+import { Action } from '../../../types/store/Action';
 import * as _ from '../utils';
 
 const reducer = (state: EditorState, action: Action): EditorState => {
