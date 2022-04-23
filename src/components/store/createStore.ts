@@ -9,7 +9,7 @@ import { Store } from '../../../types/store/store';
  * @param reducer - current Editor reducer function
  * @param initialState - initial state of the store
  */
-function createStore(reducer: Reducer, initialState: EditorState = {}): Store {
+function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} }): Store {
   const currentReducer = reducer;
   let state = initialState;
   const currentListeners = [];
