@@ -2,8 +2,10 @@ import { OutputBlockData } from '../index';
 
 /**
  * Type of the state object
- * It contains a blocks' data by block IDs as a key
  */
 export interface EditorState {
+  /**
+   * Data of blocks in the editor
+   */
   blocks: Record<string, OutputBlockData>;
 }
