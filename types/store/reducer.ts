@@ -1,5 +1,5 @@
-import { EditorState } from './EditorState';
-import { Action } from './Action';
+import { EditorState } from './editorState';
+import { Action } from './action';
 
 /**
  * Type of reducer function

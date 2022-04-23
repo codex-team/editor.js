@@ -1,16 +1,22 @@
-import { EditorState } from './types/EditorState';
-import { Reducer } from './types/Reducer';
-import { Action } from './types/Action';
-import { Store } from './types/Store';
+import { EditorState } from '../../../types/store/editorState';
+import { Reducer } from '../../../types/store/reducer';
+import { Action } from '../../../types/store/action';
+import { Store } from '../../../types/store/store';
 import * as _ from '../utils';
 
 /**
- * Function creates store and returns functions for use it
+ * This function is an entry point to use the store in the editor
+ * It creates the store with an initial state
+ *
+ * It returns functions to use the store:
+ *  subscribe - function for subscribing to each state changes
+ *  dispatch - function for applying actions to the store
+ *  getState - function returns a current state of the store
  *
  * @param reducer - current Editor reducer function
  * @param initialState - initial state of the store
  */
-const createStore = (reducer: Reducer, initialState: EditorState = {}): Store => {
+function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} }): Store {
   const currentReducer = reducer;
   let state = _.deepCopy(initialState);
   const currentListeners = [];
@@ -52,6 +58,6 @@ const createStore = (reducer: Reducer, initialState: EditorState = {}): Store =>
     dispatch,
     getState,
   };
-};
+}
 
 export default createStore;
