@@ -5,7 +5,13 @@ import { Store } from '../../../types/store/store';
 import * as _ from '../utils';
 
 /**
- * Function creates store and returns functions for use it
+ * This function is an entry point to use the store in the editor
+ * It creates the store with an initial state
+ *
+ * It returns functions to use the store:
+ *  subscribe - function for subscribing to each state changes
+ *  dispatch - function for applying actions to the store
+ *  getState - function returns a current state of the store
  *
  * @param reducer - current Editor reducer function
  * @param initialState - initial state of the store
