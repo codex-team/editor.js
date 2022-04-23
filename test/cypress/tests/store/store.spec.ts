@@ -1,7 +1,7 @@
 import createStore from '../../../../src/components/store/createStore';
-import { EditorState } from '../../../../src/components/store/types/EditorState';
+import { EditorState } from '../../../../types/store/editorState';
 import reducer from '../../../../src/components/store/reducer';
-import { ActionType } from '../../../../src/components/store/types/ActionType';
+import { BlockMutationType } from '../../../../types/events/block/mutation-type';
 
 describe('State manager', () => {
   it('should create the store without initial state', () => {
@@ -9,18 +9,20 @@ describe('State manager', () => {
 
     const store = createStore(emptyReducer);
 
-    expect(store.getState()).to.deep.equal({});
+    expect(store.getState()).to.deep.equal({ blocks: {} });
   });
 
   it('should create the store with initial state', () => {
     const emptyReducer = (state: EditorState): EditorState => state;
     const initialState = {
-      '3JPEqh8_Wc': {
-        id: '3JPEqh8_Wc',
-        type: 'header',
-        data: {
-          text: 'Editor.js',
-          level: 2,
+      blocks: {
+        '3JPEqh8_Wc': {
+          id: '3JPEqh8_Wc',
+          type: 'header',
+          data: {
+            text: 'Editor.js',
+            level: 2,
+          },
         },
       },
     };
@@ -42,11 +44,13 @@ describe('State manager', () => {
         },
       };
       const expectedResult = {
-        '3JPEqh8_Wc': block,
+        blocks: {
+          '3JPEqh8_Wc': block,
+        },
       };
 
       store.dispatch({
-        type: ActionType.CREATE_BLOCK,
+        type: BlockMutationType.Added,
         data: block,
       });
 
