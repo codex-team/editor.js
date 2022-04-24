@@ -1,5 +1,9 @@
+/**
+ * Updating values in media queries should also include changes in utils.ts@isMobile
+ */
 @custom-media --mobile (width <= 650px);
 @custom-media --not-mobile (width >= 651px);
+@custom-media --can-hover (hover: hover);
 
 :root {
   /**
@@ -119,12 +123,14 @@
       height: var(--toolbox-buttons-size--mobile);
     }
 
-    &:hover,
-    &--active {
-      background-color: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
     }
 
-    &--active{
+    &--active {
+      background-color: var(--bg-light);
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
@@ -179,20 +185,27 @@
     grid-template-rows: auto;
     justify-content: start;
     white-space: nowrap;
-    padding: 4px;
+    padding: 3px;
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
     cursor: pointer;
     align-items: center;
-    border-radius: 7px;
+    border-radius: 6px;
 
     &:not(:last-of-type){
       margin-bottom: 1px;
     }
 
-    &:hover {
-      background-color: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
+    }
+
+    @media (--mobile) {
+      font-size: 16px;
+      padding: 4px;
     }
   };
 
@@ -201,8 +214,8 @@
    */
   --tool-icon: {
     display: inline-flex;
-    width: 26px;
-    height: 26px;
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
     border: 1px solid var(--color-gray-border);
     border-radius: 5px;
     align-items: center;
@@ -211,6 +224,12 @@
     box-sizing: border-box;
     flex-shrink: 0;
     margin-right: 10px;
+
+    @media (--mobile) {
+      width: var(--toolbox-buttons-size--mobile);
+      height: var(--toolbox-buttons-size--mobile);
+      border-radius: 8px;
+    }
 
     svg {
       width: 12px;

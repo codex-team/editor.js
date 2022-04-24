@@ -766,4 +766,6 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
 /**
  * True if screen has mobile size
  */
-export const isMobile = window.matchMedia('(max-width: 650px)').matches;
+export function isMobileScreen(): boolean {
+  return window.matchMedia('(max-width: 650px)').matches;
+}

@@ -317,10 +317,6 @@ export default class BlockManager extends Module {
       });
     }
 
-    /**
-     * @todo emit beforeInsert
-     */
-
     this._blocks.insert(newIndex, block, replace);
 
     /**

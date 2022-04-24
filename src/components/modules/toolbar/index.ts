@@ -139,7 +139,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       plusButton: 'ce-toolbar__plus',
       plusButtonShortcut: 'ce-toolbar__plus-shortcut',
-      plusButtonHidden: 'ce-toolbar__plus--hidden',
       settingsToggler: 'ce-toolbar__settings-btn',
       settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
     };
@@ -155,21 +154,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
   }
 
   /**
-   * Plus Button public methods
-   */
-  public get plusButton(): { hide: () => void; show: () => void } {
-    return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
-      show: (): void => {
-        if (this.toolboxInstance.isEmpty) {
-          return;
-        }
-        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
-      },
-    };
-  }
-
-  /**
    * Public interface for accessing the Toolbox
    */
   public get toolbox(): {
@@ -181,7 +165,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
     } {
     return {
       opened: this.toolboxInstance.opened,
-      close: (): void => this.toolboxInstance.close(),
+      close: (): void => {
+        this.toolboxInstance.close();
+        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      },
       open: (): void => {
         /**
          * Set current block to cover the case when the Toolbar showed near hovered Block but caret is set to another Block.
@@ -280,17 +267,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Move Toolbar to the Top coordinate of Block
      */
     this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
-
-    /**
-     * Plus Button should be shown only for __empty__ __default__ block
-     *
-     * @todo remove methods for hiding/showing the Plus Button as well
-     */
-    // if (block.tool.isDefault && block.isEmpty) {
-    //   this.plusButton.show();
-    // } else {
-    //   this.plusButton.hide();
-    // }
 
     /**
      * Do not show Block Tunes Toggler near single and empty block
@@ -503,18 +479,25 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     /**
-     * Subscribe to the 'block-hovered' event
+     * Subscribe to the 'block-hovered' event if currenct view is not mobile
+     *
+     * @see https://github.com/codex-team/editor.js/issues/1972
      */
-    this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+    if (!_.isMobileScreen()) {
       /**
-       * Do not move toolbar if Block Settings or Toolbox opened
+       * Subscribe to the 'block-hovered' event
        */
-      if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
-        return;
-      }
+      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+        /**
+         * Do not move toolbar if Block Settings or Toolbox opened
+         */
+        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
+          return;
+        }
 
-      this.moveAndOpen(data.block);
-    });
+        this.moveAndOpen(data.block);
+      });
+    }
   }
 
   /**

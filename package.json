@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.23.2",
+  "version": "2.23.3",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -31,7 +31,8 @@
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open"
+    "test:e2e:open": "yarn build && cypress open",
+    "devserver:start": "yarn build && node ./devserver.js"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -51,6 +52,7 @@
     "@cypress/code-coverage": "^3.9.2",
     "@cypress/webpack-preprocessor": "^5.6.0",
     "@editorjs/code": "^2.7.0",
+    "@editorjs/delimiter": "^1.2.0",
     "@editorjs/header": "^2.6.1",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^14.14.35",
@@ -97,7 +99,7 @@
   },
   "dependencies": {
     "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.4",
+    "codex-tooltip": "^1.0.5",
     "nanoid": "^3.1.22"
   }
 }

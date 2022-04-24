@@ -5,16 +5,10 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover';
 
 /**
- * @todo check small tools number — there should not be a scroll
- * @todo hide toolbar after some toolbox item clicked (and the new block inserted)
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
- * @todo use i18n for search labels
- * @todo clear filter on every toolbox opening
- * @todo arrows inside the search field
- *
  */
 
 /**
@@ -37,7 +31,10 @@ export enum ToolboxEvent {
   BlockAdded = 'toolbox-block-added',
 }
 
-type toolboxTextLabelsKeys = 'filter'|'nothingFound';
+/**
+ * Available i18n dict keys that should be passed to the constructor
+ */
+type toolboxTextLabelsKeys = 'filter' | 'nothingFound';
 
 /**
  * Toolbox
@@ -100,6 +97,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private static get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
+      toolboxOpenedTop: 'ce-toolbox--opened-top',
     };
   }
 
@@ -136,6 +134,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         return {
           icon: tool.toolbox.icon,
           label: tool.toolbox.title,
+          name: tool.name,
           onClick: (item): void => {
             this.toolButtonActivated(tool.name);
           },
@@ -143,6 +142,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         };
       }),
     });
+
+    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 
     /**
      * Enable tools shortcuts
@@ -175,6 +176,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.api.listeners.offById(this.clickListenerId);
 
     this.removeAllShortcuts();
+    this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
   }
 
   /**
@@ -194,8 +196,16 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       return;
     }
 
-    this.popover.show();
+    /**
+     * Open the popover above the button
+     * if there is not enough available space below it
+     */
+    if (!this.shouldOpenPopoverBottom) {
+      this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');
+      this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
+    }
 
+    this.popover.show();
     this.opened = true;
     this.emit(ToolboxEvent.Opened);
   }
@@ -205,8 +215,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public close(): void {
     this.popover.hide();
-
     this.opened = false;
+    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpenedTop);
     this.emit(ToolboxEvent.Closed);
   }
 
@@ -219,6 +229,28 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     } else {
       this.close();
     }
+  }
+
+  /**
+   * Checks if there popover should be opened downwards.
+   * It happens in case there is enough space below or not enough space above
+   */
+  private get shouldOpenPopoverBottom(): boolean {
+    const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
+    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
+    const popoverHeight = this.popover.calculateHeight();
+    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
+    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
+    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
+
+    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+  }
+
+  /**
+   * Handles overlay click
+   */
+  private onOverlayClicked = (): void => {
+    this.close();
   }
 
   /**

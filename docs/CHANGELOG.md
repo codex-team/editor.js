@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.24.0
+
+- `New` — *UI* — The Toolbox became vertical 🥳
+- `Improvement` — *UI* — the Plus button will always be shown (previously, it appears only for empty blocks)
+- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `Fix` - `UI` - the Toolbar won't move on hover at mobile viewports. Resolves [#1972](https://github.com/codex-team/editor.js/issues/1972)
+- `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
+
 ### 2.23.2
 
 — `Fix` — Crash on initialization in the read-only mode [#1968](https://github.com/codex-team/editor.js/issues/1968)
