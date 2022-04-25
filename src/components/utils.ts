@@ -194,8 +194,8 @@ export function typeOf(object: any): string {
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isFunction(fn: any): fn is Function {
-  return typeOf(fn) === 'function';
+export function isFunction(fn: any): fn is (...args: any[]) => any {
+  return typeOf(fn) === 'function' || typeOf(fn) === 'asyncfunction';
 }
 
 /**
@@ -762,3 +762,10 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
 
   return descriptor;
 };
+
+/**
+ * True if screen has mobile size
+ */
+export function isMobileScreen(): boolean {
+  return window.matchMedia('(max-width: 650px)').matches;
+}
