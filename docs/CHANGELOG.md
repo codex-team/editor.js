@@ -1,13 +1,13 @@
 # Changelog
 
-### 2.23.4
+### 2.24.0
 
-- `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
-
-### 2.23.3
-
+- `New` — *UI* — The Toolbox became vertical 🥳
+- `Improvement` — *UI* — the Plus button will always be shown (previously, it appears only for empty blocks)
 - `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `Fix` - `UI` - the Toolbar won't move on hover at mobile viewports. Resolves [#1972](https://github.com/codex-team/editor.js/issues/1972)
 - `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
+- `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
 
 ### 2.23.2
 
