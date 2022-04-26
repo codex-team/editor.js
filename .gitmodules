@@ -52,3 +52,6 @@
 [submodule "example/tools/nested-list"]
 	path = example/tools/nested-list
 	url = https://github.com/editor-js/nested-list
+[submodule "example/tools/text-variant-tune"]
+	path = example/tools/text-variant-tune
+	url = https://github.com/editor-js/text-variant-tune
