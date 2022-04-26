@@ -1,3 +1,5 @@
+import { isEmpty } from '../utils';
+
 /**
  * @class EventDispatcher
  *
@@ -17,7 +19,7 @@ export default class EventsDispatcher<Events extends string = string> {
    *
    * @type {{}}
    */
-  private subscribers: {[name: string]: Array<(data?: object) => object>} = {};
+  private subscribers: {[name: string]: Array<(data?: object) => unknown>} = {};
 
   /**
    * Subscribe any event on callback
@@ -25,7 +27,7 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: Events, callback: (data: object) => object): void {
+  public on(eventName: Events, callback: (data: object) => unknown): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -40,12 +42,12 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public once(eventName: Events, callback: (data: object) => object): void {
+  public once(eventName: Events, callback: (data: object) => unknown): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
 
-    const wrappedCallback = (data: object): object => {
+    const wrappedCallback = (data: object): unknown => {
       const result = callback(data);
 
       const indexOfHandler = this.subscribers[eventName].indexOf(wrappedCallback);
@@ -68,7 +70,7 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {object} data - subscribers get this data when they were fired
    */
   public emit(eventName: Events, data?: object): void {
-    if (!this.subscribers[eventName]) {
+    if (isEmpty(this.subscribers) || !this.subscribers[eventName]) {
       return;
     }
 
@@ -85,7 +87,7 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {string} eventName - event name
    * @param {Function} callback - event handler
    */
-  public off(eventName: Events, callback: (data: object) => object): void {
+  public off(eventName: Events, callback: (data: object) => unknown): void {
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];
@@ -96,7 +98,7 @@ export default class EventsDispatcher<Events extends string = string> {
 
   /**
    * Destroyer
-   * clears subsribers list
+   * clears subscribers list
    */
   public destroy(): void {
     this.subscribers = null;

@@ -8,26 +8,29 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v2
-      - run: yarn pull_tools
+      - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: firefox
           build: yarn build
   chrome:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: yarn pull_tools
+      - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: chrome
           build: yarn build
   edge:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - run: yarn pull_tools
+      - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
         with:
+          config: video=false
           browser: edge
           build: yarn build

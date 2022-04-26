@@ -1,43 +1,24 @@
 .ce-toolbox {
-  position: absolute;
-  visibility: hidden;
-  transition: opacity 100ms ease;
-  will-change: opacity;
-  display: flex;
-  flex-direction: row;
+  --gap: 8px;
 
-  @media (--mobile){
-    position: static;
-    transform: none !important;
-    align-items: center;
-    overflow-x: auto;
-  }
+  @media (--not-mobile){
+    position: absolute;
+    top: calc(var(--toolbox-buttons-size) + var(--gap));
+    left: 0;
 
-  &--opened {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  &__button {
-    @apply --toolbox-button;
-    flex-shrink: 0;
+    &--opened-top {
+      top: calc(-1 * (var(--gap) + var(--popover-height)));
+    }
   }
 }
 
-.ce-toolbox-button-tooltip {
-  &__shortcut {
-    opacity: 0.6;
-    word-spacing: -3px;
-    margin-top: 3px;
-  }
-}
-
-/**
- * Styles for Narrow mode
- */
 .codex-editor--narrow .ce-toolbox {
-  @media (--not-mobile) {
-    background: #fff;
-    z-index: 2;
+  @media (--not-mobile){
+    left: auto;
+    right: 0;
+
+    .ce-popover {
+      right: 0;
+    }
   }
 }

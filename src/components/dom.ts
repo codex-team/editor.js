@@ -202,7 +202,7 @@ export default class Dom {
   public static get allInputsSelector(): string {
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    return '[contenteditable], textarea, input:not([type]), ' +
+    return '[contenteditable=true], textarea, input:not([type]), ' +
       allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
   }
 
@@ -611,5 +611,27 @@ export default class Dom {
    */
   public static isAnchor(element: Element): element is HTMLAnchorElement {
     return element.tagName.toLowerCase() === 'a';
+  }
+
+  /**
+   * Return element's offset related to the document
+   *
+   * @todo handle case when editor initialized in scrollable popup
+   * @param el - element to compute offset
+   */
+  public static offset(el): {top: number; left: number; right: number; bottom: number} {
+    const rect = el.getBoundingClientRect();
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    const top = rect.top + scrollTop;
+    const left = rect.left + scrollLeft;
+
+    return {
+      top,
+      left,
+      bottom: top + rect.height,
+      right: left + rect.width,
+    };
   }
 }

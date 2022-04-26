@@ -1,5 +1,58 @@
 # Changelog
 
+### 2.24.0
+
+- `New` — *UI* — The Toolbox became vertical 🥳
+- `Improvement` — *UI* — the Plus button will always be shown (previously, it appears only for empty blocks)
+- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `Fix` — `UI` — the Toolbar won't move on hover at mobile viewports. Resolves [#1972](https://github.com/codex-team/editor.js/issues/1972)
+- `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
+- `Fix` — `ReadOnly` — the `readonly.isEnabled` API getter now works correctly after `readonly.toggle()` calling. Resolves [#1822](https://github.com/codex-team/editor.js/issues/1822)
+
+### 2.23.2
+
+— `Fix` — Crash on initialization in the read-only mode [#1968](https://github.com/codex-team/editor.js/issues/1968)
+
+### 2.23.1
+
+— `Fix` — Incorrect release tag fixed
+
+### 2.23.0
+
+- `Improvement` — *EditorConfig* — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
+- `New` — *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+- `Improvement` — *UI* — Block Tunes toggler moved to the left
+- `Improvement` — *UI* — Block Actions (BT toggler + Plus Button) will appear on block hovering instead of click
+- `Improvement` — *UI* — Block Tunes toggler icon and Plus button icon updated
+- `Improvement` — *Dev Example Page* — The menu with helpful buttons added to the bottom of the screen
+- `Improvement` — *Dev Example Page* — The 'dark' theme added. Now we can code at night more comfortably.
+- `Improvement` — *Rectangle Selection* — paint optimized
+- `Fix` — *Rectangle Selection* — the first click after RS was not clear selection state. Now does.
+- `Improvement` — *Blocks API* — toolbar moving logic removed from `blocks.move()` and `blocks.swap()` methods. Instead, you should use Toolbar API (it was used by MoveUp and MoveDown tunes, they were updated).
+- `New` — *Blocks API* — The `getBlockIndex()` method added
+- `New` — *Blocks API* — the `insert()` method now has the `replace: boolean` parameter
+- `New` — *Blocks API* —  the `insert()` method now returns the inserted `Block API`
+- `New` — *Listeners API* — the `on()` method now returns the listener id.
+- `New` — *Listeners API* — the new `offById()` method added
+- `New` — `API` — The new `UiApi` section was added. It allows accessing some editor UI nodes and methods.
+- `Refactoring` — Toolbox became a standalone class instead of a Module. It can be accessed only through the Toolbar module.
+- `Refactoring` — CI flow optimized.
+- `Fix` - Recognize async `onPaste` handlers in tools [#1803](https://github.com/codex-team/editor.js/issues/1803).
+- `Fix` — Fire onChange event for native inputs [#1750](https://github.com/codex-team/editor.js/issues/1750)
+
+### 2.22.3
+
+- `Fix` — Tool config is passed to `prepare` method [editor-js/embed#68](https://github.com/editor-js/embed/issues/68)
+
+### 2.22.2
+
+- `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
+- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
+- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
+- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Fix` — Block's destroy method is called on block deletion
+- `Fix` - Fix jump to the button of editor zone on CBS
+
 ### 2.22.1
 
 - `Fix` — I18n for internal Block Tunes [#1661](https://github.com/codex-team/editor.js/issues/1661)

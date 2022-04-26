@@ -2,7 +2,8 @@
 /**
  * Use external module CodeX Tooltip
  */
-import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
+import CodeXTooltips from 'codex-tooltip';
+import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 
 /**
  * Tooltip
@@ -28,8 +29,8 @@ export default class Tooltip {
    * Shows tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element - any HTML element in DOM
-   * @param {TooltipContent} content - tooltip's content
-   * @param {TooltipOptions} options - showing settings
+   * @param content - tooltip's content
+   * @param options - showing settings
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
     this.lib.show(element, content, options);
@@ -37,17 +38,19 @@ export default class Tooltip {
 
   /**
    * Hides tooltip
+   *
+   * @param skipHidingDelay — pass true to immediately hide the tooltip
    */
-  public hide(): void {
-    this.lib.hide();
+  public hide(skipHidingDelay = false): void {
+    this.lib.hide(skipHidingDelay);
   }
 
   /**
    * Binds 'mouseenter' and 'mouseleave' events that shows/hides the Tooltip
    *
    * @param {HTMLElement} element - any HTML element in DOM
-   * @param {TooltipContent} content - tooltip's content
-   * @param {TooltipOptions} options - showing settings
+   * @param content - tooltip's content
+   * @param options - showing settings
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
     this.lib.onHover(element, content, options);

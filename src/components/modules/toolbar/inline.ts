@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool, EditorConfig } from '../../../../types';
+import { InlineTool as IInlineTool } from '../../../../types';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -100,9 +100,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private tooltip: Tooltip;
   /**
    * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({
@@ -134,10 +134,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Shows Inline Toolbar if something is selected
    *
-   * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
+   * @param [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public tryToShow(needToClose = false): void {
+  public tryToShow(needToClose = false, needToShowConversionToolbar = true): void {
     if (!this.allowedToShow()) {
       if (needToClose) {
         this.close();
@@ -147,7 +148,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.move();
-    this.open();
+    this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
   }
 
@@ -233,8 +234,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Shows Inline Toolbar
+   *
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public open(): void {
+  public open(needToShowConversionToolbar = true): void {
     if (this.opened) {
       return;
     }
@@ -251,7 +254,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    if (this.Editor.ConversionToolbar.hasTools()) {
+    if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
       /**
        * Change Conversion Dropdown content for current tool
        */
@@ -695,7 +698,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      allowArrows: false,
+      allowedKeys: [
+        _.keyCodes.ENTER,
+        _.keyCodes.TAB,
+      ],
     });
   }
 }

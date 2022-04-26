@@ -1,13 +1,13 @@
 .ce-settings {
   @apply --overlay-pane;
-  right: -1px;
-  top: 30px;
+  top: var(--toolbar-buttons-size);
+  left: 0;
   min-width: 114px;
   box-sizing: content-box;
 
   @media (--mobile){
     bottom: 40px;
-    right: -11px;
+    right: auto;
     top: auto;
   }
 

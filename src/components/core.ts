@@ -347,7 +347,7 @@ export default class Core {
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log(`Module ${Module.displayName} skipped because`, 'warn', e);
+        _.log(`Module ${Module.displayName} skipped because`, 'error', e);
       }
     });
   }

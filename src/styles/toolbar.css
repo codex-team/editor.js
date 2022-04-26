@@ -3,44 +3,23 @@
   left: 0;
   right: 0;
   top: 0;
-  /*opacity: 0;*/
-  /*visibility: hidden;*/
   transition: opacity 100ms ease;
-  will-change: opacity, transform;
-  display: none;
+  will-change: opacity, top;
 
-  @media (--mobile) {
-    @apply --overlay-pane;
-    padding: 3px;
-    margin-top: 5px;
-  }
+  display: none;
 
   &--opened {
     display: block;
-
-    @media (--mobile){
-      display: flex;
-    }
   }
 
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
-
-    @media (--mobile){
-      display: flex;
-      align-content: center;
-      margin: 0;
-      max-width: calc(100% - 35px);
-    }
   }
 
   &__plus {
     @apply --toolbox-button;
-
-    position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
     flex-shrink: 0;
 
     &-shortcut {
@@ -49,21 +28,10 @@
       margin-top: 5px;
     }
 
-    &--hidden {
-      display: none;
-    }
-
     @media (--mobile){
-      display: inline-flex !important;
+      @apply --overlay-pane;
       position: static;
-      transform: none !important;
     }
-  }
-
-  &__plus,
-  .ce-toolbox {
-    top: 50%;
-    transform: translateY(-50%);
   }
 
   /**
@@ -72,45 +40,38 @@
    */
   &__actions {
     position: absolute;
-    right: -30px;
-    top: 5px;
+    right: 100%;
     opacity: 0;
-
-    @media (--mobile){
-      position: absolute;
-      right: -28px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-    }
+    display: flex;
+    padding-right: 5px;
 
     &--opened {
       opacity: 1;
     }
 
-    &-buttons {
-      text-align: right;
+    @media (--mobile){
+      right: auto;
     }
   }
 
   &__settings-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    color: var(--grayText);
+    @apply --toolbox-button;
+
+    margin-left: 5px;
     cursor: pointer;
-    background: var(--bg-light);
     user-select: none;
 
-    &:hover {
-      color: var(--color-dark);
+    @media (--not-mobile){
+      width: 18px;
+    }
+
+    &--hidden {
+      display: none;
     }
 
     @media (--mobile){
-      background: transparent;
+      @apply --overlay-pane;
+      position: static;
     }
   }
 }

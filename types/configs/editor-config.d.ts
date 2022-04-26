@@ -53,7 +53,9 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+  tools?: {
+    [toolName: string]: ToolConstructable|ToolSettings;
+  }
 
   /**
    * Data to render on Editor start
@@ -88,9 +90,9 @@ export interface EditorConfig {
   /**
    * Fires when something changed in DOM
    * @param {API} api - editor.js api
-   * @param block - changed block API
+   * @param event - custom event describing mutation
    */
-  onChange?(api: API, block: BlockAPI): void;
+  onChange?(api: API, event: CustomEvent): void;
 
   /**
    * Defines default toolbar for all tools.

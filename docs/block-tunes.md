@@ -22,7 +22,7 @@ At the constructor of Tune's class exemplar you will receive an object with foll
 | Parameter | Description |
 | --------- | ----------- |
 | api  | Editor's [API](api.md) obejct |
-| settings | Configuration of Block Tool Tune is connected to (might be useful in some cases) |
+| config | Configuration of Block Tool Tune is connected to (might be useful in some cases) |
 | block | [Block API](api.md#block-api) methods for block Tune is connected to |
 | data | Saved Tune data |
 
@@ -145,7 +145,24 @@ No return value
 
 ---
 
-#### Format
+### static get sanitize()
+
+If your Tune inserts any HTML markup into Block's content you need to provide sanitize configuration, so your HTML is not trimmed on save.
+
+Please see more information at [sanitizer page](sanitizer.md).
+
+
+```javascript
+class Tune {
+  static get sanitize() {
+    return {
+      sup: true
+    }
+  }
+}
+```
+
+## Format
 
 Tunes data is saved to `tunes` property of output object:
 

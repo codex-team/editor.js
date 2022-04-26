@@ -1,5 +1,9 @@
+/**
+ * Updating values in media queries should also include changes in utils.ts@isMobile
+ */
 @custom-media --mobile (width <= 650px);
 @custom-media --not-mobile (width >= 651px);
+@custom-media --can-hover (hover: hover);
 
 :root {
   /**
@@ -52,7 +56,14 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 34px;
+  --toolbox-buttons-size: 26px;
+  --toolbox-buttons-size--mobile: 36px;
+
+  /**
+   * The main `.cdx-block` wrapper has such vertical paddings
+   * And the Block Actions toggler too
+   */
+  --block-padding-vertical: 0.4em;
 
   /**
    * Confirm deletion bg
@@ -62,14 +73,14 @@
   --overlay-pane: {
     position: absolute;
     background-color: #FFFFFF;
-    border: 1px solid #EAEAEA;
+    border: 1px solid #E8E8EB;
     box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
-    border-radius: 4px;
+    border-radius: 6px;
     z-index: 2;
 
     @media (--mobile){
-      box-shadow: 0 13px 7px -5px rgba(26, 38, 49, 0.09),6px 15px 34px -6px rgba(33, 48, 73, 0.29);
-      border-bottom-color: #d5d7db;
+      box-shadow: 0 8px 6px -6px rgb(33 48 73 / 19%);
+      border-bottom-color: #c7c7c7;
     }
 
     &--left-oriented {
@@ -88,24 +99,38 @@
     }
   };
 
+  --button-focused: {
+    box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
+    background: rgba(34, 186, 255, 0.08) !important;
+  };
+
   /**
    * Styles for Toolbox Buttons and Plus Button
    */
   --toolbox-button: {
-    color: var(--grayText);
+    color: var(--color-dark);
     cursor: pointer;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
+    border-radius: 7px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 
-    &:hover,
-    &--active {
-      color: var(--color-active-icon);
+    @media (--mobile){
+      width: var(--toolbox-buttons-size--mobile);
+      height: var(--toolbox-buttons-size--mobile);
     }
 
-    &--active{
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
+    }
+
+    &--active {
+      background-color: var(--bg-light);
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
@@ -119,9 +144,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
+    width: var(--toolbar-buttons-size);
+    height: var(--toolbar-buttons-size);
+    line-height: var(--toolbar-buttons-size);
     padding: 0 !important;
     text-align: center;
     border-radius: 3px;
@@ -142,8 +167,7 @@
     }
 
     &--focused {
-      box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
-      background: rgba(34, 186, 255, 0.08) !important;
+      @apply --button-focused;
 
       &-animated {
         animation-name: buttonClicked;
@@ -151,4 +175,66 @@
       }
     }
   };
+
+  /**
+   * Element of the Toolbox. Has icon and label
+   */
+  --popover-button: {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto;
+    justify-content: start;
+    white-space: nowrap;
+    padding: 3px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    align-items: center;
+    border-radius: 6px;
+
+    &:not(:last-of-type){
+      margin-bottom: 1px;
+    }
+
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
+    }
+
+    @media (--mobile) {
+      font-size: 16px;
+      padding: 4px;
+    }
+  };
+
+  /**
+   * Tool icon with border
+   */
+  --tool-icon: {
+    display: inline-flex;
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+    border: 1px solid var(--color-gray-border);
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-right: 10px;
+
+    @media (--mobile) {
+      width: var(--toolbox-buttons-size--mobile);
+      height: var(--toolbox-buttons-size--mobile);
+      border-radius: 8px;
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
 }
+
