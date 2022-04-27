@@ -53,7 +53,7 @@ export default class BlockManager extends Module {
    *
    * @returns {number}
    */
-   public get currentDraggingBlockIndex(): number {
+  public get currentDraggingBlockIndex(): number {
     return this._currentDraggingBlockIndex;
   }
 
@@ -107,7 +107,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-   public get currentDraggingBlock(): Block {
+  public get currentDraggingBlock(): Block {
     return this._blocks[this.currentDraggingBlockIndex];
   }
 
@@ -812,7 +812,7 @@ export default class BlockManager extends Module {
   /**
    * Sets current Dragging Block Index -1 which means unknown
    */
-   public dropDragPointer(): void {
+  public dropDragPointer(): void {
     this.currentDraggingBlockIndex = -1;
   }
 

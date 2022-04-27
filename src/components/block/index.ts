@@ -518,7 +518,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {undefined | BlockDropZonePlacement} state - 'undefined' if block is not a drop target
    */
   public set dropTarget(state: undefined | BlockDropZonePlacement) {
-    if(!state) {
+    if (!state) {
       this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
     } else {
       this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
@@ -538,7 +538,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
       return BlockDropZonePlacement.Bottom;
     }
-    return undefined
+
+    return undefined;
   }
 
   /**
