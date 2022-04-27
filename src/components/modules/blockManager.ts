@@ -810,6 +810,13 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Sets current Dragging Block Index -1 which means unknown
+   */
+   public dropDragPointer(): void {
+    this.currentDraggingBlockIndex = -1;
+  }
+
+  /**
    * Clears Editor
    *
    * @param {boolean} needToAddDefaultBlock - 1) in internal calls (for example, in api.blocks.render)

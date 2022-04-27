@@ -5,6 +5,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
+import { BlockDropZonePlacement } from '../block';
 
 /**
  *
@@ -151,12 +152,10 @@ export default class BlockEvents extends Module {
     const bbox = block.holder.getBoundingClientRect();
 
     if (bbox.top + bbox.height / 2 >= event.clientY) {
-      block.dropTargetPlacement = 'top';
+      block.dropTarget = BlockDropZonePlacement.Top;
     } else {
-      block.dropTargetPlacement = 'bottom';
+      block.dropTarget = BlockDropZonePlacement.Bottom;
     }
-
-    block.dropTarget = true;
   }
 
   /**
@@ -167,7 +166,7 @@ export default class BlockEvents extends Module {
   public dragLeave(event: DragEvent): void {
     const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
 
-    block.dropTarget = false;
+    block.dropTarget = undefined;
   }
 
   /**

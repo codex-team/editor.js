@@ -477,7 +477,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', (event: DragEvent) => {
-      this.Editor.BlockManager.currentDraggingBlockIndex = -1;
+      this.Editor.BlockManager.dropDragPointer();
       this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerDragging);
       this.moveAndOpen(this.Editor.BlockManager.currentBlock);
     }, true);

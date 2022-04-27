@@ -38,7 +38,7 @@
       height: 1px;
       position: absolute;
       width: 100%;
-      border-bottom: 5px solid #d4ecff;
+      border-bottom: 5px solid var(--selectionColor);
       pointer-events: none;
     }
   }
