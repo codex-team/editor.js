@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.24.1
+— `Fix` — Tool title is not translated anymore [#2030](https://github.com/codex-team/editor.js/issues/2030)
+
 ### 2.24.0
 
 - `New` — *UI* — The Toolbox became vertical 🥳
