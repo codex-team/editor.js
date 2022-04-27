@@ -1,5 +1,6 @@
 import { BlockDropZonePlacement } from '../block';
 import SelectionUtils from '../selection';
+
 import Module from '../__module';
 /**
  *
@@ -62,6 +63,50 @@ export default class DragNDrop extends Module {
    }
 
    /**
+    * Handle drop event
+    *
+    * @param {DragEvent} dropEvent - drop event
+    */
+   private async processDrop(dropEvent: DragEvent): Promise<void> {
+     const {
+       BlockManager,
+       Caret,
+       Paste,
+     } = this.Editor;
+
+     dropEvent.preventDefault();
+
+     if (await this.processBlockDrop(dropEvent)) {
+       return;
+     }
+
+     BlockManager.blocks.forEach((block) => {
+       block.dropTarget = undefined;
+     });
+
+     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
+       document.execCommand('delete');
+     }
+     this.isStartedAtEditor = false;
+
+     /**
+      * Try to set current block by drop target.
+      * If drop target is not part of the Block, set last Block as current.
+      */
+     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
+
+     if (targetBlock) {
+       this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
+     } else {
+       const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+
+       this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
+     }
+
+     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+   }
+
+   /**
     * Checks and process the drop of a block. Returns {boolean} depending if a block drop has been processed.
     *
     * @param dropEvent {DragEvent}
@@ -104,50 +149,6 @@ export default class DragNDrop extends Module {
      }
 
      return false;
-   }
-
-   /**
-    * Handle drop event
-    *
-    * @param {DragEvent} dropEvent - drop event
-    */
-   private async processDrop(dropEvent: DragEvent): Promise<void> {
-     const {
-       BlockManager,
-       Caret,
-       Paste,
-     } = this.Editor;
-
-     dropEvent.preventDefault();
-
-     if (await this.processBlockDrop(dropEvent)) {
-       return;
-     }
-
-     BlockManager.blocks.forEach((block) => {
-       block.dropTarget = undefined;
-     });
-
-     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
-       document.execCommand('delete');
-     }
-     this.isStartedAtEditor = false;
-
-     /**
-      * Try to set current block by drop target.
-      * If drop target is not part of the Block, set last Block as current.
-      */
-     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
-
-     if (targetBlock) {
-       this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
-     } else {
-       const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
-
-       this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
-     }
-
-     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
    }
 
    /**
