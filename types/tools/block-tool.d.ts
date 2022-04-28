@@ -17,6 +17,16 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
+   * 
+   */
+  toggler?: string;
+
+
+  toolboxItem?: any
+
+  isMe: (config?: any) => boolean
+
+  /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {BlockToolData}

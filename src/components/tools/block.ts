@@ -72,19 +72,14 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Returns Tool toolbox configuration (internal or user-specified)
    */
-  public get toolbox(): ToolboxConfig {
+  public get toolbox(): ToolboxConfig | ToolboxConfig[] {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
-    const userToolboxSettings = this.config[UserSettings.Toolbox];
 
-    if (_.isEmpty(toolToolboxSettings)) {
-      return;
+    if (Array.isArray(toolToolboxSettings)) {
+      return toolToolboxSettings.map(item => this.getActualToolboxSettings(item));
+    } else {
+      return this.getActualToolboxSettings(toolToolboxSettings);
     }
-
-    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
-      return;
-    }
-
-    return Object.assign({}, toolToolboxSettings, userToolboxSettings);
   }
 
   /**
@@ -165,5 +160,36 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       .forEach(tune => Object.assign(baseConfig, tune.sanitizeConfig));
 
     return baseConfig;
+  }
+
+  /**
+   *
+   */
+  // public get currentToolboxItem(): ToolboxConfig {
+  //   if (Array.isArray(this.toolbox)) {
+  //     console.log(this.config);
+
+  //     return null;
+  //   } else {
+  //     return this.toolbox;
+  //   }
+  // }
+
+  /**
+   *
+   * @param toolboxItemSettings
+   */
+  private getActualToolboxSettings(toolboxItemSettings: ToolboxConfig): ToolboxConfig {
+    const userToolboxSettings = this.config[UserSettings.Toolbox];
+
+    if (_.isEmpty(toolboxItemSettings)) {
+      return;
+    }
+
+    if ((userToolboxSettings ?? toolboxItemSettings) === false) {
+      return;
+    }
+
+    return Object.assign({}, toolboxItemSettings, userToolboxSettings);
   }
 }

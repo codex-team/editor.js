@@ -482,9 +482,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      */
     const toolboxSettings = currentBlock.tool.toolbox || {};
 
+    // console.log(currentBlock.toggler);
     this.nodes.conversionTogglerContent.innerHTML =
-      toolboxSettings.icon ||
-      toolboxSettings.title ||
+      currentBlock.toggler ||
+      // toolboxSettings.icon ||
+      // toolboxSettings.title ||
       _.capitalize(toolName);
   }
 

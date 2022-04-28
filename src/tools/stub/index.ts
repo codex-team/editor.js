@@ -86,6 +86,14 @@ export default class Stub implements BlockTool {
   }
 
   /**
+   *
+   * @param config
+   */
+  public isMe(config): boolean {
+    return false;
+  }
+
+  /**
    * Create Tool html markup
    *
    * @returns {HTMLElement}

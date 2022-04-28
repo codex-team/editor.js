@@ -4,7 +4,8 @@ import {
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig
+  ToolConfig,
+  ToolboxConfig
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -53,6 +54,11 @@ interface BlockConstructorOptions {
    * Tunes data for current Block
    */
   tunesData: { [name: string]: BlockTuneData };
+
+  /**
+   *
+   */
+  configOverrides: any;
 }
 
 /**
@@ -143,6 +149,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool's user configuration
    */
   public readonly config: ToolConfig;
+
+  public readonly settingsOverrides: any
 
   /**
    * Cached inputs
@@ -253,12 +261,18 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
+    configOverrides,
   }: BlockConstructorOptions) {
     super();
 
+    // Merge tool default settings with overrides
+    Object.entries(configOverrides).forEach(([prop, value]) => {
+      tool.settings[prop] = value;
+    });
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
+    this.settingsOverrides = configOverrides;
     this.config = tool.settings.config || {};
     this.api = api;
     this.blockAPI = new BlockAPI(this);
@@ -732,6 +746,32 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     if (_.isFunction(this.toolInstance.renderSettings)) {
       return this.toolInstance.renderSettings();
     }
+  }
+
+  /**
+   *
+   */
+  public get toggler(): string | undefined {
+    return this.toolInstance.toggler;
+  }
+
+  /**
+   *
+   */
+  public get toolboxItem() {
+    return this.toolInstance.toolboxItem;
+  }
+
+  /**
+   *
+   * @param config
+   */
+  public isMe(config): boolean {
+    if (typeof this.toolInstance.isMe !== 'function') {
+      return;
+    }
+
+    return this.toolInstance.isMe(config);
   }
 
   /**

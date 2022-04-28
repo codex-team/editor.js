@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolData, PasteEvent, ToolConfig } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
@@ -229,6 +229,7 @@ export default class BlockManager extends Module {
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
    * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
+   * @param {ToolConfig} [options.config] - may contain tool settings overrides
    *
    * @returns {Block}
    */
@@ -242,10 +243,10 @@ export default class BlockManager extends Module {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
 
-    // default config
-    Object.entries(config).forEach(([prop, value]) => {
-      tool.settings[prop] = value;
-    });
+    // // Merge tool default settings with overrides
+    // Object.entries(config).forEach(([prop, value]) => {
+    //   tool.settings[prop] = value;
+    // });
     const block = new Block({
       id,
       data,
@@ -253,6 +254,7 @@ export default class BlockManager extends Module {
       api: this.Editor.API,
       readOnly,
       tunesData,
+      configOverrides: config,
     });
 
     if (!readOnly) {
@@ -272,6 +274,7 @@ export default class BlockManager extends Module {
    * @param {number} [options.index] - index where to insert new Block
    * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
    * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
+   * @param {} [options.config] -
    *
    * @returns {Block}
    */
@@ -341,18 +344,21 @@ export default class BlockManager extends Module {
    * @param {object} options - replace options
    * @param {string} options.tool — plugin name
    * @param {BlockToolData} options.data — plugin data
+   * @param {ToolConfig} options.config -
    *
    * @returns {Block}
    */
   public replace({
     tool = this.config.defaultBlock,
     data = {},
+    config = {},
   }): Block {
     return this.insert({
       tool,
       data,
       index: this.currentBlockIndex,
       replace: true,
+      config,
     });
   }
 

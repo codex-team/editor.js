@@ -3,9 +3,9 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API } from '../../../types';
+import { API, ToolboxConfig, ToolConfig } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent } from '../utils/popover';
+import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -130,17 +130,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       searchable: true,
       filterLabel: this.i18nLabels.filter,
       nothingFoundLabel: this.i18nLabels.nothingFound,
-      items: this.toolsToBeDisplayed.map(tool => {
-        return {
-          icon: tool.toolbox.icon,
-          label: tool.toolbox.title,
-          name: tool.name,
-          onClick: (item): void => {
-            this.toolButtonActivated(tool.name);
-          },
-          secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
-        };
-      }),
+      items: this.toolboxItemsToBeDisplayed,
     });
 
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
@@ -183,9 +173,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Toolbox Tool's button click handler
    *
    * @param toolName - tool type to be activated
+   * @param config -
    */
-  public toolButtonActivated(toolName: string): void {
-    this.insertNewBlock(toolName);
+  public toolButtonActivated(toolName: string, config: ToolConfig): void {
+    this.insertNewBlock(toolName, config);
   }
 
   /**
@@ -260,24 +251,118 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private get toolsToBeDisplayed(): BlockTool[] {
     return Array
       .from(this.tools.values())
-      .filter(tool => {
+      .reduce((result, tool) => {
         const toolToolboxSettings = tool.toolbox;
 
-        /**
-         * Skip tools that don't pass 'toolbox' property
-         */
-        if (!toolToolboxSettings) {
-          return false;
+        if (Array.isArray(toolToolboxSettings)) {
+          const validToolboxSettings = toolToolboxSettings.filter(item => this.areToolboxSetttingsValid(item, tool.name));
+
+          result.push({
+            ...tool,
+            toolbox: validToolboxSettings,
+          });
+        } else {
+          if (this.areToolboxSetttingsValid(toolToolboxSettings, tool.name)) {
+            result.push(tool);
+          }
         }
 
-        if (toolToolboxSettings && !toolToolboxSettings.icon) {
-          _.log('Toolbar icon is missed. Tool %o skipped', 'warn', tool.name);
+        return result;
+      }, []);
+  }
 
-          return false;
+  /**
+   *
+   */
+  @_.cacheable
+  private get toolboxItemsToBeDisplayed(): PopoverItem[] {
+    /**
+     * Maps tool data to popover item structure
+     */
+    const toPopoverItem = (config: ToolboxConfig, tool: BlockTool): PopoverItem => {
+      return {
+        icon: config.icon,
+        label: config.title,
+        name: tool.name,
+        onClick: (e): void => {
+          this.toolButtonActivated(tool.name, config);
+        },
+        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+      };
+    };
+
+    return this.toolsToBeDisplayed
+      .reduce((result, tool) => {
+        if (Array.isArray(tool.toolbox)) {
+          tool.toolbox.forEach(item => {
+            result.push(toPopoverItem(item, tool));
+          });
+        } else {
+          result.push(toPopoverItem(tool.toolbox, tool));
         }
 
-        return true;
-      });
+        return result;
+      }, []);
+  }
+
+  // /**
+  //  *
+  //  */
+  //  @_.cacheable
+  // private get toolboxItemsToBeDisplayed(): PopoverItem[] {
+  //   /**
+  //    * Maps tool data to popover item structure
+  //    */
+  //   function toPopoverItem(config: ToolboxConfig, tool: BlockTool): PopoverItem {
+  //     return {
+  //       icon: config.icon,
+  //       label: config.title,
+  //       name: tool.name,
+  //       onClick: (): void => {
+  //         this.toolButtonActivated(tool.name);
+  //       },
+  //       secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+  //     };
+  //   }
+
+  //   return Array
+  //     .from(this.tools.values())
+  //     .reduce((result, tool) => {
+  //       if (Array.isArray(tool.toolbox)) {
+  //         const validToolboxSettings = tool.toolbox.filter(item => this.areToolboxSetttingsValid(item, tool.name));
+
+  //         validToolboxSettings.forEach(toolSettings => {
+  //           result.push(toPopoverItem(toolSettings, tool));
+  //         });
+  //       } else {
+  //         if (this.areToolboxSetttingsValid(tool.toolbox, tool.name)) {
+  //           result.push(toPopoverItem(tool.toolbox, tool));
+  //         }
+  //       }
+
+  //       return result;
+  //     }, []);
+  // }
+
+  /**
+   *
+   * @param tool
+   */
+  private areToolboxSetttingsValid(toolToolboxSettings, toolName: string): boolean {
+    /**
+     * Skip tools that don't pass 'toolbox' property
+     */
+    if (!toolToolboxSettings) {
+      return false;
+    }
+
+    if (toolToolboxSettings && !toolToolboxSettings.icon) {
+      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -330,7 +415,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    *
    * @param {string} toolName - Tool name
    */
-  private insertNewBlock(toolName: string): void {
+  private insertNewBlock(toolName: string, toolboxConfig?): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
@@ -347,7 +432,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     const newBlock = this.api.blocks.insert(
       toolName,
       undefined,
-      undefined,
+      toolboxConfig.config,
       index,
       undefined,
       currentBlock.isEmpty
