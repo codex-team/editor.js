@@ -3,6 +3,7 @@
 ### 2.24.1
 
 — `Fix` — The I18n of Tools` titles at the Toolbox now works correctly [#2030](https://github.com/codex-team/editor.js/issues/2030)
+- `Fix` - `Paste` - Replace the whole content of the page with plain text.[#1705](https://github.com/codex-team/editor.js/issues/1705)
 
 ### 2.24.0
 
