@@ -1,4 +1,5 @@
 import SelectionUtils from '../selection';
+import { BlockDropZonePlacement } from '../block';
 
 import Module from '../__module';
 /**
@@ -75,8 +76,12 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
+    if (await this.processBlockDrop(dropEvent)) {
+      return;
+    }
+
     BlockManager.blocks.forEach((block) => {
-      block.dropTarget = false;
+      block.dropTarget = undefined;
     });
 
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
@@ -100,6 +105,51 @@ export default class DragNDrop extends Module {
     }
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+  }
+
+  /**
+   * Checks and process the drop of a block. Returns {boolean} depending if a block drop has been processed.
+   *
+   * @param dropEvent {DragEvent}
+   * @returns {boolean}
+   */
+  private async processBlockDrop(dropEvent: DragEvent): Promise<boolean> {
+    const { BlockManager } = this.Editor;
+
+    if (BlockManager.currentDraggingBlock) {
+      const currentIndex = this.Editor.BlockManager.currentDraggingBlockIndex;
+      const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+
+      if (!targetBlock) {
+        // This means that we are trying to drop a block without references.
+        return;
+      }
+
+      const targetIndex = this.Editor.BlockManager.getBlockIndex(targetBlock);
+
+      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex - 1);
+        } else {
+          this.Editor.BlockManager.move(targetIndex);
+        }
+      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex);
+        } else {
+          this.Editor.BlockManager.move(targetIndex + 1);
+        }
+      }
+
+      // this has to be cleaned after we drop the block
+      BlockManager.blocks.forEach((block) => {
+        block.dropTarget = undefined;
+      });
+
+      return true;
+    }
+
+    return false;
   }
 
   /**
