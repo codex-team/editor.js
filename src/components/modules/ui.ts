@@ -516,9 +516,15 @@ export default class UI extends Module<UINodes> {
     }
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-    Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    const clipboard = new DataTransfer();
 
-    await Paste.processDataTransfer(event.clipboardData);
+    event.clipboardData.types.map(type => {
+      clipboard.setData(type, event.clipboardData.getData(type));
+    });
+
+    await Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+    await Paste.processDataTransfer(clipboard);
 
     BlockSelection.clearSelection(event);
     event.preventDefault();
