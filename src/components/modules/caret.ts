@@ -25,7 +25,7 @@ export default class Caret extends Module {
    * @static
    * @returns {{START: string, END: string, DEFAULT: string}}
    */
-  public get positions(): {START: string; END: string; DEFAULT: string} {
+  public get positions(): { START: string; END: string; DEFAULT: string } {
     return {
       START: 'start',
       END: 'end',
@@ -36,7 +36,7 @@ export default class Caret extends Module {
   /**
    * Elements styles that can be useful for Caret Module
    */
-  private static get CSS(): {shadowCaret: string} {
+  private static get CSS(): { shadowCaret: string } {
     return {
       shadowCaret: 'cdx-shadow-caret',
     };
@@ -224,8 +224,9 @@ export default class Caret extends Module {
    * @param {string} position - position where to set caret.
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
+   * @returns {Promise<void>}
    */
-  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
+  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): Promise<void> {
     const { BlockManager } = this.Editor;
     let element;
 
@@ -257,15 +258,15 @@ export default class Caret extends Module {
         break;
     }
 
-    /**
-     * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-     */
-    _.delay(() => {
-      this.set(nodeToSet as HTMLElement, offset);
-    }, 20)();
-
     BlockManager.setCurrentBlockByChildNode(block.holder);
     BlockManager.currentBlock.currentInput = element;
+
+    return new Promise<void>((resolve) => {
+      _.delay(() => {
+        this.set(nodeToSet as HTMLElement, offset);
+        resolve();
+      }, 20)();
+    });
   }
 
   /**
@@ -345,7 +346,7 @@ export default class Caret extends Module {
   /**
    * Extract content fragment of current Block from Caret position to the end of the Block
    */
-  public extractFragmentFromCaretPosition(): void|DocumentFragment {
+  public extractFragmentFromCaretPosition(): void | DocumentFragment {
     const selection = Selection.get();
 
     if (selection.rangeCount) {
