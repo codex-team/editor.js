@@ -127,3 +127,12 @@
     transform: rotate(360deg);
   }
 }
+
+.ce-scroll-locked, .ce-scroll-locked > body {
+  height: 100vh;
+  overflow: hidden;
+  /**
+   * Mobile Safari fix
+   */
+  position: relative;
+}

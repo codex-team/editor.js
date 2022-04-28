@@ -231,7 +231,7 @@ export default class UI extends Module<UINodes> {
      * Toolbar has internal module (Toolbox) that has own Flipper,
      * so we check it manually
      */
-    if (this.Editor.Toolbar.toolbox.flipperHasFocus) {
+    if (this.Editor.Toolbar.toolbox.hasFocus()) {
       return true;
     }
 
@@ -239,7 +239,7 @@ export default class UI extends Module<UINodes> {
       return moduleClass.flipper instanceof Flipper;
     })
       .some(([moduleName, moduleClass]) => {
-        return moduleClass.flipper.currentItem;
+        return moduleClass.flipper.hasFocus();
       });
   }
 
@@ -389,7 +389,7 @@ export default class UI extends Module<UINodes> {
    */
   private watchBlockHoveredEvents(): void {
     /**
-     * Used to not to emit the same block multiple times to the 'block-hovered' event on every mousemove
+     * Used to not emit the same block multiple times to the 'block-hovered' event on every mousemove
      */
     let blockHoveredEmitted;
 
