@@ -129,10 +129,6 @@
 }
 
 .ce-scroll-locked {
-  height: calc(100vh  + env(safe-area-inset-bottom));
-}
-
-.ce-scroll-locked > body {
   overflow: hidden;
   top: calc(-1 * var(--window-scroll-offset));
   position: fixed;
