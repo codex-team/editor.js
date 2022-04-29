@@ -6,6 +6,8 @@ import ToolsCollection from '../tools/collection';
 import { API } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
+import I18n from '../i18n';
+import { I18nInternalNS } from '../i18n/namespace-internal';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -133,7 +135,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       items: this.toolsToBeDisplayed.map(tool => {
         return {
           icon: tool.toolbox.icon,
-          label: tool.toolbox.title,
+          label: I18n.t(I18nInternalNS.toolNames, tool.toolbox.title || _.capitalize(tool.name)),
           name: tool.name,
           onClick: (item): void => {
             this.toolButtonActivated(tool.name);
