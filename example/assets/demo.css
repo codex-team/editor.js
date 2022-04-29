@@ -270,6 +270,26 @@ body {
   padding: 30px;
 }
 
+.ce-example-popup__overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #00000085;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ce-example-popup__popup {
+  width: 700px;
+  max-width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 4px;
+}
+
 .show-block-boundaries .ce-block {
   box-shadow: inset 0 0 0 1px #eff2f5;
 }
