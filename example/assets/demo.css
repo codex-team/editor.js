@@ -270,6 +270,20 @@ body {
   padding: 30px;
 }
 
+
+/**
+ * Styles for the popup example page
+ */
+.ce-example--popup {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ce-example--popup .ce-example__content {
+  flex-grow: 2;
+}
+
 .ce-example-popup__overlay {
   position: fixed;
   top: 0;
@@ -277,17 +291,33 @@ body {
   left: 0;
   right: 0;
   background: #00000085;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .ce-example-popup__popup {
-  width: 700px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 800px;
   max-width: 100%;
+  max-height: 90vh;
   background: white;
   padding: 20px;
-  border-radius: 4px;
+  border-radius: 8px;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+@media all and (max-width: 730px){
+  .ce-example-popup__popup {
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    transform: none;
+    max-height: none;
+
+  }
 }
 
 .show-block-boundaries .ce-block {
