@@ -128,11 +128,13 @@
   }
 }
 
-.ce-scroll-locked, .ce-scroll-locked > body {
-  height: 100vh;
+.ce-scroll-locked {
+  height: calc(100vh  + env(safe-area-inset-bottom));
+}
+
+.ce-scroll-locked > body {
   overflow: hidden;
-  /**
-   * Mobile Safari fix
-   */
-  position: relative;
+  top: calc(-1 * var(--window-scroll-offset));
+  position: fixed;
+  width: 100%;
 }
