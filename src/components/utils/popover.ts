@@ -4,7 +4,7 @@ import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
-import * as scrollLocker from './scroll-locker';
+import ScrollLocker from './scroll-locker';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -148,6 +148,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
+   * ScrollLocker instance
+   */
+  private scrollLocker = new ScrollLocker()
+
+  /**
    * Creates the Popover
    *
    * @param options - config
@@ -198,7 +203,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     if (isMobileScreen()) {
-      scrollLocker.lock();
+      this.scrollLocker.lock();
     }
   }
 
@@ -212,7 +217,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper.deactivate();
 
     if (isMobileScreen()) {
-      scrollLocker.unlock();
+      this.scrollLocker.unlock();
     }
   }
 
