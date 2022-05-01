@@ -4,7 +4,9 @@
 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed
 - `Fix` — Typo in toolbox empty placeholder fixed
+- `Fix` — The issue with scroll jumping on block hovering have fixed [2036](https://github.com/codex-team/editor.js/issues/2036)
 - `Improvement` — *Dev Example Page* - Add popup example page
+- `Improvement` — *UI* - The Toolbox will restore the internal scroll on every opening
 
 ### 2.24.1
 
