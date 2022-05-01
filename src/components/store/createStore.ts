@@ -9,11 +9,14 @@ import * as _ from '../utils';
  * It creates the store with an initial state
  *
  * It returns functions to use the store:
- *  subscribe - function for subscribing to each state changes
+ *  subscribe - function for subscribing to each state change
  *  dispatch - function for applying actions to the store
  *  getState - function returns a current state of the store
  *
- * @param reducer - the function that applies the passed action to the current state and returns the new state
+ * @param reducer - the function that applies the passed action to the current state and returns the new state.
+ * Passing a reducer function to the `createStore` function helps
+ * to add new logic to the Store without changing the main logic of the Store.
+ *
  * @param initialState - initial state of the store
  */
 function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} }): Store {

@@ -4,13 +4,14 @@ import * as _ from '../utils';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
- * Reducer function for Editor.js state
+ * The reducer function for Editor.js state
  * This function applies the passed action to the current state and returns the new state
+ * This reducer is especially for working with blocks data
  *
  * @param state - previous state to apply action
  * @param action - information about the action in the previous state
  */
-const reducer = (state: EditorState, action: Action): EditorState => {
+export default function blocksReducer(state: EditorState, action: Action): EditorState {
   const stateCopy = _.deepCopy(state);
 
   switch (action.type) {
@@ -25,6 +26,4 @@ const reducer = (state: EditorState, action: Action): EditorState => {
   }
 
   return stateCopy;
-};
-
-export default reducer;
+}
