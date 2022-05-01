@@ -1,6 +1,6 @@
 # Changelog
 
-### 2.24.1
+### 2.24.2
 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed
 - `Fix` — Typo in toolbox empty placeholder fixed
