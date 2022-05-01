@@ -5,7 +5,7 @@ import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
  * Reducer function for Editor.js state
- * This function applies actions in the current state
+ * This function applies the passed action to the current state and returns the new state
  *
  * @param state - previous state to apply action
  * @param action - information about the action in the previous state

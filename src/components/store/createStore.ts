@@ -13,7 +13,7 @@ import * as _ from '../utils';
  *  dispatch - function for applying actions to the store
  *  getState - function returns a current state of the store
  *
- * @param reducer - current Editor reducer function
+ * @param reducer - the function that applies the passed action to the current state and returns the new state
  * @param initialState - initial state of the store
  */
 function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} }): Store {
