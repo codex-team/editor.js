@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.24.2
+
+- `Fix` — Scrolling issue when opening toolbox on mobile fixed
+- `Fix` — Typo in toolbox empty placeholder fixed
+- `Improvement` — *Dev Example Page* - Add popup example page
+
 ### 2.24.1
 
 — `Fix` — The I18n of Tools` titles at the Toolbox now works correctly [#2030](https://github.com/codex-team/editor.js/issues/2030)

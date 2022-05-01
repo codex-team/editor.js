@@ -4,6 +4,7 @@ import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
+import ScrollLocker from './scroll-locker';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -131,7 +132,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
-    documentScrollLocked: string;
     } {
     return {
       popover: 'ce-popover',
@@ -147,9 +147,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
-      documentScrollLocked: 'ce-scroll-locked',
     };
   }
+
+  /**
+   * ScrollLocker instance
+   */
+  private scrollLocker = new ScrollLocker()
 
   /**
    * Creates the Popover
@@ -208,7 +212,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     if (isMobileScreen()) {
-      document.documentElement.classList.add(Popover.CSS.documentScrollLocked);
+      this.scrollLocker.lock();
     }
 
     this.isShowed = true;
@@ -231,7 +235,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper.deactivate();
 
     if (isMobileScreen()) {
-      document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
+      this.scrollLocker.unlock();
     }
 
     this.isShowed = false;
