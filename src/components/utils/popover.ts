@@ -186,6 +186,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Shows the Popover
    */
   public show(): void {
+
+    /**
+     * Clear search and items scrolling
+     */
+    this.search.clear();
+    this.nodes.items.scrollTop = 0;
+
     this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
     this.flipper.activate();
@@ -205,7 +212,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Hides the Popover
    */
   public hide(): void {
-    this.search.clear();
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
