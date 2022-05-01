@@ -61,7 +61,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Stores the visibility state.
    */
-  private isShowed = false;
+  private isShown = false;
 
   /**
    * Created nodes
@@ -215,7 +215,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       this.scrollLocker.lock();
     }
 
-    this.isShowed = true;
+    this.isShown = true;
   }
 
   /**
@@ -226,7 +226,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
      * If it's already hidden, do nothing
      * to prevent extra DOM operations
      */
-    if (!this.isShowed) {
+    if (!this.isShown) {
       return;
     }
 
@@ -238,7 +238,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       this.scrollLocker.unlock();
     }
 
-    this.isShowed = false;
+    this.isShown = false;
   }
 
   /**
