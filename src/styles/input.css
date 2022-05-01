@@ -1,0 +1,46 @@
+.cdx-search-field {
+  --icon-margin-right: 10px;
+
+  background: rgba(232,232,235,0.49);
+  border: 1px solid rgba(226,226,229,0.20);
+  border-radius: 6px;
+  padding: 2px;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: auto;
+
+  &__icon {
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--icon-margin-right);
+
+    .icon {
+      width: 14px;
+      height: 14px;
+      color: var(--grayText);
+      flex-shrink: 0;
+    }
+  }
+
+
+  &__input {
+    font-size: 14px;
+    outline: none;
+    font-weight: 500;
+    font-family: inherit;
+    border: 0;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    line-height: 22px;
+    min-width: calc(100% - var(--toolbox-buttons-size) - var(--icon-margin-right));
+
+    &::placeholder {
+       color: var(--grayText);
+       font-weight: 500;
+    }
+  }
+}

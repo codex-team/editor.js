@@ -698,7 +698,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      allowArrows: false,
+      allowedKeys: [
+        _.keyCodes.ENTER,
+        _.keyCodes.TAB,
+      ],
     });
   }
 }

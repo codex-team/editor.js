@@ -117,3 +117,20 @@
     transform: translateY(0);
   }
 }
+
+@keyframes panelShowingMobile {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+
+  to {
+
+    transform: translateY(0);
+  }
+}

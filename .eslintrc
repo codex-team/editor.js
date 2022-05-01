@@ -50,6 +50,7 @@
     "DOMRect": true,
     "ClientRect": true,
     "ArrayLike": true,
+    "InputEvent": true,
     "unknown": true
   }
 }

@@ -662,7 +662,7 @@ export default class Paste extends Module {
 
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-      const currentToolSanitizeConfig = BlockManager.currentBlock.tool.sanitizeConfig;
+      const currentToolSanitizeConfig = BlockManager.currentBlock.tool.baseSanitizeConfig;
 
       document.execCommand(
         'insertHTML',

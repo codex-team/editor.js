@@ -13,7 +13,9 @@
     },
     "toolbar": {
       "toolbox": {
-        "Add": ""
+        "Add": "",
+        "Filter": "",
+        "Nothing found": ""
       }
     }
   },

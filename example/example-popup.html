@@ -1,0 +1,131 @@
+
+<!--
+ Use this page for debugging purposes.
+
+ This page can be used for testing editor nested in a popup.
+ -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <title>Editor.js 🤩🧦🤨 example: Popup</title>
+   <link href="assets/demo.css" rel="stylesheet">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+ </head>
+ <body>
+   <div class="ce-example ce-example--popup">
+     <div class="ce-example__header">
+       <a class="ce-example__header-logo" href="https://codex.so/editor">Editor.js 🤩🧦🤨</a>
+
+       <div class="ce-example__header-menu">
+         <a href="https://github.com/editor-js" target="_blank">Plugins</a>
+         <a href="https://editorjs.io/usage" target="_blank">Usage</a>
+         <a href="https://editorjs.io/configuration" target="_blank">Configuration</a>
+         <a href="https://editorjs.io/creating-a-block-tool" target="_blank">API</a>
+       </div>
+     </div>
+     <div class="ce-example__content ce-example__content--with-bg _ce-example__content--small">
+       <div id="hint-core" style="text-align: center; padding-top: 20px">
+         No core bundle file found. Run <code class="inline-code">yarn build</code>
+       </div>
+       <div class="stub">
+         <h1>Base concepts</h1>
+         <p>
+           Editor.js is a block-style editor for rich media stories. It outputs clean data in JSON instead of heavy HTML markup. And more important thing is that Editor.js is designed to be API extendable and pluggable.
+         </p>
+         <p>
+           So there are a few key features:
+         </p>
+         <ul>
+           <li>Clean data output</li>
+           <li>API pluggable</li>
+           <li>Open source</li>
+         </ul>
+         <h2>
+           What does it mean block-styled
+         </h2>
+         <p>
+           In other editors, the workspace is provided by single contenteditable element in where you can create different HTML markup. All of us saw permanent bugs with moving text fragments or scaling images, while page parts are jumping and twitches. Or highlighting big parts of the text in the case when you just want to make few words to be a heading or bold.
+         </p>
+         <p>
+           The Editor.js workspace consists of separate Blocks: paragraphs, headings, images, lists, quotes, etc. Each of them is an independent contenteditable element (or more complex structure) provided by Plugin and united by Editor's Core.
+         </p>
+         <p>
+           At the same time, most useful features as arrow-navigation, copy & paste, cross block selection, and others works almost as in the familiar editors.
+         </p>
+         <h2>
+           What is clean data
+         </h2>
+         <p>
+           But the more interesting thing is, as mentioned above, that Editor.js returns clean data instead of HTML-markup. Take a look at the example.
+         </p>
+         <p>
+           If our entry consists of few paragraphs and a heading, in popular Medium editor after saving we will have something like this:
+         </p>
+         <p>
+           As you can see, there are only data we need: a list of structural Blocks with their content description.
+         </p>
+         <p>
+           You can use this data to easily render in Web, native mobile/desktop application, pass to Audio Readers, create templates for Facebook Instant Articles, AMP, RSS, create chat-bots, and many others.
+         </p>
+         <p>
+           Also, the clean data can be useful for backend processing: sanitizing, validation, injecting an advertising or other stuff, extracting Headings, make covers for social networks from Image Blocks, and other.
+         </p>
+         <h2>
+           API pluggable?
+         </h2>
+         <p>
+           A key value of the Editor is the API. All main functional units of the editor — Blocks, Inline Formatting Tools, Block Tunes — are provided by external plugins that use Editor's API.
+         </p>
+         <p>
+           We decide to extract all these Tools to separate scripts to make Editor's Core more abstract and make API more powerful. Any challenges and tasks you are facing can be implemented by your own plugins using the API.
+         </p>
+         <p>
+           At the same time, API is created to be easy-to-understand and simple-to-use.
+         </p>
+         <h2>
+           Open Source, so?
+         </h2>
+         <p>
+           Editor.js is more than just an editor. It is a big open-source community of developers and contributors. Anyone can suggest an improvement or a bug fix. Anyone can create new cool API features and plugins.
+         </p>
+         <p>
+           We will support each developer of Editor.js plugins: the best solutions will be collected to the Awesome List and promoted to the community. Together we can create a big suite of different Blocks, Inline Tools, Block Tunes that can hit a wide specter of tasks.
+         </p>
+         <p>
+           Thanks for your interest. Hope you enjoy Editor.js.
+         </p>
+       </div>
+      <div class="ce-example-popup">
+        <div class="ce-example-popup__overlay"></div>
+        <div class="ce-example-popup__popup">
+            <div id="editorjs"></div>
+        </div>
+      </div>
+     </div>
+     <div class="ce-example__output">
+       <div class="ce-example__output-footer">
+         <a href="https://codex.so" style="font-weight: bold;">Made by CodeX</a>
+       </div>
+     </div>
+   </div>
+
+   <!-- Load Editor.js's Core -->
+   <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true"></script>
+   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
+
+   <!-- Initialization -->
+   <script>
+     var editor1 = new EditorJS({
+       holder: 'editorjs',
+       tools: {
+         header: {
+           class: Header,
+           shortcut: 'CMD+SHIFT+H'
+         }
+       }
+     });
+
+   </script>
+ </body>
+ </html>
