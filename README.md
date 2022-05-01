@@ -27,8 +27,8 @@
 
 - Unified Toolbox
   - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
-  - [ ] Toolbox become vertical `In progress`
-  - [ ] Ability to display several Toolbox buttons by the single Tool
+  - [x] Toolbox become vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
+  - [ ] Ability to display several Toolbox buttons by the single Tool `In progress`
   - [ ] Conversion Toolbar uses Unified Toolbox
   - [ ] Block Tunes become vertical
   - [ ] Conversion Toolbar added to the Block Tunes
@@ -38,7 +38,7 @@
   <img width="459" alt="image" src="https://user-images.githubusercontent.com/3684889/152159639-f5e89362-19a1-4c71-a089-422e875fab7d.png">
 </a>
 
-## 
+##
 
 
 ## If you like a project 💗💗💗
