@@ -127,7 +127,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
-    documentScrollLocked: string;
     } {
     return {
       popover: 'ce-popover',
@@ -143,7 +142,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
-      documentScrollLocked: 'ce-scroll-locked',
     };
   }
 
