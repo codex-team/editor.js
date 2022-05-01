@@ -59,6 +59,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private readonly items: PopoverItem[];
 
   /**
+   * Stores the visibility state.
+   */
+  private isShown = false;
+
+  /**
    * Created nodes
    */
   private nodes: {
@@ -190,6 +195,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Shows the Popover
    */
   public show(): void {
+    /**
+     * Clear search and items scrolling
+     */
+    this.search.clear();
+    this.nodes.items.scrollTop = 0;
+
     this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
     this.flipper.activate();
@@ -203,13 +214,22 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (isMobileScreen()) {
       this.scrollLocker.lock();
     }
+
+    this.isShown = true;
   }
 
   /**
    * Hides the Popover
    */
   public hide(): void {
-    this.search.clear();
+    /**
+     * If it's already hidden, do nothing
+     * to prevent extra DOM operations
+     */
+    if (!this.isShown) {
+      return;
+    }
+
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
@@ -217,6 +237,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (isMobileScreen()) {
       this.scrollLocker.unlock();
     }
+
+    this.isShown = false;
   }
 
   /**
