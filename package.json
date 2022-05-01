@@ -24,7 +24,7 @@
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "ci:pull_paragraph": "git submodule update --init ./src/tools/paragraph",
     "pull_tools": "git submodule update --init --recursive",
-    "_tools:checkout": "git submodule foreach 'git checkout master || git checkout main'",
+    "_tools:checkout": "git submodule foreach \"git checkout master || git checkout main\"",
     "_tools:pull": "git submodule foreach git pull",
     "_tools:yarn": "git submodule foreach yarn",
     "_tools:build": "git submodule foreach yarn build",
