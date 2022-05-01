@@ -4,6 +4,7 @@ import Flipper from '../flipper';
 import SearchInput from './search-input';
 import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
+import ScrollLocker from './scroll-locker';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -56,6 +57,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Items list to be displayed
    */
   private readonly items: PopoverItem[];
+
+  /**
+   * Stores the visibility state.
+   */
+  private isShown = false;
 
   /**
    * Created nodes
@@ -126,7 +132,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
-    documentScrollLocked: string;
     } {
     return {
       popover: 'ce-popover',
@@ -142,9 +147,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
-      documentScrollLocked: 'ce-scroll-locked',
     };
   }
+
+  /**
+   * ScrollLocker instance
+   */
+  private scrollLocker = new ScrollLocker()
 
   /**
    * Creates the Popover
@@ -186,6 +195,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Shows the Popover
    */
   public show(): void {
+    /**
+     * Clear search and items scrolling
+     */
+    this.search.clear();
+    this.nodes.items.scrollTop = 0;
+
     this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
     this.flipper.activate();
@@ -197,22 +212,33 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     if (isMobileScreen()) {
-      document.documentElement.classList.add(Popover.CSS.documentScrollLocked);
+      this.scrollLocker.lock();
     }
+
+    this.isShown = true;
   }
 
   /**
    * Hides the Popover
    */
   public hide(): void {
-    this.search.clear();
+    /**
+     * If it's already hidden, do nothing
+     * to prevent extra DOM operations
+     */
+    if (!this.isShown) {
+      return;
+    }
+
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.add(Popover.CSS.popoverOverlayHidden);
     this.flipper.deactivate();
 
     if (isMobileScreen()) {
-      document.documentElement.classList.remove(Popover.CSS.documentScrollLocked);
+      this.scrollLocker.unlock();
     }
+
+    this.isShown = false;
   }
 
   /**
