@@ -6,6 +6,8 @@ import ToolsCollection from '../tools/collection';
 import { API, ToolboxConfig, ToolConfig } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
+import I18n from '../i18n';
+import { I18nInternalNS } from '../i18n/namespace-internal';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -282,7 +284,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     const toPopoverItem = (config: ToolboxConfig, tool: BlockTool): PopoverItem => {
       return {
         icon: config.icon,
-        label: config.title,
+        label: I18n.t(I18nInternalNS.toolNames, config.title || _.capitalize(tool.name)),
         name: tool.name,
         onClick: (e): void => {
           this.toolButtonActivated(tool.name, config);
