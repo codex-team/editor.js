@@ -229,7 +229,7 @@ export default class BlockManager extends Module {
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
    * @param {string} [options.id] - unique id for this block
    * @param {BlockToolData} [options.data] - constructor params
-   * @param {ToolConfig} [options.config] - may contain tool settings overrides
+   * @param {ToolConfig} [options.config] - may contain tool default settings overrides
    *
    * @returns {Block}
    */
@@ -239,14 +239,10 @@ export default class BlockManager extends Module {
     id = undefined,
     tunes: tunesData = {},
     config = {},
-  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}; config?: any}): Block {
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}; config?: ToolConfig}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
 
-    // // Merge tool default settings with overrides
-    // Object.entries(config).forEach(([prop, value]) => {
-    //   tool.settings[prop] = value;
-    // });
     const block = new Block({
       id,
       data,
@@ -274,7 +270,7 @@ export default class BlockManager extends Module {
    * @param {number} [options.index] - index where to insert new Block
    * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
    * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
-   * @param {} [options.config] -
+   * @param {ToolConfig} [options.config] - may contain tool default settings overrides
    *
    * @returns {Block}
    */
@@ -295,7 +291,7 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     tunes?: {[name: string]: BlockTuneData};
-    config?: any;
+    config?: ToolConfig;
   } = {}): Block {
     let newIndex = index;
 
@@ -344,7 +340,7 @@ export default class BlockManager extends Module {
    * @param {object} options - replace options
    * @param {string} options.tool — plugin name
    * @param {BlockToolData} options.data — plugin data
-   * @param {ToolConfig} options.config -
+   * @param {ToolConfig} options.config - may contain tool default settings overrides-
    *
    * @returns {Block}
    */

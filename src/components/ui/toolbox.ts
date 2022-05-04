@@ -274,7 +274,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   *
+   * Returns list of items that will be displayed in toolbox
    */
   @_.cacheable
   private get toolboxItemsToBeDisplayed(): PopoverItem[] {
@@ -307,50 +307,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       }, []);
   }
 
-  // /**
-  //  *
-  //  */
-  //  @_.cacheable
-  // private get toolboxItemsToBeDisplayed(): PopoverItem[] {
-  //   /**
-  //    * Maps tool data to popover item structure
-  //    */
-  //   function toPopoverItem(config: ToolboxConfig, tool: BlockTool): PopoverItem {
-  //     return {
-  //       icon: config.icon,
-  //       label: config.title,
-  //       name: tool.name,
-  //       onClick: (): void => {
-  //         this.toolButtonActivated(tool.name);
-  //       },
-  //       secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
-  //     };
-  //   }
-
-  //   return Array
-  //     .from(this.tools.values())
-  //     .reduce((result, tool) => {
-  //       if (Array.isArray(tool.toolbox)) {
-  //         const validToolboxSettings = tool.toolbox.filter(item => this.areToolboxSetttingsValid(item, tool.name));
-
-  //         validToolboxSettings.forEach(toolSettings => {
-  //           result.push(toPopoverItem(toolSettings, tool));
-  //         });
-  //       } else {
-  //         if (this.areToolboxSetttingsValid(tool.toolbox, tool.name)) {
-  //           result.push(toPopoverItem(tool.toolbox, tool));
-  //         }
-  //       }
-
-  //       return result;
-  //     }, []);
-  // }
-
   /**
+   * Validates tool's toolbox settings
    *
-   * @param tool
+   * @param toolToolboxSettings - item to validate
+   * @param toolName - name of the tool used in consone warning if item is not valid
    */
-  private areToolboxSetttingsValid(toolToolboxSettings, toolName: string): boolean {
+  private areToolboxSetttingsValid(toolToolboxSettings: ToolboxConfig, toolName: string): boolean {
     /**
      * Skip tools that don't pass 'toolbox' property
      */

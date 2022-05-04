@@ -163,21 +163,9 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
+   * Returns toolbox items settings merged with user defined settings
    *
-   */
-  // public get currentToolboxItem(): ToolboxConfig {
-  //   if (Array.isArray(this.toolbox)) {
-  //     console.log(this.config);
-
-  //     return null;
-  //   } else {
-  //     return this.toolbox;
-  //   }
-  // }
-
-  /**
-   *
-   * @param toolboxItemSettings
+   * @param toolboxItemSettings - toolbox item settings to merge
    */
   private getActualToolboxSettings(toolboxItemSettings: ToolboxConfig): ToolboxConfig {
     const userToolboxSettings = this.config[UserSettings.Toolbox];

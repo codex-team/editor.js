@@ -480,13 +480,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Get icon or title for dropdown
      */
-    const toolboxSettings = currentBlock.tool.toolbox || {};
+    const toolboxSettings = currentBlock.activeToolboxEntry || {};
 
-    // console.log(currentBlock.toggler);
     this.nodes.conversionTogglerContent.innerHTML =
-      currentBlock.toggler ||
-      // toolboxSettings.icon ||
-      // toolboxSettings.title ||
+      toolboxSettings.icon ||
+      toolboxSettings.title ||
       _.capitalize(toolName);
   }
 

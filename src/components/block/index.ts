@@ -749,17 +749,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   *
+   * Returns current active toolbox entry
    */
-  public get toggler(): string | undefined {
-    return this.toolInstance.toggler;
-  }
-
-  /**
-   *
-   */
-  public get toolboxItem() {
-    return this.toolInstance.toolboxItem;
+  public get activeToolboxEntry(): ToolboxConfig {
+    return Array.isArray(this.tool.toolbox) ? this.toolInstance.activeToolboxEntry : this.tool.toolbox;
   }
 
   /**

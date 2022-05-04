@@ -5,6 +5,7 @@ import { ToolConfig } from './tool-config';
 import {API, BlockAPI} from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
+import { ToolboxConfig } from './tool-settings';
 
 /**
  * Describe Block Tool object
@@ -16,14 +17,16 @@ export interface BlockTool extends BaseTool {
    */
   sanitize?: SanitizerConfig;
 
+
+  /**
+   * Current active toolbox entry
+   */
+  activeToolboxEntry?: ToolboxConfig
+
+
   /**
    * 
    */
-  toggler?: string;
-
-
-  toolboxItem?: any
-
   isMe: (config?: any) => boolean
 
   /**

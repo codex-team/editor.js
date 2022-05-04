@@ -79,6 +79,10 @@ export enum InternalBlockToolSettings {
    */
   Toolbox = 'toolbox',
   /**
+   * Current active toolbox item
+   */
+  ToolboxItem = 'toolboxItem',
+  /**
    * Tool conversion config
    */
   ConversionConfig = 'conversionConfig',
