@@ -56,9 +56,9 @@ interface BlockConstructorOptions {
   tunesData: { [name: string]: BlockTuneData };
 
   /**
-   *
+   * May contain overrides for tool default config
    */
-  configOverrides: any;
+  configOverrides: ToolConfig;
 }
 
 /**
@@ -149,8 +149,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool's user configuration
    */
   public readonly config: ToolConfig;
-
-  public readonly settingsOverrides: any
 
   /**
    * Cached inputs
@@ -269,10 +267,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     Object.entries(configOverrides).forEach(([prop, value]) => {
       tool.settings[prop] = value;
     });
+
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
-    this.settingsOverrides = configOverrides;
     this.config = tool.settings.config || {};
     this.api = api;
     this.blockAPI = new BlockAPI(this);
@@ -759,12 +757,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param config
    */
-  public isMe(config): boolean {
-    if (typeof this.toolInstance.isMe !== 'function') {
+  public isToolboxItemActive(config): boolean {
+    if (typeof this.toolInstance.isToolboxItemActive !== 'function') {
       return;
     }
 
-    return this.toolInstance.isMe(config);
+    return this.toolInstance.isToolboxItemActive(config);
   }
 
   /**

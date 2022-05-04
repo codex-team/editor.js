@@ -99,9 +99,10 @@ export default class Renderer extends Module {
       };
 
       if (Tools.unavailable.has(tool)) {
-        const toolName = (Tools.unavailable.get(tool) as BlockTool).name;
+        const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+        const toolboxTitle = (Array.isArray(toolboxSettings) ? toolboxSettings[0] : toolboxSettings)?.title;
 
-        stubData.title = (toolName && _.capitalize(toolName)) || stubData.title;
+        stubData.title = toolboxTitle || stubData.title;
       }
 
       const stub = BlockManager.insert({

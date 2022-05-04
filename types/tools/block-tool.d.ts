@@ -25,9 +25,11 @@ export interface BlockTool extends BaseTool {
 
 
   /**
+   * Returns true if specified toolbox item is the active one
    * 
+   * @param toolboxItem - tool's toolbox config item
    */
-  isMe: (config?: any) => boolean
+  isToolboxItemActive: (toolboxItem: ToolboxConfig) => boolean
 
   /**
    * Process Tool's element in DOM and return raw data
