@@ -4,7 +4,6 @@
   will-change: opacity, transform;
   display: flex;
   flex-direction: column;
-  padding: 6px;
   min-width: 200px;
   overflow: hidden;
   box-sizing: border-box;
@@ -19,6 +18,7 @@
   &--opened {
      opacity: 1;
      max-height: 270px;
+     padding: 6px;
      animation: panelShowing 100ms ease;
 
      @media (--mobile) {
