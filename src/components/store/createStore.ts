@@ -3,6 +3,7 @@ import { Reducer } from '../../../types/store/reducer';
 import { Action } from '../../../types/store/action';
 import { Store } from '../../../types/store/store';
 import * as _ from '../utils';
+import { Listener } from '../../../types/store/listener';
 
 /**
  * This function is an entry point to use the store in the editor
@@ -31,7 +32,7 @@ function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} 
    *
    * @returns {() => void} unsubscribe function
    */
-  const subscribe = (listener): (() => void) => {
+  const subscribe = (listener: Listener): (() => void) => {
     currentListeners.push(listener);
 
     return (): void => {
@@ -47,7 +48,7 @@ function createStore(reducer: Reducer, initialState: EditorState = { blocks: {} 
   const dispatch = (action: Action): void => {
     state = currentReducer(state, action);
     currentListeners.forEach((listener) => {
-      listener();
+      listener(state);
     });
   };
 

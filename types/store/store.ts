@@ -1,5 +1,6 @@
 import { Action } from './action';
 import { EditorState } from './editorState';
+import { Listener } from './listener';
 
 /**
  * Store type contains functions for use it
@@ -12,7 +13,7 @@ export interface Store {
    *
    * @returns {() => void} unsubscribe function
    */
-  subscribe: (listener: () => void) => (() => void);
+  subscribe: (listener: Listener) => (() => void);
 
   /**
    * Dispatch action on the current state
