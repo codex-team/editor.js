@@ -1,7 +1,7 @@
 import createStore from '../../../../src/components/store/createStore';
 import { EditorState } from '../../../../types/store/editorState';
-import reducer from '../../../../src/components/store/reducer';
 import { BlockMutationType } from '../../../../types/events/block/mutation-type';
+import blocksReducer from '../../../../src/components/store/blocksReducer';
 
 describe('State manager', () => {
   it('should create the store without initial state', () => {
@@ -32,9 +32,9 @@ describe('State manager', () => {
     expect(store.getState()).to.deep.equal(initialState);
   });
 
-  describe('reducer', () => {
+  describe('blocksReducer', () => {
     it('should change the state', () => {
-      const store = createStore(reducer);
+      const store = createStore(blocksReducer);
       const block = {
         id: '3JPEqh8_Wc',
         type: 'header',
