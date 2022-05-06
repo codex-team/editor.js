@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.24.3
+
+- `Fix` — Issue with toolbox preventing text selection fixed
+
 ### 2.24.2
 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed
