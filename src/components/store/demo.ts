@@ -1,10 +1,12 @@
 import store from './index';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import { EditorState } from '../../../types/store/editorState';
+import { Listener } from '../../../types/store/listener';
 
 /**
  * Handle changes with previous and current states
  */
-const onDataChange = (): (() => void) => {
+const onDataChange = (): Listener => {
   /**
    * Initial state
    */
@@ -12,11 +14,13 @@ const onDataChange = (): (() => void) => {
 
   /**
    * onChange handler
+   *
+   * @param changedState - changed state after dispatching
    */
-  return (): void => {
+  return (changedState: EditorState): void => {
     const prevState = currentState;
 
-    currentState = store.getState();
+    currentState = changedState;
 
     console.log('***');
     console.log('Previous state:', prevState);
