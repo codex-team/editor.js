@@ -754,18 +754,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   *
-   * @param config
-   */
-  public isToolboxItemActive(config): boolean {
-    if (typeof this.toolInstance.isToolboxItemActive !== 'function') {
-      return;
-    }
-
-    return this.toolInstance.isToolboxItemActive(config);
-  }
-
-  /**
    * Make default Block wrappers and put Tool`s content there
    *
    * @returns {HTMLDivElement}

@@ -25,13 +25,6 @@ export interface BlockTool extends BaseTool {
 
 
   /**
-   * Returns true if specified toolbox item is the active one
-   * 
-   * @param toolboxItem - tool's toolbox config item
-   */
-  isToolboxItemActive: (toolboxItem: ToolboxConfig) => boolean
-
-  /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {BlockToolData}

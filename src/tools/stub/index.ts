@@ -86,15 +86,6 @@ export default class Stub implements BlockTool {
   }
 
   /**
-   * Returns true if specified toolbox item is the active one
-   *
-   * @param toolboxItem - tool's toolbox config item
-   */
-  public isToolboxItemActive(toolboxItem: ToolboxConfig): boolean {
-    return false;
-  }
-
-  /**
    * Create Tool html markup
    *
    * @returns {HTMLElement}

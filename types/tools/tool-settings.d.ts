@@ -15,6 +15,12 @@ export interface ToolboxConfig {
    */
   icon?: string;
 
+
+  /**
+   * Toolbox item key (used to identify a toolbox item)
+   */
+  key?: string;
+
   /**
    * May contain overrides for tool default config
    */
