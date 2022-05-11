@@ -1,7 +1,7 @@
 import createStore from '../../../../src/components/store/createStore';
 import { EditorState } from '../../../../types/store/editorState';
 import blocksReducer from '../../../../src/components/store/blocksReducer';
-import { changeBlock, createBlock, removeBlock } from '../../../../src/components/store/actions/blockReducerActions';
+import { makeChangeBlockAction, makeCreateBlockAction, makeRemoveBlockAction } from '../../../../src/components/store/actions/blockReducerActions';
 
 describe('State manager', () => {
   it('should create the store without initial state', () => {
@@ -49,7 +49,7 @@ describe('State manager', () => {
         },
       };
 
-      store.dispatch(createBlock(block));
+      store.dispatch(makeCreateBlockAction(block));
 
       expect(store.getState()).to.be.deep.equal(expectedResult);
     });
@@ -81,7 +81,7 @@ describe('State manager', () => {
         },
       };
 
-      store.dispatch(changeBlock(changedBlock));
+      store.dispatch(makeChangeBlockAction(changedBlock));
 
       expect(store.getState()).to.be.deep.equal(expectedResult);
     });
@@ -104,7 +104,7 @@ describe('State manager', () => {
         blocks: {},
       };
 
-      store.dispatch(removeBlock(block.id));
+      store.dispatch(makeRemoveBlockAction(block.id));
 
       expect(store.getState()).to.be.deep.equal(expectedResult);
     });
