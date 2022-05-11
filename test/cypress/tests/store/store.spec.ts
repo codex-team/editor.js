@@ -1,7 +1,7 @@
 import createStore from '../../../../src/components/store/createStore';
 import { EditorState } from '../../../../types/store/editorState';
-import { BlockMutationType } from '../../../../types/events/block/mutation-type';
 import blocksReducer from '../../../../src/components/store/blocksReducer';
+import { changeBlock, createBlock, removeBlock } from '../../../../src/components/store/actions/blockReducerActions';
 
 describe('State manager', () => {
   it('should create the store without initial state', () => {
@@ -33,7 +33,7 @@ describe('State manager', () => {
   });
 
   describe('blocksReducer', () => {
-    it('should change the state', () => {
+    it('should create a new block in the state', () => {
       const store = createStore(blocksReducer);
       const block = {
         id: '3JPEqh8_Wc',
@@ -49,10 +49,62 @@ describe('State manager', () => {
         },
       };
 
-      store.dispatch({
-        type: BlockMutationType.Added,
-        data: block,
+      store.dispatch(createBlock(block));
+
+      expect(store.getState()).to.be.deep.equal(expectedResult);
+    });
+
+    it('should change block data in the state', () => {
+      const block = {
+        id: '3JPEqh8_Wc',
+        type: 'header',
+        data: {
+          text: 'Editor.js',
+          level: 2,
+        },
+      };
+      const store = createStore(blocksReducer, {
+        blocks: {
+          [block.id]: block,
+        },
       });
+      const changedBlock = {
+        ...block,
+        data: {
+          ...block.data,
+          text: 'New Editor.js!',
+        },
+      };
+      const expectedResult = {
+        blocks: {
+          [changedBlock.id]: changedBlock,
+        },
+      };
+
+      store.dispatch(changeBlock(changedBlock));
+
+      expect(store.getState()).to.be.deep.equal(expectedResult);
+    });
+
+    it('should remove block data from the state', () => {
+      const block = {
+        id: '3JPEqh8_Wc',
+        type: 'header',
+        data: {
+          text: 'Editor.js',
+          level: 2,
+        },
+      };
+      const store = createStore(blocksReducer, {
+        blocks: {
+          [block.id]: block,
+        },
+      });
+      const expectedResult = {
+        blocks: {},
+      };
+
+      store.dispatch(removeBlock(block.id));
 
       expect(store.getState()).to.be.deep.equal(expectedResult);
     });
