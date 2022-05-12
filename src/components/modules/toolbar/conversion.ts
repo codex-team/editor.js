@@ -287,7 +287,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         }
 
         if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach(configItem => this.addToolIfValid(name, configItem));
+          tool.toolbox.forEach((configItem, i) => this.addToolIfValid(name, configItem, (tool.toolbox as ToolboxConfig[]).slice(0, i)));
         } else {
           this.addToolIfValid(name, tool.toolbox);
         }
@@ -299,12 +299,20 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    *
    * @param name - tool's name
    * @param toolboxSettings - tool's single toolbox setting
+   * @param otherToolboxEntries - other entries in tool's toolbox config (if any)
    */
-  private addToolIfValid(name: string, toolboxSettings: ToolboxConfig): void {
+  private addToolIfValid(name: string, toolboxSettings: ToolboxConfig, otherToolboxEntries: ToolboxConfig[] = []): void {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
     if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
+      return;
+    }
+
+    /**
+     * Skip tools that has not unique hash
+     */
+    if (otherToolboxEntries.find(otherItem => otherItem.hash === toolboxSettings.hash)) {
       return;
     }
 
