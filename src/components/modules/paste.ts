@@ -254,14 +254,14 @@ export default class Paste extends Module {
    * Set onPaste callback handler
    */
   private setCallback(): void {
-    this.listeners.on(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.on(document, 'paste', this.handlePasteEvent);
   }
 
   /**
    * Unset onPaste callback handler
    */
   private unsetCallback(): void {
-    this.listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.off(document, 'paste', this.handlePasteEvent);
   }
 
   /**
@@ -418,7 +418,8 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const { BlockManager, Toolbar } = this.Editor;
+    const { BlockManager, Toolbar, BlockSelection } = this.Editor;
+    let dataTransfer: DataTransfer = event.clipboardData;
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
@@ -434,8 +435,12 @@ export default class Paste extends Module {
       return;
     }
 
+    if (BlockSelection.anyBlockSelected) {
+      dataTransfer = await this.processMultiBlockSelection(dataTransfer);
+    }
+
     event.preventDefault();
-    this.processDataTransfer(event.clipboardData);
+    this.processDataTransfer(dataTransfer);
 
     BlockManager.clearFocused();
     Toolbar.close();
@@ -478,7 +483,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions }]) => {
+      .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -495,7 +500,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [tool] = foundConfig;
+    const [ tool ] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
@@ -628,6 +633,30 @@ export default class Paste extends Module {
     }
 
     Caret.insertContentAtCaretPosition(dataToInsert.content.innerHTML);
+  }
+
+  /**
+   * Process selection of multiple block and paste content.
+   *
+   * @param {DataTransfer} dataTransfer - pasted or dropped data transfer object
+   * @returns {Promise<DataTransfer>}
+   */
+  private async processMultiBlockSelection(dataTransfer: DataTransfer): Promise<DataTransfer> {
+    const { BlockManager, Caret } = this.Editor;
+
+    /** Remove all the selected blocks */
+    const nextBlockIndex = BlockManager.removeSelectedBlocks();
+
+    /** Create copy of the clipboard since new default block insertion change the event.*/
+    const clipboard = _.copyClipboard(dataTransfer);
+
+    /** Insert new block.*/
+    const newBlock: Block = BlockManager.insertDefaultBlockAtIndex(nextBlockIndex, true);
+
+    /** Set caret to new block */
+    await Caret.setToBlock(newBlock, Caret.positions.START);
+
+    return clipboard;
   }
 
   /**
