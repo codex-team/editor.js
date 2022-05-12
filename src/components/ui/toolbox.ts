@@ -257,7 +257,19 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         const toolToolboxSettings = tool.toolbox;
 
         if (Array.isArray(toolToolboxSettings)) {
-          const validToolboxSettings = toolToolboxSettings.filter(item => this.areToolboxSetttingsValid(item, tool.name));
+          const validToolboxSettings = toolToolboxSettings
+            .filter(item => this.areToolboxSetttingsValid(item, tool.name))
+            .filter((item, i) => {
+              const notUnique = toolToolboxSettings.slice(0, i).find(otherItem => otherItem.hash === item.hash);
+
+              if (notUnique) {
+                _.log('Toolbox entry has not unique combination of icon and title. Toolbox entry %o is skipped', 'warn', item.title);
+
+                return false;
+              }
+
+              return true;
+            });
 
           result.push({
             ...tool,

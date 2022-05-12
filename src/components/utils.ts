@@ -4,6 +4,7 @@
 
 import { nanoid } from 'nanoid';
 import Dom from './dom';
+import { createHash } from 'crypto';
 
 /**
  * Possible log levels
@@ -779,3 +780,14 @@ export const isIosDevice =
   window.navigator.platform &&
   (/iP(ad|hone|od)/.test(window.navigator.platform) ||
     (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1));
+
+/**
+ * Generates md5 hash for specified string
+ *
+ * @param str - string to generage hash from
+ */
+export function md5(str: string): string {
+  return createHash('md5')
+    .update(str)
+    .digest('hex');
+}

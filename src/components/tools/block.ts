@@ -76,7 +76,10 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
 
     if (Array.isArray(toolToolboxSettings)) {
-      return toolToolboxSettings.map(item => this.getActualToolboxSettings(item));
+      return toolToolboxSettings.map(item => this.getActualToolboxSettings(item)).map(item => ({
+        ...item,
+        hash: _.md5(item.icon + item.title),
+      }));
     } else {
       return this.getActualToolboxSettings(toolToolboxSettings);
     }

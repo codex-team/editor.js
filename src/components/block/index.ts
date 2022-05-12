@@ -750,7 +750,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Returns current active toolbox entry
    */
   public get activeToolboxEntry(): ToolboxConfig {
-    return Array.isArray(this.tool.toolbox) ? this.toolInstance.activeToolboxEntry : this.tool.toolbox;
+    const entry = Array.isArray(this.tool.toolbox) ? this.toolInstance.activeToolboxEntry : this.tool.toolbox;
+
+    return {
+      ...entry,
+      hash: _.md5(entry.icon + entry.title),
+    };
   }
 
   /**
