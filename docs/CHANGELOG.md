@@ -1,9 +1,12 @@
 # Changelog
 
+### 2.24.4
+
+- `Fix` - `Paste` - Replace the whole content of editor with pasted data.[#1705](https://github.com/codex-team/editor.js/issues/1705)
+
 ### 2.24.3
 
 - `Fix` — Issue with toolbox preventing text selection fixed
-- `Fix` - `Paste` - Replace the whole content of editor with pasted data.[#1705](https://github.com/codex-team/editor.js/issues/1705)
 
 ### 2.24.2
 
