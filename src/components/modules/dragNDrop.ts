@@ -79,10 +79,6 @@ export default class DragNDrop extends Module {
       block.dropTarget = false;
     });
 
-    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
-      document.execCommand('delete');
-    }
-
     this.isStartedAtEditor = false;
 
     /**
