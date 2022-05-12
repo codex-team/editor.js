@@ -25,7 +25,7 @@ describe('Copy pasting from Editor', () => {
         .paste({
           'text/plain': 'Some plain text',
         })
-        .wait(21)
+        .wait(0)
         .should('contain', 'Some plain text');
     });
 
