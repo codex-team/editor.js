@@ -3,6 +3,7 @@
 ### 2.24.3
 
 - `Fix` — Issue with toolbox preventing text selection fixed
+- `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
 
 ### 2.24.2
 
@@ -15,7 +16,6 @@
 ### 2.24.1
 
 — `Fix` — The I18n of Tools` titles at the Toolbox now works correctly [#2030](https://github.com/codex-team/editor.js/issues/2030)
-- `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
 
 
 ### 2.24.0
