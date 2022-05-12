@@ -10,6 +10,7 @@
   box-sizing: border-box;
   flex-shrink: 0;
   max-height: 0;
+  pointer-events: none;
 
   @apply --overlay-pane;
 
@@ -19,6 +20,7 @@
   &--opened {
      opacity: 1;
      max-height: 270px;
+     pointer-events: auto;
      animation: panelShowing 100ms ease;
 
      @media (--mobile) {
