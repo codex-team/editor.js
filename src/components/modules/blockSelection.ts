@@ -14,6 +14,7 @@ import Shortcuts from '../utils/shortcuts';
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
 import { clean } from '../utils/sanitizer';
+import Dom from "../dom";
 
 /**
  *
@@ -194,8 +195,13 @@ export default class BlockSelection extends Module {
    * @param {boolean} readOnlyEnabled - "read only" state
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
-    SelectionUtils.get()
-      .removeAllRanges();
+    const sel = SelectionUtils.get();
+    for (let i = 0; i < sel.rangeCount; i++) {
+      const range = sel.getRangeAt(i);
+      if (Dom.isEditorChild(range.startContainer.parentElement)){
+        sel.removeRange(range);
+      }
+    }
 
     this.allBlocksSelected = false;
   }

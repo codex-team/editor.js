@@ -634,4 +634,21 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+
+  /**
+   * check element is editorjs's child element
+   * @param el
+   */
+  public static isEditorChild(el: HTMLElement): boolean{
+    if (el === null){
+      return false;
+    }
+    if (el.tagName === 'body'){
+      return false;
+    }
+    if (el.classList.contains('codex-editor')){
+      return true;
+    }
+    return Dom.isEditorChild(el.parentElement);
+  }
 }
