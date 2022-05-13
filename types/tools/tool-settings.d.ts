@@ -16,9 +16,9 @@ export interface ToolboxConfig {
   icon?: string;
 
   /**
-   * Hash for distinguishing one toolbox item from another
+   * Toolbox item id for distinguishing one toolbox item from another
    */
-  hash?: string;
+  id?: string;
 
   /**
    * May contain overrides for tool default config

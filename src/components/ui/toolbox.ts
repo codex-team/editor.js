@@ -260,7 +260,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
           const validToolboxSettings = toolToolboxSettings
             .filter(item => this.areToolboxSetttingsValid(item, tool.name))
             .filter((item, i) => {
-              const notUnique = toolToolboxSettings.slice(0, i).find(otherItem => otherItem.hash === item.hash);
+              const notUnique = toolToolboxSettings.slice(0, i).find(otherItem => otherItem.id === item.id);
 
               if (notUnique) {
                 _.log('Toolbox entry has not unique combination of icon and title. Toolbox entry %o is skipped', 'warn', item.title);

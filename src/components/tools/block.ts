@@ -78,7 +78,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     if (Array.isArray(toolToolboxSettings)) {
       return toolToolboxSettings.map(item => this.getActualToolboxSettings(item)).map(item => ({
         ...item,
-        hash: _.md5(item.icon + item.title),
+        id: _.md5(item.icon + item.title),
       }));
     } else {
       return this.getActualToolboxSettings(toolToolboxSettings);

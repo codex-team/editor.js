@@ -187,7 +187,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const blockData = savedBlock.data;
-    const isToolboxItemActive = this.Editor.BlockManager.currentBlock.activeToolboxEntry.hash === config?.hash;
+    const isToolboxItemActive = this.Editor.BlockManager.currentBlock.activeToolboxEntry.id === config?.id;
 
     /**
      * When current Block name is equals to the replacing tool Name,
@@ -312,7 +312,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     /**
      * Skip tools that has not unique hash
      */
-    if (otherToolboxEntries.find(otherItem => otherItem.hash === toolboxSettings.hash)) {
+    if (otherToolboxEntries.find(otherItem => otherItem.id === toolboxSettings.id)) {
       return;
     }
 
@@ -354,7 +354,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     const { currentBlock } = this.Editor.BlockManager;
 
     this.tools.forEach(tool => {
-      const isToolboxItemActive = currentBlock.activeToolboxEntry.hash === tool.toolboxItem.hash;
+      const isToolboxItemActive = currentBlock.activeToolboxEntry.id === tool.toolboxItem.id;
       const hidden = (tool.button.dataset.tool === currentBlock.name && isToolboxItemActive);
 
       tool.button.hidden = hidden;
