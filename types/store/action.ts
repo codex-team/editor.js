@@ -5,7 +5,7 @@ import { BlockMutationType } from '../events/block/mutation-type';
  * Action for creating a new block in the editor
  * This action will add the new block to the state
  */
-interface CreateBlockAction {
+export interface CreateBlockAction {
   type: BlockMutationType.Added;
   data: OutputBlockData;
 }
@@ -14,7 +14,7 @@ interface CreateBlockAction {
  * Action for changing data of an existing block
  * This action will change block data in the state by its id
  */
-interface ChangeBlockDataAction {
+export interface ChangeBlockDataAction {
   type: BlockMutationType.Changed;
   data: OutputBlockData;
 }
@@ -23,7 +23,7 @@ interface ChangeBlockDataAction {
  * Action for removing a block from the editor
  * This action will remove the block from the state by its id
  */
-interface RemoveBlockAction {
+export interface RemoveBlockAction {
   type: BlockMutationType.Removed;
   blockId: string;
 }
