@@ -76,10 +76,9 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
 
     if (Array.isArray(toolToolboxSettings)) {
-      return toolToolboxSettings.map(item => this.getActualToolboxSettings(item)).map(item => ({
-        ...item,
-        id: _.getHash(item.icon + item.title),
-      }));
+      return toolToolboxSettings
+        .map(item => this.getActualToolboxSettings(item))
+        .map(item => this.addIdToToolboxConfig(item));
     } else {
       return this.getActualToolboxSettings(toolToolboxSettings);
     }
@@ -182,5 +181,18 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     }
 
     return Object.assign({}, toolboxItemSettings, userToolboxSettings);
+  }
+
+  /**
+   * Returns toolbox config entry with apended id field which is used later for
+   * identifying an entry in case the tool has multiple toolbox entries configured.
+   *
+   * @param config - toolbox config entry
+   */
+  private addIdToToolboxConfig(config: ToolboxConfig): ToolboxConfig {
+    return {
+      ...config,
+      id: _.getHash(config.icon + config.title),
+    };
   }
 }
