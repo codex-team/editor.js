@@ -287,7 +287,13 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         }
 
         if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach((configItem, i) => this.addToolIfValid(name, configItem, (tool.toolbox as ToolboxConfig[]).slice(0, i)));
+          tool.toolbox.forEach((configItem, i) =>
+            this.addToolIfValid(
+              name,
+              configItem,
+              (tool.toolbox as ToolboxConfig[]).slice(0, i)
+            )
+          );
         } else {
           this.addToolIfValid(name, tool.toolbox);
         }
