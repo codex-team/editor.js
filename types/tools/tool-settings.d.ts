@@ -18,7 +18,7 @@ export interface ToolboxConfig {
   /**
    * Toolbox item id for distinguishing one toolbox item from another
    */
-  id?: string;
+  id?: number;
 
   /**
    * May contain overrides for tool default config

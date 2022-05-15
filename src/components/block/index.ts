@@ -754,7 +754,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     return {
       ...entry,
-      id: _.md5(entry.icon + entry.title),
+      id: _.getHash(entry.icon + entry.title),
     };
   }
 
