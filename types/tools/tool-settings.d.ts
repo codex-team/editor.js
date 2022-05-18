@@ -1,5 +1,5 @@
 import {ToolConfig} from './tool-config';
-import {ToolConstructable} from './index';
+import {ToolConstructable, BlockToolData} from './index';
 
 /**
  * Tool's Toolbox settings
@@ -16,14 +16,9 @@ export interface ToolboxConfig {
   icon?: string;
 
   /**
-   * Toolbox item id for distinguishing one toolbox item from another
-   */
-  id?: number;
-
-  /**
    * May contain overrides for tool default config
    */
-  config?: ToolConfig
+  data?: BlockToolData
 }
 
 /**

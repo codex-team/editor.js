@@ -54,11 +54,6 @@ interface BlockConstructorOptions {
    * Tunes data for current Block
    */
   tunesData: { [name: string]: BlockTuneData };
-
-  /**
-   * May contain overrides for tool default config
-   */
-  configOverrides: ToolConfig;
 }
 
 /**
@@ -259,14 +254,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
-    configOverrides,
   }: BlockConstructorOptions) {
     super();
-
-    // Merge tool default settings with overrides
-    Object.entries(configOverrides).forEach(([prop, value]) => {
-      tool.settings[prop] = value;
-    });
 
     this.name = tool.name;
     this.id = id;
@@ -747,15 +736,45 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns current active toolbox entry
+   * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+   * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public get activeToolboxEntry(): ToolboxConfig {
-    const entry = Array.isArray(this.tool.toolbox) ? this.toolInstance.activeToolboxEntry : this.tool.toolbox;
+  public async getActiveToolboxEntry(): Promise<ToolboxConfig | undefined> {
+    const toolboxSettings = this.tool.toolbox;
 
-    return {
-      ...entry,
-      id: _.getHash(entry.icon + entry.title),
-    };
+    /**
+     * If Tool specifies just the single entry, treat it like an active
+     */
+    if (Array.isArray(toolboxSettings) === false) {
+      return Promise.resolve(this.tool.toolbox as ToolboxConfig);
+    }
+
+    /**
+     * If we have several entries with their own data overrides,
+     * find those who matches some current data property
+     *
+     * Example:
+     *  Tools' toolbox: [
+     *    {title: "Heading 1", data: {level: 1} },
+     *    {title: "Heading 2", data: {level: 2} }
+     *  ]
+     *
+     *  the Block data: {
+     *    text: "Heading text",
+     *    level: 2
+     *  }
+     *
+     *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+     */
+    const blockData = await this.data;
+    const toolboxItems = toolboxSettings as ToolboxConfig[];
+
+    return toolboxItems.find((item) => {
+      return Object.entries(item.data)
+        .some(([propName, propValue]) => {
+          return blockData[propName] && _.equals(blockData[propName], propValue);
+        });
+    });
   }
 
   /**

@@ -6,7 +6,7 @@ import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import { clean } from '../../utils/sanitizer';
-import { ToolboxConfig, ToolConfig } from '../../../../types';
+import { ToolboxConfig, BlockToolData } from '../../../../types';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -136,10 +136,10 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
 
     /**
-     * We use timeout to prevent bubbling Enter keydown on first dropdown item
+     * We use RAF to prevent bubbling Enter keydown on first dropdown item
      * Conversion flipper will be activated after dropdown will open
      */
-    setTimeout(() => {
+    window.requestAnimationFrame(() => {
       this.flipper.activate(this.tools.map(tool => tool.button).filter((button) => {
         return !button.classList.contains(ConversionToolbar.CSS.conversionToolHidden);
       }));
@@ -147,7 +147,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       if (_.isFunction(this.togglingCallback)) {
         this.togglingCallback(true);
       }
-    }, 50);
+    });
   }
 
   /**
@@ -175,27 +175,17 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * For that Tools must provide import/export methods
    *
    * @param {string} replacingToolName - name of Tool which replaces current
-   * @param {ToolConfig} [config] -
+   * @param blockDataOverrides - Block data overrides. Could be passed in case if Multiple Toolbox items specified
    */
-  public async replaceWithBlock(replacingToolName: string, config?: ToolConfig): Promise<void> {
+  public async replaceWithBlock(replacingToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
     /**
      * At first, we get current Block data
      *
      * @type {BlockToolConstructable}
      */
     const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
-    const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const blockData = savedBlock.data;
-    const isToolboxItemActive = this.Editor.BlockManager.currentBlock.activeToolboxEntry.id === config?.id;
-
-    /**
-     * When current Block name is equals to the replacing tool Name,
-     * than convert this Block back to the default Block
-     */
-    if (currentBlockName === replacingToolName && isToolboxItemActive) {
-      replacingToolName = this.config.defaultBlock;
-    }
 
     /**
      * Getting a class of replacing Tool
@@ -252,10 +242,17 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       return;
     }
 
+    /**
+     * If this conversion fired by the one of multiple Toolbox items,
+     * extend converted data with this item's "data" overrides
+     */
+    if (blockDataOverrides) {
+      newBlockData = Object.assign(newBlockData, blockDataOverrides);
+    }
+
     this.Editor.BlockManager.replace({
       tool: replacingToolName,
       data: newBlockData,
-      config,
     });
     this.Editor.BlockSelection.clearSelection();
 
@@ -287,12 +284,8 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         }
 
         if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach((configItem, i) =>
-            this.addToolIfValid(
-              name,
-              configItem,
-              (tool.toolbox as ToolboxConfig[]).slice(0, i)
-            )
+          tool.toolbox.forEach((toolboxItem) =>
+            this.addToolIfValid(name, toolboxItem)
           );
         } else {
           this.addToolIfValid(name, tool.toolbox);
@@ -305,20 +298,12 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    *
    * @param name - tool's name
    * @param toolboxSettings - tool's single toolbox setting
-   * @param otherToolboxEntries - other entries in tool's toolbox config (if any)
    */
-  private addToolIfValid(name: string, toolboxSettings: ToolboxConfig, otherToolboxEntries: ToolboxConfig[] = []): void {
+  private addToolIfValid(name: string, toolboxSettings: ToolboxConfig): void {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
     if (_.isEmpty(toolboxSettings) || !toolboxSettings.icon) {
-      return;
-    }
-
-    /**
-     * Skip tools that has not unique hash
-     */
-    if (otherToolboxEntries.find(otherItem => otherItem.id === toolboxSettings.id)) {
       return;
     }
 
@@ -349,19 +334,35 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     });
 
     this.listeners.on(tool, 'click', async () => {
-      await this.replaceWithBlock(toolName, toolboxItem.config);
+      await this.replaceWithBlock(toolName, toolboxItem.data);
     });
   }
 
   /**
    * Hide current Tool and show others
    */
-  private filterTools(): void {
+  private async filterTools(): Promise<void> {
     const { currentBlock } = this.Editor.BlockManager;
+    const currentBlockActiveToolboxEntry = await currentBlock.getActiveToolboxEntry();
+
+    /**
+     * Compares two Toolbox entries
+     *
+     * @param entry1 - entry to compare
+     * @param entry2 - entry to compare with
+     */
+    function isTheSameToolboxEntry(entry1, entry2): boolean {
+      return entry1.icon === entry2.icon && entry1.title === entry2.title;
+    }
 
     this.tools.forEach(tool => {
-      const isToolboxItemActive = currentBlock.activeToolboxEntry.id === tool.toolboxItem.id;
-      const hidden = (tool.button.dataset.tool === currentBlock.name && isToolboxItemActive);
+      let hidden = false;
+
+      if (currentBlockActiveToolboxEntry) {
+        const isToolboxItemActive = isTheSameToolboxEntry(currentBlockActiveToolboxEntry, tool.toolboxItem);
+
+        hidden = (tool.button.dataset.tool === currentBlock.name && isToolboxItemActive);
+      }
 
       tool.button.hidden = hidden;
       tool.button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, hidden);

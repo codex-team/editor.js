@@ -781,21 +781,19 @@ export const isIosDevice =
     (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1));
 
 /**
- * Generates hash from specified string
+ * Compares two values with unknown type
  *
- * @param str - string to generage hash from
+ * @param var1 - value to compare
+ * @param var2 - value to compare with
+ * @returns {boolean} true if they are equal
  */
-export function getHash(str: string): number {
-  let hash = 0, i, chr;
+export function equals(var1: unknown, var2: unknown): boolean {
+  const isVar1NonPrimitive = Array.isArray(var1) || isObject(var1);
+  const isVar2NonPrimitive = Array.isArray(var2) || isObject(var2);
 
-  if (str.length === 0) {
-    return hash;
-  }
-  for (i = 0; i < str.length; i++) {
-    chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
+  if (isVar1NonPrimitive || isVar2NonPrimitive) {
+    return JSON.stringify(var1) === JSON.stringify(var2);
   }
 
-  return hash;
-};
+  return var1 === var2;
+}

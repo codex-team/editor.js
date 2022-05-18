@@ -1,5 +1,5 @@
 import $ from '../../components/dom';
-import { API, BlockTool, BlockToolConstructorOptions, BlockToolData, ToolConfig, ToolboxConfig } from '../../../types';
+import { API, BlockTool, BlockToolConstructorOptions, BlockToolData } from '../../../types';
 
 export interface StubData extends BlockToolData {
   title: string;

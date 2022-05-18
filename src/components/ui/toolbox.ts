@@ -3,7 +3,7 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, ToolboxConfig, ToolConfig } from '../../../types';
+import { API, BlockToolData, ToolboxConfig } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
 import I18n from '../i18n';
@@ -175,10 +175,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Toolbox Tool's button click handler
    *
    * @param toolName - tool type to be activated
-   * @param config -
+   * @param blockDataOverrides - Block data predefined by the activated Toolbox item
    */
-  public toolButtonActivated(toolName: string, config: ToolConfig): void {
-    this.insertNewBlock(toolName, config);
+  public toolButtonActivated(toolName: string, blockDataOverrides: BlockToolData): void {
+    this.insertNewBlock(toolName, blockDataOverrides);
   }
 
   /**
@@ -257,26 +257,16 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         const toolToolboxSettings = tool.toolbox;
 
         if (Array.isArray(toolToolboxSettings)) {
-          const validToolboxSettings = toolToolboxSettings
-            .filter(item => this.areToolboxSetttingsValid(item, tool.name))
-            .filter((item, i) => {
-              const notUnique = toolToolboxSettings.slice(0, i).find(otherItem => otherItem.id === item.id);
-
-              if (notUnique) {
-                _.log('Toolbox entry has not unique combination of icon and title. Toolbox entry %o is skipped', 'warn', item.title);
-
-                return false;
-              }
-
-              return true;
-            });
+          const validToolboxSettings = toolToolboxSettings.filter(item => {
+            return this.areToolboxSettingsValid(item, tool.name);
+          });
 
           result.push({
             ...tool,
             toolbox: validToolboxSettings,
           });
         } else {
-          if (this.areToolboxSetttingsValid(toolToolboxSettings, tool.name)) {
+          if (this.areToolboxSettingsValid(toolToolboxSettings, tool.name)) {
             result.push(tool);
           }
         }
@@ -293,13 +283,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (config: ToolboxConfig, tool: BlockTool): PopoverItem => {
+    const toPopoverItem = (toolboxItem: ToolboxConfig, tool: BlockTool): PopoverItem => {
       return {
-        icon: config.icon,
-        label: I18n.t(I18nInternalNS.toolNames, config.title || _.capitalize(tool.name)),
+        icon: toolboxItem.icon,
+        label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
         onClick: (e): void => {
-          this.toolButtonActivated(tool.name, config);
+          this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
       };
@@ -323,9 +313,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Validates tool's toolbox settings
    *
    * @param toolToolboxSettings - item to validate
-   * @param toolName - name of the tool used in consone warning if item is not valid
+   * @param toolName - name of the tool used in console warning if item is not valid
    */
-  private areToolboxSetttingsValid(toolToolboxSettings: ToolboxConfig, toolName: string): boolean {
+  private areToolboxSettingsValid(toolToolboxSettings: ToolboxConfig, toolName: string): boolean {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
@@ -391,8 +381,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Can be called when button clicked on Toolbox or by ShortcutData
    *
    * @param {string} toolName - Tool name
+   * @param blockDataOverrides - predefined Block data
    */
-  private insertNewBlock(toolName: string, toolboxConfig?): void {
+  private insertNewBlock(toolName: string, blockDataOverrides?: BlockToolData): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
@@ -408,8 +399,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
 
     const newBlock = this.api.blocks.insert(
       toolName,
+      blockDataOverrides,
       undefined,
-      toolboxConfig.config,
       index,
       undefined,
       currentBlock.isEmpty
