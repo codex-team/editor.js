@@ -356,8 +356,13 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
     }
 
     this.tools.forEach(tool => {
-      const isToolboxItemActive = isTheSameToolboxEntry(currentBlockActiveToolboxEntry, tool.toolboxItem);
-      const hidden = (tool.button.dataset.tool === currentBlock.name && isToolboxItemActive);
+      let hidden = false;
+
+      if (currentBlockActiveToolboxEntry) {
+        const isToolboxItemActive = isTheSameToolboxEntry(currentBlockActiveToolboxEntry, tool.toolboxItem);
+
+        hidden = (tool.button.dataset.tool === currentBlock.name && isToolboxItemActive);
+      }
 
       tool.button.hidden = hidden;
       tool.button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, hidden);

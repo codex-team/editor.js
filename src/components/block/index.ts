@@ -739,7 +739,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
    * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public async getActiveToolboxEntry(): Promise<ToolboxConfig> {
+  public async getActiveToolboxEntry(): Promise<ToolboxConfig | undefined> {
     const toolboxSettings = this.tool.toolbox;
 
     /**
