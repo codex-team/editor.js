@@ -772,7 +772,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return toolboxItems.find((item) => {
       return Object.entries(item.data)
         .some(([propName, propValue]) => {
-          return blockData[propName] && blockData[propName] === propValue;
+          return blockData[propName] && _.equals(blockData[propName], propValue);
         });
     });
   }

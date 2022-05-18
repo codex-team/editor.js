@@ -352,7 +352,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
      * @param entry2 - entry to compare with
      */
     function isTheSameToolboxEntry(entry1, entry2): boolean {
-      return entry1.icon + entry1.title === entry2.icon + entry2.title;
+      return entry1.icon === entry2.icon && entry1.title === entry2.title;
     }
 
     this.tools.forEach(tool => {
