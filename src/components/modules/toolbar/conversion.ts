@@ -6,7 +6,7 @@ import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import { clean } from '../../utils/sanitizer';
-import { ToolboxConfig, ToolConfig, BlockToolData } from '../../../../types';
+import { ToolboxConfig, BlockToolData } from '../../../../types';
 
 /**
  * HTML Elements used for ConversionToolbar

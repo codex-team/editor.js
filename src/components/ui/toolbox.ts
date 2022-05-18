@@ -3,7 +3,7 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import {API, BlockToolData, ToolboxConfig, ToolConfig} from '../../../types';
+import { API, BlockToolData, ToolboxConfig } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
 import I18n from '../i18n';
