@@ -762,3 +762,20 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
 
   return descriptor;
 };
+
+/**
+ * True if screen has mobile size
+ */
+export function isMobileScreen(): boolean {
+  return window.matchMedia('(max-width: 650px)').matches;
+}
+
+/**
+ * True if current device runs iOS
+ */
+export const isIosDevice =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.platform &&
+  (/iP(ad|hone|od)/.test(window.navigator.platform) ||
+    (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1));

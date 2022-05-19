@@ -376,7 +376,6 @@ export default class RectangleSelection extends Module {
     this.inverseSelection();
 
     SelectionUtils.get().removeAllRanges();
-    event.preventDefault();
   }
 
   /**

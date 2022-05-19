@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import Delimiter from '@editorjs/delimiter';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
 
 /**
@@ -21,6 +22,32 @@ describe('onChange callback', () => {
       },
       onChange: (api, event): void => {
         console.log('something changed', api, event);
+      },
+      data: blocks ? {
+        blocks,
+      } : null,
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+
+    cy.createEditor(config).as('editorInstance');
+  }
+
+  /**
+   * Creates Editor instance with save inside the onChange event.
+   *
+   * @param blocks - list of blocks to prefill the editor
+   */
+  function createEditorWithSave(blocks = null): void {
+    const config = {
+      tools: {
+        header: Header,
+        code: Code,
+        delimiter: Delimiter,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', api, event);
+        api.saver.save();
       },
       data: blocks ? {
         blocks,
@@ -92,6 +119,53 @@ describe('onChange callback', () => {
     }));
   });
 
+  it('should fire onChange callback on block insertion with save inside onChange', () => {
+    createEditorWithSave();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-toolbar__plus')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-popover__item[data-item-name=delimiter]')
+      .click();
+
+    cy.get('@onChange').should('be.calledThrice');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Removed,
+      detail: {
+        index: 0,
+        target: {
+          name: 'paragraph',
+        },
+      },
+    }));
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        index: 0,
+        target: {
+          name: 'delimiter',
+        },
+      },
+    }));
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockMutationType.Added,
+      detail: {
+        index: 1,
+        target: {
+          name: 'paragraph',
+        },
+      },
+    }));
+  });
+
   it('should fire onChange callback on block replacement for both of blocks', () => {
     createEditor();
 
@@ -104,7 +178,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('li.ce-toolbox__button[data-tool=header]')
+      .get('div.ce-popover__item[data-item-name=header]')
       .click();
 
     cy.get('@onChange').should('be.calledTwice');
@@ -170,6 +244,14 @@ describe('onChange callback', () => {
 
   it('should fire onChange callback when block is removed', () => {
     createEditor();
+
+    /**
+     * The only block does not have Tune menu, so need to create at least 2 blocks to test deleting
+     */
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('some text');
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')

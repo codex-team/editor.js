@@ -25,4 +25,26 @@ describe('Editor basic initialization', () => {
         .should('be.visible');
     });
   });
+
+  describe('Configuration', () => {
+    describe('readOnly', () => {
+      beforeEach(() => {
+        if (this && this.editorInstance) {
+          this.editorInstance.destroy();
+        }
+      });
+
+      it('should create editor without editing ability when true passed', () => {
+        cy.createEditor({
+          readOnly: true,
+        }).as('editorInstance');
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.codex-editor')
+          .get('div.ce-paragraph')
+          .invoke('attr', 'contenteditable')
+          .should('eq', 'false');
+      });
+    });
+  });
 });
