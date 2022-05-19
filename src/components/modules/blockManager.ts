@@ -240,7 +240,6 @@ export default class BlockManager extends Module {
   }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
-
     const block = new Block({
       id,
       data,
@@ -292,6 +291,7 @@ export default class BlockManager extends Module {
     if (newIndex === undefined) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
     }
+
     const block = this.composeBlock({
       id,
       tool,
