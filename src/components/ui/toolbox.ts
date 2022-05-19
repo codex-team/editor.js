@@ -3,7 +3,7 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfig } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
 import I18n from '../i18n';
@@ -283,7 +283,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfig, tool: BlockTool): PopoverItem => {
+    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
       return {
         icon: toolboxItem.icon,
         label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
@@ -315,7 +315,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param toolToolboxSettings - item to validate
    * @param toolName - name of the tool used in console warning if item is not valid
    */
-  private areToolboxSettingsValid(toolToolboxSettings: ToolboxConfig, toolName: string): boolean {
+  private areToolboxSettingsValid(toolToolboxSettings: ToolboxConfigEntry, toolName: string): boolean {
     /**
      * Skip tools that don't pass 'toolbox' property
      */

@@ -6,7 +6,7 @@ import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import { clean } from '../../utils/sanitizer';
-import { ToolboxConfig, BlockToolData } from '../../../../types';
+import { ToolboxConfigEntry, BlockToolData } from '../../../../types';
 
 /**
  * HTML Elements used for ConversionToolbar
@@ -50,7 +50,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   /**
    * Available tools data
    */
-  private tools: {name: string; toolboxItem: ToolboxConfig; button: HTMLElement}[] = []
+  private tools: {name: string; toolboxItem: ToolboxConfigEntry; button: HTMLElement}[] = []
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
@@ -167,7 +167,11 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * Returns true if it has more than one tool available for convert in
    */
   public hasTools(): boolean {
-    return !(this.tools.length === 1 && this.tools[0].name === this.config.defaultBlock);
+    if (this.tools.length === 1) {
+      return this.tools[0].name !== this.config.defaultBlock;
+    }
+
+    return true;
   }
 
   /**
@@ -299,7 +303,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * @param name - tool's name
    * @param toolboxSettings - tool's single toolbox setting
    */
-  private addToolIfValid(name: string, toolboxSettings: ToolboxConfig): void {
+  private addToolIfValid(name: string, toolboxSettings: ToolboxConfigEntry): void {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
@@ -316,7 +320,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * @param toolName - name of Tool to add
    * @param toolboxItem - tool's toolbox item data
    */
-  private addTool(toolName: string, toolboxItem: ToolboxConfig): void {
+  private addTool(toolName: string, toolboxItem: ToolboxConfigEntry): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
     const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
 

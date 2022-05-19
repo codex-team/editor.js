@@ -5,7 +5,7 @@ import {
   BlockTune as IBlockTune,
   SanitizerConfig,
   ToolConfig,
-  ToolboxConfig
+  ToolboxConfigEntry
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -739,14 +739,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
    * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public async getActiveToolboxEntry(): Promise<ToolboxConfig | undefined> {
+  public async getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
     const toolboxSettings = this.tool.toolbox;
 
     /**
      * If Tool specifies just the single entry, treat it like an active
      */
     if (Array.isArray(toolboxSettings) === false) {
-      return Promise.resolve(this.tool.toolbox as ToolboxConfig);
+      return Promise.resolve(this.tool.toolbox as ToolboxConfigEntry);
     }
 
     /**
@@ -767,7 +767,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
      */
     const blockData = await this.data;
-    const toolboxItems = toolboxSettings as ToolboxConfig[];
+    const toolboxItems = toolboxSettings as ToolboxConfigEntry[];
 
     return toolboxItems.find((item) => {
       return Object.entries(item.data)

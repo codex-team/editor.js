@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent, ToolConfig } from '../../../types';
+import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
@@ -237,10 +237,9 @@ export default class BlockManager extends Module {
     data = {},
     id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}; config?: ToolConfig}): Block {
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
-
     const block = new Block({
       id,
       data,

@@ -5,8 +5,8 @@ import {
   BlockToolConstructable,
   BlockToolData,
   ConversionConfig,
-  PasteConfig, SanitizerConfig,
-  ToolboxConfig
+  PasteConfig, SanitizerConfig, ToolboxConfig,
+  ToolboxConfigEntry
 } from '../../../types';
 import * as _ from '../utils';
 import InlineTool from './inline';
@@ -72,7 +72,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Returns Tool toolbox configuration (internal or user-specified)
    */
-  public get toolbox(): ToolboxConfig | ToolboxConfig[] {
+  public get toolbox(): ToolboxConfig {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
 
     if (Array.isArray(toolToolboxSettings)) {
@@ -167,7 +167,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    *
    * @param toolboxItemSettings - toolbox item settings to merge
    */
-  private getActualToolboxSettings(toolboxItemSettings: ToolboxConfig): ToolboxConfig {
+  private getActualToolboxSettings(toolboxItemSettings: ToolboxConfigEntry): ToolboxConfigEntry {
     const userToolboxSettings = this.config[UserSettings.Toolbox];
 
     if (_.isEmpty(toolboxItemSettings)) {
