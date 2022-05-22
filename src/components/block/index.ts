@@ -247,7 +247,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
-    id,
+    id = _.generateBlockId(),
     data,
     tool,
     api,
@@ -257,11 +257,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     super();
 
     this.name = tool.name;
-    if (id) {
-      this.id = id;
-    } else {
-      this.id = _.generateBlockId();
-    }
+    this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
