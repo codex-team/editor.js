@@ -96,13 +96,14 @@ export interface Blocks {
   /**
    * Insert new Block and return inserted Block API
    *
-   * @param {string} id — block id: if no id then it will generate one
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param {boolean?} replace - should the existed Block on that index be replaced or not
+   * @param {string} id — existing block id, if no id then it will generate one
+
    */
   insert(
     type?: string,
