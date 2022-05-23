@@ -421,6 +421,26 @@ describe('BlockTool', () => {
       expect(tool.toolbox).to.be.deep.eq(userDefinedToolboxConfig);
     });
 
+    it('should replace Tool provided toolbox config with user defined config in case the first is an object and the second is an array', () => {
+      const userDefinedToolboxConfig = [
+        {
+          title: 'Toolbox entry 1',
+        },
+        {
+          title: 'Toolbox entry 2',
+        },
+      ];
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      expect(tool.toolbox).to.be.deep.eq(userDefinedToolboxConfig);
+    });
+
     it('should merge Tool provided toolbox config with user defined config in case both are arrays', () => {
       const toolboxEntries = [
         {

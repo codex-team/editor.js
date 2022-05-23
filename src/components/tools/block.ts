@@ -100,10 +100,14 @@ export default class BlockTool extends BaseTool<IBlockTool> {
 
           return item;
         });
-      } else {
+      }
+
+      return userToolboxSettings;
+    } else {
+      if (Array.isArray(userToolboxSettings)) {
         return userToolboxSettings;
       }
-    } else {
+
       return {
         ...toolToolboxSettings,
         ...userToolboxSettings,
