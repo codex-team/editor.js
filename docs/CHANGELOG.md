@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.24.4
+
+- `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
+
+### 2.24.3
+
+- `Fix` — Issue with toolbox preventing text selection fixed
+
 ### 2.24.2
 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed
