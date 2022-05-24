@@ -388,12 +388,13 @@ static get sanitize() {
 
 ## Conversion config <a name="conversion-config"></a>
 
-Editor.js has a Conversion Toolbar that allows user to convert one Block to another.
+Editor.js has a Conversion Toolbar that allows user to convert one or multiple Blocks to another.
 
 ![](https://capella.pics/6c1f708b-a30c-4ffd-a427-5b59a1a472e0.jpg)
 
-1. You can add ability to your Tool to be converted. Specify «export» property of `conversionConfig`.
-2. You can add ability to convert other Tools to your Tool. Specify «import» property of `conversionConfig`.
+1. You can add the ability to your Tool to be converted. Specify «export» property of `conversionConfig`.
+2. You can add the ability to convert other Tools to your Tool. Specify «import» property of `conversionConfig`.
+3. You can optionally add the ability to handle how multiple blocks are merged into a single block. Specify «mergeImport» property of `conversionConfig`. 
 
 Conversion Toolbar will be shown only near Blocks that specified an «export» rule, when user selected almost all block's content.
 This Toolbar will contain only Tools that specified an «import» rule.
@@ -436,7 +437,7 @@ class ListTool {
   constructor(){
     this.data = {
       items: [
-        'Fisrt item',
+        'First item',
         'Second item',
         'Third item'
       ],
@@ -446,6 +447,13 @@ class ListTool {
 
   static get conversionConfig() {
     return {
+      imports: (data) => ({
+        items: [data],
+      }),
+      mergeImport: (dataArray) => ({
+        items: dataArray,
+        type: 'ordered'
+      }),
       export: (data) => {
         return data.items.join('.'); // in this example, all list items will be concatenated to an export string
       },
