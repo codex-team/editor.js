@@ -1,5 +1,5 @@
 import SelectionUtils from '../selection';
-import { BlockDropZonePlacement } from '../block';
+import Block, { BlockDropZonePlacement } from '../block';
 
 import Module from '../__module';
 /**
@@ -43,8 +43,8 @@ export default class DragNDrop extends Module {
       await this.processDrop(dropEvent);
     }, true);
 
-    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', () => {
-      this.processDragStart();
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', (startDragEvent: DragEvent) => {
+      this.processDragStart(startDragEvent);
     });
 
     /**
@@ -155,12 +155,17 @@ export default class DragNDrop extends Module {
   /**
    * Handle drag start event
    */
-  private processDragStart(): void {
+  private processDragStart(dragStartEvent: DragEvent): void {
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
       this.isStartedAtEditor = true;
     }
 
     this.Editor.InlineToolbar.close();
+
+    const block = this.Editor.BlockManager.currentDraggingBlock;
+    const blockContent = block.holder.querySelector(`.${Block.CSS.content}`);
+
+    if(blockContent) dragStartEvent.dataTransfer.setDragImage(blockContent, 0, 0);
   }
 
   /**
