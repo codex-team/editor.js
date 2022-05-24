@@ -544,6 +544,7 @@ export default class UI extends Module<UINodes> {
 
     if (this.Editor.Toolbar.toolbox.opened) {
       this.Editor.Toolbar.toolbox.close();
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.ConversionToolbar.opened) {

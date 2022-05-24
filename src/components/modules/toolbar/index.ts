@@ -168,7 +168,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
       opened: this.toolboxInstance.opened,
       close: (): void => {
         this.toolboxInstance.close();
-        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
       },
       open: (): void => {
         /**
@@ -410,7 +409,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       tools: this.Editor.Tools.blockTools,
       i18nLabels: {
         filter: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
-        nothingFound: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Noting found'),
+        nothingFound: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
       },
     });
 
