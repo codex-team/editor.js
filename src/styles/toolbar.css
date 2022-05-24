@@ -61,10 +61,6 @@
     cursor: pointer;
     user-select: none;
 
-    &__settings-btn-dragging {
-      opacity: 0;
-    }
-
     @media (--not-mobile){
       width: 18px;
     }
