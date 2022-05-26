@@ -116,16 +116,69 @@ export default class DragNDrop extends Module {
   private async processBlockDrop(dropEvent: DragEvent): Promise<boolean> {
     const { BlockManager } = this.Editor;
 
-    if (BlockManager.currentDraggingBlock) {
-      const currentIndex = this.Editor.BlockManager.currentDraggingBlockIndex;
-      const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+    const draggingImageElement = document.body.querySelector('#draggingImage');
 
-      if (!targetBlock) {
-        // This means that we are trying to drop a block without references.
-        return;
+    if (draggingImageElement) {
+      draggingImageElement.remove();
+    }
+
+    const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
+
+    const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+
+    if (!targetBlock) {
+      // This means that we are trying to drop a block without references.
+      return;
+    }
+    const targetIndex = this.Editor.BlockManager.getBlockIndex(targetBlock);
+
+    if (selectedBlocks.length > 1) {
+      // we are dragging a set of blocks
+      const currentStartIndex = this.Editor.BlockManager.getBlockIndex(selectedBlocks[0]);
+
+      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+        if (targetIndex > currentStartIndex) {
+          selectedBlocks.forEach((block) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex - 1, blockIndex);
+          });
+        } else {
+          selectedBlocks.forEach((block, i) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex + i, blockIndex);
+          });
+        }
+      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+        if (targetIndex > currentStartIndex) {
+          selectedBlocks.forEach((block) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex, blockIndex);
+          });
+        } else {
+          selectedBlocks.forEach((block, i) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex + 1 + i, blockIndex);
+          });
+        }
       }
 
-      const targetIndex = this.Editor.BlockManager.getBlockIndex(targetBlock);
+      // this has to be cleaned after we drop the block
+      BlockManager.blocks.forEach((block) => {
+        block.dropTarget = undefined;
+      });
+
+      return true;
+    }
+
+    if (BlockManager.currentBlock) {
+      // we are dragging one block
+      // maybe we could delete this and handle everything with the previous method
+
+      const currentIndex = this.Editor.BlockManager.currentBlockIndex;
 
       if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
         if (targetIndex > currentIndex) {
@@ -164,11 +217,29 @@ export default class DragNDrop extends Module {
 
     this.Editor.InlineToolbar.close();
 
-    const block = this.Editor.BlockManager.currentDraggingBlock;
-    const blockContent = block.holder.querySelector(`.${Block.CSS.content}`);
+    let draggingImageElement: HTMLElement;
 
-    if (blockContent) {
-      dragStartEvent.dataTransfer.setDragImage(blockContent, 0, 0);
+    const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
+
+    if (selectedBlocks.length > 1) {
+      draggingImageElement = document.createElement('div');
+      draggingImageElement.id = 'draggingImage';
+      draggingImageElement.style.position = 'absolute';
+      draggingImageElement.style.top = '-1000px';
+      selectedBlocks.forEach(block => {
+        const blockContent = block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true);
+
+        draggingImageElement.appendChild(blockContent);
+      });
+      document.body.appendChild(draggingImageElement);
+    } else {
+      const block = this.Editor.BlockManager.currentBlock;
+
+      draggingImageElement = block.holder.querySelector(`.${Block.CSS.content}`);
+    }
+
+    if (draggingImageElement) {
+      dragStartEvent.dataTransfer.setDragImage(draggingImageElement, 0, 0);
     }
   }
 

@@ -392,13 +392,6 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', _.throttle((event: MouseEvent | TouchEvent) => {
       const hoveredBlock = (event.target as Element).closest('.ce-block');
 
-      /**
-       * Do not trigger 'block-hovered' for cross-block selection
-       */
-      if (this.Editor.BlockSelection.anyBlockSelected) {
-        return;
-      }
-
       if (!hoveredBlock) {
         return;
       }
@@ -663,10 +656,14 @@ export default class UI extends Module<UINodes> {
       this.Editor.Toolbar.moveAndOpen(clickedBlock);
     }
 
+    const clickedOnSettingsToggler = this.Editor.Toolbar.nodes.settingsToggler.contains(target);
+
     /**
      * Clear Selection if user clicked somewhere
      */
-    this.Editor.BlockSelection.clearSelection(event);
+    if (!clickedOnSettingsToggler) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**

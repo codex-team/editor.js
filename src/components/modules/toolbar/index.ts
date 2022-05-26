@@ -460,7 +460,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
   private enableModuleBindings(): void {
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', (event: DragEvent) => {
       this.Editor.BlockManager.currentBlock = this.hoveredBlock;
-      this.Editor.BlockManager.currentDraggingBlock = this.hoveredBlock;
+      this.Editor.BlockManager.currentBlock.selected = true;
 
       this.nodes.settingsToggler.classList.add(this.CSS.settingsTogglerDragging);
 
@@ -468,7 +468,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', (event: DragEvent) => {
-      this.Editor.BlockManager.dropDragPointer();
       this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerDragging);
       this.moveAndOpen(this.Editor.BlockManager.currentBlock);
     }, true);
