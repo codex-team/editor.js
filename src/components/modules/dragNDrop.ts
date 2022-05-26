@@ -154,6 +154,8 @@ export default class DragNDrop extends Module {
 
   /**
    * Handle drag start event
+   *
+   * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
@@ -165,7 +167,9 @@ export default class DragNDrop extends Module {
     const block = this.Editor.BlockManager.currentDraggingBlock;
     const blockContent = block.holder.querySelector(`.${Block.CSS.content}`);
 
-    if(blockContent) dragStartEvent.dataTransfer.setDragImage(blockContent, 0, 0);
+    if (blockContent) {
+      dragStartEvent.dataTransfer.setDragImage(blockContent, 0, 0);
+    }
   }
 
   /**
