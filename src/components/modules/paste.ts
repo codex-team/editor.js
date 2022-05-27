@@ -435,10 +435,15 @@ export default class Paste extends Module {
       return;
     }
 
-    console.log(this.Editor.UI.nodes.holder.id);
+    /**
+     * If no block selected, skip processing of paste event.
+     */
     if (!BlockSelection.anyBlockSelected) {
       return;
     } else {
+      /**
+       * process multi-block selection paste.
+       */
       dataTransfer = await this.processMultiBlockSelection(dataTransfer);
     }
 
