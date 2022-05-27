@@ -167,7 +167,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
       opened: this.toolboxInstance.opened,
       close: (): void => {
         this.toolboxInstance.close();
-        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
       },
       open: (): void => {
         /**
