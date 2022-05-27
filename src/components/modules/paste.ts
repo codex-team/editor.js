@@ -435,13 +435,15 @@ export default class Paste extends Module {
       return;
     }
 
-    if (BlockSelection.anyBlockSelected) {
+    console.log(this.Editor.UI.nodes.holder.id);
+    if (!BlockSelection.anyBlockSelected) {
+      return;
+    } else {
       dataTransfer = await this.processMultiBlockSelection(dataTransfer);
     }
 
     event.preventDefault();
     this.processDataTransfer(dataTransfer);
-
     BlockManager.clearFocused();
     Toolbar.close();
   }
@@ -483,7 +485,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions } ]) => {
+      .find(([toolName, { mimeTypes, extensions }]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -500,7 +502,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [ tool ] = foundConfig;
+    const [tool] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
