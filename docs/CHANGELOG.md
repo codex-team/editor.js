@@ -2,7 +2,8 @@
 
 ### 2.25.0
 
-- `New` — *Tools API* — Toolbox now supports several entries for one tool
+- `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
+Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
 
 ### 2.24.4
 
