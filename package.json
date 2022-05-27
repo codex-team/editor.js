@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.24.3",
+  "version": "2.25.0",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -98,6 +98,7 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
+    "@editorjs/list": "^1.7.0",
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.5",
     "nanoid": "^3.1.22"

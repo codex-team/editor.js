@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.25.0
+
+- `New` — *Tools API* — Toolbox now supports several entries for one tool
+
 ### 2.24.4
 
 - `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
