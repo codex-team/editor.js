@@ -70,7 +70,17 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
-   * Returns Tool toolbox configuration (internal or user-specified)
+   * Returns Tool toolbox configuration (internal or user-specified).
+   *
+   * Merges internal and user-defined toolbox configs based on the following rules:
+   *
+   * - If both internal and user-defined toolbox configs are arrays their items are merged.
+   * Length of the second one is kept.
+   *
+   * - If both are objects their properties are merged.
+   *
+   * - If one is an object and another is an array than internal config is replaced with user-defined
+   * config. This is made to allow user to override default tool's toolbox representation (single/multiple entries)
    */
   public get toolbox(): ToolboxConfig {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
