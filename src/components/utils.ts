@@ -147,7 +147,7 @@ function _log(
     } else {
       console[type](msg, ...argsToPass);
     }
-  } catch (ignored) {}
+  } catch (ignored) { }
 }
 
 /**
@@ -325,9 +325,9 @@ export function isPrintableKey(keyCode: number): boolean {
 export async function sequence(
   chains: ChainData[],
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  success: (data: object) => void = (): void => {},
+  success: (data: object) => void = (): void => { },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fallback: (data: object) => void = (): void => {}
+  fallback: (data: object) => void = (): void => { }
 ): Promise<void> {
   /**
    * Decorator
@@ -464,7 +464,7 @@ export function debounce(func: (...args: unknown[]) => void, wait?: number, imme
  *                  but if you'd like to disable the execution on the leading edge, pass
  *                  `{leading: false}`. To disable execution on the trailing edge, ditto.
  */
-export function throttle(func, wait, options: {leading?: boolean; trailing?: boolean} = undefined): () => void {
+export function throttle(func, wait, options: { leading?: boolean; trailing?: boolean } = undefined): () => void {
   let context, args, result;
   let timeout = null;
   let previous = 0;
@@ -541,9 +541,25 @@ export function copyTextToClipboard(text): void {
 }
 
 /**
+ * Create and Return the copy of clipboard data.
+ *
+ * @param {DataTransfer} clipboardData - clipboard data to be copy.
+ * @returns {DataTransfer} - new copy of clipboardData object.
+ */
+export function copyClipboard(clipboardData: DataTransfer): DataTransfer {
+  const clipboard = new DataTransfer();
+
+  clipboardData.types.map(type => {
+    clipboard.setData(type, clipboardData.getData(type));
+  });
+
+  return clipboard;
+}
+
+/**
  * Returns object with os name as key and boolean as value. Shows current user OS
  */
-export function getUserOS(): {[key: string]: boolean} {
+export function getUserOS(): { [key: string]: boolean } {
   const OS = {
     win: false,
     mac: false,

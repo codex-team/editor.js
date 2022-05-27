@@ -112,12 +112,12 @@ export default class Paste extends Module {
   /**
    * Tags` substitutions parameters
    */
-  private toolsTags: {[tag: string]: TagSubstitute} = {};
+  private toolsTags: { [tag: string]: TagSubstitute } = {};
 
   /**
    * Store tags to substitute by tool name
    */
-  private tagsByTool: {[tools: string]: string[]} = {};
+  private tagsByTool: { [tools: string]: string[] } = {};
 
   /** Patterns` substitutions parameters */
   private toolsPatterns: PatternSubstitute[] = [];
@@ -186,7 +186,7 @@ export default class Paste extends Module {
         this.insertEditorJSData(JSON.parse(editorJSData));
 
         return;
-      } catch (e) {} // Do nothing and continue execution as usual if error appears
+      } catch (e) { } // Do nothing and continue execution as usual if error appears
     }
 
     /**
@@ -254,14 +254,14 @@ export default class Paste extends Module {
    * Set onPaste callback handler
    */
   private setCallback(): void {
-    this.listeners.on(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.on(document, 'paste', this.handlePasteEvent);
   }
 
   /**
    * Unset onPaste callback handler
    */
   private unsetCallback(): void {
-    this.listeners.off(this.Editor.UI.nodes.holder, 'paste', this.handlePasteEvent);
+    this.listeners.off(document, 'paste', this.handlePasteEvent);
   }
 
   /**
@@ -418,7 +418,8 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const { BlockManager, Toolbar } = this.Editor;
+    const { BlockManager, Toolbar, BlockSelection } = this.Editor;
+    let dataTransfer: DataTransfer = event.clipboardData;
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
@@ -434,9 +435,20 @@ export default class Paste extends Module {
       return;
     }
 
-    event.preventDefault();
-    this.processDataTransfer(event.clipboardData);
+    /**
+     * If no block selected, skip processing of paste event.
+     */
+    if (!BlockSelection.anyBlockSelected) {
+      return;
+    } else {
+      /**
+       * process multi-block selection paste.
+       */
+      dataTransfer = await this.processMultiBlockSelection(dataTransfer);
+    }
 
+    event.preventDefault();
+    this.processDataTransfer(dataTransfer);
     BlockManager.clearFocused();
     Toolbar.close();
   }
@@ -449,7 +461,7 @@ export default class Paste extends Module {
   private async processFiles(items: FileList): Promise<void> {
     const { BlockManager } = this.Editor;
 
-    let dataToInsert: {type: string; event: PasteEvent}[];
+    let dataToInsert: { type: string; event: PasteEvent }[];
 
     dataToInsert = await Promise.all(
       Array
@@ -473,7 +485,7 @@ export default class Paste extends Module {
    *
    * @param {File} file - file to process
    */
-  private async processFile(file: File): Promise<{event: PasteEvent; type: string}> {
+  private async processFile(file: File): Promise<{ event: PasteEvent; type: string }> {
     const extension = _.getFileExtension(file);
 
     const foundConfig = Object
@@ -576,7 +588,7 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
-    const { defaultBlock } = this.config as {defaultBlock: string};
+    const { defaultBlock } = this.config as { defaultBlock: string };
 
     if (!plain) {
       return [];
@@ -631,6 +643,30 @@ export default class Paste extends Module {
   }
 
   /**
+   * Process selection of multiple block and paste content.
+   *
+   * @param {DataTransfer} dataTransfer - pasted or dropped data transfer object
+   * @returns {Promise<DataTransfer>}
+   */
+  private async processMultiBlockSelection(dataTransfer: DataTransfer): Promise<DataTransfer> {
+    const { BlockManager, Caret } = this.Editor;
+
+    /** Remove all the selected blocks */
+    const nextBlockIndex = BlockManager.removeSelectedBlocks();
+
+    /** Create copy of the clipboard since new default block insertion change the event.*/
+    const clipboard = _.copyClipboard(dataTransfer);
+
+    /** Insert new block.*/
+    const newBlock: Block = BlockManager.insertDefaultBlockAtIndex(nextBlockIndex, true);
+
+    /** Set caret to new block */
+    await Caret.setToBlock(newBlock, Caret.positions.START);
+
+    return clipboard;
+  }
+
+  /**
    * Process paste to single Block:
    * 1. Find patterns` matches
    * 2. Insert new block if it is not the same type as current one
@@ -681,7 +717,7 @@ export default class Paste extends Module {
    *
    * @returns {Promise<{event: PasteEvent, tool: string}>}
    */
-  private async processPattern(text: string): Promise<{event: PasteEvent; tool: string}> {
+  private async processPattern(text: string): Promise<{ event: PasteEvent; tool: string }> {
     const pattern = this.toolsPatterns.find((substitute) => {
       const execResult = substitute.pattern.exec(text);
 
