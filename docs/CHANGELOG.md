@@ -3,6 +3,7 @@
 ### 2.24.4
 
 - `Fix` — Checks that the element supports selection before changing selection [#1853](https://github.com/codex-team/editor.js/issues/1853)
+- `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
 
 ### 2.24.3
 
