@@ -53,7 +53,7 @@ export default class Caret extends Module {
     let focusNode = selection.focusNode;
 
     /** In case lastNode is native input and supports selection */
-    if ($.supportsSelection(firstNode)) {
+    if ($.canSetCaret(firstNode)) {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
@@ -146,7 +146,7 @@ export default class Caret extends Module {
     const lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
     /** In case lastNode is native input and supports selection */
-    if ($.supportsSelection(lastNode)) {
+    if ($.canSetCaret(lastNode)) {
       return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
     }
 
@@ -355,7 +355,7 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        if ($.supportsSelection(currentBlockInput)) {
+        if ($.canSetCaret(currentBlockInput)) {
           /**
            * If input is native text input we need to use it's value
            * Text before the caret stays in the input,

@@ -349,27 +349,20 @@ export default class Dom {
    *
    * @returns {boolean}
    */
-  public static canSetCaret(target: HTMLElement): boolean {
-    let result = true;
+  public static canSetCaret(target: HTMLElement | Node): boolean {
+    const selectionSupportedTypes = [
+      'text',
+      'search',
+      'tel',
+      'url',
+      'password',
+    ];
 
     if (Dom.isNativeInput(target)) {
-      switch (target.type) {
-        case 'file':
-        case 'checkbox':
-        case 'radio':
-        case 'hidden':
-        case 'submit':
-        case 'button':
-        case 'image':
-        case 'reset':
-          result = false;
-          break;
-      }
-    } else {
-      result = Dom.isContentEditable(target);
+      return selectionSupportedTypes.includes(target.type) || target.tagName === 'TEXTAREA';
     }
 
-    return result;
+    return false;
   }
 
   /**
@@ -633,29 +626,5 @@ export default class Dom {
       bottom: top + rect.height,
       right: left + rect.width,
     };
-  }
-
-  /**
-   * Returns true if element supports selection
-   *
-   * @param {*} target - HTML element or string
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static supportsSelection(target: any): boolean {
-    const selectionSupportedTypes = [
-      'text',
-      'search',
-      'tel',
-      'url',
-      'password',
-    ];
-
-    if (Dom.isNativeInput(target)) {
-      return selectionSupportedTypes.includes(target.type) || target.tagName === 'TEXTAREA';
-    }
-
-    return false;
   }
 }
