@@ -87,10 +87,10 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     const userToolboxSettings = this.config[UserSettings.Toolbox];
 
     if (_.isEmpty(toolToolboxSettings)) {
-      return;
+      return [];
     }
     if (userToolboxSettings === false) {
-      return;
+      return [];
     }
     /**
      * Return tool's toolbox settings if user settings are not defined
