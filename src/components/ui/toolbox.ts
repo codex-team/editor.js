@@ -255,14 +255,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       .from(this.tools.values())
       .reduce((result, tool) => {
         const toolToolboxSettings = tool.toolbox;
-        const validToolboxSettings = toolToolboxSettings.filter(item => {
-          return this.areToolboxSettingsValid(item, tool.name);
-        });
 
-        result.push({
-          ...tool,
-          toolbox: validToolboxSettings,
-        });
+        if (toolToolboxSettings) {
+          const validToolboxSettings = toolToolboxSettings.filter(item => {
+            return this.areToolboxSettingsValid(item, tool.name);
+          });
+
+          result.push({
+            ...tool,
+            toolbox: validToolboxSettings,
+          });
+        }
 
         return result;
       }, []);
