@@ -82,7 +82,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
    * - If one is an object and another is an array than internal config is replaced with user-defined
    * config. This is made to allow user to override default tool's toolbox representation (single/multiple entries)
    */
-  public get toolbox(): ToolboxConfig {
+  public get toolbox(): ToolboxConfigEntry[] {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
     const userToolboxSettings = this.config[UserSettings.Toolbox];
 
@@ -92,10 +92,16 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     if (userToolboxSettings === false) {
       return;
     }
+    /**
+     * Return tool's toolbox settings if user settings are not defined
+     */
     if (!userToolboxSettings) {
-      return toolToolboxSettings;
+      return Array.isArray(toolToolboxSettings) ? toolToolboxSettings : [ toolToolboxSettings ];
     }
 
+    /**
+     * Otherwise merge user settings with tool's settings
+     */
     if (Array.isArray(toolToolboxSettings)) {
       if (Array.isArray(userToolboxSettings)) {
         return userToolboxSettings.map((item, i) => {
@@ -112,16 +118,18 @@ export default class BlockTool extends BaseTool<IBlockTool> {
         });
       }
 
-      return userToolboxSettings;
+      return [ userToolboxSettings ];
     } else {
       if (Array.isArray(userToolboxSettings)) {
         return userToolboxSettings;
       }
 
-      return {
-        ...toolToolboxSettings,
-        ...userToolboxSettings,
-      };
+      return [
+        {
+          ...toolToolboxSettings,
+          ...userToolboxSettings,
+        },
+      ];
     }
   }
 

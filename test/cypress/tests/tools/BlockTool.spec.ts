@@ -351,13 +351,13 @@ describe('BlockTool', () => {
   });
 
   context('.toolbox', () => {
-    it('should return user provided toolbox config', () => {
+    it('should return user provided toolbox config wrapped in array', () => {
       const tool = new BlockTool(options as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.config.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.config.toolbox ]);
     });
 
-    it('should return Tool provided toolbox config if user one is not specified', () => {
+    it('should return Tool provided toolbox config wrapped in array if user one is not specified', () => {
       const tool = new BlockTool({
         ...options,
         config: {
@@ -366,10 +366,10 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.constructable.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.constructable.toolbox ]);
     });
 
-    it('should merge Tool provided toolbox config and user one in case both are objects', () => {
+    it('should merge Tool provided toolbox config and user one and wrap result in array in case both are objects', () => {
       const tool1 = new BlockTool({
         ...options,
         config: {
@@ -389,8 +389,8 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool1.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }));
-      expect(tool2.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }));
+      expect(tool1.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }) ]);
+      expect(tool2.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }) ]);
     });
 
     it('should replace Tool provided toolbox config with user defined config in case the first is an array and the second is an object', () => {
@@ -418,7 +418,7 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool.toolbox).to.be.deep.eq(userDefinedToolboxConfig);
+      expect(tool.toolbox).to.be.deep.eq([ userDefinedToolboxConfig ]);
     });
 
     it('should replace Tool provided toolbox config with user defined config in case the first is an object and the second is an array', () => {

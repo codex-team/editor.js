@@ -256,7 +256,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       .reduce((result, tool) => {
         const toolToolboxSettings = tool.toolbox;
 
-        if (Array.isArray(toolToolboxSettings)) {
+        if (toolToolboxSettings) {
           const validToolboxSettings = toolToolboxSettings.filter(item => {
             return this.areToolboxSettingsValid(item, tool.name);
           });
@@ -265,10 +265,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
             ...tool,
             toolbox: validToolboxSettings,
           });
-        } else {
-          if (this.areToolboxSettingsValid(toolToolboxSettings, tool.name)) {
-            result.push(tool);
-          }
         }
 
         return result;

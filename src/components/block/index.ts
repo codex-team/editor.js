@@ -745,8 +745,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     /**
      * If Tool specifies just the single entry, treat it like an active
      */
-    if (Array.isArray(toolboxSettings) === false) {
-      return Promise.resolve(this.tool.toolbox as ToolboxConfigEntry);
+    if (toolboxSettings.length === 1) {
+      return Promise.resolve(this.tool.toolbox[0]);
     }
 
     /**
@@ -767,7 +767,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
      */
     const blockData = await this.data;
-    const toolboxItems = toolboxSettings as ToolboxConfigEntry[];
+    const toolboxItems = toolboxSettings;
 
     return toolboxItems.find((item) => {
       return Object.entries(item.data)

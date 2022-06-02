@@ -100,7 +100,7 @@ export default class Renderer extends Module {
 
       if (Tools.unavailable.has(tool)) {
         const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
-        const toolboxTitle = (Array.isArray(toolboxSettings) ? toolboxSettings[0] : toolboxSettings)?.title;
+        const toolboxTitle = toolboxSettings[0]?.title;
 
         stubData.title = toolboxTitle || stubData.title;
       }
