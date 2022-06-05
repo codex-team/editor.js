@@ -336,9 +336,9 @@ export default class Caret extends Module {
     if (lastBlock.tool.isDefault && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
-      const newBlock = this.Editor.BlockManager.insertAtEnd();
-
-      this.setToBlock(newBlock);
+      this.Editor.BlockManager.insertAtEnd().then(newBlock => {
+        this.setToBlock(newBlock);
+      });
     }
   }
 
@@ -390,7 +390,7 @@ export default class Caret extends Module {
    *
    * @returns {boolean}
    */
-  public navigateNext(): boolean {
+  public async navigateNext(): Promise<boolean> {
     const { BlockManager } = this.Editor;
     const { currentBlock, nextContentfulBlock } = BlockManager;
     const { nextInput } = currentBlock;
@@ -417,7 +417,7 @@ export default class Caret extends Module {
        * If there is no nextBlock, but currentBlock is not default,
        * insert new default block at the end and navigate to it
        */
-      nextBlock = BlockManager.insertAtEnd();
+      nextBlock = await BlockManager.insertAtEnd();
     }
 
     if (isAtEnd) {

@@ -65,8 +65,7 @@ describe('api.blocks', () => {
         const newBlockData = {
           text: 'Updated text',
         };
-
-        editor.blocks.update(idToUpdate, newBlockData);
+        await editor.blocks.update(idToUpdate, newBlockData);
 
         cy.get('[data-cy=editorjs]')
           .get('div.ce-block')
@@ -86,12 +85,10 @@ describe('api.blocks', () => {
         const newBlockData = {
           text: 'Updated text',
         };
-
-        editor.blocks.update(idToUpdate, newBlockData);
+        await editor.blocks.update(idToUpdate, newBlockData);
 
         const output = await (editor as any).save();
         const text = output.blocks[0].data.text;
-
         expect(text).to.be.eq(newBlockData.text);
       });
     });

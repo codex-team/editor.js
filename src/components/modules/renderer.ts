@@ -77,7 +77,7 @@ export default class Renderer extends Module {
 
     if (Tools.available.has(tool)) {
       try {
-        BlockManager.insert({
+        await BlockManager.insert({
           id,
           tool,
           data,
@@ -105,12 +105,11 @@ export default class Renderer extends Module {
         stubData.title = toolboxTitle || stubData.title;
       }
 
-      const stub = BlockManager.insert({
+      const stub = await BlockManager.insert({
         id,
         tool: Tools.stubTool,
         data: stubData,
-      });
-
+      })
       stub.stretched = true;
 
       _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
