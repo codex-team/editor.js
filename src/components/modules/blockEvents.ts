@@ -191,13 +191,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    BlockSelection.copySelectedBlocks(event).then(async () => {
+    BlockSelection.copySelectedBlocks(event).then(() => {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
       /**
        * Insert default block in place of removed ones
        */
-      const insertedBlock = await BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
+      const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
 
       Caret.setToBlock(insertedBlock, Caret.positions.START);
 
@@ -211,7 +211,7 @@ export default class BlockEvents extends Module {
    *
    * @param {KeyboardEvent} event - keydown
    */
-  private async enter(event: KeyboardEvent): Promise<void> {
+  private enter(event: KeyboardEvent): void {
     const { BlockManager, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
@@ -250,7 +250,7 @@ export default class BlockEvents extends Module {
        * Split the Current Block into two blocks
        * Renew local current node after split
        */
-      newCurrent = await this.Editor.BlockManager.split();
+      newCurrent = this.Editor.BlockManager.split();
     }
 
     this.Editor.Caret.setToBlock(newCurrent);

@@ -514,21 +514,19 @@ export default class UI extends Module<UINodes> {
     if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-      BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true).then(block => {
-        Caret.setToBlock(block, Caret.positions.START);
+      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
-        /** Clear selection */
-        BlockSelection.clearSelection(event);
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
 
-        /**
-         * Stop propagations
-         * Manipulation with BlockSelections is handled in global backspacePress because they may occur
-         * with CMD+A or RectangleSelection and they can be handled on document event
-         */
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-      });
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+       * with CMD+A or RectangleSelection and they can be handled on document event
+       */
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
     }
   }
 
@@ -598,19 +596,19 @@ export default class UI extends Module<UINodes> {
       /**
        * Insert the default typed Block
        */
-      this.Editor.BlockManager.insert().then(newBlock => {
-        this.Editor.Caret.setToBlock(newBlock);
+      const newBlock = this.Editor.BlockManager.insert();
 
-        /**
-         * And highlight
-         */
-        this.Editor.BlockManager.highlightCurrentNode();
+      this.Editor.Caret.setToBlock(newBlock);
 
-        /**
-         * Move toolbar and show plus button because new Block is empty
-         */
-        this.Editor.Toolbar.moveAndOpen(newBlock);
-      });
+      /**
+       * And highlight
+       */
+      this.Editor.BlockManager.highlightCurrentNode();
+
+      /**
+       * Move toolbar and show plus button because new Block is empty
+       */
+      this.Editor.Toolbar.moveAndOpen(newBlock);
     }
 
     this.Editor.BlockSelection.clearSelection(event);

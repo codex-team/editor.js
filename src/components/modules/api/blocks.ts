@@ -228,15 +228,15 @@ export default class BlocksAPI extends Module {
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param replace - pass true to replace the Block existed under passed index
    */
-  public insert = async (
+  public insert = (
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
     config: ToolConfig = {},
     index?: number,
     needToFocus?: boolean,
     replace?: boolean
-  ): Promise<BlockAPIInterface> => {
-    const insertedBlock = await this.Editor.BlockManager.insert({
+  ): BlockAPIInterface => {
+    const insertedBlock = this.Editor.BlockManager.insert({
       tool: type,
       data,
       index,
@@ -267,7 +267,7 @@ export default class BlocksAPI extends Module {
    * @param id - id of the block to update
    * @param data - the new data
    */
-  public update = async (id: string, data: BlockToolData): Promise<void> => {
+  public update = (id: string, data: BlockToolData): void => {
     const { BlockManager } = this.Editor;
     const block = BlockManager.getBlockById(id);
 
@@ -278,7 +278,8 @@ export default class BlocksAPI extends Module {
     }
 
     const blockIndex = BlockManager.getBlockIndex(block);
-    await BlockManager.insert({
+
+    BlockManager.insert({
       id: block.id,
       tool: block.name,
       data,

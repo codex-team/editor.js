@@ -15,7 +15,6 @@ import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
-import BlockTool from '../tools/block';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -233,23 +232,23 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public async composeBlock({
+  public composeBlock({
     tool: name,
     data = {},
     id = undefined,
     tunes: tunesData = {},
-  }: { tool: string; id?: string; data?: BlockToolData; tunes?: { [name: string]: BlockTuneData } }): Promise<Block> {
+  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
-    const actialData = await this.composeBlockData(tool, data);
     const block = new Block({
       id,
-      data: actialData,
+      data,
       tool,
       api: this.Editor.API,
       readOnly,
       tunesData,
     });
+
     if (!readOnly) {
       this.bindBlockEvents(block);
     }
@@ -270,7 +269,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public async insert({
+  public insert({
     id = undefined,
     tool = this.config.defaultBlock,
     data = {},
@@ -285,14 +284,15 @@ export default class BlockManager extends Module {
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
-    tunes?: { [name: string]: BlockTuneData };
-  } = {}): Promise<Block> {
+    tunes?: {[name: string]: BlockTuneData};
+  } = {}): Block {
     let newIndex = index;
 
     if (newIndex === undefined) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
     }
-    const block = await this.composeBlock({
+
+    const block = this.composeBlock({
       id,
       tool,
       data,
@@ -339,7 +339,7 @@ export default class BlockManager extends Module {
   public replace({
     tool = this.config.defaultBlock,
     data = {},
-  }): Promise<Block> {
+  }): Block {
     return this.insert({
       tool,
       data,
@@ -355,12 +355,12 @@ export default class BlockManager extends Module {
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
    */
-  public async paste(
+  public paste(
     toolName: string,
     pasteEvent: PasteEvent,
     replace = false
-  ): Promise<Block> {
-    const block = await this.insert({
+  ): Block {
+    const block = this.insert({
       tool: toolName,
       replace,
     });
@@ -384,8 +384,8 @@ export default class BlockManager extends Module {
    *
    * @returns {Block} inserted Block
    */
-  public async insertDefaultBlockAtIndex(index: number, needToFocus = false): Promise<Block> {
-    const block = await this.composeBlock({ tool: this.config.defaultBlock });
+  public insertDefaultBlockAtIndex(index: number, needToFocus = false): Block {
+    const block = this.composeBlock({ tool: this.config.defaultBlock });
 
     this._blocks[index] = block;
 
@@ -410,7 +410,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public insertAtEnd(): Promise<Block> {
+  public insertAtEnd(): Block {
     /**
      * Define new value for current block index
      */
@@ -534,7 +534,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public split(): Promise<Block> {
+  public split(): Block {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
@@ -880,25 +880,5 @@ export default class BlockManager extends Module {
     this.Editor.ModificationsObserver.onChange(event);
 
     return block;
-  }
-
-  /**
-   * Retrieves default block data by creating fake block.
-   * Merges retrieved data with specified data object.
-   *
-   * @param tool - block's tool
-   * @param dataOverrides - object containing overrides for default block data
-   */
-  private async composeBlockData(tool: BlockTool, dataOverrides = {}): Promise<BlockToolData> {
-    const block = new Block({
-      tool,
-      api: this.Editor.API,
-      readOnly: true,
-      data: {},
-      tunesData: {},
-    });
-    const blockData = await block.data;
-
-    return Object.assign(blockData, dataOverrides);
   }
 }

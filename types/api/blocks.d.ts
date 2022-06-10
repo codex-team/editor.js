@@ -110,7 +110,7 @@ export interface Blocks {
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
-  ): Promise<BlockAPI>;
+  ): BlockAPI;
 
 
   /**
@@ -119,5 +119,5 @@ export interface Blocks {
    * @param id - id of the block to update
    * @param data - the new data
    */
-  update(id: string, data: BlockToolData): Promise<void>;
+  update(id: string, data: BlockToolData): void;
 }
