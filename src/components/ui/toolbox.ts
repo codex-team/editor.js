@@ -379,7 +379,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param {string} toolName - Tool name
    * @param blockDataOverrides - predefined Block data
    */
-  private insertNewBlock(toolName: string, blockDataOverrides?: BlockToolData): void {
+  private async insertNewBlock(toolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
@@ -393,9 +393,14 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
      */
     const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
 
+    /**
+     * Merge real tool's data with data overrides
+     */
+    const actualData = await this.api.blocks.composeBlockData(toolName, blockDataOverrides);
+
     const newBlock = this.api.blocks.insert(
       toolName,
-      blockDataOverrides,
+      actualData,
       undefined,
       index,
       undefined,
