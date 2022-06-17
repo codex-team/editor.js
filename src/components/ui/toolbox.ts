@@ -396,7 +396,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     /**
      * Merge real tool's data with data overrides
      */
-    const defaultBlockData = await this.api.blocks.getDefaultBlockData(toolName);
+    const defaultBlockData = await this.api.blocks.composeBlockData(toolName);
     const actualBlockData = Object.assign(defaultBlockData, blockDataOverrides);
 
     const newBlock = this.api.blocks.insert(

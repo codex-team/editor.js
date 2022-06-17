@@ -32,7 +32,7 @@ export default class BlocksAPI extends Module {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
       update: this.update,
-      getDefaultBlockData: this.getDefaultBlockData,
+      composeBlockData: this.composeBlockData,
     };
   }
 
@@ -254,7 +254,7 @@ export default class BlocksAPI extends Module {
    *
    * @param toolName - block tool name
    */
-  public getDefaultBlockData = async (toolName: string): Promise<BlockToolData> => {
+  public composeBlockData = async (toolName: string): Promise<BlockToolData> => {
     const tool = this.Editor.Tools.blockTools.get(toolName);
     const block = new Block({
       tool,

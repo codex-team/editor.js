@@ -118,7 +118,7 @@ export interface Blocks {
    *
    * @param toolName - block tool name
    */
-  getDefaultBlockData(toolName: string): Promise<BlockToolData>
+  composeBlockData(toolName: string): Promise<BlockToolData>
 
   /**
    * Updates block data by id

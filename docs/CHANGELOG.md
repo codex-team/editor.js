@@ -4,7 +4,7 @@
 
 - `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
 Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
-- `New` — *Blocks API* — `getDefaultBlockData()` method was added.
+- `New` — *Blocks API* — `composeBlockData()` method was added.
 
 ### 2.24.4
 
