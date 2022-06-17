@@ -115,12 +115,10 @@ export interface Blocks {
 
   /**
    * Retrieves default block data by creating fake block.
-   * Merges retrieved data with specified data object.
    *
    * @param toolName - block tool name
-   * @param dataOverrides - object containing overrides for default block data
    */
-  composeBlockData(toolName: string, dataOverrides: BlockToolData): Promise<BlockToolData>
+  getDefaultBlockData(toolName: string): Promise<BlockToolData>
 
   /**
    * Updates block data by id

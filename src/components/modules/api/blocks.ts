@@ -32,7 +32,7 @@ export default class BlocksAPI extends Module {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
       update: this.update,
-      composeBlockData: this.composeBlockData,
+      getDefaultBlockData: this.getDefaultBlockData,
     };
   }
 
@@ -251,12 +251,10 @@ export default class BlocksAPI extends Module {
 
   /**
    * Retrieves default block data by creating fake block.
-   * Merges retrieved data with specified data object.
    *
    * @param toolName - block tool name
-   * @param dataOverrides - object containing overrides for default block data
    */
-  public composeBlockData = async (toolName: string, dataOverrides = {}): Promise<BlockToolData> => {
+  public getDefaultBlockData = async (toolName: string): Promise<BlockToolData> => {
     const tool = this.Editor.Tools.blockTools.get(toolName);
     const block = new Block({
       tool,
@@ -265,9 +263,8 @@ export default class BlocksAPI extends Module {
       data: {},
       tunesData: {},
     });
-    const blockData = await block.data;
 
-    return Object.assign(blockData, dataOverrides);
+    return block.data;
   }
 
   /**
