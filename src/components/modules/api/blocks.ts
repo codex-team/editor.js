@@ -250,7 +250,7 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Retrieves default block data by creating fake block.
+   * Creates data of an empty block with a passed type.
    *
    * @param toolName - block tool name
    */
