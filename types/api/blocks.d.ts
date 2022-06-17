@@ -114,6 +114,13 @@ export interface Blocks {
 
 
   /**
+   * Creates data of an empty block with a passed type.
+   *
+   * @param toolName - block tool name
+   */
+  composeBlockData(toolName: string): Promise<BlockToolData>
+
+  /**
    * Updates block data by id
    *
    * @param id - id of the block to update

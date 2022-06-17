@@ -48,6 +48,7 @@ export {
   Tool,
   ToolConstructable,
   ToolboxConfig,
+  ToolboxConfigEntry,
   ToolSettings,
   ToolConfig,
   PasteEvent,

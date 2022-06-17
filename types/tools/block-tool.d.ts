@@ -1,8 +1,8 @@
 import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
 import { BlockToolData } from './block-tool-data';
-import {BaseTool, BaseToolConstructable} from './tool';
+import { BaseTool, BaseToolConstructable } from './tool';
 import { ToolConfig } from './tool-config';
-import {API, BlockAPI} from '../index';
+import { API, BlockAPI, ToolboxConfig } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
 
@@ -95,17 +95,7 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   /**
    * Tool's Toolbox settings
    */
-  toolbox?: {
-    /**
-     * HTML string with an icon for Toolbox
-     */
-    icon: string;
-
-    /**
-     * Tool title for Toolbox
-     */
-    title?: string;
-  };
+  toolbox?: ToolboxConfig;
 
   /**
    * Paste substitutions configuration

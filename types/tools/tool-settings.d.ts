@@ -1,10 +1,16 @@
-import {ToolConfig} from './tool-config';
-import {ToolConstructable} from './index';
+import { ToolConfig } from './tool-config';
+import { ToolConstructable, BlockToolData } from './index';
+
+/**
+ * Tool may specify its toolbox configuration
+ * It may include several entries as well
+ */
+export type ToolboxConfig = ToolboxConfigEntry | ToolboxConfigEntry[];
 
 /**
  * Tool's Toolbox settings
  */
-export interface ToolboxConfig {
+export interface ToolboxConfigEntry {
   /**
    * Tool title for Toolbox
    */
@@ -14,6 +20,11 @@ export interface ToolboxConfig {
    * HTML string with an icon for Toolbox
    */
   icon?: string;
+
+  /**
+   * May contain overrides for tool default config
+   */
+  data?: BlockToolData
 }
 
 /**
