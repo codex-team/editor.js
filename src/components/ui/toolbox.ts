@@ -393,15 +393,20 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
      */
     const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
 
-    /**
-     * Merge real tool's data with data overrides
-     */
-    const defaultBlockData = await this.api.blocks.composeBlockData(toolName);
-    const actualBlockData = Object.assign(defaultBlockData, blockDataOverrides);
+    let blockData;
+
+    if (blockDataOverrides) {
+      /**
+       * Merge real tool's data with data overrides
+       */
+      const defaultBlockData = await this.api.blocks.composeBlockData(toolName);
+
+      blockData = Object.assign(defaultBlockData, blockDataOverrides);
+    }
 
     const newBlock = this.api.blocks.insert(
       toolName,
-      actualBlockData,
+      blockData,
       undefined,
       index,
       undefined,
