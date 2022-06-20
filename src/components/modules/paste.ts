@@ -239,7 +239,6 @@ export default class Paste extends Module {
       if (!dataToInsert[0].isBlock) {
         this.processInlinePaste(dataToInsert.pop());
       } else {
-        console.log(`single block`);
         this.processSingleBlock(dataToInsert.pop());
       }
 
@@ -599,7 +598,6 @@ export default class Paste extends Module {
         const content = $.make('div');
 
         content.textContent = text;
-        console.log(content);
 
         const event = this.composePasteEvent('tag', {
           data: content,
