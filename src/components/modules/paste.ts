@@ -189,9 +189,16 @@ export default class Paste extends Module {
       } catch (e) {} // Do nothing and continue execution as usual if error appears
     }
 
-    /**
-     *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
-     */
+    // Creates an <a> tag for links within plain texts
+    const values = plainData.split(` `).map((word) => {
+      return ((word.startsWith(`http:`)) || (word.startsWith(`https:`))) ? `<a href="${word}">${word}</a>` : word;
+    });
+
+    htmlData = values.join(` `);
+
+    // /**
+    //  *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
+    //  */
     if (isDragNDrop && plainData.trim() && htmlData.trim()) {
       htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
     }
@@ -232,6 +239,7 @@ export default class Paste extends Module {
       if (!dataToInsert[0].isBlock) {
         this.processInlinePaste(dataToInsert.pop());
       } else {
+        console.log(`single block`);
         this.processSingleBlock(dataToInsert.pop());
       }
 
@@ -591,6 +599,7 @@ export default class Paste extends Module {
         const content = $.make('div');
 
         content.textContent = text;
+        console.log(content);
 
         const event = this.composePasteEvent('tag', {
           data: content,
