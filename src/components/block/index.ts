@@ -4,7 +4,8 @@ import {
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig
+  ToolConfig,
+  ToolboxConfigEntry
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -765,6 +766,48 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     if (_.isFunction(this.toolInstance.renderSettings)) {
       return this.toolInstance.renderSettings();
     }
+  }
+
+  /**
+   * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+   * This method returns the entry that is related to the Block (depended on the Block data)
+   */
+  public async getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+    const toolboxSettings = this.tool.toolbox;
+
+    /**
+     * If Tool specifies just the single entry, treat it like an active
+     */
+    if (toolboxSettings.length === 1) {
+      return Promise.resolve(this.tool.toolbox[0]);
+    }
+
+    /**
+     * If we have several entries with their own data overrides,
+     * find those who matches some current data property
+     *
+     * Example:
+     *  Tools' toolbox: [
+     *    {title: "Heading 1", data: {level: 1} },
+     *    {title: "Heading 2", data: {level: 2} }
+     *  ]
+     *
+     *  the Block data: {
+     *    text: "Heading text",
+     *    level: 2
+     *  }
+     *
+     *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+     */
+    const blockData = await this.data;
+    const toolboxItems = toolboxSettings;
+
+    return toolboxItems.find((item) => {
+      return Object.entries(item.data)
+        .some(([propName, propValue]) => {
+          return blockData[propName] && _.equals(blockData[propName], propValue);
+        });
+    });
   }
 
   /**
