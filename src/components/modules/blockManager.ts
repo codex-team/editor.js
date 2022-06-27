@@ -270,7 +270,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public insert({
-    id,
+    id = undefined,
     tool = this.config.defaultBlock,
     data = {},
     index,
