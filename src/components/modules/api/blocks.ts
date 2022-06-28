@@ -3,6 +3,7 @@ import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
+import Block from '../../block';
 
 /**
  * @class BlocksAPI
@@ -31,6 +32,7 @@ export default class BlocksAPI extends Module {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
       update: this.update,
+      composeBlockData: this.composeBlockData,
     };
   }
 
@@ -248,6 +250,24 @@ export default class BlocksAPI extends Module {
     });
 
     return new BlockAPI(insertedBlock);
+  }
+
+  /**
+   * Creates data of an empty block with a passed type.
+   *
+   * @param toolName - block tool name
+   */
+  public composeBlockData = async (toolName: string): Promise<BlockToolData> => {
+    const tool = this.Editor.Tools.blockTools.get(toolName);
+    const block = new Block({
+      tool,
+      api: this.Editor.API,
+      readOnly: true,
+      data: {},
+      tunesData: {},
+    });
+
+    return block.data;
   }
 
   /**
