@@ -1,13 +1,13 @@
-import * as _ from '../utils';
-import { BlockToolAPI } from '../block';
-import Shortcuts from '../utils/shortcuts';
-import BlockTool from '../tools/block';
-import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry } from '../../../types';
-import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
-import I18n from '../i18n';
-import { I18nInternalNS } from '../i18n/namespace-internal';
+import * as _ from "../utils";
+import { BlockToolAPI } from "../block";
+import Shortcuts from "../utils/shortcuts";
+import BlockTool from "../tools/block";
+import ToolsCollection from "../tools/collection";
+import { API, BlockToolData, ToolboxConfigEntry } from "../../../types";
+import EventsDispatcher from "../utils/events";
+import Popover, { PopoverEvent, PopoverItem } from "../utils/popover";
+import I18n from "../i18n";
+import { I18nInternalNS } from "../i18n/namespace-internal";
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -20,23 +20,23 @@ export enum ToolboxEvent {
   /**
    * When the Toolbox is opened
    */
-  Opened = 'toolbox-opened',
+  Opened = "toolbox-opened",
 
   /**
    * When the Toolbox is closed
    */
-  Closed = 'toolbox-closed',
+  Closed = "toolbox-closed",
 
   /**
    * When the new Block added by Toolbox
    */
-  BlockAdded = 'toolbox-block-added',
+  BlockAdded = "toolbox-block-added",
 }
 
 /**
  * Available i18n dict keys that should be passed to the constructor
  */
-type toolboxTextLabelsKeys = 'filter' | 'nothingFound';
+type toolboxTextLabelsKeys = "filter" | "nothingFound";
 
 /**
  * Toolbox
@@ -98,8 +98,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   private static get CSS(): { [name: string]: string } {
     return {
-      toolbox: 'ce-toolbox',
-      toolboxOpenedTop: 'ce-toolbox--opened-top',
+      toolbox: "ce-toolbox",
+      toolboxOpenedTop: "ce-toolbox--opened-top",
     };
   }
 
@@ -115,7 +115,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<toolboxTextLabelsKeys, string>}) {
+  constructor({
+    api,
+    tools,
+    i18nLabels,
+  }: {
+    api: API;
+    tools: ToolsCollection<BlockTool>;
+    i18nLabels: Record<toolboxTextLabelsKeys, string>;
+  }) {
     super();
 
     this.api = api;
@@ -177,7 +185,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param toolName - tool type to be activated
    * @param blockDataOverrides - Block data predefined by the activated Toolbox item
    */
-  public toolButtonActivated(toolName: string, blockDataOverrides: BlockToolData): void {
+  public toolButtonActivated(
+    toolName: string,
+    blockDataOverrides: BlockToolData
+  ): void {
     this.insertNewBlock(toolName, blockDataOverrides);
   }
 
@@ -194,7 +205,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
      * if there is not enough available space below it
      */
     if (!this.shouldOpenPopoverBottom) {
-      this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');
+      this.nodes.toolbox.style.setProperty(
+        "--popover-height",
+        this.popover.calculateHeight() + "px"
+      );
       this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
     }
 
@@ -230,13 +244,20 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   private get shouldOpenPopoverBottom(): boolean {
     const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
-    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
+    const editorElementRect =
+      this.api.ui.nodes.redactor.getBoundingClientRect();
     const popoverHeight = this.popover.calculateHeight();
     const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
     const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
-    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
+    const bottomEdgeForComparison = Math.min(
+      window.innerHeight,
+      editorElementRect.bottom
+    );
 
-    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+    return (
+      popoverPotentialTopEdge < editorElementRect.top ||
+      popoverPotentialBottomEdge <= bottomEdgeForComparison
+    );
   }
 
   /**
@@ -244,31 +265,29 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 
   /**
    * Returns list of tools that enables the Toolbox (by specifying the 'toolbox' getter)
    */
   @_.cacheable
   private get toolsToBeDisplayed(): BlockTool[] {
-    return Array
-      .from(this.tools.values())
-      .reduce((result, tool) => {
-        const toolToolboxSettings = tool.toolbox;
+    return Array.from(this.tools.values()).reduce((result, tool) => {
+      const toolToolboxSettings = tool.toolbox;
 
-        if (toolToolboxSettings) {
-          const validToolboxSettings = toolToolboxSettings.filter(item => {
-            return this.areToolboxSettingsValid(item, tool.name);
-          });
+      if (toolToolboxSettings) {
+        const validToolboxSettings = toolToolboxSettings.filter((item) => {
+          return this.areToolboxSettingsValid(item, tool.name);
+        });
 
-          result.push({
-            ...tool,
-            toolbox: validToolboxSettings,
-          });
-        }
+        result.push({
+          ...tool,
+          toolbox: validToolboxSettings,
+        });
+      }
 
-        return result;
-      }, []);
+      return result;
+    }, []);
   }
 
   /**
@@ -279,30 +298,35 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
+    const toPopoverItem = (
+      toolboxItem: ToolboxConfigEntry,
+      tool: BlockTool
+    ): PopoverItem => {
       return {
         icon: toolboxItem.icon,
-        label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
+        label: I18n.t(
+          I18nInternalNS.toolNames,
+          toolboxItem.title || _.capitalize(tool.name)
+        ),
         name: tool.name,
         onClick: (e): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
-        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : "",
       };
     };
 
-    return this.toolsToBeDisplayed
-      .reduce((result, tool) => {
-        if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach(item => {
-            result.push(toPopoverItem(item, tool));
-          });
-        } else {
-          result.push(toPopoverItem(tool.toolbox, tool));
-        }
+    return this.toolsToBeDisplayed.reduce((result, tool) => {
+      if (Array.isArray(tool.toolbox)) {
+        tool.toolbox.forEach((item) => {
+          result.push(toPopoverItem(item, tool));
+        });
+      } else {
+        result.push(toPopoverItem(tool.toolbox, tool));
+      }
 
-        return result;
-      }, []);
+      return result;
+    }, []);
   }
 
   /**
@@ -311,7 +335,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param toolToolboxSettings - item to validate
    * @param toolName - name of the tool used in console warning if item is not valid
    */
-  private areToolboxSettingsValid(toolToolboxSettings: ToolboxConfigEntry, toolName: string): boolean {
+  private areToolboxSettingsValid(
+    toolToolboxSettings: ToolboxConfigEntry,
+    toolName: string
+  ): boolean {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
@@ -320,7 +347,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     }
 
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
-      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+      _.log("Toolbar icon is missed. Tool %o skipped", "warn", toolName);
 
       return false;
     }
@@ -379,7 +406,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param {string} toolName - Tool name
    * @param blockDataOverrides - predefined Block data
    */
-  private async insertNewBlock(toolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
+  private async insertNewBlock(
+    toolName: string,
+    blockDataOverrides?: BlockToolData
+  ): Promise<void> {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
@@ -391,7 +421,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
      * On mobile version, we see the Plus Button even near non-empty blocks,
      * so if current block is not empty, add the new block below the current
      */
-    const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
+    const index = currentBlock.isEmpty
+      ? currentBlockIndex
+      : currentBlockIndex + 1;
 
     let blockData;
 
@@ -404,14 +436,12 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       blockData = Object.assign(defaultBlockData, blockDataOverrides);
     }
 
-    const newBlock = this.api.blocks.insert(
-      toolName,
-      blockData,
-      undefined,
+    const newBlock = this.api.blocks.insert({
+      type: toolName,
+      data: blockData,
       index,
-      undefined,
-      currentBlock.isEmpty
-    );
+      replace: currentBlock.isEmpty,
+    });
 
     /**
      * Apply callback before inserting html

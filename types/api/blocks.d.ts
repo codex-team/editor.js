@@ -96,22 +96,22 @@ export interface Blocks {
   /**
    * Insert new Block and return inserted Block API
    *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
-   * @param {boolean?} replace - should the existed Block on that index be replaced or not
+   * @param newBlock - new block config
+   *  {string} type — Tool name
+   *  {BlockToolData} data — Tool data to insert
+   *  {ToolConfig} config — Tool config
+   *  {number?} index — index where to insert new Block
+   *  {boolean?} needToFocus - flag to focus inserted Block
+   *  {boolean?} replace - should the existed Block on that index be replaced or not
    */
-  insert(
-    type?: string,
-    data?: BlockToolData,
-    config?: ToolConfig,
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean,
-  ): BlockAPI;
-
+  insert(newBlock: {
+    type?: string;
+    data?: BlockToolData;
+    config?: ToolConfig;
+    index?: number;
+    needToFocus?: boolean;
+    replace?: boolean;
+  }): BlockAPI;
 
   /**
    * Creates data of an empty block with a passed type.
