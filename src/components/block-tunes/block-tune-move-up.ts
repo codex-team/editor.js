@@ -5,7 +5,8 @@
  * @copyright <CodeX Team> 2018
  */
 import $ from '../dom';
-import { API, BlockTune } from '../../../types';
+import { API, BlockTune, BlockAPI } from '../../../types';
+import { PopoverItem } from '../../components/utils/popover';
 
 /**
  *
@@ -70,28 +71,39 @@ export default class MoveUpTune implements BlockTune {
   }
 
   /**
+   *
+   */
+  public get blockSettings(): PopoverItem {
+    return {
+      icon: $.svg('arrow-up', 14, 14).outerHTML,
+      label: this.api.i18n.t('Move up'),
+      onClick: (item): void => this.handleClick(),
+    };
+  }
+
+  /**
    * Move current block up
    *
    * @param {MouseEvent} event - click event
    * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event: MouseEvent, button: HTMLElement): void {
+  public handleClick(event?: MouseEvent, button?: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
-      button.classList.add(this.CSS.animation);
+      // button.classList.add(this.CSS.animation);
 
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      }, 500);
+      // window.setTimeout(() => {
+      //   button.classList.remove(this.CSS.animation);
+      // }, 500);
 
-      return;
+      // return;
     }
 
-    const currentBlockElement = currentBlock.holder;
-    const previousBlockElement = previousBlock.holder;
+    const currentBlockElement = (currentBlock as BlockAPI).holder;
+    const previousBlockElement = (previousBlock as BlockAPI).holder;
 
     /**
      * Here is two cases:

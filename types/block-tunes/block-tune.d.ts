@@ -1,5 +1,6 @@
 import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
+import { PopoverItem } from '../../src/components/utils/popover';
 
 /**
  * Describes BLockTune blueprint
@@ -29,6 +30,11 @@ export interface BlockTune {
    * @return {BlockTuneData}
    */
   save?(): BlockTuneData;
+
+  /**
+   * 
+   */
+  blockSettings?: PopoverItem
 }
 
 /**

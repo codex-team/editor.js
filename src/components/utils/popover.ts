@@ -32,7 +32,7 @@ export interface PopoverItem {
   secondaryLabel?: string;
 
   /**
-   * Itm click handler
+   * Item click handler
    *
    * @param item - clicked item
    */

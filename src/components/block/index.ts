@@ -20,6 +20,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
+import { PopoverItem } from '../utils/popover';
 
 /**
  * Interface describes Block class constructor argument
@@ -658,6 +659,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     });
 
     return [tunesElement, defaultTunesElement];
+  }
+
+  /**
+   *
+   */
+  public getTunesItems(): PopoverItem[] {
+    return Array.from(this.defaultTunesInstances.values()).map(tune => tune.blockSettings)
+      .filter(item => !!item);
   }
 
   /**
