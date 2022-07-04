@@ -109,7 +109,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
-      items: targetBlock.getTunesItems(),
+      items: targetBlock.getTunesList(),
       customContent: this.nodes.toolSettings,
       api: this.Editor.API.methods,
     });

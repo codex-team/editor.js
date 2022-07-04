@@ -643,29 +643,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-   *
-   * @returns {DocumentFragment[]}
+   * Returns list of tunes available for block
    */
-  public renderTunes(): [DocumentFragment, DocumentFragment] {
-    const tunesElement = document.createDocumentFragment();
-    const defaultTunesElement = document.createDocumentFragment();
+  public getTunesList(): PopoverItem[] {
+    const tunes = Array.from(this.tunesInstances.values());
+    const defaultTunes = Array.from(this.defaultTunesInstances.values());
 
-    this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render());
-    });
-    this.defaultTunesInstances.forEach((tune) => {
-      $.append(defaultTunesElement, tune.render());
-    });
-
-    return [tunesElement, defaultTunesElement];
-  }
-
-  /**
-   *
-   */
-  public getTunesItems(): PopoverItem[] {
-    return Array.from(this.defaultTunesInstances.values())
+    return tunes.concat(defaultTunes)
       .map(tune => tune.blockSettings)
       .filter(item => !!item);
   }
