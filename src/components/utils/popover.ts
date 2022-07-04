@@ -61,7 +61,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Arbitrary html element to be inserted before items list
    */
-  private readonly htmlContent: HTMLElement;
+  private readonly customContent: HTMLElement;
 
   /**
    * Stores the visibility state.
@@ -138,6 +138,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
+    customContent: string;
     customContentHidden: string;
     } {
     return {
@@ -155,6 +156,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
+      customContent: 'ce-popover__custom-content',
       customContentHidden: 'ce-popover__custom-content--hidden',
     };
   }
@@ -172,19 +174,19 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.className - additional class name to be added to the popover wrapper
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
-   * @param options.htmlContent - arbitrary html element to be inserted before items list
+   * @param options.customContent - arbitrary html element to be inserted before items list
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, htmlContent }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
-    htmlContent?: HTMLElement;
+    customContent?: HTMLElement;
   }) {
     super();
     this.items = items;
-    this.htmlContent = htmlContent;
+    this.customContent = customContent;
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
@@ -305,8 +307,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       this.addSearch(this.nodes.popover);
     }
 
-    if (this.htmlContent) {
-      this.nodes.popover.appendChild(this.htmlContent);
+    if (this.customContent) {
+      this.customContent.classList.add(Popover.CSS.customContent);
+      this.nodes.popover.appendChild(this.customContent);
     }
 
     this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
@@ -362,8 +365,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
         const allItemsDisdplayed = filteredItems.length === this.items.length;
         const flippableItems = allItemsDisdplayed ? this.flippableItems : itemsVisible;
 
-        if (this.htmlContent) {
-          this.htmlContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisdplayed);
+        if (this.customContent) {
+          this.customContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisdplayed);
         }
 
         /**
@@ -445,7 +448,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private get flippableItems(): HTMLElement[] {
     const popoverItems = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
-    const customItems = this.htmlContent ? Array.from(this.htmlContent.querySelectorAll(
+    const customItems = this.customContent ? Array.from(this.customContent.querySelectorAll(
       `.${Popover.CSS.itemFlippable}`
     )) as HTMLElement[] : [];
 

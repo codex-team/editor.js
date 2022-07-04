@@ -142,6 +142,12 @@
     visibility: hidden;
   }
 
+  &__custom-content {
+    @media (--not-mobile) {
+      margin-top: 5px;
+    }
+  }
+
   &__custom-content--hidden {
     display: none;
   }

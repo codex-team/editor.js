@@ -118,7 +118,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       filterLabel: 'Filter',
       nothingFoundLabel: 'Nothing found',
       items: targetBlock.getTunesItems(),
-      htmlContent: this.nodes.toolSettings,
+      customContent: this.nodes.toolSettings,
     });
 
     this.nodes.wrapper.append(this.popover.getElement());
