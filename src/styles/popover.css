@@ -143,8 +143,11 @@
   }
 
   &__custom-content {
+    padding: 4px;
+
     @media (--not-mobile) {
       margin-top: 5px;
+      padding: 0;
     }
   }
 

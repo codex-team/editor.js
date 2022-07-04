@@ -3,7 +3,7 @@ import $ from '../../dom';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover from '../../utils/popover';
+import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
@@ -35,13 +35,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Block Settings CSS
-   *
-   * @returns {{wrapper}}
    */
   public get CSS(): { [name: string]: string } {
     return {
-      // Settings Panel
-      wrapper: 'ce-settings',
+      settings: 'ce-settings',
+      settingsOpenedTop: 'ce-settings--opened-top',
     };
   }
 
@@ -66,7 +64,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *  - Default Settings [Move, Remove, etc]
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.wrapper);
+    this.nodes.wrapper = $.make('div');
   }
 
   /**
@@ -107,12 +105,15 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.makeToolTunesButtonsNavigatable();
 
     this.popover = new Popover({
+      className: this.CSS.settings,
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
       items: targetBlock.getTunesItems(),
       customContent: this.nodes.toolSettings,
+      api: this.Editor.API.methods,
     });
+    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 
     this.nodes.wrapper.append(this.popover.getElement());
 
@@ -161,6 +162,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
+      this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
       this.popover.destroy();
       this.popover.getElement().remove();
     }
@@ -184,5 +186,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     toolSettings.forEach((item) => {
       item.classList.add(Popover.CSS.itemFlippable);
     });
+  }
+
+  /**
+   * Handles overlay click
+   */
+  private onOverlayClicked = (): void => {
+    this.close();
   }
 }

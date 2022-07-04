@@ -5,6 +5,7 @@ import SearchInput from './search-input';
 import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
+import { API } from '../../../types';
 
 /**
  * Describe parameters for rendering the single item of Popover
@@ -167,6 +168,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private scrollLocker = new ScrollLocker()
 
   /**
+   * Editor API
+   */
+  private api: API;
+
+  /**
    * Creates the Popover
    *
    * @param options - config
@@ -176,13 +182,14 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.nothingFoundLabel - label of the 'nothing found' message
    * @param options.customContent - arbitrary html element to be inserted before items list
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, api }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
     customContent?: HTMLElement;
+    api: API;
   }) {
     super();
     this.items = items;
@@ -190,6 +197,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
+    this.api = api;
 
     this.filterLabel = filterLabel;
     this.nothingFoundLabel = nothingFoundLabel;
@@ -209,6 +217,15 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Shows the Popover
    */
   public show(): void {
+    /**
+     * Open the popover above the button
+     * if there is not enough available space below it
+     */
+    if (!this.shouldOpenPopoverBottom) {
+      this.nodes.wrapper.style.setProperty('--popover-height', this.calculateHeight() + 'px');
+      this.nodes.wrapper.classList.add(this.className + '--opened-top');
+    }
+
     /**
      * Clear search and items scrolling
      */
@@ -256,6 +273,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     this.isShown = false;
+    this.nodes.wrapper.classList.remove(this.className + '--opened-top');
   }
 
   /**
@@ -277,7 +295,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Renders invisible clone of popover to get actual height.
    */
   @cacheable
-  public calculateHeight(): number {
+  private calculateHeight(): number {
     let height = 0;
     const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;
 
@@ -453,5 +471,20 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     )) as HTMLElement[] : [];
 
     return customItems.concat(popoverItems);
+  }
+
+  /**
+   * Checks if there popover should be opened up.
+   * It happens in case there is enough space below or not enough space above
+   */
+  private get shouldOpenPopoverBottom(): boolean {
+    const toolboxRect = this.nodes.wrapper.getBoundingClientRect();
+    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
+    const popoverHeight = this.calculateHeight();
+    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
+    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
+    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
+
+    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
   }
 }
