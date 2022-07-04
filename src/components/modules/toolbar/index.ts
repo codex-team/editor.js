@@ -388,7 +388,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Appending Toolbar components to itself
      */
     $.append(this.nodes.actions, this.makeToolbox());
-    $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
+    $.append(this.nodes.actions, this.Editor.BlockSettings.getElement());
 
     /**
      * Append toolbar to the Editor

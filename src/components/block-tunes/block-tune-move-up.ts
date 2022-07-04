@@ -77,7 +77,7 @@ export default class MoveUpTune implements BlockTune {
     return {
       icon: $.svg('arrow-up', 14, 14).outerHTML,
       label: this.api.i18n.t('Move up'),
-      onClick: (item): void => this.handleClick(),
+      onClick: (item, e): void => this.handleClick(e),
     };
   }
 
@@ -99,7 +99,7 @@ export default class MoveUpTune implements BlockTune {
       //   button.classList.remove(this.CSS.animation);
       // }, 500);
 
-      // return;
+      return;
     }
 
     const currentBlockElement = (currentBlock as BlockAPI).holder;

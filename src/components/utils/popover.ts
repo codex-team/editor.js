@@ -36,7 +36,7 @@ export interface PopoverItem {
    *
    * @param item - clicked item
    */
-  onClick: (item: PopoverItem) => void;
+  onClick: (item: PopoverItem, event?: MouseEvent) => void;
 }
 
 /**
@@ -306,7 +306,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
 
       if (clickedItem) {
-        this.itemClicked(clickedItem);
+        this.itemClicked(clickedItem, event as MouseEvent);
       }
     });
 
@@ -388,13 +388,14 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Item click handler
    *
    * @param itemEl - clicked item
+   * @param event
    */
-  private itemClicked(itemEl: HTMLElement): void {
+  private itemClicked(itemEl: HTMLElement, event: MouseEvent): void {
     const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
     const itemIndex = Array.from(allItems).indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
 
-    clickedItem.onClick(clickedItem);
+    clickedItem.onClick(clickedItem, event);
   }
 
   /**

@@ -7,6 +7,7 @@
 
 import $ from '../dom';
 import { API, BlockTune } from '../../../types';
+import { PopoverItem } from '../utils/popover';
 
 /**
  *
@@ -71,22 +72,33 @@ export default class MoveDownTune implements BlockTune {
   }
 
   /**
+   *
+   */
+  public get blockSettings(): PopoverItem {
+    return {
+      icon: $.svg('arrow-down', 14, 14).outerHTML,
+      label: this.api.i18n.t('Move down'),
+      onClick: (item): void => this.handleClick(),
+    };
+  }
+
+  /**
    * Handle clicks on 'move down' button
    *
    * @param {MouseEvent} event - click event
    * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event: MouseEvent, button: HTMLElement): void {
+  public handleClick(event?: MouseEvent, button?: HTMLElement): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
     if (!nextBlock) {
-      button.classList.add(this.CSS.animation);
+      // button.classList.add(this.CSS.animation);
 
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      }, 500);
+      // window.setTimeout(() => {
+      //   button.classList.remove(this.CSS.animation);
+      // }, 500);
 
       return;
     }

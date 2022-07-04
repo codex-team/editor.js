@@ -6,6 +6,7 @@
  */
 import { API, BlockTune } from '../../../types';
 import $ from '../dom';
+import { PopoverItem } from '../utils/popover';
 
 /**
  *
@@ -83,6 +84,17 @@ export default class DeleteTune implements BlockTune {
   }
 
   /**
+   *
+   */
+  public get blockSettings(): PopoverItem {
+    return {
+      icon: $.svg('cross', 14, 14).outerHTML,
+      label: this.api.i18n.t('Delete'),
+      onClick: (item, e): void => this.handleClick(e),
+    };
+  }
+
+  /**
    * Delete block conditions passed
    *
    * @param {MouseEvent} event - click event
@@ -94,6 +106,10 @@ export default class DeleteTune implements BlockTune {
      */
     if (!this.needConfirmation) {
       this.setConfirmation(true);
+      const button = (event.target as HTMLElement).closest('.ce-popover__item').querySelector('.ce-popover__item-icon');
+
+      button.classList.add(this.CSS.buttonDelete);
+      button.classList.add(this.CSS.buttonConfirm);
 
       /**
        * Subscribe on event.
