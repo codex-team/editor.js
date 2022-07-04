@@ -79,6 +79,7 @@ export default class MoveDownTune implements BlockTune {
       icon: $.svg('arrow-down', 14, 14).outerHTML,
       label: this.api.i18n.t('Move down'),
       onClick: (item): void => this.handleClick(),
+      name: 'move-down',
     };
   }
 

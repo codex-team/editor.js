@@ -665,7 +665,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    */
   public getTunesItems(): PopoverItem[] {
-    return Array.from(this.defaultTunesInstances.values()).map(tune => tune.blockSettings)
+    return Array.from(this.defaultTunesInstances.values())
+      .map(tune => tune.blockSettings)
       .filter(item => !!item);
   }
 
