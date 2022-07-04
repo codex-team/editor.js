@@ -1,45 +1,7 @@
 .ce-settings {
-  @apply --overlay-pane;
+  position: absolute;
+  z-index: 2;
   top: var(--toolbar-buttons-size);
-  left: 0;
-  min-width: 114px;
-  box-sizing: content-box;
-
-  @media (--mobile){
-    bottom: 40px;
-    right: auto;
-    top: auto;
-  }
-
-  &::before{
-    left: auto;
-    right: 12px;
-
-    @media (--mobile){
-      bottom: -5px;
-      top: auto;
-    }
-  }
-
-  display: none;
-
-  &--opened {
-    display: block;
-    animation-duration: 0.1s;
-    animation-name: panelShowing;
-  }
-
-  &__plugin-zone {
-    &:not(:empty){
-      padding: 3px 3px 0;
-    }
-  }
-
-  &__default-zone {
-    &:not(:empty){
-      padding: 3px;
-    }
-  }
 
   &__button {
     @apply --toolbar-button;

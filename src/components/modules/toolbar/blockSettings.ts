@@ -1,10 +1,9 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent, PopoverItem } from '../../utils/popover';
+import Popover from '../../utils/popover';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -12,7 +11,6 @@ import Popover, { PopoverEvent, PopoverItem } from '../../utils/popover';
 interface BlockSettingsNodes {
   wrapper: HTMLElement;
   toolSettings: HTMLElement;
-  // defaultSettings: HTMLElement;
 }
 
 /**
@@ -44,43 +42,19 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Block Settings CSS
    *
-   * @returns {{wrapper, wrapperOpened, toolSettings, button}}
+   * @returns {{wrapper}}
    */
   public get CSS(): { [name: string]: string } {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
-      wrapperOpened: 'ce-settings--opened',
-      toolSettings: 'ce-settings__plugin-zone',
-      // defaultSettings: 'ce-settings__default-zone',
-
-      button: 'ce-settings__button',
-
-      focusedButton: 'ce-settings__button--focused',
-      focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
 
   /**
-   * Is Block Settings opened or not
-   *
-   * @returns {boolean}
+   * Opened state
    */
-  public get opened(): boolean {
-    return this.nodes.wrapper.classList.contains(this.CSS.wrapperOpened);
-  }
-
-  /**
-   * List of buttons
-   */
-  private buttons: HTMLElement[] = [];
-
-  /**
-   * Instance of class that responses for leafing buttons by arrows/tab
-   *
-   * @type {Flipper|null}
-   */
-  private flipper: Flipper = null;
+  public opened = false;
 
   /**
    * Page selection utils
@@ -99,32 +73,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);
-
-    this.nodes.toolSettings = $.make('div', this.CSS.toolSettings);
-    // this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
-
-    // $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
-    // $.append(this.nodes.wrapper, this.nodes.toolSettings);
-
-    /**
-     * Active leafing by arrows/tab
-     * Buttons will be filled on opening
-     */
-    // this.enableFlipper();
   }
 
   /**
    * Destroys module
    */
   public destroy(): void {
-    /**
-     * Sometimes (in read-only mode) there is no Flipper
-     */
-    // if (this.flipper) {
-    //   this.flipper.deactivate();
-    //   this.flipper = null;
-    // }
-
     this.removeAllNodes();
   }
 
@@ -134,7 +88,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @param targetBlock - near which Block we should open BlockSettings
    */
   public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
-    this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
+    this.opened = true;
 
     /**
      * If block settings contains any inputs, focus will be set there,
@@ -151,22 +105,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    this.addToolSettings(targetBlock);
-
-    /**
-     * Add default settings that presents for all Blocks
-     */
-    // this.addTunes(targetBlock);
-
-    // console.log(targetBlock.getTunesItems());
+    this.nodes.toolSettings = targetBlock.renderSettings();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-
-    // this.flipper.activate(this.blockTunesButtons);
-    // console.log(this.blockTunesButtons);
-
-    // const toolTunes = targetBlock.renderTunes()[0];
 
     this.makeToolTunesButtonsNavigatable();
 
@@ -195,7 +137,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Close Block Settings pane
    */
   public close(): void {
-    this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
+    this.opened = false;
 
     /**
      * If selection is at editor on Block Settings closing,
@@ -218,17 +160,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     }
 
     /** Clear settings */
-    this.nodes.toolSettings.innerHTML = '';
-    // this.nodes.defaultSettings.innerHTML = '';
+    if (this.nodes.toolSettings) {
+      this.nodes.toolSettings.innerHTML = '';
+    }
 
     /** Tell to subscribers that block settings is closed */
     this.eventsDispatcher.emit(this.events.closed);
-
-    /** Clear cached buttons */
-    this.buttons = [];
-
-    /** Clear focus on active button */
-    // this.flipper.deactivate();
 
     if (this.popover) {
       this.popover.getElement().remove();
@@ -241,26 +178,17 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   private makeToolTunesButtonsNavigatable(): void {
     const { StylesAPI } = this.Editor;
-    const toolSettings = this.nodes.toolSettings.querySelectorAll(
+    const toolSettings = this.nodes.toolSettings?.querySelectorAll(
       // Select buttons and inputs
       `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
 
+    if (!toolSettings) {
+      return;
+    }
+
     toolSettings.forEach((item) => {
       item.classList.add(Popover.CSS.itemFlippable);
     });
-  }
-
-  /**
-   * Add Tool's settings
-   *
-   * @param targetBlock - Block to render settings
-   */
-  private addToolSettings(targetBlock): void {
-    const settingsElement = targetBlock.renderSettings();
-
-    if (settingsElement) {
-      $.append(this.nodes.toolSettings, settingsElement);
-    }
   }
 }
