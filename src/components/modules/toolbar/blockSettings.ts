@@ -4,6 +4,7 @@ import Flipper, { FlipperOptions } from '../../flipper';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
+import Popover, { PopoverEvent, PopoverItem } from '../../utils/popover';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -11,7 +12,7 @@ import Block from '../../block';
 interface BlockSettingsNodes {
   wrapper: HTMLElement;
   toolSettings: HTMLElement;
-  defaultSettings: HTMLElement;
+  // defaultSettings: HTMLElement;
 }
 
 /**
@@ -43,7 +44,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Block Settings CSS
    *
-   * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   * @returns {{wrapper, wrapperOpened, toolSettings, button}}
    */
   public get CSS(): { [name: string]: string } {
     return {
@@ -51,7 +52,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       wrapper: 'ce-settings',
       wrapperOpened: 'ce-settings--opened',
       toolSettings: 'ce-settings__plugin-zone',
-      defaultSettings: 'ce-settings__default-zone',
+      // defaultSettings: 'ce-settings__default-zone',
 
       button: 'ce-settings__button',
 
@@ -87,6 +88,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   private selection: SelectionUtils = new SelectionUtils();
 
   /**
+   * Popover instance. There is a util for vertical lists.
+   */
+  private popover: Popover;
+
+  /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
@@ -95,15 +101,16 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);
 
     this.nodes.toolSettings = $.make('div', this.CSS.toolSettings);
-    this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
+    // this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
 
-    $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
+    // $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
+    // $.append(this.nodes.wrapper, this.nodes.toolSettings);
 
     /**
      * Active leafing by arrows/tab
      * Buttons will be filled on opening
      */
-    this.enableFlipper();
+    // this.enableFlipper();
   }
 
   /**
@@ -113,10 +120,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Sometimes (in read-only mode) there is no Flipper
      */
-    if (this.flipper) {
-      this.flipper.deactivate();
-      this.flipper = null;
-    }
+    // if (this.flipper) {
+    //   this.flipper.deactivate();
+    //   this.flipper = null;
+    // }
 
     this.removeAllNodes();
   }
@@ -149,12 +156,39 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Add default settings that presents for all Blocks
      */
-    this.addTunes(targetBlock);
+    // this.addTunes(targetBlock);
+
+    // console.log(targetBlock.getTunesItems());
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
 
-    this.flipper.activate(this.blockTunesButtons);
+    // this.flipper.activate(this.blockTunesButtons);
+    // console.log(this.blockTunesButtons);
+
+    // const toolTunes = targetBlock.renderTunes()[0];
+
+    this.makeToolTunesButtonsNavigatable();
+
+    this.popover = new Popover({
+      className: '',
+      searchable: true,
+      filterLabel: 'Filter',
+      nothingFoundLabel: 'Nothing found',
+      items: targetBlock.getTunesItems(),
+      htmlContent: this.nodes.toolSettings,
+    });
+
+    this.nodes.wrapper.append(this.popover.getElement());
+
+    this.popover.show();
+  }
+
+  /**
+   * Returns root block settings element
+   */
+  public getElement(): HTMLElement {
+    return this.nodes.wrapper;
   }
 
   /**
@@ -185,7 +219,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
-    this.nodes.defaultSettings.innerHTML = '';
+    // this.nodes.defaultSettings.innerHTML = '';
 
     /** Tell to subscribers that block settings is closed */
     this.eventsDispatcher.emit(this.events.closed);
@@ -194,40 +228,27 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.buttons = [];
 
     /** Clear focus on active button */
-    this.flipper.deactivate();
+    // this.flipper.deactivate();
+
+    if (this.popover) {
+      this.popover.getElement().remove();
+    }
   }
 
   /**
-   * Returns Tools Settings and Default Settings
-   *
-   * @returns {HTMLElement[]}
+   * Adds special class to rendered tool settings signalising that button should
+   * be available for keyboard navigation
    */
-  public get blockTunesButtons(): HTMLElement[] {
+  private makeToolTunesButtonsNavigatable(): void {
     const { StylesAPI } = this.Editor;
-
-    /**
-     * Return from cache
-     * if exists
-     */
-    if (this.buttons.length !== 0) {
-      return this.buttons;
-    }
-
     const toolSettings = this.nodes.toolSettings.querySelectorAll(
       // Select buttons and inputs
       `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
-    const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
     toolSettings.forEach((item) => {
-      this.buttons.push((item as HTMLElement));
+      item.classList.add(Popover.CSS.itemFlippable);
     });
-
-    defaultSettings.forEach((item) => {
-      this.buttons.push((item as HTMLElement));
-    });
-
-    return this.buttons;
   }
 
   /**
@@ -241,48 +262,5 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (settingsElement) {
       $.append(this.nodes.toolSettings, settingsElement);
     }
-  }
-
-  /**
-   * Add tunes: provided by user and default ones
-   *
-   * @param targetBlock - Block to render its Tunes set
-   */
-  private addTunes(targetBlock): void {
-    const [toolTunes, defaultTunes] = targetBlock.renderTunes();
-
-    $.append(this.nodes.toolSettings, toolTunes);
-    $.append(this.nodes.defaultSettings, defaultTunes);
-  }
-
-  /**
-   * Active leafing by arrows/tab
-   * Buttons will be filled on opening
-   */
-  private enableFlipper(): void {
-    this.flipper = new Flipper({
-      focusedItemClass: this.CSS.focusedButton,
-      /**
-       * @param {HTMLElement} focusedItem - activated Tune
-       */
-      activateCallback: (focusedItem) => {
-        /**
-         * If focused item is editable element, close block settings
-         */
-        if (focusedItem && $.canSetCaret(focusedItem)) {
-          this.close();
-
-          return;
-        }
-
-        /**
-         * Restoring focus on current Block after settings clicked.
-         * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
-         */
-        _.delay(() => {
-          this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-        }, 50)();
-      },
-    } as FlipperOptions);
   }
 }

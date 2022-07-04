@@ -141,6 +141,6 @@ export default class DeleteTune implements BlockTune {
    */
   private setConfirmation(state: boolean): void {
     this.needConfirmation = state;
-    this.nodes.button.classList.add(this.CSS.buttonConfirm);
+    // this.nodes.button.classList.add(this.CSS.buttonConfirm);
   }
 }

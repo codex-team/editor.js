@@ -59,6 +59,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private readonly items: PopoverItem[];
 
   /**
+   * Arbitrary html element to be inserted before items list
+   */
+  private readonly htmlContent: HTMLElement;
+
+  /**
    * Stores the visibility state.
    */
   private isShown = false;
@@ -118,12 +123,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Style classes
    */
-  private static get CSS(): {
+  public static get CSS(): {
     popover: string;
     popoverOpened: string;
     itemsWrapper: string;
     item: string;
     itemHidden: string;
+    itemFlippable: string;
     itemFocused: string;
     itemLabel: string;
     itemIcon: string;
@@ -132,6 +138,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     noFoundMessageShown: string;
     popoverOverlay: string;
     popoverOverlayHidden: string;
+    customContentHidden: string;
     } {
     return {
       popover: 'ce-popover',
@@ -139,6 +146,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       itemsWrapper: 'ce-popover__items',
       item: 'ce-popover__item',
       itemHidden: 'ce-popover__item--hidden',
+      itemFlippable: 'ce-popover__item--flippable',
       itemFocused: 'ce-popover__item--focused',
       itemLabel: 'ce-popover__item-label',
       itemIcon: 'ce-popover__item-icon',
@@ -147,6 +155,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       noFoundMessageShown: 'ce-popover__no-found--shown',
       popoverOverlay: 'ce-popover__overlay',
       popoverOverlayHidden: 'ce-popover__overlay--hidden',
+      customContentHidden: 'ce-popover__custom-content--hidden',
     };
   }
 
@@ -163,16 +172,19 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.className - additional class name to be added to the popover wrapper
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
+   * @param options.htmlContent - arbitrary html element to be inserted before items list
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, htmlContent }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
+    htmlContent?: HTMLElement;
   }) {
     super();
     this.items = items;
+    this.htmlContent = htmlContent;
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
@@ -198,7 +210,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     /**
      * Clear search and items scrolling
      */
-    this.search.clear();
+    if (this.search) {
+      this.search.clear();
+    }
+
     this.nodes.items.scrollTop = 0;
 
     this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
@@ -290,6 +305,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       this.addSearch(this.nodes.popover);
     }
 
+    if (this.htmlContent) {
+      this.nodes.popover.appendChild(this.htmlContent);
+    }
+
     this.nodes.items = Dom.make('div', Popover.CSS.itemsWrapper);
     this.items.forEach(item => {
       this.nodes.items.appendChild(this.createItem(item));
@@ -340,11 +359,18 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
         this.nodes.nothingFound.classList.toggle(Popover.CSS.noFoundMessageShown, itemsVisible.length === 0);
 
+        const allItemsDisdplayed = filteredItems.length === this.items.length;
+        const flippableItems = allItemsDisdplayed ? this.flippableItems : itemsVisible;
+
+        if (this.htmlContent) {
+          this.htmlContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisdplayed);
+        }
+
         /**
          * Update flipper items with only visible
          */
         this.flipper.deactivate();
-        this.flipper.activate(itemsVisible);
+        this.flipper.activate(flippableItems);
         this.flipper.focusFirst();
       },
     });
@@ -402,10 +428,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Creates Flipper instance to be able to leaf tools
    */
   private enableFlipper(): void {
-    const tools = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
-
     this.flipper = new Flipper({
-      items: tools,
+      items: this.flippableItems,
       focusedItemClass: Popover.CSS.itemFocused,
       allowedKeys: [
         keyCodes.TAB,
@@ -414,5 +438,17 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
         keyCodes.ENTER,
       ],
     });
+  }
+
+  /**
+   * Returns list of items available for keyboard navigation
+   */
+  private get flippableItems(): HTMLElement[] {
+    const popoverItems = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
+    const customItems = this.htmlContent ? Array.from(this.htmlContent.querySelectorAll(
+      `.${Popover.CSS.itemFlippable}`
+    )) as HTMLElement[] : [];
+
+    return customItems.concat(popoverItems);
   }
 }
