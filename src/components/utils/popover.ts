@@ -417,7 +417,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Item click handler
    *
    * @param itemEl - clicked item
-   * @param event
+   * @param event - click event
    */
   private itemClicked(itemEl: HTMLElement, event: MouseEvent): void {
     const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);

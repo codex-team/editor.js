@@ -4,6 +4,8 @@ import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
 import Popover from '../../utils/popover';
+import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -15,14 +17,6 @@ interface BlockSettingsNodes {
 
 /**
  * Block Settings
- *
- *   ____ Settings Panel ____
- *  | ...................... |
- *  | .   Tool Settings    . |
- *  | ...................... |
- *  | .  Default Settings  . |
- *  | ...................... |
- *  |________________________|
  *
  *  @todo Make Block Settings no-module but a standalone class, like Toolbox
  */
@@ -113,10 +107,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.makeToolTunesButtonsNavigatable();
 
     this.popover = new Popover({
-      className: '',
       searchable: true,
-      filterLabel: 'Filter',
-      nothingFoundLabel: 'Nothing found',
+      filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
+      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
       items: targetBlock.getTunesItems(),
       customContent: this.nodes.toolSettings,
     });
@@ -168,6 +161,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
+      this.popover.destroy();
       this.popover.getElement().remove();
     }
   }
