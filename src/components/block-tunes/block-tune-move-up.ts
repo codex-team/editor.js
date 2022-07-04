@@ -6,7 +6,7 @@
  */
 import $ from '../dom';
 import { API, BlockTune, BlockAPI } from '../../../types';
-import { PopoverItem } from '../../components/utils/popover';
+import Popover, { PopoverItem } from '../../components/utils/popover';
 
 /**
  *
@@ -45,33 +45,7 @@ export default class MoveUpTune implements BlockTune {
   }
 
   /**
-   * Create "MoveUp" button and add click event listener
-   *
-   * @returns {HTMLElement}
-   */
-  public render(): HTMLElement {
-    const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
-
-    moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listeners.on(
-      moveUpButton,
-      'click',
-      (event) => this.handleClick(event as MouseEvent, moveUpButton),
-      false
-    );
-
-    /**
-     * Enable tooltip module on button
-     */
-    this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'), {
-      hidingDelay: 300,
-    });
-
-    return moveUpButton;
-  }
-
-  /**
-   *
+   * Tune's appearance in block settings menu
    */
   public get blockSettings(): PopoverItem {
     return {
@@ -86,19 +60,22 @@ export default class MoveUpTune implements BlockTune {
    * Move current block up
    *
    * @param {MouseEvent} event - click event
-   * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event?: MouseEvent, button?: HTMLElement): void {
+  public handleClick(event: MouseEvent): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
-      // button.classList.add(this.CSS.animation);
+      const button = (event.target as HTMLElement)
+        .closest('.' + Popover.CSS.item)
+        .querySelector('.' + Popover.CSS.itemIcon);
 
-      // window.setTimeout(() => {
-      //   button.classList.remove(this.CSS.animation);
-      // }, 500);
+      button.classList.add(this.CSS.animation);
+
+      window.setTimeout(() => {
+        button.classList.remove(this.CSS.animation);
+      }, 500);
 
       return;
     }

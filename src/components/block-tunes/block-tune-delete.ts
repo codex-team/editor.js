@@ -6,7 +6,7 @@
  */
 import { API, BlockTune } from '../../../types';
 import $ from '../dom';
-import { PopoverItem } from '../utils/popover';
+import Popover, { PopoverItem } from '../utils/popover';
 
 /**
  *
@@ -64,27 +64,7 @@ export default class DeleteTune implements BlockTune {
   }
 
   /**
-   * Create "Delete" button and add click event listener
-   *
-   * @returns {HTMLElement}
-   */
-  public render(): HTMLElement {
-    this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
-    this.nodes.button.appendChild($.svg('cross', 12, 12));
-    this.api.listeners.on(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
-
-    /**
-     * Enable tooltip module
-     */
-    this.api.tooltip.onHover(this.nodes.button, this.api.i18n.t('Delete'), {
-      hidingDelay: 300,
-    });
-
-    return this.nodes.button;
-  }
-
-  /**
-   *
+   * Tune's appearance in block settings menu
    */
   public get blockSettings(): PopoverItem {
     return {
@@ -107,7 +87,9 @@ export default class DeleteTune implements BlockTune {
      */
     if (!this.needConfirmation) {
       this.setConfirmation(true);
-      const button = (event.target as HTMLElement).closest('.ce-popover__item').querySelector('.ce-popover__item-icon');
+      const button = (event.target as HTMLElement)
+        .closest('.' + Popover.CSS.item)
+        .querySelector('.' + Popover.CSS.itemIcon);
 
       button.classList.add(this.CSS.buttonDelete);
       button.classList.add(this.CSS.buttonConfirm);
@@ -142,6 +124,5 @@ export default class DeleteTune implements BlockTune {
    */
   private setConfirmation(state: boolean): void {
     this.needConfirmation = state;
-    // this.nodes.button.classList.add(this.CSS.buttonConfirm);
   }
 }

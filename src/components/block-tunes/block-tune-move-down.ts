@@ -7,7 +7,7 @@
 
 import $ from '../dom';
 import { API, BlockTune } from '../../../types';
-import { PopoverItem } from '../utils/popover';
+import Popover, { PopoverItem } from '../utils/popover';
 
 /**
  *
@@ -46,39 +46,13 @@ export default class MoveDownTune implements BlockTune {
   }
 
   /**
-   * Return 'move down' button
-   *
-   * @returns {HTMLElement}
-   */
-  public render(): HTMLElement {
-    const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
-
-    moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    this.api.listeners.on(
-      moveDownButton,
-      'click',
-      (event) => this.handleClick(event as MouseEvent, moveDownButton),
-      false
-    );
-
-    /**
-     * Enable tooltip module on button
-     */
-    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'), {
-      hidingDelay: 300,
-    });
-
-    return moveDownButton;
-  }
-
-  /**
-   *
+   * Tune's appearance in block settings menu
    */
   public get blockSettings(): PopoverItem {
     return {
       icon: $.svg('arrow-down', 14, 14).outerHTML,
       label: this.api.i18n.t('Move down'),
-      onClick: (item): void => this.handleClick(),
+      onClick: (item, event): void => this.handleClick(event),
       name: 'move-down',
     };
   }
@@ -86,20 +60,23 @@ export default class MoveDownTune implements BlockTune {
   /**
    * Handle clicks on 'move down' button
    *
-   * @param {MouseEvent} event - click event
-   * @param {HTMLElement} button - clicked button
+   * @param event - click event
    */
-  public handleClick(event?: MouseEvent, button?: HTMLElement): void {
+  public handleClick(event: MouseEvent): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
     if (!nextBlock) {
-      // button.classList.add(this.CSS.animation);
+      const button = (event.target as HTMLElement)
+        .closest('.' + Popover.CSS.item)
+        .querySelector('.' + Popover.CSS.itemIcon);
 
-      // window.setTimeout(() => {
-      //   button.classList.remove(this.CSS.animation);
-      // }, 500);
+      button.classList.add(this.CSS.animation);
+
+      window.setTimeout(() => {
+        button.classList.remove(this.CSS.animation);
+      }, 500);
 
       return;
     }

@@ -11,7 +11,7 @@ export interface BlockTune {
    *
    * @return {HTMLElement}
    */
-  render(): HTMLElement;
+  render?(): HTMLElement;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.
@@ -32,7 +32,7 @@ export interface BlockTune {
   save?(): BlockTuneData;
 
   /**
-   * 
+   * Tune's appearance in block settings menu
    */
   blockSettings?: PopoverItem
 }
