@@ -113,6 +113,7 @@ export interface Blocks {
     replace?: boolean;
   }): BlockAPI;
 
+
   /**
    * Creates data of an empty block with a passed type.
    *
