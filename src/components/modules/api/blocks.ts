@@ -1,4 +1,5 @@
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
+import {InsertedBlock} from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
@@ -30,7 +31,7 @@ export default class BlocksAPI extends Module {
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
-      insert: this.insert,
+      insert:() :BlockAPIInterface => this.insert({}),
       update: this.update,
       composeBlockData: this.composeBlockData,
     };
@@ -222,30 +223,10 @@ export default class BlocksAPI extends Module {
 
   /**
    * Insert new Block and returns it's API
-   *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
-   * @param replace - pass true to replace the Block existed under passed index
+   * @param {InsertedBlock} block - The block being inserted
    */
-  public insert = (
-    type: string = this.config.defaultBlock,
-    data: BlockToolData = {},
-    config: ToolConfig = {},
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean
-  ): BlockAPIInterface => {
-    const insertedBlock = this.Editor.BlockManager.insert({
-      tool: type,
-      data,
-      index,
-      needToFocus,
-      replace,
-    });
-
+   public insert (block: InsertedBlock): BlockAPIInterface {
+    const insertedBlock = this.Editor.BlockManager.insert(block);
     return new BlockAPI(insertedBlock);
   }
 
@@ -263,7 +244,6 @@ export default class BlocksAPI extends Module {
       data: {},
       tunesData: {},
     });
-
     return block.data;
   }
 
@@ -278,7 +258,7 @@ export default class BlocksAPI extends Module {
   public insertNewBlock(): void {
     _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
-    this.insert();
+    this.insert({});
   }
 
   /**
