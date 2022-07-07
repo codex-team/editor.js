@@ -1,4 +1,5 @@
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
+import {InsertedBlock} from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
@@ -30,7 +31,7 @@ export default class BlocksAPI extends Module {
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
-      insert: this.insert,
+      insert:() :BlockAPIInterface => this.insert(),
       update: this.update,
       composeBlockData: this.composeBlockData,
     };
@@ -222,22 +223,22 @@ export default class BlocksAPI extends Module {
 
   /**
    * Insert new Block and returns it's API
-   *
+   * @param {InsertedBlock} block - The block being inserted
    * @param {string} type — Tool name
    * @param {BlockToolData} data — Tool data to insert
    * @param {ToolConfig} config — Tool config
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
-   * @param replace - pass true to replace the Block existed under passed index
+   * @param {replace?} - pass true to replace the Block existed under passed index
    */
-  public insert = (
-    type: string = this.config.defaultBlock,
-    data: BlockToolData = {},
-    config: ToolConfig = {},
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean
-  ): BlockAPIInterface => {
+   public insert ({
+    type = this.config.defaultBlock, 
+    data = {}, 
+    config = {}, 
+    index, 
+    needToFocus, 
+    replace
+  }: InsertedBlock = {}): BlockAPIInterface {
     const insertedBlock = this.Editor.BlockManager.insert({
       tool: type,
       data,
@@ -245,7 +246,6 @@ export default class BlocksAPI extends Module {
       needToFocus,
       replace,
     });
-
     return new BlockAPI(insertedBlock);
   }
 
@@ -263,7 +263,6 @@ export default class BlocksAPI extends Module {
       data: {},
       tunesData: {},
     });
-
     return block.data;
   }
 

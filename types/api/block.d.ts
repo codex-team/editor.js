@@ -74,3 +74,15 @@ export interface BlockAPI {
    */
   dispatchChange(): void;
 }
+
+/**
+ * @interface InsertedBLock Describes methods and properties of inserted blocks
+ */
+export interface InsertedBlock{
+  type?: string,
+  data?: BlockToolData,
+  config?: ToolConfig,
+  index?: number,
+  needToFocus?: boolean,
+  replace?: boolean
+}
