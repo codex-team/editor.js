@@ -231,19 +231,14 @@ export default class BlocksAPI extends Module {
    * @param replace - pass true to replace the Block existed under passed index
    */
   public insert = (
-    type: string = this.config.defaultBlock,
-    data: BlockToolData = {},
-    config: ToolConfig = {},
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean
+    newBlock
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
-      tool: type,
-      data,
-      index,
-      needToFocus,
-      replace,
+      tool: newBlock.type,
+      data: newBlock.data,
+      index: newBlock.index,
+      needToFocus: newBlock.needToFocus,
+      replace: newBlock.replace,
     });
 
     return new BlockAPI(insertedBlock);
@@ -278,7 +273,7 @@ export default class BlocksAPI extends Module {
   public insertNewBlock(): void {
     _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
       'Use blocks.insert() instead.', 'warn');
-    this.insert();
+    this.insert({});
   }
 
   /**
