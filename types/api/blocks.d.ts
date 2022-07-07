@@ -1,3 +1,4 @@
+import { InsertedBlock } from '.';
 import {OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
 import {BlockAPI} from './block';
@@ -96,22 +97,9 @@ export interface Blocks {
   /**
    * Insert new Block and return inserted Block API
    *
-   * @param newBlock - new block config
-   *  {string} type — Tool name
-   *  {BlockToolData} data — Tool data to insert
-   *  {ToolConfig} config — Tool config
-   *  {number?} index — index where to insert new Block
-   *  {boolean?} needToFocus - flag to focus inserted Block
-   *  {boolean?} replace - should the existed Block on that index be replaced or not
+   * @param {InsertedBlock} block - new block config
    */
-  insert(newBlock: {
-    type?: string;
-    data?: BlockToolData;
-    config?: ToolConfig;
-    index?: number;
-    needToFocus?: boolean;
-    replace?: boolean;
-  }): BlockAPI;
+  insert(block: InsertedBlock): BlockAPI;
 
 
   /**
