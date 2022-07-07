@@ -78,11 +78,35 @@ export interface BlockAPI {
 /**
  * @interface InsertedBLock Describes methods and properties of inserted blocks
  */
+
 export interface InsertedBlock{
+  /**
+   * Tool name
+   */
   type?: string,
+
+  /**
+   * Tool data to insert
+   */
   data?: BlockToolData,
+
+  /**
+   * Tool config
+   */
   config?: ToolConfig,
+
+  /**
+   * index where to insert new block
+   */
   index?: number,
+
+  /**
+   * falg to focus inserted block
+   */
   needToFocus?: boolean,
+
+  /**
+   * pass true to replace the Block existed under passed index
+   */
   replace?: boolean
 }
