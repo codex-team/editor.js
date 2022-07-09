@@ -350,13 +350,11 @@ export default class Dom {
    * @returns {boolean}
    */
   public static canSetCaret(target: HTMLElement | Node): boolean {
-    const selectionSupportedTypes = [
-      'text',
-      'search',
-      'tel',
-      'url',
-      'password',
-    ];
+    /**
+     * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-apply
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
+     */
+    const selectionSupportedTypes = ['text', 'search', 'tel', 'url', 'password'];
 
     if (Dom.isNativeInput(target)) {
       return selectionSupportedTypes.includes(target.type) || target.tagName === 'TEXTAREA';
