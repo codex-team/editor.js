@@ -74,3 +74,39 @@ export interface BlockAPI {
    */
   dispatchChange(): void;
 }
+
+/**
+ * @interface NewBlock Describes new block configuration
+ */
+
+export interface NewBlock {
+  /**
+   * Tool name
+   */
+  type: string;
+
+  /**
+   * Tool data to insert
+   */
+  data: BlockToolData;
+
+  /**
+   * Tool config
+   */
+  config: ToolConfig;
+
+  /**
+   * index where to insert new Block
+   */
+  index?: number;
+
+  /**
+   * flag to focus inserted Block
+   */
+  needToFocus?: boolean;
+
+  /**
+   * should the existed Block on that index be replaced or not
+   */
+  replace?: boolean;
+}

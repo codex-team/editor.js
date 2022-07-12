@@ -1,6 +1,6 @@
 import {OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
-import {BlockAPI} from './block';
+import {BlockAPI, NewBlock} from './block';
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -96,21 +96,10 @@ export interface Blocks {
   /**
    * Insert new Block and return inserted Block API
    *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
-   * @param {boolean?} replace - should the existed Block on that index be replaced or not
+   * @param{NewBlock} newBlock - new block config
+   *
    */
-  insert(
-    type?: string,
-    data?: BlockToolData,
-    config?: ToolConfig,
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean,
-  ): BlockAPI;
+  insert(newBlock: NewBlock): BlockAPI;
 
 
   /**

@@ -404,14 +404,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       blockData = Object.assign(defaultBlockData, blockDataOverrides);
     }
 
-    const newBlock = this.api.blocks.insert(
-      toolName,
-      blockData,
-      undefined,
+    const newBlock = this.api.blocks.insert({
+      type: toolName,
+      data: blockData,
+      config: undefined,
       index,
-      undefined,
-      currentBlock.isEmpty
-    );
+      replace: currentBlock.isEmpty,
+    });
 
     /**
      * Apply callback before inserting html
