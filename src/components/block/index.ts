@@ -643,7 +643,20 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns list of tunes available for block
+   * Returns rendered custom block tunes
+   */
+  public getTunesRendered(): DocumentFragment {
+    const tunesElement = document.createDocumentFragment();
+
+    this.tunesInstances.forEach((tune) => {
+      $.append(tunesElement, tune.render());
+    });
+
+    return tunesElement;
+  }
+
+  /**
+   * Returns list of tunes available for block as popover items
    */
   public getTunesList(): PopoverItem[] {
     const tunes = Array.from(this.tunesInstances.values());

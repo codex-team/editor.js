@@ -12,7 +12,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
  */
 interface BlockSettingsNodes {
   wrapper: HTMLElement;
-  toolSettings: HTMLElement;
+  renderedTunes: HTMLElement;
 }
 
 /**
@@ -97,7 +97,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    this.nodes.toolSettings = targetBlock.renderSettings();
+    this.nodes.renderedTunes = this.composeRenderedTunes(targetBlock);
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -110,7 +110,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
       items: targetBlock.getTunesList(),
-      customContent: this.nodes.toolSettings,
+      customContent: this.nodes.renderedTunes,
       api: this.Editor.API.methods,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
@@ -154,8 +154,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     }
 
     /** Clear settings */
-    if (this.nodes.toolSettings) {
-      this.nodes.toolSettings.innerHTML = '';
+    if (this.nodes.renderedTunes) {
+      this.nodes.renderedTunes.innerHTML = '';
     }
 
     /** Tell to subscribers that block settings is closed */
@@ -169,12 +169,30 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
+   * Combines rendered tool settings with custom block tunes
+   *
+   * @param targetBlock - block tunes belong to
+   */
+  private composeRenderedTunes(targetBlock: Block): HTMLElement | undefined {
+    const toolSettings = targetBlock.renderSettings();
+    const customBlockTunes = targetBlock.getTunesRendered();
+    const container = document.createElement('div');
+
+    if (!toolSettings && !customBlockTunes) {
+      return;
+    }
+    container.append(toolSettings, customBlockTunes);
+
+    return container;
+  }
+
+  /**
    * Adds special class to rendered tool settings signalising that button should
    * be available for keyboard navigation
    */
   private makeToolTunesButtonsNavigatable(): void {
     const { StylesAPI } = this.Editor;
-    const toolSettings = this.nodes.toolSettings?.querySelectorAll(
+    const toolSettings = this.nodes.renderedTunes?.querySelectorAll(
       // Select buttons and inputs
       `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
