@@ -656,15 +656,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns list of tunes available for block as popover items
+   * Returns list of tunes available for block in popover format
    */
   public getTunesList(): PopoverItem[] {
-    const tunes = Array.from(this.tunesInstances.values());
-    const defaultTunes = Array.from(this.defaultTunesInstances.values());
+    const customTunesInstances = Array.from(this.tunesInstances.values());
+    const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
+    const tunesDefinedInTool =
+      Array.isArray(this.toolInstance.blockSettings)
+        ? this.toolInstance.blockSettings
+        : [ this.toolInstance.blockSettings ];
 
-    return tunes.concat(defaultTunes)
+    const otherTunes = customTunesInstances.concat(defaultTunesInstances)
       .map(tune => tune.blockSettings)
       .filter(item => !!item);
+
+    // @ts-ignore
+    return tunesDefinedInTool.concat(otherTunes).filter(item => !item.isActive);
   }
 
   /**
@@ -741,6 +748,19 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       return this.toolInstance.renderSettings();
     }
   }
+
+  /**
+   *
+   */
+  // public get blockSettings(): PopoverItem | PopoverItem[] {
+  //   if (_.isFunction(this.toolInstance.blockSettings)) {
+  //     return this.toolInstance.blockSettings();
+  //   }
+  // }
+
+  // public async getActiveTunesEntry() {
+
+  // }
 
   /**
    * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")

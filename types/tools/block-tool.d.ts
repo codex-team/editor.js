@@ -5,6 +5,7 @@ import { ToolConfig } from './tool-config';
 import { API, BlockAPI, ToolboxConfig } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
+import { PopoverItem } from '../../src/components/utils/popover';
 
 /**
  * Describe Block Tool object
@@ -28,6 +29,11 @@ export interface BlockTool extends BaseTool {
    * @return {HTMLElement}
    */
   renderSettings?(): HTMLElement;
+
+  /**
+   * 
+   */
+  blockSettings?: PopoverItem | PopoverItem[];
 
   /**
    * Validate Block's data
