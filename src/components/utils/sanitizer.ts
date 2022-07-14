@@ -54,7 +54,7 @@ export function sanitizeBlocks(
       return block;
     }
 
-    block.data = deepSanitize(block.data, toolConfig) as BlockToolData;
+    block.data = deepSanitize(block.data, {}) as BlockToolData;
 
     return block;
   });

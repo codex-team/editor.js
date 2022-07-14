@@ -11,6 +11,8 @@ import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
+import Block from '../../block';
+import { debug } from 'webpack';
 
 /**
  * Inline Toolbar elements
@@ -239,6 +241,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public open(needToShowConversionToolbar = true): void {
     if (this.opened) {
+      this.checkToolsState();
+
       return;
     }
     /**
@@ -516,8 +520,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.actions.innerHTML = '';
     this.toolsInstances = new Map();
 
-    Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
-      this.addTool(tool);
+    Array.from(currentBlock.fragments.instances).forEach(([name, tool]) => {
+      this.addTool(currentBlock.fragments.inlineTools.get(name), tool, currentBlock.fragments.isToolActive(name));
     });
 
     /**
@@ -527,13 +531,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
-   * Add tool button and activate clicks
+   * Add toolInstance button and activate clicks
    *
-   * @param {InlineTool} tool - InlineTool object
+   * @param {InlineTool} toolInstance - InlineTool object
    */
-  private addTool(tool: InlineTool): void {
-    const instance = tool.create();
-    const button = instance.render();
+  private addTool(tool: InlineTool, toolInstance: IInlineTool, isActive: boolean): void {
+    const button = toolInstance.render();
 
     if (!button) {
       _.log('Render method must return an instance of Node', 'warn', tool.name);
@@ -543,16 +546,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     button.dataset.tool = tool.name;
     this.nodes.buttons.appendChild(button);
-    this.toolsInstances.set(tool.name, instance);
+    this.toolsInstances.set(tool.name, toolInstance);
 
-    if (_.isFunction(instance.renderActions)) {
-      const actions = instance.renderActions();
+    if (_.isFunction(toolInstance.renderActions)) {
+      const actions = toolInstance.renderActions();
 
       this.nodes.actions.appendChild(actions);
     }
 
     this.listeners.on(button, 'click', (event) => {
-      this.toolClicked(instance);
+      this.toolClicked(tool.name);
       event.preventDefault();
     });
 
@@ -560,7 +563,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     if (shortcut) {
       try {
-        this.enableShortcuts(instance, shortcut);
+        this.enableShortcuts(tool.name, toolInstance, shortcut);
       } catch (e) {}
     }
 
@@ -586,7 +589,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       hidingDelay: 100,
     });
 
-    instance.checkState(SelectionUtils.get());
+    toolInstance.active = isActive;
   }
 
   /**
@@ -623,7 +626,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {InlineTool} tool - Tool instance
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcuts(tool: IInlineTool, shortcut: string): void {
+  private enableShortcuts(name: string, tool: IInlineTool, shortcut: string): void {
     Shortcuts.add({
       name: shortcut,
       handler: (event) => {
@@ -648,7 +651,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         }
 
         event.preventDefault();
-        this.toolClicked(tool);
+        this.toolClicked(name);
       },
       on: this.Editor.UI.nodes.redactor,
     });
@@ -659,10 +662,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *
    * @param {InlineTool} tool - Tool's instance
    */
-  private toolClicked(tool: IInlineTool): void {
-    const range = SelectionUtils.range;
+  private toolClicked(name: string): void {
+    const currentSelection = SelectionUtils.get();
 
-    tool.surround(range);
+    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+
+    currentBlock.fragments.insert(name);
+    // const currentBlock = this
+    // const range = SelectionUtils.range;
+
+    // tool.surround(range);
     this.checkToolsState();
   }
 
@@ -670,9 +679,17 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.toolsInstances.forEach((toolInstance) => {
-      toolInstance.checkState(SelectionUtils.get());
-    });
+    const { currentBlock } = this.Editor.BlockManager;
+
+    Array
+      .from(currentBlock.fragments.instances)
+      .forEach(([name, tool]) => {
+        tool.active = currentBlock.fragments.isToolActive(name);
+      });
+
+    // this.toolsInstances.forEach((toolInstance) => {
+    //   toolInstance.active(SelectionUtils.get());
+    // });
   }
 
   /**

@@ -779,3 +779,12 @@ export const isIosDevice =
   window.navigator.platform &&
   (/iP(ad|hone|od)/.test(window.navigator.platform) ||
     (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1));
+
+/**
+ * Returns production of multiplication of arguments
+ *
+ * @param numbers - numbers to multiply
+ */
+export function multiply(...numbers: number[]) {
+  return numbers.reduce((prod, m) => prod * m, 1);
+}

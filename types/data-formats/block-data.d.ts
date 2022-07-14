@@ -18,5 +18,6 @@ export interface ValidatedData {
   tool?: string;
   data?: BlockToolData;
   time?: number;
+  fragments?: any;
   isValid: boolean;
 }

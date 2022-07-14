@@ -1,7 +1,7 @@
 import * as _ from '../../../src/components/utils';
 
 describe('Blocks selection', () => {
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {

@@ -3,7 +3,7 @@ import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
 
 describe('Copy pasting from Editor', () => {
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {

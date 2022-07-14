@@ -38,26 +38,26 @@ export default class Saver extends Module {
         chainData.push(this.getSavedData(block));
       });
 
-      const extractedData = await Promise.all(chainData) as Array<Pick<SavedData, 'data' | 'tool'>>;
+      const extractedData = await Promise.all(chainData) as Pick<SavedData, 'data' | 'tool'>[];
       const sanitizedData = sanitizeBlocks(extractedData, (name) => {
         return Tools.blockTools.get(name).sanitizeConfig;
       });
-      const withFragments = sanitizedData.map(savedData => {
-        if (savedData.tool === this.Editor.Tools.stubTool) {
-          return savedData;
-        }
+      // const withFragments = sanitizedData.map(savedData => {
+      //   if (savedData.tool === this.Editor.Tools.stubTool) {
+      //     return savedData;
+      //   }
+      //
+      //   const fragments = this.extractInlineFragments(savedData.data);
+      //
+      //   savedData.data = deepSanitize(savedData.data, {});
+      //
+      //   return {
+      //     ...savedData,
+      //     fragments,
+      //   };
+      // });
 
-        const fragments = this.extractInlineFragments(savedData.data);
-
-        savedData.data = deepSanitize(savedData.data, {});
-
-        return {
-          ...savedData,
-          fragments,
-        };
-      });
-
-      return this.makeOutput(withFragments);
+      return this.makeOutput(sanitizedData);
     } catch (e) {
       _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
     }
@@ -71,10 +71,12 @@ export default class Saver extends Module {
    */
   private async getSavedData(block: Block): Promise<ValidatedData> {
     const blockData = await block.save();
+    const fragments = block.fragments.save();
     const isValid = blockData && await block.validate(blockData.data);
 
     return {
       ...blockData,
+      fragments,
       isValid,
     };
   }

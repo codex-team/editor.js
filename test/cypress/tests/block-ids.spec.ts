@@ -3,7 +3,7 @@ import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
 
 describe.only('Block ids', () => {
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {

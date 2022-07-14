@@ -3,6 +3,7 @@ import {
   BlockTool as IBlockTool,
   BlockToolData,
   BlockTune as IBlockTune,
+  InlineTool as IInlineTool,
   SanitizerConfig,
   ToolConfig
 } from '../../../types';
@@ -19,6 +20,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
+import InlineFragmentsContainer from './inline-fragments/container';
 
 /**
  * Interface describes Block class constructor argument
@@ -143,6 +145,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool's user configuration
    */
   public readonly config: ToolConfig;
+
+  public fragments: InlineFragmentsContainer;
 
   /**
    * Cached inputs
@@ -276,6 +280,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.composeTunes(tunesData);
 
     this.holder = this.compose();
+
+    this.fragments = new InlineFragmentsContainer(tool, this.inputs[0]);
   }
 
   /**
@@ -582,6 +588,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public async save(): Promise<void | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
     const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
+
+    console.log(this.fragments.save());
 
     [
       ...this.tunesInstances.entries(),

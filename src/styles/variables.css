@@ -1,5 +1,5 @@
 /**
- * Updating values in media queries should also include changes in utils.ts@isMobile
+ * Updating values in media queries should also include changes in rangeUtils.ts@isMobile
  */
 @custom-media --mobile (width <= 650px);
 @custom-media --not-mobile (width >= 651px);
