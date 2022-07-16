@@ -99,29 +99,25 @@ export function getChangesFromString(str1: string, str2: string): InsertOperatio
   const length1 = str1.length,
       length2 = str2.length;
 
-  let left1 = 0,
-      left2 = 0;
+  let left = 0;
 
-  while (str1[left1] === str2[left2]) {
-    left1++;
-    left2++;
+  while (str1[left] === str2[left]) {
+    left++;
   }
 
-  let right1 = 0,
-      right2 = 0;
+  let right = 0;
 
-  while (str1[length1 - right1 - 1] === str2[length2 - right2 - 1]) {
-    right1++;
-    right2++;
+  while (str1[length1 - right - 1] === str2[length2 - right - 1]) {
+    right++;
   }
 
-  if (left1 + right1 < length1 && left2 + right2 < length2) {
-    const before = str1.slice(left1, length1 - right1);
-    const after = str2.slice(left2, length2 - right2);
+  if (left + right < length1 && left + right < length2) {
+    const before = str1.slice(left, length1 - right);
+    const after = str2.slice(left, length2 - right);
 
     return {
       type: Operation.Replace,
-      from: left1,
+      from: left,
       data: {
         before,
         after,
@@ -133,23 +129,23 @@ export function getChangesFromString(str1: string, str2: string): InsertOperatio
     };
   }
 
-  if (left2 + right2 < length2) {
-    const data = str2.slice(left2, length2 - right2 + (left1 + right1 - length1));
+  if (left + right < length2) {
+    const data = str2.slice(left, length2 - right + (left + right - length1));
 
     return {
       type: Operation.Insert,
-      from: left2,
+      from: left,
       data,
       length: data.length,
     };
   }
 
-  if (left1 + right1 < length1) {
-    const data = str1.slice(left1, length1 - right1 + (left2 + right2 - length2));
+  if (left + right < length1) {
+    const data = str1.slice(left, length1 - right + (left + right - length2));
 
     return {
       type: Operation.Remove,
-      from: left1,
+      from: left,
       data,
       length: data.length,
     };
