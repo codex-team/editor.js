@@ -710,4 +710,51 @@ export default class Dom {
       'onwaiting',
     ];
   }
+
+  /**
+   * Return sanitization configuration for given element.
+   *
+   * @param element - html element.
+   * @returns {object}
+   */
+  public static santizationConfig(element: string): object {
+    /** Configuration to remove all the event handler from html tag. */
+    const handlers = Object.assign({}, ...this.eventHandlers.map(k => ({ [k]: false })));
+    let config = { ...handlers };
+
+    switch (element) {
+      case 'img':
+        config = {
+          ...config,
+          src: true,
+          alt: true,
+        };
+      // eslint-disable-next-line no-fallthrough
+      case 'p':
+      case 'h1':
+      case 'h2':
+      case 'h3':
+      case 'h4':
+      case 'h5':
+      case 'h6':
+      case 'pre':
+      default:
+        config = {
+          ...config,
+          accesskey: true,
+          class: true,
+          id: true,
+          contenteditable: true,
+          dir: true,
+          draggable: true,
+          lang: true,
+          spellcheck: true,
+          style: true,
+          tabindex: true,
+          title: true,
+        };
+    }
+
+    return config;
+  }
 }
