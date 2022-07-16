@@ -478,7 +478,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions }]) => {
+      .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -495,7 +495,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [tool] = foundConfig;
+    const [ tool ] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
