@@ -49,6 +49,21 @@ describe('getChangesFromString function', () => {
 
       expect(result).deep.equal(expected);
     });
+
+    it('should compute operation when a user inserts symbols in the empty string', () => {
+      const before = '';
+      const after = 'String';
+      const expected = {
+        type: Operation.Insert,
+        from: 0,
+        data: 'String',
+        length: 6,
+      };
+
+      const result = getChangesFromString(before, after);
+
+      expect(result).deep.equal(expected);
+    });
   });
 
   describe('Remove operation', () => {
@@ -90,6 +105,21 @@ describe('getChangesFromString function', () => {
         from: 9,
         data: ' changed',
         length: 8,
+      };
+
+      const result = getChangesFromString(before, after);
+
+      expect(result).deep.equal(expected);
+    });
+
+    it('should compute operation when a user removes full string', () => {
+      const before = 'String';
+      const after = '';
+      const expected = {
+        type: Operation.Remove,
+        from: 0,
+        data: 'String',
+        length: 6,
       };
 
       const result = getChangesFromString(before, after);
@@ -154,6 +184,27 @@ describe('getChangesFromString function', () => {
         length: {
           before: 3,
           after: 2,
+        },
+      };
+
+      const result = getChangesFromString(before, after);
+
+      expect(result).deep.equal(expected);
+    });
+
+    it('should compute operation when a user replaces full string', () => {
+      const before = 'abcd';
+      const after = 'efg';
+      const expected = {
+        type: Operation.Replace,
+        from: 0,
+        data: {
+          before: 'abcd',
+          after: 'efg',
+        },
+        length: {
+          before: 4,
+          after: 3,
         },
       };
 
