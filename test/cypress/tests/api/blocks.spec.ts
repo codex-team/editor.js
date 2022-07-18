@@ -52,6 +52,32 @@ describe('api.blocks', () => {
     });
   });
 
+
+  /**
+   * api.blocks.insert(newBlock)
+   */
+  describe('.insert()', () => {
+    /**
+     * Check that api.blocks.insert(newBlock) returns the inserted Block API
+     */
+    it('should return Block API inserted', () => {
+      cy.get('@editorInstance').then(async (editor: any) => {
+        const newBlock = {
+          type: 'paragraph',
+          data: {
+            text: 'The new block that will be inserted.',
+          },
+          config: {},
+          index: 100,
+        };
+        const blockInserted = editor.blocks.insert(newBlock);
+
+        expect(blockInserted).not.to.be.undefined;
+        expect(blockInserted.name).to.be.eq(newBlock.type);
+      });
+    });
+  });
+
   /**
    * api.blocks.update(id, newData)
    */
