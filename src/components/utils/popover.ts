@@ -385,11 +385,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
         this.nodes.nothingFound.classList.toggle(Popover.CSS.noFoundMessageShown, itemsVisible.length === 0);
 
-        const allItemsDisdplayed = filteredItems.length === this.items.length;
-        const flippableItems = allItemsDisdplayed ? this.flippableItems : itemsVisible;
+        const allItemsDisplayed = filteredItems.length === this.items.length;
+        const flippableItems = allItemsDisplayed ? this.flippableItems : itemsVisible;
 
         if (this.customContent) {
-          this.customContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisdplayed);
+          this.customContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisplayed);
         }
 
         /**
