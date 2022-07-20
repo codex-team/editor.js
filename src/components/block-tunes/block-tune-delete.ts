@@ -66,7 +66,7 @@ export default class DeleteTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public get blockSettings(): PopoverItem {
+  public render(): PopoverItem {
     return {
       icon: $.svg('cross', 14, 14).outerHTML,
       label: this.api.i18n.t('Delete'),

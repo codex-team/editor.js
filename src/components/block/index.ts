@@ -648,9 +648,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public getTunesRendered(): DocumentFragment {
     const tunesElement = document.createDocumentFragment();
 
-    this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render());
-    });
+    // this.tunesInstances.forEach((tune) => {
+    //   $.append(tunesElement, tune.render());
+    // });
 
     return tunesElement;
   }
@@ -661,17 +661,42 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public getTunesList(): PopoverItem[] {
     const customTunesInstances = Array.from(this.tunesInstances.values());
     const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
-    const tunesDefinedInTool =
-      Array.isArray(this.toolInstance.blockSettings)
-        ? this.toolInstance.blockSettings
-        : [ this.toolInstance.blockSettings ];
+    const tunesDefinedInTool = [ this.toolInstance.render() ].flat();
 
     const otherTunes = customTunesInstances.concat(defaultTunesInstances)
-      .map(tune => tune.blockSettings)
+      .map(tune => tune.render())
       .filter(item => !!item);
 
     // @ts-ignore
     return tunesDefinedInTool.concat(otherTunes).filter(item => !item.isActive);
+  }
+
+  /**
+   *
+   */
+  public getTunes(): [PopoverItem[], HTMLElement] {
+    const tunesElement = document.createElement('div');
+    const tunesItems: PopoverItem[] = [];
+
+    const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
+    const customTunesInstances = Array.from(this.tunesInstances.values());
+    const tunesDefinedInTool = [ this.toolInstance.renderSettings() ].flat();
+    const otherTunes = customTunesInstances.concat(defaultTunesInstances).map(item => item.render());
+
+    tunesDefinedInTool.concat(otherTunes).forEach(rendered => {
+      if (rendered instanceof HTMLElement) {
+        tunesElement.appendChild(rendered);
+      } else {
+        const normalized = [ rendered ].flat();
+
+        tunesItems.push(...normalized);
+      }
+    });
+
+    // @ts-ignore
+    // tunesItems = tunesItems.filter(item => !item.isActive);
+
+    return [tunesItems, tunesElement];
   }
 
   /**
@@ -744,23 +769,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call Tool instance renderSettings method
    */
   public renderSettings(): HTMLElement | undefined {
-    if (_.isFunction(this.toolInstance.renderSettings)) {
-      return this.toolInstance.renderSettings();
-    }
+    return undefined;
+    // if (_.isFunction(this.toolInstance.renderSettings)) {
+    //   return this.toolInstance.renderSettings();
+    // }
   }
-
-  /**
-   *
-   */
-  // public get blockSettings(): PopoverItem | PopoverItem[] {
-  //   if (_.isFunction(this.toolInstance.blockSettings)) {
-  //     return this.toolInstance.blockSettings();
-  //   }
-  // }
-
-  // public async getActiveTunesEntry() {
-
-  // }
 
   /**
    * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")

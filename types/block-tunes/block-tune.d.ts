@@ -1,6 +1,7 @@
 import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
 import { PopoverItem } from '../../src/components/utils/popover';
+import { TunesMenuConfig } from '../tools';
 
 /**
  * Describes BLockTune blueprint
@@ -8,10 +9,8 @@ import { PopoverItem } from '../../src/components/utils/popover';
 export interface BlockTune {
   /**
    * Returns block tune HTMLElement
-   *
-   * @return {HTMLElement}
    */
-  render?(): HTMLElement;
+  render(): HTMLElement | TunesMenuConfig;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.
@@ -30,11 +29,6 @@ export interface BlockTune {
    * @return {BlockTuneData}
    */
   save?(): BlockTuneData;
-
-  /**
-   * Tune's appearance in block settings menu
-   */
-  blockSettings?: PopoverItem
 }
 
 /**

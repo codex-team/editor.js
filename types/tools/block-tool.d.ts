@@ -5,6 +5,7 @@ import { ToolConfig } from './tool-config';
 import { API, BlockAPI, ToolboxConfig } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
+import { TunesMenuConfig } from './tool-settings';
 import { PopoverItem } from '../../src/components/utils/popover';
 
 /**
@@ -26,14 +27,10 @@ export interface BlockTool extends BaseTool {
 
   /**
    * Create Block's settings block
-   * @return {HTMLElement}
    */
-  renderSettings?(): HTMLElement;
+  renderSettings?(): HTMLElement | TunesMenuConfig;
 
-  /**
-   * 
-   */
-  blockSettings?: PopoverItem | PopoverItem[];
+
 
   /**
    * Validate Block's data
@@ -102,6 +99,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Tool's Toolbox settings
    */
   toolbox?: ToolboxConfig;
+
+  /**
+   * Configures the way tool's tunes appear in tunes menu
+   */
+  tunes?: TunesMenuConfig;
 
   /**
    * Paste substitutions configuration

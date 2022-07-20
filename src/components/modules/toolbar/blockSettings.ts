@@ -97,7 +97,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    this.nodes.renderedTunes = this.composeRenderedTunes(targetBlock);
+    const [tunesItems, tunesElement] = targetBlock.getTunes();
+
+    this.nodes.renderedTunes = tunesElement;
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -109,7 +111,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
-      items: targetBlock.getTunesList(),
+      items: tunesItems,
       customContent: this.nodes.renderedTunes,
       api: this.Editor.API.methods,
     });
@@ -166,24 +168,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover.destroy();
       this.popover.getElement().remove();
     }
-  }
-
-  /**
-   * Combines rendered tool settings with custom block tunes
-   *
-   * @param targetBlock - block tunes belong to
-   */
-  private composeRenderedTunes(targetBlock: Block): HTMLElement | undefined {
-    const toolSettings = targetBlock.renderSettings();
-    const customBlockTunes = targetBlock.getTunesRendered();
-    const container = document.createElement('div');
-
-    if (!toolSettings && !customBlockTunes) {
-      return;
-    }
-    container.append(toolSettings, customBlockTunes);
-
-    return container;
   }
 
   /**

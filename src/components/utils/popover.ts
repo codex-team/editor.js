@@ -38,6 +38,11 @@ export interface PopoverItem {
    * @param item - clicked item
    */
   onClick: (item: PopoverItem, event?: MouseEvent) => void;
+
+  /**
+   * True if item should be highlighted as active
+   */
+  isActive?: boolean;
 }
 
 /**
