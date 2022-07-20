@@ -13,10 +13,12 @@
     },
     "toolbar": {
       "toolbox": {
-        "Add": "",
-        "Filter": "",
-        "Nothing found": ""
+        "Add": ""
       }
+    },
+    "popover": {
+      "Filter": "",
+      "Nothing found": ""
     }
   },
   "toolNames": {

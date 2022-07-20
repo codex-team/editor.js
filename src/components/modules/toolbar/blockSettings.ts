@@ -110,8 +110,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.popover = new Popover({
       className: this.CSS.settings,
       searchable: true,
-      filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
-      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
+      filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: this.prepareTunesItems(tunesItems),
       customContent: this.nodes.renderedTunes,
       api: this.Editor.API.methods,

@@ -407,8 +407,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
       i18nLabels: {
-        filter: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
-        nothingFound: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
+        filter: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       },
     });
 
