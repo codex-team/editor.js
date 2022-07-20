@@ -672,7 +672,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   *
+   * Returns data to render in tunes menu.
+   * Splits block tunes settings into 2 groups: popover items and custom html.
    */
   public getTunes(): [TunesMenuEntry[], HTMLElement] {
     const tunesElement = document.createElement('div');
@@ -680,7 +681,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
     const customTunesInstances = Array.from(this.tunesInstances.values());
-    const tunesDefinedInTool = [ this.toolInstance.renderSettings() ].flat();
+    const tunesDefinedInTool =
+      typeof this.toolInstance.renderSettings === 'function'
+        ? [ this.toolInstance.renderSettings() ].flat()
+        : [];
     const otherTunes = customTunesInstances.concat(defaultTunesInstances).map(item => item.render());
 
     tunesDefinedInTool.concat(otherTunes).forEach(rendered => {
