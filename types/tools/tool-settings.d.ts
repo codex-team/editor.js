@@ -29,10 +29,26 @@ export interface ToolboxConfigEntry {
 }
 
 /**
+ * Represents single tunes menu entry
+ */
+export type TunesMenuEntry = PopoverItem & {
+  /**
+   * True if tunes menu should close once item is activated
+   */
+  closeOnActivate?: boolean,
+
+  /**
+   * True if tune is active.
+   * Is used to filter out items.
+   */
+  isActive?: boolean
+};
+
+/**
  * Tool may specify its tunes configuration
  * that can contain either one or multiple entries
  */
-export type TunesMenuConfig = PopoverItem | PopoverItem[];
+export type TunesMenuConfig = TunesMenuEntry | TunesMenuEntry[];
 
 /**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}

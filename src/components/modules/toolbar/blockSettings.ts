@@ -3,9 +3,10 @@ import $ from '../../dom';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent } from '../../utils/popover';
+import Popover, { PopoverEvent, PopoverItem } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import { TunesMenuEntry } from '../../../../types/tools';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -111,7 +112,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Nothing found'),
-      items: tunesItems,
+      items: this.prepareTunesItems(tunesItems),
       customContent: this.nodes.renderedTunes,
       api: this.Editor.API.methods,
     });
@@ -168,6 +169,23 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover.destroy();
       this.popover.getElement().remove();
     }
+  }
+
+  /**
+   * Adds ability to close popover on item activation if corresponding flag is specified
+   *
+   * @param tunesItems - tunes configuration
+   */
+  private prepareTunesItems(tunesItems: TunesMenuEntry[]): PopoverItem[] {
+    return tunesItems.map(tunesItem => ({
+      ...tunesItem,
+      onClick: (item, event): void => {
+        tunesItem.onClick(item, event);
+        if (tunesItem.closeOnActivate) {
+          this.close();
+        }
+      },
+    }));
   }
 
   /**

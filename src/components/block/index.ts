@@ -21,6 +21,7 @@ import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { PopoverItem } from '../utils/popover';
+import { TunesMenuEntry } from '../../../types/tools';
 
 /**
  * Interface describes Block class constructor argument
@@ -667,16 +668,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       .map(tune => tune.render())
       .filter(item => !!item);
 
-    // @ts-ignore
     return tunesDefinedInTool.concat(otherTunes).filter(item => !item.isActive);
   }
 
   /**
    *
    */
-  public getTunes(): [PopoverItem[], HTMLElement] {
+  public getTunes(): [TunesMenuEntry[], HTMLElement] {
     const tunesElement = document.createElement('div');
-    const tunesItems: PopoverItem[] = [];
+    let tunesItems: PopoverItem[] = [];
 
     const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
     const customTunesInstances = Array.from(this.tunesInstances.values());
@@ -693,8 +693,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       }
     });
 
-    // @ts-ignore
-    // tunesItems = tunesItems.filter(item => !item.isActive);
+    tunesItems = tunesItems.filter(item => !item.isActive);
 
     return [tunesItems, tunesElement];
   }
