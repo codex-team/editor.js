@@ -118,5 +118,10 @@ export default class DragNDrop extends Module {
    */
   private processDragOver(dragEvent: DragEvent): void {
     dragEvent.preventDefault();
+    const selectedBlock = this.Editor.BlockManager.currentBlock;
+    if (selectedBlock.holder.querySelector('img')) {
+      const selectedBlockIndex = this.Editor.BlockManager.getBlockIndex(selectedBlock);
+      this.Editor.BlockManager.removeBlock(selectedBlockIndex);
+    }
   }
 }

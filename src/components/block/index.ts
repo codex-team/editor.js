@@ -506,7 +506,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param {boolean} state - 'true' if block is drop target, false otherwise
    */
-  public set dropTarget(state) {
+  public set dropTarget(state: boolean) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
   }
 
