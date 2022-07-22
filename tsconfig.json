@@ -4,7 +4,7 @@
     "target": "es2017",
     "declaration": false,
     "moduleResolution": "node", // This resolution strategy attempts to mimic the Node.js module resolution mechanism at runtime
-    "lib": ["dom", "es2017", "es2018"],
+    "lib": ["dom", "es2017", "es2018", "es2019"],
 
     // allows to import .json files for i18n
     "resolveJsonModule": true,
