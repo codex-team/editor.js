@@ -30,8 +30,6 @@ export interface BlockTool extends BaseTool {
    */
   renderSettings?(): HTMLElement | TunesMenuConfig;
 
-
-
   /**
    * Validate Block's data
    * @param {BlockToolData} blockData

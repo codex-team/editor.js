@@ -644,34 +644,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns rendered custom block tunes
-   */
-  public getTunesRendered(): DocumentFragment {
-    const tunesElement = document.createDocumentFragment();
-
-    // this.tunesInstances.forEach((tune) => {
-    //   $.append(tunesElement, tune.render());
-    // });
-
-    return tunesElement;
-  }
-
-  /**
-   * Returns list of tunes available for block in popover format
-   */
-  public getTunesList(): PopoverItem[] {
-    const customTunesInstances = Array.from(this.tunesInstances.values());
-    const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
-    const tunesDefinedInTool = [ this.toolInstance.render() ].flat();
-
-    const otherTunes = customTunesInstances.concat(defaultTunesInstances)
-      .map(tune => tune.render())
-      .filter(item => !!item);
-
-    return tunesDefinedInTool.concat(otherTunes).filter(item => !item.isActive);
-  }
-
-  /**
    * Returns data to render in tunes menu.
    * Splits block tunes settings into 2 groups: popover items and custom html.
    */
@@ -688,7 +660,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const otherTunes = customTunesInstances.concat(defaultTunesInstances).map(item => item.render());
 
     tunesDefinedInTool.concat(otherTunes).forEach(rendered => {
-      if (rendered instanceof HTMLElement) {
+      const isHTMLElement = rendered.nodeName !== undefined;
+
+      if (isHTMLElement) {
         tunesElement.appendChild(rendered);
       } else {
         const normalized = [ rendered ].flat();
@@ -766,16 +740,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     if (_.isFunction(this.toolInstance.destroy)) {
       this.toolInstance.destroy();
     }
-  }
-
-  /**
-   * Call Tool instance renderSettings method
-   */
-  public renderSettings(): HTMLElement | undefined {
-    return undefined;
-    // if (_.isFunction(this.toolInstance.renderSettings)) {
-    //   return this.toolInstance.renderSettings();
-    // }
   }
 
   /**

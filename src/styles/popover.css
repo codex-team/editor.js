@@ -142,7 +142,7 @@
     visibility: hidden;
   }
 
-  &__custom-content {
+  &__custom-content:not(:empty) {
     padding: 4px;
 
     @media (--not-mobile) {
