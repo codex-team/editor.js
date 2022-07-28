@@ -11,27 +11,24 @@ export default class Dom {
    * @returns {boolean}
    */
   public static isSingleTag(tag: HTMLElement): boolean {
-    return (
-      tag.tagName &&
-      [
-        'AREA',
-        'BASE',
-        'BR',
-        'COL',
-        'COMMAND',
-        'EMBED',
-        'HR',
-        'IMG',
-        'INPUT',
-        'KEYGEN',
-        'LINK',
-        'META',
-        'PARAM',
-        'SOURCE',
-        'TRACK',
-        'WBR',
-      ].includes(tag.tagName)
-    );
+    return tag.tagName && [
+      'AREA',
+      'BASE',
+      'BR',
+      'COL',
+      'COMMAND',
+      'EMBED',
+      'HR',
+      'IMG',
+      'INPUT',
+      'KEYGEN',
+      'LINK',
+      'META',
+      'PARAM',
+      'SOURCE',
+      'TRACK',
+      'WBR',
+    ].includes(tag.tagName);
   }
 
   /**
@@ -41,9 +38,10 @@ export default class Dom {
    * @returns {boolean}
    */
   public static isLineBreakTag(element: HTMLElement): element is HTMLBRElement {
-    return (
-      element && element.tagName && ['BR', 'WBR'].includes(element.tagName)
-    );
+    return element && element.tagName && [
+      'BR',
+      'WBR',
+    ].includes(element.tagName);
   }
 
   /**
@@ -55,11 +53,7 @@ export default class Dom {
    *
    * @returns {HTMLElement}
    */
-  public static make(
-    tagName: string,
-    classNames: string | string[] = null,
-    attributes: object = {}
-  ): HTMLElement {
+  public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
@@ -115,8 +109,8 @@ export default class Dom {
    * @param  {Element|Element[]|DocumentFragment|Text|Text[]} elements - element or elements list
    */
   public static append(
-    parent: Element | DocumentFragment,
-    elements: Element | Element[] | DocumentFragment | Text | Text[]
+    parent: Element|DocumentFragment,
+    elements: Element|Element[]|DocumentFragment|Text|Text[]
   ): void {
     if (Array.isArray(elements)) {
       elements.forEach((el) => parent.appendChild(el));
@@ -131,7 +125,7 @@ export default class Dom {
    * @param {Element} parent - where to append
    * @param {Element|Element[]} elements - element or elements list
    */
-  public static prepend(parent: Element, elements: Element | Element[]): void {
+  public static prepend(parent: Element, elements: Element|Element[]): void {
     if (Array.isArray(elements)) {
       elements = elements.reverse();
       elements.forEach((el) => parent.prepend(el));
@@ -174,10 +168,7 @@ export default class Dom {
    *
    * @returns {Element}
    */
-  public static find(
-    el: Element | Document = document,
-    selector: string
-  ): Element {
+  public static find(el: Element|Document = document, selector: string): Element {
     return el.querySelector(selector);
   }
 
@@ -201,10 +192,7 @@ export default class Dom {
    *
    * @returns {NodeList}
    */
-  public static findAll(
-    el: Element | Document = document,
-    selector: string
-  ): NodeList {
+  public static findAll(el: Element|Document = document, selector: string): NodeList {
     return el.querySelectorAll(selector);
   }
 
@@ -212,20 +200,10 @@ export default class Dom {
    * Returns CSS selector for all text inputs
    */
   public static get allInputsSelector(): string {
-    const allowedInputTypes = [
-      'text',
-      'password',
-      'email',
-      'number',
-      'search',
-      'tel',
-      'url',
-    ];
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    return (
-      '[contenteditable=true], textarea, input:not([type]), ' +
-      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ')
-    );
+    return '[contenteditable=true], textarea, input:not([type]), ' +
+      allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
   }
 
   /**
@@ -234,22 +212,17 @@ export default class Dom {
    * @param holder - element where to find inputs
    */
   public static findAllInputs(holder: Element): HTMLElement[] {
-    return (
-      _.array(holder.querySelectorAll(Dom.allInputsSelector))
-        /**
-         * If contenteditable element contains block elements, treat them as inputs.
-         */
-        .reduce((result, input) => {
-          if (
-            Dom.isNativeInput(input) ||
-            Dom.containsOnlyInlineElements(input)
-          ) {
-            return [...result, input];
-          }
+    return _.array(holder.querySelectorAll(Dom.allInputsSelector))
+      /**
+       * If contenteditable element contains block elements, treat them as inputs.
+       */
+      .reduce((result, input) => {
+        if (Dom.isNativeInput(input) || Dom.containsOnlyInlineElements(input)) {
+          return [...result, input];
+        }
 
-          return [...result, ...Dom.getDeepestBlockElements(input)];
-        }, [])
-    );
+        return [...result, ...Dom.getDeepestBlockElements(input)];
+      }, []);
   }
 
   /**
@@ -338,9 +311,7 @@ export default class Dom {
       return false;
     }
 
-    return (
-      node && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE
-    );
+    return node && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
   /**
@@ -362,14 +333,13 @@ export default class Dom {
    * @returns {boolean}
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static isNativeInput(
-    target: any
-  ): target is HTMLInputElement | HTMLTextAreaElement {
-    const nativeInputs = ['INPUT', 'TEXTAREA'];
+  public static isNativeInput(target: any): target is HTMLInputElement | HTMLTextAreaElement {
+    const nativeInputs = [
+      'INPUT',
+      'TEXTAREA',
+    ];
 
-    return target && target.tagName
-      ? nativeInputs.includes(target.tagName)
-      : false;
+    return target && target.tagName ? nativeInputs.includes(target.tagName) : false;
   }
 
   /**
@@ -415,10 +385,7 @@ export default class Dom {
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
 
-    if (
-      this.isSingleTag(node as HTMLElement) &&
-      !this.isLineBreakTag(node as HTMLElement)
-    ) {
+    if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
       return false;
     }
 
@@ -570,9 +537,7 @@ export default class Dom {
    *
    * @returns {boolean}
    */
-  public static containsOnlyInlineElements(
-    data: string | HTMLElement
-  ): boolean {
+  public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
     let wrapper: HTMLElement;
 
     if (_.isString(data)) {
@@ -583,10 +548,8 @@ export default class Dom {
     }
 
     const check = (element: HTMLElement): boolean => {
-      return (
-        !Dom.blockElements.includes(element.tagName.toLowerCase()) &&
-        Array.from(element.children).every(check)
-      );
+      return !Dom.blockElements.includes(element.tagName.toLowerCase()) &&
+        Array.from(element.children).every(check);
     };
 
     return Array.from(wrapper.children).every(check);
@@ -605,10 +568,7 @@ export default class Dom {
     }
 
     return Array.from(parent.children).reduce((result, element) => {
-      return [
-        ...result,
-        ...Dom.getDeepestBlockElements(element as HTMLElement),
-      ];
+      return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
     }, []);
   }
 
@@ -642,6 +602,7 @@ export default class Dom {
       'pwa-container-wrapper',
       'pwa-editor-bar-cnt',
       'editor-squiggler',
+      'quillbot-extension',
     ];
 
     return node && extensions.includes(node.nodeName.toLowerCase());
@@ -664,15 +625,9 @@ export default class Dom {
    * @todo handle case when editor initialized in scrollable popup
    * @param el - element to compute offset
    */
-  public static offset(el): {
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
-  } {
+  public static offset(el): {top: number; left: number; right: number; bottom: number} {
     const rect = el.getBoundingClientRect();
-    const scrollLeft =
-      window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
     const top = rect.top + scrollTop;
