@@ -651,13 +651,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const tunesElement = document.createElement('div');
     let tunesItems: PopoverItem[] = [];
 
+    /** Default tunes: Move up, Move down, Delete */
     const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
+
+    /** Third-party tunes */
     const customTunesInstances = Array.from(this.tunesInstances.values());
+
+    /** Retrieve tunes that may be defined in tool as return value of optional renderSettings function. */
     const tunesDefinedInTool =
       typeof this.toolInstance.renderSettings === 'function'
         ? [ this.toolInstance.renderSettings() ].flat()
         : [];
-    const otherTunes = customTunesInstances.concat(defaultTunesInstances).map(item => item.render());
+
+    /** Combine default and thirid-party tunes and call render() on each to retrieve their controls */
+    const otherTunes = customTunesInstances
+      .concat(defaultTunesInstances)
+      .map(item => item.render());
 
     tunesDefinedInTool.concat(otherTunes).forEach(rendered => {
       const isHTMLElement = rendered.nodeName !== undefined;
