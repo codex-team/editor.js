@@ -48,6 +48,13 @@ export interface PopoverItem {
    * True if popover should close once item is activated
    */
   closeOnActivate?: boolean;
+
+  /**
+   * If action requires confirmation, first click on the item will turn it into object specified in this field.
+   * Second click will perform the action.
+   */
+  confirmation?: boolean | Partial<PopoverItem>;
+
 }
 
 /**
@@ -146,6 +153,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     itemLabel: string;
     itemIcon: string;
     itemSecondaryLabel: string;
+    itemConfirmation: string;
     noFoundMessage: string;
     noFoundMessageShown: string;
     popoverOverlay: string;
@@ -162,6 +170,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       itemFlippable: 'ce-popover__item--flippable',
       itemFocused: 'ce-popover__item--focused',
       itemActive: 'ce-popover__item--active',
+      itemConfirmation: 'ce-popover__item--confirmation',
       itemLabel: 'ce-popover__item-label',
       itemIcon: 'ce-popover__item-icon',
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
@@ -183,6 +192,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Editor API
    */
   private api: API;
+
+  /**
+   * Reference to popover item that was clicked but requires second click to confirm action
+   */
+  private itemAwaitngConfirmation = null;
 
   /**
    * Creates the Popover
@@ -286,6 +300,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     this.isShown = false;
     this.nodes.wrapper.classList.remove(this.className + '--opened-top');
+
+    this.cleanUpConfirmationState();
   }
 
   /**
@@ -460,11 +476,68 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const itemIndex = Array.from(allItems).indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
 
+    const ignoreClick = this.handleConfirmation(itemEl, clickedItem);
+
+    if (ignoreClick) {
+      return;
+    }
+
     clickedItem.onClick(clickedItem, event);
 
     if (clickedItem.closeOnActivate) {
       this.hide();
     }
+  }
+
+  /**
+   * Handles case when item needs confirmation before calling onClick callback.
+   * Returns true if click should be ignored.
+   *
+   * @param itemEl - clicked HTML element
+   * @param clickedItem - corresponding popover item
+   */
+  private handleConfirmation(itemEl: HTMLElement, clickedItem: PopoverItem): boolean {
+    if (this.itemAwaitngConfirmation !== clickedItem && clickedItem.confirmation) {
+      /**
+       * Item requires confirmation.
+       * If configured, item's label, icon and other params should be replaced with values defined for confirmation state.
+       * Click is ignored.
+       */
+      this.itemAwaitngConfirmation = clickedItem;
+
+      const itemData = {
+        ...clickedItem,
+        ...clickedItem.confirmation as PopoverItem,
+        confirmation: false,
+      };
+      const confirmationStateItemEl = this.createItem(itemData);
+
+      confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
+      itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+
+      return true;
+    }
+
+    /**
+     * If item requiring confirmation is clicked for the second time or any other item is clicked,
+     * get rid of confirmation state on item
+     */
+    this.cleanUpConfirmationState();
+  }
+
+  /**
+   * If popover contains an item in confirmation state, bring it to default state
+   */
+  private cleanUpConfirmationState(): void {
+    if (!this.itemAwaitngConfirmation) {
+      return;
+    }
+    const defaultStateItemEl = this.createItem(this.itemAwaitngConfirmation);
+    const confirmationStateItemEl = this.nodes.wrapper.querySelector(`.${Popover.CSS.itemConfirmation}`);
+
+    confirmationStateItemEl.parentElement.replaceChild(defaultStateItemEl, confirmationStateItemEl);
+    defaultStateItemEl.classList.remove(Popover.CSS.itemConfirmation);
+    this.itemAwaitngConfirmation = null;
   }
 
   /**

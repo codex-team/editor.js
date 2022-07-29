@@ -76,6 +76,25 @@
       @apply --button-active;
     }
 
+    &--confirmation {
+      background: var(--color-confirm);
+
+      @media (--can-hover) {
+        &:hover {
+          background: #ce4343;
+        }
+      }
+
+      .ce-popover__item-icon {
+        color: var(--color-confirm);
+      }
+
+      .ce-popover__item-label {
+        color: white;
+      }
+
+    }
+
     &-icon {
       @apply --tool-icon;
     }

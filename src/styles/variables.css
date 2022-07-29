@@ -106,7 +106,7 @@
 
   --button-active: {
     background: rgba(56, 138, 229, 0.1);
-    color:  #388AE5;
+    color:  var(--color-active-icon);
   };
 
   /**
