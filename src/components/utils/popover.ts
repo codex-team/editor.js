@@ -43,6 +43,11 @@ export interface PopoverItem {
    * True if item should be highlighted as active
    */
   isActive?: boolean;
+
+  /**
+   * True if popover should close once item is activated
+   */
+  closeOnActivate?: boolean;
 }
 
 /**
@@ -137,6 +142,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     itemHidden: string;
     itemFlippable: string;
     itemFocused: string;
+    itemActive: string;
     itemLabel: string;
     itemIcon: string;
     itemSecondaryLabel: string;
@@ -155,6 +161,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       itemHidden: 'ce-popover__item--hidden',
       itemFlippable: 'ce-popover__item--flippable',
       itemFocused: 'ce-popover__item--focused',
+      itemActive: 'ce-popover__item--active',
       itemLabel: 'ce-popover__item-label',
       itemIcon: 'ce-popover__item-icon',
       itemSecondaryLabel: 'ce-popover__item-secondary-label',
@@ -435,6 +442,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       }));
     }
 
+    if (item.isActive) {
+      el.classList.add(Popover.CSS.itemActive);
+    }
+
     return el;
   }
 
@@ -450,6 +461,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const clickedItem = this.items[itemIndex];
 
     clickedItem.onClick(clickedItem, event);
+
+    if (clickedItem.closeOnActivate) {
+      this.hide();
+    }
   }
 
   /**

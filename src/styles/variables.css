@@ -104,6 +104,11 @@
     background: rgba(34, 186, 255, 0.08) !important;
   };
 
+  --button-active: {
+    background: rgba(56, 138, 229, 0.1);
+    color:  #388AE5;
+  };
+
   /**
    * Styles for Toolbox Buttons and Plus Button
    */

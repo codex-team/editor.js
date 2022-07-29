@@ -72,6 +72,10 @@
       display: none;
     }
 
+    &--active {
+      @apply --button-active;
+    }
+
     &-icon {
       @apply --tool-icon;
     }

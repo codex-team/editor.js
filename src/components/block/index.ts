@@ -21,7 +21,6 @@ import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { PopoverItem } from '../utils/popover';
-import { TunesMenuEntry } from '../../../types/tools';
 
 /**
  * Interface describes Block class constructor argument
@@ -647,9 +646,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Returns data to render in tunes menu.
    * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public getTunes(): [TunesMenuEntry[], HTMLElement] {
+  public getTunes(): [PopoverItem[], HTMLElement] {
     const tunesElement = document.createElement('div');
-    let tunesItems: PopoverItem[] = [];
+    const tunesItems: PopoverItem[] = [];
 
     /** Default tunes: Move up, Move down, Delete */
     const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
@@ -680,7 +679,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       }
     });
 
-    tunesItems = tunesItems.filter(item => !item.isActive);
+    // tunesItems = tunesItems.filter(item => !item.isActive);
 
     return [tunesItems, tunesElement];
   }
