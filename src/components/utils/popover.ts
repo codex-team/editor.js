@@ -189,9 +189,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private scrollLocker = new ScrollLocker()
 
   /**
-   * Editor API
+   * Editor container element
    */
-  private api: API;
+  private editorElement: HTMLElement;
 
   /**
    * Reference to popover item that was clicked but requires second click to confirm action
@@ -207,15 +207,16 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
    * @param options.customContent - arbitrary html element to be inserted before items list
+   * @param options.editorElement - editor container element
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, api }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, editorElement }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
     customContent?: HTMLElement;
-    api: API;
+    editorElement: HTMLElement;
   }) {
     super();
     this.items = items;
@@ -223,7 +224,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
-    this.api = api;
+    this.editorElement = editorElement;
 
     this.filterLabel = filterLabel;
     this.nothingFoundLabel = nothingFoundLabel;
@@ -605,7 +606,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private get shouldOpenPopoverBottom(): boolean {
     const toolboxRect = this.nodes.wrapper.getBoundingClientRect();
-    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
+    const editorElementRect = this.editorElement.getBoundingClientRect();
     const popoverHeight = this.calculateHeight();
     const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
     const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;

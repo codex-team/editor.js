@@ -113,7 +113,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItems,
       customContent: this.nodes.renderedTunes,
-      api: this.Editor.API.methods,
+      editorElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 

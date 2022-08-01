@@ -127,7 +127,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public make(): Element {
     this.popover = new Popover({
-      api: this.api,
+      editorElement: this.api.ui.nodes.redactor,
       className: Toolbox.CSS.toolbox,
       searchable: true,
       filterLabel: this.i18nLabels.filter,
