@@ -176,8 +176,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   private makeToolTunesButtonsNavigatable(): void {
     const { StylesAPI } = this.Editor;
+    /** Query buttons and inputs inside tunes html */
     const toolSettings = this.nodes.renderedTunes?.querySelectorAll(
-      // Select buttons and inputs
       `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
 

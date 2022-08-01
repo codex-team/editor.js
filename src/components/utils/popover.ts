@@ -577,16 +577,26 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Returns list of items available for keyboard navigation.
+   * Returns list of elements available for keyboard navigation.
    * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    const popoverItems = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
-    const customItems = this.customContent ? Array.from(this.customContent.querySelectorAll(
+    /**
+     * Select html elements of popover items
+     */
+    const popoverItemsElements = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
+
+    /**
+     * Select html elements inside custom content that are marked with special css class to be available for keyboard navigation
+     */
+    const customContentElements = this.customContent ? Array.from(this.customContent.querySelectorAll(
       `.${Popover.CSS.itemFlippable}`
     )) as HTMLElement[] : [];
 
-    return customItems.concat(popoverItems);
+    /**
+     * Combine both lists and return
+     */
+    return customContentElements.concat(popoverItemsElements);
   }
 
   /**
