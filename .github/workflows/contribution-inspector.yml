@@ -1,0 +1,28 @@
+name: Contribution Inspector
+
+on: 
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  contribution_inspector:
+    runs-on: ubuntu-latest
+    name: Contribution Inspector
+    steps:
+    - name: All Checks
+      uses: flowdify/contribution-inspector@v1.0
+      with:
+        # GitHub Access Token
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # Message to show when an issue is created successfully
+        issue--greeting-message: 'Thanks for your contribution!'
+        # Message to show when a pull request is created successfully
+        pull-request--greeting-message: 'Thanks for your contribution!'
+        # Size of the pull request measured by the lines of code changed.
+        pull-request--size-small: 50
+        # Size of the pull request measured by the lines of code changed.
+        pull-request--size-medium: 200
+        # Size of the pull request measured by the lines of code changed.
+        pull-request--size-large: 400
