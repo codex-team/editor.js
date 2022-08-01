@@ -673,9 +673,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       if (isHTMLElement) {
         tunesElement.appendChild(rendered);
       } else {
-        const normalized = [ rendered ].flat();
+        const items = Array.isArray(rendered) ? rendered : [ rendered ];
 
-        tunesItems.push(...normalized);
+        tunesItems.push(...items);
       }
     });
 
