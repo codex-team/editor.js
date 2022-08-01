@@ -84,31 +84,6 @@ export default class DeleteTune implements BlockTune {
    * @param {MouseEvent} event - click event
    */
   public handleClick(event: MouseEvent): void {
-    /**
-     * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
-     * otherwise delete block
-     */
-    // if (!this.needConfirmation) {
-    //   this.setConfirmation(true);
-    //   const button = (event.target as HTMLElement)
-    //     .closest('.' + Popover.CSS.item)
-    //     .querySelector('.' + Popover.CSS.itemIcon);
-
-    //   button.classList.add(this.CSS.buttonDelete);
-    //   button.classList.add(this.CSS.buttonConfirm);
-
-    //   /**
-    //    * Subscribe on event.
-    //    * When toolbar block settings is closed but block deletion is not confirmed,
-    //    * then reset confirmation state
-    //    */
-    //   this.api.events.on('block-settings-closed', this.resetConfirmation);
-    // } else {
-    /**
-     * Unsubscribe from block-settings closing event
-     */
-    // this.api.events.off('block-settings-closed', this.resetConfirmation);
-
     this.api.blocks.delete();
     this.api.toolbar.close();
     this.api.tooltip.hide();
@@ -117,7 +92,6 @@ export default class DeleteTune implements BlockTune {
      * Prevent firing ui~documentClicked that can drop currentBlock pointer
      */
     event.stopPropagation();
-    // }
   }
 
   /**

@@ -505,22 +505,34 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
        */
       this.itemAwaitngConfirmation = clickedItem;
 
-      const itemData = {
-        ...clickedItem,
-        ...clickedItem.confirmation as PopoverItem,
-        confirmation: false,
-      };
-      const confirmationStateItemEl = this.createItem(itemData);
+      /**
+       * If special confirmation state (with different label, icon and so on) configured for the item,
+       * apply it and add highlighting
+       */
+      if (typeof clickedItem.confirmation === 'object') {
+        const itemData = {
+          ...clickedItem,
+          ...clickedItem.confirmation as PopoverItem,
+          confirmation: false,
+        };
 
-      confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
-      itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+        const confirmationStateItemEl = this.createItem(itemData);
+
+        confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
+        itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+      } else {
+        /**
+         * Otherwise just add confirmation highlighting
+         */
+        itemEl.classList.add(Popover.CSS.itemConfirmation);
+      }
 
       return true;
     }
 
     /**
      * If item requiring confirmation is clicked for the second time or any other item is clicked,
-     * get rid of confirmation state on item
+     * get rid of confirmation state
      */
     this.cleanUpConfirmationState();
   }
