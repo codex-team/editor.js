@@ -99,11 +99,6 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   toolbox?: ToolboxConfig;
 
   /**
-   * Configures the way tool's tunes appear in tunes menu
-   */
-  tunes?: TunesMenuConfig;
-
-  /**
    * Paste substitutions configuration
    */
   pasteConfig?: PasteConfig | false;

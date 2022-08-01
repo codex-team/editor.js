@@ -393,23 +393,31 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       items: this.items,
       placeholder: this.filterLabel,
       onSearch: (filteredItems): void => {
-        const itemsVisible = [];
+        const searchResultElements = [];
 
         this.items.forEach((item, index) => {
           const itemElement = this.nodes.items.children[index];
 
           if (filteredItems.includes(item)) {
-            itemsVisible.push(itemElement);
+            searchResultElements.push(itemElement);
             itemElement.classList.remove(Popover.CSS.itemHidden);
           } else {
             itemElement.classList.add(Popover.CSS.itemHidden);
           }
         });
 
-        this.nodes.nothingFound.classList.toggle(Popover.CSS.noFoundMessageShown, itemsVisible.length === 0);
+        this.nodes.nothingFound.classList.toggle(Popover.CSS.noFoundMessageShown, searchResultElements.length === 0);
 
+        /**
+         * In order to make keyboard navigation work correctly, flipper should be reactivated with only visible items.
+         * As custom html content is not displayed while search, it should be excluded from keyboard navigation.
+         */
         const allItemsDisplayed = filteredItems.length === this.items.length;
-        const flippableItems = allItemsDisplayed ? this.flippableItems : itemsVisible;
+
+        /**
+         * Contains list of elements available for keyboard navigation considering search query applied
+         */
+        const flippableElements = allItemsDisplayed ? this.flippableElements : searchResultElements;
 
         if (this.customContent) {
           this.customContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisplayed);
@@ -419,7 +427,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
          * Update flipper items with only visible
          */
         this.flipper.deactivate();
-        this.flipper.activate(flippableItems);
+        this.flipper.activate(flippableElements);
         this.flipper.focusFirst();
       },
     });
@@ -557,7 +565,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private enableFlipper(): void {
     this.flipper = new Flipper({
-      items: this.flippableItems,
+      items: this.flippableElements,
       focusedItemClass: Popover.CSS.itemFocused,
       allowedKeys: [
         keyCodes.TAB,
@@ -569,9 +577,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Returns list of items available for keyboard navigation
+   * Returns list of items available for keyboard navigation.
+   * Contains both usual popover items elements and custom html content.
    */
-  private get flippableItems(): HTMLElement[] {
+  private get flippableElements(): HTMLElement[] {
     const popoverItems = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
     const customItems = this.customContent ? Array.from(this.customContent.querySelectorAll(
       `.${Popover.CSS.itemFlippable}`
