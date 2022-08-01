@@ -263,7 +263,11 @@ describe('onChange callback', () => {
 
     cy.get('[data-cy=editorjs]')
       .get('div[data-item-name=delete]')
-      .click()
+      .click();
+
+    /** Second click for confirmation */
+    cy.get('[data-cy=editorjs]')
+      .get('div[data-item-name=delete]')
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
