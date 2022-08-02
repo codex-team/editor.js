@@ -504,7 +504,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
           return;
         }
 
-        this.moveAndOpenToolbox(data.block);
+        this.moveAndOpen(data.block);
       });
     }
   }
