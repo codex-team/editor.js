@@ -85,6 +85,10 @@
         }
       }
 
+      &.ce-popover__item--focused {
+        background: #ce4343 !important;
+      }
+
       .ce-popover__item-icon {
         color: var(--color-confirm);
       }

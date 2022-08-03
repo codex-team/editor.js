@@ -529,6 +529,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
         confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
         itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+
+        /**
+         * Reactivate flipper to make navigation work with new element
+         */
+        this.flipper.deactivate();
+        this.flipper.activate(this.flippableElements);
       } else {
         /**
          * Otherwise just add confirmation highlighting
@@ -559,6 +565,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     confirmationStateItemEl.parentElement.replaceChild(defaultStateItemEl, confirmationStateItemEl);
     defaultStateItemEl.classList.remove(Popover.CSS.itemConfirmation);
     this.itemAwaitngConfirmation = null;
+
+    /**
+     * Reactivate flipper to make navigation work with new element
+     */
+    this.flipper.deactivate();
+    this.flipper.activate(this.flippableElements);
   }
 
   /**
