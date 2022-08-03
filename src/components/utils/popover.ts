@@ -52,7 +52,7 @@ interface PopoverItemWithConfirmation extends PopoverItemBase {
    */
   confirmation: PopoverItem;
 
-  onClick?: never;
+  onActivate?: never;
 }
 
 /**
@@ -62,11 +62,11 @@ interface PopoverItemWithoutConfirmation extends PopoverItemBase {
   confirmation?: never;
 
   /**
-   * Item click handler
+   * Item activation handler
    *
-   * @param item - clicked item
+   * @param item - activated item
    */
-  onClick: (item: PopoverItem, event?: MouseEvent) => void;
+  onActivate: (item: PopoverItem, event?: MouseEvent) => void;
 }
 
 export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation
@@ -519,7 +519,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       return;
     }
 
-    clickedItem.onClick(clickedItem, event);
+    clickedItem.onActivate(clickedItem, event);
 
     if (clickedItem.closeOnActivate) {
       this.hide();

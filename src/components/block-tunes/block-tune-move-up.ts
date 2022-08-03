@@ -51,7 +51,7 @@ export default class MoveUpTune implements BlockTune {
     return {
       icon: $.svg('arrow-up', 14, 14).outerHTML,
       label: this.api.i18n.t('Move up'),
-      onClick: (item, e): void => this.handleClick(e),
+      onActivate: (item, e): void => this.handleClick(e),
       name: 'move-up',
     };
   }
