@@ -93,13 +93,18 @@ export default class Flipper {
   /**
    * Active tab/arrows handling by flipper
    *
-   * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param cursorPosition - index of the item that should be focused once flipper is activated
    */
-  public activate(items?: HTMLElement[]): void {
+  public activate(items?: HTMLElement[], cursorPosition?: number): void {
     this.activated = true;
 
     if (items) {
       this.iterator.setItems(items);
+    }
+
+    if (cursorPosition !== undefined) {
+      this.iterator.setCursor(cursorPosition);
     }
 
     /**

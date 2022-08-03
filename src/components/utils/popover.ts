@@ -5,12 +5,11 @@ import SearchInput from './search-input';
 import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
-import { API } from '../../../types';
 
 /**
- * Describe parameters for rendering the single item of Popover
+ * Describe parameters for rendering a single popover item
  */
-export interface PopoverItem {
+export interface PopoverItemBase {
   /**
    * Item icon to be appeared near a title
    */
@@ -33,13 +32,6 @@ export interface PopoverItem {
   secondaryLabel?: string;
 
   /**
-   * Item click handler
-   *
-   * @param item - clicked item
-   */
-  onClick: (item: PopoverItem, event?: MouseEvent) => void;
-
-  /**
    * True if item should be highlighted as active
    */
   isActive?: boolean;
@@ -48,14 +40,36 @@ export interface PopoverItem {
    * True if popover should close once item is activated
    */
   closeOnActivate?: boolean;
+}
+
+/**
+ * Represents popover item with confirmation state configuration
+ */
+interface PopoverItemWithConfirmation extends PopoverItemBase {
+  /**
+   * Item parameters that should be applied on item activation.
+   * May be used to ask user for confirmation before executing popover item activation handler.
+   */
+  confirmation: PopoverItem;
+
+  onClick?: never;
+}
+
+/**
+ * Represents default popover item without confirmation state configuration
+ */
+interface PopoverItemWithoutConfirmation extends PopoverItemBase {
+  confirmation?: never;
 
   /**
-   * If action requires confirmation, first click on the item will turn it into object specified in this field.
-   * Second click will perform the action.
+   * Item click handler
+   *
+   * @param item - clicked item
    */
-  confirmation?: boolean | Partial<PopoverItem>;
-
+  onClick: (item: PopoverItem, event?: MouseEvent) => void;
 }
+
+export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation
 
 /**
  * Event that can be triggered by the Popover
@@ -196,7 +210,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Reference to popover item that was clicked but requires second click to confirm action
    */
-  private itemAwaitngConfirmation = null;
+  private itemRequiringConfirmation = null;
 
   /**
    * Creates the Popover
@@ -427,8 +441,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
         /**
          * Update flipper items with only visible
          */
-        this.flipper.deactivate();
-        this.flipper.activate(flippableElements);
+        this.reactivateFlipper(flippableElements);
         this.flipper.focusFirst();
       },
     });
@@ -485,9 +498,24 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const itemIndex = Array.from(allItems).indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
 
-    const ignoreClick = this.handleConfirmation(itemEl, clickedItem);
+    this.cleanUpConfirmationState();
 
-    if (ignoreClick) {
+    if (clickedItem.confirmation) {
+      /** Save root item requiring confirmation to restore original state on popover hide */
+      if (this.itemRequiringConfirmation === null) {
+        this.itemRequiringConfirmation = clickedItem;
+      }
+      this.items[itemIndex] = clickedItem.confirmation;
+      const confirmationStateItemEl = this.createItem(clickedItem.confirmation as PopoverItem);
+
+      confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
+      itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+
+      this.reactivateFlipper(
+        this.flippableElements,
+        this.flippableElements.indexOf(confirmationStateItemEl)
+      );
+
       return;
     }
 
@@ -499,78 +527,37 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Handles case when item needs confirmation before calling onClick callback.
-   * Returns true if click should be ignored.
-   *
-   * @param itemEl - clicked HTML element
-   * @param clickedItem - corresponding popover item
+   * Brings popover item in confirmation state to its original state
    */
-  private handleConfirmation(itemEl: HTMLElement, clickedItem: PopoverItem): boolean {
-    if (this.itemAwaitngConfirmation !== clickedItem && clickedItem.confirmation) {
-      /**
-       * Item requires confirmation.
-       * If configured, item's label, icon and other params should be replaced with values defined for confirmation state.
-       * Click is ignored.
-       */
-      this.itemAwaitngConfirmation = clickedItem;
-
-      /**
-       * If special confirmation state (with different label, icon and so on) configured for the item,
-       * apply it and add highlighting
-       */
-      if (typeof clickedItem.confirmation === 'object') {
-        const itemData = {
-          ...clickedItem,
-          ...clickedItem.confirmation as PopoverItem,
-          confirmation: false,
-        };
-
-        const confirmationStateItemEl = this.createItem(itemData);
-
-        confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
-        itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
-
-        /**
-         * Reactivate flipper to make navigation work with new element
-         */
-        this.flipper.deactivate();
-        this.flipper.activate(this.flippableElements);
-      } else {
-        /**
-         * Otherwise just add confirmation highlighting
-         */
-        itemEl.classList.add(Popover.CSS.itemConfirmation);
-      }
-
-      return true;
+  private cleanUpConfirmationState(): void {
+    if (!this.itemRequiringConfirmation) {
+      return;
     }
+    const confirmationStateItemEl = this.nodes.wrapper.querySelector(`.${Popover.CSS.itemConfirmation}`);
+    const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
+    const itemIndex = Array.from(allItems).indexOf(confirmationStateItemEl);
+    const originalStateItemEl = this.createItem(this.itemRequiringConfirmation);
 
-    /**
-     * If item requiring confirmation is clicked for the second time or any other item is clicked,
-     * get rid of confirmation state
-     */
-    this.cleanUpConfirmationState();
+    confirmationStateItemEl.parentElement.replaceChild(originalStateItemEl, confirmationStateItemEl);
+    this.items[itemIndex] = this.itemRequiringConfirmation;
+    this.itemRequiringConfirmation = null;
+
+    this.reactivateFlipper(
+      this.flippableElements,
+      this.flippableElements.indexOf(originalStateItemEl)
+    );
   }
 
   /**
-   * If popover contains an item in confirmation state, bring it to default state
+   * Reactivates flipper instance.
+   * Should be used if popover items html elements get replaced to preserve workability of keyboard navigation
+   *
+   * @param items - html elements to navigate through
+   * @param focusedIndex - index of element to be focused
    */
-  private cleanUpConfirmationState(): void {
-    if (!this.itemAwaitngConfirmation) {
-      return;
-    }
-    const defaultStateItemEl = this.createItem(this.itemAwaitngConfirmation);
-    const confirmationStateItemEl = this.nodes.wrapper.querySelector(`.${Popover.CSS.itemConfirmation}`);
-
-    confirmationStateItemEl.parentElement.replaceChild(defaultStateItemEl, confirmationStateItemEl);
-    defaultStateItemEl.classList.remove(Popover.CSS.itemConfirmation);
-    this.itemAwaitngConfirmation = null;
-
-    /**
-     * Reactivate flipper to make navigation work with new element
-     */
+  private reactivateFlipper(items: HTMLElement[], focusedIndex?: number): void {
     this.flipper.deactivate();
-    this.flipper.activate(this.flippableElements);
+    this.flipper.activate(items, focusedIndex);
   }
 
   /**

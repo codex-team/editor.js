@@ -34,33 +34,12 @@ export default class DeleteTune implements BlockTune {
   };
 
   /**
-   * Delete confirmation
-   */
-  private needConfirmation: boolean;
-
-  /**
-   * set false confirmation state
-   */
-  private readonly resetConfirmation: () => void;
-
-  /**
-   * Tune nodes
-   */
-  private nodes: {button: HTMLElement} = {
-    button: null,
-  };
-
-  /**
    * DeleteTune constructor
    *
    * @param {API} api - Editor's API
    */
   constructor({ api }) {
     this.api = api;
-
-    this.resetConfirmation = (): void => {
-      this.setConfirmation(false);
-    };
   }
 
   /**
@@ -70,10 +49,11 @@ export default class DeleteTune implements BlockTune {
     return {
       icon: $.svg('cross', 14, 14).outerHTML,
       label: this.api.i18n.t('Delete'),
-      onClick: (item, e): void => this.handleClick(e),
       name: 'delete',
       confirmation: {
+        icon: $.svg('cross', 14, 14).outerHTML,
         label: 'Click to delete',
+        onClick: (item, e): void => this.handleClick(e),
       },
     };
   }
@@ -92,14 +72,5 @@ export default class DeleteTune implements BlockTune {
      * Prevent firing ui~documentClicked that can drop currentBlock pointer
      */
     event.stopPropagation();
-  }
-
-  /**
-   * change tune state
-   *
-   * @param {boolean} state - delete confirmation state
-   */
-  private setConfirmation(state: boolean): void {
-    this.needConfirmation = state;
   }
 }
