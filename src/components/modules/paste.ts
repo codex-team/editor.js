@@ -20,6 +20,11 @@ interface TagSubstitute {
    *
    */
   tool: BlockTool;
+  /**
+   * Paste Sanitization configuration
+   *
+   */
+  sanitizationConfig?: object;
 }
 
 /**
@@ -195,10 +200,16 @@ export default class Paste extends Module {
     if (isDragNDrop && plainData.trim() && htmlData.trim()) {
       htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
     }
-
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
-      result[tag.toLowerCase()] = $.santizationConfig(tag.toLowerCase());
+      /**
+       * Check if sanitizer configuration for this tag is defined.
+       */
+      if (this.toolsTags[tag].sanitizationConfig) {
+        result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig;
+      } else {
+        result[tag.toLowerCase()] = true;
+      }
 
       return result;
     }, {});
@@ -324,13 +335,31 @@ export default class Paste extends Module {
 
         return;
       }
-
-      this.toolsTags[tag.toUpperCase()] = {
-        tool,
-      };
+      /** Sanitization configuration is string */
+      if (_.isString(tag)) {
+        this.toolsTags[tag.toUpperCase()] = {
+          tool,
+        };
+      }
+      /** Sanitization configuration is object */
+      if (_.isObject(tag)) {
+        this.toolsTags[Object.keys(tag)[0].toUpperCase()] = {
+          tool,
+          sanitizationConfig: tag[Object.keys(tag)[0]],
+        };
+      }
     });
 
-    this.tagsByTool[tool.name] = tags.map((t) => t.toUpperCase());
+    this.tagsByTool[tool.name] = tags.map((t) => {
+      /** Sanitization configuration is string */
+      if (_.isString(t)) {
+        return t.toUpperCase();
+      }
+      /** Sanitization configuration is object */
+      if (_.isObject(t)) {
+        return Object.keys(t)[0].toUpperCase();
+      }
+    });
   }
 
   /**
@@ -478,7 +507,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions } ]) => {
+      .find(([toolName, { mimeTypes, extensions }]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -495,7 +524,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [ tool ] = foundConfig;
+    const [tool] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
@@ -546,7 +575,14 @@ export default class Paste extends Module {
         const { tags } = tool.pasteConfig;
 
         const toolTags = tags.reduce((result, tag) => {
-          result[tag.toLowerCase()] = {};
+          /** Sanitization configuration is string */
+          if (_.isString(tag)) {
+            result[tag.toLowerCase()] = {};
+          }
+          /** Sanitization configuration is object */
+          if (_.isObject(tag)) {
+            result[Object.keys(tag)[0].toUpperCase()] = tag[Object.keys(tag)[0]];
+          }
 
           return result;
         }, {});
