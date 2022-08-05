@@ -259,7 +259,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         icon: toolboxItem.icon,
         label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
-        onClick: (e): void => {
+        onActivate: (e): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
