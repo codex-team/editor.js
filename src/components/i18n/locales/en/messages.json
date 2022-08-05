@@ -37,7 +37,8 @@
   },
   "blockTunes": {
     "delete": {
-      "Delete": ""
+      "Delete": "",
+      "Click to delete": ""
     },
     "moveUp": {
       "Move up": ""

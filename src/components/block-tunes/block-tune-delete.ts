@@ -51,9 +51,7 @@ export default class DeleteTune implements BlockTune {
       label: this.api.i18n.t('Delete'),
       name: 'delete',
       confirmation: {
-        icon: $.svg('cross', 14, 14).outerHTML,
-        label: 'Click to delete',
-        name: 'delete',
+        label: this.api.i18n.t('Click to delete'),
         onActivate: (item, e): void => this.handleClick(e),
       },
     };

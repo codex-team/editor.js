@@ -50,7 +50,7 @@ interface PopoverItemWithConfirmation extends PopoverItemBase {
    * Item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: PopoverItem;
+  confirmation: Partial<PopoverItem>;
 
   onActivate?: never;
 }
@@ -505,8 +505,19 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       if (this.itemRequiringConfirmation === null) {
         this.itemRequiringConfirmation = clickedItem;
       }
-      this.items[itemIndex] = clickedItem.confirmation;
-      const confirmationStateItemEl = this.createItem(clickedItem.confirmation as PopoverItem);
+      const newItemData = {
+        ...clickedItem,
+        ...clickedItem.confirmation,
+      } as PopoverItem;
+
+      /** Prevent confirmation loop */
+      if (newItemData.confirmation === clickedItem.confirmation) {
+        delete newItemData.confirmation;
+      }
+
+      this.items[itemIndex] = newItemData;
+
+      const confirmationStateItemEl = this.createItem(newItemData as PopoverItem);
 
       confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
       itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
