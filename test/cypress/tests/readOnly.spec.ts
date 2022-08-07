@@ -47,4 +47,18 @@ describe('ReadOnly API spec', () => {
           });
       });
   });
+
+  it('should add default block when block list is empty', () => {
+    createEditor({ readOnly: true });
+
+    cy
+      .get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        editor.readOnly.toggle(false).then(() => {
+          cy.get('[data-cy=editorjs').click();
+
+          expect(editor.readOnly.isEnabled).to.be.false;
+        });
+      });
+  });
 });
