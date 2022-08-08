@@ -650,36 +650,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const tunesElement = document.createElement('div');
     const tunesItems: PopoverItem[] = [];
 
-    /** Default tunes: Move up, Move down, Delete */
-    const defaultTunesInstances = Array.from(this.defaultTunesInstances.values());
+    /** Tool's tunes: may be defined as return value of optional renderSettings method */
+    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' && this.toolInstance.renderSettings();
 
-    /** Third-party tunes */
-    const customTunesInstances = Array.from(this.tunesInstances.values());
+    /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
+    const commonTunes = [
+      ...this.defaultTunesInstances.values(),
+      ...this.tunesInstances.values(),
+    ].map(tuneInstance => tuneInstance.render());
 
-    /** Retrieve tunes that may be defined in tool as return value of optional renderSettings function. */
-    const tunesDefinedInTool =
-      typeof this.toolInstance.renderSettings === 'function'
-        ? [ this.toolInstance.renderSettings() ].flat()
-        : [];
-
-    /** Combine default and thirid-party tunes and call render() on each to retrieve their controls */
-    const otherTunes = customTunesInstances
-      .concat(defaultTunesInstances)
-      .map(item => item.render());
-
-    tunesDefinedInTool.concat(otherTunes).forEach(rendered => {
-      const isHTMLElement = rendered.nodeName !== undefined;
-
-      if (isHTMLElement) {
+    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
+      if ($.isElement(rendered)) {
         tunesElement.appendChild(rendered);
       } else {
-        const items = Array.isArray(rendered) ? rendered : [ rendered ];
-
-        tunesItems.push(...items);
+        tunesItems.push(rendered);
       }
     });
-
-    // tunesItems = tunesItems.filter(item => !item.isActive);
 
     return [tunesItems, tunesElement];
   }
