@@ -205,7 +205,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Editor container element
    */
-  private editorElement: HTMLElement;
+  private scopeElement: HTMLElement;
 
   /**
    * Reference to popover item that was clicked but requires second click to confirm action
@@ -221,16 +221,16 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
    * @param options.customContent - arbitrary html element to be inserted before items list
-   * @param options.editorElement - editor container element
+   * @param options.scopeElement - editor container element
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, editorElement }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, scopeElement }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
     customContent?: HTMLElement;
-    editorElement: HTMLElement;
+    scopeElement: HTMLElement;
   }) {
     super();
     this.items = items;
@@ -238,7 +238,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
-    this.editorElement = editorElement;
+    this.scopeElement = scopeElement;
 
     this.filterLabel = filterLabel;
     this.nothingFoundLabel = nothingFoundLabel;
@@ -611,17 +611,17 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Checks if there popover should be opened up.
-   * It happens in case there is enough space below or not enough space above
+   * Checks if popover should be opened bottom.
+   * It should happen when there is enough space below or not enough space above
    */
   private get shouldOpenPopoverBottom(): boolean {
     const toolboxRect = this.nodes.wrapper.getBoundingClientRect();
-    const editorElementRect = this.editorElement.getBoundingClientRect();
+    const scopeElementRect = this.scopeElement.getBoundingClientRect();
     const popoverHeight = this.calculateHeight();
     const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
     const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
-    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
+    const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
 
-    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+    return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
   }
 }

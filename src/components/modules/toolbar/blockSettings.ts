@@ -97,9 +97,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    const [tunesItems, tunesElement] = targetBlock.getTunes();
+    const [tunesItemsConfig, addiitionalTunesContainer] = targetBlock.getTunes();
 
-    this.nodes.renderedTunes = tunesElement;
+    this.nodes.renderedTunes = addiitionalTunesContainer;
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -111,9 +111,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItems,
+      items: tunesItemsConfig,
       customContent: this.nodes.renderedTunes,
-      editorElement: this.Editor.API.methods.ui.nodes.redactor,
+      scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 

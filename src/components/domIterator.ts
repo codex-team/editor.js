@@ -67,6 +67,7 @@ export default class DomIterator {
    */
   public setCursor(cursorPosition: number): void {
     if (cursorPosition < this.items.length && cursorPosition >= -1) {
+      this.dropCursor();
       this.cursor = cursorPosition;
       this.items[this.cursor].classList.add(this.focusedCssClass);
     }
