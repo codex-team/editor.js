@@ -651,7 +651,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const tunesItems: PopoverItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
-    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' && this.toolInstance.renderSettings();
+    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [

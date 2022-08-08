@@ -3,7 +3,7 @@ import $ from '../../dom';
 import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent, PopoverItem } from '../../utils/popover';
+import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 
