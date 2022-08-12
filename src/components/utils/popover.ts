@@ -503,32 +503,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const clickedItem = this.items[itemIndex];
 
     this.cleanUpConfirmationState();
+
     if (clickedItem.confirmation) {
-      /** Save root item requiring confirmation to restore original state on popover hide */
-      if (this.itemRequiringConfirmation === null) {
-        this.itemRequiringConfirmation = clickedItem;
-      }
-      const newItemData = {
-        ...clickedItem,
-        ...clickedItem.confirmation,
-      } as PopoverItem;
-
-      /** Prevent confirmation loop */
-      if (newItemData.confirmation === clickedItem.confirmation) {
-        delete newItemData.confirmation;
-      }
-
-      this.items[itemIndex] = newItemData;
-
-      const confirmationStateItemEl = this.createItem(newItemData as PopoverItem);
-
-      confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
-      itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
-
-      this.reactivateFlipper(
-        this.flippableElements,
-        this.flippableElements.indexOf(confirmationStateItemEl)
-      );
+      this.enableConfirmationStateForItem(clickedItem as PopoverItemWithConfirmation, itemEl, itemIndex);
 
       return;
     }
@@ -538,6 +515,42 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (clickedItem.closeOnActivate) {
       this.hide();
     }
+  }
+
+  /**
+   * Enables confirmation state for specified item.
+   * Replaces item element in popover so that is becomes highlighted in a special way
+   *
+   * @param item - item to enable confirmation state for
+   * @param itemEl - html element corresponding to the item
+   * @param itemIndex - index of the item in all items list
+   */
+  private enableConfirmationStateForItem(item: PopoverItemWithConfirmation, itemEl: HTMLElement, itemIndex: number): void {
+    /** Save root item requiring confirmation to restore original state on popover hide */
+    if (this.itemRequiringConfirmation === null) {
+      this.itemRequiringConfirmation = item;
+    }
+    const newItemData = {
+      ...item,
+      ...item.confirmation,
+    } as PopoverItem;
+
+    /** Prevent confirmation loop */
+    if (newItemData.confirmation === item.confirmation) {
+      delete newItemData.confirmation;
+    }
+
+    this.items[itemIndex] = newItemData;
+
+    const confirmationStateItemEl = this.createItem(newItemData as PopoverItem);
+
+    confirmationStateItemEl.classList.add(Popover.CSS.itemConfirmation);
+    itemEl.parentElement.replaceChild(confirmationStateItemEl, itemEl);
+
+    this.reactivateFlipper(
+      this.flippableElements,
+      this.flippableElements.indexOf(confirmationStateItemEl)
+    );
   }
 
   /**
