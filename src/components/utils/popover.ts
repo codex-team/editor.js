@@ -65,9 +65,9 @@ interface PopoverItemWithoutConfirmation extends PopoverItemBase {
    * Popover item activation handler
    *
    * @param item - activated item
-   * @param event - click event
+   * @param event - event that initiated item activation
    */
-  onActivate: (item: PopoverItem, event?: MouseEvent) => void;
+  onActivate: (item: PopoverItem, event?: PointerEvent) => void;
 }
 
 /**
@@ -389,11 +389,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     this.nodes.popover.appendChild(this.nodes.nothingFound);
 
-    this.listeners.on(this.nodes.popover, 'click', (event: KeyboardEvent|MouseEvent) => {
+    this.listeners.on(this.nodes.popover, 'click', (event: PointerEvent) => {
       const clickedItem = (event.target as HTMLElement).closest(`.${Popover.CSS.item}`) as HTMLElement;
 
       if (clickedItem) {
-        this.itemClicked(clickedItem, event as MouseEvent);
+        this.itemClicked(clickedItem, event as PointerEvent);
       }
     });
 
@@ -497,13 +497,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param itemEl - clicked item
    * @param event - click event
    */
-  private itemClicked(itemEl: HTMLElement, event: MouseEvent): void {
+  private itemClicked(itemEl: HTMLElement, event: PointerEvent): void {
     const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
     const itemIndex = Array.from(allItems).indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
 
     this.cleanUpConfirmationState();
-
     if (clickedItem.confirmation) {
       /** Save root item requiring confirmation to restore original state on popover hide */
       if (this.itemRequiringConfirmation === null) {
