@@ -7,7 +7,7 @@ import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
 
 /**
- * Describe parameters for rendering a single popover item
+ * Common parameters for both types of popover items: with or without confirmation
  */
 export interface PopoverItemBase {
   /**
@@ -47,7 +47,7 @@ export interface PopoverItemBase {
  */
 interface PopoverItemWithConfirmation extends PopoverItemBase {
   /**
-   * Item parameters that should be applied on item activation.
+   * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
   confirmation: Partial<PopoverItem>;
@@ -62,13 +62,17 @@ interface PopoverItemWithoutConfirmation extends PopoverItemBase {
   confirmation?: never;
 
   /**
-   * Item activation handler
+   * Popover item activation handler
    *
    * @param item - activated item
+   * @param event - click event
    */
   onActivate: (item: PopoverItem, event?: MouseEvent) => void;
 }
 
+/**
+ * Represents single popover item
+ */
 export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation
 
 /**
