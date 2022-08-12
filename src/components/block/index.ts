@@ -5,7 +5,8 @@ import {
   BlockTune as IBlockTune,
   SanitizerConfig,
   ToolConfig,
-  ToolboxConfigEntry
+  ToolboxConfigEntry,
+  PopoverItem
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -20,7 +21,6 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import { PopoverItem } from '../utils/popover';
 
 /**
  * Interface describes Block class constructor argument

@@ -6,8 +6,8 @@
  */
 
 import $ from '../dom';
-import { API, BlockTune } from '../../../types';
-import Popover, { PopoverItem } from '../utils/popover';
+import { API, BlockTune, PopoverItem } from '../../../types';
+import Popover from '../utils/popover';
 
 /**
  *

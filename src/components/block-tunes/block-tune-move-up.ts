@@ -5,8 +5,8 @@
  * @copyright <CodeX Team> 2018
  */
 import $ from '../dom';
-import { API, BlockTune, BlockAPI } from '../../../types';
-import Popover, { PopoverItem } from '../../components/utils/popover';
+import { API, BlockTune, BlockAPI, PopoverItem } from '../../../types';
+import Popover from '../../components/utils/popover';
 
 /**
  *
