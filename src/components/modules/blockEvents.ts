@@ -138,6 +138,9 @@ export default class BlockEvents extends Module {
     } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
       this.activateBlockSettings();
     }
+
+    /** Prevent event being handled inside opened popover */
+    event.stopPropagation();
   }
 
   /**
