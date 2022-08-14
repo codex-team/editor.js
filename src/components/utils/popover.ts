@@ -446,6 +446,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     if (clickedItem.closeOnActivate) {
       this.hide();
+    } else {
+      /** If popover is not intended to close once item is activated, we need to update active state of activated item */
+      clickedItem.isActive = !clickedItem.isActive;
+      itemEl.classList.toggle(Popover.CSS.itemActive);
     }
   }
 
