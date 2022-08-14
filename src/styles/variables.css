@@ -69,6 +69,7 @@
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
+  --color-confirm-hover: #CE4343;
 
   --overlay-pane: {
     position: absolute;

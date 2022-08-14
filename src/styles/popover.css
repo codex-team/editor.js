@@ -81,12 +81,12 @@
 
       @media (--can-hover) {
         &:hover {
-          background: #ce4343;
+          background: var(--color-confirm-hover);
         }
       }
 
       &.ce-popover__item--focused {
-        background: #ce4343 !important;
+        background: var(--color-confirm-hover) !important;
       }
 
       .ce-popover__item-icon {
