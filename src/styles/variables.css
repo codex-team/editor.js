@@ -110,6 +110,13 @@
     color:  var(--color-active-icon);
   };
 
+  --button-disabled: {
+    color: var(--grayText);
+    cursor: default;
+    background: rgba(232,232,235,0.49);
+    opacity: 0.5;
+  }
+
   /**
    * Styles for Toolbox Buttons and Plus Button
    */

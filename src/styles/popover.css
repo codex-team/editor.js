@@ -76,6 +76,10 @@
       @apply --button-active;
     }
 
+    &--disabled {
+      @apply --button-disabled;
+    }
+
     &--confirmation {
       background: var(--color-confirm);
 

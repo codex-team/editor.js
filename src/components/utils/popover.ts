@@ -100,6 +100,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     itemFlippable: string;
     itemFocused: string;
     itemActive: string;
+    itemDisabled: string;
     itemLabel: string;
     itemIcon: string;
     itemSecondaryLabel: string;
@@ -120,6 +121,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       itemFlippable: 'ce-popover__item--flippable',
       itemFocused: 'ce-popover__item--focused',
       itemActive: 'ce-popover__item--active',
+      itemDisabled: 'ce-popover__item--disabled',
       itemConfirmation: 'ce-popover__item--confirmation',
       itemLabel: 'ce-popover__item-label',
       itemIcon: 'ce-popover__item-icon',
@@ -420,6 +422,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       el.classList.add(Popover.CSS.itemActive);
     }
 
+    if (item.isDisabled) {
+      el.classList.add(Popover.CSS.itemDisabled);
+    }
+
     return el;
   }
 
@@ -433,6 +439,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
     const itemIndex = Array.from(allItems).indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
+
+    if (clickedItem.isDisabled) {
+      return;
+    }
 
     this.cleanUpConfirmationState();
 

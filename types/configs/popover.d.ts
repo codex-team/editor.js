@@ -28,6 +28,12 @@ interface PopoverItemBase {
    */
   isActive?: boolean;
 
+
+  /**
+   * True if item should be disabled
+   */
+  isDisabled?: boolean;
+
   /**
    * True if popover should close once item is activated
    */
