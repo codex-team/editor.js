@@ -261,6 +261,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Clears memory
    */
   public destroy(): void {
+    this.flipper.deactivate();
     this.listeners.removeAll();
   }
 
