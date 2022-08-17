@@ -24,15 +24,6 @@ export default class DeleteTune implements BlockTune {
   private readonly api: API;
 
   /**
-   * Styles
-   */
-  private CSS = {
-    button: 'ce-settings__button',
-    buttonDelete: 'ce-settings__button--delete',
-    buttonConfirm: 'ce-settings__button--confirm',
-  };
-
-  /**
    * DeleteTune constructor
    *
    * @param {API} api - Editor's API
@@ -63,12 +54,5 @@ export default class DeleteTune implements BlockTune {
    */
   public handleClick(event: MouseEvent): void {
     this.api.blocks.delete();
-    this.api.toolbar.close();
-    this.api.tooltip.hide();
-
-    /**
-     * Prevent firing ui~documentClicked that can drop currentBlock pointer
-     */
-    event.stopPropagation();
   }
 }

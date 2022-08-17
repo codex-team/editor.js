@@ -26,12 +26,8 @@ export default class MoveUpTune implements BlockTune {
 
   /**
    * Styles
-   *
-   * @type {{wrapper: string}}
    */
   private CSS = {
-    button: 'ce-settings__button',
-    wrapper: 'ce-tune-move-up',
     animation: 'wobble',
   };
 
@@ -108,8 +104,5 @@ export default class MoveUpTune implements BlockTune {
     this.api.blocks.move(currentBlockIndex - 1);
 
     this.api.toolbar.toggleBlockSettings(true);
-
-    /** Hide the Tooltip */
-    this.api.tooltip.hide();
   }
 }
