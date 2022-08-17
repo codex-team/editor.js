@@ -146,9 +146,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private scopeElement: HTMLElement;
 
   /**
-   * Reference to popover item that was clicked but requires second click to confirm action
+   *
    */
-  private itemRequiringConfirmation = null;
+  private itemsRequiringConfirmation: {[itemIndex: number]: PopoverItem} = {};
 
   /**
    * Creates the Popover
@@ -254,7 +254,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.isShown = false;
     this.nodes.wrapper.classList.remove(this.className + '--opened-top');
 
-    this.cleanUpConfirmationState();
+    /**
+     * Remove confirmation state from items
+     */
+    const confirmationStateItems = Array.from(this.nodes.items.querySelectorAll(`.${Popover.CSS.itemConfirmation}`));
+
+    confirmationStateItems.forEach((itemEl: HTMLElement) => this.cleanUpConfirmationStateForItem(itemEl));
   }
 
   /**
@@ -437,22 +442,28 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param event - click event
    */
   private itemClicked(itemEl: HTMLElement, event: PointerEvent): void {
-    const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
-    const itemIndex = Array.from(allItems).indexOf(itemEl);
+    const allItems = Array.from(this.nodes.items.children);
+    const itemIndex = allItems.indexOf(itemEl);
     const clickedItem = this.items[itemIndex];
 
     if (clickedItem.isDisabled) {
       return;
     }
 
-    this.cleanUpConfirmationState();
+    /**
+     * If there is any other item in confirmatin except the clicked one, clean it up
+     */
+    allItems
+      .filter(item => item !== itemEl)
+      .forEach(item => {
+        this.cleanUpConfirmationStateForItem(item);
+      });
 
     if (clickedItem.confirmation) {
       this.enableConfirmationStateForItem(clickedItem as PopoverItemWithConfirmation, itemEl, itemIndex);
 
       return;
     }
-
     clickedItem.onActivate(clickedItem, event);
 
     if (clickedItem.closeOnActivate) {
@@ -474,18 +485,14 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private enableConfirmationStateForItem(item: PopoverItemWithConfirmation, itemEl: HTMLElement, itemIndex: number): void {
     /** Save root item requiring confirmation to restore original state on popover hide */
-    if (this.itemRequiringConfirmation === null) {
-      this.itemRequiringConfirmation = item;
+    if (this.itemsRequiringConfirmation[itemIndex] === undefined) {
+      this.itemsRequiringConfirmation[itemIndex] = item;
     }
     const newItemData = {
       ...item,
       ...item.confirmation,
+      confirmation: item.confirmation.confirmation,
     } as PopoverItem;
-
-    /** Prevent confirmation loop */
-    if (newItemData.confirmation === item.confirmation) {
-      delete newItemData.confirmation;
-    }
 
     this.items[itemIndex] = newItemData;
 
@@ -501,20 +508,25 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Brings popover item in confirmation state to its original state
+   * Brings specified element corresponding to popover item to its original state
+   *
+   * @param itemEl - item in confirmation state
    */
-  private cleanUpConfirmationState(): void {
-    if (!this.itemRequiringConfirmation) {
+  private cleanUpConfirmationStateForItem(itemEl: Element): void {
+    const allItems = Array.from(this.nodes.items.children);
+    const index = allItems.indexOf(itemEl);
+
+    const originalItem = this.itemsRequiringConfirmation[index];
+
+    if (originalItem === undefined) {
       return;
     }
-    const confirmationStateItemEl = this.nodes.wrapper.querySelector(`.${Popover.CSS.itemConfirmation}`);
-    const allItems = this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`);
-    const itemIndex = Array.from(allItems).indexOf(confirmationStateItemEl);
-    const originalStateItemEl = this.createItem(this.itemRequiringConfirmation);
+    const originalStateItemEl = this.createItem(originalItem);
 
-    confirmationStateItemEl.parentElement.replaceChild(originalStateItemEl, confirmationStateItemEl);
-    this.items[itemIndex] = this.itemRequiringConfirmation;
-    this.itemRequiringConfirmation = null;
+    itemEl.parentElement.replaceChild(originalStateItemEl, itemEl);
+    this.items[index] = originalItem;
+
+    delete this.itemsRequiringConfirmation[index];
 
     this.reactivateFlipper(
       this.flippableElements,
