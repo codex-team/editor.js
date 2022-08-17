@@ -71,6 +71,9 @@
   --color-confirm: #E24A4A;
   --color-confirm-hover: #CE4343;
 
+  --color-line-active: #D8E8FA;
+  --color-line-gray: #EFF0F1;
+
   --overlay-pane: {
     position: absolute;
     background-color: #FFFFFF;
@@ -113,8 +116,7 @@
   --button-disabled: {
     color: var(--grayText);
     cursor: default;
-    background: rgba(232,232,235,0.49);
-    opacity: 0.5;
+    pointer-events: none;
   }
 
   /**

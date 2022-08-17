@@ -74,10 +74,18 @@
 
     &--active {
       @apply --button-active;
+
+      .ce-popover__item-icon {
+        border: 1px solid var(--color-line-active);
+      }
     }
 
     &--disabled {
       @apply --button-disabled;
+
+      .ce-popover__item-icon {
+        border: 1px solid var(--color-line-gray);
+      }
     }
 
     &--confirmation {
