@@ -13,12 +13,6 @@ interface PopoverItemBase {
   label: string;
 
   /**
-   * Item name
-   * Used in data attributes needed for cypress tests
-   */
-  name?: string;
-
-  /**
    * Additional displayed text
    */
   secondaryLabel?: string;
@@ -38,6 +32,12 @@ interface PopoverItemBase {
    * True if popover should close once item is activated
    */
   closeOnActivate?: boolean;
+
+  /**
+   * Item name
+   * Used in data attributes needed for cypress tests
+   */
+  name?: string;
 }
 
 /**
