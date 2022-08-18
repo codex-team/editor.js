@@ -104,7 +104,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
 
-    this.makeToolTunesButtonsNavigatable();
+    const customContentFlippableItems = this.getControls(this.nodes.renderedTunes);
 
     this.popover = new Popover({
       className: this.CSS.settings,
@@ -113,6 +113,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItemsConfig,
       customContent: this.nodes.renderedTunes,
+      customContentFlippableItems,
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
@@ -171,23 +172,18 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Adds special class to rendered tool settings signalising that button should
-   * be available for keyboard navigation
+   * Returns list of buttons and inputs inside specified container
+   *
+   * @param container - container to query controls inside of
    */
-  private makeToolTunesButtonsNavigatable(): void {
+  private getControls(container: HTMLElement): HTMLElement[] {
     const { StylesAPI } = this.Editor;
     /** Query buttons and inputs inside tunes html */
-    const toolSettings = this.nodes.renderedTunes?.querySelectorAll(
+    const controls = container.querySelectorAll<HTMLElement>(
       `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
     );
 
-    if (!toolSettings) {
-      return;
-    }
-
-    toolSettings.forEach((item) => {
-      item.classList.add(Popover.CSS.itemFlippable);
-    });
+    return Array.from(controls);
   }
 
   /**

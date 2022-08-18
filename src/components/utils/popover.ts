@@ -32,6 +32,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private readonly customContent: HTMLElement;
 
   /**
+   * List of html elements inside custom content area that should be available for keyboard navigation
+   */
+  private readonly customContentFlippableItems: HTMLElement[] = [];
+
+  /**
    * Stores the visibility state.
    */
   private isShown = false;
@@ -97,7 +102,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     itemsWrapper: string;
     item: string;
     itemHidden: string;
-    itemFlippable: string;
     itemFocused: string;
     itemActive: string;
     itemDisabled: string;
@@ -118,7 +122,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       itemsWrapper: 'ce-popover__items',
       item: 'ce-popover__item',
       itemHidden: 'ce-popover__item--hidden',
-      itemFlippable: 'ce-popover__item--flippable',
       itemFocused: 'ce-popover__item--focused',
       itemActive: 'ce-popover__item--active',
       itemDisabled: 'ce-popover__item--disabled',
@@ -146,7 +149,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private scopeElement: HTMLElement;
 
   /**
-   *
+   * Stores data on popover items that are in confirmation state
    */
   private itemsRequiringConfirmation: {[itemIndex: number]: PopoverItem} = {};
 
@@ -159,20 +162,23 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
    * @param options.customContent - arbitrary html element to be inserted before items list
+   * @param options.customContentFlippableItems - list of html elements inside custom content area that should be available for keyboard navigation
    * @param options.scopeElement - editor container element
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, scopeElement }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, customContentFlippableItems, scopeElement }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
     customContent?: HTMLElement;
+    customContentFlippableItems?: HTMLElement[];
     scopeElement: HTMLElement;
   }) {
     super();
     this.items = items;
     this.customContent = customContent;
+    this.customContentFlippableItems = customContentFlippableItems;
     this.className = className || '';
     this.searchable = searchable;
     this.listeners = new Listeners();
@@ -572,17 +578,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
      */
     const popoverItemsElements = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
 
-    /**
-     * Select html elements inside custom content that are marked with special css class to be available for keyboard navigation
-     */
-    const customContentElements = this.customContent ? Array.from(this.customContent.querySelectorAll(
-      `.${Popover.CSS.itemFlippable}`
-    )) as HTMLElement[] : [];
+    const customContentControlsElements = this.customContentFlippableItems || [];
 
     /**
-     * Combine both lists and return
+     * Combine elements inside custom content area with popover items elements
      */
-    return customContentElements.concat(popoverItemsElements);
+    return customContentControlsElements.concat(popoverItemsElements);
   }
 
   /**
