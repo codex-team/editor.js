@@ -64,19 +64,11 @@
   &__item {
     @apply --popover-button;
 
-    &--focused {
-      @apply --button-focused;
-    }
-
-    &--hidden {
-      display: none;
-    }
-
-    &--active {
-      @apply --button-active;
-
-      .ce-popover__item-icon {
-        border: 1px solid var(--color-line-active);
+    @media (--can-hover) {
+      &:hover {
+        .ce-popover__item-icon {
+          border: none;
+        }
       }
     }
 
@@ -87,6 +79,20 @@
         border: 1px solid var(--color-line-gray);
       }
     }
+
+    &--focused {
+      @apply --button-focused;
+    }
+
+    &--hidden {
+      display: none;
+    }
+
+    &--active {
+      @apply --button-active;
+    }
+
+  
 
     &--confirmation {
       background: var(--color-confirm);
@@ -135,6 +141,12 @@
 
       @media (--mobile){
         display: none;
+      }
+    }
+
+    &--confirmation, &--active, &--focused {
+      .ce-popover__item-icon {
+        border: none;
       }
     }
   }
