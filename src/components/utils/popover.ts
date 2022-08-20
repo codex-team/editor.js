@@ -274,6 +274,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   public destroy(): void {
     this.flipper.deactivate();
     this.listeners.removeAll();
+
+    if (isMobileScreen()) {
+      this.scrollLocker.unlock();
+    }
   }
 
   /**
