@@ -129,18 +129,21 @@ export default class BlockEvents extends Module {
     const canOpenToolbox = currentBlock.tool.isDefault && isEmptyBlock;
     const conversionToolbarOpened = !isEmptyBlock && ConversionToolbar.opened;
     const inlineToolbarOpened = !isEmptyBlock && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const canOpenBlockTunes = !conversionToolbarOpened && !inlineToolbarOpened;
 
     /**
      * For empty Blocks we show Plus button via Toolbox only for default Blocks
      */
     if (canOpenToolbox) {
       this.activateToolbox();
-    } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
+    } else if (canOpenBlockTunes) {
       this.activateBlockSettings();
     }
 
-    /** Prevent event being handled inside opened popover */
-    event.stopPropagation();
+    if (canOpenToolbox || canOpenBlockTunes) {
+      /** Prevent event being handled inside opened popover */
+      event.stopPropagation();
+    }
   }
 
   /**
