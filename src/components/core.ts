@@ -5,6 +5,7 @@ import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
+import fakecomponent from './dom';
 
 /**
  * @typedef {Core} Core - editor core class
