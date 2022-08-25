@@ -6,7 +6,7 @@ export interface PasteConfig {
    * Array of tags Tool can substitute
    * @type string[]
    */
-  tags?: string[];
+  tags?: (string | object)[];
 
   /**
    * Object of string patterns Tool can substitute.
