@@ -205,11 +205,7 @@ export default class Paste extends Module {
       /**
        * Check if sanitizer configuration for this tag is defined.
        */
-      if (this.toolsTags[tag].sanitizationConfig) {
-        result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig;
-      } else {
-        result[tag.toLowerCase()] = true;
-      }
+      result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? true;
 
       return result;
     }, {});
