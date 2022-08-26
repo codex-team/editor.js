@@ -567,17 +567,16 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags } = tool.pasteConfig;
+        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig;
 
-        const toolTags = tags.reduce((result, tag) => {
-          /** Sanitization configuration is string */
-          if (_.isString(tag)) {
-            result[tag.toLowerCase()] = {};
-          }
-          /** Sanitization configuration is object */
-          if (_.isObject(tag)) {
-            result[Object.keys(tag)[0].toUpperCase()] = tag[Object.keys(tag)[0]];
-          }
+        const toolTags = tagsOrSanitizeConfigs.reduce((result, tagOrSanitizeConfig) => {
+          const tags = this.getTags(tagOrSanitizeConfig);
+
+          tags.forEach((tag) => {
+            const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
+
+            result[tag] = sanitizationConfig || {};
+          });
 
           return result;
         }, {});
