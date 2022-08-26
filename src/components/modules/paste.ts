@@ -316,15 +316,15 @@ export default class Paste extends Module {
   /**
    * Get tags from tags configuration.
    *
-   * @param tagsConfig - tag name or sanitize config object.
-   * @returns array of tags.
+   * @param {string | object} tagsConfig - tag name or sanitize config object.
+   * @returns {string[]} array of tags.
    */
   private getTags = (tagsConfig: (string | object)): string[] => {
     /**
      * If tagsConfig is string, return it as an array.
      */
     if (_.isString(tagsConfig)) {
-      return [tagsConfig.toUpperCase()];
+      return [ tagsConfig.toUpperCase() ];
     }
     /**
      * If tagsConfig is object, return keys of it as an array.
@@ -520,7 +520,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions }]) => {
+      .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -537,7 +537,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [tool] = foundConfig;
+    const [ tool ] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
