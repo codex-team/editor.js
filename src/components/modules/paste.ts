@@ -313,12 +313,24 @@ export default class Paste extends Module {
     }
   }
 
-  private getTags = (tagOrSanitizeConfig: (string | object)): string[] => {
-    if (_.isString(tagOrSanitizeConfig)) {
-      return [tagOrSanitizeConfig.toUpperCase()];
+  /**
+   * Get tags from tags configuration.
+   *
+   * @param tagsConfig - tag name or sanitize config object.
+   * @returns array of tags.
+   */
+  private getTags = (tagsConfig: (string | object)): string[] => {
+    /**
+     * If tagsConfig is string, return it as an array.
+     */
+    if (_.isString(tagsConfig)) {
+      return [tagsConfig.toUpperCase()];
     }
-    if (_.isObject(tagOrSanitizeConfig)) {
-      return Object.keys(tagOrSanitizeConfig).map(tag => tag.toUpperCase());
+    /**
+     * If tagsConfig is object, return keys of it as an array.
+     */
+    if (_.isObject(tagsConfig)) {
+      return Object.keys(tagsConfig).map(tag => tag.toUpperCase());
     }
   }
 
@@ -334,6 +346,9 @@ export default class Paste extends Module {
     tagsOrSanitizeConfigs.forEach((tagOrSanitizeConfig) => {
       const tags = this.getTags(tagOrSanitizeConfig);
 
+      /**
+       * Add tags to toolTags array
+       */
       toolTags.push(...tags);
       tags.forEach((tag) => {
         if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
@@ -345,6 +360,9 @@ export default class Paste extends Module {
 
           return;
         }
+        /**
+         * Get sanitize config for tag.
+         */
         const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
 
         this.toolsTags[tag] = {
