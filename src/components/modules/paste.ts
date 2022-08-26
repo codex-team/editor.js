@@ -313,6 +313,15 @@ export default class Paste extends Module {
     }
   }
 
+  private getTagName = (tagOrSanitizeConfig: (string | object)): string[] => {
+    if (_.isString(tagOrSanitizeConfig)) {
+      return [tagOrSanitizeConfig.toUpperCase()];
+    }
+    if (_.isObject(tagOrSanitizeConfig)) {
+      return Object.keys(tagOrSanitizeConfig).map(tag => tag.toUpperCase());
+    }
+  }
+
   /**
    * Get tags to substitute by Tool
    *
