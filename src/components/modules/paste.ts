@@ -313,7 +313,7 @@ export default class Paste extends Module {
     }
   }
 
-  private getTagName = (tagOrSanitizeConfig: (string | object)): string[] => {
+  private getTags = (tagOrSanitizeConfig: (string | object)): string[] => {
     if (_.isString(tagOrSanitizeConfig)) {
       return [tagOrSanitizeConfig.toUpperCase()];
     }
@@ -328,43 +328,33 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getTagsConfig(tool: BlockTool): void {
-    const tags = tool.pasteConfig.tags || [];
+    const tagsOrSanitizeConfigs = tool.pasteConfig.tags || [];
+    const toolTags = [];
 
-    tags.forEach((tag) => {
-      if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
-        _.log(
-          `Paste handler for «${tool.name}» Tool on «${tag}» tag is skipped ` +
-          `because it is already used by «${this.toolsTags[tag].tool.name}» Tool.`,
-          'warn'
-        );
+    tagsOrSanitizeConfigs.forEach((tagOrSanitizeConfig) => {
+      const tags = this.getTags(tagOrSanitizeConfig);
 
-        return;
-      }
-      /** Sanitization configuration is string */
-      if (_.isString(tag)) {
-        this.toolsTags[tag.toUpperCase()] = {
+      toolTags.push(...tags);
+      tags.forEach((tag) => {
+        if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
+          _.log(
+            `Paste handler for «${tool.name}» Tool on «${tag}» tag is skipped ` +
+            `because it is already used by «${this.toolsTags[tag].tool.name}» Tool.`,
+            'warn'
+          );
+
+          return;
+        }
+        const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
+
+        this.toolsTags[tag] = {
           tool,
+          sanitizationConfig,
         };
-      }
-      /** Sanitization configuration is object */
-      if (_.isObject(tag)) {
-        this.toolsTags[Object.keys(tag)[0].toUpperCase()] = {
-          tool,
-          sanitizationConfig: tag[Object.keys(tag)[0]],
-        };
-      }
+      });
     });
 
-    this.tagsByTool[tool.name] = tags.map((t) => {
-      /** Sanitization configuration is string */
-      if (_.isString(t)) {
-        return t.toUpperCase();
-      }
-      /** Sanitization configuration is object */
-      if (_.isObject(t)) {
-        return Object.keys(t)[0].toUpperCase();
-      }
-    });
+    this.tagsByTool[tool.name] = toolTags;
   }
 
   /**
