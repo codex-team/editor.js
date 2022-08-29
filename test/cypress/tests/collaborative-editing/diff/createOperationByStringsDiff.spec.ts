@@ -1,7 +1,7 @@
 import {
-  getChangesFromString,
-  Operation
-} from '../../../../../src/components/collaborative-editing/diff/getChangesFromString';
+  createOperationByStringsDiff,
+  OperationType
+} from '../../../../../src/components/collaborative-editing/diff/createOperationByStringsDiff';
 
 describe('getChangesFromString function', () => {
   describe('Insert operation', () => {
@@ -10,14 +10,14 @@ describe('getChangesFromString function', () => {
       const after = 'Changed string';
       const expected = [
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 0,
           data: 'Changed ',
           length: 8,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -27,14 +27,14 @@ describe('getChangesFromString function', () => {
       const after = 'stri123ng';
       const expected = [
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 4,
           data: '123',
           length: 3,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -44,14 +44,14 @@ describe('getChangesFromString function', () => {
       const after = 'string is changed';
       const expected = [
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 6,
           data: ' is changed',
           length: 11,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -61,14 +61,14 @@ describe('getChangesFromString function', () => {
       const after = 'String';
       const expected = [
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 0,
           data: 'String',
           length: 6,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -80,14 +80,14 @@ describe('getChangesFromString function', () => {
       const after = 'ing';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 0,
           data: 'str',
           length: 3,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -97,14 +97,14 @@ describe('getChangesFromString function', () => {
       const after = 'String changed';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 7,
           data: 'is ',
           length: 3,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -114,14 +114,14 @@ describe('getChangesFromString function', () => {
       const after = 'String is';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 9,
           data: ' changed',
           length: 8,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -131,14 +131,14 @@ describe('getChangesFromString function', () => {
       const after = '';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 0,
           data: 'String',
           length: 6,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -150,20 +150,20 @@ describe('getChangesFromString function', () => {
       const after = 'aaing';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 0,
           data: 'str',
           length: 3,
         },
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 0,
           data: 'aa',
           length: 2,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -173,20 +173,20 @@ describe('getChangesFromString function', () => {
       const after = 'abceecfd';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 3,
           data: 'aa',
           length: 2,
         },
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 3,
           data: 'eec',
           length: 3,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -196,20 +196,20 @@ describe('getChangesFromString function', () => {
       const after = 'abcaa';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 3,
           data: 'def',
           length: 3,
         },
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 3,
           data: 'aa',
           length: 2,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -219,20 +219,20 @@ describe('getChangesFromString function', () => {
       const after = 'efg';
       const expected = [
         {
-          type: Operation.Remove,
+          type: OperationType.Remove,
           from: 0,
           data: 'abcd',
           length: 4,
         },
         {
-          type: Operation.Insert,
+          type: OperationType.Insert,
           from: 0,
           data: 'efg',
           length: 3,
         },
       ];
 
-      const result = getChangesFromString(before, after);
+      const result = createOperationByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });

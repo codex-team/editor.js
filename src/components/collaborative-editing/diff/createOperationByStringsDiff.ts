@@ -1,7 +1,7 @@
 /**
  * Possible operation types
  */
-export enum Operation {
+export enum OperationType {
   /**
    * User inserts symbols
    */
@@ -14,7 +14,7 @@ export enum Operation {
 }
 
 type InsertOperation = {
-  type: Operation.Insert;
+  type: OperationType.Insert;
 
   /**
    * Index where user inserted symbols
@@ -33,7 +33,7 @@ type InsertOperation = {
 }
 
 type RemoveOperation = {
-  type: Operation.Remove;
+  type: OperationType.Remove;
 
   /**
    * Index where user removed symbols
@@ -57,15 +57,15 @@ type RemoveOperation = {
  * @param str1 - original string
  * @param str2 - new string that comes from the first
  *
- * @returns {object} object of operation
+ * @returns {object[]} array of operations
  */
-export function getChangesFromString(str1: string, str2: string): (InsertOperation | RemoveOperation)[] {
+export function createOperationByStringsDiff(str1: string, str2: string): (InsertOperation | RemoveOperation)[] {
   if (str1 === str2) {
     return [];
   }
 
-  const length1 = str1.length,
-      length2 = str2.length;
+  const length1 = str1.length;
+  const length2 = str2.length;
 
   let left = 0;
 
@@ -79,19 +79,32 @@ export function getChangesFromString(str1: string, str2: string): (InsertOperati
     right++;
   }
 
-  if (left + right < length1 && left + right < length2) {
+  /**
+   * Length of difference in the first string
+   */
+  const diffLength1 = length1 - left - right;
+
+  /**
+   * Length of difference in the second string
+   */
+  const diffLength2 = length2 - left - right;
+
+  /**
+   * There are differences in two strings. User replaced values by new.
+   */
+  if (diffLength1 > 0 && diffLength2 > 0) {
     const before = str1.slice(left, length1 - right);
     const after = str2.slice(left, length2 - right);
 
     return [
       {
-        type: Operation.Remove,
+        type: OperationType.Remove,
         from: left,
         data: before,
         length: before.length,
       },
       {
-        type: Operation.Insert,
+        type: OperationType.Insert,
         from: left,
         data: after,
         length: after.length,
@@ -99,12 +112,15 @@ export function getChangesFromString(str1: string, str2: string): (InsertOperati
     ];
   }
 
-  if (left + right < length2) {
+  /**
+   * There is a difference only in the second string. Used inserted new values.
+   */
+  if (diffLength2 > 0) {
     const data = str2.slice(left, length2 - right + (left + right - length1));
 
     return [
       {
-        type: Operation.Insert,
+        type: OperationType.Insert,
         from: left,
         data,
         length: data.length,
@@ -112,12 +128,15 @@ export function getChangesFromString(str1: string, str2: string): (InsertOperati
     ];
   }
 
-  if (left + right < length1) {
+  /**
+   * There is a difference only in the first string. Used removed values from it.
+   */
+  if (diffLength1 > 0) {
     const data = str1.slice(left, length1 - right + (left + right - length2));
 
     return [
       {
-        type: Operation.Remove,
+        type: OperationType.Remove,
         from: left,
         data,
         length: data.length,
