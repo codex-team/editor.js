@@ -11,11 +11,6 @@ export enum Operation {
    * User removes symbols
    */
   Remove,
-
-  /**
-   * User replaces symbols
-   */
-  Replace
 }
 
 type InsertOperation = {
@@ -56,37 +51,6 @@ type RemoveOperation = {
   length: number;
 }
 
-type ReplaceOperation = {
-  type: Operation.Replace;
-
-  /**
-   * Index where user replaced symbols
-   */
-  from: number;
-  data: {
-    /**
-     * Replaced data
-     */
-    before: string;
-
-    /**
-     * New data
-     */
-    after: string;
-  };
-  length: {
-    /**
-     * Length of replaced data
-     */
-    before: number;
-
-    /**
-     * Length of new data
-     */
-    after: number;
-  };
-}
-
 /**
  * Function finds difference between two different strings
  *
@@ -95,7 +59,11 @@ type ReplaceOperation = {
  *
  * @returns {object} object of operation
  */
-export function getChangesFromString(str1: string, str2: string): InsertOperation | RemoveOperation | ReplaceOperation {
+export function getChangesFromString(str1: string, str2: string): (InsertOperation | RemoveOperation)[] {
+  if (str1 === str2) {
+    return [];
+  }
+
   const length1 = str1.length,
       length2 = str2.length;
 
@@ -115,39 +83,45 @@ export function getChangesFromString(str1: string, str2: string): InsertOperatio
     const before = str1.slice(left, length1 - right);
     const after = str2.slice(left, length2 - right);
 
-    return {
-      type: Operation.Replace,
-      from: left,
-      data: {
-        before,
-        after,
+    return [
+      {
+        type: Operation.Remove,
+        from: left,
+        data: before,
+        length: before.length,
       },
-      length: {
-        before: before.length,
-        after: after.length,
+      {
+        type: Operation.Insert,
+        from: left,
+        data: after,
+        length: after.length,
       },
-    };
+    ];
   }
 
   if (left + right < length2) {
     const data = str2.slice(left, length2 - right + (left + right - length1));
 
-    return {
-      type: Operation.Insert,
-      from: left,
-      data,
-      length: data.length,
-    };
+    return [
+      {
+        type: Operation.Insert,
+        from: left,
+        data,
+        length: data.length,
+      },
+    ];
   }
 
   if (left + right < length1) {
     const data = str1.slice(left, length1 - right + (left + right - length2));
 
-    return {
-      type: Operation.Remove,
-      from: left,
-      data,
-      length: data.length,
-    };
+    return [
+      {
+        type: Operation.Remove,
+        from: left,
+        data,
+        length: data.length,
+      },
+    ];
   }
 }

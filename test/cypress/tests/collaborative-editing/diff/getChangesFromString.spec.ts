@@ -8,12 +8,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user inserts symbols at the start of the string', () => {
       const before = 'string';
       const after = 'Changed string';
-      const expected = {
-        type: Operation.Insert,
-        from: 0,
-        data: 'Changed ',
-        length: 8,
-      };
+      const expected = [
+        {
+          type: Operation.Insert,
+          from: 0,
+          data: 'Changed ',
+          length: 8,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -23,12 +25,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user inserts symbols in the string', () => {
       const before = 'string';
       const after = 'stri123ng';
-      const expected = {
-        type: Operation.Insert,
-        from: 4,
-        data: '123',
-        length: 3,
-      };
+      const expected = [
+        {
+          type: Operation.Insert,
+          from: 4,
+          data: '123',
+          length: 3,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -38,12 +42,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user inserts symbols at the end of the string', () => {
       const before = 'string';
       const after = 'string is changed';
-      const expected = {
-        type: Operation.Insert,
-        from: 6,
-        data: ' is changed',
-        length: 11,
-      };
+      const expected = [
+        {
+          type: Operation.Insert,
+          from: 6,
+          data: ' is changed',
+          length: 11,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -53,12 +59,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user inserts symbols in the empty string', () => {
       const before = '';
       const after = 'String';
-      const expected = {
-        type: Operation.Insert,
-        from: 0,
-        data: 'String',
-        length: 6,
-      };
+      const expected = [
+        {
+          type: Operation.Insert,
+          from: 0,
+          data: 'String',
+          length: 6,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -70,12 +78,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user removes symbols at the start of the string', () => {
       const before = 'string';
       const after = 'ing';
-      const expected = {
-        type: Operation.Remove,
-        from: 0,
-        data: 'str',
-        length: 3,
-      };
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 0,
+          data: 'str',
+          length: 3,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -85,12 +95,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user removes symbols from the center of the string', () => {
       const before = 'String is changed';
       const after = 'String changed';
-      const expected = {
-        type: Operation.Remove,
-        from: 7,
-        data: 'is ',
-        length: 3,
-      };
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 7,
+          data: 'is ',
+          length: 3,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -100,12 +112,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user removes symbols at the end of the string', () => {
       const before = 'String is changed';
       const after = 'String is';
-      const expected = {
-        type: Operation.Remove,
-        from: 9,
-        data: ' changed',
-        length: 8,
-      };
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 9,
+          data: ' changed',
+          length: 8,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -115,12 +129,14 @@ describe('getChangesFromString function', () => {
     it('should compute operation when a user removes full string', () => {
       const before = 'String';
       const after = '';
-      const expected = {
-        type: Operation.Remove,
-        from: 0,
-        data: 'String',
-        length: 6,
-      };
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 0,
+          data: 'String',
+          length: 6,
+        },
+      ];
 
       const result = getChangesFromString(before, after);
 
@@ -128,85 +144,93 @@ describe('getChangesFromString function', () => {
     });
   });
 
-  describe('Replace operation', () => {
-    it('should compute operation when a user replaces symbols at the start of the string', () => {
+  describe('Remove and Insert operations', () => {
+    it('should compute operations when a user replaces symbols at the start of the string', () => {
       const before = 'string';
       const after = 'aaing';
-      const expected = {
-        type: Operation.Replace,
-        from: 0,
-        data: {
-          before: 'str',
-          after: 'aa',
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 0,
+          data: 'str',
+          length: 3,
         },
-        length: {
-          before: 3,
-          after: 2,
+        {
+          type: Operation.Insert,
+          from: 0,
+          data: 'aa',
+          length: 2,
         },
-      };
+      ];
 
       const result = getChangesFromString(before, after);
 
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user replaces symbols from the center of the string', () => {
+    it('should compute operations when a user replaces symbols from the center of the string', () => {
       const before = 'abcaafd';
       const after = 'abceecfd';
-      const expected = {
-        type: Operation.Replace,
-        from: 3,
-        data: {
-          before: 'aa',
-          after: 'eec',
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 3,
+          data: 'aa',
+          length: 2,
         },
-        length: {
-          before: 2,
-          after: 3,
+        {
+          type: Operation.Insert,
+          from: 3,
+          data: 'eec',
+          length: 3,
         },
-      };
+      ];
 
       const result = getChangesFromString(before, after);
 
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user replaces symbols at the end of the string', () => {
+    it('should compute operations when a user replaces symbols at the end of the string', () => {
       const before = 'abcdef';
       const after = 'abcaa';
-      const expected = {
-        type: Operation.Replace,
-        from: 3,
-        data: {
-          before: 'def',
-          after: 'aa',
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 3,
+          data: 'def',
+          length: 3,
         },
-        length: {
-          before: 3,
-          after: 2,
+        {
+          type: Operation.Insert,
+          from: 3,
+          data: 'aa',
+          length: 2,
         },
-      };
+      ];
 
       const result = getChangesFromString(before, after);
 
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user replaces full string', () => {
+    it('should compute operations when a user replaces full string', () => {
       const before = 'abcd';
       const after = 'efg';
-      const expected = {
-        type: Operation.Replace,
-        from: 0,
-        data: {
-          before: 'abcd',
-          after: 'efg',
+      const expected = [
+        {
+          type: Operation.Remove,
+          from: 0,
+          data: 'abcd',
+          length: 4,
         },
-        length: {
-          before: 4,
-          after: 3,
+        {
+          type: Operation.Insert,
+          from: 0,
+          data: 'efg',
+          length: 3,
         },
-      };
+      ];
 
       const result = getChangesFromString(before, after);
 
