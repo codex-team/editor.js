@@ -463,7 +463,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Changes Conversion Dropdown content for current block's Tool
    */
-  private setConversionTogglerContent(): void {
+  private async setConversionTogglerContent(): Promise<void> {
     const { BlockManager } = this.Editor;
     const { currentBlock } = BlockManager;
     const toolName = currentBlock.name;
@@ -480,7 +480,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Get icon or title for dropdown
      */
-    const toolboxSettings = currentBlock.tool.toolbox || {};
+    const toolboxSettings = await currentBlock.getActiveToolboxEntry() || {};
 
     this.nodes.conversionTogglerContent.innerHTML =
       toolboxSettings.icon ||
@@ -698,7 +698,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
-      allowArrows: false,
+      allowedKeys: [
+        _.keyCodes.ENTER,
+        _.keyCodes.TAB,
+      ],
     });
   }
 }
