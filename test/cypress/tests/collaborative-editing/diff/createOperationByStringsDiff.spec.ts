@@ -1,7 +1,5 @@
-import {
-  createOperationByStringsDiff,
-  OperationType
-} from '../../../../../src/components/collaborative-editing/diff/createOperationByStringsDiff';
+import { createOperationByStringsDiff } from '../../../../../src/components/collaborative-editing/diff/createOperationByStringsDiff';
+import { OperationType } from '../../../../../src/components/collaborative-editing/diff/types';
 
 describe('getChangesFromString function', () => {
   describe('Insert operation', () => {

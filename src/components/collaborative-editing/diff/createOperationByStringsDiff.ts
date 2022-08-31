@@ -1,55 +1,4 @@
-/**
- * Possible operation types
- */
-export enum OperationType {
-  /**
-   * User inserts symbols
-   */
-  Insert,
-
-  /**
-   * User removes symbols
-   */
-  Remove,
-}
-
-type InsertOperation = {
-  type: OperationType.Insert;
-
-  /**
-   * Index where user inserted symbols
-   */
-  from: number;
-
-  /**
-   * Which symbols user inserted
-   */
-  data: string;
-
-  /**
-   * Length of inserted data
-   */
-  length: number;
-}
-
-type RemoveOperation = {
-  type: OperationType.Remove;
-
-  /**
-   * Index where user removed symbols
-   */
-  from: number;
-
-  /**
-   * Which symbols user removed
-   */
-  data: string;
-
-  /**
-   * Length of removed data
-   */
-  length: number;
-}
+import { InsertOperation, OperationType, RemoveOperation } from './types';
 
 /**
  * Function finds difference between two different strings
@@ -67,12 +16,18 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
   const length1 = str1.length;
   const length2 = str2.length;
 
+  /**
+   * Left border of changes
+   */
   let left = 0;
 
   while (str1[left] === str2[left]) {
     left++;
   }
 
+  /**
+   * Right border of changes
+   */
   let right = 0;
 
   while (str1[length1 - right - 1] === str2[length2 - right - 1]) {
@@ -90,7 +45,8 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
   const diffLength2 = length2 - left - right;
 
   /**
-   * There are differences in two strings. User replaced values by new.
+   * There are differences in two strings
+   * User replaced values by new
    */
   if (diffLength1 > 0 && diffLength2 > 0) {
     const before = str1.slice(left, length1 - right);
@@ -113,7 +69,8 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
   }
 
   /**
-   * There is a difference only in the second string. Used inserted new values.
+   * There is a difference only in the second string
+   * Used inserted new values
    */
   if (diffLength2 > 0) {
     const data = str2.slice(left, length2 - right + (left + right - length1));
@@ -129,7 +86,8 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
   }
 
   /**
-   * There is a difference only in the first string. Used removed values from it.
+   * There is a difference only in the first string
+   * Used removed values from it
    */
   if (diffLength1 > 0) {
     const data = str1.slice(left, length1 - right + (left + right - length2));
