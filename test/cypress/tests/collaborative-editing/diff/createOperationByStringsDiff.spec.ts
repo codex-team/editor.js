@@ -20,7 +20,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should create Insert operation when a user inserts symbols in the string', () => {
+    it('should create Insert operation when a user inserts symbols inside the string', () => {
       const before = 'string';
       const after = 'stri123ng';
       const expected = [
@@ -54,7 +54,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should create Insert operation when a user inserts symbols in the empty string', () => {
+    it('should create Insert operation when a user inserts symbols inside the empty string', () => {
       const before = '';
       const after = 'String';
       const expected = [
