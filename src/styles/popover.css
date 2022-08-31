@@ -68,7 +68,7 @@
     @media (--can-hover) {
       &:hover {
         .ce-popover__item-icon {
-          border: none;
+          box-shadow: none;
         }
       }
     }
@@ -77,7 +77,7 @@
       @apply --button-disabled;
 
       .ce-popover__item-icon {
-        border: 1px solid var(--color-line-gray);
+        box-shadow: 0 0 0 1px var(--color-line-gray);
       }
     }
 
@@ -151,7 +151,7 @@
 
     &--confirmation, &--active, &--focused {
       .ce-popover__item-icon {
-        border: none;
+        box-shadow: none;
       }
     }
   }

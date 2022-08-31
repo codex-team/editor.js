@@ -230,12 +230,12 @@
     display: inline-flex;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    border: 1px solid var(--color-gray-border);
+    box-shadow: 0 0 0 1px var(--color-gray-border);
     border-radius: 5px;
     align-items: center;
     justify-content: center;
     background: #fff;
-    box-sizing: border-box;
+    box-sizing: content-box;
     flex-shrink: 0;
     margin-right: 10px;
 
