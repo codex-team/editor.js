@@ -41,6 +41,13 @@ export interface FlipperOptions {
  */
 export default class Flipper {
   /**
+   * True if flipper is currently activated
+   */
+  public get isActivated(): boolean {
+    return this.activated;
+  }
+
+  /**
    * Instance of flipper iterator
    *
    * @type {DomIterator|null}

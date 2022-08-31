@@ -392,11 +392,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
           this.customContent.classList.toggle(Popover.CSS.customContentHidden, !allItemsDisplayed);
         }
 
-        /**
-         * Update flipper items with only visible
-         */
-        this.reactivateFlipper(flippableElements);
-        this.flipper.focusFirst();
+        if (this.flipper.isActivated) {
+          /**
+           * Update flipper items with only visible
+           */
+          this.reactivateFlipper(flippableElements);
+          this.flipper.focusFirst();
+        }
       },
     });
 

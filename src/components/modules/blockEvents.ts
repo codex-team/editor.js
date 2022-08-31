@@ -139,11 +139,6 @@ export default class BlockEvents extends Module {
     } else if (canOpenBlockTunes) {
       this.activateBlockSettings();
     }
-
-    if (canOpenToolbox || canOpenBlockTunes) {
-      /** Prevent event being handled inside opened popover */
-      event.stopPropagation();
-    }
   }
 
   /**
