@@ -351,13 +351,13 @@ describe('BlockTool', () => {
   });
 
   context('.toolbox', () => {
-    it('should return user provided toolbox config', () => {
+    it('should return user provided toolbox config wrapped in array', () => {
       const tool = new BlockTool(options as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.config.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.config.toolbox ]);
     });
 
-    it('should return Tool provided toolbox config if user one is not specified', () => {
+    it('should return Tool provided toolbox config wrapped in array if user one is not specified', () => {
       const tool = new BlockTool({
         ...options,
         config: {
@@ -366,10 +366,10 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.constructable.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.constructable.toolbox ]);
     });
 
-    it('should merge Tool provided toolbox config and user one', () => {
+    it('should merge Tool provided toolbox config and user one and wrap result in array in case both are objects', () => {
       const tool1 = new BlockTool({
         ...options,
         config: {
@@ -389,8 +389,101 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool1.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }));
-      expect(tool2.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }));
+      expect(tool1.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }) ]);
+      expect(tool2.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }) ]);
+    });
+
+    it('should replace Tool provided toolbox config with user defined config in case the first is an array and the second is an object', () => {
+      const toolboxEntries = [
+        {
+          title: 'Toolbox entry 1',
+        },
+        {
+          title: 'Toolbox entry 2',
+        },
+      ];
+      const userDefinedToolboxConfig = {
+        icon: options.config.toolbox.icon,
+        title: options.config.toolbox.title,
+      };
+      const tool = new BlockTool({
+        ...options,
+        constructable: {
+          ...options.constructable,
+          toolbox: toolboxEntries,
+        },
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      expect(tool.toolbox).to.be.deep.eq([ userDefinedToolboxConfig ]);
+    });
+
+    it('should replace Tool provided toolbox config with user defined config in case the first is an object and the second is an array', () => {
+      const userDefinedToolboxConfig = [
+        {
+          title: 'Toolbox entry 1',
+        },
+        {
+          title: 'Toolbox entry 2',
+        },
+      ];
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      expect(tool.toolbox).to.be.deep.eq(userDefinedToolboxConfig);
+    });
+
+    it('should merge Tool provided toolbox config with user defined config in case both are arrays', () => {
+      const toolboxEntries = [
+        {
+          title: 'Toolbox entry 1',
+        },
+      ];
+
+      const userDefinedToolboxConfig = [
+        {
+          icon: 'Icon 1',
+        },
+        {
+          icon: 'Icon 2',
+          title: 'Toolbox entry 2',
+        },
+      ];
+
+      const tool = new BlockTool({
+        ...options,
+        constructable: {
+          ...options.constructable,
+          toolbox: toolboxEntries,
+        },
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      const expected = userDefinedToolboxConfig.map((item, i) => {
+        const toolToolboxEntry = toolboxEntries[i];
+
+        if (toolToolboxEntry) {
+          return {
+            ...toolToolboxEntry,
+            ...item,
+          };
+        }
+
+        return item;
+      });
+
+      expect(tool.toolbox).to.be.deep.eq(expected);
     });
 
     it('should return undefined if user specifies false as a value', () => {

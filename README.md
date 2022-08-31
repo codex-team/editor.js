@@ -27,18 +27,18 @@
 
 - Unified Toolbox
   - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
-  - [ ] Toolbox become vertical `In progress`
-  - [ ] Ability to display several Toolbox buttons by the single Tool
-  - [ ] Conversion Toolbar uses Unified Toolbox
+  - [x] Toolbox become vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
+  - [x] Ability to display several Toolbox buttons by the single Tool [#2050](https://github.com/codex-team/editor.js/pull/2050)
+  - [ ] Conversion Toolbar uses Unified Toolbox `In progress`
   - [ ] Block Tunes become vertical
   - [ ] Conversion Toolbar added to the Block Tunes
 - Ecosystem improvements
 
 <a href="https://opencollective.com/editorjs/donate" target="_blank">
-  <img width="459" alt="image" src="https://user-images.githubusercontent.com/3684889/152159639-f5e89362-19a1-4c71-a089-422e875fab7d.png">
+  <img width="432" alt="image" src="https://user-images.githubusercontent.com/3684889/166146666-e6f5fcc3-bccf-43b0-b48c-e8f1b25b2896.png">
 </a>
 
-## 
+##
 
 
 ## If you like a project 💗💗💗
@@ -84,6 +84,8 @@ You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Tele
 ## Changelog
 
 See the whole [Changelog](/docs/CHANGELOG.md)
+
+If you want to follow Editor.js updates, [subscribe to our Newsletter](http://digest.editorjs.io/).
 
 ## How to use Editor.js
 
