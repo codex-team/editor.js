@@ -2,8 +2,8 @@ import { createOperationByStringsDiff } from '../../../../../src/components/coll
 import { OperationType } from '../../../../../src/components/collaborative-editing/diff/types';
 
 describe('getChangesFromString function', () => {
-  describe('Insert operation', () => {
-    it('should compute operation when a user inserts symbols at the start of the string', () => {
+  describe('User inserts symbols', () => {
+    it('should create Insert operation when a user inserts symbols at the start of the string', () => {
       const before = 'string';
       const after = 'Changed string';
       const expected = [
@@ -20,7 +20,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user inserts symbols in the string', () => {
+    it('should create Insert operation when a user inserts symbols in the string', () => {
       const before = 'string';
       const after = 'stri123ng';
       const expected = [
@@ -37,7 +37,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user inserts symbols at the end of the string', () => {
+    it('should create Insert operation when a user inserts symbols at the end of the string', () => {
       const before = 'string';
       const after = 'string is changed';
       const expected = [
@@ -54,7 +54,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user inserts symbols in the empty string', () => {
+    it('should create Insert operation when a user inserts symbols in the empty string', () => {
       const before = '';
       const after = 'String';
       const expected = [
@@ -72,8 +72,8 @@ describe('getChangesFromString function', () => {
     });
   });
 
-  describe('Remove operation', () => {
-    it('should compute operation when a user removes symbols at the start of the string', () => {
+  describe('User removes symbols', () => {
+    it('should create Remove operation when a user removes symbols at the start of the string', () => {
       const before = 'string';
       const after = 'ing';
       const expected = [
@@ -90,7 +90,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user removes symbols from the center of the string', () => {
+    it('should create Remove operation when a user removes symbols from the center of the string', () => {
       const before = 'String is changed';
       const after = 'String changed';
       const expected = [
@@ -107,7 +107,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user removes symbols at the end of the string', () => {
+    it('should create Remove operation when a user removes symbols at the end of the string', () => {
       const before = 'String is changed';
       const after = 'String is';
       const expected = [
@@ -124,7 +124,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operation when a user removes full string', () => {
+    it('should create Remove operation when a user removes full string', () => {
       const before = 'String';
       const after = '';
       const expected = [
@@ -142,8 +142,8 @@ describe('getChangesFromString function', () => {
     });
   });
 
-  describe('Remove and Insert operations', () => {
-    it('should compute operations when a user replaces symbols at the start of the string', () => {
+  describe('User replaces symbols', () => {
+    it('should create Remove and Insert operations when a user replaces symbols at the start of the string', () => {
       const before = 'string';
       const after = 'aaing';
       const expected = [
@@ -166,7 +166,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operations when a user replaces symbols from the center of the string', () => {
+    it('should create Remove and Insert operations when a user replaces symbols from the center of the string', () => {
       const before = 'abcaafd';
       const after = 'abceecfd';
       const expected = [
@@ -189,7 +189,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operations when a user replaces symbols at the end of the string', () => {
+    it('should create Remove and Insert operations when a user replaces symbols at the end of the string', () => {
       const before = 'abcdef';
       const after = 'abcaa';
       const expected = [
@@ -212,7 +212,7 @@ describe('getChangesFromString function', () => {
       expect(result).deep.equal(expected);
     });
 
-    it('should compute operations when a user replaces full string', () => {
+    it('should create Remove and Insert operations when a user replaces full string', () => {
       const before = 'abcd';
       const after = 'efg';
       const expected = [
