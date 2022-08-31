@@ -8,7 +8,7 @@ import { InsertOperation, OperationType, RemoveOperation } from './types';
  *
  * @returns {object[]} array of operations
  */
-export function createOperationByStringsDiff(str1: string, str2: string): (InsertOperation | RemoveOperation)[] {
+export function createOperationByStringsDiff(str1: string, str2: string): (InsertOperation<string> | RemoveOperation<string>)[] {
   if (str1 === str2) {
     return [];
   }
@@ -55,15 +55,13 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
     return [
       {
         type: OperationType.Remove,
-        from: left,
+        index: left,
         data: before,
-        length: before.length,
       },
       {
         type: OperationType.Insert,
-        from: left,
+        index: left,
         data: after,
-        length: after.length,
       },
     ];
   }
@@ -78,9 +76,8 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
     return [
       {
         type: OperationType.Insert,
-        from: left,
+        index: left,
         data,
-        length: data.length,
       },
     ];
   }
@@ -95,9 +92,8 @@ export function createOperationByStringsDiff(str1: string, str2: string): (Inser
     return [
       {
         type: OperationType.Remove,
-        from: left,
+        index: left,
         data,
-        length: data.length,
       },
     ];
   }

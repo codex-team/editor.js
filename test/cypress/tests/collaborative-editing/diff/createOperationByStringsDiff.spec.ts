@@ -9,9 +9,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Insert,
-          from: 0,
+          index: 0,
           data: 'Changed ',
-          length: 8,
         },
       ];
 
@@ -26,9 +25,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Insert,
-          from: 4,
+          index: 4,
           data: '123',
-          length: 3,
         },
       ];
 
@@ -43,9 +41,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Insert,
-          from: 6,
+          index: 6,
           data: ' is changed',
-          length: 11,
         },
       ];
 
@@ -60,9 +57,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Insert,
-          from: 0,
+          index: 0,
           data: 'String',
-          length: 6,
         },
       ];
 
@@ -79,9 +75,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 0,
+          index: 0,
           data: 'str',
-          length: 3,
         },
       ];
 
@@ -96,9 +91,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 7,
+          index: 7,
           data: 'is ',
-          length: 3,
         },
       ];
 
@@ -113,9 +107,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 9,
+          index: 9,
           data: ' changed',
-          length: 8,
         },
       ];
 
@@ -130,9 +123,8 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 0,
+          index: 0,
           data: 'String',
-          length: 6,
         },
       ];
 
@@ -149,15 +141,13 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 0,
+          index: 0,
           data: 'str',
-          length: 3,
         },
         {
           type: OperationType.Insert,
-          from: 0,
+          index: 0,
           data: 'aa',
-          length: 2,
         },
       ];
 
@@ -172,15 +162,13 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 3,
+          index: 3,
           data: 'aa',
-          length: 2,
         },
         {
           type: OperationType.Insert,
-          from: 3,
+          index: 3,
           data: 'eec',
-          length: 3,
         },
       ];
 
@@ -195,15 +183,13 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 3,
+          index: 3,
           data: 'def',
-          length: 3,
         },
         {
           type: OperationType.Insert,
-          from: 3,
+          index: 3,
           data: 'aa',
-          length: 2,
         },
       ];
 
@@ -218,15 +204,13 @@ describe('getChangesFromString function', () => {
       const expected = [
         {
           type: OperationType.Remove,
-          from: 0,
+          index: 0,
           data: 'abcd',
-          length: 4,
         },
         {
           type: OperationType.Insert,
-          from: 0,
+          index: 0,
           data: 'efg',
-          length: 3,
         },
       ];
 
