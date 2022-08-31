@@ -22,7 +22,6 @@ interface PopoverItemBase {
    */
   isActive?: boolean;
 
-
   /**
    * True if item should be disabled
    */
