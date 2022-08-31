@@ -6,6 +6,7 @@
   flex-direction: column;
   padding: 6px;
   min-width: 200px;
+  width: 200px;
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -122,6 +123,10 @@
     }
 
     &-label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
       &::after {
         content: '';
         width: 25px;
