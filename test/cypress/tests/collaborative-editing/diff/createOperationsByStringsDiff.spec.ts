@@ -1,7 +1,7 @@
-import { createOperationByStringsDiff } from '../../../../../src/components/collaborative-editing/diff/createOperationByStringsDiff';
+import { createOperationsByStringsDiff } from '../../../../../src/components/collaborative-editing/diff/createOperationsByStringsDiff';
 import { OperationType } from '../../../../../src/components/collaborative-editing/diff/types';
 
-describe('getChangesFromString function', () => {
+describe('createOperationsByStringsDiff function', () => {
   describe('User inserts symbols', () => {
     it('should create Insert operation when a user inserts symbols at the start of the string', () => {
       const before = 'string';
@@ -14,7 +14,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -30,7 +30,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -46,7 +46,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -62,7 +62,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -80,7 +80,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -96,7 +96,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -112,7 +112,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -128,7 +128,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -151,7 +151,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -172,7 +172,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -193,7 +193,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });
@@ -214,7 +214,7 @@ describe('getChangesFromString function', () => {
         },
       ];
 
-      const result = createOperationByStringsDiff(before, after);
+      const result = createOperationsByStringsDiff(before, after);
 
       expect(result).deep.equal(expected);
     });

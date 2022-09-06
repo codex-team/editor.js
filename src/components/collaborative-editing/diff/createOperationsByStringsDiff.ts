@@ -8,7 +8,7 @@ import { InsertOperation, OperationType, RemoveOperation } from './types';
  *
  * @returns {object[]} array of operations
  */
-export function createOperationByStringsDiff(str1: string, str2: string): (InsertOperation<string> | RemoveOperation<string>)[] {
+export function createOperationsByStringsDiff(str1: string, str2: string): (InsertOperation<string> | RemoveOperation<string>)[] {
   if (str1 === str2) {
     return [];
   }
