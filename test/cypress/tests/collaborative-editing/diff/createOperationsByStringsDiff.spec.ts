@@ -218,5 +218,26 @@ describe('createOperationsByStringsDiff function', () => {
 
       expect(result).deep.equal(expected);
     });
+
+    it('should create Remove and Insert operations when there are two changes at the start and the end of the string', () => {
+      const before = 'String is changed';
+      const after = 'Number is changed many times';
+      const expected = [
+        {
+          type: OperationType.Remove,
+          index: 0,
+          data: 'String is changed',
+        },
+        {
+          type: OperationType.Insert,
+          index: 0,
+          data: 'Number is changed many times',
+        },
+      ];
+
+      const result = createOperationsByStringsDiff(before, after);
+
+      expect(result).deep.equal(expected);
+    });
   });
 });
