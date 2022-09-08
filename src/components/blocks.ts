@@ -2,6 +2,7 @@ import * as _ from './utils';
 import $ from './dom';
 import Block, { BlockToolAPI } from './block';
 import { MoveEvent } from '../../types/tools';
+import { test } from './testsq';
 
 /**
  * @class Blocks
