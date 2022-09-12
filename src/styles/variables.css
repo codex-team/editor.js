@@ -211,12 +211,6 @@
       margin-bottom: 1px;
     }
 
-    @media (--can-hover) {
-      &:hover {
-        background-color: var(--bg-light);
-      }
-    }
-
     @media (--mobile) {
       font-size: 16px;
       padding: 4px;

@@ -72,6 +72,11 @@ export default class Flipper {
   private readonly activateCallback: (item: HTMLElement) => void;
 
   /**
+   * Contains list of callbacks to be executed on each flip
+   */
+  private flipCallbacks: Array<() => void> = []
+
+  /**
    * @param {FlipperOptions} options - different constructing settings
    */
   constructor(options: FlipperOptions) {
@@ -161,6 +166,24 @@ export default class Flipper {
    */
   public hasFocus(): boolean {
     return !!this.iterator.currentItem;
+  }
+
+  /**
+   * Registeres function that should be executed on each navigation action
+   *
+   * @param cb - function to execute
+   */
+  public onFlip(cb: () => void): void {
+    this.flipCallbacks.push(cb);
+  }
+
+  /**
+   * Unregisteres function that is executed on each navigation action
+   *
+   * @param cb - function to stop executing
+   */
+  public removeOnFlip(cb: () => void): void {
+    this.flipCallbacks = this.flipCallbacks.filter(fn => fn !== cb);
   }
 
   /**
@@ -270,5 +293,7 @@ export default class Flipper {
     if (this.iterator.currentItem) {
       this.iterator.currentItem.scrollIntoViewIfNeeded();
     }
+
+    this.flipCallbacks.forEach(cb => cb());
   }
 }
