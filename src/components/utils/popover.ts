@@ -155,7 +155,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Stores data on popover items that are in confirmation state
    */
-  private itemsRequiringConfirmation: {[itemIndex: number]: PopoverItem} = {};
+  private itemsRequiringConfirmation: { [itemIndex: number]: PopoverItem } = {};
 
   /**
    * Creates the Popover
@@ -572,100 +572,100 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper.onFlip(this.onFlip);
   }
 
-    /**
-     * Removes class responsible for special hover behavior on an item
-     */
-    private removeSpecialHoverBehavior = (): void => {
-      const el = this.nodes.items.querySelector(`.${Popover.CSS.itemNoHover}`);
+  /**
+   * Removes class responsible for special hover behavior on an item
+   */
+  private removeSpecialHoverBehavior = (): void => {
+    const el = this.nodes.items.querySelector(`.${Popover.CSS.itemNoHover}`);
 
-      if (!el) {
-        return;
-      }
-
-      el.classList.remove(Popover.CSS.itemNoHover);
+    if (!el) {
+      return;
     }
 
-    /**
-     * Removes class responsible for special focus behavior on an item
-     */
-    private removeSpecialFocusBehavior(): void {
-      const el = this.nodes.items.querySelector(`.${Popover.CSS.itemNoFocus}`);
+    el.classList.remove(Popover.CSS.itemNoHover);
+  }
 
-      if (!el) {
-        return;
-      }
+  /**
+   * Removes class responsible for special focus behavior on an item
+   */
+  private removeSpecialFocusBehavior(): void {
+    const el = this.nodes.items.querySelector(`.${Popover.CSS.itemNoFocus}`);
 
-      el.classList.remove(Popover.CSS.itemNoFocus);
+    if (!el) {
+      return;
     }
 
-    /**
-     * Called on flipper navigation
-     */
-    private onFlip = (): void => {
-      this.removeSpecialFocusBehavior();
-      this.removeSpecialHoverBehavior();
+    el.classList.remove(Popover.CSS.itemNoFocus);
+  }
 
-      this.flipper.removeOnFlip(this.onFlip);
-    }
+  /**
+   * Called on flipper navigation
+   */
+  private onFlip = (): void => {
+    this.removeSpecialFocusBehavior();
+    this.removeSpecialHoverBehavior();
 
-    /**
-     * Reactivates flipper instance.
-     * Should be used if popover items html elements get replaced to preserve workability of keyboard navigation
-     *
-     * @param items - html elements to navigate through
-     * @param focusedIndex - index of element to be focused
-     */
-    private reactivateFlipper(items: HTMLElement[], focusedIndex?: number): void {
-      this.flipper.deactivate();
-      this.flipper.activate(items, focusedIndex);
-    }
+    this.flipper.removeOnFlip(this.onFlip);
+  }
 
-    /**
-     * Creates Flipper instance to be able to leaf tools
-     */
-    private enableFlipper(): void {
-      this.flipper = new Flipper({
-        items: this.flippableElements,
-        focusedItemClass: Popover.CSS.itemFocused,
-        allowedKeys: [
-          keyCodes.TAB,
-          keyCodes.UP,
-          keyCodes.DOWN,
-          keyCodes.ENTER,
-        ],
-      });
-    }
+  /**
+   * Reactivates flipper instance.
+   * Should be used if popover items html elements get replaced to preserve workability of keyboard navigation
+   *
+   * @param items - html elements to navigate through
+   * @param focusedIndex - index of element to be focused
+   */
+  private reactivateFlipper(items: HTMLElement[], focusedIndex?: number): void {
+    this.flipper.deactivate();
+    this.flipper.activate(items, focusedIndex);
+  }
 
-    /**
-     * Returns list of elements available for keyboard navigation.
-     * Contains both usual popover items elements and custom html content.
-     */
-    private get flippableElements(): HTMLElement[] {
+  /**
+   * Creates Flipper instance to be able to leaf tools
+   */
+  private enableFlipper(): void {
+    this.flipper = new Flipper({
+      items: this.flippableElements,
+      focusedItemClass: Popover.CSS.itemFocused,
+      allowedKeys: [
+        keyCodes.TAB,
+        keyCodes.UP,
+        keyCodes.DOWN,
+        keyCodes.ENTER,
+      ],
+    });
+  }
+
+  /**
+   * Returns list of elements available for keyboard navigation.
+   * Contains both usual popover items elements and custom html content.
+   */
+  private get flippableElements(): HTMLElement[] {
     /**
      * Select html elements of popover items
      */
-      const popoverItemsElements = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
+    const popoverItemsElements = Array.from(this.nodes.wrapper.querySelectorAll(`.${Popover.CSS.item}`)) as HTMLElement[];
 
-      const customContentControlsElements = this.customContentFlippableItems || [];
-
-      /**
-       * Combine elements inside custom content area with popover items elements
-       */
-      return customContentControlsElements.concat(popoverItemsElements);
-    }
+    const customContentControlsElements = this.customContentFlippableItems || [];
 
     /**
-     * Checks if popover should be opened bottom.
-     * It should happen when there is enough space below or not enough space above
+     * Combine elements inside custom content area with popover items elements
      */
-    private get shouldOpenPopoverBottom(): boolean {
-      const toolboxRect = this.nodes.wrapper.getBoundingClientRect();
-      const scopeElementRect = this.scopeElement.getBoundingClientRect();
-      const popoverHeight = this.calculateHeight();
-      const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
-      const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
-      const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
+    return customContentControlsElements.concat(popoverItemsElements);
+  }
 
-      return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
-    }
+  /**
+   * Checks if popover should be opened bottom.
+   * It should happen when there is enough space below or not enough space above
+   */
+  private get shouldOpenPopoverBottom(): boolean {
+    const toolboxRect = this.nodes.wrapper.getBoundingClientRect();
+    const scopeElementRect = this.scopeElement.getBoundingClientRect();
+    const popoverHeight = this.calculateHeight();
+    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
+    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
+    const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
+
+    return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+  }
 }
