@@ -57,6 +57,7 @@
       border-width: 1px 1px 0 0;
       transform-origin: right;
       transform: rotate(45deg);
+      pointer-events: none;
     }
 
     &:after {
@@ -73,6 +74,7 @@
         #fff 1px,
         #fff 6px
       );
+      pointer-events: none;
     }
   }
 
