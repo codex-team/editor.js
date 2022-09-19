@@ -163,11 +163,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.Editor.BlockManager.currentBlock.selected = false;
     }
 
-    /** Clear settings */
-    if (this.nodes.renderedTunes) {
-      this.nodes.renderedTunes.innerHTML = '';
-    }
-
     /** Tell to subscribers that block settings is closed */
     this.eventsDispatcher.emit(this.events.closed);
 
