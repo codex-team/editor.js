@@ -34,6 +34,7 @@
 
   /**
    * Gray border, loaders
+   * @deprecated — use --color-line-gray instead
    */
   --color-gray-border: rgba(201, 201, 204, 0.48);
 
