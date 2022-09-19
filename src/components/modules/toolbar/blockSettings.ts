@@ -39,7 +39,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   public get CSS(): { [name: string]: string } {
     return {
       settings: 'ce-settings',
-      settingsOpenedTop: 'ce-settings--opened-top',
     };
   }
 
@@ -97,14 +96,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    const [tunesItemsConfig, addiitionalTunesContainer] = targetBlock.getTunes();
+    const [tunesItemsConfig, additionalTunesContainer] = targetBlock.getTunes();
 
-    this.nodes.renderedTunes = addiitionalTunesContainer;
+    this.nodes.renderedTunes = additionalTunesContainer;
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-
-    const customContentFlippableItems = this.getControls(this.nodes.renderedTunes);
 
     this.popover = new Popover({
       className: this.CSS.settings,
@@ -113,7 +110,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItemsConfig,
       customContent: this.nodes.renderedTunes,
-      customContentFlippableItems,
+      customContentFlippableItems: this.getControls(this.nodes.renderedTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
