@@ -6,6 +6,7 @@ import Block from '../../block';
 import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Flipper from '../../flipper';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -46,6 +47,15 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Opened state
    */
   public opened = false;
+
+  /**
+   * Getter for inner popover's flipper instance
+   *
+   * @todo remove once BlockSettings becomes standalone non-module class
+   */
+  public get flipper(): Flipper {
+    return this.popover?.flipper;
+  }
 
   /**
    * Page selection utils

@@ -22,6 +22,11 @@ export enum PopoverEvent {
  */
 export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
+   * Flipper - module for keyboard iteration between elements
+   */
+  public flipper: Flipper;
+
+  /**
    * Items list to be displayed
    */
   private readonly items: PopoverItem[];
@@ -67,11 +72,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Listeners util instance
    */
   private listeners: Listeners;
-
-  /**
-   * Flipper - module for keyboard iteration between elements
-   */
-  private flipper: Flipper;
 
   /**
    * Pass true to enable local search field
