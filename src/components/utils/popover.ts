@@ -271,7 +271,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     confirmationStateItems.forEach((itemEl: HTMLElement) => this.cleanUpConfirmationStateForItem(itemEl));
 
-    this.flipper.removeOnFlip(this.onFlip);
+    this.disableSpecialHoverAndFocusBehavior();
   }
 
   /**
@@ -280,7 +280,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   public destroy(): void {
     this.flipper.deactivate();
     this.listeners.removeAll();
-    this.flipper.removeOnFlip(this.onFlip);
+    this.disableSpecialHoverAndFocusBehavior();
 
     if (isMobileScreen()) {
       this.scrollLocker.unlock();
@@ -550,7 +550,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     delete this.itemsRequiringConfirmation[index];
 
     itemEl.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
-    this.flipper.removeOnFlip(this.onFlip);
+    this.disableSpecialHoverAndFocusBehavior();
 
     this.reactivateFlipper(
       this.flippableElements,
@@ -570,6 +570,16 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     item.addEventListener('mouseleave', this.removeSpecialHoverBehavior, { once: true });
     this.flipper.onFlip(this.onFlip);
+  }
+
+  /**
+   * Disables special focus and hover behavior.
+   */
+  private disableSpecialHoverAndFocusBehavior(): void {
+    this.removeSpecialFocusBehavior();
+    this.removeSpecialHoverBehavior();
+
+    this.flipper.removeOnFlip(this.onFlip);
   }
 
   /**
@@ -602,10 +612,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    this.removeSpecialFocusBehavior();
-    this.removeSpecialHoverBehavior();
-
-    this.flipper.removeOnFlip(this.onFlip);
+    this.disableSpecialHoverAndFocusBehavior();
   }
 
   /**
