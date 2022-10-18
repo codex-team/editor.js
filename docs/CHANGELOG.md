@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.25.1
+
+- `Fix`- add popular grammar checker extension node names
+
 ### 2.25.0
 
 - `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
