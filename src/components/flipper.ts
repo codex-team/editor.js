@@ -124,7 +124,7 @@ export default class Flipper {
      * TAB will leaf iterator items
      * ENTER will click the focused item
      */
-    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keydown', this.onKeyDown, true);
   }
 
   /**
