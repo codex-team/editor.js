@@ -237,9 +237,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper.activate();
 
     if (this.searchable) {
-      window.requestAnimationFrame(() => {
+      setTimeout(() => {
         this.search.focus();
-      });
+      }, 100);
     }
 
     if (isMobileScreen()) {
