@@ -123,6 +123,10 @@ export default class Flipper {
      * Listening all keydowns on document and react on TAB/Enter press
      * TAB will leaf iterator items
      * ENTER will click the focused item
+     *
+     * Note: the event should be handled in capturing mode on following reasons:
+     * - prevents plugins inner keydown handlers from being called while keyboard navigation
+     * - otherwise this handler will be called at the moment it is attached which causes false flipper firing (see https://techread.me/js-addeventlistener-fires-for-past-events/)
      */
     document.addEventListener('keydown', this.onKeyDown, true);
   }
