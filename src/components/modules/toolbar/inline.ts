@@ -196,6 +196,14 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+
+    const selection = SelectionUtils.get();
+
+    for (const button of Array.from(this.nodes.buttons.querySelectorAll('button'))) {
+      const instance = this.toolsInstances.get(button.dataset.tool);
+
+      button.hidden = instance.isValid && !instance.isValid(selection);
+    }
   }
 
   /**
@@ -543,6 +551,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     button.dataset.tool = tool.name;
     this.nodes.buttons.appendChild(button);
+    button.hidden = instance.isValid && !instance.isValid(SelectionUtils.get());
     this.toolsInstances.set(tool.name, instance);
 
     if (_.isFunction(instance.renderActions)) {

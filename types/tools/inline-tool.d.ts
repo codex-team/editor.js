@@ -35,6 +35,13 @@ export interface InlineTool extends BaseTool {
    *                          Better to create the 'destroy' method in a future.
    */
   clear?(): void;
+
+  /**
+   * Function called every time selection is updated
+   * Used to show or not that Tool
+   * @param selection - current Selection
+   */
+  isValid?(selection: Selection): boolean
 }
 
 

@@ -194,4 +194,48 @@ describe('InlineTool', () => {
       expect(instance.config).to.be.deep.eq(options.config.config);
     });
   });
+
+  context('.isValid()',() => {
+    const tool = new InlineTool(options as any);
+    const instance = tool.create();
+    const keyword = 'charles';
+
+    instance.isValid = function (selection): boolean {
+      cy.log(selection.toString());
+
+      return selection.toString().startsWith(keyword);
+    };
+
+    it('should not be a valid selection', () => {
+      const p = document.createElement('p');
+      const data = 'hi i dont start with ' + keyword;
+      const range = new Range();
+      const selection = window.getSelection();
+
+      p.appendChild(document.createTextNode(data));
+      document.body.appendChild(p);
+      range.setStart(p.firstChild, 0);
+      range.setEnd(p.firstChild, data.length);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      expect(instance.isValid(selection)).to.be.false;
+      document.body.removeChild(p);
+    });
+
+    it('should be a valid selection', () => {
+      const p = document.createElement('p');
+      const data = keyword + ', hi i dont start with ';
+      const range = new Range();
+      const selection = window.getSelection();
+
+      p.appendChild(document.createTextNode(data));
+      document.body.appendChild(p);
+      range.setStart(p.firstChild, 0);
+      range.setEnd(p.firstChild, data.length);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      expect(instance.isValid(selection)).to.be.true;
+      document.body.removeChild(p);
+    });
+  });
 });
