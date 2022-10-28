@@ -122,7 +122,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       customContent: this.nodes.renderedTunes,
       customContentFlippableItems: this.getControls(this.nodes.renderedTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
-      shouldHighlightActivated: true,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
 

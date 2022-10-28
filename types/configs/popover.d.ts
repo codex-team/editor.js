@@ -37,6 +37,11 @@ interface PopoverItemBase {
    * Used in data attributes needed for cypress tests
    */
   name?: string;
+
+  /**
+   * True if item should be highlighted once activated
+   */
+  toggle?: boolean;
 }
 
 /**

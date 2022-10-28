@@ -158,11 +158,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private itemsRequiringConfirmation: { [itemIndex: number]: PopoverItem } = {};
 
   /**
-   * If true, activated item should be highlighted as active once clicked.
-   */
-  private shouldHighlightActivated: boolean;
-
-  /**
    * Creates the Popover
    *
    * @param options - config
@@ -173,9 +168,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.customContent - arbitrary html element to be inserted before items list
    * @param options.customContentFlippableItems - list of html elements inside custom content area that should be available for keyboard navigation
    * @param options.scopeElement - editor container element
-   * @param shouldHighlightActivated - If true, activated item should be highlighted as active once clicked.
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, customContentFlippableItems, scopeElement, shouldHighlightActivated = false }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, customContentFlippableItems, scopeElement }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
@@ -184,7 +178,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     customContent?: HTMLElement;
     customContentFlippableItems?: HTMLElement[];
     scopeElement: HTMLElement;
-    shouldHighlightActivated?: boolean;
   }) {
     super();
     this.items = items;
@@ -194,7 +187,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.searchable = searchable;
     this.listeners = new Listeners();
     this.scopeElement = scopeElement;
-    this.shouldHighlightActivated = shouldHighlightActivated;
 
     this.filterLabel = filterLabel;
     this.nothingFoundLabel = nothingFoundLabel;
@@ -493,8 +485,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
     clickedItem.onActivate(clickedItem, event);
 
-    if (this.shouldHighlightActivated) {
-      /** If popover is not intended to close once item is activated, we need to update active state of activated item */
+    if (clickedItem.toggle) {
       clickedItem.isActive = !clickedItem.isActive;
       itemEl.classList.toggle(Popover.CSS.itemActive);
     }
