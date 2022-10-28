@@ -234,7 +234,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
     this.nodes.overlay.classList.remove(Popover.CSS.popoverOverlayHidden);
-    this.flipper.activate();
+    this.flipper.activate(this.flippableElements);
 
     if (this.searchable) {
       setTimeout(() => {
