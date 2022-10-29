@@ -23,7 +23,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface | undefined => this.getBlockByIndex(index),
       getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlockIndex: (id: string): number => this.getBlockIndex(id),
@@ -77,7 +77,7 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} index - index to get
    */
-  public getBlockByIndex(index: number): BlockAPIInterface | void {
+  public getBlockByIndex(index: number): BlockAPIInterface | undefined {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (block === undefined) {

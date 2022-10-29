@@ -13,7 +13,6 @@ import Flipper from '../../flipper';
  */
 interface BlockSettingsNodes {
   wrapper: HTMLElement;
-  renderedTunes: HTMLElement;
 }
 
 /**
@@ -54,7 +53,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @todo remove once BlockSettings becomes standalone non-module class
    */
   public get flipper(): Flipper {
-    return this.popover?.flipper;
+    return this.popover.flipper;
   }
 
   /**
@@ -106,9 +105,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    const [tunesItemsConfig, additionalTunesContainer] = targetBlock.getTunes();
-
-    this.nodes.renderedTunes = additionalTunesContainer;
+    const [tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -118,9 +115,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItemsConfig,
-      customContent: this.nodes.renderedTunes,
-      customContentFlippableItems: this.getControls(this.nodes.renderedTunes),
+      items: tunesItems,
+      customContent: customHtmlTunesContainer,
+      customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
