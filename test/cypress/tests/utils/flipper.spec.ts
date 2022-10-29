@@ -75,9 +75,18 @@ describe('Flipper', () => {
       .get('.cdx-some-plugin')
       // Open tunes menu
       .trigger('keydown', { keyCode: TAB_KEY_CODE })
-      // Navigate to delete button
+      // Navigate to delete button (the second button)
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE })
-      .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE })
+      .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE });
+
+    /**
+     * Check whether we focus the Delete Tune or not
+     */
+    cy.get('[data-item-name="delete"]')
+      .should('have.class', 'ce-popover__item--focused');
+
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-some-plugin')
       // Click delete
       .trigger('keydown', { keyCode: ENTER_KEY_CODE })
       // // Confirm delete
