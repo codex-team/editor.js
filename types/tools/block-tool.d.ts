@@ -6,7 +6,6 @@ import { API, BlockAPI, ToolboxConfig } from '../index';
 import { PasteEvent } from './paste-events';
 import { MoveEvent } from './hook-events';
 import { TunesMenuConfig } from './tool-settings';
-import { PopoverItem } from '../../src/components/utils/popover';
 
 /**
  * Describe Block Tool object

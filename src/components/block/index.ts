@@ -662,6 +662,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
       if ($.isElement(rendered)) {
         customHtmlTunesContainer.appendChild(rendered);
+      } else if (Array.isArray(rendered)) {
+        tunesItems.push(...rendered);
       } else {
         tunesItems.push(rendered);
       }
