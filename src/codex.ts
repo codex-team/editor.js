@@ -138,3 +138,7 @@ export default class EditorJS {
       });
   }
 }
+
+ /**
+   *trigger analysis*
+   */
