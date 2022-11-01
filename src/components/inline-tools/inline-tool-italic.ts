@@ -23,13 +23,14 @@ export default class ItalicInlineTool implements InlineTool {
 
   /**
    * Sanitizer Rule
-   * Leave <i> tags
+   * Leave <i> and <em> tags
    *
    * @returns {object}
    */
   public static get sanitize(): SanitizerConfig {
     return {
       i: {},
+      em: {},
     } as SanitizerConfig;
   }
 
