@@ -43,12 +43,14 @@
   }
 
   @media (--mobile) {
+    --offset: 5px;
+
     position: fixed;
     max-width: none;
-    min-width: auto;
-    left: 5px;
-    right: 5px;
-    bottom: calc(5px + env(safe-area-inset-bottom));
+    min-width: calc(100% - var(--offset) * 2);
+    left: var(--offset);
+    right: var(--offset);
+    bottom: calc(var(--offset) + env(safe-area-inset-bottom));
     top: auto;
     border-radius: 10px;
   }
@@ -175,10 +177,6 @@
     &--shown {
       display: block;
     }
-
-    /* &:hover {
-      background-color: transparent;
-    } */
   }
 
   @media (--mobile) {
