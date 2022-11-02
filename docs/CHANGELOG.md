@@ -1,5 +1,10 @@
 # Changelog
 
+
+### 2.26.0
+
+- `New` — *UI* — Meet the new Block Tunes look! Vertical menu with simple JSON configuration (and support for legacy way of defining block tunes).
+
 ### 2.25.0
 
 - `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
