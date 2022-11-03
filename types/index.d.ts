@@ -71,6 +71,9 @@ export {
   Dictionary,
   DictValue,
   I18nConfig,
+  PopoverItem,
+  PopoverItemWithConfirmation,
+  PopoverItemWithoutConfirmation
 } from './configs';
 export {OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockAPI } from './api'
