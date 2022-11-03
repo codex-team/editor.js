@@ -121,6 +121,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
     this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover.on(PopoverEvent.Close, () => this.close());
 
     this.nodes.wrapper.append(this.popover.getElement());
 
@@ -167,6 +168,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
       this.popover.destroy();
       this.popover.getElement().remove();
+      this.popover = null;
     }
   }
 

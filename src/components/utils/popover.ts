@@ -15,6 +15,11 @@ export enum PopoverEvent {
    * When popover overlay is clicked
    */
   OverlayClicked = 'overlay-clicked',
+
+  /**
+   * When popover closes
+   */
+  Close = 'close'
 }
 
 /**
@@ -272,6 +277,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     confirmationStateItems.forEach((itemEl: HTMLElement) => this.cleanUpConfirmationStateForItem(itemEl));
 
     this.disableSpecialHoverAndFocusBehavior();
+
+    this.emit(PopoverEvent.Close);
   }
 
   /**
