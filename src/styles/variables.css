@@ -61,6 +61,11 @@
   --toolbox-buttons-size--mobile: 36px;
 
   /**
+   * Size of svg icons got from the CodeX Icons pack
+   */
+  --icon-size: 20px;
+
+  /**
    * The main `.cdx-block` wrapper has such vertical paddings
    * And the Block Actions toggler too
    */
@@ -241,8 +246,8 @@
     }
 
     svg {
-      width: 12px;
-      height: 12px;
+      width: var(--icon-size);
+      height: var(--icon-size);
     }
   }
 }

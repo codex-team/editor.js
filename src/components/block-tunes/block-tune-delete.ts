@@ -5,7 +5,7 @@
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune, PopoverItem } from '../../../types';
-import $ from '../dom';
+import { IconCross } from '@codexteam/icons';
 
 /**
  *
@@ -37,7 +37,7 @@ export default class DeleteTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
-      icon: $.svg('cross', 14, 14).outerHTML,
+      icon: IconCross,
       label: this.api.i18n.t('Delete'),
       name: 'delete',
       confirmation: {

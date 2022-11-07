@@ -4,9 +4,9 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import $ from '../dom';
-import { API, BlockTune, BlockAPI, PopoverItem } from '../../../types';
+import { API, BlockTune, PopoverItem } from '../../../types';
 import Popover from '../../components/utils/popover';
+import { IconArrowUp } from '@codexteam/icons';
 
 /**
  *
@@ -45,7 +45,7 @@ export default class MoveUpTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
-      icon: $.svg('arrow-up', 14, 14).outerHTML,
+      icon: IconArrowUp,
       label: this.api.i18n.t('Move up'),
       onActivate: (item, e): void => this.handleClick(e),
       name: 'move-up',

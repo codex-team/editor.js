@@ -877,6 +877,7 @@ export default class UI extends Module<UINodes> {
 
   /**
    * Append prebuilt sprite with SVG icons
+   * @deprecated
    */
   private appendSVGSprite(): void {
     const spriteHolder = $.make('div');

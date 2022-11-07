@@ -90,8 +90,10 @@ export default class Dom {
    * @param {number} [height] - icon height
    *
    * @returns {SVGElement}
+   *
+   * @deprecated
    */
-  public static svg(name: string, width = 14, height = 14): SVGElement {
+  public static svg(name: string, width = 20, height = 20): SVGElement {
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     icon.classList.add('icon', 'icon--' + name);
