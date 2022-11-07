@@ -1,43 +1,15 @@
 .ce-settings {
-  @apply --overlay-pane;
-  top: var(--toolbar-buttons-size);
-  left: 0;
-  min-width: 114px;
-  box-sizing: content-box;
+  position: absolute;
+  z-index: 2;
+  --gap: 8px;
 
-  @media (--mobile){
-    bottom: 40px;
-    right: auto;
-    top: auto;
-  }
+  @media (--not-mobile){
+    position: absolute;
+    top: calc(var(--toolbox-buttons-size) + var(--gap));
+    left: 0;
 
-  &::before{
-    left: auto;
-    right: 12px;
-
-    @media (--mobile){
-      bottom: -5px;
-      top: auto;
-    }
-  }
-
-  display: none;
-
-  &--opened {
-    display: block;
-    animation-duration: 0.1s;
-    animation-name: panelShowing;
-  }
-
-  &__plugin-zone {
-    &:not(:empty){
-      padding: 3px 3px 0;
-    }
-  }
-
-  &__default-zone {
-    &:not(:empty){
-      padding: 3px;
+    &--opened-top {
+      top: calc(-1 * (var(--gap) + var(--popover-height)));
     }
   }
 

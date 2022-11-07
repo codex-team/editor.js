@@ -3,9 +3,9 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
 
@@ -99,7 +99,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private static get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
-      toolboxOpenedTop: 'ce-toolbox--opened-top',
     };
   }
 
@@ -128,6 +127,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public make(): Element {
     this.popover = new Popover({
+      scopeElement: this.api.ui.nodes.redactor,
       className: Toolbox.CSS.toolbox,
       searchable: true,
       filterLabel: this.i18nLabels.filter,
@@ -189,15 +189,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       return;
     }
 
-    /**
-     * Open the popover above the button
-     * if there is not enough available space below it
-     */
-    if (!this.shouldOpenPopoverBottom) {
-      this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');
-      this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
-    }
-
     this.popover.show();
     this.opened = true;
     this.emit(ToolboxEvent.Opened);
@@ -209,7 +200,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public close(): void {
     this.popover.hide();
     this.opened = false;
-    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpenedTop);
     this.emit(ToolboxEvent.Closed);
   }
 
@@ -222,21 +212,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     } else {
       this.close();
     }
-  }
-
-  /**
-   * Checks if there popover should be opened downwards.
-   * It happens in case there is enough space below or not enough space above
-   */
-  private get shouldOpenPopoverBottom(): boolean {
-    const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
-    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
-    const popoverHeight = this.popover.calculateHeight();
-    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
-    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
-    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
-
-    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
   }
 
   /**
@@ -284,7 +259,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         icon: toolboxItem.icon,
         label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
-        onClick: (e): void => {
+        onActivate: (e): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',

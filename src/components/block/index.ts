@@ -5,7 +5,8 @@ import {
   BlockTune as IBlockTune,
   SanitizerConfig,
   ToolConfig,
-  ToolboxConfigEntry
+  ToolboxConfigEntry,
+  PopoverItem
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -642,22 +643,33 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-   *
-   * @returns {DocumentFragment[]}
+   * Returns data to render in tunes menu.
+   * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public renderTunes(): [DocumentFragment, DocumentFragment] {
-    const tunesElement = document.createDocumentFragment();
-    const defaultTunesElement = document.createDocumentFragment();
+  public getTunes(): [PopoverItem[], HTMLElement] {
+    const customHtmlTunesContainer = document.createElement('div');
+    const tunesItems: PopoverItem[] = [];
 
-    this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render());
-    });
-    this.defaultTunesInstances.forEach((tune) => {
-      $.append(defaultTunesElement, tune.render());
+    /** Tool's tunes: may be defined as return value of optional renderSettings method */
+    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
+
+    /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
+    const commonTunes = [
+      ...this.defaultTunesInstances.values(),
+      ...this.tunesInstances.values(),
+    ].map(tuneInstance => tuneInstance.render());
+
+    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
+      if ($.isElement(rendered)) {
+        customHtmlTunesContainer.appendChild(rendered);
+      } else if (Array.isArray(rendered)) {
+        tunesItems.push(...rendered);
+      } else {
+        tunesItems.push(rendered);
+      }
     });
 
-    return [tunesElement, defaultTunesElement];
+    return [tunesItems, customHtmlTunesContainer];
   }
 
   /**
@@ -723,15 +735,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     if (_.isFunction(this.toolInstance.destroy)) {
       this.toolInstance.destroy();
-    }
-  }
-
-  /**
-   * Call Tool instance renderSettings method
-   */
-  public renderSettings(): HTMLElement | undefined {
-    if (_.isFunction(this.toolInstance.renderSettings)) {
-      return this.toolInstance.renderSettings();
     }
   }
 

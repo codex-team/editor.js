@@ -6,7 +6,8 @@
  */
 
 import $ from '../dom';
-import { API, BlockTune } from '../../../types';
+import { API, BlockTune, PopoverItem } from '../../../types';
+import Popover from '../utils/popover';
 
 /**
  *
@@ -26,12 +27,8 @@ export default class MoveDownTune implements BlockTune {
 
   /**
    * Styles
-   *
-   * @type {{wrapper: string}}
    */
   private CSS = {
-    button: 'ce-settings__button',
-    wrapper: 'ce-tune-move-down',
     animation: 'wobble',
   };
 
@@ -45,43 +42,32 @@ export default class MoveDownTune implements BlockTune {
   }
 
   /**
-   * Return 'move down' button
-   *
-   * @returns {HTMLElement}
+   * Tune's appearance in block settings menu
    */
-  public render(): HTMLElement {
-    const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
-
-    moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    this.api.listeners.on(
-      moveDownButton,
-      'click',
-      (event) => this.handleClick(event as MouseEvent, moveDownButton),
-      false
-    );
-
-    /**
-     * Enable tooltip module on button
-     */
-    this.api.tooltip.onHover(moveDownButton, this.api.i18n.t('Move down'), {
-      hidingDelay: 300,
-    });
-
-    return moveDownButton;
+  public render(): PopoverItem {
+    return {
+      icon: $.svg('arrow-down', 14, 14).outerHTML,
+      label: this.api.i18n.t('Move down'),
+      onActivate: (item, event): void => this.handleClick(event),
+      name: 'move-down',
+    };
   }
 
   /**
    * Handle clicks on 'move down' button
    *
-   * @param {MouseEvent} event - click event
-   * @param {HTMLElement} button - clicked button
+   * @param event - click event
    */
-  public handleClick(event: MouseEvent, button: HTMLElement): void {
+  public handleClick(event: MouseEvent): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
     if (!nextBlock) {
+      const button = (event.target as HTMLElement)
+        .closest('.' + Popover.CSS.item)
+        .querySelector('.' + Popover.CSS.itemIcon);
+
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
@@ -110,8 +96,5 @@ export default class MoveDownTune implements BlockTune {
     this.api.blocks.move(currentBlockIndex + 1);
 
     this.api.toolbar.toggleBlockSettings(true);
-
-    /** Hide the Tooltip */
-    this.api.tooltip.hide();
   }
 }
