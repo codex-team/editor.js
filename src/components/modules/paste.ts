@@ -324,7 +324,7 @@ export default class Paste extends Module {
      * If tagsConfig is string, return it as an array.
      */
     if (_.isString(tagsConfig)) {
-      return [tagsConfig];
+      return [ tagsConfig ];
     }
     /**
      * If tagsConfig is object, return keys of it as an array.
@@ -525,7 +525,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
-      .find(([toolName, { mimeTypes, extensions }]) => {
+      .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -542,7 +542,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [tool] = foundConfig;
+    const [ tool ] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
@@ -593,33 +593,33 @@ export default class Paste extends Module {
         const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig;
 
         /**
-          * Reduce the tags or sanitize configs to a single array of sanitize config.
-          * For example:
-          * If sanitaze config is
-          * [ 'tbody',
-          *   {
-          *     table: {
-          *       width: true,
-          *       height: true,
-          *     },
-          *   },
-          *   {
-          *      td: {
-          *        colspan: true,
-          *        rowspan: true,
-          *       },
-          *      tr: {  // <-- the second tag
-          *        height: true,
-          *       },
-          *   },]
-          * then sanitize config will be
-          * [
-          *  'table':{},
-          *  'tbody':{width: true, height: true}
-          *  'td':{colspan: true, rowspan: true},
-          *  'tr':{height: true}
-          * ]
-        */
+         * Reduce the tags or sanitize configs to a single array of sanitize config.
+         * For example:
+         * If sanitaze config is
+         * [ 'tbody',
+         *   {
+         *     table: {
+         *       width: true,
+         *       height: true,
+         *     },
+         *   },
+         *   {
+         *      td: {
+         *        colspan: true,
+         *        rowspan: true,
+         *       },
+         *      tr: {  // <-- the second tag
+         *        height: true,
+         *       },
+         *   },]
+         * then sanitize config will be
+         * [
+         *  'table':{},
+         *  'tbody':{width: true, height: true}
+         *  'td':{colspan: true, rowspan: true},
+         *  'tr':{height: true}
+         * ]
+         */
         const toolTags = tagsOrSanitizeConfigs.reduce((result, tagOrSanitizeConfig) => {
           const tags = this.getTags(tagOrSanitizeConfig);
 
