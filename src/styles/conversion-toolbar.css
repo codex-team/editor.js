@@ -63,20 +63,7 @@
   }
 
   &__icon {
-    display: inline-flex;
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--color-gray-border);
-    border-radius: 3px;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    background: #fff;
-
-    svg {
-      width: 11px;
-      height: 11px;
-    }
+    @apply --tool-icon;
   }
 
   &--last {

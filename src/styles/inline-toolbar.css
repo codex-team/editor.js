@@ -50,13 +50,14 @@
   }
 
   &__dropdown {
-    display: inline-flex;
+    display: flex;
     height: var(--toolbar-buttons-size);
-    padding: 0 9px 0 10px;
+    padding: 6px;
     margin: 0 6px 0 -6px;
     align-items: center;
     cursor: pointer;
     border-right: 1px solid var(--color-gray-border);
+    box-sizing: border-box;
 
     &:hover {
       background: var(--bg-light);
@@ -66,18 +67,13 @@
       display: none;
     }
 
-    &-content{
+    &-content,
+    &-arrow {
       display: flex;
-      font-weight: 500;
-      font-size: 14px;
-
       svg {
-        height: 12px;
+        width: var(--icon-size);
+        height: var(--icon-size);
       }
-    }
-
-    .icon--toggler-down {
-      margin-left: 4px;
     }
   }
 

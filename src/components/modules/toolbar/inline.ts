@@ -11,6 +11,7 @@ import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
+import { IconArrowDown } from '@codexteam/icons';
 
 /**
  * Inline Toolbar elements
@@ -51,6 +52,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
+    conversionTogglerArrow: 'ce-inline-toolbar__dropdown-arrow',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
     togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper',
@@ -428,10 +430,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
     this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
 
-    const icon = $.svg('toggler-down', 13, 13);
+    const iconWrapper = $.make('div', this.CSS.conversionTogglerArrow, {
+      innerHTML: IconArrowDown,
+    });
 
     this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
-    this.nodes.conversionToggler.appendChild(icon);
+    this.nodes.conversionToggler.appendChild(iconWrapper);
 
     this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
