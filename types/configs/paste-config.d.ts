@@ -3,7 +3,15 @@
  */
 export interface PasteConfig {
   /**
-   * Array of tags Tool can substitute
+   * Array of tags Tool can substitute. 
+   * 
+   * Could also contain a sanitise-config if you need to save some tag's attribute. 
+   * For example: 
+   * [
+   *   { 
+   *     img: { src: true },
+   *   }
+   * ],
    * @type string[]
    */
   tags?: (string | object)[];
