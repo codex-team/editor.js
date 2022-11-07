@@ -1,4 +1,7 @@
 import { ToolboxConfig, BlockToolData, ToolboxConfigEntry } from '../../../../types';
+import { TunesMenuConfig } from '../../../../types/tools';
+
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 const ICON = '<svg width="17" height="15" viewBox="0 0 336 276" xmlns="http://www.w3.org/2000/svg"><path d="M291 150V79c0-19-15-34-34-34H79c-19 0-34 15-34 34v42l67-44 81 72 56-29 42 30zm0 52l-43-30-56 30-81-67-66 39v23c0 19 15 34 34 34h178c17 0 31-13 34-29zM79 0h178c44 0 79 35 79 79v118c0 44-35 79-79 79H79c-44 0-79-35-79-79V79C0 35 35 0 79 0z"></path></svg>';
 
@@ -264,6 +267,227 @@ describe('Editor Tools Api', () => {
         .get('div.ce-popover__item[data-item-name=testTool]')
         .should('have.length', 1)
         .should('not.contain', skippedEntryTitle);
+    });
+  });
+
+  context('Tunes', () => {
+    it('should contain a single block tune configured in tool\'s renderSettings() method', () => {
+      /** Tool with single tunes menu entry configured */
+      class TestTool {
+        /** Returns toolbox config as list of entries */
+        public static get toolbox(): ToolboxConfigEntry {
+          return {
+            title: 'Test tool',
+            icon: ICON,
+          };
+        }
+
+        /** Returns configuration for block tunes menu */
+        public renderSettings(): TunesMenuConfig {
+          return {
+            label: 'Test tool tune',
+            icon: ICON,
+            name: 'testToolTune',
+
+            onActivate: (): void => {},
+          };
+        }
+
+        /** Save method stub */
+        public save(): void {}
+
+        /** Renders a block */
+        public render(): HTMLElement {
+          const element = document.createElement('div');
+
+          element.contentEditable = 'true';
+          element.setAttribute('data-name', 'testBlock');
+
+          return element;
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+      }).as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-toolbar__plus')
+        .click();
+
+      // Insert test tool block
+      cy.get('[data-cy=editorjs]')
+        .get(`[data-item-name="testTool"]`)
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-name=testBlock]')
+        .type('some text')
+        .click();
+
+      // Open block tunes
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      // Expect preconfigured tune to exist in tunes menu
+      cy.get('[data-item-name=testToolTune]').should('exist');
+    });
+
+    it('should contain multiple block tunes if configured in tool\'s renderSettings() method', () => {
+      /** Tool with single tunes menu entry configured */
+      class TestTool {
+        /** Returns toolbox config as list of entries */
+        public static get toolbox(): ToolboxConfigEntry {
+          return {
+            title: 'Test tool',
+            icon: ICON,
+          };
+        }
+
+        /** Returns configuration for block tunes menu */
+        public renderSettings(): TunesMenuConfig {
+          return [
+            {
+              label: 'Test tool tune 1',
+              icon: ICON,
+              name: 'testToolTune1',
+
+              onActivate: (): void => {},
+            },
+            {
+              label: 'Test tool tune 2',
+              icon: ICON,
+              name: 'testToolTune2',
+
+              onActivate: (): void => {},
+            },
+          ];
+        }
+
+        /** Save method stub */
+        public save(): void {}
+
+        /** Renders a block */
+        public render(): HTMLElement {
+          const element = document.createElement('div');
+
+          element.contentEditable = 'true';
+          element.setAttribute('data-name', 'testBlock');
+
+          return element;
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+      }).as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-toolbar__plus')
+        .click();
+
+      // Insert test tool block
+      cy.get('[data-cy=editorjs]')
+        .get(`[data-item-name="testTool"]`)
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-name=testBlock]')
+        .type('some text')
+        .click();
+
+      // Open block tunes
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      // Expect preconfigured tunes to exist in tunes menu
+      cy.get('[data-item-name=testToolTune1]').should('exist');
+      cy.get('[data-item-name=testToolTune2]').should('exist');
+    });
+
+    it('should contain block tunes represented as custom html if so configured in tool\'s renderSettings() method', () => {
+      const sampleText = 'sample text';
+
+      /** Tool with single tunes menu entry configured */
+      class TestTool {
+        /** Returns toolbox config as list of entries */
+        public static get toolbox(): ToolboxConfigEntry {
+          return {
+            title: 'Test tool',
+            icon: ICON,
+          };
+        }
+
+        /** Returns configuration for block tunes menu */
+        public renderSettings(): HTMLElement {
+          const element = document.createElement('div');
+
+          element.textContent = sampleText;
+
+          return element;
+        }
+
+        /** Save method stub */
+        public save(): void {}
+
+        /** Renders a block */
+        public render(): HTMLElement {
+          const element = document.createElement('div');
+
+          element.contentEditable = 'true';
+          element.setAttribute('data-name', 'testBlock');
+
+          return element;
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+      }).as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-toolbar__plus')
+        .click();
+
+      // Insert test tool block
+      cy.get('[data-cy=editorjs]')
+        .get(`[data-item-name="testTool"]`)
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-name=testBlock]')
+        .type('some text')
+        .click();
+
+      // Open block tunes
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      // Expect preconfigured custom html tunes to exist in tunes menu
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover')
+        .should('contain.text', sampleText);
     });
   });
 });
