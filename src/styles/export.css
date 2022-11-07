@@ -40,6 +40,8 @@
  */
 .cdx-settings-button {
   @apply --toolbar-button;
+  min-width: var(--toolbox-buttons-size);
+  min-height: var(--toolbox-buttons-size);
 
   &--active {
     color: var(--color-active-icon);

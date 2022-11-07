@@ -51,7 +51,6 @@
 
   &__dropdown {
     display: flex;
-    height: var(--toolbar-buttons-size);
     padding: 6px;
     margin: 0 6px 0 -6px;
     align-items: center;
@@ -86,19 +85,11 @@
 
 .ce-inline-tool {
   @apply --toolbar-button;
+
   border-radius: 0;
   line-height: normal;
-  width: auto;
-  padding: 0 5px !important;
-  min-width: 24px;
+  padding: 0 1px !important;
 
-  &:not(:last-of-type) {
-    margin-right: 2px;
-  }
-
-  .icon {
-    height: 12px;
-  }
 
   &--link {
     .icon--unlink {

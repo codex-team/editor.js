@@ -1,5 +1,6 @@
 import $ from '../dom';
 import { InlineTool, SanitizerConfig } from '../../../types';
+import { IconBold } from '@codexteam/icons';
 
 /**
  * Bold Tool
@@ -61,7 +62,7 @@ export default class BoldInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('bold', 12, 14));
+    this.nodes.button.innerHTML = IconBold;
 
     return this.nodes.button;
   }

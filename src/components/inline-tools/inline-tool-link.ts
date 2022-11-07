@@ -4,6 +4,7 @@ import $ from '../dom';
 import * as _ from '../utils';
 import { InlineTool, SanitizerConfig } from '../../../types';
 import { Notifier, Toolbar, I18n } from '../../../types/api';
+import { IconLink } from '@codexteam/icons';
 
 /**
  * Link Tool
