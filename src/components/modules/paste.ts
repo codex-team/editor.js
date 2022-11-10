@@ -552,7 +552,18 @@ export default class Paste extends Module {
         }, {});
         const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
 
-        content.innerHTML = clean(content.innerHTML, customConfig);
+        if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+          content.innerHTML = clean(content.innerHTML, customConfig);
+        } else {
+          const sanitizerWrapper = document.createElement('div');
+
+          sanitizerWrapper.innerHTML = clean(content.outerHTML, customConfig);
+          const sanitized = sanitizerWrapper.children[0].cloneNode(true);
+
+          content.replaceWith(sanitized);
+          content = sanitized;
+          sanitizerWrapper.remove();
+        }
 
         const event = this.composePasteEvent('tag', {
           data: content,
