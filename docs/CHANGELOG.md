@@ -9,7 +9,8 @@
 - `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
 - `Fix` — Wrong element not highlighted anymore when popover opened.
 - `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.
-- `Fix` — XSS copy/pasting HTML in the editor by refactoring sanitization config [2166](https://github.com/codex-team/editor.js/issues/2166).
+- `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
+- `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 
 ### 2.25.0
 

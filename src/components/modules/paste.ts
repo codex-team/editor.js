@@ -4,7 +4,9 @@ import * as _ from '../utils';
 import {
   BlockAPI,
   PasteEvent,
-  PasteEventDetail
+  PasteEventDetail,
+  SanitizerConfig,
+  SanitizerRule
 } from '../../../types';
 import Block from '../block';
 import { SavedData } from '../../../types/data-formats';
@@ -20,11 +22,12 @@ interface TagSubstitute {
    *
    */
   tool: BlockTool;
+
   /**
-   * Paste Sanitization configuration
-   *
+   * If a Tool specifies just a tag name, all the attributes will be sanitized.
+   * But Tool can explicitly specify sanitizer configuration for supported tags
    */
-  sanitizationConfig?: object;
+  sanitizationConfig?: SanitizerRule;
 }
 
 /**
@@ -200,10 +203,12 @@ export default class Paste extends Module {
     if (isDragNDrop && plainData.trim() && htmlData.trim()) {
       htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
     }
+
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
       /**
-       * Check if sanitizer configuration for this tag is defined.
+       * If Tool explicitly specifies sanitizer configuration for the tag, use it.
+       * Otherwise, remove all attributes
        */
       result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? true;
 
@@ -319,7 +324,7 @@ export default class Paste extends Module {
    * @param {string | object} tagOrSanitizeConfig - tag name or sanitize config object.
    * @returns {string[]} array of tags.
    */
-  private getTags = (tagOrSanitizeConfig: (string | object)): string[] => {
+  private collectTagNames(tagOrSanitizeConfig: string | SanitizerConfig): string[] {
     /**
      * If string, then it is a tag name.
      */
@@ -347,7 +352,7 @@ export default class Paste extends Module {
     const toolTags = [];
 
     tagsOrSanitizeConfigs.forEach((tagOrSanitizeConfig) => {
-      const tags = this.getTags(tagOrSanitizeConfig);
+      const tags = this.collectTagNames(tagOrSanitizeConfig);
 
       /**
        * Add tags to toolTags array
@@ -605,11 +610,12 @@ export default class Paste extends Module {
          *      td: {
          *        colspan: true,
          *        rowspan: true,
-         *       },
+         *      },
          *      tr: {  // <-- the second tag
          *        height: true,
-         *       },
-         *   },]
+         *      },
+         *   },
+         * ]
          * then sanitize config will be
          * [
          *  'table':{},
@@ -619,7 +625,7 @@ export default class Paste extends Module {
          * ]
          */
         const toolTags = tagsOrSanitizeConfigs.reduce((result, tagOrSanitizeConfig) => {
-          const tags = this.getTags(tagOrSanitizeConfig);
+          const tags = this.collectTagNames(tagOrSanitizeConfig);
 
           tags.forEach((tag) => {
             const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;

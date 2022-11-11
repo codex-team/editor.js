@@ -270,7 +270,7 @@ describe('Editor Tools Api', () => {
     });
   });
 
-  context('Tunes', () => {
+  context('Tunes — renderSettings()', () => {
     it('should contain a single block tune configured in tool\'s renderSettings() method', () => {
       /** Tool with single tunes menu entry configured */
       class TestTool {
@@ -488,6 +488,66 @@ describe('Editor Tools Api', () => {
       cy.get('[data-cy=editorjs]')
         .get('.ce-popover')
         .should('contain.text', sampleText);
+    });
+  });
+
+  /**
+   * @todo cover all the pasteConfig properties
+   */
+  context('Paste — pasteConfig()', () => {
+    context('tags', () => {
+      /**
+       * tags: ['H1', 'H2']
+       */
+      it('should use corresponding tool when the array of tag names specified', () => {
+
+      });
+
+      /**
+       * tags: ['img'] -> <img>
+       */
+      it('should remove all attributes from tag, if only tag name specified ', () => {
+
+      });
+
+      /**
+       * tags: [{
+       *   img: {
+       *     src: true
+       *   }
+       * }]
+       *   ->  <img src="">
+       *
+       */
+      it('should leave attributes if entry specified as a sanitizer config ', () => {
+
+      });
+
+      /**
+       * tags: [
+       *   'tbody',
+       *   {
+       *     table: {
+       *       width: true
+       *     }
+       *   }
+       * ]
+       */
+      it('should support mixed tag names and sanitizer config ', () => {
+
+      });
+
+      /**
+       * tags: [
+       *   {
+       *     td: { width: true },
+       *     tr: { height: true }
+       *   }
+       * ]
+       */
+      it('should support config with several keys as the single entry', () => {
+
+      });
     });
   });
 });
