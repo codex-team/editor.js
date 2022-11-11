@@ -210,7 +210,7 @@ export default class Paste extends Module {
        * If Tool explicitly specifies sanitizer configuration for the tag, use it.
        * Otherwise, remove all attributes
        */
-      result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? true;
+      result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? {};
 
       return result;
     }, {});
@@ -565,6 +565,19 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools } = this.Editor;
+
+    /**
+     * @todo Research, do we really need to always wrap innerHTML to a div:
+     *  - <img> tag could be processed separately, but for now it becomes div-wrapped
+     *    and then .getNodes() returns strange: [document-fragment, img]
+     *    (description of the method says that it should should return only block tags or fragments,
+     *     but there are inline-block element along with redundant empty fragment)
+     *  - probably this is a reason of bugs with unexpected new block creation instead of inline pasting:
+     *      - https://github.com/codex-team/editor.js/issues/1427
+     *      - https://github.com/codex-team/editor.js/issues/1244
+     *      - https://github.com/codex-team/editor.js/issues/740
+     *
+     */
     const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
@@ -635,6 +648,7 @@ export default class Paste extends Module {
 
           return result;
         }, {});
+
         const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
 
         content.innerHTML = clean(content.innerHTML, customConfig);
