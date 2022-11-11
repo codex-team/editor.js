@@ -314,24 +314,27 @@ export default class Paste extends Module {
   }
 
   /**
-   * Get tags from tags configuration.
+   * Get tags name list from either tag name or sanitization config.
    *
-   * @param {string | object} tagsConfig - tag name or sanitize config object.
+   * @param {string | object} tagOrSanitizeConfig - tag name or sanitize config object.
    * @returns {string[]} array of tags.
    */
-  private getTags = (tagsConfig: (string | object)): string[] => {
+  private getTags = (tagOrSanitizeConfig: (string | object)): string[] => {
     /**
-     * If tagsConfig is string, return it as an array.
+     * If string, then it is a tag name.
      */
-    if (_.isString(tagsConfig)) {
-      return [ tagsConfig ];
+    if (_.isString(tagOrSanitizeConfig)) {
+      return [ tagOrSanitizeConfig ];
     }
     /**
-     * If tagsConfig is object, return keys of it as an array.
+     * If object, then it's keys are tags.
      */
-    if (_.isObject(tagsConfig)) {
-      return Object.keys(tagsConfig);
+    if (_.isObject(tagOrSanitizeConfig)) {
+      return Object.keys(tagOrSanitizeConfig);
     }
+
+    /** Return empty tag list */
+    return [];
   }
 
   /**
@@ -345,11 +348,6 @@ export default class Paste extends Module {
 
     tagsOrSanitizeConfigs.forEach((tagOrSanitizeConfig) => {
       const tags = this.getTags(tagOrSanitizeConfig);
-
-      /** Return if tags undefined*/
-      if (!tags) {
-        return;
-      }
 
       /**
        * Add tags to toolTags array
