@@ -9,6 +9,7 @@
 - `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
 - `Fix` — Wrong element not highlighted anymore when popover opened.
 - `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.
+- `Fix` — XSS copy/pasting HTML in the editor by refactoring sanitization config [2166](https://github.com/codex-team/editor.js/issues/2166).
 
 ### 2.25.0
 
