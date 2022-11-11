@@ -165,6 +165,33 @@ static get pasteConfig() {
 
 > Same tag can be handled by one (first specified) Tool only.
 
+For Table Tool can handle complex configuration using paste handling API
+
+```javascript
+static get pasteConfig() {
+  return {
+    tags: [ 'tbody',
+            {
+              table: {
+                // allow width and height of table tag
+                width: true, 
+                height: true,
+              },
+            },
+            {
+              td: {
+                colspan: true,
+                rowspan: true,
+                },
+              tr: {  // <-- the second tag
+                height: true,
+                },
+            },
+         ],
+  }
+}
+```
+
 ### RegExp patterns handling
 
 Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `pasteConfig` getter should contain following field to use patterns:
