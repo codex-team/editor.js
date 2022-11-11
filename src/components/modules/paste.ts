@@ -327,7 +327,7 @@ export default class Paste extends Module {
       return [ tagOrSanitizeConfig ];
     }
     /**
-     * If object, then it's keys are tags.
+     * If object, then its keys are tags.
      */
     if (_.isObject(tagOrSanitizeConfig)) {
       return Object.keys(tagOrSanitizeConfig);
