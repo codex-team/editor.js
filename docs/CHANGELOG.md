@@ -1,5 +1,29 @@
 # Changelog
 
+
+### 2.26.0
+
+- `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
+- `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This impovement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
+- `New` — *Tools API* — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
+- `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
+- `Fix` — Wrong element not highlighted anymore when popover opened.
+- `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.
+
+### 2.25.0
+
+- `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
+Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
+- `New` — *Blocks API* — `composeBlockData()` method was added.
+
+### 2.24.4
+
+- `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
+
+### 2.24.3
+
+- `Fix` — Issue with toolbox preventing text selection fixed
+
 ### 2.24.2
 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed

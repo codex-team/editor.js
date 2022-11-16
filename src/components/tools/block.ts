@@ -5,8 +5,8 @@ import {
   BlockToolConstructable,
   BlockToolData,
   ConversionConfig,
-  PasteConfig, SanitizerConfig,
-  ToolboxConfig
+  PasteConfig, SanitizerConfig, ToolboxConfig,
+  ToolboxConfigEntry
 } from '../../../types';
 import * as _ from '../utils';
 import InlineTool from './inline';
@@ -70,21 +70,67 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
-   * Returns Tool toolbox configuration (internal or user-specified)
+   * Returns Tool toolbox configuration (internal or user-specified).
+   *
+   * Merges internal and user-defined toolbox configs based on the following rules:
+   *
+   * - If both internal and user-defined toolbox configs are arrays their items are merged.
+   * Length of the second one is kept.
+   *
+   * - If both are objects their properties are merged.
+   *
+   * - If one is an object and another is an array than internal config is replaced with user-defined
+   * config. This is made to allow user to override default tool's toolbox representation (single/multiple entries)
    */
-  public get toolbox(): ToolboxConfig {
+  public get toolbox(): ToolboxConfigEntry[] | undefined {
     const toolToolboxSettings = this.constructable[InternalBlockToolSettings.Toolbox] as ToolboxConfig;
     const userToolboxSettings = this.config[UserSettings.Toolbox];
 
     if (_.isEmpty(toolToolboxSettings)) {
       return;
     }
-
-    if ((userToolboxSettings ?? toolToolboxSettings) === false) {
+    if (userToolboxSettings === false) {
       return;
     }
+    /**
+     * Return tool's toolbox settings if user settings are not defined
+     */
+    if (!userToolboxSettings) {
+      return Array.isArray(toolToolboxSettings) ? toolToolboxSettings : [ toolToolboxSettings ];
+    }
 
-    return Object.assign({}, toolToolboxSettings, userToolboxSettings);
+    /**
+     * Otherwise merge user settings with tool's settings
+     */
+    if (Array.isArray(toolToolboxSettings)) {
+      if (Array.isArray(userToolboxSettings)) {
+        return userToolboxSettings.map((item, i) => {
+          const toolToolboxEntry = toolToolboxSettings[i];
+
+          if (toolToolboxEntry) {
+            return {
+              ...toolToolboxEntry,
+              ...item,
+            };
+          }
+
+          return item;
+        });
+      }
+
+      return [ userToolboxSettings ];
+    } else {
+      if (Array.isArray(userToolboxSettings)) {
+        return userToolboxSettings;
+      }
+
+      return [
+        {
+          ...toolToolboxSettings,
+          ...userToolboxSettings,
+        },
+      ];
+    }
   }
 
   /**

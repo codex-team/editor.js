@@ -34,6 +34,7 @@
 
   /**
    * Gray border, loaders
+   * @deprecated — use --color-line-gray instead
    */
   --color-gray-border: rgba(201, 201, 204, 0.48);
 
@@ -69,6 +70,9 @@
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
+  --color-confirm-hover: #CE4343;
+
+  --color-line-gray: #EFF0F1;
 
   --overlay-pane: {
     position: absolute;
@@ -103,6 +107,17 @@
     box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
     background: rgba(34, 186, 255, 0.08) !important;
   };
+
+  --button-active: {
+    background: rgba(56, 138, 229, 0.1);
+    color:  var(--color-active-icon);
+  };
+
+  --button-disabled: {
+    color: var(--grayText);
+    cursor: default;
+    pointer-events: none;
+  }
 
   /**
    * Styles for Toolbox Buttons and Plus Button
@@ -197,12 +212,6 @@
       margin-bottom: 1px;
     }
 
-    @media (--can-hover) {
-      &:hover {
-        background-color: var(--bg-light);
-      }
-    }
-
     @media (--mobile) {
       font-size: 16px;
       padding: 4px;
@@ -216,12 +225,12 @@
     display: inline-flex;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    border: 1px solid var(--color-gray-border);
+    box-shadow: 0 0 0 1px var(--color-gray-border);
     border-radius: 5px;
     align-items: center;
     justify-content: center;
     background: #fff;
-    box-sizing: border-box;
+    box-sizing: content-box;
     flex-shrink: 0;
     margin-right: 10px;
 

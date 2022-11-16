@@ -3,6 +3,7 @@ import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
+import Block from '../../block';
 
 /**
  * @class BlocksAPI
@@ -22,7 +23,7 @@ export default class BlocksAPI extends Module {
       delete: (index?: number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
-      getBlockByIndex: (index: number): BlockAPIInterface | void => this.getBlockByIndex(index),
+      getBlockByIndex: (index: number): BlockAPIInterface | undefined => this.getBlockByIndex(index),
       getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlockIndex: (id: string): number => this.getBlockIndex(id),
@@ -31,6 +32,7 @@ export default class BlocksAPI extends Module {
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
       update: this.update,
+      composeBlockData: this.composeBlockData,
     };
   }
 
@@ -75,7 +77,7 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} index - index to get
    */
-  public getBlockByIndex(index: number): BlockAPIInterface | void {
+  public getBlockByIndex(index: number): BlockAPIInterface | undefined {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (block === undefined) {
@@ -245,6 +247,24 @@ export default class BlocksAPI extends Module {
     });
 
     return new BlockAPI(insertedBlock);
+  }
+
+  /**
+   * Creates data of an empty block with a passed type.
+   *
+   * @param toolName - block tool name
+   */
+  public composeBlockData = async (toolName: string): Promise<BlockToolData> => {
+    const tool = this.Editor.Tools.blockTools.get(toolName);
+    const block = new Block({
+      tool,
+      api: this.Editor.API,
+      readOnly: true,
+      data: {},
+      tunesData: {},
+    });
+
+    return block.data;
   }
 
   /**

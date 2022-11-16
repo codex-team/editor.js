@@ -101,8 +101,9 @@ export default class Renderer extends Module {
 
       if (Tools.unavailable.has(tool)) {
         const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+        const toolboxTitle = toolboxSettings[0]?.title;
 
-        stubData.title = toolboxSettings?.title || stubData.title;
+        stubData.title = toolboxTitle || stubData.title;
       }
 
       const stub = BlockManager.insert({

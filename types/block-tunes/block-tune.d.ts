@@ -1,5 +1,6 @@
 import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
+import { TunesMenuConfig } from '../tools';
 
 /**
  * Describes BLockTune blueprint
@@ -7,10 +8,8 @@ import { BlockTuneData } from './block-tune-data';
 export interface BlockTune {
   /**
    * Returns block tune HTMLElement
-   *
-   * @return {HTMLElement}
    */
-  render(): HTMLElement;
+  render(): HTMLElement | TunesMenuConfig;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.

@@ -36,17 +36,10 @@
 
 /**
  * Settings
+ * @deprecated - use tunes config instead of creating html element with controls
  */
 .cdx-settings-button {
   @apply --toolbar-button;
-
-  &:not(:nth-child(3n+3)) {
-    margin-right: 3px;
-  }
-
-  &:nth-child(n+4) {
-    margin-top: 3px;
-  }
 
   &--active {
     color: var(--color-active-icon);

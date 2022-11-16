@@ -52,7 +52,7 @@ export interface Blocks {
    * Returns Block API object by passed Block index
    * @param {number} index
    */
-  getBlockByIndex(index: number): BlockAPI | void;
+  getBlockByIndex(index: number): BlockAPI | undefined;
 
   /**
    * Returns Block API object by passed Block id
@@ -112,6 +112,13 @@ export interface Blocks {
     replace?: boolean,
   ): BlockAPI;
 
+
+  /**
+   * Creates data of an empty block with a passed type.
+   *
+   * @param toolName - block tool name
+   */
+  composeBlockData(toolName: string): Promise<BlockToolData>
 
   /**
    * Updates block data by id
