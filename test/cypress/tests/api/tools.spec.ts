@@ -806,8 +806,6 @@ describe('Editor Tools Api', () => {
          * Stub the onPaste method to access the PasteEvent data for assertion
          */
         cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
-          console.log('onpaste', (event.detail.data as HTMLElement).outerHTML);
-
           pastedElement = event.detail.data;
         });
 
