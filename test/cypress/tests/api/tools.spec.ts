@@ -495,7 +495,7 @@ describe('Editor Tools Api', () => {
    * @todo cover all the pasteConfig properties
    */
   context('Paste — pasteConfig()', () => {
-    context.only('tags', () => {
+    context('tags', () => {
       /**
        * tags: ['H1', 'H2']
        */
