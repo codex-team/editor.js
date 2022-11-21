@@ -759,6 +759,83 @@ describe('Editor Tools Api', () => {
       });
 
       /**
+       * tags: [
+       *   {
+       *     td: { width: true },
+       *     tr: { height: true }
+       *   }
+       * ]
+       */
+      it('should support config with several keys as the single entry', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                {
+                  video: {
+                    width: true,
+                  },
+                  source: {
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('video');
+
+            /**
+             * Check that the <tr> has the 'height' attribute
+             */
+            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
+            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
+          });
+      });
+
+      /**
        * It covers a workaround HTMLJanitor bug with tables (incorrect sanitizing of table.innerHTML)
        * https://github.com/guardian/html-janitor/issues/3
        */
@@ -836,83 +913,6 @@ describe('Editor Tools Api', () => {
              */
             expect(pastedElement.querySelector('td')).not.to.be.undefined;
             expect(pastedElement.querySelector('td').getAttribute('width')).eq('300');
-          });
-      });
-
-      /**
-       * tags: [
-       *   {
-       *     td: { width: true },
-       *     tr: { height: true }
-       *   }
-       * ]
-       */
-      it('should support config with several keys as the single entry', () => {
-        /**
-         * Variable used for spying the pasted element we are passing to the Tool
-         */
-        let pastedElement;
-
-        /**
-         * Test tool with pasteConfig.tags specified
-         */
-        class TestTool {
-          /** config specified handled tag */
-          public static get pasteConfig(): PasteConfig {
-            return {
-              tags: [
-                {
-                  video: {
-                    width: true,
-                  },
-                  source: {
-                    src: true,
-                  },
-                },
-              ],
-            };
-          }
-
-          /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
-
-          /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
-
-          /** render is required for correct implementation of the BlockTool class */
-          public render(): HTMLElement {
-            return document.createElement('tbody');
-          }
-        }
-
-        /**
-         * Stub the onPaste method to access the PasteEvent data for assertion
-         */
-        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
-          pastedElement = event.detail.data;
-        });
-
-        cy.createEditor({
-          tools: {
-            testTool: TestTool,
-          },
-        });
-
-        cy.get('[data-cy=editorjs]')
-          .get('div.ce-block')
-          .click()
-          .paste({
-            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
-          })
-          .then(() => {
-            expect(pastedElement).not.to.be.undefined;
-            expect(pastedElement.tagName.toLowerCase()).eq('video');
-
-            /**
-             * Check that the <tr> has the 'height' attribute
-             */
-            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
-            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
           });
       });
     });
