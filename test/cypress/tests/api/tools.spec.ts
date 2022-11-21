@@ -1,5 +1,5 @@
-import { ToolboxConfig, BlockToolData, ToolboxConfigEntry } from '../../../../types';
-import { TunesMenuConfig } from '../../../../types/tools';
+import { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
+import { HTMLPasteEvent, PasteEvent, TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -270,7 +270,7 @@ describe('Editor Tools Api', () => {
     });
   });
 
-  context('Tunes', () => {
+  context('Tunes — renderSettings()', () => {
     it('should contain a single block tune configured in tool\'s renderSettings() method', () => {
       /** Tool with single tunes menu entry configured */
       class TestTool {
@@ -488,6 +488,433 @@ describe('Editor Tools Api', () => {
       cy.get('[data-cy=editorjs]')
         .get('.ce-popover')
         .should('contain.text', sampleText);
+    });
+  });
+
+  /**
+   * @todo cover all the pasteConfig properties
+   */
+  context('Paste — pasteConfig()', () => {
+    context('tags', () => {
+      /**
+       * tags: ['H1', 'H2']
+       */
+      it('should use corresponding tool when the array of tag names specified', () => {
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestImgTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('img');
+          }
+        }
+
+        const toolsOnPaste = cy.spy(TestImgTool.prototype, 'onPaste');
+
+        cy.createEditor({
+          tools: {
+            testTool: TestImgTool,
+          },
+        }).as('editorInstance');
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<img>',
+          })
+          .then(() => {
+            expect(toolsOnPaste).to.be.called;
+          });
+      });
+
+      /**
+       * tags: ['img'] -> <img>
+       */
+      it('should sanitize all attributes from tag, if only tag name specified ', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestImageTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('img');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestImageTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testImageTool: TestImageTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<img src="foo" onerror="alert(123)"/>', // all attributes should be sanitized
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('img');
+            expect(pastedElement.attributes.length).eq(0);
+          });
+      });
+
+      /**
+       * tags: [{
+       *   img: {
+       *     src: true
+       *   }
+       * }]
+       *   ->  <img src="">
+       *
+       */
+      it('should leave attributes if entry specified as a sanitizer config ', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestImageTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                {
+                  img: {
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('img');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestImageTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testImageTool: TestImageTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<img src="foo" onerror="alert(123)"/>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+
+            /**
+             * Check that the <img> has only "src" attribute
+             */
+            expect(pastedElement.tagName.toLowerCase()).eq('img');
+            expect(pastedElement.getAttribute('src')).eq('foo');
+            expect(pastedElement.attributes.length).eq(1);
+          });
+      });
+
+      /**
+       * tags: [
+       *   'video',
+       *   {
+       *     source: {
+       *       src: true
+       *     }
+       *   }
+       * ]
+       */
+      it('should support mixed tag names and sanitizer config ', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                'video', // video should not have attributes
+                {
+                  source: { // source should have only src attribute
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+
+            /**
+             * Check that <video>  has no attributes
+             */
+            expect(pastedElement.tagName.toLowerCase()).eq('video');
+            expect(pastedElement.attributes.length).eq(0);
+
+            /**
+             * Check that the <source> has only 'src' attribute
+             */
+            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
+            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
+            expect(pastedElement.firstChild.attributes.length).eq(1);
+          });
+      });
+
+      /**
+       * tags: [
+       *   {
+       *     td: { width: true },
+       *     tr: { height: true }
+       *   }
+       * ]
+       */
+      it('should support config with several keys as the single entry', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                {
+                  video: {
+                    width: true,
+                  },
+                  source: {
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('video');
+
+            /**
+             * Check that the <tr> has the 'height' attribute
+             */
+            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
+            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
+          });
+      });
+
+      /**
+       * It covers a workaround HTMLJanitor bug with tables (incorrect sanitizing of table.innerHTML)
+       * https://github.com/guardian/html-janitor/issues/3
+       */
+      it('should correctly sanitize Table structure (test for HTMLJanitor bug)', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                'table',
+                'tbody',
+                {
+                  td: {
+                    width: true,
+                  },
+                  tr: {
+                    height: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<table><tr height="50"><td width="300">Ho-Ho-Ho</td></tr></table>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('table');
+
+            /**
+             * Check that the <tr> has the 'height' attribute
+             */
+            expect(pastedElement.querySelector('tr')).not.to.be.undefined;
+            expect(pastedElement.querySelector('tr').getAttribute('height')).eq('50');
+
+            /**
+             * Check that the <td> has the 'width' attribute
+             */
+            expect(pastedElement.querySelector('td')).not.to.be.undefined;
+            expect(pastedElement.querySelector('td').getAttribute('width')).eq('300');
+          });
+      });
     });
   });
 });

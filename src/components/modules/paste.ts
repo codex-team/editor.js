@@ -4,7 +4,9 @@ import * as _ from '../utils';
 import {
   BlockAPI,
   PasteEvent,
-  PasteEventDetail
+  PasteEventDetail,
+  SanitizerConfig,
+  SanitizerRule
 } from '../../../types';
 import Block from '../block';
 import { SavedData } from '../../../types/data-formats';
@@ -20,6 +22,12 @@ interface TagSubstitute {
    *
    */
   tool: BlockTool;
+
+  /**
+   * If a Tool specifies just a tag name, all the attributes will be sanitized.
+   * But Tool can explicitly specify sanitizer configuration for supported tags
+   */
+  sanitizationConfig?: SanitizerRule;
 }
 
 /**
@@ -112,12 +120,12 @@ export default class Paste extends Module {
   /**
    * Tags` substitutions parameters
    */
-  private toolsTags: {[tag: string]: TagSubstitute} = {};
+  private toolsTags: { [tag: string]: TagSubstitute } = {};
 
   /**
    * Store tags to substitute by tool name
    */
-  private tagsByTool: {[tools: string]: string[]} = {};
+  private tagsByTool: { [tools: string]: string[] } = {};
 
   /** Patterns` substitutions parameters */
   private toolsPatterns: PatternSubstitute[] = [];
@@ -186,7 +194,7 @@ export default class Paste extends Module {
         this.insertEditorJSData(JSON.parse(editorJSData));
 
         return;
-      } catch (e) {} // Do nothing and continue execution as usual if error appears
+      } catch (e) { } // Do nothing and continue execution as usual if error appears
     }
 
     /**
@@ -198,7 +206,11 @@ export default class Paste extends Module {
 
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
-      result[tag.toLowerCase()] = true;
+      /**
+       * If Tool explicitly specifies sanitizer configuration for the tag, use it.
+       * Otherwise, remove all attributes
+       */
+      result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? {};
 
       return result;
     }, {});
@@ -307,30 +319,68 @@ export default class Paste extends Module {
   }
 
   /**
+   * Get tags name list from either tag name or sanitization config.
+   *
+   * @param {string | object} tagOrSanitizeConfig - tag name or sanitize config object.
+   * @returns {string[]} array of tags.
+   */
+  private collectTagNames(tagOrSanitizeConfig: string | SanitizerConfig): string[] {
+    /**
+     * If string, then it is a tag name.
+     */
+    if (_.isString(tagOrSanitizeConfig)) {
+      return [ tagOrSanitizeConfig ];
+    }
+    /**
+     * If object, then its keys are tags.
+     */
+    if (_.isObject(tagOrSanitizeConfig)) {
+      return Object.keys(tagOrSanitizeConfig);
+    }
+
+    /** Return empty tag list */
+    return [];
+  }
+
+  /**
    * Get tags to substitute by Tool
    *
    * @param tool - BlockTool object
    */
   private getTagsConfig(tool: BlockTool): void {
-    const tags = tool.pasteConfig.tags || [];
+    const tagsOrSanitizeConfigs = tool.pasteConfig.tags || [];
+    const toolTags = [];
 
-    tags.forEach((tag) => {
-      if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
-        _.log(
-          `Paste handler for «${tool.name}» Tool on «${tag}» tag is skipped ` +
-          `because it is already used by «${this.toolsTags[tag].tool.name}» Tool.`,
-          'warn'
-        );
+    tagsOrSanitizeConfigs.forEach((tagOrSanitizeConfig) => {
+      const tags = this.collectTagNames(tagOrSanitizeConfig);
 
-        return;
-      }
+      /**
+       * Add tags to toolTags array
+       */
+      toolTags.push(...tags);
+      tags.forEach((tag) => {
+        if (Object.prototype.hasOwnProperty.call(this.toolsTags, tag)) {
+          _.log(
+            `Paste handler for «${tool.name}» Tool on «${tag}» tag is skipped ` +
+            `because it is already used by «${this.toolsTags[tag].tool.name}» Tool.`,
+            'warn'
+          );
 
-      this.toolsTags[tag.toUpperCase()] = {
-        tool,
-      };
+          return;
+        }
+        /**
+         * Get sanitize config for tag.
+         */
+        const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
+
+        this.toolsTags[tag.toUpperCase()] = {
+          tool,
+          sanitizationConfig,
+        };
+      });
     });
 
-    this.tagsByTool[tool.name] = tags.map((t) => t.toUpperCase());
+    this.tagsByTool[tool.name] = toolTags.map((t) => t.toUpperCase());
   }
 
   /**
@@ -449,7 +499,7 @@ export default class Paste extends Module {
   private async processFiles(items: FileList): Promise<void> {
     const { BlockManager } = this.Editor;
 
-    let dataToInsert: {type: string; event: PasteEvent}[];
+    let dataToInsert: { type: string; event: PasteEvent }[];
 
     dataToInsert = await Promise.all(
       Array
@@ -473,7 +523,7 @@ export default class Paste extends Module {
    *
    * @param {File} file - file to process
    */
-  private async processFile(file: File): Promise<{event: PasteEvent; type: string}> {
+  private async processFile(file: File): Promise<{ event: PasteEvent; type: string }> {
     const extension = _.getFileExtension(file);
 
     const foundConfig = Object
@@ -515,6 +565,19 @@ export default class Paste extends Module {
    */
   private processHTML(innerHTML: string): PasteData[] {
     const { Tools } = this.Editor;
+
+    /**
+     * @todo Research, do we really need to always wrap innerHTML to a div:
+     *  - <img> tag could be processed separately, but for now it becomes div-wrapped
+     *    and then .getNodes() returns strange: [document-fragment, img]
+     *    (description of the method says that it should should return only block tags or fragments,
+     *     but there are inline-block element along with redundant empty fragment)
+     *  - probably this is a reason of bugs with unexpected new block creation instead of inline pasting:
+     *      - https://github.com/codex-team/editor.js/issues/1427
+     *      - https://github.com/codex-team/editor.js/issues/1244
+     *      - https://github.com/codex-team/editor.js/issues/740
+     *
+     */
     const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
@@ -543,16 +606,65 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags } = tool.pasteConfig;
+        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig;
 
-        const toolTags = tags.reduce((result, tag) => {
-          result[tag.toLowerCase()] = {};
+        /**
+         * Reduce the tags or sanitize configs to a single array of sanitize config.
+         * For example:
+         * If sanitize config is
+         * [ 'tbody',
+         *   {
+         *     table: {
+         *       width: true,
+         *       height: true,
+         *     },
+         *   },
+         *   {
+         *      td: {
+         *        colspan: true,
+         *        rowspan: true,
+         *      },
+         *      tr: {  // <-- the second tag
+         *        height: true,
+         *      },
+         *   },
+         * ]
+         * then sanitize config will be
+         * [
+         *  'table':{},
+         *  'tbody':{width: true, height: true}
+         *  'td':{colspan: true, rowspan: true},
+         *  'tr':{height: true}
+         * ]
+         */
+        const toolTags = tagsOrSanitizeConfigs.reduce((result, tagOrSanitizeConfig) => {
+          const tags = this.collectTagNames(tagOrSanitizeConfig);
+
+          tags.forEach((tag) => {
+            const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
+
+            result[tag] = sanitizationConfig || {};
+          });
 
           return result;
         }, {});
+
         const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
 
-        content.innerHTML = clean(content.innerHTML, customConfig);
+        /**
+         * A workaround for the HTMLJanitor bug with Tables (incorrect sanitizing of table.innerHTML)
+         * https://github.com/guardian/html-janitor/issues/3
+         */
+        if (content.tagName.toLowerCase() === 'table') {
+          const cleanTableHTML = clean(content.outerHTML, customConfig);
+          const tmpWrapper = $.make('div', undefined, {
+            innerHTML: cleanTableHTML,
+          });
+
+          content = tmpWrapper.firstChild;
+        } else {
+          content.innerHTML = clean(content.innerHTML, customConfig);
+        }
 
         const event = this.composePasteEvent('tag', {
           data: content,
@@ -565,7 +677,12 @@ export default class Paste extends Module {
           event,
         };
       })
-      .filter((data) => !$.isNodeEmpty(data.content) || $.isSingleTag(data.content));
+      .filter((data) => {
+        const isEmpty = $.isEmpty(data.content);
+        const isSingleTag = $.isSingleTag(data.content);
+
+        return !isEmpty || isSingleTag;
+      });
   }
 
   /**
@@ -576,7 +693,7 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
-    const { defaultBlock } = this.config as {defaultBlock: string};
+    const { defaultBlock } = this.config as { defaultBlock: string };
 
     if (!plain) {
       return [];
@@ -681,7 +798,7 @@ export default class Paste extends Module {
    *
    * @returns {Promise<{event: PasteEvent, tool: string}>}
    */
-  private async processPattern(text: string): Promise<{event: PasteEvent; tool: string}> {
+  private async processPattern(text: string): Promise<{ event: PasteEvent; tool: string }> {
     const pattern = this.toolsPatterns.find((substitute) => {
       const execResult = substitute.pattern.exec(text);
 
@@ -878,3 +995,4 @@ export default class Paste extends Module {
     }) as PasteEvent;
   }
 }
+
