@@ -523,6 +523,8 @@ export default class Dom {
       'ruby',
       'section',
       'table',
+      'tbody',
+      'thead',
       'tr',
       'tfoot',
       'ul',

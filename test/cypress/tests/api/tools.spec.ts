@@ -665,6 +665,10 @@ describe('Editor Tools Api', () => {
           })
           .then(() => {
             expect(pastedElement).not.to.be.undefined;
+
+            /**
+             * Check that the <img> has only "src" attribute
+             */
             expect(pastedElement.tagName.toLowerCase()).eq('img');
             expect(pastedElement.getAttribute('src')).eq('foo');
             expect(pastedElement.attributes.length).eq(1);
@@ -673,16 +677,168 @@ describe('Editor Tools Api', () => {
 
       /**
        * tags: [
-       *   'tbody',
+       *   'video',
        *   {
-       *     table: {
-       *       width: true
+       *     source: {
+       *       src: true
        *     }
        *   }
        * ]
        */
       it('should support mixed tag names and sanitizer config ', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
 
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                'video', // video should not have attributes
+                {
+                  source: { // source should have only src attribute
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+
+            /**
+             * Check that <video>  has no attributes
+             */
+            expect(pastedElement.tagName.toLowerCase()).eq('video');
+            expect(pastedElement.attributes.length).eq(0);
+
+            /**
+             * Check that the <source> has only 'src' attribute
+             */
+            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
+            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
+            expect(pastedElement.firstChild.attributes.length).eq(1);
+          });
+      });
+
+      /**
+       * It covers a workaround HTMLJanitor bug with tables (incorrect sanitizing of table.innerHTML)
+       * https://github.com/guardian/html-janitor/issues/3
+       */
+      it('should correctly sanitize Table structure (test for HTMLJanitor bug)', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                'table',
+                'tbody',
+                {
+                  td: {
+                    width: true,
+                  },
+                  tr: {
+                    height: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          console.log('onpaste', (event.detail.data as HTMLElement).outerHTML);
+
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<table><tr height="50"><td width="300">Ho-Ho-Ho</td></tr></table>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('table');
+
+            /**
+             * Check that the <tr> has the 'height' attribute
+             */
+            expect(pastedElement.querySelector('tr')).not.to.be.undefined;
+            expect(pastedElement.querySelector('tr').getAttribute('height')).eq('50');
+
+            /**
+             * Check that the <td> has the 'width' attribute
+             */
+            expect(pastedElement.querySelector('td')).not.to.be.undefined;
+            expect(pastedElement.querySelector('td').getAttribute('width')).eq('300');
+          });
       });
 
       /**
@@ -694,7 +850,72 @@ describe('Editor Tools Api', () => {
        * ]
        */
       it('should support config with several keys as the single entry', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
 
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: [
+                {
+                  video: {
+                    width: true,
+                  },
+                  source: {
+                    src: true,
+                  },
+                },
+              ],
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void {}
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void {}
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('tbody');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testTool: TestTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('video');
+
+            /**
+             * Check that the <tr> has the 'height' attribute
+             */
+            expect(pastedElement.firstChild.tagName.toLowerCase()).eq('source');
+            expect(pastedElement.firstChild.getAttribute('src')).eq('movie.mp4');
+          });
       });
     });
   });

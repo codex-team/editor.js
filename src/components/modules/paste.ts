@@ -611,7 +611,7 @@ export default class Paste extends Module {
         /**
          * Reduce the tags or sanitize configs to a single array of sanitize config.
          * For example:
-         * If sanitaze config is
+         * If sanitize config is
          * [ 'tbody',
          *   {
          *     table: {
@@ -651,7 +651,20 @@ export default class Paste extends Module {
 
         const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
 
-        content.innerHTML = clean(content.innerHTML, customConfig);
+        /**
+         * A workaround for the HTMLJanitor bug with Tables (incorrect sanitizing of table.innerHTML)
+         * https://github.com/guardian/html-janitor/issues/3
+         */
+        if (content.tagName.toLowerCase() === 'table') {
+          const cleanTableHTML = clean(content.outerHTML, customConfig);
+          const tmpWrapper = $.make('div', undefined, {
+            innerHTML: cleanTableHTML,
+          });
+
+          content = tmpWrapper.firstChild;
+        } else {
+          content.innerHTML = clean(content.innerHTML, customConfig);
+        }
 
         const event = this.composePasteEvent('tag', {
           data: content,
@@ -664,7 +677,12 @@ export default class Paste extends Module {
           event,
         };
       })
-      .filter((data) => !$.isNodeEmpty(data.content) || $.isSingleTag(data.content));
+      .filter((data) => {
+        const isEmpty = $.isEmpty(data.content);
+        const isSingleTag = $.isSingleTag(data.content);
+
+        return !isEmpty || isSingleTag;
+      });
   }
 
   /**
@@ -977,3 +995,4 @@ export default class Paste extends Module {
     }) as PasteEvent;
   }
 }
+
