@@ -98,4 +98,16 @@ export default class BoldInlineTool implements InlineTool {
   public get shortcut(): string {
     return 'CMD+B';
   }
+
+  public apply(contents: DocumentFragment): { element: HTMLElement } {
+    const b = document.createElement('b');
+
+    b.append(contents);
+
+    return { element: b };
+  }
+
+  public set active(state: boolean) {
+    this.nodes.button.classList.toggle(this.CSS.buttonActive, state);
+  }
 }

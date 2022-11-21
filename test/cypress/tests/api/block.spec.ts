@@ -22,7 +22,7 @@ describe('BlockAPI', () => {
    */
   const EditorJSApiMock = Cypress.sinon.match.any;
 
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {

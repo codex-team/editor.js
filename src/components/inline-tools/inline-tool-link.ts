@@ -24,6 +24,7 @@ export default class LinkInlineTool implements InlineTool {
    * Title for hover-tooltip
    */
   public static title = 'Link';
+  private fakeBackground: HTMLSpanElement;
 
   /**
    * Sanitizer Rule
@@ -226,6 +227,27 @@ export default class LinkInlineTool implements InlineTool {
    */
   public get shortcut(): string {
     return 'CMD+K';
+  }
+
+  public apply(contents: DocumentFragment): { element: HTMLElement } {
+    this.fakeBackground = document.createElement('span');
+
+    this.fakeBackground.style.background = '#a8d6ff';
+
+    this.fakeBackground.append(contents);
+
+    this.openActions(true);
+
+    const a = document.createElement('a');
+
+    a.append(contents);
+
+    return { element: this.fakeBackground };
+  }
+
+  public set active(state: boolean) {
+    this.nodes.button.classList.toggle(this.CSS.buttonUnlink, state);
+    this.nodes.button.classList.toggle(this.CSS.buttonActive, state);
   }
 
   /**

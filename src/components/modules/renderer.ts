@@ -73,7 +73,7 @@ export default class Renderer extends Module {
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
-    const { type: tool, data, tunes, id } = item;
+    const { type: tool, data, tunes, id, fragments } = item;
 
     if (Tools.available.has(tool)) {
       try {
@@ -82,6 +82,7 @@ export default class Renderer extends Module {
           tool,
           data,
           tunes,
+          fragments,
         });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);

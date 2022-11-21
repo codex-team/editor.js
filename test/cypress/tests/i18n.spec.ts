@@ -3,7 +3,7 @@ import { ToolboxConfig } from '../../../types';
 
 describe('Editor i18n', () => {
   context('Toolbox', () => {
-    it('should translate tool title in a toolbox', () => {
+    it('should translate tool title in a toolbox', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }

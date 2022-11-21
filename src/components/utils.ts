@@ -797,3 +797,13 @@ export function equals(var1: unknown, var2: unknown): boolean {
 
   return var1 === var2;
 }
+
+
+/**
+ * Returns production of multiplication of arguments
+ *
+ * @param numbers - numbers to multiply
+ */
+export function multiply(...numbers: number[]) {
+  return numbers.reduce((prod, m) => prod * m, 1);
+}

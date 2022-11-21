@@ -1,5 +1,6 @@
 import {BlockToolData} from '../tools';
 import {BlockTuneData} from '../block-tunes/block-tune-data';
+import {InlineFragmentsDict} from './inline-fragments';
 
 /**
  * Output of one Tool
@@ -25,6 +26,8 @@ export interface OutputBlockData<Type extends string = string, Data extends obje
    * Block Tunes data
    */
   tunes?: {[name: string]: BlockTuneData};
+
+  fragments?: InlineFragmentsDict;
 }
 
 export interface OutputData {

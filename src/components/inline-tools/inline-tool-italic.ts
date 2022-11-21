@@ -94,4 +94,16 @@ export default class ItalicInlineTool implements InlineTool {
   public get shortcut(): string {
     return 'CMD+I';
   }
+
+  public apply(contents: DocumentFragment): { element: HTMLElement } {
+    const i = document.createElement('i');
+
+    i.append(contents);
+
+    return { element: i };
+  }
+
+  public set active(state: boolean) {
+    this.nodes.button.classList.toggle(this.CSS.buttonActive, state);
+  }
 }

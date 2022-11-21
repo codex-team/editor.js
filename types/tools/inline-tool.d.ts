@@ -35,6 +35,10 @@ export interface InlineTool extends BaseTool {
    *                          Better to create the 'destroy' method in a future.
    */
   clear?(): void;
+
+  apply(contents: DocumentFragment, meta?: unknown): { element: HTMLElement, meta?: unknown }
+
+  active: boolean;
 }
 
 
