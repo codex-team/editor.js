@@ -53,7 +53,7 @@ export default class Dom {
    *
    * @returns {HTMLElement}
    */
-  public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): HTMLElement {
+  public static make(tagName: string, classNames: string | string[] = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
@@ -111,8 +111,8 @@ export default class Dom {
    * @param  {Element|Element[]|DocumentFragment|Text|Text[]} elements - element or elements list
    */
   public static append(
-    parent: Element|DocumentFragment,
-    elements: Element|Element[]|DocumentFragment|Text|Text[]
+    parent: Element | DocumentFragment,
+    elements: Element | Element[] | DocumentFragment | Text | Text[]
   ): void {
     if (Array.isArray(elements)) {
       elements.forEach((el) => parent.appendChild(el));
@@ -127,7 +127,7 @@ export default class Dom {
    * @param {Element} parent - where to append
    * @param {Element|Element[]} elements - element or elements list
    */
-  public static prepend(parent: Element, elements: Element|Element[]): void {
+  public static prepend(parent: Element, elements: Element | Element[]): void {
     if (Array.isArray(elements)) {
       elements = elements.reverse();
       elements.forEach((el) => parent.prepend(el));
@@ -170,7 +170,7 @@ export default class Dom {
    *
    * @returns {Element}
    */
-  public static find(el: Element|Document = document, selector: string): Element {
+  public static find(el: Element | Document = document, selector: string): Element {
     return el.querySelector(selector);
   }
 
@@ -194,7 +194,7 @@ export default class Dom {
    *
    * @returns {NodeList}
    */
-  public static findAll(el: Element|Document = document, selector: string): NodeList {
+  public static findAll(el: Element | Document = document, selector: string): NodeList {
     return el.querySelectorAll(selector);
   }
 
@@ -525,6 +525,8 @@ export default class Dom {
       'ruby',
       'section',
       'table',
+      'tbody',
+      'thead',
       'tr',
       'tfoot',
       'ul',
@@ -621,7 +623,7 @@ export default class Dom {
    * @todo handle case when editor initialized in scrollable popup
    * @param el - element to compute offset
    */
-  public static offset(el): {top: number; left: number; right: number; bottom: number} {
+  public static offset(el): { top: number; left: number; right: number; bottom: number } {
     const rect = el.getBoundingClientRect();
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
