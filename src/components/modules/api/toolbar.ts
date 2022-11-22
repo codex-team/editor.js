@@ -15,6 +15,7 @@ export default class ToolbarAPI extends Module {
     return {
       close: (): void => this.close(),
       open: (): void => this.open(),
+      openToolbox: (): void => this.openToolbox(),
       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
     };
   }
@@ -31,6 +32,13 @@ export default class ToolbarAPI extends Module {
    */
   public close(): void {
     this.Editor.Toolbar.close();
+  }
+
+  /**
+   * Open toolbox
+   */
+  public openToolbox(): void {
+    this.Editor.Toolbar.moveAndOpenToolbox();
   }
 
   /**

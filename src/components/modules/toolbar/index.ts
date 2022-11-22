@@ -280,6 +280,16 @@ export default class Toolbar extends Module<ToolbarNodes> {
   }
 
   /**
+   * Move and open the Toolbar with toolbox opened
+   *
+   * @param block
+   */
+  public moveAndOpenToolbox(block: Block = this.Editor.BlockManager.currentBlock): void {
+    this.moveAndOpen();
+    this.toolboxInstance.open();
+  }
+
+  /**
    * Close the Toolbar
    */
   public close(): void {
