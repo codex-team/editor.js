@@ -83,6 +83,16 @@ export enum BlockToolAPI {
 }
 
 /**
+ * When dragging a block, where it can be placed relative to the focused
+ * block.
+ */
+export enum BlockDropZonePlacement {
+  Top = 'top',
+  Bottom = 'bottom',
+  // Left, Right could be added in the future
+}
+
+/**
  * Names of events supported by Block class
  */
 type BlockEvents = 'didMutated';
@@ -108,6 +118,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
+      dropTargetTop: 'ce-block--drop-target-top',
+      dropTargetBottom: 'ce-block--drop-target-bottom',
     };
   }
 
@@ -505,10 +517,31 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Toggle drop target state
    *
-   * @param {boolean} state - 'true' if block is drop target, false otherwise
+   * @param {undefined | BlockDropZonePlacement} state - 'undefined' if block is not a drop target
    */
-  public set dropTarget(state) {
-    this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  public set dropTarget(state: undefined | BlockDropZonePlacement) {
+    if (!state || this.selected) {
+      this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
+    } else {
+      this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
+      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePlacement.Top);
+      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePlacement.Bottom);
+    }
+  }
+
+  /**
+   * Return Block's dropTarget state
+   *
+   * @returns {BlockDropZonePlacement | undefined}
+   */
+  public get dropTarget(): undefined | BlockDropZonePlacement {
+    if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
+      return BlockDropZonePlacement.Top;
+    } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
+      return BlockDropZonePlacement.Bottom;
+    }
+
+    return undefined;
   }
 
   /**

@@ -1,4 +1,5 @@
 import SelectionUtils from '../selection';
+import Block, { BlockDropZonePlacement } from '../block';
 
 import Module from '../__module';
 /**
@@ -42,8 +43,8 @@ export default class DragNDrop extends Module {
       await this.processDrop(dropEvent);
     }, true);
 
-    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', () => {
-      this.processDragStart();
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', (startDragEvent: DragEvent) => {
+      this.processDragStart(startDragEvent);
     });
 
     /**
@@ -75,8 +76,12 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
+    if (await this.processBlockDrop(dropEvent)) {
+      return;
+    }
+
     BlockManager.blocks.forEach((block) => {
-      block.dropTarget = false;
+      block.dropTarget = undefined;
     });
 
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
@@ -103,14 +108,139 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   * Handle drag start event
+   * Checks and process the drop of a block. Returns {boolean} depending if a block drop has been processed.
+   *
+   * @param dropEvent {DragEvent}
+   * @returns {boolean}
    */
-  private processDragStart(): void {
+  private async processBlockDrop(dropEvent: DragEvent): Promise<boolean> {
+    const { BlockManager } = this.Editor;
+
+    const draggingImageElement = document.body.querySelector('#draggingImage');
+
+    if (draggingImageElement) {
+      draggingImageElement.remove();
+    }
+
+    const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
+
+    const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+
+    if (!targetBlock) {
+      // This means that we are trying to drop a block without references.
+      return;
+    }
+    const targetIndex = this.Editor.BlockManager.getBlockIndex(targetBlock);
+
+    if (selectedBlocks.length > 1) {
+      // we are dragging a set of blocks
+      const currentStartIndex = this.Editor.BlockManager.getBlockIndex(selectedBlocks[0]);
+
+      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+        if (targetIndex > currentStartIndex) {
+          selectedBlocks.forEach((block) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex - 1, blockIndex);
+          });
+        } else {
+          selectedBlocks.forEach((block, i) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex + i, blockIndex);
+          });
+        }
+      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+        if (targetIndex > currentStartIndex) {
+          selectedBlocks.forEach((block) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex, blockIndex);
+          });
+        } else {
+          selectedBlocks.forEach((block, i) => {
+            const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
+
+            this.Editor.BlockManager.move(targetIndex + 1 + i, blockIndex);
+          });
+        }
+      }
+
+      // this has to be cleaned after we drop the block
+      BlockManager.blocks.forEach((block) => {
+        block.dropTarget = undefined;
+      });
+
+      return true;
+    }
+
+    if (BlockManager.currentBlock) {
+      // we are dragging one block
+      // maybe we could delete this and handle everything with the previous method
+
+      const currentIndex = this.Editor.BlockManager.currentBlockIndex;
+
+      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex - 1);
+        } else {
+          this.Editor.BlockManager.move(targetIndex);
+        }
+      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+        if (targetIndex > currentIndex) {
+          this.Editor.BlockManager.move(targetIndex);
+        } else {
+          this.Editor.BlockManager.move(targetIndex + 1);
+        }
+      }
+
+      // this has to be cleaned after we drop the block
+      BlockManager.blocks.forEach((block) => {
+        block.dropTarget = undefined;
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Handle drag start event
+   *
+   * @param dragStartEvent - drag start event
+   */
+  private processDragStart(dragStartEvent: DragEvent): void {
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
       this.isStartedAtEditor = true;
     }
 
     this.Editor.InlineToolbar.close();
+
+    let draggingImageElement: HTMLElement;
+
+    const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
+
+    if (selectedBlocks.length > 1) {
+      draggingImageElement = document.createElement('div');
+      draggingImageElement.id = 'draggingImage';
+      draggingImageElement.style.position = 'absolute';
+      draggingImageElement.style.top = '-1000px';
+      selectedBlocks.forEach(block => {
+        const blockContent = block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true);
+
+        draggingImageElement.appendChild(blockContent);
+      });
+      document.body.appendChild(draggingImageElement);
+    } else {
+      const block = this.Editor.BlockManager.currentBlock;
+
+      draggingImageElement = block.holder.querySelector(`.${Block.CSS.content}`);
+    }
+
+    if (draggingImageElement) {
+      dragStartEvent.dataTransfer.setDragImage(draggingImageElement, 0, 0);
+    }
   }
 
   /**

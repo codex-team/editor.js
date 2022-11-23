@@ -97,12 +97,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.selection.save();
 
     /**
-     * Highlight content of a Block we are working with
-     */
-    targetBlock.selected = true;
-    this.Editor.BlockSelection.clearCache();
-
-    /**
      * Fill Tool's settings
      */
     const [tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
