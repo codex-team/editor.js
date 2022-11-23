@@ -1,6 +1,7 @@
 /* eslint-disable jsdoc/no-undefined-types */
 /**
  * Prebuilded sprite of SVG icons
+ * @deprecated
  */
 import sprite from '../../../dist/sprite.svg';
 

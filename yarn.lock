@@ -1331,9 +1331,9 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@codexteam/icons@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.3.tgz#921f78aef1ad13a49d0ef63a3f567222bee7fe59"
+"@codexteam/icons@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.4.tgz#8b72dcd3f3a1b0d880bdceb2abebd74b46d3ae13"
 
 "@codexteam/shortcuts@^1.1.1":
   version "1.1.1"

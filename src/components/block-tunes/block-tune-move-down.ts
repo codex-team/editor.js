@@ -7,7 +7,7 @@
 
 import { API, BlockTune, PopoverItem } from '../../../types';
 import Popover from '../utils/popover';
-import { IconArrowDown } from '@codexteam/icons';
+import { IconChevronDown } from '@codexteam/icons';
 
 
 /**
@@ -47,7 +47,7 @@ export default class MoveDownTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
-      icon: IconArrowDown,
+      icon: IconChevronDown,
       label: this.api.i18n.t('Move down'),
       onActivate: (item, event): void => this.handleClick(event),
       name: 'move-down',

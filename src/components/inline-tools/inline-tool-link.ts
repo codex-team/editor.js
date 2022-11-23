@@ -4,7 +4,7 @@ import $ from '../dom';
 import * as _ from '../utils';
 import { InlineTool, SanitizerConfig } from '../../../types';
 import { Notifier, Toolbar, I18n } from '../../../types/api';
-import { IconLink } from '@codexteam/icons';
+import { IconLink, IconUnlink } from '@codexteam/icons';
 
 /**
  * Link Tool
@@ -124,8 +124,8 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('link', 14, 10));
-    this.nodes.button.appendChild($.svg('unlink', 15, 11));
+
+    this.nodes.button.innerHTML = IconLink;
 
     return this.nodes.button;
   }
@@ -195,6 +195,7 @@ export default class LinkInlineTool implements InlineTool {
     const anchorTag = this.selection.findParentTag('A');
 
     if (anchorTag) {
+      this.nodes.button.innerHTML = IconUnlink;
       this.nodes.button.classList.add(this.CSS.buttonUnlink);
       this.nodes.button.classList.add(this.CSS.buttonActive);
       this.openActions();
@@ -208,6 +209,7 @@ export default class LinkInlineTool implements InlineTool {
 
       this.selection.save();
     } else {
+      this.nodes.button.innerHTML = IconLink;
       this.nodes.button.classList.remove(this.CSS.buttonUnlink);
       this.nodes.button.classList.remove(this.CSS.buttonActive);
     }
