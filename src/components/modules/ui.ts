@@ -16,6 +16,7 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
+import { mobileScreenBreakpoint } from '../utils';
 
 /**
  * HTML Elements used for UI
@@ -268,7 +269,7 @@ export default class UI extends Module<UINodes> {
    * Check for mobile mode and cache a result
    */
   private checkIsMobile(): void {
-    this.isMobile = window.innerWidth < 650;
+    this.isMobile = window.innerWidth < mobileScreenBreakpoint;
   }
 
   /**
@@ -366,8 +367,8 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.readOnlyMutableListeners.on(document, 'selectionchange', (event: Event) => {
-      this.selectionChanged(event);
+    this.readOnlyMutableListeners.on(document, 'selectionchange', () => {
+      this.selectionChanged();
     }, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
@@ -414,6 +415,7 @@ export default class UI extends Module<UINodes> {
       this.eventsDispatcher.emit(this.events.blockHovered, {
         block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
       });
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 20), {
       passive: true,
     });
@@ -805,10 +807,8 @@ export default class UI extends Module<UINodes> {
   /**
    * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
-   *
-   * @param {Event} event - selection event
    */
-  private selectionChanged(event: Event): void {
+  private selectionChanged(): void {
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
 

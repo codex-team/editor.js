@@ -15,16 +15,16 @@ import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
  * @todo - Keyboard-only mode bug:
  *         press Tab, flip to the Checkbox. press Enter (block will be added), Press Tab
  *         (Block Tunes will be opened with Move up focused), press Enter, press Tab ———— both Block Tunes and Toolbox will be opened
- * @todo TESTCASE - show toggler after opening and closing the Inline Toolbar
- * @todo TESTCASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
- * @todo TESTCASE - Click inside Editor holder should close Toolbar and Clear Focused blocks
- * @todo TESTCASE - Click inside Redactor zone when Block Settings are opened:
+ * @todo TEST CASE - show toggler after opening and closing the Inline Toolbar
+ * @todo TEST CASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
+ * @todo TEST CASE - Click inside Editor holder should close Toolbar and Clear Focused blocks
+ * @todo TEST CASE - Click inside Redactor zone when Block Settings are opened:
  *                  - should close Block Settings
  *                  - should not close Toolbar
  *                  - should move Toolbar to the clicked Block
- * @todo TESTCASE - Toolbar should be closed on the Cross Block Selection
- * @todo TESTCASE - Toolbar should be closed on the Rectangle Selection
- * @todo TESTCASE - If Block Settings or Toolbox are opened, the Toolbar should not be moved by Bocks hovering
+ * @todo TEST CASE - Toolbar should be closed on the Cross Block Selection
+ * @todo TEST CASE - Toolbar should be closed on the Rectangle Selection
+ * @todo TEST CASE - If Block Settings or Toolbox are opened, the Toolbar should not be moved by Bocks hovering
  */
 
 /**
@@ -474,7 +474,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     /**
-     * Subscribe to the 'block-hovered' event if currenct view is not mobile
+     * Subscribe to the 'block-hovered' event if current view is not mobile
      *
      * @see https://github.com/codex-team/editor.js/issues/1972
      */

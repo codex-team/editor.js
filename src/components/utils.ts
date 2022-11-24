@@ -37,7 +37,7 @@ export interface ChainData {
  */
 
 /**
- * Returns basic keycodes as constants
+ * Returns basic key codes as constants
  *
  * @returns {{}}
  */
@@ -295,7 +295,7 @@ export function isPromise(object: any): object is Promise<any> {
  */
 export function isPrintableKey(keyCode: number): boolean {
   return (keyCode > 47 && keyCode < 58) || // number keys
-    keyCode === 32 || keyCode === 13 || // Spacebar & return key(s)
+    keyCode === 32 || keyCode === 13 || // Space bar & return key(s)
     keyCode === 229 || // processing key input for certain languages — Chinese, Japanese, etc.
     (keyCode > 64 && keyCode < 91) || // letter keys
     (keyCode > 95 && keyCode < 112) || // Numpad keys
@@ -537,7 +537,7 @@ export function getUserOS(): {[key: string]: boolean} {
     linux: false,
   };
 
-  const userOS = Object.keys(OS).find((os: string) => navigator.appVersion.toLowerCase().indexOf(os) !== -1);
+  const userOS = Object.keys(OS).find((os: string) => window.navigator.appVersion.toLowerCase().indexOf(os) !== -1);
 
   if (userOS) {
     OS[userOS] = true;
@@ -658,7 +658,9 @@ export function getValidUrl(url: string): string {
  * @returns {string}
  */
 export function generateBlockId(): string {
-  return nanoid(10);
+  const idLen = 10;
+
+  return nanoid(idLen);
 }
 
 /**
@@ -677,7 +679,7 @@ export function openTab(url: string): void {
  * @returns {string}
  */
 export function generateId(prefix = ''): string {
-  // tslint:disable-next-line:no-bitwise
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   return `${prefix}${(Math.floor(Math.random() * 1e8)).toString(16)}`;
 }
 
@@ -747,10 +749,15 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
 }
 
 /**
+ * All screens below this width will be treated as mobile;
+ */
+export const mobileScreenBreakpoint = 650;
+
+/**
  * True if screen has mobile size
  */
 export function isMobileScreen(): boolean {
-  return window.matchMedia('(max-width: 650px)').matches;
+  return window.matchMedia(`(max-width: ${mobileScreenBreakpoint}px)`).matches;
 }
 
 /**
