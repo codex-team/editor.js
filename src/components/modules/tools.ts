@@ -21,8 +21,6 @@ import ToolsCollection from '../tools/collection';
  * Creates Instances from Plugins and binds external config to the instances
  */
 
-type ToolClass = BlockTool | InlineTool | BlockTune;
-
 /**
  * Class properties:
  *

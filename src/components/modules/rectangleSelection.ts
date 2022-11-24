@@ -187,6 +187,7 @@ export default class RectangleSelection extends Module {
 
     this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10), {
       passive: true,
     });
@@ -197,6 +198,7 @@ export default class RectangleSelection extends Module {
 
     this.listeners.on(window, 'scroll', _.throttle((mouseEvent: MouseEvent) => {
       this.processScroll(mouseEvent);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10), {
       passive: true,
     });

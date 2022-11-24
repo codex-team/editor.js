@@ -286,6 +286,7 @@ export function isPromise(object: any): object is Promise<any> {
   return Promise.resolve(object) === object;
 }
 
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /**
  * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
  *
@@ -301,6 +302,7 @@ export function isPrintableKey(keyCode: number): boolean {
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
     (keyCode > 218 && keyCode < 223); // [\]' (in order)
 }
+/* eslint-enable @typescript-eslint/no-magic-numbers */
 
 /**
  * Fires a promise sequence asynchronously
@@ -475,6 +477,7 @@ export function throttle(func, wait, options: {leading?: boolean; trailing?: boo
 
     const remaining = wait - (now - previous);
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     context = this;
 
     // eslint-disable-next-line prefer-rest-params

@@ -114,6 +114,7 @@ export default class SearchInput {
     this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
 
     const iconWrapper = Dom.make('div', SearchInput.CSS.icon);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const icon = Dom.svg('search', 16, 16);
 
     this.input = Dom.make('input', SearchInput.CSS.input, {

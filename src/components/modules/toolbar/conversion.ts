@@ -265,6 +265,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
 
     _.delay(() => {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10)();
   }
 

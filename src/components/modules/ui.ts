@@ -123,6 +123,7 @@ export default class UI extends Module<UINodes> {
    */
   private resizeDebouncer: () => void = _.debounce(() => {
     this.windowResize();
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   }, 200);
 
   /**
@@ -233,12 +234,15 @@ export default class UI extends Module<UINodes> {
       return true;
     }
 
-    return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+    return Object.entries(this.Editor).filter(([_moduleName, moduleClass]) => {
       return moduleClass.flipper instanceof Flipper;
     })
-      .some(([moduleName, moduleClass]) => {
+      .some(([_moduleName, moduleClass]) => {
         return moduleClass.flipper.hasFocus();
       });
+
+    /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars */
   }
 
   /**
