@@ -18,7 +18,7 @@ export type ModuleNodes = object;
  * @property {object} config - Editor user settings
  * @property {EditorModules} Editor - List of Editor modules
  */
-export default class Module<T extends ModuleNodes = {}> {
+export default class Module<T extends ModuleNodes = Record<string, HTMLElement>> {
   /**
    * Each module can provide some UI elements that will be stored in this property
    */
@@ -91,7 +91,9 @@ export default class Module<T extends ModuleNodes = {}> {
 
   /**
    * @class
-   * @param {ModuleConfig} - Module config
+   * @param options - Module options
+   * @param options.config - Module config
+   * @param options.eventsDispatcher - Common event bus
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     if (new.target === Module) {
