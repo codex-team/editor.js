@@ -1,7 +1,6 @@
 /**
  * @class DeleteTune
  * @classdesc Editor's default tune that moves up selected block
- *
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune, PopoverItem } from '../../../types';

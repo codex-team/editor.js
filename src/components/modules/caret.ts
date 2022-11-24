@@ -3,9 +3,7 @@
  * @classdesc Contains methods for working Caret
  *
  * Uses Range methods to manipulate with caret
- *
  * @module Caret
- *
  * @version 2.0.0
  */
 
@@ -562,10 +560,8 @@ export default class Caret extends Module {
    * <p></p>                            | right first-level siblings
    * <p></p>                            |
    * </div>
-   *
    * @param {HTMLElement} from - element from which siblings should be searched
    * @param {'left' | 'right'} direction - direction of search
-   *
    * @returns {HTMLElement[]}
    */
   private getHigherLevelSiblings(from: HTMLElement, direction?: 'left' | 'right'): HTMLElement[] {

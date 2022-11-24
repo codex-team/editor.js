@@ -12,11 +12,9 @@ import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
  *          - make Block Settings a standalone module
- *
  * @todo - Keyboard-only mode bug:
  *         press Tab, flip to the Checkbox. press Enter (block will be added), Press Tab
  *         (Block Tunes will be opened with Move up focused), press Enter, press Tab ———— both Block Tunes and Toolbox will be opened
- *
  * @todo TESTCASE - show toggler after opening and closing the Inline Toolbar
  * @todo TESTCASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
  * @todo TESTCASE - Click inside Editor holder should close Toolbar and Clear Focused blocks
@@ -78,7 +76,6 @@ interface ToolbarNodes {
  *
  * @class
  * @classdesc Toolbar module
- *
  * @typedef {Toolbar} Toolbar
  * @property {object} nodes - Toolbar nodes
  * @property {Element} nodes.wrapper        - Toolbar main element

@@ -25,7 +25,6 @@ export default class ReadOnlyAPI extends Module {
    * Set or toggle read-only state
    *
    * @param {boolean|undefined} state - set or toggle state
-   *
    * @returns {boolean} current value
    */
   public toggle(state?: boolean): Promise<boolean> {

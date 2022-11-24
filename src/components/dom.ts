@@ -50,7 +50,6 @@ export default class Dom {
    * @param  {string} tagName - new Element tag name
    * @param  {string[]|string} [classNames] - list or name of CSS classname(s)
    * @param  {object} [attributes] - any attributes
-   *
    * @returns {HTMLElement}
    */
   public static make(tagName: string, classNames: string | string[] = null, attributes: object = {}): HTMLElement {
@@ -75,7 +74,6 @@ export default class Dom {
    * Creates Text Node with the passed content
    *
    * @param {string} content - text content
-   *
    * @returns {Text}
    */
   public static text(content: string): Text {
@@ -88,7 +86,6 @@ export default class Dom {
    * @param {string} name - name (id) of icon from sprite
    * @param {number} [width] - icon width
    * @param {number} [height] - icon height
-   *
    * @returns {SVGElement}
    */
   public static svg(name: string, width = 14, height = 14): SVGElement {
@@ -165,7 +162,6 @@ export default class Dom {
    *
    * @param {Element} el - element we searching inside. Default - DOM Document
    * @param {string} selector - searching string
-   *
    * @returns {Element}
    */
   public static find(el: Element | Document = document, selector: string): Element {
@@ -189,7 +185,6 @@ export default class Dom {
    *
    * @param {Element|Document} el - element we searching inside. Default - DOM Document
    * @param {string} selector - searching string
-   *
    * @returns {NodeList}
    */
   public static findAll(el: Element | Document = document, selector: string): NodeList {
@@ -230,11 +225,9 @@ export default class Dom {
    * Leaf is the vertex that doesn't have any child nodes
    *
    * @description Method recursively goes throw the all Node until it finds the Leaf
-   *
    * @param {Node} node - root Node. From this vertex we start Deep-first search
    *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
    * @param {boolean} [atLast] - find last text node
-   *
    * @returns {Node} - it can be text Node or Element Node, so that caret will able to work with it
    */
   public static getDeepestNode(node: Node, atLast = false): Node {
@@ -287,7 +280,6 @@ export default class Dom {
    * Check if object is DOM node
    *
    * @param {*} node - object to check
-   *
    * @returns {boolean}
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -318,7 +310,6 @@ export default class Dom {
    * Check if passed element is contenteditable
    *
    * @param {HTMLElement} element - html element to check
-   *
    * @returns {boolean}
    */
   public static isContentEditable(element: HTMLElement): boolean {
@@ -329,7 +320,6 @@ export default class Dom {
    * Checks target if it is native input
    *
    * @param {*} target - HTML element or string
-   *
    * @returns {boolean}
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -346,7 +336,6 @@ export default class Dom {
    * Checks if we can set caret
    *
    * @param {HTMLElement} target - target to check
-   *
    * @returns {boolean}
    */
   public static canSetCaret(target: HTMLElement): boolean {
@@ -377,9 +366,7 @@ export default class Dom {
    *
    * @description Method checks simple Node without any childs for emptiness
    * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
-   *
    * @param {Node} node - node to check
-   *
    * @returns {boolean} true if it is empty
    */
   public static isNodeEmpty(node: Node): boolean {
@@ -402,7 +389,6 @@ export default class Dom {
    * checks node if it is doesn't have any child nodes
    *
    * @param {Node} node - node to check
-   *
    * @returns {boolean}
    */
   public static isLeaf(node: Node): boolean {
@@ -418,7 +404,6 @@ export default class Dom {
    * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
    *
    * @description Pushes to stack all DOM leafs and checks for emptiness
-   *
    * @param {Node} node - node to check
    * @returns {boolean}
    */
@@ -453,7 +438,6 @@ export default class Dom {
    * Check if string contains html elements
    *
    * @param {string} str - string to check
-   *
    * @returns {boolean}
    */
   public static isHTMLString(str: string): boolean {
@@ -468,7 +452,6 @@ export default class Dom {
    * Return length of node`s text content
    *
    * @param {Node} node - node with content
-   *
    * @returns {number}
    */
   public static getContentLength(node: Node): number {
@@ -536,7 +519,6 @@ export default class Dom {
    * Check if passed content includes only inline elements
    *
    * @param {string|HTMLElement} data - element or html string
-   *
    * @returns {boolean}
    */
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
@@ -561,7 +543,6 @@ export default class Dom {
    * Find and return all block elements in the passed parent (including subtree)
    *
    * @param {HTMLElement} parent - root element
-   *
    * @returns {HTMLElement[]}
    */
   public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
@@ -578,7 +559,6 @@ export default class Dom {
    * Helper for get holder from {string} or return HTMLElement
    *
    * @param {string | HTMLElement} element - holder's id or holder's HTML Element
-   *
    * @returns {HTMLElement}
    */
   public static getHolder(element: string | HTMLElement): HTMLElement {
@@ -593,7 +573,6 @@ export default class Dom {
    * Method checks passed Node if it is some extension Node
    *
    * @param {Node} node - any node
-   *
    * @returns {boolean}
    */
   public static isExtensionNode(node: Node): boolean {
@@ -608,7 +587,6 @@ export default class Dom {
    * Returns true if element is anchor (is A tag)
    *
    * @param {Element} element - element to check
-   *
    * @returns {boolean}
    */
   public static isAnchor(element: Element): element is HTMLAnchorElement {

@@ -45,7 +45,7 @@ export default class Tools extends Module {
   /**
    * Returns available Tools
    *
-   * @returns {object<Tool>}
+   * @returns {Object<Tool>}
    */
   public get available(): ToolsCollection {
     return this.toolsAvailable;

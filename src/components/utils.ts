@@ -24,7 +24,6 @@ declare const VERSION: string;
  * @typedef {object} ChainData
  * @property {object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronously
- *
  * @interface ChainData
  */
 export interface ChainData {
@@ -178,7 +177,6 @@ export const logLabeled = _log.bind(window, true);
  * Return string representation of the object type
  *
  * @param {*} object - object to get type
- *
  * @returns {string}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -190,7 +188,6 @@ export function typeOf(object: any): string {
  * Check if passed variable is a function
  *
  * @param {*} fn - function to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,7 +199,6 @@ export function isFunction(fn: any): fn is (...args: any[]) => any {
  * Checks if passed argument is an object
  *
  * @param {*} v - object to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,7 +210,6 @@ export function isObject(v: any): v is object {
  * Checks if passed argument is a string
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -226,7 +221,6 @@ export function isString(v: any): v is string {
  * Checks if passed argument is boolean
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -238,7 +232,6 @@ export function isBoolean(v: any): v is boolean {
  * Checks if passed argument is number
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,7 +243,6 @@ export function isNumber(v: any): v is number {
  * Checks if passed argument is undefined
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -262,7 +254,6 @@ export function isUndefined(v: any): v is undefined {
  * Check if passed function is a class
  *
  * @param {Function} fn - function to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -274,7 +265,6 @@ export function isClass(fn: any): boolean {
  * Checks if object is empty
  *
  * @param {object} object - object to check
- *
  * @returns {boolean}
  */
 export function isEmpty(object: object): boolean {
@@ -300,7 +290,6 @@ export function isPromise(object: any): object is Promise<any> {
  * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
  *
  * @param {number} keyCode - key code
- *
  * @returns {boolean}
  */
 export function isPrintableKey(keyCode: number): boolean {
@@ -319,7 +308,6 @@ export function isPrintableKey(keyCode: number): boolean {
  * @param {ChainData[]} chains - list or ChainData's
  * @param {Function} success - success callback
  * @param {Function} fallback - callback that fires in case of errors
- *
  * @returns {Promise}
  */
 export async function sequence(
@@ -333,10 +321,8 @@ export async function sequence(
    * Decorator
    *
    * @param {ChainData} chainData - Chain data
-   *
    * @param {Function} successCallback - success callback
    * @param {Function} fallbackCallback - fail callback
-   *
    * @returns {Promise}
    */
   async function waitNextBlock(
@@ -370,7 +356,6 @@ export async function sequence(
  * Make array from array-like collection
  *
  * @param {ArrayLike} collection - collection to convert to array
- *
  * @returns {Array}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -400,7 +385,6 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
  * Get file extension
  *
  * @param {File} file - file
- *
  * @returns {string}
  */
 export function getFileExtension(file: File): string {
@@ -411,7 +395,6 @@ export function getFileExtension(file: File): string {
  * Check if string is MIME type
  *
  * @param {string} type - string to check
- *
  * @returns {boolean}
  */
 export function isValidMimeType(type: string): boolean {
@@ -566,7 +549,6 @@ export function getUserOS(): {[key: string]: boolean} {
  * Capitalizes first letter of the string
  *
  * @param {string} text - text to capitalize
- *
  * @returns {string}
  */
 export function capitalize(text: string): string {
@@ -610,7 +592,6 @@ export function deepMerge<T extends object>(target, ...sources): T {
  * To detect touch devices more carefully, use 'touchstart' event listener
  *
  * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
- *
  * @returns {boolean}
  */
 export const isTouchSupported: boolean = 'ontouchstart' in document.documentElement;
@@ -690,7 +671,6 @@ export function openTab(url: string): void {
  * Returns random generated identifier
  *
  * @param {string} prefix - identifier prefix
- *
  * @returns {string}
  */
 export function generateId(prefix = ''): string {
@@ -761,7 +741,7 @@ export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]
   }
 
   return descriptor;
-};
+}
 
 /**
  * True if screen has mobile size

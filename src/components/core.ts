@@ -30,12 +30,9 @@ contextRequire.keys().forEach((filename) => {
 
 /**
  * @class Core
- *
  * @classdesc Editor.js core class
- *
  * @property {EditorConfig} config - all settings
  * @property {EditorModules} moduleInstances - constructed editor components
- *
  * @type {Core}
  */
 export default class Core {
@@ -61,7 +58,6 @@ export default class Core {
 
   /**
    * @param {EditorConfig} config - user configuration
-   *
    */
   constructor(config?: EditorConfig|string) {
     /**

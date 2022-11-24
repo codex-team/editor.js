@@ -192,5 +192,5 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 }

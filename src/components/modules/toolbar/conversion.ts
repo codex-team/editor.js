@@ -50,7 +50,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   /**
    * Available tools data
    */
-  private tools: {name: string; toolboxItem: ToolboxConfigEntry; button: HTMLElement}[] = []
+  private tools: {name: string; toolboxItem: ToolboxConfigEntry; button: HTMLElement}[] = [];
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab

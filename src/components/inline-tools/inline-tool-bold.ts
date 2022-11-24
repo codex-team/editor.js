@@ -79,7 +79,6 @@ export default class BoldInlineTool implements InlineTool {
    * Check selection and set activated state to button if there are <b> tag
    *
    * @param {Selection} selection - selection to check
-   *
    * @returns {boolean}
    */
   public checkState(selection: Selection): boolean {

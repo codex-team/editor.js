@@ -1,7 +1,6 @@
 /**
  * @class BlockSelection
  * @classdesc Manages Block selection with shortcut CMD+A
- *
  * @module BlockSelection
  * @version 1.0.0
  */
@@ -283,7 +282,6 @@ export default class BlockSelection extends Module {
    * Reduce each Block and copy its content
    *
    * @param {ClipboardEvent} e - copy/cut event
-   *
    * @returns {Promise<void>}
    */
   public copySelectedBlocks(e: ClipboardEvent): Promise<void> {

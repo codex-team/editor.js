@@ -71,9 +71,9 @@ export default class LinkInlineTool implements InlineTool {
     button: HTMLButtonElement;
     input: HTMLInputElement;
   } = {
-    button: null,
-    input: null,
-  };
+      button: null,
+      input: null,
+    };
 
   /**
    * SelectionUtils instance

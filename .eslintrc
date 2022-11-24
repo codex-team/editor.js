@@ -1,6 +1,6 @@
 {
   "extends": [
-    "codex"
+    "codex/ts"
   ],
   "rules": {
     /**

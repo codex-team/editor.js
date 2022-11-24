@@ -201,7 +201,6 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} index - index of Block to stretch
    * @param {boolean} status - true to enable, false to disable
-   *
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
@@ -247,7 +246,7 @@ export default class BlocksAPI extends Module {
     });
 
     return new BlockAPI(insertedBlock);
-  }
+  };
 
   /**
    * Creates data of an empty block with a passed type.
@@ -265,14 +264,13 @@ export default class BlocksAPI extends Module {
     });
 
     return block.data;
-  }
+  };
 
   /**
    * Insert new Block
    * After set caret to this Block
    *
    * @todo remove in 3.0.0
-   *
    * @deprecated with insert() method
    */
   public insertNewBlock(): void {
@@ -307,5 +305,5 @@ export default class BlocksAPI extends Module {
       replace: true,
       tunes: block.tunes,
     });
-  }
+  };
 }

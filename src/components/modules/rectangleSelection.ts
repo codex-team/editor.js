@@ -1,7 +1,6 @@
 /**
  * @class RectangleSelection
  * @classdesc Manages Block selection with mouse
- *
  * @module RectangleSelection
  * @version 1.0.0
  */
@@ -290,7 +289,7 @@ export default class RectangleSelection extends Module {
   /**
    * Generates required HTML elements
    *
-   * @returns {object<string, Element>}
+   * @returns {Object<string, Element>}
    */
   private genHTML(): {container: Element; overlay: Element} {
     const { UI } = this.Editor;

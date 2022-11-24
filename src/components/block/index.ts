@@ -60,10 +60,8 @@ interface BlockConstructorOptions {
 /**
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
  * @property {BlockTool} tool — current block tool (Paragraph, for example)
  * @property {object} CSS — block`s css classes
- *
  */
 
 /**
@@ -89,7 +87,6 @@ type BlockEvents = 'didMutated';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
@@ -628,7 +625,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool's validation method is optional
    *
    * @description Method returns true|false whether data passed the validation or not
-   *
    * @param {BlockToolData} data - data to validate
    * @returns {Promise<boolean>} valid
    */
@@ -855,7 +851,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Update current input
      */
     this.updateCurrentInput();
-  }
+  };
 
   /**
    * Adds focus event listeners to all inputs and contentEditables

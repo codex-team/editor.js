@@ -88,13 +88,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private nodes: {
     toolbox: HTMLElement;
   } = {
-    toolbox: null,
-  };
+      toolbox: null,
+    };
 
   /**
    * CSS styles
    *
-   * @returns {object.<string, string>}
+   * @returns {Object<string, string>}
    */
   private static get CSS(): { [name: string]: string } {
     return {
@@ -219,7 +219,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 
   /**
    * Returns list of tools that enables the Toolbox (by specifying the 'toolbox' getter)

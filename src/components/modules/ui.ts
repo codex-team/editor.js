@@ -29,14 +29,12 @@ interface UINodes {
 
 /**
  * @class
- *
  * @classdesc Makes Editor.js UI:
  *                <codex-editor>
  *                    <ce-redactor />
  *                    <ce-toolbar />
  *                    <ce-inline-toolbar />
  *                </codex-editor>
- *
  * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
  * @property {object} Editor         - available editor modules {@link EditorJS#moduleInstances}
@@ -726,7 +724,6 @@ export default class UI extends Module<UINodes> {
    * All clicks on the redactor zone
    *
    * @param {MouseEvent} event - click event
-   *
    * @description
    * - By clicks on the Editor's bottom zone:
    *      - if last Block is empty, set a Caret to this

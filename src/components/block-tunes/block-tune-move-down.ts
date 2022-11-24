@@ -1,7 +1,6 @@
 /**
  * @class MoveDownTune
  * @classdesc Editor's default tune - Moves down highlighted block
- *
  * @copyright <CodeX Team> 2018
  */
 

@@ -326,7 +326,6 @@ export default class SelectionUtils {
    *
    * @param element - element where to set focus
    * @param offset - offset of cursor
-   *
    * @returns {DOMRect} of range
    */
   public static setCursor(element: HTMLElement, offset = 0): DOMRect {
@@ -452,7 +451,6 @@ export default class SelectionUtils {
    * @param  {string} tagName       - tag to found
    * @param  {string} [className]   - tag's class name
    * @param  {number} [searchDepth] - count of tags that can be included. For better performance.
-   *
    * @returns {HTMLElement|null}
    */
   public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement | null {

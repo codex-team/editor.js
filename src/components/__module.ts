@@ -14,7 +14,6 @@ export type ModuleNodes = object;
  * @abstract
  * @class      Module
  * @classdesc  All modules inherits from this class.
- *
  * @typedef {Module} Module
  * @property {object} config - Editor user settings
  * @property {EditorModules} Editor - List of Editor modules
@@ -92,7 +91,6 @@ export default class Module<T extends ModuleNodes = {}> {
 
   /**
    * @class
-   *
    * @param {ModuleConfig} - Module config
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {

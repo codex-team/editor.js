@@ -61,12 +61,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     nothingFound: HTMLElement;
     overlay: HTMLElement;
   } = {
-    wrapper: null,
-    popover: null,
-    items: null,
-    nothingFound: null,
-    overlay: null,
-  }
+      wrapper: null,
+      popover: null,
+      items: null,
+      nothingFound: null,
+      overlay: null,
+    };
 
   /**
    * Additional wrapper's class name
@@ -150,7 +150,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * ScrollLocker instance
    */
-  private scrollLocker = new ScrollLocker()
+  private scrollLocker = new ScrollLocker();
 
   /**
    * Editor container element
@@ -601,7 +601,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     el.classList.remove(Popover.CSS.itemNoHover);
-  }
+  };
 
   /**
    * Removes class responsible for special focus behavior on an item
@@ -621,7 +621,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private onFlip = (): void => {
     this.disableSpecialHoverAndFocusBehavior();
-  }
+  };
 
   /**
    * Reactivates flipper instance.
