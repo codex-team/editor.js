@@ -146,7 +146,7 @@ export default class SelectionUtils {
   /**
    * Check if passed selection is at Editor's zone
    *
-   * @param selection - Selectoin object to check
+   * @param selection - Selection object to check
    */
   public static isSelectionAtEditor(selection: Selection): boolean {
     if (!selection) {
@@ -326,7 +326,6 @@ export default class SelectionUtils {
    *
    * @param element - element where to set focus
    * @param offset - offset of cursor
-   * @returns {DOMRect} of range
    */
   public static setCursor(element: HTMLElement, offset = 0): DOMRect {
     const range = document.createRange();
@@ -524,7 +523,7 @@ export default class SelectionUtils {
   /**
    * Expands selection range to the passed parent node
    *
-   * @param {HTMLElement} element - element which contents should be selcted
+   * @param {HTMLElement} element - element which contents should be selected
    */
   public expandToTag(element: HTMLElement): void {
     const selection = window.getSelection();

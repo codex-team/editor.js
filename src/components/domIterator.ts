@@ -175,6 +175,7 @@ export default class DomIterator {
       /**
        * Focus input with micro-delay to ensure DOM is updated
        */
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       _.delay(() => SelectionUtils.setCursor(this.items[focusedButtonIndex]), 50)();
     }
 

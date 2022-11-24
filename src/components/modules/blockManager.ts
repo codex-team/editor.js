@@ -583,7 +583,6 @@ export default class BlockManager extends Module {
    * Get Block instance by html element
    *
    * @param {Node} element - html element to get Block by
-   * @returns {Block}
    */
   public getBlock(element: HTMLElement): Block {
     if (!$.isElement(element) as boolean) {

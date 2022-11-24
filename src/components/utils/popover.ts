@@ -236,6 +236,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (this.searchable) {
       setTimeout(() => {
         this.search.focus();
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 100);
     }
 

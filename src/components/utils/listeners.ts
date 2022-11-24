@@ -62,7 +62,6 @@ export default class Listeners {
    * @param {string} eventType - event type
    * @param {Function} handler - method that will be fired on event
    * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
-   * @returns {string}
    */
   public on(
     element: EventTarget,
@@ -103,6 +102,7 @@ export default class Listeners {
     element: EventTarget,
     eventType: string,
     handler?: (event: Event) => void,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     options?: boolean | AddEventListenerOptions
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);

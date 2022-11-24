@@ -4,7 +4,7 @@
  * @copyright <CodeX Team> 2018
  */
 import $ from '../dom';
-import { API, BlockTune, BlockAPI, PopoverItem } from '../../../types';
+import { API, BlockTune, PopoverItem } from '../../../types';
 import Popover from '../../components/utils/popover';
 
 /**
@@ -44,6 +44,7 @@ export default class MoveUpTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       icon: $.svg('arrow-up', 14, 14).outerHTML,
       label: this.api.i18n.t('Move up'),
       onActivate: (item, e): void => this.handleClick(e),
@@ -70,6 +71,7 @@ export default class MoveUpTune implements BlockTune {
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
 
       return;

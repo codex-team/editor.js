@@ -189,10 +189,8 @@ export default class BlockSelection extends Module {
    *
    *  - Remove all ranges
    *  - Unselect all Blocks
-   *
-   * @param {boolean} readOnlyEnabled - "read only" state
    */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
+  public toggleReadOnly(): void {
     SelectionUtils.get()
       .removeAllRanges();
 
@@ -249,12 +247,13 @@ export default class BlockSelection extends Module {
         const eventKey = (reason as KeyboardEvent).key;
 
         /**
-         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentifier).
+         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
          * So we use empty string
          *
          * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
          */
         Caret.insertContentAtCaretPosition(eventKey.length > 1 ? '' : eventKey);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 

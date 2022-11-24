@@ -525,6 +525,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
       .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
@@ -719,7 +720,7 @@ export default class Paste extends Module {
   /**
    * Process paste of single Block tool content
    *
-   * @param {PasteData} dataToInsert - data of Block to inseret
+   * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
     const { Caret, BlockManager } = this.Editor;
@@ -878,7 +879,6 @@ export default class Paste extends Module {
    * @param {Node} node - current node
    * @param {Node[]} nodes - processed nodes
    * @param {Node} destNode - destination node
-   * @returns {Node[]}
    */
   private processElementNode(node: Node, nodes: Node[], destNode: Node): Node[] | void {
     const tags = Object.keys(this.toolsTags);

@@ -1,6 +1,5 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
 import Popover, { PopoverEvent } from '../../utils/popover';

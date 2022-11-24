@@ -58,7 +58,6 @@ export default class BlocksAPI extends Module {
    * Returns the index of Block by id;
    *
    * @param id - block id
-   * @returns {number}
    */
   public getBlockIndex(id: string): number | undefined {
     const block = this.Editor.BlockManager.getBlockById(id);
@@ -232,6 +231,7 @@ export default class BlocksAPI extends Module {
   public insert = (
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     config: ToolConfig = {},
     index?: number,
     needToFocus?: boolean,

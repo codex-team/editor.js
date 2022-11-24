@@ -36,22 +36,21 @@ export default class DeleteTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       icon: $.svg('cross', 14, 14).outerHTML,
       label: this.api.i18n.t('Delete'),
       name: 'delete',
       confirmation: {
         label: this.api.i18n.t('Click to delete'),
-        onActivate: (item, e): void => this.handleClick(e),
+        onActivate: (): void => this.handleClick(),
       },
     };
   }
 
   /**
    * Delete block conditions passed
-   *
-   * @param {MouseEvent} event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     this.api.blocks.delete();
   }
 }

@@ -3,17 +3,23 @@
       "Behaviour",
       "cacheable",
       "codexteam",
+      "colspan",
       "contenteditable",
       "cssnano",
       "Debouncer",
       "devserver",
       "editorjs",
       "entrypoints",
+      "Flippable",
       "hsablonniere",
       "intellij",
       "keydowns",
       "Kilian",
+      "mergeable",
+      "nofollow",
       "opencollective",
-      "stylelint"
+      "rowspan",
+      "stylelint",
+      "twitterwidget"
     ]
 }
