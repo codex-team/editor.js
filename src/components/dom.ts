@@ -83,28 +83,6 @@ export default class Dom {
   }
 
   /**
-   * Creates SVG icon linked to the sprite
-   *
-   * @param {string} name - name (id) of icon from sprite
-   * @param {number} [width] - icon width
-   * @param {number} [height] - icon height
-   *
-   * @returns {SVGElement}
-   *
-   * @deprecated
-   */
-  public static svg(name: string, width = 20, height = 20): SVGElement {
-    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-    icon.classList.add('icon', 'icon--' + name);
-    icon.setAttribute('width', width + 'px');
-    icon.setAttribute('height', height + 'px');
-    icon.innerHTML = `<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${name}"></use>`;
-
-    return icon;
-  }
-
-  /**
    * Append one or several elements to the parent
    *
    * @param  {Element|DocumentFragment} parent - where to append
