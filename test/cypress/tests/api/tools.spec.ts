@@ -1,5 +1,6 @@
 import { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
-import { HTMLPasteEvent, PasteEvent, TunesMenuConfig } from '../../../../types/tools';
+import EditorJS from '../../../../types';
+import { HTMLPasteEvent, TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -97,22 +98,22 @@ describe('Editor Tools Api', () => {
         .should('contain.text', TestTool.toolbox[1].title);
     });
 
-    it('should insert block with overriden data on entry click in case toolbox entry provides data overrides', () => {
+    it('should insert block with overridden data on entry click in case toolbox entry provides data overrides', () => {
       const text = 'Text';
       const dataOverrides = {
         testProp: 'new value',
       };
 
       /**
-       * Tool with default data to be overriden
+       * Tool with default data to be overridden
        */
       class TestTool {
         private _data = {
           testProp: 'default value',
-        }
+        };
 
         /**
-         * Tool contructor
+         * Tool constructor
          *
          * @param data - previously saved data
          */
@@ -121,7 +122,7 @@ describe('Editor Tools Api', () => {
         }
 
         /**
-         * Returns toolbox config as list of entries with overriden data
+         * Returns toolbox config as list of entries with overridden data
          */
         public static get toolbox(): ToolboxConfig {
           return [
@@ -182,8 +183,8 @@ describe('Editor Tools Api', () => {
         .type(text);
 
       cy.get('@editorInstance')
-        .then(async (editor: any) => {
-          const editorData = await editor.save();
+        .then(async (editor: unknown) => {
+          const editorData = await (editor as EditorJS).save();
 
           expect(editorData.blocks[0].data).to.be.deep.eq({
             ...dataOverrides,
@@ -535,6 +536,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<img>',
           })
           .then(() => {
@@ -591,6 +593,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<img src="foo" onerror="alert(123)"/>', // all attributes should be sanitized
           })
           .then(() => {
@@ -661,6 +664,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<img src="foo" onerror="alert(123)"/>',
           })
           .then(() => {
@@ -738,6 +742,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
           })
           .then(() => {
@@ -821,6 +826,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<video width="100"><source src="movie.mp4" type="video/mp4"></video>',
           })
           .then(() => {
@@ -896,6 +902,7 @@ describe('Editor Tools Api', () => {
           .get('div.ce-block')
           .click()
           .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'text/html': '<table><tr height="50"><td width="300">Ho-Ho-Ho</td></tr></table>',
           })
           .then(() => {

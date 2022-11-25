@@ -7,9 +7,7 @@ import { isEmpty } from '../utils';
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
  *    - {Function off - unsubscribes callback
- *
  * @version 1.0.0
- *
  * @typedef {Events} Events
  * @property {object} subscribers - all subscribers grouped by event name
  */

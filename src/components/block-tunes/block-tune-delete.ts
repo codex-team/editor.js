@@ -1,7 +1,6 @@
 /**
  * @class DeleteTune
  * @classdesc Editor's default tune that moves up selected block
- *
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune, PopoverItem } from '../../../types';
@@ -42,17 +41,15 @@ export default class DeleteTune implements BlockTune {
       name: 'delete',
       confirmation: {
         label: this.api.i18n.t('Click to delete'),
-        onActivate: (item, e): void => this.handleClick(e),
+        onActivate: (): void => this.handleClick(),
       },
     };
   }
 
   /**
    * Delete block conditions passed
-   *
-   * @param {MouseEvent} event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     this.api.blocks.delete();
   }
 }

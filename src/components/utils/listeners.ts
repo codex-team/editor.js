@@ -62,8 +62,6 @@ export default class Listeners {
    * @param {string} eventType - event type
    * @param {Function} handler - method that will be fired on event
    * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
-   *
-   * @returns {string}
    */
   public on(
     element: EventTarget,
@@ -104,6 +102,7 @@ export default class Listeners {
     element: EventTarget,
     eventType: string,
     handler?: (event: Event) => void,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     options?: boolean | AddEventListenerOptions
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
@@ -140,7 +139,6 @@ export default class Listeners {
    * @param {EventTarget} element - event target
    * @param {string} [eventType] - event type
    * @param {Function} [handler] - event handler
-   *
    * @returns {ListenerData|null}
    */
   public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
@@ -155,7 +153,6 @@ export default class Listeners {
    * @param {EventTarget} element - event target
    * @param {string} eventType - event type
    * @param {Function} handler - event handler
-   *
    * @returns {ListenerData[]}
    */
   public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
@@ -195,7 +192,6 @@ export default class Listeners {
    * Search method: looks for listener by passed element
    *
    * @param {EventTarget} element - searching element
-   *
    * @returns {Array} listeners that found on element
    */
   private findByEventTarget(element: EventTarget): ListenerData[] {
@@ -210,7 +206,6 @@ export default class Listeners {
    * Search method: looks for listener by passed event type
    *
    * @param {string} eventType - event type
-   *
    * @returns {ListenerData[]} listeners that found on element
    */
   private findByType(eventType: string): ListenerData[] {
@@ -225,7 +220,6 @@ export default class Listeners {
    * Search method: looks for listener by passed handler
    *
    * @param {Function} handler - event handler
-   *
    * @returns {ListenerData[]} listeners that found on element
    */
   private findByHandler(handler: (event: Event) => void): ListenerData[] {
@@ -240,7 +234,6 @@ export default class Listeners {
    * Returns listener data found by id
    *
    * @param {string} id - listener identifier
-   *
    * @returns {ListenerData}
    */
   private findById(id: string): ListenerData {

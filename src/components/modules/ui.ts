@@ -11,6 +11,7 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
+import { mobileScreenBreakpoint } from '../utils';
 
 /**
  * HTML Elements used for UI
@@ -24,14 +25,12 @@ interface UINodes {
 
 /**
  * @class
- *
  * @classdesc Makes Editor.js UI:
  *                <codex-editor>
  *                    <ce-redactor />
  *                    <ce-toolbar />
  *                    <ce-inline-toolbar />
  *                </codex-editor>
- *
  * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
  * @property {object} Editor         - available editor modules {@link EditorJS#moduleInstances}
@@ -120,6 +119,7 @@ export default class UI extends Module<UINodes> {
    */
   private resizeDebouncer: () => void = _.debounce(() => {
     this.windowResize();
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   }, 200);
 
   /**
@@ -225,12 +225,15 @@ export default class UI extends Module<UINodes> {
       return true;
     }
 
-    return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+    return Object.entries(this.Editor).filter(([_moduleName, moduleClass]) => {
       return moduleClass.flipper instanceof Flipper;
     })
-      .some(([moduleName, moduleClass]) => {
+      .some(([_moduleName, moduleClass]) => {
         return moduleClass.flipper.hasFocus();
       });
+
+    /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars */
   }
 
   /**
@@ -256,7 +259,7 @@ export default class UI extends Module<UINodes> {
    * Check for mobile mode and cache a result
    */
   private checkIsMobile(): void {
-    this.isMobile = window.innerWidth < 650;
+    this.isMobile = window.innerWidth < mobileScreenBreakpoint;
   }
 
   /**
@@ -354,8 +357,8 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.readOnlyMutableListeners.on(document, 'selectionchange', (event: Event) => {
-      this.selectionChanged(event);
+    this.readOnlyMutableListeners.on(document, 'selectionchange', () => {
+      this.selectionChanged();
     }, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
@@ -402,6 +405,7 @@ export default class UI extends Module<UINodes> {
       this.eventsDispatcher.emit(this.events.blockHovered, {
         block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
       });
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 20), {
       passive: true,
     });
@@ -716,7 +720,6 @@ export default class UI extends Module<UINodes> {
    * All clicks on the redactor zone
    *
    * @param {MouseEvent} event - click event
-   *
    * @description
    * - By clicks on the Editor's bottom zone:
    *      - if last Block is empty, set a Caret to this
@@ -794,10 +797,8 @@ export default class UI extends Module<UINodes> {
   /**
    * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
-   *
-   * @param {Event} event - selection event
    */
-  private selectionChanged(event: Event): void {
+  private selectionChanged(): void {
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
 

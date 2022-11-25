@@ -74,7 +74,7 @@ export default class Flipper {
   /**
    * Contains list of callbacks to be executed on each flip
    */
-  private flipCallbacks: Array<() => void> = []
+  private flipCallbacks: Array<() => void> = [];
 
   /**
    * @param {FlipperOptions} options - different constructing settings

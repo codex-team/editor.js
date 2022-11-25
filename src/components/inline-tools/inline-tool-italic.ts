@@ -1,4 +1,3 @@
-import $ from '../dom';
 import { InlineTool, SanitizerConfig } from '../../../types';
 import { IconItalic } from '@codexteam/icons';
 
@@ -69,19 +68,15 @@ export default class ItalicInlineTool implements InlineTool {
 
   /**
    * Wrap range with <i> tag
-   *
-   * @param {Range} range - range to wrap
    */
-  public surround(range: Range): void {
+  public surround(): void {
     document.execCommand(this.commandName);
   }
 
   /**
    * Check selection and set activated state to button if there are <i> tag
-   *
-   * @param {Selection} selection - selection to check
    */
-  public checkState(selection: Selection): boolean {
+  public checkState(): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);

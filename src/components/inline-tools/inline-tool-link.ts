@@ -1,9 +1,7 @@
 import SelectionUtils from '../selection';
-
-import $ from '../dom';
 import * as _ from '../utils';
-import { InlineTool, SanitizerConfig } from '../../../types';
-import { Notifier, Toolbar, I18n } from '../../../types/api';
+import { InlineTool, SanitizerConfig, API } from '../../../types';
+import { Notifier, Toolbar, I18n, InlineToolbar } from '../../../types/api';
 import { IconLink, IconUnlink } from '@codexteam/icons';
 
 /**
@@ -72,9 +70,9 @@ export default class LinkInlineTool implements InlineTool {
     button: HTMLButtonElement;
     input: HTMLInputElement;
   } = {
-    button: null,
-    input: null,
-  };
+      button: null,
+      input: null,
+    };
 
   /**
    * SelectionUtils instance
@@ -94,7 +92,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available inline toolbar methods (open/close)
    */
-  private inlineToolbar: Toolbar;
+  private inlineToolbar: InlineToolbar;
 
   /**
    * Notifier API methods
@@ -107,9 +105,9 @@ export default class LinkInlineTool implements InlineTool {
   private i18n: I18n;
 
   /**
-   * @param {API} api - Editor.js API
+   * @param api - Editor.js API
    */
-  constructor({ api }) {
+  constructor({ api }: { api: API }) {
     this.toolbar = api.toolbar;
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
@@ -188,10 +186,8 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <a> tag
-   *
-   * @param {Selection} selection - selection to check
    */
-  public checkState(selection?: Selection): boolean {
+  public checkState(): boolean {
     const anchorTag = this.selection.findParentTag('A');
 
     if (anchorTag) {

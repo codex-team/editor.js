@@ -16,13 +16,15 @@ describe('api.blocks', () => {
     ],
   };
 
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({
+      data: editorDataMock,
+    }).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({
-        data: editorDataMock,
-      }).as('editorInstance');
     }
   });
 

@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { isFunction } from '../../../src/components/utils';
 
+/**
+ * Example of typical synchronous function
+ */
 function syncFunction(): void {}
 
+/**
+ * Example of typical asynchronous function
+ */
 async function asyncFunction(): Promise<void> {}
 
 const syncArrowFunction = (): void => {};
@@ -10,7 +16,7 @@ const syncArrowFunction = (): void => {};
 const asyncArrowFunction = async (): Promise<void> => {};
 
 describe('isFunction function', () => {
-  it('should recognise sync functions', () => {
+  it('should recognize sync functions', () => {
     /**
      * Act
      */
@@ -24,7 +30,7 @@ describe('isFunction function', () => {
     expect(arrowFunctionResult).to.eq(true);
   });
 
-  it('should recognise async functions', () => {
+  it('should recognize async functions', () => {
     /**
      * Act
      */

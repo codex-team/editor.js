@@ -105,9 +105,7 @@ interface PasteData {
 /**
  * @class Paste
  * @classdesc Contains methods to handle paste on editor
- *
  * @module Paste
- *
  * @version 2.0.0
  */
 export default class Paste extends Module {
@@ -316,7 +314,7 @@ export default class Paste extends Module {
         e
       );
     }
-  }
+  };
 
   /**
    * Get tags name list from either tag name or sanitization config.
@@ -455,7 +453,6 @@ export default class Paste extends Module {
    * Check if browser behavior suits better
    *
    * @param {EventTarget} element - element where content has been pasted
-   *
    * @returns {boolean}
    */
   private isNativeBehaviour(element: EventTarget): boolean {
@@ -489,7 +486,7 @@ export default class Paste extends Module {
 
     BlockManager.clearFocused();
     Toolbar.close();
-  }
+  };
 
   /**
    * Get files from data transfer object and insert related Tools
@@ -528,6 +525,7 @@ export default class Paste extends Module {
 
     const foundConfig = Object
       .entries(this.toolsFiles)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
       .find(([toolName, { mimeTypes, extensions } ]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
@@ -560,7 +558,6 @@ export default class Paste extends Module {
    * Split HTML string to blocks and return it as array of Block data
    *
    * @param {string} innerHTML - html string to process
-   *
    * @returns {PasteData[]}
    */
   private processHTML(innerHTML: string): PasteData[] {
@@ -576,7 +573,6 @@ export default class Paste extends Module {
      *      - https://github.com/codex-team/editor.js/issues/1427
      *      - https://github.com/codex-team/editor.js/issues/1244
      *      - https://github.com/codex-team/editor.js/issues/740
-     *
      */
     const wrapper = $.make('DIV');
 
@@ -689,7 +685,6 @@ export default class Paste extends Module {
    * Split plain text by new line symbols and return it as array of Block data
    *
    * @param {string} plain - string to process
-   *
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
@@ -725,7 +720,7 @@ export default class Paste extends Module {
   /**
    * Process paste of single Block tool content
    *
-   * @param {PasteData} dataToInsert - data of Block to inseret
+   * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
     const { Caret, BlockManager } = this.Editor;
@@ -795,7 +790,6 @@ export default class Paste extends Module {
    * Get patterns` matches
    *
    * @param {string} text - text to process
-   *
    * @returns {Promise<{event: PasteEvent, tool: string}>}
    */
   private async processPattern(text: string): Promise<{ event: PasteEvent; tool: string }> {
@@ -829,7 +823,6 @@ export default class Paste extends Module {
    *
    * @param {PasteData} data - data to insert
    * @param {boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
-   *
    * @returns {void}
    */
   private insertBlock(data: PasteData, canReplaceCurrentBlock = false): void {
@@ -853,7 +846,6 @@ export default class Paste extends Module {
    * Insert data passed as application/x-editor-js JSON
    *
    * @param {Array} blocks — Blocks' data to insert
-   *
    * @returns {void}
    */
   private insertEditorJSData(blocks: Pick<SavedData, 'id' | 'data' | 'tool'>[]): void {
@@ -887,8 +879,6 @@ export default class Paste extends Module {
    * @param {Node} node - current node
    * @param {Node[]} nodes - processed nodes
    * @param {Node} destNode - destination node
-   *
-   * @returns {Node[]}
    */
   private processElementNode(node: Node, nodes: Node[], destNode: Node): Node[] | void {
     const tags = Object.keys(this.toolsTags);
@@ -931,7 +921,6 @@ export default class Paste extends Module {
    * 2. Document Fragments contained text and markup tags like a, b, i etc.
    *
    * @param {Node} wrapper - wrapper of paster HTML content
-   *
    * @returns {Node[]}
    */
   private getNodes(wrapper: Node): Node[] {

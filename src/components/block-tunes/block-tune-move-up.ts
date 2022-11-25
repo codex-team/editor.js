@@ -1,7 +1,6 @@
 /**
  * @class MoveUpTune
  * @classdesc Editor's default tune that moves up selected block
- *
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune, PopoverItem } from '../../../types';
@@ -71,6 +70,7 @@ export default class MoveUpTune implements BlockTune {
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
 
       return;
