@@ -14,7 +14,6 @@
 - `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
 - `Fix` — Pasting from Microsoft Word to Chrome (Mac OS) fixed. Now if there is no image-tools connected, regular text content will be pasted.
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
-
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 
 ### 2.25.0
