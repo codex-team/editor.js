@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 describe('Output sanitization', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({}).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({}).as('editorInstance');
     }
   });
 
