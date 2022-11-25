@@ -1,4 +1,5 @@
 import { BlockMutationType } from '../../../../types/events/block/mutation-type';
+import EditorJS from '../../../../types';
 
 /**
  * There will be described test cases of BlockAPI
@@ -22,13 +23,15 @@ describe('BlockAPI', () => {
    */
   const EditorJSApiMock = Cypress.sinon.match.any;
 
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {
       const config = {
         data: editorDataMock,
-        onChange: (): void => { console.log('something changed'); },
+        onChange: (): void => {
+          console.log('something changed');
+        },
       };
 
       cy.createEditor(config).as('editorInstance');
@@ -45,8 +48,8 @@ describe('BlockAPI', () => {
      * Check that blocks.dispatchChange() triggers Editor 'onChange' callback
      */
     it('should trigger onChange with corresponded block', () => {
-      cy.get('@editorInstance').then(async (editor: any) => {
-        const block = editor.blocks.getById(firstBlock.id);
+      cy.get('@editorInstance').then(async (editor: unknown) => {
+        const block = (editor as EditorJS).blocks.getById(firstBlock.id);
 
         block.dispatchChange();
 
@@ -59,5 +62,4 @@ describe('BlockAPI', () => {
       });
     });
   });
-
 });

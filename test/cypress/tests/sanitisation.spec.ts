@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-describe('Output sanitisation', () => {
+describe('Output sanitization', () => {
   beforeEach(() => {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
@@ -52,7 +52,10 @@ describe('Output sanitisation', () => {
     it('should save formatting for paragraph on paste', () => {
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
-        .paste({ 'text/html': '<p>Text</p><p><b>Bold text</b></p>' });
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/html': '<p>Text</p><p><b>Bold text</b></p>',
+        });
 
       cy.get('@editorInstance').then(async editorInstance => {
         const output = await (editorInstance as any).save();

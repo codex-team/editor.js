@@ -3,7 +3,7 @@ import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
 
 describe('Copy pasting from Editor', () => {
-  beforeEach(() => {
+  beforeEach(function () {
     if (this && this.editorInstance) {
       this.editorInstance.destroy();
     } else {
@@ -23,6 +23,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/plain': 'Some plain text',
         })
         .wait(0)
@@ -34,6 +35,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/html': '<p><b>Some text</b></p>',
         })
         .should('contain.html', '<b>Some text</b>');
@@ -44,6 +46,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/plain': 'First block\n\nSecond block',
         });
 
@@ -60,6 +63,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/html': '<p>First block</p><p>Second block</p>',
         });
 
@@ -76,6 +80,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'application/x-editor-js': JSON.stringify([
             {
               tool: 'paragraph',
@@ -105,6 +110,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/html': '<h2>First block</h2><p>Second block</p>',
         });
 
@@ -122,6 +128,7 @@ describe('Copy pasting from Editor', () => {
         .get('div.ce-block')
         .click()
         .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/plain': 'https://codex.so/public/app/img/external/codex2x.png',
         });
 
