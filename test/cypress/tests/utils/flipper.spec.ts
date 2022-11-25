@@ -37,15 +37,17 @@ class SomePlugin {
 }
 
 describe('Flipper', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({
+      tools: {
+        sometool: SomePlugin,
+      },
+    }).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({
-        tools: {
-          sometool: SomePlugin,
-        },
-      }).as('editorInstance');
     }
   });
 

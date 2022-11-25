@@ -24,19 +24,21 @@ describe('BlockAPI', () => {
   const EditorJSApiMock = Cypress.sinon.match.any;
 
   beforeEach(function () {
-    if (this && this.editorInstance) {
+    const config = {
+      data: editorDataMock,
+      onChange: (): void => {
+        console.log('something changed');
+      },
+    };
+
+    cy.createEditor(config).as('editorInstance');
+
+    cy.spy(config, 'onChange').as('onChange');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      const config = {
-        data: editorDataMock,
-        onChange: (): void => {
-          console.log('something changed');
-        },
-      };
-
-      cy.createEditor(config).as('editorInstance');
-
-      cy.spy(config, 'onChange').as('onChange');
     }
   });
 
