@@ -227,7 +227,7 @@ export default class BlocksAPI extends Module {
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param replace - pass true to replace the Block existed under passed index
-   * @param {string} id — block id, an optional id to be used when inserting a new block, if an id is omitted then a new id will be generated
+   * @param {string} id — An optional id for the new block. If omitted then the new id will be generated
    */
   public insert = (
     type: string = this.config.defaultBlock,
@@ -240,12 +240,12 @@ export default class BlocksAPI extends Module {
     id?: string
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
+      id,
       tool: type,
       data,
       index,
       needToFocus,
       replace,
-      id,
     });
 
     return new BlockAPI(insertedBlock);

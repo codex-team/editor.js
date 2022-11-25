@@ -175,6 +175,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Toolbox Tool's button click handler
    *
    * @param toolName - tool type to be activated
+   * @param blockDataOverrides - Block data predefined by the activated Toolbox item
    */
   public toolButtonActivated(toolName: string, blockDataOverrides: BlockToolData): void {
     this.insertNewBlock(toolName, blockDataOverrides);
@@ -380,13 +381,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
 
     const newBlock = this.api.blocks.insert(
       toolName,
-      undefined,
       blockData,
       undefined,
       index,
       undefined,
-      currentBlock.isEmpty,
-      undefined
+      currentBlock.isEmpty
     );
 
     /**
