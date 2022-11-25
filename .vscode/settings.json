@@ -1,12 +1,15 @@
 {
     "cSpell.words": [
+      "autofocused",
       "Behaviour",
       "cacheable",
       "childs",
       "codexteam",
       "colspan",
       "contenteditable",
+      "contentless",
       "cssnano",
+      "cssnext",
       "Debouncer",
       "devserver",
       "editorjs",
@@ -15,6 +18,7 @@
       "GRAMMARLY",
       "hsablonniere",
       "intellij",
+      "keydown",
       "keydowns",
       "Kilian",
       "mergeable",
@@ -22,10 +26,14 @@
       "nofollow",
       "opencollective",
       "preconfigured",
+      "resetors",
       "rowspan",
       "selectall",
       "sometool",
       "stylelint",
-      "twitterwidget"
+      "textareas",
+      "twitterwidget",
+      "typeof",
+      "viewports"
     ]
 }
