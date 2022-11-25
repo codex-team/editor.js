@@ -1,10 +1,5 @@
 /* eslint-disable jsdoc/no-undefined-types */
 /**
- * Prebuilded sprite of SVG icons
- */
-import sprite from '../../../dist/sprite.svg';
-
-/**
  * Module UI
  *
  * @type {UI}
@@ -162,11 +157,6 @@ export default class UI extends Module<UINodes> {
      * Loader for rendering process
      */
     this.addLoader();
-
-    /**
-     * Append SVG sprite
-     */
-    this.appendSVGSprite();
 
     /**
      * Load and append CSS
@@ -874,18 +864,5 @@ export default class UI extends Module<UINodes> {
      * @todo add debounce
      */
     this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
-  }
-
-  /**
-   * Append prebuilt sprite with SVG icons
-   */
-  private appendSVGSprite(): void {
-    const spriteHolder = $.make('div');
-
-    spriteHolder.hidden = true;
-    spriteHolder.style.display = 'none';
-    spriteHolder.innerHTML = sprite;
-
-    $.append(this.nodes.wrapper, spriteHolder);
   }
 }

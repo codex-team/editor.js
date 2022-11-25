@@ -50,15 +50,15 @@
   --narrow-mode-right-padding: 50px;
 
   /**
-   * Toolbar buttons height and width
-   */
-  --toolbar-buttons-size: 34px;
-
-  /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
   --toolbox-buttons-size: 26px;
   --toolbox-buttons-size--mobile: 36px;
+
+  /**
+   * Size of svg icons got from the CodeX Icons pack
+   */
+  --icon-size: 20px;
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -159,19 +159,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--toolbar-buttons-size);
-    height: var(--toolbar-buttons-size);
-    line-height: var(--toolbar-buttons-size);
-    padding: 0 !important;
-    text-align: center;
+
+    padding: 0;
     border-radius: 3px;
     cursor: pointer;
     border: 0;
     outline: none;
     background-color: transparent;
     vertical-align: bottom;
-    color: #000;
+    color: inherit;
     margin: 0;
+
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
 
     &:hover {
       background-color: var(--bg-light);
@@ -241,8 +243,8 @@
     }
 
     svg {
-      width: 12px;
-      height: 12px;
+      width: var(--icon-size);
+      height: var(--icon-size);
     }
   }
 }

@@ -3,9 +3,9 @@
  * @classdesc Editor's default tune that moves up selected block
  * @copyright <CodeX Team> 2018
  */
-import $ from '../dom';
 import { API, BlockTune, PopoverItem } from '../../../types';
 import Popover from '../../components/utils/popover';
+import { IconChevronUp } from '@codexteam/icons';
 
 /**
  *
@@ -44,8 +44,7 @@ export default class MoveUpTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      icon: $.svg('arrow-up', 14, 14).outerHTML,
+      icon: IconChevronUp,
       label: this.api.i18n.t('Move up'),
       onActivate: (item, e): void => this.handleClick(e),
       name: 'move-up',

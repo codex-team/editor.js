@@ -1,5 +1,6 @@
 import Dom from '../dom';
 import Listeners from './listeners';
+import { IconSearch } from '@codexteam/icons';
 
 /**
  * Item that could be searched
@@ -113,15 +114,14 @@ export default class SearchInput {
   private render(placeholder: string): void {
     this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
 
-    const iconWrapper = Dom.make('div', SearchInput.CSS.icon);
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const icon = Dom.svg('search', 16, 16);
+    const iconWrapper = Dom.make('div', SearchInput.CSS.icon, {
+      innerHTML: IconSearch,
+    });
 
     this.input = Dom.make('input', SearchInput.CSS.input, {
       placeholder,
     }) as HTMLInputElement;
 
-    iconWrapper.appendChild(icon);
     this.wrapper.appendChild(iconWrapper);
     this.wrapper.appendChild(this.input);
 

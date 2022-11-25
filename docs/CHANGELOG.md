@@ -6,6 +6,7 @@
 - `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
 - `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This impovement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
 - `New` — *Tools API* — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
+- `New` — *UI* — Meet the new icons from [CodeX Icons](https://github.com/codex-team/icons) pack 🛍 💝
 - `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
 - `Fix` — Wrong element not highlighted anymore when popover opened.
 - `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.

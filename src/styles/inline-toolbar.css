@@ -50,13 +50,13 @@
   }
 
   &__dropdown {
-    display: inline-flex;
-    height: var(--toolbar-buttons-size);
-    padding: 0 9px 0 10px;
+    display: flex;
+    padding: 6px;
     margin: 0 6px 0 -6px;
     align-items: center;
     cursor: pointer;
     border-right: 1px solid var(--color-gray-border);
+    box-sizing: border-box;
 
     &:hover {
       background: var(--bg-light);
@@ -66,18 +66,13 @@
       display: none;
     }
 
-    &-content{
+    &-content,
+    &-arrow {
       display: flex;
-      font-weight: 500;
-      font-size: 14px;
-
       svg {
-        height: 12px;
+        width: var(--icon-size);
+        height: var(--icon-size);
       }
-    }
-
-    .icon--toggler-down {
-      margin-left: 4px;
     }
   }
 
@@ -90,19 +85,11 @@
 
 .ce-inline-tool {
   @apply --toolbar-button;
+
   border-radius: 0;
   line-height: normal;
-  width: auto;
-  padding: 0 5px !important;
-  min-width: 24px;
+  padding: 0 1px !important;
 
-  &:not(:last-of-type) {
-    margin-right: 2px;
-  }
-
-  .icon {
-    height: 12px;
-  }
 
   &--link {
     .icon--unlink {

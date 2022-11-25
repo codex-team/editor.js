@@ -11,6 +11,7 @@ import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
+import { IconChevronDown } from '@codexteam/icons';
 
 /**
  * Inline Toolbar elements
@@ -51,6 +52,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
+    conversionTogglerArrow: 'ce-inline-toolbar__dropdown-arrow',
     conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
     togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper',
@@ -428,11 +430,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
     this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
 
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const icon = $.svg('toggler-down', 13, 13);
+    const iconWrapper = $.make('div', this.CSS.conversionTogglerArrow, {
+      innerHTML: IconChevronDown,
+    });
 
     this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
-    this.nodes.conversionToggler.appendChild(icon);
+    this.nodes.conversionToggler.appendChild(iconWrapper);
 
     this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
@@ -665,6 +668,15 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     tool.surround(range);
     this.checkToolsState();
+
+    /**
+     * If tool has "actions", so after click it will probably toggle them on.
+     * For example, the Inline Link Tool will show the URL-input.
+     * So we disable the Flipper for that case to allow Tool bind own Enter listener
+     */
+    if (tool.renderActions !== undefined) {
+      this.flipper.deactivate();
+    }
   }
 
   /**

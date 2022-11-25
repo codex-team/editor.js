@@ -45,10 +45,10 @@ export default class Dom {
   }
 
   /**
-   * Helper for making Elements with classname and attributes
+   * Helper for making Elements with class name and attributes
    *
    * @param  {string} tagName - new Element tag name
-   * @param  {string[]|string} [classNames] - list or name of CSS classname(s)
+   * @param  {string[]|string} [classNames] - list or name of CSS class name(s)
    * @param  {object} [attributes] - any attributes
    * @returns {HTMLElement}
    */
@@ -78,25 +78,6 @@ export default class Dom {
    */
   public static text(content: string): Text {
     return document.createTextNode(content);
-  }
-
-  /**
-   * Creates SVG icon linked to the sprite
-   *
-   * @param {string} name - name (id) of icon from sprite
-   * @param {number} [width] - icon width
-   * @param {number} [height] - icon height
-   * @returns {SVGElement}
-   */
-  public static svg(name: string, width = 14, height = 14): SVGElement {
-    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-    icon.classList.add('icon', 'icon--' + name);
-    icon.setAttribute('width', width + 'px');
-    icon.setAttribute('height', height + 'px');
-    icon.innerHTML = `<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${name}"></use>`;
-
-    return icon;
   }
 
   /**
@@ -202,7 +183,7 @@ export default class Dom {
   }
 
   /**
-   * Find all contendeditable, textarea and editable input elements passed holder contains
+   * Find all contenteditable, textarea and editable input elements passed holder contains
    *
    * @param holder - element where to find inputs
    */

@@ -8,6 +8,7 @@ import { ModuleConfig } from '../../../types-internal/module-config';
 import { BlockAPI } from '../../../../types';
 import Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
+import { IconMenu, IconPlus } from '@codexteam/icons';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -335,9 +336,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Plus Button
      *  - Toolbox
      */
-    this.nodes.plusButton = $.make('div', this.CSS.plusButton);
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    $.append(this.nodes.plusButton, $.svg('plus', 16, 16));
+    this.nodes.plusButton = $.make('div', this.CSS.plusButton, {
+      innerHTML: IconPlus,
+    });
     $.append(this.nodes.actions, this.nodes.plusButton);
 
     this.readOnlyMutableListeners.on(this.nodes.plusButton, 'click', () => {
@@ -365,11 +366,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Remove Block Button
      *  - Settings Panel
      */
-    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const settingsIcon = $.svg('dots', 16, 16);
+    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler, {
+      innerHTML: IconMenu,
+    });
 
-    $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.actions, this.nodes.settingsToggler);
 
     this.tooltip.onHover(
