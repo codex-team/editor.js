@@ -184,8 +184,6 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   public async replaceWithBlock(replacingToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
     /**
      * At first, we get current Block data
-     *
-     * @type {BlockToolConstructable}
      */
     const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
@@ -193,8 +191,6 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
 
     /**
      * Getting a class of replacing Tool
-     *
-     * @type {BlockToolConstructable}
      */
     const replacingTool = this.Editor.Tools.blockTools.get(replacingToolName);
 

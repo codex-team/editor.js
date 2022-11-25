@@ -2,8 +2,8 @@ import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import * as _ from '../utils';
-import { InlineTool, SanitizerConfig } from '../../../types';
-import { Notifier, Toolbar, I18n } from '../../../types/api';
+import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { Notifier, Toolbar, I18n, InlineToolbar } from '../../../types/api';
 
 /**
  * Link Tool
@@ -93,7 +93,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available inline toolbar methods (open/close)
    */
-  private inlineToolbar: Toolbar;
+  private inlineToolbar: InlineToolbar;
 
   /**
    * Notifier API methods
@@ -106,9 +106,9 @@ export default class LinkInlineTool implements InlineTool {
   private i18n: I18n;
 
   /**
-   * @param {API} api - Editor.js API
+   * @param api - Editor.js API
    */
-  constructor({ api }) {
+  constructor({ api }: { api: API }) {
     this.toolbar = api.toolbar;
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;

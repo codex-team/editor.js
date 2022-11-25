@@ -2,16 +2,6 @@
   "extends": [
     "codex/ts"
   ],
-  "rules": {
-    "jsdoc/no-undefined-types": ["warn", {"definedTypes": [
-      "ConstructorOptions",
-      "API",
-      "BlockToolConstructable",
-      "EditorConfig",
-      "Tool",
-      "ToolSettings"
-    ]}]
-  },
   "settings": {
     "jsdoc": {
       "mode": "typescript"

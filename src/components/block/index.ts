@@ -243,7 +243,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {object} options - block constructor options
    * @param {string} [options.id] - block's id. Will be generated if omitted.
    * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockToolConstructable} options.tool — block's tool
+   * @param {BlockTool} options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param {boolean} options.readOnly - Read-Only flag
    */

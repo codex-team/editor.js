@@ -22,14 +22,7 @@ import ToolsCollection from '../tools/collection';
  */
 
 /**
- * Class properties:
- *
- * @typedef {Tools} Tools
- * @property {Tools[]} toolsAvailable - available Tools
- * @property {Tools[]} toolsUnavailable - unavailable Tools
- * @property {object} toolsClasses - all classes
- * @property {object} toolsSettings - Tools settings
- * @property {EditorConfig} config - Editor config
+ * Modules that works with tools classes
  */
 export default class Tools extends Module {
   /**
@@ -42,8 +35,6 @@ export default class Tools extends Module {
 
   /**
    * Returns available Tools
-   *
-   * @returns {Object<Tool>}
    */
   public get available(): ToolsCollection {
     return this.toolsAvailable;
@@ -51,8 +42,6 @@ export default class Tools extends Module {
 
   /**
    * Returns unavailable Tools
-   *
-   * @returns {Tool[]}
    */
   public get unavailable(): ToolsCollection {
     return this.toolsUnavailable;
@@ -60,8 +49,6 @@ export default class Tools extends Module {
 
   /**
    * Return Tools for the Inline Toolbar
-   *
-   * @returns {object} - object of Inline Tool's classes
    */
   public get inlineTools(): ToolsCollection<InlineTool> {
     return this.available.inlineTools;
