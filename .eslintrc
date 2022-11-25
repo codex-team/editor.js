@@ -2,11 +2,6 @@
   "extends": [
     "codex/ts"
   ],
-  "settings": {
-    "jsdoc": {
-      "mode": "typescript"
-    }
-  },
   "globals": {
     "Node": true,
     "Range": true,
