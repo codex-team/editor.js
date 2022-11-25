@@ -36,7 +36,7 @@ export enum ToolboxEvent {
 /**
  * Available i18n dict keys that should be passed to the constructor
  */
-type toolboxTextLabelsKeys = 'filter' | 'nothingFound';
+type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
 
 /**
  * Toolbox
@@ -80,7 +80,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
    * Text labels used in the Toolbox. Should be passed from the i18n module
    */
-  private i18nLabels: Record<toolboxTextLabelsKeys, string>;
+  private i18nLabels: Record<ToolboxTextLabelsKeys, string>;
 
   /**
    * Current module HTML Elements
@@ -88,13 +88,13 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private nodes: {
     toolbox: HTMLElement;
   } = {
-    toolbox: null,
-  };
+      toolbox: null,
+    };
 
   /**
    * CSS styles
    *
-   * @returns {object.<string, string>}
+   * @returns {Object<string, string>}
    */
   private static get CSS(): { [name: string]: string } {
     return {
@@ -114,7 +114,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<toolboxTextLabelsKeys, string>}) {
+  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
     super();
 
     this.api = api;
@@ -219,7 +219,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 
   /**
    * Returns list of tools that enables the Toolbox (by specifying the 'toolbox' getter)
@@ -259,7 +259,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         icon: toolboxItem.icon,
         label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
-        onActivate: (e): void => {
+        onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',

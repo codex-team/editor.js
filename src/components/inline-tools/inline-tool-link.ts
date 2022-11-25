@@ -2,8 +2,8 @@ import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import * as _ from '../utils';
-import { InlineTool, SanitizerConfig } from '../../../types';
-import { Notifier, Toolbar, I18n } from '../../../types/api';
+import { API, InlineTool, SanitizerConfig } from '../../../types';
+import { Notifier, Toolbar, I18n, InlineToolbar } from '../../../types/api';
 
 /**
  * Link Tool
@@ -71,9 +71,9 @@ export default class LinkInlineTool implements InlineTool {
     button: HTMLButtonElement;
     input: HTMLInputElement;
   } = {
-    button: null,
-    input: null,
-  };
+      button: null,
+      input: null,
+    };
 
   /**
    * SelectionUtils instance
@@ -93,7 +93,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available inline toolbar methods (open/close)
    */
-  private inlineToolbar: Toolbar;
+  private inlineToolbar: InlineToolbar;
 
   /**
    * Notifier API methods
@@ -106,9 +106,9 @@ export default class LinkInlineTool implements InlineTool {
   private i18n: I18n;
 
   /**
-   * @param {API} api - Editor.js API
+   * @param api - Editor.js API
    */
-  constructor({ api }) {
+  constructor({ api }: { api: API }) {
     this.toolbar = api.toolbar;
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
@@ -123,7 +123,9 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.nodes.button.appendChild($.svg('link', 14, 10));
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.nodes.button.appendChild($.svg('unlink', 15, 11));
 
     return this.nodes.button;
@@ -187,10 +189,8 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <a> tag
-   *
-   * @param {Selection} selection - selection to check
    */
-  public checkState(selection?: Selection): boolean {
+  public checkState(): boolean {
     const anchorTag = this.selection.findParentTag('A');
 
     if (anchorTag) {

@@ -92,6 +92,7 @@ export default class Stub implements BlockTool {
    */
   private make(): HTMLElement {
     const wrapper = $.make('div', this.CSS.wrapper);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const icon = $.svg('sad-face', 52, 52);
     const infoContainer = $.make('div', this.CSS.info);
     const title = $.make('div', this.CSS.title, {

@@ -12,21 +12,19 @@ import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
  *          - make Block Settings a standalone module
- *
  * @todo - Keyboard-only mode bug:
  *         press Tab, flip to the Checkbox. press Enter (block will be added), Press Tab
  *         (Block Tunes will be opened with Move up focused), press Enter, press Tab ———— both Block Tunes and Toolbox will be opened
- *
- * @todo TESTCASE - show toggler after opening and closing the Inline Toolbar
- * @todo TESTCASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
- * @todo TESTCASE - Click inside Editor holder should close Toolbar and Clear Focused blocks
- * @todo TESTCASE - Click inside Redactor zone when Block Settings are opened:
+ * @todo TEST CASE - show toggler after opening and closing the Inline Toolbar
+ * @todo TEST CASE - Click outside Editor holder should close Toolbar and Clear Focused blocks
+ * @todo TEST CASE - Click inside Editor holder should close Toolbar and Clear Focused blocks
+ * @todo TEST CASE - Click inside Redactor zone when Block Settings are opened:
  *                  - should close Block Settings
  *                  - should not close Toolbar
  *                  - should move Toolbar to the clicked Block
- * @todo TESTCASE - Toolbar should be closed on the Cross Block Selection
- * @todo TESTCASE - Toolbar should be closed on the Rectangle Selection
- * @todo TESTCASE - If Block Settings or Toolbox are opened, the Toolbar should not be moved by Bocks hovering
+ * @todo TEST CASE - Toolbar should be closed on the Cross Block Selection
+ * @todo TEST CASE - Toolbar should be closed on the Rectangle Selection
+ * @todo TEST CASE - If Block Settings or Toolbox are opened, the Toolbar should not be moved by Bocks hovering
  */
 
 /**
@@ -78,7 +76,6 @@ interface ToolbarNodes {
  *
  * @class
  * @classdesc Toolbar module
- *
  * @typedef {Toolbar} Toolbar
  * @property {object} nodes - Toolbar nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
@@ -300,12 +297,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
    *
    * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
    *                                     This flag allows to open Toolbar without Actions.
-   * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
-   *                                      (by click on Block, or by enter)
-   *                                      with closing Toolbox and Block Settings
-   *                                      This flag allows to open Toolbar with Toolbox
    */
-  private open(withBlockActions = true, needToCloseToolbox = true): void {
+  private open(withBlockActions = true): void {
     _.delay(() => {
       this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
 
@@ -314,6 +307,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       } else {
         this.blockActions.hide();
       }
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 50)();
   }
 
@@ -342,6 +336,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Toolbox
      */
     this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     $.append(this.nodes.plusButton, $.svg('plus', 16, 16));
     $.append(this.nodes.actions, this.nodes.plusButton);
 
@@ -371,6 +366,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *  - Settings Panel
      */
     this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const settingsIcon = $.svg('dots', 16, 16);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
@@ -478,7 +474,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }, true);
 
     /**
-     * Subscribe to the 'block-hovered' event if currenct view is not mobile
+     * Subscribe to the 'block-hovered' event if current view is not mobile
      *
      * @see https://github.com/codex-team/editor.js/issues/1972
      */

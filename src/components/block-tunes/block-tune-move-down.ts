@@ -1,7 +1,6 @@
 /**
  * @class MoveDownTune
  * @classdesc Editor's default tune - Moves down highlighted block
- *
  * @copyright <CodeX Team> 2018
  */
 
@@ -46,6 +45,7 @@ export default class MoveDownTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       icon: $.svg('arrow-down', 14, 14).outerHTML,
       label: this.api.i18n.t('Move down'),
       onActivate: (item, event): void => this.handleClick(event),
@@ -72,6 +72,7 @@ export default class MoveDownTune implements BlockTune {
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
 
       return;

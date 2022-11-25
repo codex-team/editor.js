@@ -280,7 +280,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Check if node is contained by Inline Toolbar
    *
-   * @param {Node} node — node to chcek
+   * @param {Node} node — node to check
    */
   public containsNode(node: Node): boolean {
     return this.nodes.wrapper.contains(node);
@@ -322,7 +322,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
 
       // If click is on actions wrapper,
-      // do not prevent default behaviour because actions might include interactive elements
+      // do not prevent default behavior because actions might include interactive elements
       if (!isClickedOnActionsWrapper) {
         event.preventDefault();
       }
@@ -428,6 +428,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
     this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
 
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const icon = $.svg('toggler-down', 13, 13);
 
     this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);

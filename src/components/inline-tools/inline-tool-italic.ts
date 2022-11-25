@@ -61,6 +61,7 @@ export default class ItalicInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.nodes.button.appendChild($.svg('italic', 4, 11));
 
     return this.nodes.button;
@@ -68,19 +69,15 @@ export default class ItalicInlineTool implements InlineTool {
 
   /**
    * Wrap range with <i> tag
-   *
-   * @param {Range} range - range to wrap
    */
-  public surround(range: Range): void {
+  public surround(): void {
     document.execCommand(this.commandName);
   }
 
   /**
    * Check selection and set activated state to button if there are <i> tag
-   *
-   * @param {Selection} selection - selection to check
    */
-  public checkState(selection: Selection): boolean {
+  public checkState(): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
