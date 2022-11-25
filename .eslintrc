@@ -3,7 +3,6 @@
     "codex/ts"
   ],
   "rules": {
-    "@typescript-eslint/triple-slash-reference": ["off"],
     "jsdoc/no-undefined-types": ["warn", {"definedTypes": [
       "ConstructorOptions",
       "API",
