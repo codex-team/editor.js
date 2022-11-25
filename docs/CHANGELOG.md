@@ -4,7 +4,7 @@
 ### 2.26.0
 
 - `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
-- `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This impovement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
+- `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This improvement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
 - `New` — *Tools API* — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
 - `New` — *UI* — Meet the new icons from [CodeX Icons](https://github.com/codex-team/icons) pack 🛍 💝
 - `New` — *BlocksAPI* — the `blocks.insert()` method now also have the optional `id` param. If passed, this id will be used instead of the generated one.
@@ -14,6 +14,7 @@
 - `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
+- `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 
 ### 2.25.0
 
@@ -117,7 +118,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 ### 2.20.1
 
 - `Fix` - Create a new block when clicked at the bottom [#1588](https://github.com/codex-team/editor.js/issues/1588).
-- `Fix` — Fix sanitisation problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
+- `Fix` — Fix sanitization problem with Inline Tools [#1631](https://github.com/codex-team/editor.js/issues/1631)
 - `Fix` — Fix copy in FireFox [1625](https://github.com/codex-team/editor.js/issues/1625)
 - `Refactoring` - The Sanitizer module is util now.
 - `Refactoring` - Tooltip module is util now.
@@ -172,7 +173,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `New` - Tool's `reset` static method added to the API to clean up any data added by Tool on initialization
 - `Improvements` - The `initialBlock` property of Editor config is deprecated. Use the `defaultBlock` instead. [#993](https://github.com/codex-team/editor.js/issues/993)
 - `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
-- `Improvements` - Unuseful log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
+- `Improvements` - Useless log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
 - `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
 - `Fix` — Fix problem with types usage [#1183](https://github.com/codex-team/editor.js/issues/1183)
 - `Fix` - Fixed issue with Spam clicking the "Click to tune" button duplicates the icons on FireFox. [#1273](https://github.com/codex-team/editor.js/issues/1273)
@@ -183,7 +184,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Fix` - Fixed issue with enter key in inputs and textareas [#920](https://github.com/codex-team/editor.js/issues/920)
 - `Fix` - blocks.getBlockByIndex() API method now returns void for indexes out of range [#1270](https://github.com/codex-team/editor.js/issues/1270)
 - `Fix` - Fixed the `Tab` key behavior when the caret is not set inside contenteditable element, but the block is selected [#1302](https://github.com/codex-team/editor.js/issues/1302).
-- `Fix` - Fixed the `onChange` callback issue. This method didn't be called for native inputs before some contentedtable element changed [#843](https://github.com/codex-team/editor.js/issues/843)
+- `Fix` - Fixed the `onChange` callback issue. This method didn't be called for native inputs before some contenteditable element changed [#843](https://github.com/codex-team/editor.js/issues/843)
 - `Fix` - Fixed the `onChange` callback issue. This method didn't be called after the callback throws an exception [#1339](https://github.com/codex-team/editor.js/issues/1339)
 - `Fix` - The internal `shortcut` getter of Tools classes will work now.
 - `Deprecated` — The Inline Tool `clear()` method is deprecated because the new instance of Inline Tools will be created on every showing of the Inline Toolbar
@@ -232,7 +233,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 - `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)
 - `Fix` — Set initial hidden Inline Toolbar position [#979](https://github.com/codex-team/editor.js/issues/979)
-- `Fix` — Fix issue with CodeX.Toolips TypeScript definitions [#978](https://github.com/codex-team/editor.js/issues/978)
+- `Fix` — Fix issue with CodeX.Tooltips TypeScript definitions [#978](https://github.com/codex-team/editor.js/issues/978)
 - `Fix` — Fix some issues with Inline and Tunes toolbars.
 - `Fix` - Fix `minHeight` option with zero-value issue [#724](https://github.com/codex-team/editor.js/issues/724)
 - `Improvements` — Disable Conversion Toolbar if there are no Tools to convert [#984](https://github.com/codex-team/editor.js/issues/984)
@@ -345,7 +346,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.11.5
 
-- `Fix` *RectangeSelection* — Redesign of the scrolling zones
+- `Fix` *RectangleSelection* — Redesign of the scrolling zones
 
 ### 2.11.4
 
@@ -361,7 +362,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.11.1
 
-- `Fix` *RectangeSelection* — Selection is available only for the main mouse button
+- `Fix` *RectangleSelection* — Selection is available only for the main mouse button
 
 ### 2.11.0
 
@@ -393,7 +394,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.9.0
 
-- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
+- `New` *RectangleSelection* — Ability to select Block or several Blocks with mouse
 
 ### 2.8.1
 
@@ -401,7 +402,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.8.0
 
-- `Imporvements` *API* — Added [API methods](api.md#caretapi) to manage caret position
+- `Improvements` *API* — Added [API methods](api.md#caretapi) to manage caret position
 
 ### 2.7.32
 
