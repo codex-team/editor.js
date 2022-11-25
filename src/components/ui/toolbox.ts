@@ -3,9 +3,9 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent, PopoverItem } from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
 
@@ -36,7 +36,7 @@ export enum ToolboxEvent {
 /**
  * Available i18n dict keys that should be passed to the constructor
  */
-type toolboxTextLabelsKeys = 'filter' | 'nothingFound';
+type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
 
 /**
  * Toolbox
@@ -80,7 +80,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
    * Text labels used in the Toolbox. Should be passed from the i18n module
    */
-  private i18nLabels: Record<toolboxTextLabelsKeys, string>;
+  private i18nLabels: Record<ToolboxTextLabelsKeys, string>;
 
   /**
    * Current module HTML Elements
@@ -88,18 +88,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   private nodes: {
     toolbox: HTMLElement;
   } = {
-    toolbox: null,
-  };
+      toolbox: null,
+    };
 
   /**
    * CSS styles
    *
-   * @returns {object.<string, string>}
+   * @returns {Object<string, string>}
    */
   private static get CSS(): { [name: string]: string } {
     return {
       toolbox: 'ce-toolbox',
-      toolboxOpenedTop: 'ce-toolbox--opened-top',
     };
   }
 
@@ -115,7 +114,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<toolboxTextLabelsKeys, string>}) {
+  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
     super();
 
     this.api = api;
@@ -128,6 +127,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public make(): Element {
     this.popover = new Popover({
+      scopeElement: this.api.ui.nodes.redactor,
       className: Toolbox.CSS.toolbox,
       searchable: true,
       filterLabel: this.i18nLabels.filter,
@@ -188,15 +188,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       return;
     }
 
-    /**
-     * Open the popover above the button
-     * if there is not enough available space below it
-     */
-    if (!this.shouldOpenPopoverBottom) {
-      this.nodes.toolbox.style.setProperty('--popover-height', this.popover.calculateHeight() + 'px');
-      this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpenedTop);
-    }
-
     this.popover.show();
     this.opened = true;
     this.emit(ToolboxEvent.Opened);
@@ -208,7 +199,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public close(): void {
     this.popover.hide();
     this.opened = false;
-    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpenedTop);
     this.emit(ToolboxEvent.Closed);
   }
 
@@ -224,26 +214,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   * Checks if there popover should be opened downwards.
-   * It happens in case there is enough space below or not enough space above
-   */
-  private get shouldOpenPopoverBottom(): boolean {
-    const toolboxRect = this.nodes.toolbox.getBoundingClientRect();
-    const editorElementRect = this.api.ui.nodes.redactor.getBoundingClientRect();
-    const popoverHeight = this.popover.calculateHeight();
-    const popoverPotentialBottomEdge = toolboxRect.top + popoverHeight;
-    const popoverPotentialTopEdge = toolboxRect.top - popoverHeight;
-    const bottomEdgeForComparison = Math.min(window.innerHeight, editorElementRect.bottom);
-
-    return popoverPotentialTopEdge < editorElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
-  }
-
-  /**
    * Handles overlay click
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 
   /**
    * Returns list of tools that enables the Toolbox (by specifying the 'toolbox' getter)
@@ -283,7 +258,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
         icon: toolboxItem.icon,
         label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
-        onClick: (e): void => {
+        onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',

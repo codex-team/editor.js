@@ -52,7 +52,7 @@ export interface Blocks {
    * Returns Block API object by passed Block index
    * @param {number} index
    */
-  getBlockByIndex(index: number): BlockAPI | void;
+  getBlockByIndex(index: number): BlockAPI | undefined;
 
   /**
    * Returns Block API object by passed Block id

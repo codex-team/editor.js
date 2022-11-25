@@ -61,6 +61,19 @@ export default class DomIterator {
   }
 
   /**
+   * Sets cursor to specified position
+   *
+   * @param cursorPosition - new cursor position
+   */
+  public setCursor(cursorPosition: number): void {
+    if (cursorPosition < this.items.length && cursorPosition >= -1) {
+      this.dropCursor();
+      this.cursor = cursorPosition;
+      this.items[this.cursor].classList.add(this.focusedCssClass);
+    }
+  }
+
+  /**
    * Sets items. Can be used when iterable items changed dynamically
    *
    * @param {HTMLElement[]} nodeList - nodes to iterate
@@ -162,6 +175,7 @@ export default class DomIterator {
       /**
        * Focus input with micro-delay to ensure DOM is updated
        */
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       _.delay(() => SelectionUtils.setCursor(this.items[focusedButtonIndex]), 50)();
     }
 

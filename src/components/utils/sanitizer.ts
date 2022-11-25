@@ -5,7 +5,6 @@
  * Clears HTML from taint tags
  *
  * @version 2.0.0
- *
  * @example
  *
  * clean(yourTaintString, yourConfig);
@@ -18,7 +17,6 @@ import * as _ from '../utils';
 /**
  * @typedef {object} SanitizerConfig
  * @property {object} tags - define tags restrictions
- *
  * @example
  *
  * tags : {
@@ -65,7 +63,6 @@ export function sanitizeBlocks(
  *
  * @param {string} taintString - taint string
  * @param {SanitizerConfig} customConfig - allowed tags
- *
  * @returns {string} clean HTML
  */
 export function clean(taintString: string, customConfig: SanitizerConfig = {} as SanitizerConfig): string {
@@ -163,7 +160,6 @@ function cleanObject(object: object, rules: SanitizerConfig|{[field: string]: Sa
  *
  * @param {string} taintString - string to clean
  * @param {SanitizerConfig|boolean} rule - sanitizer rule
- *
  * @returns {string}
  */
 function cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {

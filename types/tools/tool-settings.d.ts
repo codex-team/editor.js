@@ -1,5 +1,6 @@
 import { ToolConfig } from './tool-config';
 import { ToolConstructable, BlockToolData } from './index';
+import { PopoverItem } from '../configs';
 
 /**
  * Tool may specify its toolbox configuration
@@ -26,6 +27,12 @@ export interface ToolboxConfigEntry {
    */
   data?: BlockToolData
 }
+
+/**
+ * Tool may specify its tunes configuration
+ * that can contain either one or multiple entries
+ */
+export type TunesMenuConfig = PopoverItem | PopoverItem[];
 
 /**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}

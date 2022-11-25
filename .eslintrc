@@ -1,27 +1,7 @@
 {
   "extends": [
-    "codex"
+    "codex/ts"
   ],
-  "rules": {
-    /**
-     * Temporary suppress some errors. We need to fix them partially in next patches
-     */
-    "import/no-duplicates": ["warn"],
-    "@typescript-eslint/triple-slash-reference": ["off"],
-    "jsdoc/no-undefined-types": ["warn", {"definedTypes": [
-      "ConstructorOptions",
-      "API",
-      "BlockToolConstructable",
-      "EditorConfig",
-      "Tool",
-      "ToolSettings"
-    ]}]
-  },
-  "settings": {
-    "jsdoc": {
-      "mode": "typescript"
-    }
-  },
   "globals": {
     "Node": true,
     "Range": true,

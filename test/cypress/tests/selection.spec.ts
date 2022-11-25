@@ -1,11 +1,13 @@
 import * as _ from '../../../src/components/utils';
 
 describe('Blocks selection', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({}).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({}).as('editorInstance');
     }
   });
 
