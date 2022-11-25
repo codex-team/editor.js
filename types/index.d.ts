@@ -64,6 +64,7 @@ export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {
   EditorConfig,
   SanitizerConfig,
+  SanitizerRule,
   PasteConfig,
   LogLevels,
   ConversionConfig,
