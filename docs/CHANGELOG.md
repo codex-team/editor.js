@@ -1,5 +1,56 @@
 # Changelog
 
+
+### 2.26.0
+
+- `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
+- `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This impovement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
+- `New` — *Tools API* — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
+- `New` — *UI* — Meet the new icons from [CodeX Icons](https://github.com/codex-team/icons) pack 🛍 💝
+- `New` — *BlocksAPI* — the `blocks.insert()` method now also have the optional `id` param. If passed, this id will be used instead of the generated one.
+- `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
+- `Fix` — Wrong element not highlighted anymore when popover opened.
+- `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.
+- `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
+- `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
+- `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
+
+### 2.25.0
+
+- `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
+Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
+- `New` — *Blocks API* — `composeBlockData()` method was added.
+
+### 2.24.4
+
+- `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
+
+### 2.24.3
+
+- `Fix` — Issue with toolbox preventing text selection fixed
+
+### 2.24.2
+
+- `Fix` — Scrolling issue when opening toolbox on mobile fixed
+- `Fix` — Typo in toolbox empty placeholder fixed
+- `Fix` — The issue with scroll jumping on block hovering have fixed [2036](https://github.com/codex-team/editor.js/issues/2036)
+- `Improvement` — *Dev Example Page* - Add popup example page
+- `Improvement` — *UI* - The Toolbox will restore the internal scroll on every opening
+
+### 2.24.1
+
+— `Fix` — The I18n of Tools` titles at the Toolbox now works correctly [#2030](https://github.com/codex-team/editor.js/issues/2030)
+
+### 2.24.0
+
+- `New` — *UI* — The Toolbox became vertical 🥳
+- `Improvement` — *UI* — the Plus button will always be shown (previously, it appears only for empty blocks)
+- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `Fix` — `UI` — the Toolbar won't move on hover at mobile viewports. Resolves [#1972](https://github.com/codex-team/editor.js/issues/1972)
+- `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
+- `Fix` — `ReadOnly` — the `readonly.isEnabled` API getter now works correctly after `readonly.toggle()` calling. Resolves [#1822](https://github.com/codex-team/editor.js/issues/1822)
+- `Fix` — `Paste` — the inline HTML tags now will be preserved on pasting. [#1686](https://github.com/codex-team/editor.js/pull/1686)
+
 ### 2.23.2
 
 — `Fix` — Crash on initialization in the read-only mode [#1968](https://github.com/codex-team/editor.js/issues/1968)

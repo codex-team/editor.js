@@ -101,9 +101,11 @@
   }
 
   svg {
-    fill: currentColor;
-    vertical-align: middle;
     max-height: 100%;
+  }
+
+  path {
+    stroke: currentColor;
   }
 }
 
@@ -126,4 +128,15 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.ce-scroll-locked {
+  overflow: hidden;
+}
+
+.ce-scroll-locked--hard {
+  overflow: hidden;
+  top: calc(-1 * var(--window-scroll-offset));
+  position: fixed;
+  width: 100%;
 }

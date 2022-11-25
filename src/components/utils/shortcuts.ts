@@ -94,7 +94,6 @@ class Shortcuts {
    *
    * @param element - Element shorcut is set for
    * @param shortcut - shortcut name
-   *
    * @returns {number} index - shortcut index if exist
    */
   private findShortcut(element: Element, shortcut: string): Shortcut | void {

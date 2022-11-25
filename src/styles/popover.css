@@ -1,0 +1,220 @@
+.ce-popover {
+  position: absolute;
+  opacity: 0;
+  will-change: opacity, transform;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  min-width: 200px;
+  width: 200px;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  max-height: 0;
+  pointer-events: none;
+
+  @apply --overlay-pane;
+
+  z-index: 4;
+  flex-wrap: nowrap;
+
+  &--opened {
+     opacity: 1;
+     max-height: 270px;
+     pointer-events: auto;
+     animation: panelShowing 100ms ease;
+
+     @media (--mobile) {
+       animation: panelShowingMobile 250ms ease;
+     }
+  }
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    box-sizing: border-box;
+    box-shadow: inset 0 0 2px 2px var(--bg-light);
+    border: 3px solid transparent;
+    border-left-width: 0px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+  }
+
+  @media (--mobile) {
+    --offset: 5px;
+
+    position: fixed;
+    max-width: none;
+    min-width: calc(100% - var(--offset) * 2);
+    left: var(--offset);
+    right: var(--offset);
+    bottom: calc(var(--offset) + env(safe-area-inset-bottom));
+    top: auto;
+    border-radius: 10px;
+  }
+
+  &__items {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    @media (--not-mobile) {
+      margin-top: 5px;
+    }
+  }
+
+  &__item {
+    @apply --popover-button;
+
+    @media (--can-hover) {
+      &:hover {
+
+        &:not(.ce-popover__item--no-visible-hover) {
+          background-color: var(--bg-light);
+        }
+
+        .ce-popover__item-icon {
+          box-shadow: none;
+        }
+      }
+    }
+
+    &--disabled {
+      @apply --button-disabled;
+
+      .ce-popover__item-icon {
+        box-shadow: 0 0 0 1px var(--color-line-gray);
+      }
+    }
+
+    &--focused {
+      &:not(.ce-popover__item--no-visible-focus) {
+        @apply --button-focused;
+      }
+    }
+
+    &--hidden {
+      display: none;
+    }
+
+    &--active {
+      @apply --button-active;
+    }
+
+    &--confirmation {
+      background: var(--color-confirm);
+
+      .ce-popover__item-icon {
+        color: var(--color-confirm);
+      }
+
+      .ce-popover__item-label {
+        color: white;
+      }
+
+      &:not(.ce-popover__item--no-visible-hover) {
+        @media (--can-hover) {
+          &:hover {
+            background: var(--color-confirm-hover);
+          }
+        }
+      }
+
+      &:not(.ce-popover__item--no-visible-focus) {
+        &.ce-popover__item--focused {
+          background: var(--color-confirm-hover) !important;
+        }
+      }
+
+    }
+
+    &-icon {
+      @apply --tool-icon;
+    }
+
+    &-label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &::after {
+        content: '';
+        width: 25px;
+        display: inline-block;
+      }
+    }
+
+    &-secondary-label {
+      color: var(--grayText);
+      font-size: 12px;
+      margin-left: auto;
+      white-space: nowrap;
+      letter-spacing: -0.1em;
+      padding-right: 5px;
+      margin-bottom: -2px;
+      opacity: 0.6;
+
+      @media (--mobile){
+        display: none;
+      }
+    }
+
+    &--confirmation, &--active, &--focused {
+      .ce-popover__item-icon {
+        box-shadow: none;
+      }
+    }
+  }
+
+  &__no-found {
+    @apply --popover-button;
+
+    color: var(--grayText);
+    display: none;
+    cursor: default;
+
+    &--shown {
+      display: block;
+    }
+  }
+
+  @media (--mobile) {
+    &__overlay {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-dark);
+      opacity: 0.5;
+      z-index: 3;
+      transition: opacity 0.12s ease-in;
+      will-change: opacity;
+      visibility: visible;
+    }
+
+    .cdx-search-field {
+      display: none;
+    }
+  }
+
+  &__overlay--hidden {
+    z-index: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &__custom-content:not(:empty) {
+    padding: 4px;
+
+    @media (--not-mobile) {
+      margin-top: 5px;
+      padding: 0;
+    }
+  }
+
+  &__custom-content--hidden {
+    display: none;
+  }
+}

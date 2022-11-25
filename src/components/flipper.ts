@@ -18,26 +18,35 @@ export interface FlipperOptions {
   items?: HTMLElement[];
 
   /**
-   * Defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
-   *
-   * true by default
-   *
-   * Pass 'false' if you don't need this behaviour
-   * (for example, Inline Toolbar should be closed by arrows,
-   * because it means caret moving with selection clearing)
-   */
-  allowArrows?: boolean;
-
-  /**
    * Optional callback for button click
    */
   activateCallback?: (item: HTMLElement) => void;
+
+  /**
+   * List of keys allowed for handling.
+   * Can include codes of the following keys:
+   *  - Tab
+   *  - Enter
+   *  - Arrow up
+   *  - Arrow down
+   *  - Arrow right
+   *  - Arrow left
+   * If not specified all keys are enabled
+   */
+  allowedKeys?: number[];
 }
 
 /**
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
+  /**
+   * True if flipper is currently activated
+   */
+  public get isActivated(): boolean {
+    return this.activated;
+  }
+
   /**
    * Instance of flipper iterator
    *
@@ -53,11 +62,9 @@ export default class Flipper {
   private activated = false;
 
   /**
-   * Flag that allows arrows usage to flip items
-   *
-   * @type {boolean}
+   * List codes of the keys allowed for handling
    */
-  private readonly allowArrows: boolean = true;
+  private readonly allowedKeys: number[];
 
   /**
    * Call back for button click/enter
@@ -65,12 +72,17 @@ export default class Flipper {
   private readonly activateCallback: (item: HTMLElement) => void;
 
   /**
+   * Contains list of callbacks to be executed on each flip
+   */
+  private flipCallbacks: Array<() => void> = [];
+
+  /**
    * @param {FlipperOptions} options - different constructing settings
    */
   constructor(options: FlipperOptions) {
-    this.allowArrows = _.isBoolean(options.allowArrows) ? options.allowArrows : true;
     this.iterator = new DomIterator(options.items, options.focusedItemClass);
     this.activateCallback = options.activateCallback;
+    this.allowedKeys = options.allowedKeys || Flipper.usedKeys;
   }
 
   /**
@@ -93,21 +105,30 @@ export default class Flipper {
   /**
    * Active tab/arrows handling by flipper
    *
-   * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param cursorPosition - index of the item that should be focused once flipper is activated
    */
-  public activate(items?: HTMLElement[]): void {
+  public activate(items?: HTMLElement[], cursorPosition?: number): void {
     this.activated = true;
 
     if (items) {
       this.iterator.setItems(items);
     }
 
+    if (cursorPosition !== undefined) {
+      this.iterator.setCursor(cursorPosition);
+    }
+
     /**
      * Listening all keydowns on document and react on TAB/Enter press
      * TAB will leaf iterator items
      * ENTER will click the focused item
+     *
+     * Note: the event should be handled in capturing mode on following reasons:
+     * - prevents plugins inner keydown handlers from being called while keyboard navigation
+     * - otherwise this handler will be called at the moment it is attached which causes false flipper firing (see https://techread.me/js-addeventlistener-fires-for-past-events/)
      */
-    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keydown', this.onKeyDown, true);
   }
 
   /**
@@ -118,15 +139,6 @@ export default class Flipper {
     this.dropCursor();
 
     document.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  /**
-   * Return current focused button
-   *
-   * @returns {HTMLElement|null}
-   */
-  public get currentItem(): HTMLElement|null {
-    return this.iterator.currentItem;
   }
 
   /**
@@ -142,6 +154,7 @@ export default class Flipper {
    */
   public flipLeft(): void {
     this.iterator.previous();
+    this.flipCallback();
   }
 
   /**
@@ -149,6 +162,32 @@ export default class Flipper {
    */
   public flipRight(): void {
     this.iterator.next();
+    this.flipCallback();
+  }
+
+  /**
+   * Return true if some button is focused
+   */
+  public hasFocus(): boolean {
+    return !!this.iterator.currentItem;
+  }
+
+  /**
+   * Registeres function that should be executed on each navigation action
+   *
+   * @param cb - function to execute
+   */
+  public onFlip(cb: () => void): void {
+    this.flipCallbacks.push(cb);
+  }
+
+  /**
+   * Unregisteres function that is executed on each navigation action
+   *
+   * @param cb - function to stop executing
+   */
+  public removeOnFlip(cb: () => void): void {
+    this.flipCallbacks = this.flipCallbacks.filter(fn => fn !== cb);
   }
 
   /**
@@ -206,23 +245,7 @@ export default class Flipper {
    * @returns {boolean}
    */
   private isEventReadyForHandling(event: KeyboardEvent): boolean {
-    const handlingKeyCodeList = [
-      _.keyCodes.TAB,
-      _.keyCodes.ENTER,
-    ];
-
-    const isCurrentItemIsFocusedInput = this.iterator.currentItem == document.activeElement;
-
-    if (this.allowArrows && !isCurrentItemIsFocusedInput) {
-      handlingKeyCodeList.push(
-        _.keyCodes.LEFT,
-        _.keyCodes.RIGHT,
-        _.keyCodes.UP,
-        _.keyCodes.DOWN
-      );
-    }
-
-    return this.activated && handlingKeyCodeList.indexOf(event.keyCode) !== -1;
+    return this.activated && this.allowedKeys.includes(event.keyCode);
   }
 
   /**
@@ -265,5 +288,16 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  /**
+   * Fired after flipping in any direction
+   */
+  private flipCallback(): void {
+    if (this.iterator.currentItem) {
+      this.iterator.currentItem.scrollIntoViewIfNeeded();
+    }
+
+    this.flipCallbacks.forEach(cb => cb());
   }
 }

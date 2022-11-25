@@ -8,7 +8,6 @@ import BlockTool from '../tools/block';
  *
  * @module Renderer
  * @author CodeX Team
- *
  * @version 2.0.0
  */
 export default class Renderer extends Module {
@@ -37,7 +36,6 @@ export default class Renderer extends Module {
    *     }
    *   },
    * ]
-   *
    */
 
   /**
@@ -68,7 +66,6 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
-   *
    * @returns {Promise<void>}
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
@@ -100,8 +97,9 @@ export default class Renderer extends Module {
 
       if (Tools.unavailable.has(tool)) {
         const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+        const toolboxTitle = toolboxSettings[0]?.title;
 
-        stubData.title = toolboxSettings?.title || stubData.title;
+        stubData.title = toolboxTitle || stubData.title;
       }
 
       const stub = BlockManager.insert({

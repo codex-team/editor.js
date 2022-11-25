@@ -4,7 +4,9 @@ import {
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig
+  ToolConfig,
+  ToolboxConfigEntry,
+  PopoverItem
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -58,10 +60,8 @@ interface BlockConstructorOptions {
 /**
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
  * @property {BlockTool} tool — current block tool (Paragraph, for example)
  * @property {object} CSS — block`s css classes
- *
  */
 
 /**
@@ -72,11 +72,13 @@ export enum BlockToolAPI {
    * @todo remove method in 3.0.0
    * @deprecated — use 'rendered' hook instead
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
   MOVED = 'moved',
   UPDATED = 'updated',
   REMOVED = 'removed',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   ON_PASTE = 'onPaste',
 }
 
@@ -87,7 +89,6 @@ type BlockEvents = 'didMutated';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
@@ -242,7 +243,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {object} options - block constructor options
    * @param {string} [options.id] - block's id. Will be generated if omitted.
    * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockToolConstructable} options.tool — block's tool
+   * @param {BlockTool} options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param {boolean} options.readOnly - Read-Only flag
    */
@@ -279,7 +280,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+   * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
    *
    * @returns {HTMLElement[]}
    */
@@ -394,7 +395,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * is block mergeable
-   * We plugin have merge function then we call it mergable
+   * We plugin have merge function then we call it mergeable
    *
    * @returns {boolean}
    */
@@ -415,7 +416,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Check if block has a media content such as images, iframes and other
+   * Check if block has a media content such as images, iframe and other
    *
    * @returns {boolean}
    */
@@ -485,7 +486,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Set stretched state
    *
-   * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
+   * @param {boolean} state - 'true' to enable, 'false' to disable stretched state
    */
   public set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
@@ -617,7 +618,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         };
       })
       .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+        _.log(`Saving process for ${this.name} tool failed due to the ${error}`, 'log', 'red');
       });
   }
 
@@ -626,7 +627,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Tool's validation method is optional
    *
    * @description Method returns true|false whether data passed the validation or not
-   *
    * @param {BlockToolData} data - data to validate
    * @returns {Promise<boolean>} valid
    */
@@ -641,22 +641,33 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-   *
-   * @returns {DocumentFragment[]}
+   * Returns data to render in tunes menu.
+   * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public renderTunes(): [DocumentFragment, DocumentFragment] {
-    const tunesElement = document.createDocumentFragment();
-    const defaultTunesElement = document.createDocumentFragment();
+  public getTunes(): [PopoverItem[], HTMLElement] {
+    const customHtmlTunesContainer = document.createElement('div');
+    const tunesItems: PopoverItem[] = [];
 
-    this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render());
-    });
-    this.defaultTunesInstances.forEach((tune) => {
-      $.append(defaultTunesElement, tune.render());
+    /** Tool's tunes: may be defined as return value of optional renderSettings method */
+    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
+
+    /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
+    const commonTunes = [
+      ...this.defaultTunesInstances.values(),
+      ...this.tunesInstances.values(),
+    ].map(tuneInstance => tuneInstance.render());
+
+    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
+      if ($.isElement(rendered)) {
+        customHtmlTunesContainer.appendChild(rendered);
+      } else if (Array.isArray(rendered)) {
+        tunesItems.push(...rendered);
+      } else {
+        tunesItems.push(rendered);
+      }
     });
 
-    return [tunesElement, defaultTunesElement];
+    return [tunesItems, customHtmlTunesContainer];
   }
 
   /**
@@ -726,12 +737,45 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Call Tool instance renderSettings method
+   * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+   * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public renderSettings(): HTMLElement | undefined {
-    if (_.isFunction(this.toolInstance.renderSettings)) {
-      return this.toolInstance.renderSettings();
+  public async getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+    const toolboxSettings = this.tool.toolbox;
+
+    /**
+     * If Tool specifies just the single entry, treat it like an active
+     */
+    if (toolboxSettings.length === 1) {
+      return Promise.resolve(this.tool.toolbox[0]);
     }
+
+    /**
+     * If we have several entries with their own data overrides,
+     * find those who matches some current data property
+     *
+     * Example:
+     *  Tools' toolbox: [
+     *    {title: "Heading 1", data: {level: 1} },
+     *    {title: "Heading 2", data: {level: 2} }
+     *  ]
+     *
+     *  the Block data: {
+     *    text: "Heading text",
+     *    level: 2
+     *  }
+     *
+     *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+     */
+    const blockData = await this.data;
+    const toolboxItems = toolboxSettings;
+
+    return toolboxItems.find((item) => {
+      return Object.entries(item.data)
+        .some(([propName, propValue]) => {
+          return blockData[propName] && _.equals(blockData[propName], propValue);
+        });
+    });
   }
 
   /**
@@ -809,10 +853,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Update current input
      */
     this.updateCurrentInput();
-  }
+  };
 
   /**
-   * Adds focus event listeners to all inputs and contentEditables
+   * Adds focus event listeners to all inputs and contenteditable
    */
   private addInputEvents(): void {
     this.inputs.forEach(input => {
@@ -828,7 +872,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * removes focus event listeners from all inputs and contentEditables
+   * removes focus event listeners from all inputs and contenteditable
    */
   private removeInputEvents(): void {
     this.inputs.forEach(input => {

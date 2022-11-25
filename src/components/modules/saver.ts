@@ -16,7 +16,6 @@ declare const VERSION: string;
 
 /**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
- *
  * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
  * @property {string} json - Editor JSON output
@@ -28,16 +27,11 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, Tools, ModificationsObserver } = this.Editor;
+    const { BlockManager, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
 
     try {
-      /**
-       * Disable onChange callback on save to not to spam those events
-       */
-      ModificationsObserver.disable();
-
       blocks.forEach((block: Block) => {
         chainData.push(this.getSavedData(block));
       });
@@ -50,8 +44,6 @@ export default class Saver extends Module {
       return this.makeOutput(sanitizedData);
     } catch (e) {
       _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
-    } finally {
-      ModificationsObserver.enable();
     }
   }
 

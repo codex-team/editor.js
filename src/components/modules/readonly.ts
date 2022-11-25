@@ -6,9 +6,7 @@ import { CriticalError } from '../errors/critical';
  *
  * Has one important method:
  *    - {Function} toggleReadonly - Set read-only mode or toggle current state
- *
  * @version 1.0.0
- *
  * @typedef {ReadOnly} ReadOnly
  * @property {boolean} readOnlyEnabled - read-only state
  */

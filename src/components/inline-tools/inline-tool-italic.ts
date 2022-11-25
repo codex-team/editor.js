@@ -1,5 +1,5 @@
-import $ from '../dom';
 import { InlineTool, SanitizerConfig } from '../../../types';
+import { IconItalic } from '@codexteam/icons';
 
 /**
  * Italic Tool
@@ -61,26 +61,22 @@ export default class ItalicInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('italic', 4, 11));
+    this.nodes.button.innerHTML = IconItalic;
 
     return this.nodes.button;
   }
 
   /**
    * Wrap range with <i> tag
-   *
-   * @param {Range} range - range to wrap
    */
-  public surround(range: Range): void {
+  public surround(): void {
     document.execCommand(this.commandName);
   }
 
   /**
    * Check selection and set activated state to button if there are <i> tag
-   *
-   * @param {Selection} selection - selection to check
    */
-  public checkState(selection: Selection): boolean {
+  public checkState(): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
