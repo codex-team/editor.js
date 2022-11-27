@@ -33,7 +33,7 @@ describe('Keydown', function () {
           expect(blocks.length).to.equal(2);
 
           /**
-           * Check that there is now removed fragment left
+           * Check that selected text fragment has been removed
            */
           expect(blocks[0].textContent).to.equal('The block ');
           expect(blocks[1].textContent).to.equal('me text');
