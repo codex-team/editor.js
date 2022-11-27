@@ -305,7 +305,14 @@ export default class Caret extends Module {
    * @param {number} offset - offset
    */
   public set(element: HTMLElement, offset = 0): void {
-    const { top, bottom } = Selection.setCursor(element, offset);
+    const domRect = Selection.setCursor(element, offset);
+
+    /** There are some cases when caret can not be set, e.g. input type 'email' */
+    if (domRect === undefined) {
+      return;
+    }
+
+    const { top, bottom } = domRect;
 
     /** If new cursor position is not visible, scroll to it */
     const { innerHeight } = window;

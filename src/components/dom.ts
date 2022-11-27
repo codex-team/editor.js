@@ -353,6 +353,8 @@ export default class Dom {
     /**
      * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-apply
      * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
+     * @todo currently nothing happens when you try to move caret to input of unsupported type.
+     * Instead, caret should move to the next input of supported type.
      */
     const selectionSupportedTypes = ['text', 'search', 'tel', 'url', 'password'];
 
