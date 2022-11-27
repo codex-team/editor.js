@@ -262,8 +262,12 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-settings__button--delete')
-      .click()
+      .get('div[data-item-name=delete]')
+      .click();
+
+    /** Second click for confirmation */
+    cy.get('[data-cy=editorjs]')
+      .get('div[data-item-name=delete]')
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
@@ -292,7 +296,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-tune-move-up')
+      .get('div[data-item-name=move-up]')
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({

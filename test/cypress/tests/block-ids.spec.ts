@@ -3,15 +3,17 @@ import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
 
 describe.only('Block ids', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({
+      tools: {
+        header: Header,
+      },
+    }).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({
-        tools: {
-          header: Header,
-        },
-      }).as('editorInstance');
     }
   });
 

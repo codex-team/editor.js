@@ -3,7 +3,7 @@ import { ToolboxConfig } from '../../../types';
 
 describe('Editor i18n', () => {
   context('Toolbox', () => {
-    it('should translate tool title in a toolbox', () => {
+    it('should translate tool title in a toolbox', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
@@ -35,7 +35,7 @@ describe('Editor i18n', () => {
         .should('contain.text', toolNamesDictionary.Heading);
     });
 
-    it('should translate titles of toolbox entries', () => {
+    it('should translate titles of toolbox entries', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
@@ -95,7 +95,7 @@ describe('Editor i18n', () => {
         .should('contain.text', toolNamesDictionary.Title2);
     });
 
-    it('should use capitalized tool name as translation key if toolbox title is missing', () => {
+    it('should use capitalized tool name as translation key if toolbox title is missing', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
