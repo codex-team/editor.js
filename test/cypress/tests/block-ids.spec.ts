@@ -2,7 +2,7 @@
 import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
 
-describe.only('Block ids', () => {
+describe('Block ids', () => {
   beforeEach(function () {
     cy.createEditor({
       tools: {
