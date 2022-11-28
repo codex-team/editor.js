@@ -59,6 +59,8 @@
    * Size of svg icons got from the CodeX Icons pack
    */
   --icon-size: 20px;
+  --icon-size--mobile: 30px;
+
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -173,6 +175,11 @@
     svg {
       width: var(--icon-size);
       height: var(--icon-size);
+
+      @media (--mobile) {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
     }
 
     &:hover {
@@ -247,8 +254,8 @@
       border-radius: 8px;
 
       svg {
-        width: 80%;
-        height: 80%;
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
       }
     }
   }
