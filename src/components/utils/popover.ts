@@ -437,11 +437,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       innerHTML: item.label,
     });
 
-    if (item.icon) {
-      el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
-        innerHTML: item.icon,
-      }));
-    }
+    el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
+      innerHTML: item.icon || item.name.substring(0, 1).toUpperCase(),
+    }));
 
     el.appendChild(label);
 

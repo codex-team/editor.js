@@ -16,6 +16,7 @@
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
+- `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
 
 ### 2.25.0
 
