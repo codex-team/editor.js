@@ -193,7 +193,7 @@ describe('Editor Tools Api', () => {
         });
     });
 
-    it('should not display tool in toolbox if the tool has single toolbox entry configured and it has icon missing', () => {
+    it('should not display tool in toolbox if the tool has single toolbox entry configured and it has title missing', () => {
       /**
        * Tool with one of the toolbox entries with icon missing
        */
@@ -203,7 +203,7 @@ describe('Editor Tools Api', () => {
          */
         public static get toolbox(): ToolboxConfig {
           return {
-            title: 'Entry 2',
+            icon: ICON,
           };
         }
       }
@@ -227,7 +227,7 @@ describe('Editor Tools Api', () => {
         .should('not.exist');
     });
 
-    it('should skip toolbox entries that have no icon', () => {
+    it('should skip toolbox entries that have no title', () => {
       const skippedEntryTitle = 'Entry 2';
 
       /**
@@ -244,7 +244,7 @@ describe('Editor Tools Api', () => {
               icon: ICON,
             },
             {
-              title: skippedEntryTitle,
+              icon: ICON,
             },
           ];
         }
