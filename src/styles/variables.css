@@ -236,15 +236,20 @@
     flex-shrink: 0;
     margin-right: 10px;
 
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+
     @media (--mobile) {
       width: var(--toolbox-buttons-size--mobile);
       height: var(--toolbox-buttons-size--mobile);
       border-radius: 8px;
-    }
 
-    svg {
-      width: var(--icon-size);
-      height: var(--icon-size);
+      svg {
+        width: 80%;
+        height: 80%;
+      }
     }
   }
 }
