@@ -14,6 +14,7 @@
 - `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
 - `Fix` — Pasting from Microsoft Word to Chrome (Mac OS) fixed. Now if there are no image-tools connected, regular text content will be pasted.
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
+- `Fix` — Toolbox shortcuts appearance and execution fixed [#2112](https://github.com/codex-team/editor.js/issues/2112)
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 - `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
@@ -26,7 +27,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.24.4
 
-- `Fix` — Keyboard selection by word [2045](https://github.com/codex-team/editor.js/issues/2045)
+- `Fix` — Keyboard selection by word [#2045](https://github.com/codex-team/editor.js/issues/2045)
 
 ### 2.24.3
 
