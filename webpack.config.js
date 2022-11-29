@@ -8,7 +8,6 @@
 
 module.exports = (env, argv) => {
   const path = require('path');
-  const TerserPlugin = require('terser-webpack-plugin');
   const { LicenseWebpackPlugin } = require('license-webpack-plugin');
   const pkg = require('./package.json');
 
@@ -98,12 +97,7 @@ module.exports = (env, argv) => {
     devtool: NODE_ENV === 'development' ? 'source-map' : false,
 
     optimization: {
-      minimizer: [
-        new TerserPlugin({
-          cache: true,
-          parallel: true,
-        }),
-      ],
+      minimize: false
     },
   };
 };
