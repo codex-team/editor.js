@@ -59,6 +59,8 @@
    * Size of svg icons got from the CodeX Icons pack
    */
   --icon-size: 20px;
+  --icon-size--mobile: 28px;
+
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -81,11 +83,6 @@
     box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
     border-radius: 6px;
     z-index: 2;
-
-    @media (--mobile){
-      box-shadow: 0 8px 6px -6px rgb(33 48 73 / 19%);
-      border-bottom-color: #c7c7c7;
-    }
 
     &--left-oriented {
       &::before {
@@ -160,7 +157,7 @@
     align-items: center;
     justify-content: center;
 
-    padding: 0;
+    padding: 6px 1px;
     border-radius: 3px;
     cursor: pointer;
     border: 0;
@@ -173,10 +170,17 @@
     svg {
       width: var(--icon-size);
       height: var(--icon-size);
+
+      @media (--mobile) {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
     }
 
-    &:hover {
-      background-color: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
     }
 
     &--active {
@@ -236,15 +240,20 @@
     flex-shrink: 0;
     margin-right: 10px;
 
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+
     @media (--mobile) {
       width: var(--toolbox-buttons-size--mobile);
       height: var(--toolbox-buttons-size--mobile);
       border-radius: 8px;
-    }
 
-    svg {
-      width: var(--icon-size);
-      height: var(--icon-size);
+      svg {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
     }
   }
 }

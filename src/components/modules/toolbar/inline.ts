@@ -68,7 +68,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 5;
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  private readonly toolbarVerticalMargin: number = _.isMobileScreen() ? 20 : 6;
 
   /**
    * TODO: Get rid of this
