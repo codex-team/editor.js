@@ -58,8 +58,10 @@
     border-right: 1px solid var(--color-gray-border);
     box-sizing: border-box;
 
-    &:hover {
-      background: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background: var(--bg-light);
+      }
     }
 
     &--hidden {
@@ -88,7 +90,6 @@
 
   border-radius: 0;
   line-height: normal;
-  padding: 0 1px !important;
 
 
   &--link {
@@ -119,6 +120,13 @@
     display: none;
     font-weight: 500;
     border-top: 1px solid rgba(201,201,204,.48);
+    -webkit-appearance: none;
+    font-family: inherit;
+
+    @media (--mobile){
+      font-size: 15px;
+      font-weight: 500;
+    }
 
     &::placeholder {
       color: var(--grayText);
