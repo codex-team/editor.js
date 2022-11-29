@@ -15,6 +15,7 @@
 - `Fix` — Pasting from Microsoft Word to Chrome (Mac OS) fixed. Now if there are no image-tools connected, regular text content will be pasted.
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
 - `Fix` — Toolbox shortcuts appearance and execution fixed [#2112](https://github.com/codex-team/editor.js/issues/2112)
+- `Fix` — Inline Tools click handling on mobile devices improved
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 - `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
