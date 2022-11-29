@@ -459,10 +459,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     });
 
-    this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
-      placement: 'top',
-      hidingDelay: 100,
-    });
+    if (_.isMobileScreen() === false ) {
+      this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+        placement: 'top',
+        hidingDelay: 100,
+      });
+    }
   }
 
   /**
@@ -586,10 +588,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }));
     }
 
-    this.tooltip.onHover(button, tooltipContent, {
-      placement: 'top',
-      hidingDelay: 100,
-    });
+    if (_.isMobileScreen() === false ) {
+      this.tooltip.onHover(button, tooltipContent, {
+        placement: 'top',
+        hidingDelay: 100,
+      });
+    }
 
     instance.checkState(SelectionUtils.get());
   }
