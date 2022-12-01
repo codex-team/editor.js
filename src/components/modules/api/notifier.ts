@@ -1,4 +1,3 @@
-import EventsDispatcher from '../../utils/events';
 import { Notifier as INotifier } from '../../../../types/api';
 import Notifier from '../../utils/notifier';
 import { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
@@ -15,10 +14,9 @@ export default class NotifierAPI extends Module {
   private notifier: Notifier;
 
   /**
-   * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({

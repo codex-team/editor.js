@@ -57,12 +57,12 @@
   &__settings-btn {
     @apply --toolbox-button;
 
-    margin-left: 5px;
+    margin-left: 3px;
     cursor: pointer;
     user-select: none;
 
     @media (--not-mobile){
-      width: 18px;
+      width: 24px;
     }
 
     &--hidden {
@@ -72,6 +72,14 @@
     @media (--mobile){
       @apply --overlay-pane;
       position: static;
+    }
+  }
+
+  &__plus,
+  &__settings-btn {
+    svg {
+      width: 24px;
+      height: 24px;
     }
   }
 }

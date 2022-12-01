@@ -58,7 +58,6 @@ export default class BlocksAPI extends Module {
    * Returns the index of Block by id;
    *
    * @param id - block id
-   * @returns {number}
    */
   public getBlockIndex(id: string): number | undefined {
     const block = this.Editor.BlockManager.getBlockById(id);
@@ -201,7 +200,6 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} index - index of Block to stretch
    * @param {boolean} status - true to enable, false to disable
-   *
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
@@ -229,16 +227,20 @@ export default class BlocksAPI extends Module {
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param replace - pass true to replace the Block existed under passed index
+   * @param {string} id — An optional id for the new block. If omitted then the new id will be generated
    */
   public insert = (
     type: string = this.config.defaultBlock,
     data: BlockToolData = {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     config: ToolConfig = {},
     index?: number,
     needToFocus?: boolean,
-    replace?: boolean
+    replace?: boolean,
+    id?: string
   ): BlockAPIInterface => {
     const insertedBlock = this.Editor.BlockManager.insert({
+      id,
       tool: type,
       data,
       index,
@@ -247,7 +249,7 @@ export default class BlocksAPI extends Module {
     });
 
     return new BlockAPI(insertedBlock);
-  }
+  };
 
   /**
    * Creates data of an empty block with a passed type.
@@ -265,14 +267,13 @@ export default class BlocksAPI extends Module {
     });
 
     return block.data;
-  }
+  };
 
   /**
    * Insert new Block
    * After set caret to this Block
    *
    * @todo remove in 3.0.0
-   *
    * @deprecated with insert() method
    */
   public insertNewBlock(): void {
@@ -307,5 +308,5 @@ export default class BlocksAPI extends Module {
       replace: true,
       tunes: block.tunes,
     });
-  }
+  };
 }

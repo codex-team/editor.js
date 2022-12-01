@@ -50,15 +50,17 @@
   --narrow-mode-right-padding: 50px;
 
   /**
-   * Toolbar buttons height and width
-   */
-  --toolbar-buttons-size: 34px;
-
-  /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
   --toolbox-buttons-size: 26px;
   --toolbox-buttons-size--mobile: 36px;
+
+  /**
+   * Size of svg icons got from the CodeX Icons pack
+   */
+  --icon-size: 20px;
+  --icon-size--mobile: 28px;
+
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -81,11 +83,6 @@
     box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
     border-radius: 6px;
     z-index: 2;
-
-    @media (--mobile){
-      box-shadow: 0 8px 6px -6px rgb(33 48 73 / 19%);
-      border-bottom-color: #c7c7c7;
-    }
 
     &--left-oriented {
       &::before {
@@ -159,22 +156,31 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--toolbar-buttons-size);
-    height: var(--toolbar-buttons-size);
-    line-height: var(--toolbar-buttons-size);
-    padding: 0 !important;
-    text-align: center;
+
+    padding: 6px 1px;
     border-radius: 3px;
     cursor: pointer;
     border: 0;
     outline: none;
     background-color: transparent;
     vertical-align: bottom;
-    color: #000;
+    color: inherit;
     margin: 0;
 
-    &:hover {
-      background-color: var(--bg-light);
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+
+      @media (--mobile) {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
+    }
+
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
     }
 
     &--active {
@@ -234,15 +240,20 @@
     flex-shrink: 0;
     margin-right: 10px;
 
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+
     @media (--mobile) {
       width: var(--toolbox-buttons-size--mobile);
       height: var(--toolbox-buttons-size--mobile);
       border-radius: 8px;
-    }
 
-    svg {
-      width: 12px;
-      height: 12px;
+      svg {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
     }
   }
 }

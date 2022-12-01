@@ -47,6 +47,19 @@ declare global {
        * @param data — data to render
        */
       render(data: OutputData): Chainable<EditorJS>;
+
+      /**
+       * Select passed text in element
+       * Note. Previous subject should have 'textNode' as firstChild
+       *
+       * Usage
+       * cy.get('[data-cy=editorjs]')
+       *  .find('.ce-paragraph')
+       *  .selectText('block te')
+       *
+       * @param text - text to select
+       */
+      selectText(text: string): Chainable<Subject>;
     }
 
     interface ApplicationWindow {

@@ -29,7 +29,6 @@ export default class ToolsFactory {
 
   /**
    * @class
-   *
    * @param config - tools config
    * @param editorConfig - EditorJS config
    * @param api - EditorJS API module
