@@ -3,7 +3,7 @@
 
 ### 2.26.1
 
-- `Fix`- add popular grammar checker extension node names
+- `Fix`- Fix of Block deletion after Backspace press in case when node cotains 3rd party grammar checker extension
 
 
 ### 2.26.0
