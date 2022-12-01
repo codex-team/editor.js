@@ -1,6 +1,5 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import * as _ from '../../utils';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
 import Popover, { PopoverEvent } from '../../utils/popover';
@@ -53,7 +52,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @todo remove once BlockSettings becomes standalone non-module class
    */
   public get flipper(): Flipper {
-    return this.popover.flipper;
+    return this.popover?.flipper;
   }
 
   /**
@@ -64,7 +63,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: Popover;
+  private popover: Popover | undefined;
 
   /**
    * Panel with block settings with 2 sections:
@@ -192,5 +191,5 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   private onOverlayClicked = (): void => {
     this.close();
-  }
+  };
 }

@@ -61,12 +61,12 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     nothingFound: HTMLElement;
     overlay: HTMLElement;
   } = {
-    wrapper: null,
-    popover: null,
-    items: null,
-    nothingFound: null,
-    overlay: null,
-  }
+      wrapper: null,
+      popover: null,
+      items: null,
+      nothingFound: null,
+      overlay: null,
+    };
 
   /**
    * Additional wrapper's class name
@@ -150,7 +150,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * ScrollLocker instance
    */
-  private scrollLocker = new ScrollLocker()
+  private scrollLocker = new ScrollLocker();
 
   /**
    * Editor container element
@@ -236,6 +236,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (this.searchable) {
       setTimeout(() => {
         this.search.focus();
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 100);
     }
 
@@ -436,11 +437,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       innerHTML: item.label,
     });
 
-    if (item.icon) {
-      el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
-        innerHTML: item.icon,
-      }));
-    }
+    el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
+      innerHTML: item.icon || item.name.substring(0, 1).toUpperCase(),
+    }));
 
     el.appendChild(label);
 
@@ -601,7 +600,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     el.classList.remove(Popover.CSS.itemNoHover);
-  }
+  };
 
   /**
    * Removes class responsible for special focus behavior on an item
@@ -621,7 +620,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private onFlip = (): void => {
     this.disableSpecialHoverAndFocusBehavior();
-  }
+  };
 
   /**
    * Reactivates flipper instance.

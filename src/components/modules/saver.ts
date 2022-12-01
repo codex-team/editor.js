@@ -16,7 +16,6 @@ declare const VERSION: string;
 
 /**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
- *
  * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
  * @property {string} json - Editor JSON output

@@ -10,12 +10,12 @@ export default class ScrollLocker {
   private static CSS = {
     scrollLocked: 'ce-scroll-locked',
     scrollLockedHard: 'ce-scroll-locked--hard',
-  }
+  };
 
   /**
    * Stores scroll position, used for hard scroll lock
    */
-  private scrollPosition: null|number
+  private scrollPosition: null|number;
 
   /**
    * Locks body element scroll
