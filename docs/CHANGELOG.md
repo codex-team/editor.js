@@ -1,6 +1,9 @@
 # Changelog
 
 
+### 2.26.1
+- `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
+
 ### 2.26.0
 
 - `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
