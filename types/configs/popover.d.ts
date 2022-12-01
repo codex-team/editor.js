@@ -39,9 +39,11 @@ interface PopoverItemBase {
   name?: string;
 
   /**
-   * True if item should be highlighted once activated
+   * Defines whether item should toggle on click. 
+   * Can be represented as boolean value or a string key. 
+   * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
-  toggle?: boolean;
+  toggle?: boolean | string;
 }
 
 /**

@@ -491,13 +491,51 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
     clickedItem.onActivate(clickedItem, event);
 
-    if (clickedItem.toggle) {
-      clickedItem.isActive = !clickedItem.isActive;
-      itemEl.classList.toggle(Popover.CSS.itemActive);
-    }
+    this.toggleIfNeeded(itemIndex, allItems);
 
     if (clickedItem.closeOnActivate) {
       this.hide();
+    }
+  }
+
+  /**
+   * - Toggles item active state, if the item has property 'toggle' set to true.
+   *
+   * - Performs radiobutton-like behavior if the item has property 'toggle' set to string key.
+   * (All the other items with the same key get unactive, and the item gets active)
+   *
+   * @param index - clicked item index
+   * @param itemEls - array of html elements representing popover items
+   */
+  private toggleIfNeeded(index: number, itemEls: Element[]): void {
+    const clickedItem = this.items[index];
+
+    if (clickedItem.toggle === true) {
+      clickedItem.isActive = !clickedItem.isActive;
+      itemEls[index].classList.toggle(Popover.CSS.itemActive);
+
+      return;
+    }
+
+    if (typeof clickedItem.toggle === 'string') {
+      const itemsInToggleGroup = this.items.filter(item => item.toggle === clickedItem.toggle);
+
+      /** If there's only one item in toggle group, toggle it */
+      if (itemsInToggleGroup.length === 1) {
+        clickedItem.isActive = !clickedItem.isActive;
+        itemEls[index].classList.toggle(Popover.CSS.itemActive);
+
+        return;
+      }
+
+      /** Set clicked item as active and the rest items with same toggle key value as inactive */
+      itemsInToggleGroup.forEach((item: PopoverItem) => {
+        const i = this.items.indexOf(item);
+        const newState = item === clickedItem;
+
+        item.isActive = newState;
+        itemEls[i].classList.toggle(Popover.CSS.itemActive, newState);
+      });
     }
   }
 
