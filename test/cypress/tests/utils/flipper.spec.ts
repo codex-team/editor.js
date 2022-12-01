@@ -5,7 +5,7 @@ import { PopoverItem } from '../../../../types/index.js';
  */
 class SomePlugin {
   /**
-   * Event handler to be spyed in test
+   * Event handler to be spied in test
    */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public static pluginInternalKeydownHandler(): void {}
@@ -24,7 +24,7 @@ class SomePlugin {
   }
 
   /**
-   * Used to display our tool in the Toolboz
+   * Used to display our tool in the Toolbox
    */
   public static get toolbox(): PopoverItem {
     return {
@@ -37,15 +37,17 @@ class SomePlugin {
 }
 
 describe('Flipper', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+  beforeEach(function () {
+    cy.createEditor({
+      tools: {
+        sometool: SomePlugin,
+      },
+    }).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({
-        tools: {
-          sometool: SomePlugin,
-        },
-      }).as('editorInstance');
     }
   });
 

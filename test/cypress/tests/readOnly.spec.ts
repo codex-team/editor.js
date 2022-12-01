@@ -1,6 +1,11 @@
 import EditorJS, { EditorConfig } from '../../../types';
 
 describe('ReadOnly API spec', () => {
+  /**
+   * Creates the new editor instance
+   *
+   * @param config - Editor Config
+   */
   function createEditor(config?: EditorConfig): void {
     const editorConfig = Object.assign({}, config || {});
 

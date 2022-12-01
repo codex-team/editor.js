@@ -1,13 +1,13 @@
 /**
  * @class MoveDownTune
  * @classdesc Editor's default tune - Moves down highlighted block
- *
  * @copyright <CodeX Team> 2018
  */
 
-import $ from '../dom';
 import { API, BlockTune, PopoverItem } from '../../../types';
 import Popover from '../utils/popover';
+import { IconChevronDown } from '@codexteam/icons';
+
 
 /**
  *
@@ -46,7 +46,7 @@ export default class MoveDownTune implements BlockTune {
    */
   public render(): PopoverItem {
     return {
-      icon: $.svg('arrow-down', 14, 14).outerHTML,
+      icon: IconChevronDown,
       label: this.api.i18n.t('Move down'),
       onActivate: (item, event): void => this.handleClick(event),
       name: 'move-down',
@@ -72,6 +72,7 @@ export default class MoveDownTune implements BlockTune {
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
 
       return;

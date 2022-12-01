@@ -3,14 +3,14 @@
  */
 interface PopoverItemBase {
   /**
-   * Item icon to be appeared near a title
-   */
-  icon: string;
-
-  /**
    * Displayed text
    */
   label: string;
+
+  /**
+   * Item icon to be appeared near a title
+   */
+  icon?: string;
 
   /**
    * Additional displayed text

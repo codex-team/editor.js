@@ -34,28 +34,5 @@
     &--selected {
       color: var(--color-active-icon);
     }
-
-    &--delete {
-      transition: background-color 300ms ease;
-      will-change: background-color;
-
-      .icon {
-        transition: transform 200ms ease-out;
-        will-change: transform;
-      }
-    }
-
-    &--confirm {
-      background-color: var(--color-confirm) !important;
-      color: #fff;
-
-      &:hover {
-        background-color: color-mod(var(--color-confirm) blackness(+5%)) !important;
-      }
-
-      .icon {
-        transform: rotate(90deg);
-      }
-    }
   }
 }
