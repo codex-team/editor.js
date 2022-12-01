@@ -234,7 +234,7 @@ describe('Popover', () => {
     });
   });
 
-  it('should hightlighted as active the item with toggle property set to unique string key once clicked', () => {
+  it('should toggle item if it is the only item in toggle group', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
