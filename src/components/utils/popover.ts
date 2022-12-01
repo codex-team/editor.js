@@ -529,7 +529,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       }
 
       /** Set clicked item as active and the rest items with same toggle key value as inactive */
-      this.items.forEach((item: PopoverItem, i: number) => {
+      itemsInToggleGroup.forEach((item: PopoverItem) => {
+        const i = this.items.indexOf(item);
+
         if (item === clickedItem) {
           item.isActive = true;
           itemEls[i].classList.add(Popover.CSS.itemActive);
