@@ -671,31 +671,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return [tunesItems, customHtmlTunesContainer];
   }
 
-  // /**
-  //  * Resolves aliases in tunes menu items
-  //  *
-  //  * @param item - item with resolved aliases
-  //  */
-  // private resolveAliases(item: TunesMenuConfigItem, aliases: {[propery: string]: string}): TunesMenuConfigItem {
-  //   const result = {} as TunesMenuConfigItem;
-
-  //   Object.keys(item).forEach(property => {
-  //     result[property] = item[property];
-
-  //     const aliasProperty = aliases[property];
-
-  //     if (aliasProperty !== undefined) {
-  //       result[property] = item[aliasProperty];
-  //     }
-  //   });
-
-  //   if (item.confirmation) {
-  //     result.confirmation = this.resolveAliases(item.confirmation, aliases);
-  //   }
-
-  //   return result;
-  // }
-
   /**
    * Update current input index with selection anchor node
    */
