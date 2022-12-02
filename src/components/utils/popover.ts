@@ -434,7 +434,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       el.dataset.itemName = item.name;
     }
     const label = Dom.make('div', Popover.CSS.itemLabel, {
-      innerHTML: item.label,
+      innerHTML: item.title,
     });
 
     el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {

@@ -6,9 +6,9 @@ import { PopoverItem } from '../../../../types';
 describe('Popover', () => {
   it('should support confirmation chains', () => {
     const actionIcon = 'Icon 1';
-    const actionLabel = 'Action';
+    const actionTitle = 'Action';
     const confirmActionIcon = 'Icon 2';
-    const confirmActionLabel = 'Confirm action';
+    const confirmActionTitle = 'Confirm action';
 
     /**
      * Confirmation is moved to separate variable to be able to test it's callback execution.
@@ -16,14 +16,14 @@ describe('Popover', () => {
      */
     const confirmation = {
       icon: confirmActionIcon,
-      label: confirmActionLabel,
+      title: confirmActionTitle,
       onActivate: cy.stub(),
     };
 
     const items: PopoverItem[] = [
       {
         icon: actionIcon,
-        label: actionLabel,
+        title: actionTitle,
         name: 'testItem',
         confirmation,
       },
@@ -45,7 +45,7 @@ describe('Popover', () => {
 
       cy.get('[data-item-name=testItem]')
         .get('.ce-popover__item-label')
-        .should('have.text', actionLabel);
+        .should('have.text', actionTitle);
 
       // First click on item
       cy.get('[data-item-name=testItem]').click();
@@ -58,7 +58,7 @@ describe('Popover', () => {
       // Check label has changed
       cy.get('[data-item-name=testItem]')
         .get('.ce-popover__item-label')
-        .should('have.text', confirmActionLabel);
+        .should('have.text', confirmActionTitle);
 
       // Second click
       cy.get('[data-item-name=testItem]')
@@ -74,7 +74,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         isActive: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -101,7 +101,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         isDisabled: true,
         name: 'testItem',
         onActivate: cy.stub(),
@@ -133,7 +133,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         closeOnActivate: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -163,7 +163,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         toggle: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -190,7 +190,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon 1',
-        label: 'Label 1',
+        title: 'Title 1',
         toggle: 'group-name',
         name: 'testItem1',
         isActive: true,
@@ -198,7 +198,7 @@ describe('Popover', () => {
       },
       {
         icon: 'Icon 2',
-        label: 'Label 2',
+        title: 'Title 2',
         toggle: 'group-name',
         name: 'testItem2',
         onActivate: (): void => {},
@@ -238,7 +238,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         toggle: 'key',
         name: 'testItem',
         onActivate: (): void => {},

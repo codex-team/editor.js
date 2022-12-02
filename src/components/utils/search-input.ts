@@ -6,7 +6,7 @@ import { IconSearch } from '@codexteam/icons';
  * Item that could be searched
  */
 interface SearchableItem {
-  label: string;
+  title?: string;
 }
 
 /**
@@ -145,7 +145,7 @@ export default class SearchInput {
    * @param item - item to be checked
    */
   private checkItem(item: SearchableItem): boolean {
-    const text = item.label.toLowerCase();
+    const text = item.title.toLowerCase();
     const query = this.searchQuery.toLowerCase();
 
     return text.includes(query);

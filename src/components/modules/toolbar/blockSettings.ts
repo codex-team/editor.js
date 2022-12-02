@@ -6,6 +6,7 @@ import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
+import { TunesMenuConfigItem } from '../../../../types/tools';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -114,7 +115,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItems,
+      items: tunesItems.map(tune => this.resolveAliases(tune, { label: 'title' })),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
@@ -192,4 +193,29 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   private onOverlayClicked = (): void => {
     this.close();
   };
+
+  /**
+   * Resolves aliases in tunes menu items
+   *
+   * @param item - item with resolved aliases
+   */
+  private resolveAliases(item: TunesMenuConfigItem, aliases: {[alias: string]: string}): TunesMenuConfigItem {
+    const result = {} as TunesMenuConfigItem;
+
+    Object.keys(item).forEach(property => {
+      const aliasedProperty = aliases[property];
+
+      if (aliasedProperty !== undefined) {
+        result[aliasedProperty] = item[property];
+      } else {
+        result[property] = item[property];
+      }
+    });
+
+    if (item.confirmation) {
+      result.confirmation = this.resolveAliases(item.confirmation, aliases);
+    }
+
+    return result;
+  }
 }

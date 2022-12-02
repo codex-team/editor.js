@@ -21,6 +21,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
+import { TunesMenuConfigItem } from '../../../types/tools';
 
 /**
  * Interface describes Block class constructor argument
@@ -646,7 +647,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public getTunes(): [PopoverItem[], HTMLElement] {
     const customHtmlTunesContainer = document.createElement('div');
-    const tunesItems: PopoverItem[] = [];
+    const tunesItems: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
@@ -669,6 +670,31 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     return [tunesItems, customHtmlTunesContainer];
   }
+
+  // /**
+  //  * Resolves aliases in tunes menu items
+  //  *
+  //  * @param item - item with resolved aliases
+  //  */
+  // private resolveAliases(item: TunesMenuConfigItem, aliases: {[propery: string]: string}): TunesMenuConfigItem {
+  //   const result = {} as TunesMenuConfigItem;
+
+  //   Object.keys(item).forEach(property => {
+  //     result[property] = item[property];
+
+  //     const aliasProperty = aliases[property];
+
+  //     if (aliasProperty !== undefined) {
+  //       result[property] = item[aliasProperty];
+  //     }
+  //   });
+
+  //   if (item.confirmation) {
+  //     result.confirmation = this.resolveAliases(item.confirmation, aliases);
+  //   }
+
+  //   return result;
+  // }
 
   /**
    * Update current input index with selection anchor node
