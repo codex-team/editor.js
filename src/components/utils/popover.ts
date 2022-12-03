@@ -6,7 +6,7 @@ import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
 import { PopoverItem, PopoverItemWithConfirmation } from '../../../types';
-
+import { capitalize } from '../utils';
 /**
  * Event that can be triggered by the Popover
  */
@@ -185,7 +185,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     scopeElement: HTMLElement;
   }) {
     super();
-    this.items = items;
+    this.items = items.map(this.fillItemTitle);
     this.customContent = customContent;
     this.customContentFlippableItems = customContentFlippableItems;
     this.className = className || '';
@@ -719,5 +719,21 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
 
     return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+  }
+
+  /**
+   * Returns popover item with filled in title property if missing
+   *
+   * @param item - item to fill in title of
+   */
+  private fillItemTitle(item: PopoverItem): PopoverItem {
+    if (item.title !== undefined) {
+      return item;
+    }
+
+    return {
+      ...item,
+      title: capitalize(item.name),
+    };
   }
 }
