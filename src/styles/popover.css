@@ -110,7 +110,7 @@
       }
 
       .ce-popover__item-label {
-        color: white;
+        color: #e24a4a;
       }
 
       &:not(.ce-popover__item--no-visible-hover) {
