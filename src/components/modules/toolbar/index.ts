@@ -510,7 +510,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       });
 
       /**
-       * Need to move toolbar on resize because we are now moving it to te left of a Block if Block Settings or Toolbox opened
+       * Need to move toolbar on resize because we are now moving it to te left of a Block
+       * This is needed because max-width is removed from Toolbar content to accommodate different block layouts
        */
       this.readOnlyMutableListeners.on(window, 'resize', () => {
         this.assignToolbarLeftPosition(this.hoveredBlock);
