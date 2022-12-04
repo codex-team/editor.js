@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 2.26.2
+
+- `Fix` — *Menu Config* — Installed tunes are rendered above default tunes again.
+
 ### 2.26.1
 - `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
 
