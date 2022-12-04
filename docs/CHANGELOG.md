@@ -5,6 +5,7 @@
 
 - `Fix`- Fix of Block deletion after Backspace press in case when node cotains 3rd party grammar checker extension
 
+- `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
 
 ### 2.26.0
 

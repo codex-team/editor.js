@@ -185,4 +185,79 @@ describe('Popover', () => {
         .should('have.class', 'ce-popover__item--active');
     });
   });
+
+  it('should perform radiobutton-like behavior among the items that have toggle property value set to the same string value', () => {
+    const items: PopoverItem[] = [
+      {
+        icon: 'Icon 1',
+        label: 'Label 1',
+        toggle: 'group-name',
+        name: 'testItem1',
+        isActive: true,
+        onActivate: (): void => {},
+      },
+      {
+        icon: 'Icon 2',
+        label: 'Label 2',
+        toggle: 'group-name',
+        name: 'testItem2',
+        onActivate: (): void => {},
+      },
+    ];
+
+    const popover = new Popover({
+      items,
+      filterLabel: '',
+      nothingFoundLabel: '',
+      scopeElement: null,
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /** Check first item is active */
+      cy.get('[data-item-name=testItem1]')
+        .should('have.class', 'ce-popover__item--active');
+
+      /** Check second item is not active */
+      cy.get('[data-item-name=testItem2]')
+        .should('not.have.class', 'ce-popover__item--active');
+
+      /* Click second item and check it became active */
+      cy.get('[data-item-name=testItem2]')
+        .click()
+        .should('have.class', 'ce-popover__item--active');
+
+      /** Check first item became not active */
+      cy.get('[data-item-name=testItem1]')
+        .should('not.have.class', 'ce-popover__item--active');
+    });
+  });
+
+  it('should toggle item if it is the only item in toggle group', () => {
+    const items: PopoverItem[] = [
+      {
+        icon: 'Icon',
+        label: 'Label',
+        toggle: 'key',
+        name: 'testItem',
+        onActivate: (): void => {},
+      },
+    ];
+    const popover = new Popover({
+      items,
+      filterLabel: '',
+      nothingFoundLabel: '',
+      scopeElement: null,
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /* Check item has active class */
+      cy.get('[data-item-name=testItem]')
+        .click()
+        .should('have.class', 'ce-popover__item--active');
+    });
+  });
 });
