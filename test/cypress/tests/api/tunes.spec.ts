@@ -181,7 +181,7 @@ describe('Editor Tunes Api', () => {
 
     /** Check default Move Up tune is inserted below the test tune */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-popover__item')
+      .get('.ce-settings .ce-popover__item')
       .eq(1)
       .should('have.attr', 'data-item-name', 'move-up' );
   });
