@@ -457,6 +457,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * @param block - block to move Toolbar near it
    */
   private assignToolbarLeftPosition(block: Block = this.Editor.BlockManager.currentBlock): void {
+    /**
+     * If no Block is selected as a Current
+     */
+    if (!block) {
+      return;
+    }
+
     const targetBlockHolder = block.holder;
     const blockContentNode = targetBlockHolder.querySelector(`.${Block.CSS.content}`) as HTMLElement | null;
 
