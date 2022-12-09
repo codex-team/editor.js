@@ -1,4 +1,4 @@
-import {BlockToolData} from '../tools';
+import type {BlockToolData} from '../tools';
 
 /**
  * Config allows Tool to specify how it can be converted into/from another Tool
