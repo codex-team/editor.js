@@ -185,7 +185,7 @@ describe('Editor Tunes Api', () => {
     /** Check both tunes have correct text */
     cy.get('[data-item-name=testTune1]').contains('Tune entry 1');
     cy.get('[data-item-name=testTune2]').contains('Tune entry 2');
-  })
+  });
 
   it('should display installed tunes above default tunes', () => {
     /** Test tune that should appear be rendered in block tunes menu */
