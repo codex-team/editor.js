@@ -654,8 +654,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [
-      ...this.defaultTunesInstances.values(),
       ...this.tunesInstances.values(),
+      ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
     [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
