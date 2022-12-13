@@ -546,7 +546,7 @@ describe('Editor Tools Api', () => {
           /** config specified handled tag */
           public static get pasteConfig(): PasteConfig {
             return {
-              tags: ['OL', 'LI'], // only tag name specified. Attributes should be sanitized
+              tags: ['OL', 'LI'], // tag names specified in upper case
             };
           }
 
@@ -580,7 +580,7 @@ describe('Editor Tools Api', () => {
           .click()
           .paste({
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            'text/html': '<ol start="50"><li>Orderd List</li><li>Unorderd List</li></ol>', // all attributes should be sanitized
+            'text/html': '<ol start="50"><li>Orderd List</li><li>Unorderd List</li></ol>', // all attributes should be sanitized, <li> should be preserved
           })
           .then(() => {
             expect(pastedElement).not.to.be.undefined;
