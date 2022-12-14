@@ -413,6 +413,87 @@ describe('Editor Tools Api', () => {
         .get('.ce-popover')
         .should('contain.text', sampleText);
     });
+
+    it('should support label alias', () => {
+      /** Tool with single tunes menu entry configured */
+      class TestTool {
+        /** Returns toolbox config as list of entries */
+        public static get toolbox(): ToolboxConfigEntry {
+          return {
+            title: 'Test tool',
+            icon: ICON,
+          };
+        }
+
+        /** Returns configuration for block tunes menu */
+        public renderSettings(): TunesMenuConfig {
+          return [
+            {
+              icon: ICON,
+              name: 'testToolTune1',
+              onActivate: (): void => {},
+
+              // Set text via title property
+              title: 'Test tool tune 1',
+            },
+            {
+              icon: ICON,
+              name: 'testToolTune2',
+              onActivate: (): void => {},
+
+              // Set test via label property
+              label: 'Test tool tune 2',
+            },
+          ];
+        }
+
+        /** Save method stub */
+        public save(): void {}
+
+        /** Renders a block */
+        public render(): HTMLElement {
+          const element = document.createElement('div');
+
+          element.contentEditable = 'true';
+          element.setAttribute('data-name', 'testBlock');
+
+          return element;
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+      }).as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-toolbar__plus')
+        .click();
+
+      // Insert test tool block
+      cy.get('[data-cy=editorjs]')
+        .get(`[data-item-name="testTool"]`)
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-name=testBlock]')
+        .type('some text')
+        .click();
+
+      // Open block tunes
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      // Expect both tunes to have correct text
+      cy.get('[data-item-name=testToolTune1]').contains('Test tool tune 1');
+      cy.get('[data-item-name=testToolTune2]').contains('Test tool tune 2');
+    });
   });
 
   /**

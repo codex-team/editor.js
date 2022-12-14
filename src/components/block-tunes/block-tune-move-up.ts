@@ -3,9 +3,10 @@
  * @classdesc Editor's default tune that moves up selected block
  * @copyright <CodeX Team> 2018
  */
-import { API, BlockTune, PopoverItem } from '../../../types';
+import { API, BlockTune } from '../../../types';
 import Popover from '../../components/utils/popover';
 import { IconChevronUp } from '@codexteam/icons';
+import { TunesMenuConfig } from '../../../types/tools';
 
 /**
  *
@@ -42,10 +43,10 @@ export default class MoveUpTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public render(): PopoverItem {
+  public render(): TunesMenuConfig {
     return {
       icon: IconChevronUp,
-      label: this.api.i18n.t('Move up'),
+      title: this.api.i18n.t('Move up'),
       onActivate: (item, e): void => this.handleClick(e),
       name: 'move-up',
     };

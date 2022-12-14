@@ -4,9 +4,10 @@
  * @copyright <CodeX Team> 2018
  */
 
-import { API, BlockTune, PopoverItem } from '../../../types';
+import { API, BlockTune } from '../../../types';
 import Popover from '../utils/popover';
 import { IconChevronDown } from '@codexteam/icons';
+import { TunesMenuConfig } from '../../../types/tools';
 
 
 /**
@@ -44,10 +45,10 @@ export default class MoveDownTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public render(): PopoverItem {
+  public render(): TunesMenuConfig {
     return {
       icon: IconChevronDown,
-      label: this.api.i18n.t('Move down'),
+      title: this.api.i18n.t('Move down'),
       onActivate: (item, event): void => this.handleClick(event),
       name: 'move-down',
     };

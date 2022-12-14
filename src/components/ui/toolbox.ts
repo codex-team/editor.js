@@ -243,7 +243,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
       return {
         icon: toolboxItem.icon,
-        label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
+        title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
