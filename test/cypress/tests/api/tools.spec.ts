@@ -213,12 +213,12 @@ describe('Editor Tools Api', () => {
             icon: ICON,
             name: 'testToolTune',
 
-            onActivate: (): void => {},
+            onActivate: (): void => { },
           };
         }
 
         /** Save method stub */
-        public save(): void {}
+        public save(): void { }
 
         /** Renders a block */
         public render(): HTMLElement {
@@ -283,20 +283,20 @@ describe('Editor Tools Api', () => {
               icon: ICON,
               name: 'testToolTune1',
 
-              onActivate: (): void => {},
+              onActivate: (): void => { },
             },
             {
               label: 'Test tool tune 2',
               icon: ICON,
               name: 'testToolTune2',
 
-              onActivate: (): void => {},
+              onActivate: (): void => { },
             },
           ];
         }
 
         /** Save method stub */
-        public save(): void {}
+        public save(): void { }
 
         /** Renders a block */
         public render(): HTMLElement {
@@ -366,7 +366,7 @@ describe('Editor Tools Api', () => {
         }
 
         /** Save method stub */
-        public save(): void {}
+        public save(): void { }
 
         /** Renders a block */
         public render(): HTMLElement {
@@ -512,15 +512,15 @@ describe('Editor Tools Api', () => {
           /** config specified handled tag */
           public static get pasteConfig(): PasteConfig {
             return {
-              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
+              tags: ['img'], // only tag name specified. Attributes should be sanitized
             };
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {
@@ -564,15 +564,15 @@ describe('Editor Tools Api', () => {
           /** config specified handled tag */
           public static get pasteConfig(): PasteConfig {
             return {
-              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
+              tags: ['img'], // only tag name specified. Attributes should be sanitized
             };
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {
@@ -604,6 +604,79 @@ describe('Editor Tools Api', () => {
             expect(pastedElement).not.to.be.undefined;
             expect(pastedElement.tagName.toLowerCase()).eq('img');
             expect(pastedElement.attributes.length).eq(0);
+          });
+      });
+
+      /**
+       * tags: ['OL','LI',]
+       * -><ol>
+       * <li></li>
+       * <li></li>
+       * </ol>
+       */
+      it('should sanitize all attributes from tags, even if tag names specified in uppercase', () => {
+        /**
+         * Variable used for spying the pasted element we are passing to the Tool
+         */
+        let pastedElement;
+
+        /**
+         * Test tool with pasteConfig.tags specified
+         */
+        class TestListTool {
+          /** config specified handled tag */
+          public static get pasteConfig(): PasteConfig {
+            return {
+              tags: ['OL', 'LI'], // tag names specified in upper case
+            };
+          }
+
+          /** onPaste callback will be stubbed below */
+          public onPaste(): void { }
+
+          /** save is required for correct implementation of the BlockTool class */
+          public save(): void { }
+
+          /** render is required for correct implementation of the BlockTool class */
+          public render(): HTMLElement {
+            return document.createElement('ol');
+          }
+        }
+
+        /**
+         * Stub the onPaste method to access the PasteEvent data for assertion
+         */
+        cy.stub(TestListTool.prototype, 'onPaste').callsFake((event: HTMLPasteEvent) => {
+          pastedElement = event.detail.data;
+        });
+
+        cy.createEditor({
+          tools: {
+            testListTool: TestListTool,
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .click()
+          .paste({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            'text/html': '<ol start="50"><li>Orderd List</li><li>Unorderd List</li></ol>', // all attributes should be sanitized, <li> should be preserved
+          })
+          .then(() => {
+            expect(pastedElement).not.to.be.undefined;
+            expect(pastedElement.tagName.toLowerCase()).eq('ol');
+            expect(pastedElement.attributes.length).eq(0);
+            // check number of children
+            expect(pastedElement.children.length).eq(2);
+
+            /**
+             * Check that all children are <li> tags
+             */
+            pastedElement.childNodes.forEach((child) => {
+              expect(child.tagName.toLowerCase()).eq('li');
+              expect(child.attributes.length).eq(0);
+            });
           });
       });
 
@@ -640,10 +713,10 @@ describe('Editor Tools Api', () => {
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {
@@ -718,14 +791,14 @@ describe('Editor Tools Api', () => {
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {
-            return document.createElement('tbody');
+            return document.createElement('video');
           }
         }
 
@@ -802,14 +875,14 @@ describe('Editor Tools Api', () => {
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {
-            return document.createElement('tbody');
+            return document.createElement('video');
           }
         }
 
@@ -878,10 +951,10 @@ describe('Editor Tools Api', () => {
           }
 
           /** onPaste callback will be stubbed below */
-          public onPaste(): void {}
+          public onPaste(): void { }
 
           /** save is required for correct implementation of the BlockTool class */
-          public save(): void {}
+          public save(): void { }
 
           /** render is required for correct implementation of the BlockTool class */
           public render(): HTMLElement {

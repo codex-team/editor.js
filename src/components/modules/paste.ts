@@ -639,7 +639,7 @@ export default class Paste extends Module {
           tags.forEach((tag) => {
             const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
 
-            result[tag] = sanitizationConfig || {};
+            result[tag.toLowerCase()] = sanitizationConfig || {};
           });
 
           return result;
