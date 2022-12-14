@@ -6,7 +6,6 @@ import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
 import { PopoverItem, PopoverItemWithConfirmation } from '../../../types';
-import { capitalize } from '../utils';
 import { IconDotCircle } from '@codexteam/icons';
 
 /**

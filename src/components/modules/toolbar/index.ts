@@ -405,7 +405,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       i18nLabels: {
         filter: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-        untitled: I18n.ui(I18nInternalNS.ui.popover, 'Untitled')
+        untitled: I18n.ui(I18nInternalNS.ui.popover, 'Untitled'),
       },
     });
 
