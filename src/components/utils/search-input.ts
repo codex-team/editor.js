@@ -145,7 +145,7 @@ export default class SearchInput {
    * @param item - item to be checked
    */
   private checkItem(item: SearchableItem): boolean {
-    const text = item.title.toLowerCase();
+    const text = item.title?.toLowerCase() || '';
     const query = this.searchQuery.toLowerCase();
 
     return text.includes(query);
