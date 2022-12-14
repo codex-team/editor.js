@@ -36,7 +36,7 @@ export enum ToolboxEvent {
 /**
  * Available i18n dict keys that should be passed to the constructor
  */
-type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
+type ToolboxTextLabelsKeys = 'filter' | 'nothingFound' | 'untitled';
 
 /**
  * Toolbox
@@ -127,6 +127,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       searchable: true,
       filterLabel: this.i18nLabels.filter,
       nothingFoundLabel: this.i18nLabels.nothingFound,
+      untitledLabel: this.i18nLabels.untitled,
       items: this.toolboxItemsToBeDisplayed,
     });
 

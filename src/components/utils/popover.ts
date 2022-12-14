@@ -7,6 +7,8 @@ import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
 import { PopoverItem, PopoverItemWithConfirmation } from '../../../types';
 import { capitalize } from '../utils';
+import { IconDotCircle } from '@codexteam/icons';
+
 /**
  * Event that can be triggered by the Popover
  */
@@ -99,6 +101,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private readonly nothingFoundLabel: string;
 
   /**
+   * text that will be displayed instead of title for title-less items
+   */
+  private readonly untitledLabel: string = 'Untitled';
+
+  /**
    * Style classes
    */
   public static get CSS(): {
@@ -170,22 +177,24 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param options.className - additional class name to be added to the popover wrapper
    * @param options.filterLabel - label for the search Field
    * @param options.nothingFoundLabel - label of the 'nothing found' message
+   * @param options.untitledLabel - text that will be displayed instead of title for title-less items
    * @param options.customContent - arbitrary html element to be inserted before items list
    * @param options.customContentFlippableItems - list of html elements inside custom content area that should be available for keyboard navigation
    * @param options.scopeElement - editor container element
    */
-  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, customContent, customContentFlippableItems, scopeElement }: {
+  constructor({ items, className, searchable, filterLabel, nothingFoundLabel, untitledLabel, customContent, customContentFlippableItems, scopeElement }: {
     items: PopoverItem[];
     className?: string;
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
+    untitledLabel?: string;
     customContent?: HTMLElement;
     customContentFlippableItems?: HTMLElement[];
     scopeElement: HTMLElement;
   }) {
     super();
-    this.items = items.map(this.fillItemTitle);
+    this.items = items.map((item) => this.fillItemTitle(item));
     this.customContent = customContent;
     this.customContentFlippableItems = customContentFlippableItems;
     this.className = className || '';
@@ -195,6 +204,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     this.filterLabel = filterLabel;
     this.nothingFoundLabel = nothingFoundLabel;
+    this.untitledLabel = untitledLabel;
 
     this.render();
     this.enableFlipper();
@@ -438,7 +448,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     });
 
     el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
-      innerHTML: item.icon || item.name.substring(0, 1).toUpperCase(),
+      innerHTML: item.icon || IconDotCircle,
     }));
 
     el.appendChild(label);
@@ -733,7 +743,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     return {
       ...item,
-      title: capitalize(item.name),
+      title: this.untitledLabel,
     };
   }
 }

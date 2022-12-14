@@ -116,6 +116,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+      untitledLabel: I18n.ui(I18nInternalNS.ui.popover, 'Untitled'),
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
