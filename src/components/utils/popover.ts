@@ -181,7 +181,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     searchable?: boolean;
     filterLabel: string;
     nothingFoundLabel: string;
-    untitledLabel?: string;
     customContent?: HTMLElement;
     customContentFlippableItems?: HTMLElement[];
     scopeElement: HTMLElement;
