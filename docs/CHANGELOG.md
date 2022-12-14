@@ -3,6 +3,9 @@
 ### 2.26.4
 
 - `Fix` — *Paste Module* — fix for a problem with specifying of `pasteConfig().tags` in upper case  [#2208](https://github.com/codex-team/editor.js/issues/2208).
+
+### 2.26.3
+
 - `Improvement` — *Menu Config* — Property `label` renamed to `title`.
 
 ### 2.26.2
