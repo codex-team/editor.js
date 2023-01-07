@@ -1,0 +1,35 @@
+.codex-popover {
+  --border-radius: 6px;
+  --width: 200px;
+  --max-height: 270px;
+  --padding: 6px;
+  --gap: 8px;
+
+  padding: var(--padding);
+  min-width: var(--width);
+  width: var(--width);
+  max-height: var(--max-height);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid #e8e8eb;
+  box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
+  position: absolute;
+  left: 0;
+  top: calc(100% + var(--gap));
+  background: white;
+
+  animation: panelShowing 100ms ease;
+
+  &--open-top {
+    top: calc(-1 * (var(--gap) + var(--popover-height)));
+  }
+
+  &--closed {
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+    padding: 0;
+    border: none;
+  }
+}

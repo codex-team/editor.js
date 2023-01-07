@@ -12,3 +12,7 @@
 @import './rtl.css';
 @import './popover.css';
 @import './input.css';
+
+/** @todo remove */
+@import '../components/utils/popover/styles.css';
+@import '../components/utils/popover/popover-item/styles.css'
