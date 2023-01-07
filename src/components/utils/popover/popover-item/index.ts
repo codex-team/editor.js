@@ -52,13 +52,14 @@ export class PopoverItemNode {
   /**
    * Popover item CSS classes
    */
-  private static get CSS(): {
+  public static get CSS(): {
     container: string,
     title: string,
     secondaryTitle: string,
     icon: string,
     isActive: string,
     isDisabled: string,
+    isFocused: string
     } {
     return {
       container: 'codex-popover-item',
@@ -67,6 +68,7 @@ export class PopoverItemNode {
       icon: 'codex-popover-item__icon',
       isActive: 'codex-popover-item--active',
       isDisabled: 'codex-popover-item--disabled',
+      isFocused: 'codex-popover-item--focused',
     };
   }
 

@@ -2,7 +2,8 @@ import './styles.css'; // not working
 
 import { PopoverItemNode, PopoverItemParams } from './popover-item';
 import Dom from '../../dom';
-import { cacheable } from '../../utils';
+import { cacheable, keyCodes } from '../../utils';
+import Flipper from '../../flipper';
 
 interface PopoverParams {
   items: PopoverItemParams[];
@@ -13,6 +14,12 @@ interface PopoverParams {
  * Class responsible for rendering popover and handling its behaviour
  */
 export default class Popover {
+  /**
+   * Flipper - module for keyboard iteration between elements
+   */
+  public flipper: Flipper;
+
+
   /** List of popover items */
   private items: PopoverItemNode[];
 
@@ -62,6 +69,7 @@ export default class Popover {
     }
 
     this.make();
+    this.initializeFlipper();
   }
 
   /**
@@ -69,6 +77,13 @@ export default class Popover {
    */
   public getElement(): HTMLElement | null {
     return this.nodes.popover;
+  }
+
+  /**
+   * Returns true if some item inside popover is focused
+   */
+  public hasFocus(): boolean {
+    return this.flipper.hasFocus();
   }
 
   /**
@@ -81,6 +96,7 @@ export default class Popover {
     }
 
     this.nodes.popover.classList.remove(Popover.CSS.popoverClosed);
+    this.flipper.activate(this.flippableElements);
     this.isOpen = true;
   }
 
@@ -90,6 +106,7 @@ export default class Popover {
   public hide(): void {
     this.nodes.popover.classList.add(Popover.CSS.popoverClosed);
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
+    this.flipper.deactivate();
     this.isOpen = false;
   }
 
@@ -143,6 +160,30 @@ export default class Popover {
     if (item.toggle === true) {
       item.toggleActive();
     }
+  }
+
+  /**
+   * Creates Flipper instance which allows to navigate between popover items via keyboard
+   */
+  private initializeFlipper(): void {
+    this.flipper = new Flipper({
+      items: this.flippableElements,
+      focusedItemClass: PopoverItemNode.CSS.isFocused,
+      allowedKeys: [
+        keyCodes.TAB,
+        keyCodes.UP,
+        keyCodes.DOWN,
+        keyCodes.ENTER,
+      ],
+    });
+  }
+
+  /**
+   * Returns list of elements available for keyboard navigation.
+   * Contains both usual popover items elements and custom html content.
+   */
+  private get flippableElements(): HTMLElement[] {
+    return this.items.map(item => item.getElement());
   }
 
   /**
