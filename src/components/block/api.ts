@@ -105,6 +105,16 @@ function BlockAPI(
     },
 
     /**
+     * Update Block data
+     *
+     * @param {BlockToolData} data - data to update
+     * @returns {Promise<boolean>}
+     */
+    update(data: BlockToolData): Promise<boolean> {
+      return block.update(data);
+    },
+
+    /**
      * Validate Block data
      *
      * @param {BlockToolData} data - data to validate

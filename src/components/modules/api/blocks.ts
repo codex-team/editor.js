@@ -298,15 +298,9 @@ export default class BlocksAPI extends Module {
       return;
     }
 
-    const blockIndex = BlockManager.getBlockIndex(block);
-
-    BlockManager.insert({
+    BlockManager.update({
       id: block.id,
-      tool: block.name,
       data,
-      index: blockIndex,
-      replace: true,
-      tunes: block.tunes,
     });
   };
 }

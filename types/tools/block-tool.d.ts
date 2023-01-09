@@ -44,6 +44,12 @@ export interface BlockTool extends BaseTool {
   merge?(blockData: BlockToolData): void;
 
   /**
+   * Method that specified how to update Block's data.
+   * @param {BlockToolData} blockData
+   */
+  update?(blockData: BlockToolData): boolean;
+
+  /**
    * On paste callback. Fired when pasted content can be substituted by a Tool
    * @param {PasteEvent} event
    */

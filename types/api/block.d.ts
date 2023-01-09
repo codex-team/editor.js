@@ -60,6 +60,15 @@ export interface BlockAPI {
   save(): Promise<void|SavedData>;
 
   /**
+   * Update Block data
+   *
+   * @param {BlockToolData} data
+   *
+   * @return {Promise<boolean>}
+   */
+  update(data: BlockToolData): Promise<boolean>;
+
+  /**
    * Validate Block data
    *
    * @param {BlockToolData} data

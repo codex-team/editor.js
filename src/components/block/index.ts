@@ -78,6 +78,7 @@ export enum BlockToolAPI {
   RENDERED = 'rendered',
   MOVED = 'moved',
   UPDATED = 'updated',
+  UPDATE = 'update',
   REMOVED = 'removed',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   ON_PASTE = 'onPaste',
@@ -598,6 +599,21 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.toolInstance.merge(data);
+  }
+
+  /**
+   * Call plugins update method
+   *
+   * @param {BlockToolData} data - data to update
+   */
+  public async update(data: BlockToolData): Promise<boolean> {
+    let updated = false;
+
+    if (this.toolInstance.update instanceof Function) {
+      updated = await this.toolInstance.update(data);
+    }
+
+    return updated;
   }
 
   /**

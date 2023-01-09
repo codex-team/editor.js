@@ -322,6 +322,62 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Update block by id
+   *
+   * keep the tool name
+   * only update data of block
+   *
+   * @param {object} options - insert options
+   * @param {string} [options.id] - block's unique id
+   * @param {object} [options.data] - plugin data
+   * @returns {void}
+   */
+  public update({
+    id = undefined,
+    data = {},
+  }: {
+    id?: string;
+    data?: BlockToolData;
+  } = {}): void {
+    const block = this.blocks.find(item => item.id === id);
+
+    if (block.update(data)) {
+      this.blockDidMutated(BlockMutationType.Changed, block, {
+        id,
+      });
+
+      return;
+    }
+
+    const index = this._blocks.array.findIndex(item => item.id === id);
+
+    if (index === -1) {
+      _.log(`blockManamger.update(): invalid index of block id: ${id}`, 'warn');
+
+      return;
+    }
+
+    const tool = this._blocks[index].tool.name;
+    const newBlock = this.composeBlock({
+      id,
+      tool,
+      data,
+      tunes: {},
+    });
+
+    this._blocks.insert(index, newBlock, true);
+
+    /**
+     * Force call of didMutated event on Block changed
+     */
+    this.blockDidMutated(BlockMutationType.Changed, newBlock, {
+      id,
+    });
+
+    return;
+  }
+
+  /**
    * Replace current working block
    *
    * @param {object} options - replace options
