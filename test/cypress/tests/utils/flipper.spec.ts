@@ -29,7 +29,7 @@ class SomePlugin {
   public static get toolbox(): PopoverItem {
     return {
       icon: '₷',
-      label: 'Some tool',
+      title: 'Some tool',
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onActivate: (): void => {},
     };

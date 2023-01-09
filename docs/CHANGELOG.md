@@ -1,10 +1,20 @@
 # Changelog
 
+### 2.26.4
+
+- `Improvement` — *Menu Config* — Property `label` renamed to `title`.
+
+### 2.26.3
+
+- `Fix` — *Paste Module* — fix for a problem with specifying of `pasteConfig().tags` in upper case  [#2208](https://github.com/codex-team/editor.js/issues/2208).
+
+### 2.26.2
+
+- `Fix` — *Menu Config* — Installed tunes are rendered above default tunes again.
 
 ### 2.26.1
 
 - `Fix`- Fix of Block deletion after Backspace press in case when node cotains 3rd party grammar checker extension
-
 - `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
 
 ### 2.26.0

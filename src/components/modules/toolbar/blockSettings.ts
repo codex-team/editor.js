@@ -6,6 +6,8 @@ import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
+import { TunesMenuConfigItem } from '../../../../types/tools';
+import { resolveAliases } from '../../utils/resolve-aliases';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -114,7 +116,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       searchable: true,
       filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItems,
+      items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
@@ -192,4 +194,19 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   private onOverlayClicked = (): void => {
     this.close();
   };
+
+  /**
+   * Resolves aliases in tunes menu items
+   *
+   * @param item - item with resolved aliases
+   */
+  private resolveTuneAliases(item: TunesMenuConfigItem): TunesMenuConfigItem {
+    const result = resolveAliases(item, { label: 'title' });
+
+    if (item.confirmation) {
+      result.confirmation = this.resolveTuneAliases(item.confirmation);
+    }
+
+    return result;
+  }
 }

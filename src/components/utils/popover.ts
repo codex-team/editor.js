@@ -6,6 +6,7 @@ import EventsDispatcher from './events';
 import { isMobileScreen, keyCodes, cacheable } from '../utils';
 import ScrollLocker from './scroll-locker';
 import { PopoverItem, PopoverItemWithConfirmation } from '../../../types';
+import { IconDotCircle } from '@codexteam/icons';
 
 /**
  * Event that can be triggered by the Popover
@@ -434,11 +435,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       el.dataset.itemName = item.name;
     }
     const label = Dom.make('div', Popover.CSS.itemLabel, {
-      innerHTML: item.label,
+      innerHTML: item.title || '',
     });
 
     el.appendChild(Dom.make('div', Popover.CSS.itemIcon, {
-      innerHTML: item.icon || item.name.substring(0, 1).toUpperCase(),
+      innerHTML: item.icon || IconDotCircle,
     }));
 
     el.appendChild(label);

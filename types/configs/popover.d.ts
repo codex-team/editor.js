@@ -5,7 +5,7 @@ interface PopoverItemBase {
   /**
    * Displayed text
    */
-  label: string;
+  title?: string;
 
   /**
    * Item icon to be appeared near a title
@@ -54,7 +54,7 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: Partial<PopoverItem>;
+  confirmation: PopoverItem;
 
   onActivate?: never;
 }
