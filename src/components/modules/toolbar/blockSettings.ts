@@ -9,6 +9,8 @@ import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
 
+import PopoverNew from '../../utils/popover/index';
+
 /**
  * HTML Elements that used for BlockSettings
  */
@@ -65,7 +67,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: Popover | undefined;
+  // private popover: Popover | undefined;
+  private popover: PopoverNew | undefined;
+
 
   /**
    * Panel with block settings with 2 sections:
@@ -111,18 +115,18 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
 
-    this.popover = new Popover({
-      className: this.CSS.settings,
-      searchable: true,
-      filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+    this.popover = new PopoverNew({
+      // className: this.CSS.settings,
+      // searchable: true,
+      // filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+      // nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
-      customContent: customHtmlTunesContainer,
-      customContentFlippableItems: this.getControls(customHtmlTunesContainer),
+      // customContent: customHtmlTunesContainer,
+      // customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
     });
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
-    this.popover.on(PopoverEvent.Close, () => this.close());
+    // this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    // this.popover.on(PopoverEvent.Close, () => this.close());
 
     this.nodes.wrapper.append(this.popover.getElement());
 
@@ -166,7 +170,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
-      this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+      // this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked); // @todo uncomment
       this.popover.destroy();
       this.popover.getElement().remove();
       this.popover = null;
