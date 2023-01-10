@@ -2,31 +2,32 @@ import Dom from '../../../dom';
 import { IconDotCircle } from '@codexteam/icons';
 
 import './styles.css'; // not working
+import { PopoverItem } from '../../../../../types';
 
-export interface PopoverItemParams {
-  /** Popover item icon svg */
-  icon?: string;
+// export interface PopoverItemParams {
+//   /** Popover item icon svg */
+//   icon?: string;
 
-  /** Popover item title */
-  title?: string;
+//   /** Popover item title */
+//   title?: string;
 
-  /** Popover item secondary title */
-  secondaryLabel?: string;
+//   /** Popover item secondary title */
+//   secondaryLabel?: string;
 
-  /** True if popover item should be highlighted as active */
-  isActive?: boolean;
+//   /** True if popover item should be highlighted as active */
+//   isActive?: boolean;
 
-  /** True if popover item should be marked as disabled */
-  isDisabled?: boolean;
+//   /** True if popover item should be marked as disabled */
+//   isDisabled?: boolean;
 
-  /**  */
-  toggle?: boolean;
+//   /**  */
+//   toggle?: boolean;
 
-  /** Popover item name. Used for testing purposes */
-  cyName?: string;
+//   /** Popover item name. Used for testing purposes */
+//   cyName?: string;
 
-  onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
-}
+//   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
+// }
 
 
 /**
@@ -40,18 +41,24 @@ export class PopoverItemNode {
 
   /** */
   public get toggle(): boolean {
-    return this.params.toggle;
+    return this.params.toggle === true;
+  }
+
+  /** True if popover item is in confirmation state */
+  public get isInConfirmationState(): boolean {
+    return true;
   }
 
   /** Item root html element */
   private element: HTMLElement;
 
   /**  */
-  private params: PopoverItemParams;
+  private params: PopoverItem;
 
-  /**
-   * Popover item CSS classes
-   */
+  /**  */
+  private confirmationState: PopoverItem | null;
+
+  /** Popover item CSS classes */
   public static get CSS(): {
     container: string,
     title: string,
@@ -59,7 +66,8 @@ export class PopoverItemNode {
     icon: string,
     isActive: string,
     isDisabled: string,
-    isFocused: string
+    isFocused: string,
+    confirmationState: string
     } {
     return {
       container: 'codex-popover-item',
@@ -69,6 +77,7 @@ export class PopoverItemNode {
       isActive: 'codex-popover-item--active',
       isDisabled: 'codex-popover-item--disabled',
       isFocused: 'codex-popover-item--focused',
+      confirmationState: 'codex-popover-item--confirmation',
     };
   }
 
@@ -77,7 +86,7 @@ export class PopoverItemNode {
    *
    * @param params - popover item construction params
    */
-  constructor(params: PopoverItemParams) {
+  constructor(params: PopoverItem) {
     this.params = params;
     this.element = this.make(params);
   }
@@ -94,8 +103,12 @@ export class PopoverItemNode {
    *
    * @param event - click event
    */
-  public onActivate(event: PointerEvent): void {
-    this.params.onActivate(this.params, event);
+  public handleClick(event: PointerEvent): void {
+    if (this.params.confirmation === undefined) {
+      this.params.onActivate(this.params, event);
+    } else {
+      this.enableConfirmationMode(this.params.confirmation);
+    }
   }
 
   /**
@@ -106,15 +119,22 @@ export class PopoverItemNode {
   }
 
   /**
+   * Resets popover item to its original state
+   */
+  public reset(): void {
+    this.disableConfirmationMode();
+  }
+
+  /**
    * Constructs HTML element corresponding to popover item
    *
    * @param params - item construction params
    */
-  private make(params: PopoverItemParams): HTMLElement {
+  private make(params: PopoverItem): HTMLElement {
     const el = Dom.make('div', PopoverItemNode.CSS.container);
 
-    if (params.cyName) {
-      el.dataset.cyName = params.cyName;
+    if (params.name) {
+      el.dataset.name = params.name;
     }
 
     el.appendChild(Dom.make('div', PopoverItemNode.CSS.icon, {
@@ -140,5 +160,32 @@ export class PopoverItemNode {
     }
 
     return el;
+  }
+
+  /**
+   * Activates confirmation mode for the item.
+   *
+   * @param newState
+   */
+  private enableConfirmationMode(newState: PopoverItem): void {
+    const params = {
+      ...this.params,
+      ...newState,
+      confirmation: newState.confirmation,
+    } as PopoverItem;
+    const confirmationEl = this.make(params);
+
+    this.element.innerHTML = confirmationEl.innerHTML;
+    this.element.classList.add(PopoverItemNode.CSS.confirmationState);
+  }
+
+  /**
+   *
+   */
+  private disableConfirmationMode(): void {
+    const itemWithOriginalParams = this.make(this.params);
+
+    this.element.innerHTML = itemWithOriginalParams.innerHTML;
+    this.element.classList.remove(PopoverItemNode.CSS.confirmationState);
   }
 }

@@ -1,12 +1,13 @@
 import './styles.css'; // not working
 
-import { PopoverItemNode, PopoverItemParams } from './popover-item';
+import { PopoverItemNode } from './popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes } from '../../utils';
 import Flipper from '../../flipper';
+import { PopoverItem } from '../../../../types';
 
 interface PopoverParams {
-  items: PopoverItemParams[];
+  items: PopoverItem[];
   scopeElement?: HTMLElement;
 }
 
@@ -107,6 +108,7 @@ export default class Popover {
     this.nodes.popover.classList.add(Popover.CSS.popoverClosed);
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
     this.flipper.deactivate();
+    this.items.forEach(item => item.reset());
     this.isOpen = false;
   }
 
@@ -155,7 +157,10 @@ export default class Popover {
       return;
     }
 
-    item.onActivate(event);
+    /** Cleanup other items state */
+    this.items.filter(x => x !== item).forEach(x => x.reset());
+
+    item.handleClick(event);
 
     if (item.toggle === true) {
       item.toggleActive();

@@ -36,15 +36,26 @@ export default class DeleteTune implements BlockTune {
    * Tune's appearance in block settings menu
    */
   public render(): TunesMenuConfig {
-    return {
-      icon: IconCross,
-      title: this.api.i18n.t('Delete'),
-      name: 'delete',
-      confirmation: {
-        title: this.api.i18n.t('Click to delete'),
-        onActivate: (): void => this.handleClick(),
+    return [
+      {
+        icon: IconCross,
+        title: this.api.i18n.t('Delete'),
+        name: 'delete',
+        confirmation: {
+          title: this.api.i18n.t('Click to delete'),
+          onActivate: (): void => this.handleClick(),
+        },
       },
-    };
+      {
+        icon: IconCross,
+        title: this.api.i18n.t('Delete 2'),
+        name: 'delete',
+        confirmation: {
+          title: this.api.i18n.t('Click to delete 2'),
+          onActivate: (): void => this.handleClick(),
+        },
+      },
+    ];
   }
 
   /**

@@ -78,6 +78,18 @@
     background: rgba(34, 186, 255, 0.08) !important;
   }
 
+  &--confirmation {
+    background: var(--color-confirm);
+
+    .codex-popover-item__icon {
+      color: var(--color-confirm);
+    }
+
+    .codex-popover-item__title {
+      color: white;
+    }
+  }
+
   @media (--can-hover) {
     &:hover {
       cursor: pointer;
