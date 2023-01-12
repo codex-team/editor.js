@@ -4,31 +4,6 @@ import { IconDotCircle } from '@codexteam/icons';
 import './styles.css'; // not working
 import { PopoverItem } from '../../../../../types';
 
-// export interface PopoverItemParams {
-//   /** Popover item icon svg */
-//   icon?: string;
-
-//   /** Popover item title */
-//   title?: string;
-
-//   /** Popover item secondary title */
-//   secondaryLabel?: string;
-
-//   /** True if popover item should be highlighted as active */
-//   isActive?: boolean;
-
-//   /** True if popover item should be marked as disabled */
-//   isDisabled?: boolean;
-
-//   /**  */
-//   toggle?: boolean;
-
-//   /** Popover item name. Used for testing purposes */
-//   cyName?: string;
-
-//   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
-// }
-
 
 /**
  * Represents sigle popover item node
@@ -46,17 +21,17 @@ export class PopoverItemNode {
 
   /** True if popover item is in confirmation state */
   public get isInConfirmationState(): boolean {
-    return true;
+    return this.confirmationState !== null;
   }
 
   /** Item root html element */
   private element: HTMLElement;
 
-  /**  */
+  /** Popover item params */
   private params: PopoverItem;
 
-  /**  */
-  private confirmationState: PopoverItem | null;
+  /** If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on */
+  private confirmationState: PopoverItem | null = null;
 
   /** Popover item CSS classes */
   public static get CSS(): {
@@ -64,20 +39,24 @@ export class PopoverItemNode {
     title: string,
     secondaryTitle: string,
     icon: string,
-    isActive: string,
-    isDisabled: string,
-    isFocused: string,
-    confirmationState: string
+    active: string,
+    disabled: string,
+    focused: string,
+    confirmationState: string,
+    noHover: string,
+    noFocus: string
     } {
     return {
       container: 'codex-popover-item',
       title: 'codex-popover-item__title',
       secondaryTitle: 'codex-popover-item__secondary-title',
       icon: 'codex-popover-item__icon',
-      isActive: 'codex-popover-item--active',
-      isDisabled: 'codex-popover-item--disabled',
-      isFocused: 'codex-popover-item--focused',
+      active: 'codex-popover-item--active',
+      disabled: 'codex-popover-item--disabled',
+      focused: 'codex-popover-item--focused',
       confirmationState: 'codex-popover-item--confirmation',
+      noHover: 'codex-popover-item--no-hover',
+      noFocus: 'codex-popover-item--no-focus',
     };
   }
 
@@ -104,18 +83,21 @@ export class PopoverItemNode {
    * @param event - click event
    */
   public handleClick(event: PointerEvent): void {
-    if (this.params.confirmation === undefined) {
-      this.params.onActivate(this.params, event);
-    } else {
-      this.enableConfirmationMode(this.params.confirmation);
+    if (this.isInConfirmationState) {
+      this.activateOrEnableConfirmationMode(this.confirmationState, event);
+      this.disableConfirmationMode();
+
+      return;
     }
+
+    this.activateOrEnableConfirmationMode(this.params, event);
   }
 
   /**
    * Toggles item active state
    */
   public toggleActive(): void {
-    this.element.classList.toggle(PopoverItemNode.CSS.isActive);
+    this.element.classList.toggle(PopoverItemNode.CSS.active);
   }
 
   /**
@@ -123,6 +105,13 @@ export class PopoverItemNode {
    */
   public reset(): void {
     this.disableConfirmationMode();
+  }
+
+  /**
+   * Method called on popover keyboard navigation
+   */
+  public onFlip(): void {
+    this.disableSpecialHoverAndFocusBehavior();
   }
 
   /**
@@ -152,11 +141,11 @@ export class PopoverItemNode {
     }
 
     if (params.isActive) {
-      el.classList.add(PopoverItemNode.CSS.isActive);
+      el.classList.add(PopoverItemNode.CSS.active);
     }
 
     if (params.isDisabled) {
-      el.classList.add(PopoverItemNode.CSS.isDisabled);
+      el.classList.add(PopoverItemNode.CSS.disabled);
     }
 
     return el;
@@ -165,7 +154,7 @@ export class PopoverItemNode {
   /**
    * Activates confirmation mode for the item.
    *
-   * @param newState
+   * @param newState -
    */
   private enableConfirmationMode(newState: PopoverItem): void {
     const params = {
@@ -177,15 +166,72 @@ export class PopoverItemNode {
 
     this.element.innerHTML = confirmationEl.innerHTML;
     this.element.classList.add(PopoverItemNode.CSS.confirmationState);
+
+    this.confirmationState = newState;
+
+    this.enableSpecialHoverAndFocusBehavior();
   }
 
   /**
-   *
+   * Returns item to its original state
    */
   private disableConfirmationMode(): void {
     const itemWithOriginalParams = this.make(this.params);
 
     this.element.innerHTML = itemWithOriginalParams.innerHTML;
     this.element.classList.remove(PopoverItemNode.CSS.confirmationState);
+
+    this.confirmationState = null;
+
+    this.disableSpecialHoverAndFocusBehavior();
+  }
+
+  /**
+   * Enables special focus and hover behavior for item in confirmation state.
+   * This is needed to prevent item from being highlighted as hovered/focused just after click.
+   */
+  private enableSpecialHoverAndFocusBehavior(): void {
+    this.element.classList.add(PopoverItemNode.CSS.noHover);
+    this.element.classList.add(PopoverItemNode.CSS.noFocus);
+
+    this.element.addEventListener('mouseleave', this.removeSpecialHoverBehavior, { once: true });
+  }
+
+  /**
+   * Disables special focus and hover behavior
+   */
+  private disableSpecialHoverAndFocusBehavior(): void  {
+    this.removeSpecialFocusBehavior();
+    this.removeSpecialHoverBehavior();
+
+    this.element.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
+  }
+
+  /**
+   * Removes class responsible for special focus behavior on an item
+   */
+  private removeSpecialFocusBehavior = (): void => {
+    this.element.classList.remove(PopoverItemNode.CSS.noFocus);
+  };
+
+  /**
+   * Removes class responsible for special hover behavior on an item
+   */
+  private removeSpecialHoverBehavior = (): void => {
+    this.element.classList.remove(PopoverItemNode.CSS.noHover);
+  };
+
+  /**
+   * Executes item's onActivate callback if the item has no confirmation configured
+   *
+   * @param item - item to activate or bring to confirmation mode
+   * @param event - click event
+   */
+  private activateOrEnableConfirmationMode(item: PopoverItem, event: PointerEvent): void {
+    if (item.confirmation === undefined) {
+      item.onActivate(item, event);
+    } else {
+      this.enableConfirmationMode(item.confirmation);
+    }
   }
 }

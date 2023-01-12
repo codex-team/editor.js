@@ -173,7 +173,7 @@ export default class Popover {
   private initializeFlipper(): void {
     this.flipper = new Flipper({
       items: this.flippableElements,
-      focusedItemClass: PopoverItemNode.CSS.isFocused,
+      focusedItemClass: PopoverItemNode.CSS.focused,
       allowedKeys: [
         keyCodes.TAB,
         keyCodes.UP,
@@ -181,6 +181,8 @@ export default class Popover {
         keyCodes.ENTER,
       ],
     });
+
+    this.flipper.onFlip(this.onFlip);
   }
 
   /**
@@ -230,4 +232,11 @@ export default class Popover {
 
     return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
   }
+
+  /**
+   * Called on flipper navigation
+   */
+  private onFlip = (): void => {
+    this.items.forEach(item => item.onFlip());
+  };
 }

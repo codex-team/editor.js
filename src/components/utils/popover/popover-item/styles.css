@@ -74,8 +74,24 @@
 
   &--focused {
     /* @apply --button-focused ??? */
-    box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
-    background: rgba(34, 186, 255, 0.08) !important;
+    &:not(.codex-popover-item--no-focus) {
+      box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
+      background: rgba(34, 186, 255, 0.08) !important;
+    }
+  }
+
+  @media (--can-hover) {
+    &:hover {
+      cursor: pointer;
+      
+      &:not(.codex-popover-item--no-hover) {
+        background-color: var(--bg-light);
+      }
+
+      .codex-popover-item__icon {
+        box-shadow: none;
+      }
+    }
   }
 
   &--confirmation {
@@ -88,16 +104,28 @@
     .codex-popover-item__title {
       color: white;
     }
+
+    /* confirmation hover */
+    &:not(.codex-popover-item--no-hover) {
+      @media (--can-hover) {
+        &:hover {
+          background: var(--color-confirm-hover);
+        }
+      }
+    }
+
+    /* confirmation focus */
+    &:not(.codex-popover-item--no-focus) {
+      &.codex-popover-item--focused {
+        background: var(--color-confirm-hover) !important;
+      }
+    }
+
   }
 
-  @media (--can-hover) {
-    &:hover {
-      cursor: pointer;
-      background-color: var(--bg-light);
-
-      .codex-popover-item__icon {
-        box-shadow: none;
-      }
+  &--confirmation, &--active, &--focused {
+    .codex-popover-item__icon {
+      box-shadow: none;
     }
   }
 }
