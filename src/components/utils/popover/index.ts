@@ -15,7 +15,10 @@ interface PopoverParams {
 }
 
 interface PopoverMessages {
+  /** Text displayed when search has no results */
   nothingFound?: string;
+
+  /** Search input label */
   search?: string
 }
 
@@ -236,8 +239,10 @@ export default class Popover {
 
     item.handleClick(event);
 
-    if (item.toggle === true) {
-      item.toggleActive();
+    this.toggleIfNeeded(item);
+
+    if (item.closeOnActivate) {
+      this.hide();
     }
   }
 
@@ -321,5 +326,35 @@ export default class Popover {
    */
   private toggleNothingFoundMessage(isDislayed: boolean): void {
     this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDislayed);
+  }
+
+  /**
+   * - Toggles item active state, if clicked popover item has property 'toggle' set to true.
+   *
+   * - Performs radiobutton-like behavior if the item has property 'toggle' set to string key.
+   * (All the other items with the same key get unactive, and the item gets active)
+   *
+   * @param clickedItem - popover item that was clicked
+   */
+  private toggleIfNeeded(clickedItem: PopoverItemNode): void {
+    if (clickedItem.toggle === true) {
+      clickedItem.toggleActive();
+    }
+
+    if (typeof clickedItem.toggle === 'string') {
+      const itemsInToggleGroup = this.items.filter(item => item.toggle === clickedItem.toggle);
+
+      /** If there's only one item in toggle group, toggle it */
+      if (itemsInToggleGroup.length === 1) {
+        clickedItem.toggleActive();
+
+        return;
+      }
+
+      /** Set clicked item as active and the rest items with same toggle key value as inactive */
+      itemsInToggleGroup.forEach(item => {
+        item.toggleActive(item === clickedItem);
+      });
+    }
   }
 }

@@ -14,14 +14,19 @@ export class PopoverItemNode {
     return this.params.isDisabled;
   }
 
-  /** */
-  public get toggle(): boolean {
-    return this.params.toggle === true;
+  /** Exposes popover item toggle parameter */
+  public get toggle(): boolean | string | undefined {
+    return this.params.toggle;
   }
 
   /** Item title */
   public get title(): string | undefined {
     return this.params.title;
+  }
+
+  /** True if popover should close once item is activated */
+  public get closeOnActivate(): boolean | undefined {
+    return this.params.closeOnActivate;
   }
 
   /** True if popover item is in confirmation state */
@@ -102,9 +107,11 @@ export class PopoverItemNode {
 
   /**
    * Toggles item active state
+   *
+   * @param isActive - true if item should strictly should become active
    */
-  public toggleActive(): void {
-    this.element.classList.toggle(PopoverItemNode.CSS.active);
+  public toggleActive(isActive?: boolean): void {
+    this.element.classList.toggle(PopoverItemNode.CSS.active, isActive);
   }
 
   /**
@@ -131,7 +138,7 @@ export class PopoverItemNode {
   }
 
   /**
-   * Constructs HTML element corresponding to popover item
+   * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
    */
@@ -139,7 +146,7 @@ export class PopoverItemNode {
     const el = Dom.make('div', PopoverItemNode.CSS.container);
 
     if (params.name) {
-      el.dataset.name = params.name;
+      el.dataset.itemName = params.name;
     }
 
     el.appendChild(Dom.make('div', PopoverItemNode.CSS.icon, {
