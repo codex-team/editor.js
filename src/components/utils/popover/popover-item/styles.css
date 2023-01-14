@@ -80,6 +80,10 @@
     }
   }
 
+  &--hidden {
+    display: none;
+  }
+
   @media (--can-hover) {
     &:hover {
       cursor: pointer;

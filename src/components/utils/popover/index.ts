@@ -5,10 +5,18 @@ import Dom from '../../dom';
 import { cacheable, keyCodes } from '../../utils';
 import Flipper from '../../flipper';
 import { PopoverItem } from '../../../../types';
+import SearchInput from '../search-input';
 
 interface PopoverParams {
   items: PopoverItem[];
   scopeElement?: HTMLElement;
+  searchable?: boolean;
+  messages?: PopoverMessages
+}
+
+interface PopoverMessages {
+  nothingFound?: string;
+  search?: string
 }
 
 /**
@@ -33,29 +41,44 @@ export default class Popover {
    */
   private scopeElement: HTMLElement = document.body;
 
+  /** Instance of the Search Input */
+  private search: SearchInput | undefined;
+
   /**
    * Popover CSS classes
    */
   private static get CSS(): {
     popover: string;
     popoverOpenTop: string;
-    popoverClosed: string
+    popoverClosed: string;
+    search: string;
+    nothingFoundMessage: string;
+    nothingFoundMessageDisplayed: string;
     } {
     return {
       popover: 'codex-popover',
       popoverOpenTop: 'codex-popover--open-top',
       popoverClosed: 'codex-popover--closed',
+      search: 'codex-popover__search',
+      nothingFoundMessage: 'codex-popover__nothing-found-message',
+      nothingFoundMessageDisplayed: 'codex-popover__nothing-found-message--displayed',
     };
   }
 
-  /**
-   * Refs to created HTML elements
-   */
+  /** Refs to created HTML elements */
   private nodes: {
     popover: HTMLElement | null
+    nothingFoundMessage: HTMLElement | null
   } = {
       popover: null,
+      nothingFoundMessage: null,
     };
+
+  /** Messages that will be displayed in popover */
+  private messages: PopoverMessages = {
+    nothingFound: 'Nothing found',
+    search: 'Search',
+  };
 
   /**
    * Constructs the instance
@@ -69,7 +92,19 @@ export default class Popover {
       this.scopeElement = params.scopeElement;
     }
 
+    if (params.messages) {
+      this.messages = {
+        ...this.messages,
+        ...params.messages,
+      };
+    }
+
     this.make();
+
+    if (params.searchable) {
+      this.addSearch();
+    }
+
     this.initializeFlipper();
   }
 
@@ -98,6 +133,14 @@ export default class Popover {
 
     this.nodes.popover.classList.remove(Popover.CSS.popoverClosed);
     this.flipper.activate(this.flippableElements);
+
+    if (this.search !== undefined) {
+      setTimeout(() => {
+        this.search.focus();
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      }, 100);
+    }
+
     this.isOpen = true;
   }
 
@@ -126,6 +169,12 @@ export default class Popover {
   private make(): void {
     this.nodes.popover = Dom.make('div', [Popover.CSS.popover, Popover.CSS.popoverClosed]);
 
+    this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
+      textContent: this.messages.nothingFound,
+    });
+
+    this.nodes.popover.appendChild(this.nodes.nothingFoundMessage);
+
     this.items.forEach(item => {
       this.nodes.popover.appendChild(item.getElement());
     });
@@ -135,6 +184,31 @@ export default class Popover {
 
       this.handleClick(item, event);
     });
+  }
+
+  /**
+   * Adds seach to the popover
+   */
+  private addSearch(): void {
+    this.search = new SearchInput({
+      items: this.items,
+      placeholder: this.messages.search,
+      onSearch: (result: PopoverItemNode[]): void => {
+        this.items.forEach(item => {
+          const isHidden = !result.includes(item);
+
+          item.toggleHidden(isHidden);
+        });
+
+        this.toggleNothingFoundMessage(result.length === 0);
+      },
+    });
+
+    const searchElement = this.search.getElement();
+
+    searchElement.classList.add(Popover.CSS.search);
+
+    this.nodes.popover.insertBefore(searchElement, this.nodes.popover.firstChild);
   }
 
   /**
@@ -239,4 +313,13 @@ export default class Popover {
   private onFlip = (): void => {
     this.items.forEach(item => item.onFlip());
   };
+
+  /**
+   * Toggles nothing found message visibility
+   *
+   * @param isDislayed - true if the message should be displayed
+   */
+  private toggleNothingFoundMessage(isDislayed: boolean): void {
+    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDislayed);
+  }
 }

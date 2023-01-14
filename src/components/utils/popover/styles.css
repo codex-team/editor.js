@@ -32,4 +32,25 @@
     padding: 0;
     border: none;
   }
+
+  &__search {
+    margin-bottom: 5px;
+  }
+
+  &__nothing-found-message {
+    color: var(--grayText);
+    display: none;
+    cursor: default;
+    padding: 3px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--displayed {
+      display: block;
+    }
+  }
 }

@@ -19,6 +19,11 @@ export class PopoverItemNode {
     return this.params.toggle === true;
   }
 
+  /** Item title */
+  public get title(): string | undefined {
+    return this.params.title;
+  }
+
   /** True if popover item is in confirmation state */
   public get isInConfirmationState(): boolean {
     return this.confirmationState !== null;
@@ -42,6 +47,7 @@ export class PopoverItemNode {
     active: string,
     disabled: string,
     focused: string,
+    hidden: string,
     confirmationState: string,
     noHover: string,
     noFocus: string
@@ -54,6 +60,7 @@ export class PopoverItemNode {
       active: 'codex-popover-item--active',
       disabled: 'codex-popover-item--disabled',
       focused: 'codex-popover-item--focused',
+      hidden: 'codex-popover-item--hidden',
       confirmationState: 'codex-popover-item--confirmation',
       noHover: 'codex-popover-item--no-hover',
       noFocus: 'codex-popover-item--no-focus',
@@ -98,6 +105,15 @@ export class PopoverItemNode {
    */
   public toggleActive(): void {
     this.element.classList.toggle(PopoverItemNode.CSS.active);
+  }
+
+  /**
+   * Toggles item hidden state
+   *
+   * @param isHidden - true if item should be hidden
+   */
+  public toggleHidden(isHidden: boolean): void {
+    this.element.classList.toggle(PopoverItemNode.CSS.hidden, isHidden);
   }
 
   /**

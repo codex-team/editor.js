@@ -117,13 +117,17 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover = new PopoverNew({
       // className: this.CSS.settings,
-      // searchable: true,
+      searchable: true,
       // filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       // nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       // customContent: customHtmlTunesContainer,
       // customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
+      messages: {
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+        search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+      },
     });
     // this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
     // this.popover.on(PopoverEvent.Close, () => this.close());
