@@ -33,7 +33,7 @@ There is a [workflow](.github/workflows/publish-package-to-npm.yml) that fired o
 
 Use target version changelog as a description.
 
-![](https://capella.pics/57267bab-f2f0-411b-a9d1-69abee6abab5.jpg)
+![](assets/57267bab-f2f0-411b-a9d1-69abee6abab5.jpg)
 
 Then you can publish the release and wait for package publishing via action.
 
@@ -44,7 +44,7 @@ This package version will be published to NPM with default `latest` tag.
 If you want to publish release candidate version, use suffix `-rc.*` for package
 version in package.json file and in tag on releases page. Workflow will detect it and mark a release as "pre-release".
 
-![](https://capella.pics/796de9eb-bbe0-485c-bc8f-9a4cb76641b7.jpg)
+![](assets/796de9eb-bbe0-485c-bc8f-9a4cb76641b7.jpg)
 
 This package version will be published to NPM with `next` tag.
 

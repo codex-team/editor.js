@@ -1,4 +1,4 @@
-<a href="https://editorjs.io/"><p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p></a>
+<a href="https://editorjs.io/"><p align="center"><img src="assets/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p></a>
 
 [![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
@@ -106,12 +106,12 @@ How to use the Editor after [Installation](https://editorjs.io/getting-started).
 
 - Select a text fragment and apply a style or insert a link from the Inline Toolbar
 
-![](https://capella.pics/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
+![](assets/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
 
 - Use the «three-dots» button on the right to open Block Settings. From here, you can move and delete a Block
 or apply a Tool's settings, if it provided. For example, you can set a Heading level or List style.
 
-![](https://capella.pics/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)
+![](assets/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)
 
 ### Shortcuts
 
