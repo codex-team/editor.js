@@ -5,7 +5,7 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent } from '../utils/popover';
+import Popover, { PopoverEvent } from '../utils/popover/index';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
 
@@ -123,14 +123,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public make(): Element {
     this.popover = new Popover({
       scopeElement: this.api.ui.nodes.redactor,
-      className: Toolbox.CSS.toolbox,
       searchable: true,
-      filterLabel: this.i18nLabels.filter,
-      nothingFoundLabel: this.i18nLabels.nothingFound,
+      messages: {
+        nothingFound: this.i18nLabels.nothingFound,
+        search: this.i18nLabels.filter,
+      },
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
     /**
      * Enable tools shortcuts
@@ -138,6 +139,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.enableShortcuts();
 
     this.nodes.toolbox = this.popover.getElement();
+    this.nodes.toolbox.classList.add(Toolbox.CSS.toolbox);
 
     return this.nodes.toolbox;
   }
@@ -161,7 +163,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     }
 
     this.removeAllShortcuts();
-    this.popover?.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
   }
 
   /**
@@ -192,8 +194,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public close(): void {
     this.popover?.hide();
-    this.opened = false;
-    this.emit(ToolboxEvent.Closed);
   }
 
   /**
@@ -208,10 +208,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   * Handles overlay click
+   * Handles popover close event
    */
-  private onOverlayClicked = (): void => {
-    this.close();
+  private onPopoverClose = (): void => {
+    this.opened = false;
+    this.emit(ToolboxEvent.Closed);
   };
 
   /**

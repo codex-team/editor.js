@@ -4,9 +4,9 @@
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune } from '../../../types';
-import Popover from '../../components/utils/popover';
 import { IconChevronUp } from '@codexteam/icons';
 import { TunesMenuConfig } from '../../../types/tools';
+import { PopoverItemNode } from '../utils/popover/popover-item';
 
 /**
  *
@@ -64,8 +64,8 @@ export default class MoveUpTune implements BlockTune {
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
       const button = (event.target as HTMLElement)
-        .closest('.' + Popover.CSS.item)
-        .querySelector('.' + Popover.CSS.itemIcon);
+        .closest('.' + PopoverItemNode.CSS.container)
+        .querySelector('.' +  PopoverItemNode.CSS.icon);
 
       button.classList.add(this.CSS.animation);
 

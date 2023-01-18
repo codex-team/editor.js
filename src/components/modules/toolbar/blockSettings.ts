@@ -2,14 +2,12 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-
-import PopoverNew, { PopoverEvent } from '../../utils/popover/index';
+import Popover, { PopoverEvent } from '../../utils/popover/index';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -67,8 +65,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  // private popover: Popover | undefined;
-  private popover: PopoverNew | undefined;
+  private popover: Popover | undefined;
 
 
   /**
@@ -77,7 +74,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *  - Default Settings [Move, Remove, etc]
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div');
+    this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
   }
 
   /**
@@ -114,11 +111,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-    this.popover = new PopoverNew({
-      // className: this.CSS.settings,
+    this.popover = new Popover({
       searchable: true,
-      // filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-      // nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
@@ -128,8 +122,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
         search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       },
     });
-    // this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
-    this.popover.on(PopoverEvent.Close, () => this.close());
+
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
     this.nodes.wrapper.append(this.popover.getElement());
 
@@ -173,12 +167,19 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
-      // this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked); // @todo uncomment
+      this.popover.off(PopoverEvent.Close, this.onPopoverClose);
       this.popover.destroy();
       this.popover.getElement().remove();
       this.popover = null;
     }
   }
+
+  /**
+   * Handles popover close event
+   */
+  private onPopoverClose = (): void => {
+    this.close();
+  };
 
   /**
    * Returns list of buttons and inputs inside specified container

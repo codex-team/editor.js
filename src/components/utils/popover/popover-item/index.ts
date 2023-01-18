@@ -1,9 +1,6 @@
 import Dom from '../../../dom';
 import { IconDotCircle } from '@codexteam/icons';
-
-import './styles.css'; // not working
 import { PopoverItem } from '../../../../../types';
-
 
 /**
  * Represents sigle popover item node

@@ -1,5 +1,3 @@
-import './styles.css'; // not working
-
 import { PopoverItemNode } from './popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
@@ -11,13 +9,22 @@ import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
 
 interface PopoverParams {
+  /** Popover items config */
   items: PopoverItem[];
+
+  /** Element of the page that creates 'scope' of the popover. */
   scopeElement?: HTMLElement;
+
   /** Arbitrary html element to be inserted before items list */
   customContent?: HTMLElement;
+
   /** List of html elements inside custom content area that should be available for keyboard navigation */
   customContentFlippableItems?: HTMLElement[];
+
+  /** True if popover should contain search field */
   searchable?: boolean;
+
+  /** Popover texts overrides */
   messages?: PopoverMessages
 }
 
@@ -53,9 +60,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /** List of popover items */
   private items: PopoverItemNode[];
 
-  /** True if popover is open */
-  private isOpen = false;
-
   /**
    * Element of the page that creates 'scope' of the popover.
    * If possible, popover will not cross specified element's borders when opening.
@@ -74,9 +78,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /** ScrollLocker instance */
   private scrollLocker = new ScrollLocker();
 
-  /**
-   * Popover CSS classes
-   */
+  /** Popover CSS classes */
   private static get CSS(): {
     popover: string;
     popoverOpenTop: string;
@@ -204,8 +206,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (isMobileScreen()) {
       this.scrollLocker.lock();
     }
-
-    this.isOpen = true;
   }
 
   /**
@@ -226,7 +226,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       this.scrollLocker.unlock();
     }
 
-    this.isOpen = false;
     this.emit(PopoverEvent.Close);
   }
 
@@ -450,7 +449,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param isDisplayed - true if custom content should be displayed
    */
   private toggleCustomContent(isDisplayed: boolean): void {
-    this.nodes.customContent.classList.toggle(Popover.CSS.customContentHidden, isDisplayed);
+    this.nodes.customContent?.classList.toggle(Popover.CSS.customContentHidden, isDisplayed);
   }
 
   /**
