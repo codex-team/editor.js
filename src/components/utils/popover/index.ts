@@ -66,6 +66,7 @@ export default class Popover {
     nothingFoundMessageDisplayed: string;
     customContent: string;
     customContentHidden: string;
+    items: string;
     } {
     return {
       popover: 'codex-popover',
@@ -76,6 +77,7 @@ export default class Popover {
       nothingFoundMessageDisplayed: 'codex-popover__nothing-found-message--displayed',
       customContent: 'codex-popover__custom-content',
       customContentHidden: 'codex-popover__custom-content--hidden',
+      items: 'codex-popover__items',
     };
   }
 
@@ -84,10 +86,12 @@ export default class Popover {
     popover: HTMLElement | null;
     nothingFoundMessage: HTMLElement | null;
     customContent: HTMLElement | null;
+    items: HTMLElement | null
   } = {
       popover: null,
       nothingFoundMessage: null,
       customContent: null,
+      items: null,
     };
 
   /** Messages that will be displayed in popover */
@@ -204,10 +208,13 @@ export default class Popover {
     });
 
     this.nodes.popover.appendChild(this.nodes.nothingFoundMessage);
+    this.nodes.items = Dom.make('div', [ Popover.CSS.items ]);
 
     this.items.forEach(item => {
-      this.nodes.popover.appendChild(item.getElement());
+      this.nodes.items.appendChild(item.getElement());
     });
+
+    this.nodes.popover.appendChild(this.nodes.items);
 
     this.nodes.popover.addEventListener('click', (event: PointerEvent) => {
       const item = this.getTargetItem(event);
