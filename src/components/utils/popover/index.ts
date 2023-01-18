@@ -2,10 +2,13 @@ import './styles.css'; // not working
 
 import { PopoverItemNode } from './popover-item';
 import Dom from '../../dom';
-import { cacheable, keyCodes } from '../../utils';
+import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
 import { PopoverItem } from '../../../../types';
 import SearchInput from '../search-input';
+import EventsDispatcher from '../events';
+import Listeners from '../listeners';
+import ScrollLocker from '../scroll-locker';
 
 interface PopoverParams {
   items: PopoverItem[];
@@ -27,9 +30,20 @@ interface PopoverMessages {
 }
 
 /**
+ * Event that can be triggered by the Popover
+ */
+export enum PopoverEvent {
+  /**
+   * When popover closes
+   */
+  Close = 'close'
+}
+
+
+/**
  * Class responsible for rendering popover and handling its behaviour
  */
-export default class Popover {
+export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Flipper - module for keyboard iteration between elements
    */
@@ -54,6 +68,12 @@ export default class Popover {
   /** Instance of the Search Input */
   private search: SearchInput | undefined;
 
+  /** Listeners util instance */
+  private listeners: Listeners = new Listeners();
+
+  /** ScrollLocker instance */
+  private scrollLocker = new ScrollLocker();
+
   /**
    * Popover CSS classes
    */
@@ -67,6 +87,8 @@ export default class Popover {
     customContent: string;
     customContentHidden: string;
     items: string;
+    overlay: string;
+    overlayHidden: string;
     } {
     return {
       popover: 'codex-popover',
@@ -78,20 +100,26 @@ export default class Popover {
       customContent: 'codex-popover__custom-content',
       customContentHidden: 'codex-popover__custom-content--hidden',
       items: 'codex-popover__items',
+      overlay: 'codex-popover__overlay',
+      overlayHidden: 'codex-popover__overlay--hidden',
     };
   }
 
   /** Refs to created HTML elements */
   private nodes: {
+    wrapper: HTMLElement | null;
     popover: HTMLElement | null;
     nothingFoundMessage: HTMLElement | null;
     customContent: HTMLElement | null;
-    items: HTMLElement | null
+    items: HTMLElement | null;
+    overlay: HTMLElement | null;
   } = {
+      wrapper: null,
       popover: null,
       nothingFoundMessage: null,
       customContent: null,
       items: null,
+      overlay: null,
     };
 
   /** Messages that will be displayed in popover */
@@ -106,6 +134,8 @@ export default class Popover {
    * @param params - popover construction params
    */
   constructor(params: PopoverParams) {
+    super();
+
     this.items = params.items.map(item => new PopoverItemNode(item));
 
     if (params.scopeElement !== undefined) {
@@ -141,7 +171,7 @@ export default class Popover {
    * Returns HTML element correcponding to the popover
    */
   public getElement(): HTMLElement | null {
-    return this.nodes.popover;
+    return this.nodes.wrapper;
   }
 
   /**
@@ -160,6 +190,7 @@ export default class Popover {
       this.nodes.popover.classList.add(Popover.CSS.popoverOpenTop);
     }
 
+    this.nodes.overlay.classList.remove(Popover.CSS.overlayHidden);
     this.nodes.popover.classList.remove(Popover.CSS.popoverClosed);
     this.flipper.activate(this.flippableElements);
 
@@ -168,6 +199,10 @@ export default class Popover {
         this.search.focus();
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 100);
+    }
+
+    if (isMobileScreen()) {
+      this.scrollLocker.lock();
     }
 
     this.isOpen = true;
@@ -179,6 +214,7 @@ export default class Popover {
   public hide(): void {
     this.nodes.popover.classList.add(Popover.CSS.popoverClosed);
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
+    this.nodes.overlay.classList.add(Popover.CSS.overlayHidden);
     this.flipper.deactivate();
     this.items.forEach(item => item.reset());
 
@@ -186,14 +222,24 @@ export default class Popover {
       this.search.clear();
     }
 
+    if (isMobileScreen()) {
+      this.scrollLocker.unlock();
+    }
+
     this.isOpen = false;
+    this.emit(PopoverEvent.Close);
   }
 
   /**
-   *
+   * Clears memory
    */
   public destroy(): void {
-    //
+    this.flipper.deactivate();
+    this.listeners.removeAll();
+
+    if (isMobileScreen()) {
+      this.scrollLocker.unlock();
+    }
   }
 
 
@@ -216,11 +262,21 @@ export default class Popover {
 
     this.nodes.popover.appendChild(this.nodes.items);
 
-    this.nodes.popover.addEventListener('click', (event: PointerEvent) => {
+    this.listeners.on(this.nodes.popover, 'click', (event: PointerEvent) => {
       const item = this.getTargetItem(event);
 
       this.handleClick(item, event);
     });
+
+    this.nodes.wrapper = Dom.make('div');
+    this.nodes.overlay = Dom.make('div', [ Popover.CSS.overlay ]);
+
+    this.listeners.on(this.nodes.overlay, 'click', () => {
+      this.hide();
+    });
+
+    this.nodes.wrapper.appendChild(this.nodes.overlay);
+    this.nodes.wrapper.appendChild(this.nodes.popover);
   }
 
   /**

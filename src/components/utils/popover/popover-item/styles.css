@@ -1,11 +1,16 @@
 .codex-popover-item {
   --border-radius: 6px;
   --icon-size: 20px;
+  --icon-size-mobile: 24px;
 
   border-radius: var(--border-radius);
-  padding: 3px;
   display: flex;
   align-items: center;
+  padding: 3px;
+
+  @media (--mobile) {
+    padding: 4px;
+  }
 
   &:not(:last-of-type) {
     margin-bottom: 1px;
@@ -26,6 +31,16 @@
       width: var(--icon-size);
       height: var(--icon-size);
     }
+
+    @media (--mobile){
+      width: 36px;
+      height: 36px;
+
+      svg {
+        width: var(--icon-size-mobile);
+        height: var(--icon-size-mobile);
+      }
+    }
   }
 
   &__title {
@@ -36,6 +51,10 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    @media (--mobile) {
+      font-size: 16px;
+    }
   }
 
   &__secondary-title {

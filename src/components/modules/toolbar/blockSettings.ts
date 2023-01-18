@@ -2,14 +2,14 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent } from '../../utils/popover';
+import Popover from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
 
-import PopoverNew from '../../utils/popover/index';
+import PopoverNew, { PopoverEvent } from '../../utils/popover/index';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -129,7 +129,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       },
     });
     // this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
-    // this.popover.on(PopoverEvent.Close, () => this.close());
+    this.popover.on(PopoverEvent.Close, () => this.close());
 
     this.nodes.wrapper.append(this.popover.getElement());
 
