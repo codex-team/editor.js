@@ -53,4 +53,17 @@
       display: block;
     }
   }
+
+  &__custom-content:not(:empty) {
+    padding: 4px;
+
+    @media (--not-mobile) {
+      margin-top: 5px;
+      padding: 0;
+    }
+  }
+
+  &__custom-content--hidden {
+    display: none;
+  }
 }

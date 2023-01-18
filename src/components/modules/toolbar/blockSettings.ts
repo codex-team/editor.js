@@ -114,15 +114,14 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-
     this.popover = new PopoverNew({
       // className: this.CSS.settings,
       searchable: true,
       // filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
       // nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
-      // customContent: customHtmlTunesContainer,
-      // customContentFlippableItems: this.getControls(customHtmlTunesContainer),
+      customContent: customHtmlTunesContainer,
+      customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),

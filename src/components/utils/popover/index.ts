@@ -10,6 +10,10 @@ import SearchInput from '../search-input';
 interface PopoverParams {
   items: PopoverItem[];
   scopeElement?: HTMLElement;
+  /** Arbitrary html element to be inserted before items list */
+  customContent?: HTMLElement;
+  /** List of html elements inside custom content area that should be available for keyboard navigation */
+  customContentFlippableItems?: HTMLElement[];
   searchable?: boolean;
   messages?: PopoverMessages
 }
@@ -44,6 +48,9 @@ export default class Popover {
    */
   private scopeElement: HTMLElement = document.body;
 
+  /** List of html elements inside custom content area that should be available for keyboard navigation */
+  private customContentFlippableItems: HTMLElement[] | undefined;
+
   /** Instance of the Search Input */
   private search: SearchInput | undefined;
 
@@ -57,6 +64,8 @@ export default class Popover {
     search: string;
     nothingFoundMessage: string;
     nothingFoundMessageDisplayed: string;
+    customContent: string;
+    customContentHidden: string;
     } {
     return {
       popover: 'codex-popover',
@@ -65,16 +74,20 @@ export default class Popover {
       search: 'codex-popover__search',
       nothingFoundMessage: 'codex-popover__nothing-found-message',
       nothingFoundMessageDisplayed: 'codex-popover__nothing-found-message--displayed',
+      customContent: 'codex-popover__custom-content',
+      customContentHidden: 'codex-popover__custom-content--hidden',
     };
   }
 
   /** Refs to created HTML elements */
   private nodes: {
-    popover: HTMLElement | null
-    nothingFoundMessage: HTMLElement | null
+    popover: HTMLElement | null;
+    nothingFoundMessage: HTMLElement | null;
+    customContent: HTMLElement | null;
   } = {
       popover: null,
       nothingFoundMessage: null,
+      customContent: null,
     };
 
   /** Messages that will be displayed in popover */
@@ -102,11 +115,20 @@ export default class Popover {
       };
     }
 
+    if (params.customContentFlippableItems) {
+      this.customContentFlippableItems = params.customContentFlippableItems;
+    }
+
     this.make();
+
+    if (params.customContent) {
+      this.addCustomContent(params.customContent);
+    }
 
     if (params.searchable) {
       this.addSearch();
     }
+
 
     this.initializeFlipper();
   }
@@ -155,6 +177,11 @@ export default class Popover {
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
     this.flipper.deactivate();
     this.items.forEach(item => item.reset());
+
+    if (this.search !== undefined) {
+      this.search.clear();
+    }
+
     this.isOpen = false;
   }
 
@@ -196,14 +223,23 @@ export default class Popover {
     this.search = new SearchInput({
       items: this.items,
       placeholder: this.messages.search,
-      onSearch: (result: PopoverItemNode[]): void => {
+      onSearch: (query: string, result: PopoverItemNode[]): void => {
         this.items.forEach(item => {
           const isHidden = !result.includes(item);
 
           item.toggleHidden(isHidden);
         });
-
         this.toggleNothingFoundMessage(result.length === 0);
+        this.toggleCustomContent(query !== '');
+
+        /** Contains list of elements available for keyboard navigation considering search query applied */
+        const flippableElements = query === '' ? this.flippableElements : result.map(item => item.getElement());
+
+        if (this.flipper.isActivated) {
+          /** Update flipper items with only visible */
+          this.flipper.deactivate();
+          this.flipper.activate(flippableElements);
+        }
       },
     });
 
@@ -212,6 +248,17 @@ export default class Popover {
     searchElement.classList.add(Popover.CSS.search);
 
     this.nodes.popover.insertBefore(searchElement, this.nodes.popover.firstChild);
+  }
+
+  /**
+   * Adds custom html content to the popover
+   *
+   * @param content - html content to append
+   */
+  private addCustomContent(content: HTMLElement): void {
+    this.nodes.customContent = content;
+    this.nodes.customContent.classList.add(Popover.CSS.customContent);
+    this.nodes.popover.insertBefore(content, this.nodes.popover.firstChild);
   }
 
   /**
@@ -269,7 +316,13 @@ export default class Popover {
    * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    return this.items.map(item => item.getElement());
+    const popoverItemsElements = this.items.map(item => item.getElement());
+    const customContentControlsElements = this.customContentFlippableItems || [];
+
+    /**
+     * Combine elements inside custom content area with popover items elements
+     */
+    return customContentControlsElements.concat(popoverItemsElements);
   }
 
   /**
@@ -326,6 +379,15 @@ export default class Popover {
    */
   private toggleNothingFoundMessage(isDislayed: boolean): void {
     this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDislayed);
+  }
+
+  /**
+   * Toggles custom content visibility
+   *
+   * @param isDisplayed - true if custom content should be displayed
+   */
+  private toggleCustomContent(isDisplayed: boolean): void {
+    this.nodes.customContent.classList.toggle(Popover.CSS.customContentHidden, isDisplayed);
   }
 
   /**

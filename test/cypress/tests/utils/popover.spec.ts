@@ -239,4 +239,22 @@ describe('Popover', () => {
         .should('have.class', 'codex-popover-item--active');
     });
   });
+
+  it('should render custom html content', () => {
+    const customHtml = document.createElement('div');
+
+    customHtml.setAttribute('data-cy-name', 'customContent');
+    customHtml.innerText = 'custom html content';
+    const popover = new Popover({
+      customContent: customHtml,
+      items: [],
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /* Check custom content exists in the popover */
+      cy.get('[data-cy-name=customContent]');
+    });
+  });
 });

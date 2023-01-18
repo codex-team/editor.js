@@ -377,7 +377,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.search = new SearchInput({
       items: this.items,
       placeholder: this.filterLabel,
-      onSearch: (filteredItems): void => {
+      onSearch: (query: string, filteredItems): void => {
         const searchResultElements = [];
 
         this.items.forEach((item, index) => {
