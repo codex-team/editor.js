@@ -31,7 +31,7 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=header]')
+        .get('div.codex-popover-item[data-item-name=header]')
         .should('contain.text', toolNamesDictionary.Heading);
     });
 
@@ -85,12 +85,12 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .first()
         .should('contain.text', toolNamesDictionary.Title1);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .last()
         .should('contain.text', toolNamesDictionary.Title2);
     });
@@ -137,7 +137,7 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .should('contain.text', toolNamesDictionary.TestTool);
     });
   });

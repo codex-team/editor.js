@@ -39,11 +39,11 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .should('have.length', 1);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool] .ce-popover__item-icon')
+        .get('div.codex-popover-item[data-item-name=testTool] .codex-popover-item__icon')
         .should('contain.html', TestTool.toolbox.icon);
     });
 
@@ -84,16 +84,16 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .should('have.length', 2);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .first()
         .should('contain.text', TestTool.toolbox[0].title);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .last()
         .should('contain.text', TestTool.toolbox[1].title);
     });
@@ -173,7 +173,7 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.codex-popover-item[data-item-name=testTool]')
         .click();
 
       cy.get('[data-cy=editorjs]')
@@ -410,7 +410,7 @@ describe('Editor Tools Api', () => {
 
       // Expect preconfigured custom html tunes to exist in tunes menu
       cy.get('[data-cy=editorjs]')
-        .get('.ce-popover')
+        .get('.codex-popover')
         .should('contain.text', sampleText);
     });
 

@@ -130,7 +130,7 @@ describe('Editor Tunes Api', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('.ce-popover')
+      .get('.codex-popover')
       .should('contain.text', sampleText);
   });
 
@@ -228,13 +228,13 @@ describe('Editor Tunes Api', () => {
 
     /** Check test tune is inserted at index 0 */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-settings .ce-popover__item')
+      .get('.ce-settings .codex-popover-item')
       .eq(0)
       .should('have.attr', 'data-item-name', 'test-tune' );
 
     /** Check default Move Up tune is inserted below the test tune */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-settings .ce-popover__item')
+      .get('.ce-settings .codex-popover-item')
       .eq(1)
       .should('have.attr', 'data-item-name', 'move-up' );
   });
