@@ -197,13 +197,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Handles overlay click
-   */
-  private onOverlayClicked = (): void => {
-    this.close();
-  };
-
-  /**
    * Resolves aliases in tunes menu items
    *
    * @param item - item with resolved aliases

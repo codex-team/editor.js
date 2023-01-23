@@ -1,18 +1,4 @@
 .ce-settings {
-  position: absolute;
-  z-index: 2;
-  --gap: 8px;
-
-  @media (--not-mobile){
-    position: absolute;
-    top: calc(var(--toolbox-buttons-size) + var(--gap));
-    left: 0;
-
-    &--opened-top {
-      top: calc(-1 * (var(--gap) + var(--popover-height)));
-    }
-  }
-
   &__button {
     @apply --toolbar-button;
 

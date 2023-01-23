@@ -7,7 +7,7 @@
 import { API, BlockTune } from '../../../types';
 import { IconChevronDown } from '@codexteam/icons';
 import { TunesMenuConfig } from '../../../types/tools';
-import { PopoverItemNode } from '../utils/popover/popover-item';
+import { PopoverItem } from '../utils/popover/popover-item';
 
 
 /**
@@ -66,8 +66,8 @@ export default class MoveDownTune implements BlockTune {
     // If Block is last do nothing
     if (!nextBlock) {
       const button = (event.target as HTMLElement)
-        .closest('.' + PopoverItemNode.CSS.container)
-        .querySelector('.' +  PopoverItemNode.CSS.icon);
+        .closest('.' + PopoverItem.CSS.container)
+        .querySelector('.' +  PopoverItem.CSS.icon);
 
       button.classList.add(this.CSS.animation);
 

@@ -1,8 +1,8 @@
-import { PopoverItemNode } from './popover-item';
+import { PopoverItem } from './popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
-import { PopoverItem } from '../../../../types';
+import { PopoverItem as PopoverItemParams } from '../../../../types';
 import SearchInput from '../search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
@@ -10,7 +10,7 @@ import ScrollLocker from '../scroll-locker';
 
 interface PopoverParams {
   /** Popover items config */
-  items: PopoverItem[];
+  items: PopoverItemParams[];
 
   /** Element of the page that creates 'scope' of the popover. */
   scopeElement?: HTMLElement;
@@ -51,14 +51,11 @@ export enum PopoverEvent {
  * Class responsible for rendering popover and handling its behaviour
  */
 export default class Popover extends EventsDispatcher<PopoverEvent> {
-  /**
-   * Flipper - module for keyboard iteration between elements
-   */
+  /** Flipper - module for keyboard iteration between elements */
   public flipper: Flipper;
 
-
   /** List of popover items */
-  private items: PopoverItemNode[];
+  private items: PopoverItem[];
 
   /**
    * Element of the page that creates 'scope' of the popover.
@@ -138,7 +135,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   constructor(params: PopoverParams) {
     super();
 
-    this.items = params.items.map(item => new PopoverItemNode(item));
+    this.items = params.items.map(item => new PopoverItem(item));
 
     if (params.scopeElement !== undefined) {
       this.scopeElement = params.scopeElement;
@@ -285,7 +282,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.search = new SearchInput({
       items: this.items,
       placeholder: this.messages.search,
-      onSearch: (query: string, result: PopoverItemNode[]): void => {
+      onSearch: (query: string, result: PopoverItem[]): void => {
         this.items.forEach(item => {
           const isHidden = !result.includes(item);
 
@@ -328,7 +325,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    *
    * @param event - event to retrieve popover item from
    */
-  private getTargetItem(event: PointerEvent): PopoverItemNode | undefined {
+  private getTargetItem(event: PointerEvent): PopoverItem | undefined {
     return this.items.find(el => event.composedPath().includes(el.getElement()));
   }
 
@@ -338,7 +335,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param item - item to handle click of
    * @param event - click event
    */
-  private handleClick(item: PopoverItemNode, event: PointerEvent): void {
+  private handleClick(item: PopoverItem, event: PointerEvent): void {
     if (item === undefined || item.isDisabled) {
       return;
     }
@@ -361,7 +358,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private initializeFlipper(): void {
     this.flipper = new Flipper({
       items: this.flippableElements,
-      focusedItemClass: PopoverItemNode.CSS.focused,
+      focusedItemClass: PopoverItem.CSS.focused,
       allowedKeys: [
         keyCodes.TAB,
         keyCodes.UP,
@@ -460,7 +457,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    *
    * @param clickedItem - popover item that was clicked
    */
-  private toggleIfNeeded(clickedItem: PopoverItemNode): void {
+  private toggleIfNeeded(clickedItem: PopoverItem): void {
     if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
     }

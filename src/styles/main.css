@@ -12,5 +12,6 @@
 @import './rtl.css';
 @import './input.css';
 
+/** Popover styles */
 @import '../components/utils/popover/styles.css';
 @import '../components/utils/popover/popover-item/styles.css'
