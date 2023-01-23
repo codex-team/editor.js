@@ -5,7 +5,6 @@
   --padding: 6px;
   --gap: 8px;
 
-  padding: var(--padding);
   min-width: var(--width);
   width: var(--width);
   max-height: var(--max-height);
@@ -22,10 +21,22 @@
   flex-direction: column;
   z-index: 4;
 
-  animation: panelShowing 100ms ease;
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+  padding: 0;
+  border: none;
 
-  @media (--mobile) {
-    animation: panelShowingMobile 250ms ease;
+  &--opened {
+    opacity: 1;
+    padding: var(--padding);
+    max-height: 270px;
+    pointer-events: auto;
+    animation: panelShowing 100ms ease;
+
+    @media (--mobile) {
+      animation: panelShowingMobile 250ms ease;
+    }
   }
 
   &::-webkit-scrollbar {
@@ -72,14 +83,6 @@
 
   &--open-top {
     top: calc(-1 * (var(--gap) + var(--popover-height)));
-  }
-
-  &--closed {
-    opacity: 0;
-    max-height: 0;
-    pointer-events: none;
-    padding: 0;
-    border: none;
   }
 
   @media (--mobile) {

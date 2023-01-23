@@ -82,7 +82,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private static get CSS(): {
     popover: string;
     popoverOpenTop: string;
-    popoverClosed: string;
+    popoverOpened: string;
     search: string;
     nothingFoundMessage: string;
     nothingFoundMessageDisplayed: string;
@@ -95,7 +95,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     return {
       popover: 'codex-popover',
       popoverOpenTop: 'codex-popover--open-top',
-      popoverClosed: 'codex-popover--closed',
+      popoverOpened: 'codex-popover--opened',
       search: 'codex-popover__search',
       nothingFoundMessage: 'codex-popover__nothing-found-message',
       nothingFoundMessageDisplayed: 'codex-popover__nothing-found-message--displayed',
@@ -193,7 +193,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
 
     this.nodes.overlay.classList.remove(Popover.CSS.overlayHidden);
-    this.nodes.popover.classList.remove(Popover.CSS.popoverClosed);
+    this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
     this.flipper.activate(this.flippableElements);
 
     if (this.search !== undefined) {
@@ -212,7 +212,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Closes popover
    */
   public hide(): void {
-    this.nodes.popover.classList.add(Popover.CSS.popoverClosed);
+    this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
     this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
     this.nodes.overlay.classList.add(Popover.CSS.overlayHidden);
     this.flipper.deactivate();
@@ -246,7 +246,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Constructs HTML element corresponding to popover
    */
   private make(): void {
-    this.nodes.popover = Dom.make('div', [Popover.CSS.popover, Popover.CSS.popoverClosed]);
+    this.nodes.popover = Dom.make('div', [Popover.CSS.popover]);
 
     this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
@@ -404,7 +404,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     popoverClone.style.visibility = 'hidden';
     popoverClone.style.position = 'absolute';
     popoverClone.style.top = '-1000px';
-    popoverClone.classList.remove(Popover.CSS.popoverClosed);
+    popoverClone.classList.add(Popover.CSS.popoverOpened);
     document.body.appendChild(popoverClone);
     height = popoverClone.offsetHeight;
     popoverClone.remove();
