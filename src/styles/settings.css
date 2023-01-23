@@ -22,3 +22,12 @@
     }
   }
 }
+
+.codex-editor--narrow .ce-settings {
+  @media (--not-mobile){
+    .codex-popover {
+      right: 0;
+      left: unset;
+    }
+  }
+}
