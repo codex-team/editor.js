@@ -4,7 +4,7 @@
 
 .codex-editor--narrow .ce-toolbox {
   @media (--not-mobile){
-    .codex-popover {
+    .ce-popover {
       right: 0;
       left: unset;
     }

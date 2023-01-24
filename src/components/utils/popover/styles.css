@@ -1,4 +1,4 @@
-.codex-popover {
+.ce-popover {
   --border-radius: 6px;
   --width: 200px;
   --max-height: 270px;
@@ -97,7 +97,7 @@
     top: auto;
     border-radius: 10px;
 
-    .codex-popover__search {
+    .ce-popover__search {
       display: none;
     }
   }

@@ -90,17 +90,17 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     overlayHidden: string;
     } {
     return {
-      popover: 'codex-popover',
-      popoverOpenTop: 'codex-popover--open-top',
-      popoverOpened: 'codex-popover--opened',
-      search: 'codex-popover__search',
-      nothingFoundMessage: 'codex-popover__nothing-found-message',
-      nothingFoundMessageDisplayed: 'codex-popover__nothing-found-message--displayed',
-      customContent: 'codex-popover__custom-content',
-      customContentHidden: 'codex-popover__custom-content--hidden',
-      items: 'codex-popover__items',
-      overlay: 'codex-popover__overlay',
-      overlayHidden: 'codex-popover__overlay--hidden',
+      popover: 'ce-popover',
+      popoverOpenTop: 'ce-popover--open-top',
+      popoverOpened: 'ce-popover--opened',
+      search: 'ce-popover__search',
+      nothingFoundMessage: 'ce-popover__nothing-found-message',
+      nothingFoundMessageDisplayed: 'ce-popover__nothing-found-message--displayed',
+      customContent: 'ce-popover__custom-content',
+      customContentHidden: 'ce-popover__custom-content--hidden',
+      items: 'ce-popover__items',
+      overlay: 'ce-popover__overlay',
+      overlayHidden: 'ce-popover__overlay--hidden',
     };
   }
 

@@ -37,11 +37,11 @@ describe('Popover', () => {
       doc.body.append(popover.getElement());
 
       cy.get('[data-item-name=testItem]')
-        .get('.codex-popover-item__icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', actionIcon);
 
       cy.get('[data-item-name=testItem]')
-        .get('.codex-popover-item__title')
+        .get('.ce-popover-item__title')
         .should('have.text', actionTitle);
 
       // First click on item
@@ -49,12 +49,12 @@ describe('Popover', () => {
 
       // Check icon has changed
       cy.get('[data-item-name=testItem]')
-        .get('.codex-popover-item__icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', confirmActionIcon);
 
       // Check label has changed
       cy.get('[data-item-name=testItem]')
-        .get('.codex-popover-item__title')
+        .get('.ce-popover-item__title')
         .should('have.text', confirmActionTitle);
 
       // Second click
@@ -87,7 +87,7 @@ describe('Popover', () => {
 
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'codex-popover-item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 
@@ -111,7 +111,7 @@ describe('Popover', () => {
 
       /* Check item has disabled class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'codex-popover-item--disabled')
+        .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
           // Check onActivate callback has never been called
@@ -167,7 +167,7 @@ describe('Popover', () => {
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
         .click()
-        .should('have.class', 'codex-popover-item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 
@@ -199,20 +199,20 @@ describe('Popover', () => {
 
       /** Check first item is active */
       cy.get('[data-item-name=testItem1]')
-        .should('have.class', 'codex-popover-item--active');
+        .should('have.class', 'ce-popover-item--active');
 
       /** Check second item is not active */
       cy.get('[data-item-name=testItem2]')
-        .should('not.have.class', 'codex-popover-item--active');
+        .should('not.have.class', 'ce-popover-item--active');
 
       /* Click second item and check it became active */
       cy.get('[data-item-name=testItem2]')
         .click()
-        .should('have.class', 'codex-popover-item--active');
+        .should('have.class', 'ce-popover-item--active');
 
       /** Check first item became not active */
       cy.get('[data-item-name=testItem1]')
-        .should('not.have.class', 'codex-popover-item--active');
+        .should('not.have.class', 'ce-popover-item--active');
     });
   });
 
@@ -236,7 +236,7 @@ describe('Popover', () => {
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
         .click()
-        .should('have.class', 'codex-popover-item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 

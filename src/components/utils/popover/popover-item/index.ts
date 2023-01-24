@@ -55,17 +55,17 @@ export class PopoverItem {
     noFocus: string
     } {
     return {
-      container: 'codex-popover-item',
-      title: 'codex-popover-item__title',
-      secondaryTitle: 'codex-popover-item__secondary-title',
-      icon: 'codex-popover-item__icon',
-      active: 'codex-popover-item--active',
-      disabled: 'codex-popover-item--disabled',
-      focused: 'codex-popover-item--focused',
-      hidden: 'codex-popover-item--hidden',
-      confirmationState: 'codex-popover-item--confirmation',
-      noHover: 'codex-popover-item--no-hover',
-      noFocus: 'codex-popover-item--no-focus',
+      container: 'ce-popover-item',
+      title: 'ce-popover-item__title',
+      secondaryTitle: 'ce-popover-item__secondary-title',
+      icon: 'ce-popover-item__icon',
+      active: 'ce-popover-item--active',
+      disabled: 'ce-popover-item--disabled',
+      focused: 'ce-popover-item--focused',
+      hidden: 'ce-popover-item--hidden',
+      confirmationState: 'ce-popover-item--confirmation',
+      noHover: 'ce-popover-item--no-hover',
+      noFocus: 'ce-popover-item--no-focus',
     };
   }
 
