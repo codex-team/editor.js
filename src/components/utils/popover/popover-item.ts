@@ -1,6 +1,6 @@
-import Dom from '../../../dom';
+import Dom from '../../dom';
 import { IconDotCircle } from '@codexteam/icons';
-import { PopoverItem as PopoverItemParams} from '../../../../../types';
+import { PopoverItem as PopoverItemParams} from '../../../../types';
 
 /**
  * Represents sigle popover item node
