@@ -1,8 +1,8 @@
 ---
-name: Discussion
+name: General Issue
 about: Any question about the Editor.js to discuss
 title: ''
-labels: discussion
+labels: ''
 assignees: ''
 
 ---
