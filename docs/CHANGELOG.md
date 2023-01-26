@@ -3,6 +3,7 @@
 ### 2.26.5
 
 - `Improvement` — *UI* — Popover refactored.
+
 ### 2.26.4
 
 - `Improvement` — *Menu Config* — Property `label` renamed to `title`.
