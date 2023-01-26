@@ -68,12 +68,6 @@
    */
   --block-padding-vertical: 0.4em;
 
-  /**
-   * Confirm deletion bg
-   */
-  --color-confirm: #E24A4A;
-  --color-confirm-hover: #CE4343;
-
   --color-line-gray: #EFF0F1;
 
   --overlay-pane: {
@@ -146,7 +140,6 @@
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
-
   };
 
   /**
@@ -194,33 +187,6 @@
         animation-name: buttonClicked;
         animation-duration: 250ms;
       }
-    }
-  };
-
-  /**
-   * Element of the Toolbox. Has icon and label
-   */
-  --popover-button: {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    grid-template-rows: auto;
-    justify-content: start;
-    white-space: nowrap;
-    padding: 3px;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    align-items: center;
-    border-radius: 6px;
-
-    &:not(:last-of-type){
-      margin-bottom: 1px;
-    }
-
-    @media (--mobile) {
-      font-size: 16px;
-      padding: 4px;
     }
   };
 
