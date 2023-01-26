@@ -70,7 +70,8 @@ export class PopoverItem {
     hidden: string,
     confirmationState: string,
     noHover: string,
-    noFocus: string
+    noFocus: string,
+    wobbleAnimation: string
     } {
     return {
       container: 'ce-popover-item',
@@ -84,6 +85,7 @@ export class PopoverItem {
       confirmationState: 'ce-popover-item--confirmation',
       noHover: 'ce-popover-item--no-hover',
       noFocus: 'ce-popover-item--no-focus',
+      wobbleAnimation: 'wobble',
     };
   }
 
@@ -106,18 +108,16 @@ export class PopoverItem {
 
   /**
    * Called on popover item click
-   *
-   * @param event - click event
    */
-  public handleClick(event: PointerEvent): void {
+  public handleClick(): void {
     if (this.isInConfirmationState) {
-      this.activateOrEnableConfirmationMode(this.confirmationState, event);
+      this.activateOrEnableConfirmationMode(this.confirmationState);
       this.disableConfirmationMode();
 
       return;
     }
 
-    this.activateOrEnableConfirmationMode(this.params, event);
+    this.activateOrEnableConfirmationMode(this.params);
   }
 
   /**
@@ -263,13 +263,31 @@ export class PopoverItem {
    * Executes item's onActivate callback if the item has no confirmation configured
    *
    * @param item - item to activate or bring to confirmation mode
-   * @param event - click event
    */
-  private activateOrEnableConfirmationMode(item: PopoverItemParams, event: PointerEvent): void {
+  private activateOrEnableConfirmationMode(item: PopoverItemParams): void {
     if (item.confirmation === undefined) {
-      item.onActivate(item, event);
+      try {
+        item.onActivate(item);
+      } catch {
+        this.animateError();
+      }
     } else {
       this.enableConfirmationMode(item.confirmation);
     }
+  }
+
+  /**
+   * Animates item which symbolizes that error occured while executing 'onActivate()' callback
+   */
+  private animateError(): void {
+    if (this.element.classList.contains(PopoverItem.CSS.wobbleAnimation)) {
+      return;
+    }
+
+    this.element.classList.add(PopoverItem.CSS.wobbleAnimation);
+
+    this.element.addEventListener('animationend', () => {
+      this.element.classList.remove(PopoverItem.CSS.wobbleAnimation);
+    }, { once: true });
   }
 }

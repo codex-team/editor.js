@@ -48,34 +48,21 @@ export default class MoveDownTune implements BlockTune {
     return {
       icon: IconChevronDown,
       title: this.api.i18n.t('Move down'),
-      onActivate: (item, event): void => this.handleClick(event),
+      onActivate: (): void => this.handleClick(),
       name: 'move-down',
     };
   }
 
   /**
    * Handle clicks on 'move down' button
-   *
-   * @param event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
     if (!nextBlock) {
-      const button = (event.target as HTMLElement)
-        .closest('.ce-popover-item')
-        .querySelector('..ce-popover-item__icon');
-
-      button.classList.add(this.CSS.animation);
-
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
-
-      return;
+      throw new Error('Unable to move down');
     }
 
     const nextBlockElement = nextBlock.holder;

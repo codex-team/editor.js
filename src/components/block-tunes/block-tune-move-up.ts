@@ -46,34 +46,21 @@ export default class MoveUpTune implements BlockTune {
     return {
       icon: IconChevronUp,
       title: this.api.i18n.t('Move up'),
-      onActivate: (item, e): void => this.handleClick(e),
+      onActivate: (): void => this.handleClick(),
       name: 'move-up',
     };
   }
 
   /**
    * Move current block up
-   *
-   * @param {MouseEvent} event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
-      const button = (event.target as HTMLElement)
-        .closest('.ce-popover-item')
-        .querySelector('.ce-popover-item__icon');
-
-      button.classList.add(this.CSS.animation);
-
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
-
-      return;
+      throw new Error('Unable to move up');
     }
 
     const currentBlockElement = currentBlock.holder;
