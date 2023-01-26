@@ -8,26 +8,44 @@ import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
 
+/**
+ * Params required to render popover
+ */
 interface PopoverParams {
-  /** Popover items config */
+  /**
+   * Popover items config
+   */
   items: PopoverItemParams[];
 
-  /** Element of the page that creates 'scope' of the popover. */
+  /**
+   * Element of the page that creates 'scope' of the popover
+   */
   scopeElement?: HTMLElement;
 
-  /** Arbitrary html element to be inserted before items list */
+  /**
+   * Arbitrary html element to be inserted before items list
+   */
   customContent?: HTMLElement;
 
-  /** List of html elements inside custom content area that should be available for keyboard navigation */
+  /**
+   * List of html elements inside custom content area that should be available for keyboard navigation
+   */
   customContentFlippableItems?: HTMLElement[];
 
-  /** True if popover should contain search field */
+  /**
+   * True if popover should contain search field
+   */
   searchable?: boolean;
 
-  /** Popover texts overrides */
+  /**
+   * Popover texts overrides
+   */
   messages?: PopoverMessages
 }
 
+/**
+ * Texts used inside popover
+ */
 interface PopoverMessages {
   /** Text displayed when search has no results */
   nothingFound?: string;
@@ -51,10 +69,14 @@ export enum PopoverEvent {
  * Class responsible for rendering popover and handling its behaviour
  */
 export default class Popover extends EventsDispatcher<PopoverEvent> {
-  /** Flipper - module for keyboard iteration between elements */
+  /**
+   * Flipper - module for keyboard iteration between elements
+   */
   public flipper: Flipper;
 
-  /** List of popover items */
+  /**
+   * List of popover items
+   */
   private items: PopoverItem[];
 
   /**
@@ -63,19 +85,29 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private scopeElement: HTMLElement = document.body;
 
-  /** List of html elements inside custom content area that should be available for keyboard navigation */
+  /**
+   * List of html elements inside custom content area that should be available for keyboard navigation
+   */
   private customContentFlippableItems: HTMLElement[] | undefined;
 
-  /** Instance of the Search Input */
+  /**
+   * Instance of the Search Input
+   */
   private search: SearchInput | undefined;
 
-  /** Listeners util instance */
+  /**
+   * Listeners util instance
+   */
   private listeners: Listeners = new Listeners();
 
-  /** ScrollLocker instance */
+  /**
+   * ScrollLocker instance
+   */
   private scrollLocker = new ScrollLocker();
 
-  /** Popover CSS classes */
+  /**
+   * Popover CSS classes
+   */
   private static get CSS(): {
     popover: string;
     popoverOpenTop: string;
@@ -104,7 +136,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     };
   }
 
-  /** Refs to created HTML elements */
+  /**
+   * Refs to created HTML elements
+   */
   private nodes: {
     wrapper: HTMLElement | null;
     popover: HTMLElement | null;
@@ -121,7 +155,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
       overlay: null,
     };
 
-  /** Messages that will be displayed in popover */
+  /**
+   * Messages that will be displayed in popover
+   */
   private messages: PopoverMessages = {
     nothingFound: 'Nothing found',
     search: 'Search',
@@ -238,12 +274,11 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     }
   }
 
-
   /**
    * Constructs HTML element corresponding to popover
    */
   private make(): void {
-    this.nodes.popover = Dom.make('div', [Popover.CSS.popover]);
+    this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
 
     this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,

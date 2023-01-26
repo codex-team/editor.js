@@ -1,46 +1,64 @@
 import Dom from '../../dom';
 import { IconDotCircle } from '@codexteam/icons';
-import { PopoverItem as PopoverItemParams} from '../../../../types';
+import { PopoverItem as PopoverItemParams } from '../../../../types';
 
 /**
  * Represents sigle popover item node
  */
 export class PopoverItem {
-  /** True if item is disabled and hence not clickable */
+  /**
+   * True if item is disabled and hence not clickable
+   */
   public get isDisabled(): boolean {
     return this.params.isDisabled;
   }
 
-  /** Exposes popover item toggle parameter */
+  /**
+   * Exposes popover item toggle parameter
+   */
   public get toggle(): boolean | string | undefined {
     return this.params.toggle;
   }
 
-  /** Item title */
+  /**
+   * Item title
+   */
   public get title(): string | undefined {
     return this.params.title;
   }
 
-  /** True if popover should close once item is activated */
+  /**
+   * True if popover should close once item is activated
+   */
   public get closeOnActivate(): boolean | undefined {
     return this.params.closeOnActivate;
   }
 
-  /** True if popover item is in confirmation state */
+  /**
+   * True if popover item is in confirmation state
+   */
   public get isInConfirmationState(): boolean {
     return this.confirmationState !== null;
   }
 
-  /** Item root html element */
+  /**
+   * Item root html element
+   */
   private element: HTMLElement;
 
-  /** Popover item params */
+  /**
+   * Popover item params
+   */
   private params: PopoverItemParams;
 
-  /** If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on */
+  /**
+   * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
+   */
   private confirmationState: PopoverItemParams | null = null;
 
-  /** Popover item CSS classes */
+  /**
+   * Popover item CSS classes
+   */
   public static get CSS(): {
     container: string,
     title: string,
