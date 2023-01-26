@@ -60,7 +60,7 @@ export default class MoveUpTune implements BlockTune {
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
-      throw new Error('Unable to move up');
+      throw new Error('Unable to move Block up since it is already the first');
     }
 
     const currentBlockElement = currentBlock.holder;
