@@ -62,7 +62,7 @@ export default class MoveDownTune implements BlockTune {
 
     // If Block is last do nothing
     if (!nextBlock) {
-      throw new Error('Unable to move down');
+      throw new Error('Unable to move Block down since it is already the last');
     }
 
     const nextBlockElement = nextBlock.holder;
