@@ -326,7 +326,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
         this.toggleNothingFoundMessage(result.length === 0);
         this.toggleCustomContent(query !== '');
 
-        /** Contains list of elements available for keyboard navigation considering search query applied */
+        /** List of elements available for keyboard navigation considering search query applied */
         const flippableElements = query === '' ? this.flippableElements : result.map(item => item.getElement());
 
         if (this.flipper.isActivated) {
