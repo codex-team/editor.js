@@ -145,7 +145,7 @@
           class: Header,
           inlineToolbar: ['marker', 'link'],
           config: {
-            placeholder: 'Header'
+            placeholder: 'Header',
           },
           shortcut: 'CMD+SHIFT+H'
         },
@@ -197,7 +197,12 @@
 
         linkTool: LinkTool,
 
-        raw: RawTool,
+        raw: {
+          class: RawTool,
+          toolbox: {
+            description: 'Paste html code'
+          },
+        },
 
         embed: Embed,
 

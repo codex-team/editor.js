@@ -1,4 +1,4 @@
-/** 
+/**
  * Popover styles
  */
 .ce-popover {
@@ -137,7 +137,7 @@
 }
 
 
-/** 
+/**
  * Popover item styles
  */
 .ce-popover-item {
@@ -147,6 +147,7 @@
 
   border-radius: var(--border-radius);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   padding: 3px;
   color: var(--color-text-primary);
@@ -203,6 +204,7 @@
   }
 
   &__secondary-title {
+    text-align: left;
     color: var(--color-text-secondary);
     font-size: 12px;
     margin-left: auto;
@@ -211,6 +213,19 @@
     padding-right: 5px;
     margin-bottom: -2px;
     opacity: 0.6;
+
+    @media (--mobile){
+      display: none;
+    }
+  }
+
+  &__description {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    padding-left: 35px;
+    opacity: 0.6;
+    white-space: normal;
+    width: 100%;
 
     @media (--mobile){
       display: none;
@@ -250,7 +265,7 @@
   @media (--can-hover) {
     &:hover {
       cursor: pointer;
-      
+
       &:not(.ce-popover-item--no-hover) {
         background-color: var(--color-background-item-hover);
       }
@@ -298,7 +313,7 @@
 }
 
 
-/** 
+/**
  * Animations
  */
 @keyframes panelShowing {

@@ -18,6 +18,11 @@ export interface ToolboxConfigEntry {
   title?: string;
 
   /**
+   * Tool description for Toolbox
+   */
+  description?: string
+
+  /**
    * HTML string with an icon for Toolbox
    */
   icon?: string;
@@ -41,7 +46,7 @@ export type TunesMenuConfigItem = PopoverItem & {
   /**
    * Tune displayed text.
    * Alias for title property
-   * 
+   *
    * @deprecated - use title property instead
    */
   label?: string

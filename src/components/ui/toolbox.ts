@@ -252,6 +252,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+        description: toolboxItem?.description || null,
       };
     };
 

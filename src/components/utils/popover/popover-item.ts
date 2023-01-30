@@ -76,6 +76,7 @@ export class PopoverItem {
     container: string,
     title: string,
     secondaryTitle: string,
+    description: string,
     icon: string,
     active: string,
     disabled: string,
@@ -90,6 +91,7 @@ export class PopoverItem {
       container: 'ce-popover-item',
       title: 'ce-popover-item__title',
       secondaryTitle: 'ce-popover-item__secondary-title',
+      description: 'ce-popover-item__description',
       icon: 'ce-popover-item__icon',
       active: 'ce-popover-item--active',
       disabled: 'ce-popover-item--disabled',
@@ -191,6 +193,12 @@ export class PopoverItem {
     if (params.secondaryLabel) {
       el.appendChild(Dom.make('div', PopoverItem.CSS.secondaryTitle, {
         textContent: params.secondaryLabel,
+      }));
+    }
+
+    if (params.description) {
+      el.appendChild(Dom.make('div', PopoverItem.CSS.description, {
+        textContent: params.description,
       }));
     }
 
