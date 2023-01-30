@@ -28,7 +28,6 @@
   border-radius: var(--border-radius);
   overflow: hidden;
   box-sizing: border-box;
-  border: 1px solid var(--color-border);
   box-shadow: 0 3px 15px -3px var(--color-shadow);
   position: absolute;
   left: 0;
@@ -50,6 +49,7 @@
     max-height: var(--max-height);
     pointer-events: auto;
     animation: panelShowing 100ms ease;
+    border: 1px solid var(--color-border);
 
     @media (--mobile) {
       animation: panelShowingMobile 250ms ease;
@@ -60,9 +60,9 @@
     overflow-y: auto;
     overscroll-behavior: contain;
 
-    @media (--not-mobile) {
+    /* @media (--not-mobile) {
       margin-top: 5px;
-    }
+    } */
   }
 
   &__overlay {
@@ -106,7 +106,7 @@
     }
   }
 
-  &__search {
+  &__search, &__custom-content {
     margin-bottom: 5px;
   }
 

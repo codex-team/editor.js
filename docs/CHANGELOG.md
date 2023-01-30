@@ -2,7 +2,7 @@
 
 ### 2.26.5
 
-- `Improvement` — *UI* — Popover refactored.
+- `Refactoring` — Popover class refactored.
 
 ### 2.26.4
 
