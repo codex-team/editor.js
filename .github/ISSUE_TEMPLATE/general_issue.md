@@ -1,6 +1,6 @@
 ---
 name: General Issue
-about: Well-designed, algorithmized feature/idea/improvement issue for Editor.js
+about: Any question about the Editor.js to discuss
 title: ''
 labels: ''
 assignees: ''
