@@ -1,4 +1,4 @@
-import Popover from '../../../../src/components/utils/popover/index';
+import Popover from '../../../../src/components/utils/popover';
 import { PopoverItem } from '../../../../types';
 
 /* eslint-disable @typescript-eslint/no-empty-function */

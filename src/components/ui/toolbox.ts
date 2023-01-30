@@ -5,7 +5,7 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent } from '../utils/popover/index';
+import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
 
