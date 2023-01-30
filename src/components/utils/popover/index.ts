@@ -296,6 +296,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.listeners.on(this.nodes.popover, 'click', (event: PointerEvent) => {
       const item = this.getTargetItem(event);
 
+      if (item === undefined) {
+        return;
+      }
+
       this.handleItemClick(item);
     });
 
@@ -371,7 +375,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * @param event - click event
    */
   private handleItemClick(item: PopoverItem): void {
-    if (item === undefined || item.isDisabled) {
+    if (item.isDisabled) {
       return;
     }
 
@@ -380,7 +384,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
 
     item.handleClick();
 
-    this.toggleIfNeeded(item);
+    this.toggleItemActivenessIfNeeded(item);
 
     if (item.closeOnActivate) {
       this.hide();
@@ -492,7 +496,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    *
    * @param clickedItem - popover item that was clicked
    */
-  private toggleIfNeeded(clickedItem: PopoverItem): void {
+  private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
     if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
     }
