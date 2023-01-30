@@ -3,7 +3,7 @@ import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
-import SearchInput from '../search-input';
+import SearchInput from './search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';

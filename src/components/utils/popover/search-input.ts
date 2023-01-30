@@ -1,5 +1,5 @@
-import Dom from '../dom';
-import Listeners from './listeners';
+import Dom from '../../dom';
+import Listeners from '../listeners';
 import { IconSearch } from '@codexteam/icons';
 
 /**
