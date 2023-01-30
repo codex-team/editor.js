@@ -194,6 +194,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   public close(): void {
     this.popover?.hide();
+    this.opened = false;
+    this.emit(ToolboxEvent.Closed);
   }
 
   /**
