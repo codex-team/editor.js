@@ -35,9 +35,9 @@ export class PopoverItem {
   }
 
   /**
-   * True if popover item is in confirmation state
+   * True if confirmation state is enabled for popover item
    */
-  public get isInConfirmationState(): boolean {
+  public get isConfirmationStateEnabled(): boolean {
     return this.confirmationState !== null;
   }
 
@@ -117,7 +117,7 @@ export class PopoverItem {
    * Called on popover item click
    */
   public handleClick(): void {
-    if (this.isInConfirmationState) {
+    if (this.isConfirmationStateEnabled) {
       this.activateOrEnableConfirmationMode(this.confirmationState);
       this.disableConfirmationMode();
 
