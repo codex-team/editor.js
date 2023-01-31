@@ -59,10 +59,6 @@
   &__items {
     overflow-y: auto;
     overscroll-behavior: contain;
-
-    /* @media (--not-mobile) {
-      margin-top: 5px;
-    } */
   }
 
   &__overlay {
@@ -106,7 +102,7 @@
     }
   }
 
-  &__search, &__custom-content {
+  &__search, &__custom-content:not(:empty) {
     margin-bottom: 5px;
   }
 
@@ -303,8 +299,6 @@
 /** 
  * Animations
  */
-
-
 @keyframes panelShowing {
   from {
     opacity: 0;
