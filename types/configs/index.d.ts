@@ -1,5 +1,3 @@
-import { fromCallback } from 'cypress/types/bluebird';
-
 export * from './editor-config';
 export * from './sanitizer-config';
 export * from './paste-config';
