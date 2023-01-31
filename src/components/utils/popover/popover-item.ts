@@ -42,6 +42,13 @@ export class PopoverItem {
   }
 
   /**
+   * True if item is focused in keyboard navigation process
+   */
+  public get isFocused(): boolean {
+    return this.element.classList.contains(PopoverItem.CSS.focused);
+  }
+
+  /**
    * Item root html element
    */
   private element: HTMLElement;
@@ -146,9 +153,9 @@ export class PopoverItem {
   }
 
   /**
-   * Method called on popover keyboard navigation
+   * Method called once item becomes focused during keyboard navigation
    */
-  public onFlip(): void {
+  public onFocus(): void {
     this.disableSpecialHoverAndFocusBehavior();
   }
 

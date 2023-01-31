@@ -467,7 +467,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    this.items.forEach(item => item.onFlip());
+    const focusedItem = this.items.find(item => item.isFocused);
+
+    focusedItem.onFocus();
   };
 
   /**
