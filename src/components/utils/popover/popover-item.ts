@@ -293,8 +293,14 @@ export class PopoverItem {
 
     this.element.classList.add(PopoverItem.CSS.wobbleAnimation);
 
-    this.element.addEventListener('animationend', () => {
-      this.element.classList.remove(PopoverItem.CSS.wobbleAnimation);
-    }, { once: true });
+    this.element.addEventListener('animationend', this.onErrorAnimationEnd);
   }
+
+  /**
+   * Handles finish of error animation
+   */
+  private onErrorAnimationEnd = (): void => {
+    this.element.classList.remove(PopoverItem.CSS.wobbleAnimation);
+    this.element.removeEventListener('animationend', this.onErrorAnimationEnd);
+  };
 }
