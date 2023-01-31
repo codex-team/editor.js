@@ -34,6 +34,7 @@
 
   /**
    * Gray border, loaders
+   * @deprecated — use --color-line-gray instead
    */
   --color-gray-border: rgba(201, 201, 204, 0.48);
 
@@ -49,15 +50,17 @@
   --narrow-mode-right-padding: 50px;
 
   /**
-   * Toolbar buttons height and width
-   */
-  --toolbar-buttons-size: 34px;
-
-  /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
   --toolbox-buttons-size: 26px;
   --toolbox-buttons-size--mobile: 36px;
+
+  /**
+   * Size of svg icons got from the CodeX Icons pack
+   */
+  --icon-size: 20px;
+  --icon-size--mobile: 28px;
+
 
   /**
    * The main `.cdx-block` wrapper has such vertical paddings
@@ -69,6 +72,9 @@
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
+  --color-confirm-hover: #CE4343;
+
+  --color-line-gray: #EFF0F1;
 
   --overlay-pane: {
     position: absolute;
@@ -77,11 +83,6 @@
     box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
     border-radius: 6px;
     z-index: 2;
-
-    @media (--mobile){
-      box-shadow: 0 8px 6px -6px rgb(33 48 73 / 19%);
-      border-bottom-color: #c7c7c7;
-    }
 
     &--left-oriented {
       &::before {
@@ -103,6 +104,17 @@
     box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
     background: rgba(34, 186, 255, 0.08) !important;
   };
+
+  --button-active: {
+    background: rgba(56, 138, 229, 0.1);
+    color:  var(--color-active-icon);
+  };
+
+  --button-disabled: {
+    color: var(--grayText);
+    cursor: default;
+    pointer-events: none;
+  }
 
   /**
    * Styles for Toolbox Buttons and Plus Button
@@ -144,22 +156,31 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--toolbar-buttons-size);
-    height: var(--toolbar-buttons-size);
-    line-height: var(--toolbar-buttons-size);
-    padding: 0 !important;
-    text-align: center;
+
+    padding: 6px 1px;
     border-radius: 3px;
     cursor: pointer;
     border: 0;
     outline: none;
     background-color: transparent;
     vertical-align: bottom;
-    color: #000;
+    color: inherit;
     margin: 0;
 
-    &:hover {
-      background-color: var(--bg-light);
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+
+      @media (--mobile) {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
+    }
+
+    @media (--can-hover) {
+      &:hover {
+        background-color: var(--bg-light);
+      }
     }
 
     &--active {
@@ -197,12 +218,6 @@
       margin-bottom: 1px;
     }
 
-    @media (--can-hover) {
-      &:hover {
-        background-color: var(--bg-light);
-      }
-    }
-
     @media (--mobile) {
       font-size: 16px;
       padding: 4px;
@@ -216,24 +231,29 @@
     display: inline-flex;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    border: 1px solid var(--color-gray-border);
+    box-shadow: 0 0 0 1px var(--color-gray-border);
     border-radius: 5px;
     align-items: center;
     justify-content: center;
     background: #fff;
-    box-sizing: border-box;
+    box-sizing: content-box;
     flex-shrink: 0;
     margin-right: 10px;
+
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
 
     @media (--mobile) {
       width: var(--toolbox-buttons-size--mobile);
       height: var(--toolbox-buttons-size--mobile);
       border-radius: 8px;
-    }
 
-    svg {
-      width: 12px;
-      height: 12px;
+      svg {
+        width: var(--icon-size--mobile);
+        height: var(--icon-size--mobile);
+      }
     }
   }
 }

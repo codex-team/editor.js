@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <g transform="translate(1 1.5)" fill-rule="evenodd">
-    <rect x="6" width="2" height="13" rx="1"/>
-    <rect x=".5" y="5.5" width="13" height="2" rx="1"/>
-  </g>
-</svg>

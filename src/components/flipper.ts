@@ -41,6 +41,13 @@ export interface FlipperOptions {
  */
 export default class Flipper {
   /**
+   * True if flipper is currently activated
+   */
+  public get isActivated(): boolean {
+    return this.activated;
+  }
+
+  /**
    * Instance of flipper iterator
    *
    * @type {DomIterator|null}
@@ -63,6 +70,11 @@ export default class Flipper {
    * Call back for button click/enter
    */
   private readonly activateCallback: (item: HTMLElement) => void;
+
+  /**
+   * Contains list of callbacks to be executed on each flip
+   */
+  private flipCallbacks: Array<() => void> = [];
 
   /**
    * @param {FlipperOptions} options - different constructing settings
@@ -93,21 +105,30 @@ export default class Flipper {
   /**
    * Active tab/arrows handling by flipper
    *
-   * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
+   * @param cursorPosition - index of the item that should be focused once flipper is activated
    */
-  public activate(items?: HTMLElement[]): void {
+  public activate(items?: HTMLElement[], cursorPosition?: number): void {
     this.activated = true;
 
     if (items) {
       this.iterator.setItems(items);
     }
 
+    if (cursorPosition !== undefined) {
+      this.iterator.setCursor(cursorPosition);
+    }
+
     /**
      * Listening all keydowns on document and react on TAB/Enter press
      * TAB will leaf iterator items
      * ENTER will click the focused item
+     *
+     * Note: the event should be handled in capturing mode on following reasons:
+     * - prevents plugins inner keydown handlers from being called while keyboard navigation
+     * - otherwise this handler will be called at the moment it is attached which causes false flipper firing (see https://techread.me/js-addeventlistener-fires-for-past-events/)
      */
-    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keydown', this.onKeyDown, true);
   }
 
   /**
@@ -149,6 +170,24 @@ export default class Flipper {
    */
   public hasFocus(): boolean {
     return !!this.iterator.currentItem;
+  }
+
+  /**
+   * Registeres function that should be executed on each navigation action
+   *
+   * @param cb - function to execute
+   */
+  public onFlip(cb: () => void): void {
+    this.flipCallbacks.push(cb);
+  }
+
+  /**
+   * Unregisteres function that is executed on each navigation action
+   *
+   * @param cb - function to stop executing
+   */
+  public removeOnFlip(cb: () => void): void {
+    this.flipCallbacks = this.flipCallbacks.filter(fn => fn !== cb);
   }
 
   /**
@@ -240,15 +279,17 @@ export default class Flipper {
     }
 
     if (this.iterator.currentItem) {
+      /**
+       * Stop Enter propagation only if flipper is ready to select focused item
+       */
+      event.stopPropagation();
+      event.preventDefault();
       this.iterator.currentItem.click();
     }
 
     if (_.isFunction(this.activateCallback)) {
       this.activateCallback(this.iterator.currentItem);
     }
-
-    event.preventDefault();
-    event.stopPropagation();
   }
 
   /**
@@ -258,5 +299,7 @@ export default class Flipper {
     if (this.iterator.currentItem) {
       this.iterator.currentItem.scrollIntoViewIfNeeded();
     }
+
+    this.flipCallbacks.forEach(cb => cb());
   }
 }

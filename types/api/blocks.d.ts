@@ -52,7 +52,7 @@ export interface Blocks {
    * Returns Block API object by passed Block index
    * @param {number} index
    */
-  getBlockByIndex(index: number): BlockAPI | void;
+  getBlockByIndex(index: number): BlockAPI | undefined;
 
   /**
    * Returns Block API object by passed Block id
@@ -102,6 +102,8 @@ export interface Blocks {
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param {boolean?} replace - should the existed Block on that index be replaced or not
+   * @param {string} id — An optional id for the new block. If omitted then the new id will be generated
+
    */
   insert(
     type?: string,
@@ -110,6 +112,7 @@ export interface Blocks {
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
+    id?: string,
   ): BlockAPI;
 
 

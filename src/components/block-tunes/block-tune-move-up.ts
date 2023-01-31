@@ -1,11 +1,12 @@
 /**
  * @class MoveUpTune
  * @classdesc Editor's default tune that moves up selected block
- *
  * @copyright <CodeX Team> 2018
  */
-import $ from '../dom';
 import { API, BlockTune } from '../../../types';
+import Popover from '../../components/utils/popover';
+import { IconChevronUp } from '@codexteam/icons';
+import { TunesMenuConfig } from '../../../types/tools';
 
 /**
  *
@@ -25,12 +26,8 @@ export default class MoveUpTune implements BlockTune {
 
   /**
    * Styles
-   *
-   * @type {{wrapper: string}}
    */
   private CSS = {
-    button: 'ce-settings__button',
-    wrapper: 'ce-tune-move-up',
     animation: 'wobble',
   };
 
@@ -44,47 +41,37 @@ export default class MoveUpTune implements BlockTune {
   }
 
   /**
-   * Create "MoveUp" button and add click event listener
-   *
-   * @returns {HTMLElement}
+   * Tune's appearance in block settings menu
    */
-  public render(): HTMLElement {
-    const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
-
-    moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listeners.on(
-      moveUpButton,
-      'click',
-      (event) => this.handleClick(event as MouseEvent, moveUpButton),
-      false
-    );
-
-    /**
-     * Enable tooltip module on button
-     */
-    this.api.tooltip.onHover(moveUpButton, this.api.i18n.t('Move up'), {
-      hidingDelay: 300,
-    });
-
-    return moveUpButton;
+  public render(): TunesMenuConfig {
+    return {
+      icon: IconChevronUp,
+      title: this.api.i18n.t('Move up'),
+      onActivate: (item, e): void => this.handleClick(e),
+      name: 'move-up',
+    };
   }
 
   /**
    * Move current block up
    *
    * @param {MouseEvent} event - click event
-   * @param {HTMLElement} button - clicked button
    */
-  public handleClick(event: MouseEvent, button: HTMLElement): void {
+  public handleClick(event: MouseEvent): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
+      const button = (event.target as HTMLElement)
+        .closest('.' + Popover.CSS.item)
+        .querySelector('.' + Popover.CSS.itemIcon);
+
       button.classList.add(this.CSS.animation);
 
       window.setTimeout(() => {
         button.classList.remove(this.CSS.animation);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
 
       return;
@@ -118,8 +105,5 @@ export default class MoveUpTune implements BlockTune {
     this.api.blocks.move(currentBlockIndex - 1);
 
     this.api.toolbar.toggleBlockSettings(true);
-
-    /** Hide the Tooltip */
-    this.api.tooltip.hide();
   }
 }

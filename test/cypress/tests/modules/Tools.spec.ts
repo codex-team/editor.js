@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-/* eslint-disable @typescript-eslint/ban-ts-ignore,@typescript-eslint/no-explicit-any,jsdoc/require-jsdoc */
+/* eslint-disable @typescript-eslint/no-explicit-any, jsdoc/require-jsdoc */
 import Tools from '../../../../src/components/modules/tools';
 import { EditorConfig } from '../../../../types';
 import BlockTool from '../../../../src/components/tools/block';
@@ -57,6 +57,7 @@ describe('Tools module', () => {
     it('should throw an error if tools config is corrupted', async () => {
       const module = constructModule({
         tools: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           corruptedTool: 'value',
         },
@@ -77,7 +78,7 @@ describe('Tools module', () => {
     it('should call Tools prepare method with user config', async () => {
       class WithSuccessfulPrepare {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        public static prepare = cy.stub()
+        public static prepare = cy.stub();
       }
 
       const config = {
@@ -134,7 +135,7 @@ describe('Tools module', () => {
           },
           blockToolWithoutSettings: class {} as any,
           inlineTool: class {
-            public static isInline = true
+            public static isInline = true;
 
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             public render(): void {}
@@ -146,7 +147,7 @@ describe('Tools module', () => {
             public checkState(): void {}
           } as any,
           inlineTool2: class {
-            public static isInline = true
+            public static isInline = true;
 
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             public render(): void {}

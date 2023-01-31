@@ -1,11 +1,12 @@
 import Dom from '../dom';
 import Listeners from './listeners';
+import { IconSearch } from '@codexteam/icons';
 
 /**
  * Item that could be searched
  */
 interface SearchableItem {
-  label: string;
+  title?: string;
 }
 
 /**
@@ -113,14 +114,14 @@ export default class SearchInput {
   private render(placeholder: string): void {
     this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
 
-    const iconWrapper = Dom.make('div', SearchInput.CSS.icon);
-    const icon = Dom.svg('search', 16, 16);
+    const iconWrapper = Dom.make('div', SearchInput.CSS.icon, {
+      innerHTML: IconSearch,
+    });
 
     this.input = Dom.make('input', SearchInput.CSS.input, {
       placeholder,
     }) as HTMLInputElement;
 
-    iconWrapper.appendChild(icon);
     this.wrapper.appendChild(iconWrapper);
     this.wrapper.appendChild(this.input);
 
@@ -144,7 +145,7 @@ export default class SearchInput {
    * @param item - item to be checked
    */
   private checkItem(item: SearchableItem): boolean {
-    const text = item.label.toLowerCase();
+    const text = item.title?.toLowerCase() || '';
     const query = this.searchQuery.toLowerCase();
 
     return text.includes(query);

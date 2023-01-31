@@ -1,5 +1,5 @@
 /**
- * Contains keyboard and mouse events binded on each Block by Block Manager
+ * Contains keyboard and mouse events bound on each Block by Block Manager
  */
 import Module from '../__module';
 import * as _ from '../utils';
@@ -130,13 +130,14 @@ export default class BlockEvents extends Module {
     const canOpenToolbox = currentBlock.tool.isDefault && isEmptyBlock;
     const conversionToolbarOpened = !isEmptyBlock && ConversionToolbar.opened;
     const inlineToolbarOpened = !isEmptyBlock && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const canOpenBlockTunes = !conversionToolbarOpened && !inlineToolbarOpened;
 
     /**
      * For empty Blocks we show Plus button via Toolbox only for default Blocks
      */
     if (canOpenToolbox) {
       this.activateToolbox();
-    } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
+    } else if (canOpenBlockTunes) {
       this.activateBlockSettings();
     }
   }
@@ -239,7 +240,7 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Allow to create linebreaks by Shift+Enter
+     * Allow to create line breaks by Shift+Enter
      */
     if (event.shiftKey) {
       return;
@@ -430,6 +431,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
@@ -488,6 +490,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
