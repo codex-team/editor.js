@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.26.5
+
+- `Fix` — *Types* — Remove unnecessary import that creates a dependency on the `cypress`.
+
 ### 2.26.4
 
 - `Improvement` — *Menu Config* — Property `label` renamed to `title`.

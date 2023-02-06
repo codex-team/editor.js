@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve Editor.js
-title: "[Bug]"
+title: ""
 labels: bug
 assignees: ''
 
