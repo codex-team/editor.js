@@ -199,7 +199,7 @@ export class PopoverItem {
   /**
    * Activates confirmation mode for the item.
    *
-   * @param newState -
+   * @param newState - new popover item params that should be applied
    */
   private enableConfirmationMode(newState: PopoverItemParams): void {
     const params = {
