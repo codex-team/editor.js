@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://editorjs.io/base-concepts/">Documentation</a> |
-  <a href="https://github.com/codex-team/editor.js#roadmap">Changelog</a> |
+  <a href="https://github.com/codex-team/editor.js/blob/next/docs/CHANGELOG.md">Changelog</a> |
   <a href="https://github.com/codex-team/editor.js#roadmap">Roadmap</a>
 </p>
 
@@ -215,24 +215,6 @@ This project exists thanks to all the people who contribute. <img src="https://o
 
 We really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way.
 
-<!-- ## Documentation
-
-Please visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
-
-- [Base concepts](https://editorjs.io/base-concepts)
-- [Getting started](https://editorjs.io/getting-started)
-- [Configuration](https://editorjs.io/configuration)
-- [How to create a Block Tool Plugin](https://editorjs.io/creating-a-block-tool)
-- [How to create an Inline Tool Plugin](https://editorjs.io/creating-an-inline-tool)
-- [API for Tools](https://editorjs.io/tools-api)
-
-You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question. -->
-
-## Changelog
-
-See the whole [Changelog](/docs/CHANGELOG.md)
-
-If you want to follow Editor.js updates, [subscribe to our Newsletter](http://digest.editorjs.io/).
 
 ## Credits and references
 
