@@ -150,6 +150,7 @@
   align-items: center;
   padding: 3px;
   color: var(--color-text-primary);
+  user-select: none;
 
   @media (--mobile) {
     padding: 4px;
