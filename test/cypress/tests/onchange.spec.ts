@@ -131,7 +131,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=delimiter]')
+      .get('div.ce-popover-item[data-item-name=delimiter]')
       .click();
 
     cy.get('@onChange').should('be.calledThrice');
@@ -178,7 +178,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=header]')
+      .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
     cy.get('@onChange').should('be.calledTwice');

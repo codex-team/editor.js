@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.27.0
+
+- `Refactoring` — Popover class refactored.
+- `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
+
 ### 2.26.5
 
 - `Fix` — *Types* — Remove unnecessary import that creates a dependency on the `cypress`.
