@@ -3,6 +3,7 @@
 ### 2.27.0
 
 - `Refactoring` — Popover class refactored.
+- `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 
 ### 2.26.5
 
