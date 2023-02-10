@@ -1,8 +1,11 @@
 # Changelog
 
-### 2.26.5
+### 2.27.0
 
 - `Refactoring` — Popover class refactored.
+
+### 2.26.5
+
 - `Fix` — *Types* — Remove unnecessary import that creates a dependency on the `cypress`.
 
 ### 2.26.4
