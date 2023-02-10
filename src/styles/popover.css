@@ -348,23 +348,23 @@
   }
 
   15% {
-    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);
+    transform: translate3d(-9%, 0, 0);
   }
 
   30% {
-    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);
+    transform: translate3d(9%, 0, 0);
   }
 
   45% {
-    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);
+    transform: translate3d(-4%, 0, 0);
   }
 
   60% {
-    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);
+    transform: translate3d(4%, 0, 0);
   }
 
   75% {
-    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);
+    transform: translate3d(-1%, 0, 0);
   }
 
   to {

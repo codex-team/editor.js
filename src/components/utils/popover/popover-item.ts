@@ -45,13 +45,19 @@ export class PopoverItem {
    * True if item is focused in keyboard navigation process
    */
   public get isFocused(): boolean {
-    return this.element.classList.contains(PopoverItem.CSS.focused);
+    return this.nodes.root.classList.contains(PopoverItem.CSS.focused);
   }
 
   /**
-   * Item root html element
+   * Item html elements
    */
-  private element: HTMLElement;
+  private nodes: {
+    root: null | HTMLElement,
+    icon: null | HTMLElement
+  } = {
+      root: null,
+      icon: null,
+    };
 
   /**
    * Popover item params
@@ -103,14 +109,14 @@ export class PopoverItem {
    */
   constructor(params: PopoverItemParams) {
     this.params = params;
-    this.element = this.make(params);
+    this.nodes.root = this.make(params);
   }
 
   /**
    * Returns popover item root element
    */
   public getElement(): HTMLElement {
-    return this.element;
+    return this.nodes.root;
   }
 
   /**
@@ -132,7 +138,7 @@ export class PopoverItem {
    * @param isActive - true if item should strictly should become active
    */
   public toggleActive(isActive?: boolean): void {
-    this.element.classList.toggle(PopoverItem.CSS.active, isActive);
+    this.nodes.root.classList.toggle(PopoverItem.CSS.active, isActive);
   }
 
   /**
@@ -141,7 +147,7 @@ export class PopoverItem {
    * @param isHidden - true if item should be hidden
    */
   public toggleHidden(isHidden: boolean): void {
-    this.element.classList.toggle(PopoverItem.CSS.hidden, isHidden);
+    this.nodes.root.classList.toggle(PopoverItem.CSS.hidden, isHidden);
   }
 
   /**
@@ -172,9 +178,11 @@ export class PopoverItem {
       el.dataset.itemName = params.name;
     }
 
-    el.appendChild(Dom.make('div', PopoverItem.CSS.icon, {
+    this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
       innerHTML: params.icon || IconDotCircle,
-    }));
+    });
+
+    el.appendChild(this.nodes.icon);
 
     el.appendChild(Dom.make('div', PopoverItem.CSS.title, {
       innerHTML: params.title || '',
@@ -210,8 +218,8 @@ export class PopoverItem {
     } as PopoverItemParams;
     const confirmationEl = this.make(params);
 
-    this.element.innerHTML = confirmationEl.innerHTML;
-    this.element.classList.add(PopoverItem.CSS.confirmationState);
+    this.nodes.root.innerHTML = confirmationEl.innerHTML;
+    this.nodes.root.classList.add(PopoverItem.CSS.confirmationState);
 
     this.confirmationState = newState;
 
@@ -224,8 +232,8 @@ export class PopoverItem {
   private disableConfirmationMode(): void {
     const itemWithOriginalParams = this.make(this.params);
 
-    this.element.innerHTML = itemWithOriginalParams.innerHTML;
-    this.element.classList.remove(PopoverItem.CSS.confirmationState);
+    this.nodes.root.innerHTML = itemWithOriginalParams.innerHTML;
+    this.nodes.root.classList.remove(PopoverItem.CSS.confirmationState);
 
     this.confirmationState = null;
 
@@ -237,10 +245,10 @@ export class PopoverItem {
    * This is needed to prevent item from being highlighted as hovered/focused just after click.
    */
   private enableSpecialHoverAndFocusBehavior(): void {
-    this.element.classList.add(PopoverItem.CSS.noHover);
-    this.element.classList.add(PopoverItem.CSS.noFocus);
+    this.nodes.root.classList.add(PopoverItem.CSS.noHover);
+    this.nodes.root.classList.add(PopoverItem.CSS.noFocus);
 
-    this.element.addEventListener('mouseleave', this.removeSpecialHoverBehavior, { once: true });
+    this.nodes.root.addEventListener('mouseleave', this.removeSpecialHoverBehavior, { once: true });
   }
 
   /**
@@ -250,21 +258,21 @@ export class PopoverItem {
     this.removeSpecialFocusBehavior();
     this.removeSpecialHoverBehavior();
 
-    this.element.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
+    this.nodes.root.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
   }
 
   /**
    * Removes class responsible for special focus behavior on an item
    */
   private removeSpecialFocusBehavior = (): void => {
-    this.element.classList.remove(PopoverItem.CSS.noFocus);
+    this.nodes.root.classList.remove(PopoverItem.CSS.noFocus);
   };
 
   /**
    * Removes class responsible for special hover behavior on an item
    */
   private removeSpecialHoverBehavior = (): void => {
-    this.element.classList.remove(PopoverItem.CSS.noHover);
+    this.nodes.root.classList.remove(PopoverItem.CSS.noHover);
   };
 
   /**
@@ -289,20 +297,20 @@ export class PopoverItem {
    * Animates item which symbolizes that error occured while executing 'onActivate()' callback
    */
   private animateError(): void {
-    if (this.element.classList.contains(PopoverItem.CSS.wobbleAnimation)) {
+    if (this.nodes.icon.classList.contains(PopoverItem.CSS.wobbleAnimation)) {
       return;
     }
 
-    this.element.classList.add(PopoverItem.CSS.wobbleAnimation);
+    this.nodes.icon.classList.add(PopoverItem.CSS.wobbleAnimation);
 
-    this.element.addEventListener('animationend', this.onErrorAnimationEnd);
+    this.nodes.icon.addEventListener('animationend', this.onErrorAnimationEnd);
   }
 
   /**
    * Handles finish of error animation
    */
   private onErrorAnimationEnd = (): void => {
-    this.element.classList.remove(PopoverItem.CSS.wobbleAnimation);
-    this.element.removeEventListener('animationend', this.onErrorAnimationEnd);
+    this.nodes.icon.classList.remove(PopoverItem.CSS.wobbleAnimation);
+    this.nodes.icon.removeEventListener('animationend', this.onErrorAnimationEnd);
   };
 }
