@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://editorjs.io/">
     <picture>
-      <source media="(prefers-color-scheme: dark)"  srcset="./assets/night.png">
+      <source media="(prefers-color-scheme: dark)"  srcset="./assets/logo_night.png">
       <source media="(prefers-color-scheme: light)" srcset="./assets/logo_day.png">
       <img alt="Editor.js Logo" src="./assets/logo_day.png">
     </picture>    
