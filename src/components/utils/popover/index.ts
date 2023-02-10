@@ -372,7 +372,6 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * Handles item clicks
    *
    * @param item - item to handle click of
-   * @param event - click event
    */
   private handleItemClick(item: PopoverItem): void {
     if (item.isDisabled) {

@@ -119,7 +119,6 @@ export class PopoverItem {
   public handleClick(): void {
     if (this.isConfirmationStateEnabled) {
       this.activateOrEnableConfirmationMode(this.confirmationState);
-      this.disableConfirmationMode();
 
       return;
     }
@@ -149,7 +148,9 @@ export class PopoverItem {
    * Resets popover item to its original state
    */
   public reset(): void {
-    this.disableConfirmationMode();
+    if (this.isConfirmationStateEnabled) {
+      this.disableConfirmationMode();
+    }
   }
 
   /**
@@ -275,6 +276,7 @@ export class PopoverItem {
     if (item.confirmation === undefined) {
       try {
         item.onActivate(item);
+        this.disableConfirmationMode();
       } catch {
         this.animateError();
       }
