@@ -178,6 +178,7 @@
     @media (--mobile){
       width: 36px;
       height: 36px;
+      border-radius: 8px;
 
       svg {
         width: var(--icon-size-mobile);
