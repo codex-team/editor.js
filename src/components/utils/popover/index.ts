@@ -304,7 +304,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     });
 
     this.nodes.wrapper = Dom.make('div');
-    this.nodes.overlay = Dom.make('div', [ Popover.CSS.overlay ]);
+    this.nodes.overlay = Dom.make('div', [Popover.CSS.overlay, Popover.CSS.overlayHidden]);
 
     this.listeners.on(this.nodes.overlay, 'click', () => {
       this.hide();
