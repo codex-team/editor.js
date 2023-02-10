@@ -1,8 +1,12 @@
-<a href="https://editorjs.io/"><p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p></a>
-
-<h2 align="center">Free block-style editor with a universal JSON output</h2>
-
-<p align="center">Some text here Some text here Some text here Some text here Some text here Some text here Some text here Some text here</p>
+<p align="center">
+  <a href="https://editorjs.io/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)"  srcset="./assets/night.png">
+      <source media="(prefers-color-scheme: light)" srcset="./assets/logo_day.png">
+      <img alt="Editor.js Logo" src="./assets/logo_day.png">
+    </picture>    
+  </a>
+</p>
 
 <p align="center">
   <a href="https://editorjs.io/base-concepts/">Documentation</a> |
@@ -15,9 +19,6 @@
     <img src="https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm" alt="npm"/>
   </a>
   <a href="https://www.npmjs.com/package/@editorjs/editorjs">
-    <img src="https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan" alt="Minified size"/>
-  </a>
-  <a href="https://www.npmjs.com/package/@editorjs/editorjs">
     <img src="https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green" alt="Minzipped size"/>
   </a>
   <a href="https://github.com/codex-team/editor.js#backers">
@@ -25,9 +26,6 @@
   </a>
   <a href="https://github.com/codex-team/editor.js#sponsors">
     <img src="https://opencollective.com/editorjs/sponsors/badge.svg" alt="Sponsors on Open Collective"/>
-  </a>
-  <a href="https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
-    <img src="https://badges.gitter.im/codex-team/editor.js.svg" alt="Join the chat at https://gitter.im/codex-team/editor.js"/>
   </a>
 </p>
 
