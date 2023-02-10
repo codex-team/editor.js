@@ -214,9 +214,6 @@ This project exists thanks to all the people who contribute. <img src="https://o
 We really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way.
 
 
-## Credits and references
-
-- We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module.
 
 ## Community
 You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
