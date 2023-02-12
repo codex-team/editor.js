@@ -29,8 +29,8 @@
   - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
   - [x] Toolbox become vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
   - [x] Ability to display several Toolbox buttons by the single Tool [#2050](https://github.com/codex-team/editor.js/pull/2050)
-  - [ ] Conversion Toolbar uses Unified Toolbox `In progress`
-  - [ ] Block Tunes become vertical
+  - [x] Block Tunes become vertical
+  - [ ] Conversion Toolbar uses Unified Toolbox
   - [ ] Conversion Toolbar added to the Block Tunes
 - Ecosystem improvements
 
