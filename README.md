@@ -29,19 +29,17 @@
   </a>
 </p>
 
-## Features
+## About
 
-- **Free and open-source** \
-Being improved by the whole world. You can join.
+Editor.js is an open-source text editor offering a variety of features to help users create and format content efficiently. It has a modern, block-style interface that allows users to easily add and arrange different types of content, such as text, images, lists, quotes, etc. Each Block is provided via a separate plugin making Editor.js extremely flexible.
 
-- **Clean UI/UX** \
-Modern look. Customizable. Out of the box.
+Editor.js outputs a clean JSON data instead of heavy HTML markup. Use it in Web, iOS, Android, AMP, Instant Articles, speech readers, AI chatbots — everywhere. Easy to sanitize, extend and integrate with your logic. 
 
-- **Simple API driven** \
-Simple but powerful. Create any tool. Lots of already created.
-
-- **Powered by CodeX** \
-The team of senior developers loving Open Source
+- 😍  Modern UI out of the box
+- 💎  Clean JSON output
+- ⚙️  Well-designed API
+- 🛍  Various Tools available
+- 💌  Free and open source
 
 <picture>
   <img alt="Editor.js Overview" src="./assets/overview.png">
