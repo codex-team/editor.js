@@ -183,12 +183,15 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
   <img src="https://logo.clearbit.com/contentharmony.com" width="50" alt="Content Harmony">
 </a>
 
+<br>
+
 [Become a Sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)
 
 ### Backers
  Thank you to all our backers
 
 <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890&avatarHeight=34"></a>
+
 [Become a Backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)
 
 ### Contributors
