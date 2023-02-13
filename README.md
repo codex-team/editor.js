@@ -55,7 +55,7 @@ It's quite simple:
 
 Install using NPM, Yarn, or [CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs):
 
-```shell
+```bash
 npm i @editorjs/editorjs
 ```
 
@@ -120,15 +120,15 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 
 - Unified Toolbox
-  - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
-  - [x] Toolbox becomes vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
-  - [x] Ability to display several Toolbox buttons by the single Tool [#2050](https://github.com/codex-team/editor.js/pull/2050)
+  - [x] Block Tunes moved left
+  - [x] Toolbox becomes vertical
+  - [x] Ability to display several Toolbox buttons by the single Tool
   - [x] Block Tunes become vertical
-  - [ ] Block Tunes support nested menus `In progress`
+  - [ ] Block Tunes support nested menus
   - [ ] Conversion Toolbar uses Unified Toolbox
   - [ ] Conversion Toolbar added to the Block Tunes
 - Collaborative editing
-  - [ ] Implement Inline Tools JSON format `In progress` [#1801](https://github.com/codex-team/editor.js/pull/1801)
+  - [ ] Implement Inline Tools JSON format
   - [ ] Operations Observer, Executor, Manager, Transformer
   - [ ] Implement Undo/Redo Manager
   - [ ] Implement Tools API changes
@@ -141,8 +141,8 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 - Ecosystem improvements
   - [x] CodeX Icons — the way to unify all tools and core icons
   - [x] Homepage and Docs redesign
-  - [ ] Editor.js DevTools — stand for core and tools development `In progress`
-  - [ ] @editorjs/create-tool for Tools bootstrapping
+  - [x] @editorjs/create-tool for Tools bootstrapping
+  - [ ] Editor.js DevTools — stand for core and tools development
   - [ ] Editor.js Design System
   - [ ] Editor.js Preset Env
   - [ ] Editor.js ToolKit
@@ -160,37 +160,49 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 <br>
 
-## If you like a project 💗💗💗
+## Like Editor.js?
 
-If you like Editor.js you can support project improvements and development of new features with a donation to our collective.
+You can support project improvement and development of new features with a donation to our team.
 
- 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+[https://opencollective.com/editorjs](https://opencollective.com/editorjs)
 
 ### Sponsors
 
-Support us by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)]
+Support us by becoming a sponsor. Your logo will show up here with a link to your website.
 
-<a href="https://humm.earth/" target="_blank"><img src="https://images.opencollective.com/hummearth/2a8406a/logo/256.png" width="64"></a>
-<a href="https://tesen.com/" target="_blank"><img src="https://images.opencollective.com/tesen-media-inc/b90cf6a/logo/256.png" width="64"></a>
-<a href="https://slid.cc/" target="_blank"><img src="https://images.opencollective.com/slid_team/ff564d7/logo/256.png" width="64"></a>
+<a href="https://www.mister-auto.com/" target="_blank">
+  <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/5131a030-5672-11ec-be79-1d003d12ec5f.png" width="50" alt="Mister Auto">
+</a>
+<a href="https://www.uplucid.com/" target="_blank">
+  <img src="https://logo.clearbit.com/uplucid.com" width="50" alt="UPLUCID, K.K.">
+</a>
+<a href="https://www.contentharmony.com/" target="_blank">
+  <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/89edb1b0-7d82-11ed-b99e-ab6e6f9cb69f.png" width="50" alt="Kane Jamison">
+</a>
+<a href="https://www.contentharmony.com/product/" target="_blank">
+  <img src="https://logo.clearbit.com/contentharmony.com" width="50" alt="Content Harmony">
+</a>
 
+[Become a Sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)
 
  ### Backers
+ Thank you to all our backers
 
- Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)]
+ <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890&avatarHeight=34"></a>
 
- <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
+ [Become a Backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)
 
 ### Contributors
 
-This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
+This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false&avatarHeight=34" />
 
 
 ## Community
 
-- [Awesome Editor.js](https://github.com/editor-js/awesome-editorjs)
 - [Official Tools](https://github.com/editor-js)
+- [Awesome Editor.js](https://github.com/editor-js/awesome-editorjs)
 - [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22)
+- [Contributing](https://editorjs.io/contributing/)
 - [Telegram Chat](https://t.me/codex_editor)
 
 # About CodeX
