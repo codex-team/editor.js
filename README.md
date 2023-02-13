@@ -115,9 +115,7 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 ## Roadmap
 
-<img align="right" width="342" src="./assets/roadmap.png" hspace="50">
-
-
+<img align="right" width="342" src="./assets/roadmap.png" style="margin-left: 30px">
 
 - Unified Toolbox
   - [x] Block Tunes moved left
@@ -156,7 +154,6 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
     <img width="162px" alt="Support Editor.js" src="./assets/support_day.png">
   </picture>
 </a>
-
 
 <br>
 
