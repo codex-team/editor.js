@@ -225,7 +225,7 @@ export default class BlockSelection extends Module {
    * @param {boolean} restoreSelection - if true, restore saved selection
    */
   public clearSelection(reason?: Event, restoreSelection = false): void {
-    const { BlockManager, Caret, RectangleSelection } = this.Editor;
+    const { BlockManager, Caret, RectangleSelection, Toolbar } = this.Editor;
 
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
@@ -233,6 +233,16 @@ export default class BlockSelection extends Module {
 
     const isKeyboard = reason && (reason instanceof KeyboardEvent);
     const isPrintableKey = isKeyboard && _.isPrintableKey((reason as KeyboardEvent).keyCode);
+
+    /**
+     * Don't clear the selection during multiple element dragging.
+     */
+    const isMouse = reason && (reason instanceof MouseEvent);
+    const isClickedOnSettingsToggler = isMouse && Toolbar.nodes.settingsToggler.contains(reason.target as HTMLElement);
+
+    if (isMouse && isClickedOnSettingsToggler) {
+      return;
+    }
 
     /**
      * If reason caused clear of the selection was printable key and any block is selected,
