@@ -29,6 +29,20 @@
   </a>
 </p>
 
+## Features
+
+- **Free and open-source** \
+Being improved by the whole world. You can join.
+
+- **Clean UI/UX** \
+Modern look. Customizable. Out of the box.
+
+- **Simple API driven** \
+Simple but powerful. Create any tool. Lots of already created.
+
+- **Powered by CodeX** \
+The team of senior developers loving Open Source
+
 <picture>
   <img alt="Editor.js Overview" src="./assets/overview.png">
 </picture>   
