@@ -45,112 +45,61 @@ Editor.js outputs a clean JSON data instead of heavy HTML markup. Use it in Web,
   <img alt="Editor.js Overview" src="./assets/overview.png">
 </picture>   
 
-## Installation Guide
+## Installation
 
-There are few steps to run Editor.js on your site.
+It's quite simple:
 
-1. [Load Editor's core](#load-editors-core)
-2. [Load Tools](#load-tools)
-3. [Initialize Editor's instance](#create-editor-instance)
+1. Install Editor.js 
+2. Install tools you need
+3. Initialize Editor's instance
 
-### Step 1. Load Editor's core
-
-Get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
-
-Choose the most usable method of getting Editor for you.
-
-- Node package
-- Source from CDN
-
-##### Option A. NPM install
-
-Install the package via NPM or Yarn
+Install using NPM, Yarn, or [CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs):
 
 ```shell
 npm i @editorjs/editorjs
 ```
 
-Include module in your application
+Include module in your code:
 
 ```javascript
 import EditorJS from '@editorjs/editorjs';
 ```
 
-##### Option B. Use a CDN
+Choose and install tools:
 
-You can load EditorJS directly from from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
+- [Heading](https://github.com/editor-js/header)
+- [Link embed](https://github.com/editor-js/link)
+- [Image](https://github.com/editor-js/image) 
+- [Simple Image](https://github.com/editor-js/simple-image) (without backend requirement)
+- [Checklist](https://github.com/editor-js/checklist)
+- [Nested List](https://github.com/editor-js/nested-list)
+- [Embeds](https://github.com/editor-js/embed) (YouTube, Twitch, Vimeo, Gfycat, Instagram, Twitter, etc)
+- [Quote](https://github.com/editor-js/quote)
+- [Table](https://github.com/editor-js/table)
+- [Delimiter](https://github.com/editor-js/delimiter)
+- [Warning](https://github.com/editor-js/warning)
+- [Code](https://github.com/editor-js/code)
+- [Raw HTML](https://github.com/editor-js/raw)
+- [Attaches](https://github.com/editor-js/attaches)
+- [Marker](https://github.com/editor-js/marker)
 
-`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest`
+See the [😎 Awesome Editor.js](https://github.com/editor-js/awesome-editorjs) list for more tools.
 
-For example, place this in your HTML:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-```
-
-Or download the bundle file and use it from your server.
-
-```html
-<script src="editor.js"></script>
-```
-
-### Step 2. Load the Tools that you want to make available
-
-Each Block is represented by a [Tool](docs/tools.md). Tools are simple external scripts with their own logic. For example, there is a [Header](https://github.com/editor-js/header) Tool into which you type your heading text. If you want to be able to use this, install the Header Tool the same way as the Editor (Node.js, CDN, local file).
-
-**Example:** use Header from CDN
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
-```
-
-Check [Editor.js's community](https://github.com/editor-js/) to see more ready-to-use Tools.
-
-### Step 3. Create Editor instance
-
-Create an instance of Editor.js and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
+Initialize the Editor:
 
 ```html
 <div id="editorjs"></div>
 ```
 
-You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `editorjs` id for wrapper.
-
 ```javascript
-var editor = new EditorJS(); /** Zero-configuration */
-
-// equals
-
-var editor = new EditorJS('editorjs');
+const editor = new EditorJS({
+  tools: {
+   // ... your tools
+  }
+});
 ````
 
-Or pass a whole settings object.
-
-```javascript
-var editor = new EditorJS({
-    /**
-     * Create a holder for the Editor and pass its ID
-     */
-    holder : 'editorjs',
-
-    /**
-     * Available Tools list.
-     * Pass Tool's class or Settings object for each Tool you want to use
-     */
-    tools: {
-        header: {
-          class: Header,
-          inlineToolbar : true
-        },
-        // ...
-    },
-
-    /**
-     * Previously saved data that should be rendered
-     */
-    data: {}
-});
-```
+See details about [Installation](https://editorjs.io/getting-started/) and [Configuration](https://editorjs.io/configuration/) at the documentation.
 
 ### Saving Data
 
