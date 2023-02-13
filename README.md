@@ -246,12 +246,14 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
 
 This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
 
-We really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way.
-
-
 
 ## Community
-You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
+
+- [Awesome Editor.js](https://github.com/editor-js/awesome-editorjs)
+- [Official Tools](https://github.com/editor-js)
+- [Telegram Chat](https://t.me/codex_editor)
+- [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22)
+
 # About CodeX
 
 <img align="right" width="120" height="120" src="https://codex.so/public/app/img/codex-logo.svg" hspace="50">
