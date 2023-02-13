@@ -29,6 +29,10 @@
   </a>
 </p>
 
+<picture>
+  <img alt="Editor.js Overview" src="./assets/overview.png">
+</picture>   
+
 ## Installation Guide
 
 There are few steps to run Editor.js on your site.
@@ -160,27 +164,46 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 ## Roadmap
 
-<img align="right" width="342" src="https://user-images.githubusercontent.com/3684889/152149321-3f9c585d-7d87-4dad-ab14-def0d526e71c.png" hspace="50">
+<img align="right" width="342" src="./assets/roadmap.png" hspace="50">
 
 
 
 - Unified Toolbox
   - [x] Block Tunes moved left [#1815](https://github.com/codex-team/editor.js/pull/1815)
-  - [x] Toolbox become vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
+  - [x] Toolbox becomes vertical [#2014](https://github.com/codex-team/editor.js/pull/2014)
   - [x] Ability to display several Toolbox buttons by the single Tool [#2050](https://github.com/codex-team/editor.js/pull/2050)
   - [x] Block Tunes become vertical
-  - [ ] Conversion Toolbar uses Unified Toolbox `In progress`
+  - [ ] Block Tunes support nested menus `In progress`
+  - [ ] Conversion Toolbar uses Unified Toolbox
   - [ ] Conversion Toolbar added to the Block Tunes
 - Collaborative editing
   - [ ] Implement Inline Tools JSON format `In progress` [#1801](https://github.com/codex-team/editor.js/pull/1801)
-  - [ ] Implement Operations creation and transformations
+  - [ ] Operations Observer, Executor, Manager, Transformer
+  - [ ] Implement Undo/Redo Manager
   - [ ] Implement Tools API changes
   - [ ] Implement Server and communication
   - [ ] Update basic tools to fit the new API
+- Other features
+  - [ ] Blocks drag'n'drop
+  - [ ] New cross-block selection
+  - [ ] New cross-block caret moving
 - Ecosystem improvements
+  - [x] CodeX Icons — the way to unify all tools and core icons
+  - [x] Homepage and Docs redesign
+  - [ ] Editor.js DevTools — stand for core and tools development `In progress`
+  - [ ] @editorjs/create-tool for Tools bootstrapping
+  - [ ] Editor.js Design System
+  - [ ] Editor.js Preset Env
+  - [ ] Editor.js ToolKit
+  - [ ] New core bundle system
+  - [ ] New documentation and guides
 
 <a href="https://opencollective.com/editorjs/donate" target="_blank">
-  <img width="432" alt="image" src="https://user-images.githubusercontent.com/3684889/166146666-e6f5fcc3-bccf-43b0-b48c-e8f1b25b2896.png">
+  <picture>
+    <source width="162px" media="(prefers-color-scheme: dark)"  srcset="./assets/support_night.png">
+    <source width="162px" media="(prefers-color-scheme: light)" srcset="./assets/support_day.png">
+    <img width="162px" alt="Support Editor.js" src="./assets/support_day.png">
+  </picture>
 </a>
 
 
