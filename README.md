@@ -185,12 +185,11 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
 
 [Become a Sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)
 
- ### Backers
+### Backers
  Thank you to all our backers
 
- <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890&avatarHeight=34"></a>
-
- [Become a Backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)
+<a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890&avatarHeight=34"></a>
+[Become a Backer](https://opencollective.com/editorjs/contribute/backer-8632/checkout)
 
 ### Contributors
 
