@@ -170,20 +170,20 @@ You can support project improvement and development of new features with a donat
 
 Support us by becoming a sponsor. Your logo will show up here with a link to your website.
 
-<a href="https://www.mister-auto.com/" target="_blank">
-  <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/5131a030-5672-11ec-be79-1d003d12ec5f.png" width="50" alt="Mister Auto">
-</a>
-<a href="https://www.uplucid.com/" target="_blank">
-  <img src="https://logo.clearbit.com/uplucid.com" width="50" alt="UPLUCID, K.K.">
-</a>
-<a href="https://www.contentharmony.com/" target="_blank">
-  <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/89edb1b0-7d82-11ed-b99e-ab6e6f9cb69f.png" width="50" alt="Kane Jamison">
-</a>
-<a href="https://www.contentharmony.com/product/" target="_blank">
-  <img src="https://logo.clearbit.com/contentharmony.com" width="50" alt="Content Harmony">
-</a>
-
-<br>
+<p>
+  <a href="https://www.mister-auto.com/" target="_blank">
+    <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/5131a030-5672-11ec-be79-1d003d12ec5f.png" width="50" alt="Mister Auto">
+  </a>
+  <a href="https://www.uplucid.com/" target="_blank">
+    <img src="https://logo.clearbit.com/uplucid.com" width="50" alt="UPLUCID, K.K.">
+  </a>
+  <a href="https://www.contentharmony.com/" target="_blank">
+    <img src="https://opencollective-production.s3.us-west-1.amazonaws.com/89edb1b0-7d82-11ed-b99e-ab6e6f9cb69f.png" width="50" alt="Kane Jamison">
+  </a>
+  <a href="https://www.contentharmony.com/product/" target="_blank">
+    <img src="https://logo.clearbit.com/contentharmony.com" width="50" alt="Content Harmony">
+  </a>
+</p>
 
 [Become a Sponsor](https://opencollective.com/editorjs/contribute/sir-8679/checkout)
 
