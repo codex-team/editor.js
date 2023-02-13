@@ -651,13 +651,9 @@ export default class UI extends Module<UINodes> {
     }
 
     /**
-     * Clear Selection if user clicked somewhere only
-     * when it's not click inside block setting toggler to prevent multiple
-     * selection drag.
+     * Clear Selection if user clicked somewhere
      */
-    if (!isClickedInsideBlockSettingsToggler) {
-      this.Editor.BlockSelection.clearSelection(event);
-    }
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
