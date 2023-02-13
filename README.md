@@ -59,12 +59,6 @@ Install using NPM, Yarn, or [CDN](https://www.jsdelivr.com/package/npm/@editorjs
 npm i @editorjs/editorjs
 ```
 
-Include module in your code:
-
-```javascript
-import EditorJS from '@editorjs/editorjs';
-```
-
 Choose and install tools:
 
 - [Heading](https://github.com/editor-js/header)
@@ -92,6 +86,8 @@ Initialize the Editor:
 ```
 
 ```javascript
+import EditorJS from '@editorjs/editorjs';
+
 const editor = new EditorJS({
   tools: {
    // ... your tools
@@ -115,12 +111,6 @@ editor.save()
 ### Example
 
 Take a look at the [example.html](example/example.html) to view more detailed examples.
-
-## Browser compatibility
-
-
-| <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="16px" height="16px" /> Edge 12+ | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="16px" height="16px" /> Firefox 18+ | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="16px" height="16px" /> Chrome 49+ | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="16px" height="16px" /> Safari 10+ | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="16px" height="16px" /> iOS Safari 10+ | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="16px" height="16px" /> Opera 36+ |
-|-|-|-|-|-|-|
 
 
 ## Roadmap
@@ -200,8 +190,8 @@ This project exists thanks to all the people who contribute. <img src="https://o
 
 - [Awesome Editor.js](https://github.com/editor-js/awesome-editorjs)
 - [Official Tools](https://github.com/editor-js)
-- [Telegram Chat](https://t.me/codex_editor)
 - [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22)
+- [Telegram Chat](https://t.me/codex_editor)
 
 # About CodeX
 
