@@ -138,7 +138,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
       plusButton: 'ce-toolbar__plus',
       plusButtonShortcut: 'ce-toolbar__plus-shortcut',
       settingsToggler: 'ce-toolbar__settings-btn',
-      settingsTogglerDragging: 'ce-toolbar__settings-btn-dragging',
       settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
     };
   }
@@ -459,13 +458,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.Editor.BlockManager.currentBlock = this.hoveredBlock;
       this.Editor.BlockManager.currentBlock.selected = true;
 
-      this.nodes.settingsToggler.classList.add(this.CSS.settingsTogglerDragging);
 
       this.tooltip.hide(true);
     }, true);
 
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', (event: DragEvent) => {
-      this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerDragging);
       this.moveAndOpen(this.Editor.BlockManager.currentBlock);
     }, true);
 
