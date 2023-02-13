@@ -650,12 +650,10 @@ export default class UI extends Module<UINodes> {
       this.Editor.Toolbar.moveAndOpen(clickedBlock);
     }
 
-    const clickedOnSettingsToggler = this.Editor.Toolbar.nodes.settingsToggler.contains(target);
-
     /**
      * Clear Selection if user clicked somewhere
      */
-    if (!clickedOnSettingsToggler) {
+    if (!isClickedInsideBlockSettingsToggler) {
       this.Editor.BlockSelection.clearSelection(event);
     }
   }
