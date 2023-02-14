@@ -162,7 +162,22 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 You can support project improvement and development of new features with a donation to our team.
 
-[https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+[Donate via OpenCollective](https://opencollective.com/editorjs)
+\
+[Donate via Crypto](https://codex.so/donate)
+\
+[Donate via Patreon](https://www.patreon.com/editorjs)
+
+### Why donate
+
+Donations to open-source products have several advantages for your business:
+
+- If your business relies on some of our products, you'll probably want these products to be maintained
+- It helps products you rely on to evolve and get the new features
+- We can support contributors and the community around the project. You'll receive well organized docs, guides, etc.
+- We need to pay for our infrastructure and maintain public resources (domain names, homepages, docs, etc). Supporting it guarantees you to access any resources at the time you need them.
+- You can advertise by adding your brand assets and mentions on our public resources
+
 
 ### Sponsors
 
@@ -194,8 +209,20 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
 
 ### Contributors
 
-This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false&avatarHeight=34" />
+This project exists thanks to all the people who contribute. 
 
+<p><img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false&avatarHeight=34" /></p>
+
+### Need something special?
+
+Hire CodeX experts to resolve technical challenges and match your product requirements. 
+
+- Resolve a problem that has high value for you
+- Implement a new feature required by your business
+- Help with integration or tool development
+- Provide any consultation
+
+Contact us via team@codex.so and share your details
 
 ## Community
 
