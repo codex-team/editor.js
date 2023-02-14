@@ -63,13 +63,13 @@ npm i @editorjs/editorjs
 Choose and install tools:
 
 - [Heading](https://github.com/editor-js/header)
-- [Link embed](https://github.com/editor-js/link)
+- [Quote](https://github.com/editor-js/quote)
 - [Image](https://github.com/editor-js/image) 
 - [Simple Image](https://github.com/editor-js/simple-image) (without backend requirement)
-- [Checklist](https://github.com/editor-js/checklist)
 - [Nested List](https://github.com/editor-js/nested-list)
+- [Checklist](https://github.com/editor-js/checklist)
+- [Link embed](https://github.com/editor-js/link)
 - [Embeds](https://github.com/editor-js/embed) (YouTube, Twitch, Vimeo, Gfycat, Instagram, Twitter, etc)
-- [Quote](https://github.com/editor-js/quote)
 - [Table](https://github.com/editor-js/table)
 - [Delimiter](https://github.com/editor-js/delimiter)
 - [Warning](https://github.com/editor-js/warning)
@@ -77,6 +77,7 @@ Choose and install tools:
 - [Raw HTML](https://github.com/editor-js/raw)
 - [Attaches](https://github.com/editor-js/attaches)
 - [Marker](https://github.com/editor-js/marker)
+- [Inline Code](https://github.com/editor-js/inline-code)
 
 See the [😎 Awesome Editor.js](https://github.com/editor-js/awesome-editorjs) list for more tools.
 
@@ -87,13 +88,13 @@ Initialize the Editor:
 ```
 
 ```javascript
-import EditorJS from '@editorjs/editorjs';
+import EditorJS from '@editorjs/editorjs'
 
 const editor = new EditorJS({
   tools: {
    // ... your tools
   }
-});
+})
 ````
 
 See details about [Installation](https://editorjs.io/getting-started/) and [Configuration](https://editorjs.io/configuration/) at the documentation.
@@ -103,10 +104,7 @@ See details about [Installation](https://editorjs.io/getting-started/) and [Conf
 Call `editor.save()` and handle returned Promise with saved data.
 
 ```javascript
-editor.save()
-  .then((savedData) => {
-    console.log(savedData);
-  });
+const data = await editor.save()
 ```
 
 ### Example
@@ -139,7 +137,7 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
   - [ ] New cross-block caret moving
 - Ecosystem improvements
   - [x] CodeX Icons — the way to unify all tools and core icons
-  - [x] Homepage and Docs redesign
+  - [x] New Homepage and Docs
   - [x] @editorjs/create-tool for Tools bootstrapping
   - [ ] Editor.js DevTools — stand for core and tools development
   - [ ] Editor.js Design System
