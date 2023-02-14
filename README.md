@@ -9,9 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://editorjs.io/base-concepts/">Documentation</a> |
-  <a href="https://github.com/codex-team/editor.js/blob/next/docs/CHANGELOG.md">Changelog</a> |
-  <a href="https://github.com/codex-team/editor.js#roadmap">Roadmap</a>
+ <a href="https://editorjs.io/">editorjs.io</a> |
+  <a href="https://editorjs.io/base-concepts/">documentation</a> |
+  <a href="https://github.com/codex-team/editor.js/blob/next/docs/CHANGELOG.md">changelog</a>
+  
 </p>
 
 <p align="center">
