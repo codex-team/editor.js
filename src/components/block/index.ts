@@ -84,12 +84,11 @@ export enum BlockToolAPI {
 }
 
 /**
- * When dragging a block, where it can be placed relative to the focused
- * block.
+ * Available block drop zones position w.r.t. focused block.
  */
-export enum BlockDropZonePlacement {
-  Top = 'top',
-  Bottom = 'bottom',
+export enum BlockDropZonePosition {
+  TOP = 'top',
+  BOTTOM = 'bottom',
   // Left, Right could be added in the future
 }
 
@@ -517,28 +516,28 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Toggle drop target state
    *
-   * @param {undefined | BlockDropZonePlacement} state - 'undefined' if block is not a drop target
+   * @param {undefined | BlockDropZonePosition} state - 'undefined' if block is not a drop target
    */
-  public set dropTarget(state: undefined | BlockDropZonePlacement) {
+  public set dropTarget(state: undefined | BlockDropZonePosition) {
     if (!state || this.selected) {
       this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
     } else {
       this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
-      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePlacement.Top);
-      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePlacement.Bottom);
+      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.TOP);
+      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePosition.BOTTOM);
     }
   }
 
   /**
    * Return Block's dropTarget state
    *
-   * @returns {BlockDropZonePlacement | undefined}
+   * @returns {BlockDropZonePosition | undefined}
    */
-  public get dropTarget(): undefined | BlockDropZonePlacement {
+  public get dropTarget(): undefined | BlockDropZonePosition {
     if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
-      return BlockDropZonePlacement.Top;
+      return BlockDropZonePosition.TOP;
     } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
-      return BlockDropZonePlacement.Bottom;
+      return BlockDropZonePosition.BOTTOM;
     }
 
     return undefined;

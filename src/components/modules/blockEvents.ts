@@ -5,7 +5,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
-import { BlockDropZonePlacement } from '../block';
+import { BlockDropZonePosition } from '../block';
 
 /**
  *
@@ -169,8 +169,8 @@ export default class BlockEvents extends Module {
      * Add style for target drop zone position.
      */
     block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
-      BlockDropZonePlacement.Top :
-      BlockDropZonePlacement.Bottom;
+      BlockDropZonePosition.TOP :
+      BlockDropZonePosition.BOTTOM;
   }
 
   /**

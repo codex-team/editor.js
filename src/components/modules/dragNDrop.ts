@@ -1,5 +1,5 @@
 import SelectionUtils from '../selection';
-import Block, { BlockDropZonePlacement } from '../block';
+import Block, { BlockDropZonePosition } from '../block';
 
 import Module from '../__module';
 /**
@@ -136,7 +136,7 @@ export default class DragNDrop extends Module {
       // we are dragging a set of blocks
       const currentStartIndex = this.Editor.BlockManager.getBlockIndex(selectedBlocks[0]);
 
-      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
         if (targetIndex > currentStartIndex) {
           selectedBlocks.forEach((block) => {
             const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
@@ -150,7 +150,7 @@ export default class DragNDrop extends Module {
             this.Editor.BlockManager.move(targetIndex + i, blockIndex);
           });
         }
-      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
         if (targetIndex > currentStartIndex) {
           selectedBlocks.forEach((block) => {
             const blockIndex = this.Editor.BlockManager.getBlockIndex(block);
@@ -180,13 +180,13 @@ export default class DragNDrop extends Module {
 
       const currentIndex = this.Editor.BlockManager.currentBlockIndex;
 
-      if (targetBlock.dropTarget === BlockDropZonePlacement.Top) {
+      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
         if (targetIndex > currentIndex) {
           this.Editor.BlockManager.move(targetIndex - 1);
         } else {
           this.Editor.BlockManager.move(targetIndex);
         }
-      } else if (targetBlock.dropTarget === BlockDropZonePlacement.Bottom) {
+      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
         if (targetIndex > currentIndex) {
           this.Editor.BlockManager.move(targetIndex);
         } else {
