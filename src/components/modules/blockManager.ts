@@ -798,12 +798,12 @@ export default class BlockManager extends Module {
       BlockEvents.keyup(event);
     });
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
-      BlockEvents.dragOver(event);
+    this.readOnlyMutableListeners.on(block.holder, 'dragenter', () => {
+      BlockEvents.dragEnter();
     });
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
-      BlockEvents.dragLeave(event);
+    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+      BlockEvents.dragOver(event);
     });
 
     block.on('didMutated', (affectedBlock: Block) => {
