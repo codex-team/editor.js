@@ -143,6 +143,16 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Remove drag target style
+   *
+   */
+  public dragEnter(): void {
+    this.Editor.BlockManager.blocks.forEach((block) => {
+      block.dropTarget = undefined;
+    });
+  }
+
+  /**
    * Add drop target styles
    *
    * @param {DragEvent} event - drag over event
@@ -157,14 +167,6 @@ export default class BlockEvents extends Module {
     block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
       BlockDropZonePlacement.Top :
       BlockDropZonePlacement.Bottom;
-  }
-
-  /**
-   * Remove drop target style
-   *
-   * @param {DragEvent} event - drag leave event
-   */
-  public dragLeave(event: DragEvent): void {
   }
 
   /**
@@ -504,10 +506,10 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event: KeyboardEvent): boolean {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbar.toolbox.opened),
-      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
-      inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
-      conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
-      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
+        blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+        inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
+        conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
+        flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
     /**
      * Do not close Toolbar in cases:
