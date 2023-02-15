@@ -143,17 +143,21 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * Remove drag target style
-   *
+   * All drag enter on block 
+   *  - use to clear previous drop target zone style.
    */
   public dragEnter(): void {
+    /**
+     * Clear previous drop target zone for every block.
+     */
     this.Editor.BlockManager.blocks.forEach((block) => {
       block.dropTarget = undefined;
     });
   }
 
   /**
-   * Add drop target styles
+   * All drag over on block.
+   *  - Check the position of drag and suggest drop zone accordingly.
    *
    * @param {DragEvent} event - drag over event
    */
@@ -162,7 +166,7 @@ export default class BlockEvents extends Module {
     const rect = block.holder.getBoundingClientRect();
 
     /**
-     * Add style directive for drop position.
+     * Add style for target drop zone position.
      */
     block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
       BlockDropZonePlacement.Top :
