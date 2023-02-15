@@ -459,7 +459,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *
      * dargstart is used to select the current block/s and hide the tooltip for dragging.
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', (event: DragEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
       this.Editor.BlockManager.currentBlock = this.hoveredBlock;
       this.Editor.BlockManager.currentBlock.selected = true;
 
@@ -471,7 +471,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *
      * dargend is used to move the select block toolbar setting to dropped position.
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', (event: DragEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', () => {
       this.moveAndOpen(this.Editor.BlockManager.currentBlock);
     }, true);
 
