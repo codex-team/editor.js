@@ -514,14 +514,23 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Toggle drop target state
+   * Toggle drop target state.
    *
-   * @param {undefined | BlockDropZonePosition} state - 'undefined' if block is not a drop target
+   * @param {undefined | BlockDropZonePosition} state - 'undefined' if block is not a drop target or
+   * position of drop zone.
    */
   public set dropTarget(state: undefined | BlockDropZonePosition) {
+    
     if (!state || this.selected) {
+      /**
+       * If state is undefined or block is selected for drag 
+       * then remove the drop target style 
+       */
       this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
     } else {
+      /**
+       * Otherwise, toggle the block's drop target and drop zone position. 
+       */
       this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
       this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.TOP);
       this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePosition.BOTTOM);
@@ -529,7 +538,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Return Block's dropTarget state
+   * Return Block's dropTarget state.
    *
    * @returns {BlockDropZonePosition | undefined}
    */
