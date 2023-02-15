@@ -149,12 +149,12 @@ export default class BlockEvents extends Module {
    */
   public dragOver(event: DragEvent): void {
     const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
-    const bbox = block.holder.getBoundingClientRect();
+    const rect = block.holder.getBoundingClientRect();
 
     /**
      * Add style directive for drop position.
      */
-    block.dropTarget = (bbox.top + bbox.height / 2 >= event.clientY) ?
+    block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
       BlockDropZonePlacement.Top :
       BlockDropZonePlacement.Bottom;
   }
@@ -165,9 +165,6 @@ export default class BlockEvents extends Module {
    * @param {DragEvent} event - drag leave event
    */
   public dragLeave(event: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
-
-    block.dropTarget = undefined;
   }
 
   /**
