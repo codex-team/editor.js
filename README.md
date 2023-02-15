@@ -170,8 +170,8 @@ You can support project improvement and development of new features with a donat
 
 Donations to open-source products have several advantages for your business:
 
-- If your business relies on some of our products, you'll probably want these products to be maintained
-- It helps products you rely on to evolve and get the new features
+- If your business relies on Editor.js, you'll probably want it to be maintained
+- It helps Editor.js to evolve and get the new features
 - We can support contributors and the community around the project. You'll receive well organized docs, guides, etc.
 - We need to pay for our infrastructure and maintain public resources (domain names, homepages, docs, etc). Supporting it guarantees you to access any resources at the time you need them.
 - You can advertise by adding your brand assets and mentions on our public resources
