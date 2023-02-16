@@ -47,6 +47,15 @@ export default class DragNDrop extends Module {
       this.processDragStart(startDragEvent);
     });
 
+    // check for dragging is not successful then clear the style.
+    // this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragend', (startDragEvent: DragEvent) => {
+    //   if (startDragEvent.dataTransfer.dropEffect === 'none') {
+    //     console.log('Incomplete drag');
+    //   } else {
+    //     console.log('Drag completed successfully');
+    //   }
+    // });
+
     /**
      * Prevent default browser behavior to allow drop on non-contenteditable elements
      */
@@ -80,9 +89,7 @@ export default class DragNDrop extends Module {
       return;
     }
 
-    BlockManager.blocks.forEach((block) => {
-      block.dropTarget = undefined;
-    });
+    BlockManager.clearDropTargets();
 
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
       document.execCommand('delete');
@@ -167,9 +174,7 @@ export default class DragNDrop extends Module {
       }
 
       // this has to be cleaned after we drop the block
-      BlockManager.blocks.forEach((block) => {
-        block.dropTarget = undefined;
-      });
+      BlockManager.clearDropTargets();
 
       return true;
     }
@@ -195,9 +200,7 @@ export default class DragNDrop extends Module {
       }
 
       // this has to be cleaned after we drop the block
-      BlockManager.blocks.forEach((block) => {
-        block.dropTarget = undefined;
-      });
+      BlockManager.clearDropTargets();
 
       return true;
     }

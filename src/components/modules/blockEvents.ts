@@ -150,9 +150,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear previous drop target zone for every block.
      */
-    this.Editor.BlockManager.blocks.forEach((block) => {
-      block.dropTarget = undefined;
-    });
+    this.Editor.BlockManager.clearDropTargets();
   }
 
   /**

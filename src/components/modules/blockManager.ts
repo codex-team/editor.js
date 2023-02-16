@@ -625,6 +625,15 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Remove drop targets style from all Blocks.
+   */
+  public clearDropTargets(): void {
+    this.blocks.forEach((block) => {
+      block.dropTarget = undefined;
+    });
+  }
+
+  /**
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
