@@ -67,11 +67,11 @@ export enum CommonInternalSettings {
 }
 
 /**
- * Enum of Tool optoins provided by Block Tool
+ * Enum of Tool options provided by Block Tool
  */
 export enum InternalBlockToolSettings {
   /**
-   * Is linebreaks enabled for Tool
+   * Is line breaks enabled for Tool
    */
   IsEnabledLineBreaks = 'enableLineBreaks',
   /**
@@ -116,7 +116,7 @@ export enum InternalTuneSettings {
   IsTune = 'isTune',
 }
 
-export type ToolOptions = Omit<ToolSettings, 'class'>
+export type ToolOptions = Omit<ToolSettings, 'class'>;
 
 interface ConstructorOptions {
   name: string;
@@ -174,14 +174,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
 
   /**
    * @class
-   *
-   * @param name - Tool name
-   * @param constructable - Tool constructable blueprint
-   * @param config - user specified Tool config
-   * @param api - EditorJS API module
-   * @param defaultTool - default Tool name
-   * @param isInternal - is current Tool internal
-   * @param defaultPlaceholder - default user specified placeholder
+   * @param {ConstructorOptions} options - Constructor options
    */
   constructor({
     name,
@@ -249,7 +242,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    * Returns Tool's sanitizer configuration
    */
   public get sanitizeConfig(): SanitizerConfig {
-    return this.constructable[CommonInternalSettings.SanitizeConfig];
+    return this.constructable[CommonInternalSettings.SanitizeConfig] || {};
   }
 
   /**
@@ -278,5 +271,6 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    *
    * @param args
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public abstract create(...args: any[]): Type;
 }

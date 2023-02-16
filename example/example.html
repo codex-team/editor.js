@@ -281,8 +281,8 @@
       onReady: function(){
         saveButton.click();
       },
-      onChange: function() {
-        console.log('something changed');
+      onChange: function(api, event) {
+        console.log('something changed', event);
       }
     });
 

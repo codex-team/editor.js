@@ -1,12 +1,15 @@
 .ce-inline-toolbar {
+  --y-offset: 8px;
+
   @apply --overlay-pane;
-  transform: translateX(-50%) translateY(8px) scale(0.9);
+  transform: translateX(-50%) translateY(8px) scale(0.94);
   opacity: 0;
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
   will-change: transform, opacity;
   top: 0;
   left: 0;
+  z-index: 3;
 
   &--showed {
     opacity: 1;
@@ -15,7 +18,7 @@
   }
 
   &--left-oriented {
-    transform: translateX(-23px) translateY(8px) scale(0.9);
+    transform: translateX(-23px) translateY(8px) scale(0.94);
   }
 
   &--left-oriented&--showed {
@@ -23,7 +26,7 @@
   }
 
   &--right-oriented {
-    transform: translateX(-100%) translateY(8px) scale(0.9);
+    transform: translateX(-100%) translateY(8px) scale(0.94);
     margin-left: 23px;
   }
 
@@ -49,34 +52,31 @@
   }
 
   &__dropdown {
-    display: inline-flex;
-    height: var(--toolbar-buttons-size);
-    padding: 0 9px 0 10px;
+    display: flex;
+    padding: 6px;
     margin: 0 6px 0 -6px;
     align-items: center;
     cursor: pointer;
     border-right: 1px solid var(--color-gray-border);
+    box-sizing: border-box;
 
-    &:hover {
-      background: var(--bg-light);
+    @media (--can-hover) {
+      &:hover {
+        background: var(--bg-light);
+      }
     }
 
     &--hidden {
       display: none;
     }
 
-    &-content{
+    &-content,
+    &-arrow {
       display: flex;
-      font-weight: 500;
-      font-size: 14px;
-
       svg {
-        height: 12px;
+        width: var(--icon-size);
+        height: var(--icon-size);
       }
-    }
-
-    .icon--toggler-down {
-      margin-left: 4px;
     }
   }
 
@@ -89,19 +89,10 @@
 
 .ce-inline-tool {
   @apply --toolbar-button;
+
   border-radius: 0;
   line-height: normal;
-  width: auto;
-  padding: 0 5px !important;
-  min-width: 24px;
 
-  &:not(:last-of-type) {
-    margin-right: 2px;
-  }
-
-  .icon {
-    height: 12px;
-  }
 
   &--link {
     .icon--unlink {
@@ -131,6 +122,13 @@
     display: none;
     font-weight: 500;
     border-top: 1px solid rgba(201,201,204,.48);
+    -webkit-appearance: none;
+    font-family: inherit;
+
+    @media (--mobile){
+      font-size: 15px;
+      font-weight: 500;
+    }
 
     &::placeholder {
       color: var(--grayText);

@@ -30,12 +30,9 @@ contextRequire.keys().forEach((filename) => {
 
 /**
  * @class Core
- *
  * @classdesc Editor.js core class
- *
  * @property {EditorConfig} config - all settings
  * @property {EditorModules} moduleInstances - constructed editor components
- *
  * @type {Core}
  */
 export default class Core {
@@ -61,7 +58,6 @@ export default class Core {
 
   /**
    * @param {EditorConfig} config - user configuration
-   *
    */
   constructor(config?: EditorConfig|string) {
     /**
@@ -103,6 +99,7 @@ export default class Core {
            * Resolve this.isReady promise
            */
           onReady();
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         }, 500);
       })
       .catch((error) => {
@@ -173,6 +170,7 @@ export default class Core {
      *
      * @type {number}
      */
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
 
     const defaultBlockToolData: DefaultBlockToolData = {
@@ -351,7 +349,7 @@ export default class Core {
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log(`Module ${Module.displayName} skipped because`, 'warn', e);
+        _.log(`Module ${Module.displayName} skipped because`, 'error', e);
       }
     });
   }

@@ -1,7 +1,6 @@
 /**
  * @class BlockSelection
  * @classdesc Manages Block selection with shortcut CMD+A
- *
  * @module BlockSelection
  * @version 1.0.0
  */
@@ -13,6 +12,7 @@ import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
 import { SanitizerConfig } from '../../../types/configs';
+import { clean } from '../utils/sanitizer';
 
 /**
  *
@@ -189,10 +189,8 @@ export default class BlockSelection extends Module {
    *
    *  - Remove all ranges
    *  - Unselect all Blocks
-   *
-   * @param {boolean} readOnlyEnabled - "read only" state
    */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
+  public toggleReadOnly(): void {
     SelectionUtils.get()
       .removeAllRanges();
 
@@ -249,12 +247,13 @@ export default class BlockSelection extends Module {
         const eventKey = (reason as KeyboardEvent).key;
 
         /**
-         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentifier).
+         * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
          * So we use empty string
          *
          * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
          */
         Caret.insertContentAtCaretPosition(eventKey.length > 1 ? '' : eventKey);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
@@ -282,10 +281,9 @@ export default class BlockSelection extends Module {
    * Reduce each Block and copy its content
    *
    * @param {ClipboardEvent} e - copy/cut event
-   *
    * @returns {Promise<void>}
    */
-  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
+  public copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
      * Prevent default copy
      */
@@ -297,14 +295,12 @@ export default class BlockSelection extends Module {
       /**
        * Make <p> tag that holds clean HTML
        */
-      const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
       fragment.innerHTML = cleanHTML;
       fakeClipboard.appendChild(fragment);
     });
-
-    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
 
     const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
       .join('\n\n');
@@ -312,7 +308,16 @@ export default class BlockSelection extends Module {
 
     e.clipboardData.setData('text/plain', textPlain);
     e.clipboardData.setData('text/html', textHTML);
-    e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+
+    return Promise
+      .all(this.selectedBlocks.map((block) => block.save()))
+      .then(savedData => {
+        try {
+          e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+        } catch (err) {
+          // In Firefox we can't set data in async function
+        }
+      });
   }
 
   /**

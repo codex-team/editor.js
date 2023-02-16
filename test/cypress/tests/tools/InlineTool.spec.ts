@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import { ToolSettings } from '../../../../types';
 import { ToolType } from '../../../../src/components/tools/base';
@@ -12,9 +13,9 @@ describe('InlineTool', () => {
     constructable: class {
       public static sanitize = {
         rule1: 'rule1',
-      }
+      };
 
-      public static title = 'Title'
+      public static title = 'Title';
 
       public static reset;
       public static prepare;
@@ -25,7 +26,9 @@ describe('InlineTool', () => {
       public config: ToolSettings;
 
       /**
-       *
+       * @param options - constructor options
+       * @param options.api - EditorAPI
+       * @param options.config - tool config
        */
       constructor({ api, config }) {
         this.api = api;

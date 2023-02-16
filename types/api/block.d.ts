@@ -6,6 +6,11 @@ import {SavedData} from '../data-formats';
  */
 export interface BlockAPI {
   /**
+   * Block unique identifier
+   */
+  readonly id: string;
+
+  /**
    * Tool name
    */
   readonly name: string;
@@ -62,4 +67,10 @@ export interface BlockAPI {
    * @return {Promise<boolean>}
    */
   validate(data: BlockToolData): Promise<boolean>;
+
+  /**
+   * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+   * Can be useful for block changes invisible for editor core.
+   */
+  dispatchChange(): void;
 }

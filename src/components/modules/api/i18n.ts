@@ -14,7 +14,7 @@ export default class I18nAPI extends Module {
    * @param tool - tool object
    */
   private static getNamespace(tool: ToolClass): string {
-    if (tool.isTune) {
+    if (tool.isTune()) {
       return `blockTunes.${tool.name}`;
     }
 

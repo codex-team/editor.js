@@ -27,6 +27,7 @@ import {
   Toolbar,
   Tooltip,
   I18n,
+  Ui,
 } from './api';
 
 import { OutputData } from './data-formats';
@@ -48,6 +49,7 @@ export {
   Tool,
   ToolConstructable,
   ToolboxConfig,
+  ToolboxConfigEntry,
   ToolSettings,
   ToolConfig,
   PasteEvent,
@@ -63,6 +65,7 @@ export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {
   EditorConfig,
   SanitizerConfig,
+  SanitizerRule,
   PasteConfig,
   LogLevels,
   ConversionConfig,
@@ -70,6 +73,9 @@ export {
   Dictionary,
   DictValue,
   I18nConfig,
+  PopoverItem,
+  PopoverItemWithConfirmation,
+  PopoverItemWithoutConfirmation
 } from './configs';
 export {OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockAPI } from './api'
@@ -93,6 +99,7 @@ export interface API {
   tooltip: Tooltip;
   i18n: I18n;
   readOnly: ReadOnly;
+  ui: Ui;
 }
 
 /**

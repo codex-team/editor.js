@@ -2,7 +2,7 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
-import type { EditorConfig } from './../../../types/index';
+import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index'
 
 declare global {
@@ -14,6 +14,52 @@ declare global {
        * @example cy.createEditor({})
        */
       createEditor(editorConfig: EditorConfig): Chainable<EditorJS>
+
+      /**
+       * Paste command to dispatch paste event
+       *
+       * @usage
+       * cy.get('div').paste({'text/plain': 'Text', 'text/html': '<b>Text</b>'})
+       *
+       * @param data - map with MIME type as a key and data as value
+       */
+      paste(data: {[type: string]: string}): Chainable<Subject>
+
+      /**
+       * Copy command to dispatch copy event on subject
+       *
+       * @usage
+       * cy.get('div').copy().then(data => {})
+       */
+      copy(): Chainable<{ [type: string]: any }>;
+
+      /**
+       * Cut command to dispatch cut event on subject
+       *
+       * @usage
+       * cy.get('div').cut().then(data => {})
+       */
+      cut(): Chainable<{ [type: string]: any }>;
+
+      /**
+       * Calls EditorJS API render method
+       *
+       * @param data — data to render
+       */
+      render(data: OutputData): Chainable<EditorJS>;
+
+      /**
+       * Select passed text in element
+       * Note. Previous subject should have 'textNode' as firstChild
+       *
+       * Usage
+       * cy.get('[data-cy=editorjs]')
+       *  .find('.ce-paragraph')
+       *  .selectText('block te')
+       *
+       * @param text - text to select
+       */
+      selectText(text: string): Chainable<Subject>;
     }
 
     interface ApplicationWindow {

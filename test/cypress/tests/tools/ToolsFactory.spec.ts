@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import LinkInlineTool from '../../../../src/components/inline-tools/inline-tool-link';
 import MoveUpTune from '../../../../src/components/block-tunes/block-tune-move-up';
 import ToolsFactory from '../../../../src/components/tools/factory';

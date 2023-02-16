@@ -1,0 +1,36 @@
+name: Tests
+on: [pull_request]
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node14.17.0-chrome88-ff89
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn ci:pull_paragraph
+      - uses: cypress-io/github-action@v2
+        with:
+          config: video=false
+          browser: firefox
+          build: yarn build
+  chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn ci:pull_paragraph
+      - uses: cypress-io/github-action@v2
+        with:
+          config: video=false
+          browser: chrome
+          build: yarn build
+  edge:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn ci:pull_paragraph
+      - uses: cypress-io/github-action@v2
+        with:
+          config: video=false
+          browser: edge
+          build: yarn build

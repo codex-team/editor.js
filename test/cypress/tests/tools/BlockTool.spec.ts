@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import { BlockToolData, ToolSettings } from '../../../../types';
 import { ToolType } from '../../../../src/components/tools/base';
 import BlockTool from '../../../../src/components/tools/block';
+import InlineTool from '../../../../src/components/tools/inline';
+import ToolsCollection from '../../../../src/components/tools/collection';
 
 describe('BlockTool', () => {
   /**
@@ -11,8 +14,10 @@ describe('BlockTool', () => {
     name: 'blockTool',
     constructable: class {
       public static sanitize = {
-        rule1: 'rule1',
-      }
+        rule1: {
+          div: true,
+        },
+      };
 
       public static toolbox = {
         icon: 'Tool icon',
@@ -43,9 +48,7 @@ describe('BlockTool', () => {
       public api: object;
       public config: ToolSettings;
 
-      /**
-       *
-       */
+      // eslint-disable-next-line jsdoc/require-jsdoc
       constructor({ data, block, readOnly, api, config }) {
         this.data = data;
         this.block = block;
@@ -131,10 +134,87 @@ describe('BlockTool', () => {
     });
   });
 
-  it('.sanitizeConfig should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  context('.sanitizeConfig', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+      expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
+    });
+
+    it('should return composed config if there are enabled inline tools', () => {
+      const tool = new BlockTool(options as any);
+
+      const inlineTool = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            b: true,
+          };
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool] ]);
+
+      const expected = options.constructable.sanitize;
+
+      // tslint:disable-next-line:forin
+      for (const key in expected) {
+        expected[key] = {
+          ...expected[key],
+          b: true,
+        };
+      }
+
+      expect(tool.sanitizeConfig).to.be.deep.eq(expected);
+    });
+
+    it('should return inline tools config if block one is not set', () => {
+      const tool = new BlockTool({
+        ...options,
+        constructable: class {},
+      } as any);
+
+      const inlineTool1 = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            b: true,
+          };
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      const inlineTool2 = new InlineTool({
+        name: 'inlineTool',
+        constructable: class {
+          public static sanitize = {
+            a: true,
+          };
+        },
+        api: {},
+        config: {},
+      } as any);
+
+      tool.inlineTools = new ToolsCollection([ ['inlineTool', inlineTool1], ['inlineTool2', inlineTool2] ]);
+
+      expect(tool.sanitizeConfig).to.be.deep.eq(Object.assign(
+        {},
+        inlineTool1.sanitizeConfig,
+        inlineTool2.sanitizeConfig
+      ));
+    });
+
+    it('should return empty object by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        constructable: class {},
+      } as any);
+
+      expect(tool.sanitizeConfig).to.be.deep.eq({});
+    });
   });
 
   it('.isBlock() should return true', () => {
@@ -179,10 +259,24 @@ describe('BlockTool', () => {
     expect(tool.pasteConfig).to.be.deep.eq(options.constructable.pasteConfig);
   });
 
-  it('.enabledInlineTools should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  context('.enabledInlineTools', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+      expect(tool.enabledInlineTools).to.be.deep.eq(options.config.inlineToolbar);
+    });
+
+    it('should return false by default', () => {
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          inlineToolbar: undefined,
+        },
+      } as any);
+
+      expect(tool.enabledInlineTools).to.be.false;
+    });
   });
 
   it('.enabledBlockTunes should return correct value', () => {
@@ -255,13 +349,13 @@ describe('BlockTool', () => {
   });
 
   context('.toolbox', () => {
-    it('should return user provided toolbox config', () => {
+    it('should return user provided toolbox config wrapped in array', () => {
       const tool = new BlockTool(options as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.config.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.config.toolbox ]);
     });
 
-    it('should return Tool provided toolbox config if user one is not specified', () => {
+    it('should return Tool provided toolbox config wrapped in array if user one is not specified', () => {
       const tool = new BlockTool({
         ...options,
         config: {
@@ -270,10 +364,10 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool.toolbox).to.be.deep.eq(options.constructable.toolbox);
+      expect(tool.toolbox).to.be.deep.eq([ options.constructable.toolbox ]);
     });
 
-    it('should merge Tool provided toolbox config and user one', () => {
+    it('should merge Tool provided toolbox config and user one and wrap result in array in case both are objects', () => {
       const tool1 = new BlockTool({
         ...options,
         config: {
@@ -293,8 +387,101 @@ describe('BlockTool', () => {
         },
       } as any);
 
-      expect(tool1.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }));
-      expect(tool2.toolbox).to.be.deep.eq(Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }));
+      expect(tool1.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { title: options.config.toolbox.title }) ]);
+      expect(tool2.toolbox).to.be.deep.eq([ Object.assign({}, options.constructable.toolbox, { icon: options.config.toolbox.icon }) ]);
+    });
+
+    it('should replace Tool provided toolbox config with user defined config in case the first is an array and the second is an object', () => {
+      const toolboxEntries = [
+        {
+          title: 'Toolbox entry 1',
+        },
+        {
+          title: 'Toolbox entry 2',
+        },
+      ];
+      const userDefinedToolboxConfig = {
+        icon: options.config.toolbox.icon,
+        title: options.config.toolbox.title,
+      };
+      const tool = new BlockTool({
+        ...options,
+        constructable: {
+          ...options.constructable,
+          toolbox: toolboxEntries,
+        },
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      expect(tool.toolbox).to.be.deep.eq([ userDefinedToolboxConfig ]);
+    });
+
+    it('should replace Tool provided toolbox config with user defined config in case the first is an object and the second is an array', () => {
+      const userDefinedToolboxConfig = [
+        {
+          title: 'Toolbox entry 1',
+        },
+        {
+          title: 'Toolbox entry 2',
+        },
+      ];
+      const tool = new BlockTool({
+        ...options,
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      expect(tool.toolbox).to.be.deep.eq(userDefinedToolboxConfig);
+    });
+
+    it('should merge Tool provided toolbox config with user defined config in case both are arrays', () => {
+      const toolboxEntries = [
+        {
+          title: 'Toolbox entry 1',
+        },
+      ];
+
+      const userDefinedToolboxConfig = [
+        {
+          icon: 'Icon 1',
+        },
+        {
+          icon: 'Icon 2',
+          title: 'Toolbox entry 2',
+        },
+      ];
+
+      const tool = new BlockTool({
+        ...options,
+        constructable: {
+          ...options.constructable,
+          toolbox: toolboxEntries,
+        },
+        config: {
+          ...options.config,
+          toolbox: userDefinedToolboxConfig,
+        },
+      } as any);
+
+      const expected = userDefinedToolboxConfig.map((item, i) => {
+        const toolToolboxEntry = toolboxEntries[i];
+
+        if (toolToolboxEntry) {
+          return {
+            ...toolToolboxEntry,
+            ...item,
+          };
+        }
+
+        return item;
+      });
+
+      expect(tool.toolbox).to.be.deep.eq(expected);
     });
 
     it('should return undefined if user specifies false as a value', () => {
@@ -313,7 +500,7 @@ describe('BlockTool', () => {
       const tool = new BlockTool({
         ...options,
         constructable: class {
-          public static toolbox = false
+          public static toolbox = false;
         },
       } as any);
 
@@ -324,7 +511,7 @@ describe('BlockTool', () => {
       const tool = new BlockTool({
         ...options,
         constructable: class {
-          public static toolbox = {}
+          public static toolbox = {};
         },
       } as any);
 

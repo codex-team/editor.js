@@ -12,6 +12,7 @@ module.exports = (env, argv) => {
   const { LicenseWebpackPlugin } = require('license-webpack-plugin');
   const pkg = require('./package.json');
 
+
   /**
    * Environment
    *
@@ -78,6 +79,9 @@ module.exports = (env, argv) => {
             },
             {
               loader: 'ts-loader',
+              options: {
+                configFile: NODE_ENV === 'production' ? 'tsconfig.build.json' : 'tsconfig.json',
+              },
             },
           ],
         },
@@ -87,15 +91,7 @@ module.exports = (env, argv) => {
           use: [
             'postcss-loader',
           ],
-        },
-        {
-          test: /\.(svg)$/,
-          use: [
-            {
-              loader: 'raw-loader',
-            },
-          ],
-        },
+        }
       ],
     },
 
