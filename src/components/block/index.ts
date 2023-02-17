@@ -210,7 +210,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
     /**
-     * We won't fire a Block mutation event for nodes that contain 'data-mutation-free' attributes
+     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
      */
     let shouldFireUpdate;
 
@@ -230,7 +230,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         const { addedNodes, removedNodes } = record;
         const changedNodes = [
           ...Array.from(addedNodes),
-          ...Array.from(removedNodes)
+          ...Array.from(removedNodes),
         ];
 
         return changedNodes.some((node) => {
@@ -239,8 +239,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
           }
 
           return (node as HTMLElement).dataset.mutationFree === 'true';
-        })
-      })
+        });
+      });
 
       if (everyRecordIsMutationFree) {
         shouldFireUpdate = false;
