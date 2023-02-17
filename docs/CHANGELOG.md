@@ -4,6 +4,7 @@
 
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
+- `Improvement` - Improved types for default block data used on block split [#1520](https://github.com/codex-team/editor.js/issues/1520).
 
 ### 2.26.5
 

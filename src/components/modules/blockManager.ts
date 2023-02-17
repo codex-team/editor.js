@@ -9,7 +9,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockToolData, DefaultBlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
@@ -531,10 +531,7 @@ export default class BlockManager extends Module {
 
     wrapper.appendChild(extractedFragment as DocumentFragment);
 
-    /**
-     * @todo make object in accordance with Tool
-     */
-    const data = {
+    const data: DefaultBlockToolData = {
       text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
     };
 
