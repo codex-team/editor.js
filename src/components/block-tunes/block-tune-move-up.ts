@@ -4,7 +4,6 @@
  * @copyright <CodeX Team> 2018
  */
 import { API, BlockTune } from '../../../types';
-import Popover from '../../components/utils/popover';
 import { IconChevronUp } from '@codexteam/icons';
 import { TunesMenuConfig } from '../../../types/tools';
 
@@ -47,34 +46,21 @@ export default class MoveUpTune implements BlockTune {
     return {
       icon: IconChevronUp,
       title: this.api.i18n.t('Move up'),
-      onActivate: (item, e): void => this.handleClick(e),
+      onActivate: (): void => this.handleClick(),
       name: 'move-up',
     };
   }
 
   /**
    * Move current block up
-   *
-   * @param {MouseEvent} event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
     const previousBlock = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     if (currentBlockIndex === 0 || !currentBlock || !previousBlock) {
-      const button = (event.target as HTMLElement)
-        .closest('.' + Popover.CSS.item)
-        .querySelector('.' + Popover.CSS.itemIcon);
-
-      button.classList.add(this.CSS.animation);
-
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
-
-      return;
+      throw new Error('Unable to move Block up since it is already the first');
     }
 
     const currentBlockElement = currentBlock.holder;

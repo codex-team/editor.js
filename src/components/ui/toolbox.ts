@@ -123,14 +123,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public make(): Element {
     this.popover = new Popover({
       scopeElement: this.api.ui.nodes.redactor,
-      className: Toolbox.CSS.toolbox,
       searchable: true,
-      filterLabel: this.i18nLabels.filter,
-      nothingFoundLabel: this.i18nLabels.nothingFound,
+      messages: {
+        nothingFound: this.i18nLabels.nothingFound,
+        search: this.i18nLabels.filter,
+      },
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
     /**
      * Enable tools shortcuts
@@ -138,6 +139,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.enableShortcuts();
 
     this.nodes.toolbox = this.popover.getElement();
+    this.nodes.toolbox.classList.add(Toolbox.CSS.toolbox);
 
     return this.nodes.toolbox;
   }
@@ -161,7 +163,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     }
 
     this.removeAllShortcuts();
-    this.popover?.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
   }
 
   /**
@@ -208,10 +210,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   * Handles overlay click
+   * Handles popover close event
    */
-  private onOverlayClicked = (): void => {
-    this.close();
+  private onPopoverClose = (): void => {
+    this.opened = false;
+    this.emit(ToolboxEvent.Closed);
   };
 
   /**
