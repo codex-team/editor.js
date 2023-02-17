@@ -204,8 +204,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when DOM mutation has been happened
    */
   private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = []): void => {
+    /**
+     * We won't fire a Block mutation event for nodes that contain 'data-mutation-free' attributes
+     *
+     * Update from 2023, Feb 17:
+     *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
+     *    since there could be a real mutations same-time with mutation-free changes,
+     *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
+     *    — we should fire 'didMutated' event in that case
+     */
     const shouldFireUpdate = mutationsOrInputEvent instanceof InputEvent ||
-      !mutationsOrInputEvent.some(({
+      !mutationsOrInputEvent.every(({
         addedNodes = [],
         removedNodes,
       }) => {
