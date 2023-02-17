@@ -27,6 +27,9 @@ jobs:
   edge:
     runs-on: windows-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
