@@ -204,7 +204,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when DOM mutation has been happened
    */
   private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = []): void => {
-    const shouldFireUpdate = mutationsOrInputEvent instanceof InputEvent ||
+    const shouldFireUpdate = mutationsOrInputEvent instanceof InputEvent || (mutationsOrInputEvent instanceof Event && mutationsOrInputEvent.type === 'input') ||
       !mutationsOrInputEvent.some(({
         addedNodes = [],
         removedNodes,
