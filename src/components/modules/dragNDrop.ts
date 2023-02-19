@@ -1,6 +1,6 @@
 import SelectionUtils from '../selection';
 import Block, { BlockDropZonePosition } from '../block';
-
+import * as _ from '../utils';
 import Module from '../__module';
 /**
  *
@@ -123,12 +123,7 @@ export default class DragNDrop extends Module {
   private async processBlockDrop(dropEvent: DragEvent): Promise<boolean> {
     const { BlockManager } = this.Editor;
 
-    const draggingImageElement = document.body.querySelector('#draggingImage');
-
-    if (draggingImageElement) {
-      draggingImageElement.remove();
-    }
-
+    this.removeDragImage();
     const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
 
     const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
@@ -184,36 +179,19 @@ export default class DragNDrop extends Module {
    * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
+    const { BlockManager, InlineToolbar } = this.Editor;
+
     if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
       this.isStartedAtEditor = true;
     }
 
-    this.Editor.InlineToolbar.close();
+    InlineToolbar.close();
 
-    let draggingImageElement: HTMLElement;
+    const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
 
-    const selectedBlocks = this.Editor.BlockManager.blocks.filter(block => block.selected);
+    const dragImage = this.createDragImage(selectedBlocks);
 
-    if (selectedBlocks.length > 1) {
-      draggingImageElement = document.createElement('div');
-      draggingImageElement.id = 'draggingImage';
-      draggingImageElement.style.position = 'absolute';
-      draggingImageElement.style.top = '-1000px';
-      selectedBlocks.forEach(block => {
-        const blockContent = block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true);
-
-        draggingImageElement.appendChild(blockContent);
-      });
-      document.body.appendChild(draggingImageElement);
-    } else {
-      const block = this.Editor.BlockManager.currentBlock;
-
-      draggingImageElement = block.holder.querySelector(`.${Block.CSS.content}`);
-    }
-
-    if (draggingImageElement) {
-      dragStartEvent.dataTransfer.setDragImage(draggingImageElement, 0, 0);
-    }
+    dragStartEvent.dataTransfer.setDragImage(dragImage, 0, 0);
   }
 
   /**
@@ -221,5 +199,32 @@ export default class DragNDrop extends Module {
    */
   private processDragOver(dragEvent: DragEvent): void {
     dragEvent.preventDefault();
+  }
+
+  private createDragImage(blocks: Block[]): HTMLElement {
+    const { BlockManager } = this.Editor;
+
+    if (blocks.length == 1) {
+      const block = BlockManager.currentBlock;
+
+      return block.holder.querySelector(`.${Block.CSS.content}`);
+    }
+    const dragImage: HTMLElement = document.createElement('div');
+
+    dragImage.id = `drag-image-${_.generateId()}`;
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    blocks.forEach(block => {
+      const blockContent = block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true);
+
+      dragImage.appendChild(blockContent);
+    });
+    document.body.appendChild(dragImage);
+
+    return dragImage;
+  }
+
+  private removeDragImage(): void {
+    document.querySelector('[id^="drag-image-"]')?.remove();
   }
 }
