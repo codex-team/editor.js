@@ -137,35 +137,26 @@ export default class DragNDrop extends Module {
     // we are dragging a set of blocks
     const currentStartIndex = BlockManager.getBlockIndex(selectedBlocks[0]);
 
-    if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
-      if (targetIndex > currentStartIndex) {
-        selectedBlocks.forEach((block) => {
-          const blockIndex = BlockManager.getBlockIndex(block);
+    selectedBlocks.forEach((block, i) => {
+      const blockIndex = BlockManager.getBlockIndex(block);
 
-          BlockManager.move(targetIndex - 1, blockIndex);
-        });
-      } else {
-        selectedBlocks.forEach((block, i) => {
-          const blockIndex = BlockManager.getBlockIndex(block);
+      let toIndex;
 
-          BlockManager.move(targetIndex + i, blockIndex);
-        });
+      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
+        if (targetIndex > currentStartIndex) {
+          toIndex = targetIndex - 1;
+        } else {
+          toIndex = targetIndex + i;
+        }
+      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
+        if (targetIndex > currentStartIndex) {
+          toIndex = targetIndex;
+        } else {
+          toIndex = targetIndex + 1 + i;
+        }
       }
-    } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
-      if (targetIndex > currentStartIndex) {
-        selectedBlocks.forEach((block) => {
-          const blockIndex = BlockManager.getBlockIndex(block);
-
-          BlockManager.move(targetIndex, blockIndex);
-        });
-      } else {
-        selectedBlocks.forEach((block, i) => {
-          const blockIndex = BlockManager.getBlockIndex(block);
-
-          BlockManager.move(targetIndex + 1 + i, blockIndex);
-        });
-      }
-    }
+      BlockManager.move(toIndex, blockIndex);
+    });
 
     // this has to be cleaned after we drop the block
     BlockManager.clearDropTargets();
