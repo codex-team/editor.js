@@ -95,6 +95,13 @@ export interface EditorConfig {
   onChange?(api: API, event: CustomEvent): void;
 
   /**
+   * On Paste hook for parsing HTML before sanitization
+   * @param {string} html Input pasted HTML
+   * @returns {string} cleaned / updated HTML
+   */
+  onPasteHTML?(html: string): string;
+
+  /**
    * Defines default toolbar for all tools.
    */
   inlineToolbar?: string[]|boolean;
