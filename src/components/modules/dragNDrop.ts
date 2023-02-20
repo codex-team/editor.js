@@ -85,9 +85,7 @@ export default class DragNDrop extends Module {
 
     dropEvent.preventDefault();
 
-    if (await this.processBlockDrop(dropEvent)) {
-      return;
-    }
+    this.processBlockDrop(dropEvent);
 
     BlockManager.clearDropTargets();
 
@@ -104,7 +102,11 @@ export default class DragNDrop extends Module {
     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      Caret.setToBlock(targetBlock, Caret.positions.END);
+      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
+        Caret.setToBlock(targetBlock, Caret.positions.START);
+      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
+        Caret.setToBlock(targetBlock, Caret.positions.END);
+      }
     } else {
       const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
 
@@ -118,9 +120,8 @@ export default class DragNDrop extends Module {
    * Checks and process the drop of a block. Returns {boolean} depending if a block drop has been processed.
    *
    * @param dropEvent {DragEvent}
-   * @returns {boolean}
    */
-  private async processBlockDrop(dropEvent: DragEvent): Promise<boolean> {
+  private processBlockDrop(dropEvent: DragEvent): void {
     const { BlockManager } = this.Editor;
 
     this.removeDragImage();
@@ -157,11 +158,6 @@ export default class DragNDrop extends Module {
       }
       BlockManager.move(toIndex, blockIndex);
     });
-
-    // this has to be cleaned after we drop the block
-    BlockManager.clearDropTargets();
-
-    return true;
   }
 
   /**
