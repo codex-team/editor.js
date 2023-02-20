@@ -5,6 +5,7 @@
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
+- `Fix` — Resolve compiler error from importing the BlockToolData type
 
 ### 2.26.5
 
