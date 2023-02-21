@@ -15,6 +15,12 @@ export default class DragNDrop extends Module {
   private isStartedAtEditor = false;
 
   /**
+   *
+   */
+  public get isDragStarted(): boolean {
+    return this.isStartedAtEditor;
+  }
+  /**
    * Toggle read-only state
    *
    * if state is true:
@@ -182,6 +188,10 @@ export default class DragNDrop extends Module {
     dragEvent.preventDefault();
   }
 
+  /**
+   *
+   * @param blocks
+   */
   private createDragImage(blocks: Block[]): HTMLElement {
     const { BlockManager } = this.Editor;
 
@@ -205,6 +215,9 @@ export default class DragNDrop extends Module {
     return dragImage;
   }
 
+  /**
+   *
+   */
   private removeDragImage(): void {
     document.querySelector('[id^="drag-image-"]')?.remove();
   }

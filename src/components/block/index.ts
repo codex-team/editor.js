@@ -520,16 +520,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * position of drop zone.
    */
   public set dropTarget(state: undefined | BlockDropZonePosition) {
-    
     if (!state || this.selected) {
       /**
-       * If state is undefined or block is selected for drag 
-       * then remove the drop target style 
+       * If state is undefined or block is selected for drag
+       * then remove the drop target style
        */
       this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
     } else {
       /**
-       * Otherwise, toggle the block's drop target and drop zone position. 
+       * Otherwise, toggle the block's drop target and drop zone position.
        */
       this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
       this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.TOP);

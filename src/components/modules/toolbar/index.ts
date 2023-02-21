@@ -511,7 +511,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         /**
          * Do not move toolbar if Block Settings or Toolbox opened
          */
-        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened) {
+        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened || this.Editor.DragNDrop.isDragStarted) {
           return;
         }
 

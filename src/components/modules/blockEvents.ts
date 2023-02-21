@@ -143,7 +143,7 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * All drag enter on block 
+   * All drag enter on block
    *  - use to clear previous drop target zone style.
    */
   public dragEnter(): void {
