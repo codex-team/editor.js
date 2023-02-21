@@ -512,7 +512,7 @@ describe('Editor Tools Api', () => {
           /** config specified handled tag */
           public static get pasteConfig(): PasteConfig {
             return {
-              tags: ['img'], // only tag name specified. Attributes should be sanitized
+              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
             };
           }
 
@@ -564,7 +564,7 @@ describe('Editor Tools Api', () => {
           /** config specified handled tag */
           public static get pasteConfig(): PasteConfig {
             return {
-              tags: ['img'], // only tag name specified. Attributes should be sanitized
+              tags: [ 'img' ], // only tag name specified. Attributes should be sanitized
             };
           }
 
