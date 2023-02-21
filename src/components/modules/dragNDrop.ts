@@ -15,11 +15,14 @@ export default class DragNDrop extends Module {
   private isStartedAtEditor = false;
 
   /**
+   * Flag that identifies if the drag event is started at the editor.
    *
+   * @returns {boolean}
    */
   public get isDragStarted(): boolean {
     return this.isStartedAtEditor;
   }
+
   /**
    * Toggle read-only state
    *
@@ -43,7 +46,7 @@ export default class DragNDrop extends Module {
    * Add drag events listeners to editor zone
    */
   private enableModuleBindings(): void {
-    const { UI } = this.Editor;
+    const { UI, BlockManager } = this.Editor;
 
     this.readOnlyMutableListeners.on(UI.nodes.holder, 'drop', async (dropEvent: DragEvent) => {
       await this.processDrop(dropEvent);
@@ -53,14 +56,14 @@ export default class DragNDrop extends Module {
       this.processDragStart(startDragEvent);
     });
 
-    // check for dragging is not successful then clear the style.
-    // this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragend', (startDragEvent: DragEvent) => {
-    //   if (startDragEvent.dataTransfer.dropEffect === 'none') {
-    //     console.log('Incomplete drag');
-    //   } else {
-    //     console.log('Drag completed successfully');
-    //   }
-    // });
+    /**
+     * Clear drop targets if drop effect is none.
+     */
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragend', (dragEndEvent: DragEvent) => {
+      if (dragEndEvent.dataTransfer.dropEffect === 'none') {
+        BlockManager.clearDropTargets();
+      }
+    });
 
     /**
      * Prevent default browser behavior to allow drop on non-contenteditable elements
@@ -91,6 +94,10 @@ export default class DragNDrop extends Module {
     } = this.Editor;
 
     dropEvent.preventDefault();
+
+    /**
+     * If we are dropping a block, process it and return.
+     */
     if (this.isStartedAtEditor && BlockSelection.anyBlockSelected) {
       this.processBlockDrop(dropEvent);
     }
@@ -121,16 +128,19 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   * Checks and process the drop of a block. Returns {boolean} depending if a block drop has been processed.
+   * Process block drop event.
    *
-   * @param dropEvent {DragEvent}
+   * @param dropEvent {DragEvent} - drop event
    */
   private processBlockDrop(dropEvent: DragEvent): void {
     const { BlockManager } = this.Editor;
 
+    /**
+     * Remove drag image from DOM.
+     */
     this.removeDragImage();
-    const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
 
+    const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
     const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
 
     if (!targetBlock) {
@@ -147,6 +157,9 @@ export default class DragNDrop extends Module {
 
       let toIndex;
 
+      /**
+       * Calculate the index where the block should be moved to.
+       */
       if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
         if (targetIndex > currentStartIndex) {
           toIndex = targetIndex - 1;
@@ -165,13 +178,16 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   * Handle drag start event
+   * Handle drag start event by setting drag image.
    *
    * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
     const { BlockManager } = this.Editor;
 
+    /**
+     * If we are dragging a block, set the flag to true.
+     */
     this.isStartedAtEditor = true;
 
     const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
@@ -189,17 +205,26 @@ export default class DragNDrop extends Module {
   }
 
   /**
+   * Create drag image for drag-n-drop.
    *
-   * @param blocks
+   * @param blocks {Block[]} - blocks to create drag image for.
+   * @returns {HTMLElement} - drag image.
    */
   private createDragImage(blocks: Block[]): HTMLElement {
     const { BlockManager } = this.Editor;
 
+    /**
+     * If we are dragging only one block, return its content.
+     */
     if (blocks.length == 1) {
       const block = BlockManager.currentBlock;
 
       return block.holder.querySelector(`.${Block.CSS.content}`);
     }
+
+    /**
+     * If we are dragging multiple blocks, create a drag image with all blocks content.
+     */
     const dragImage: HTMLElement = document.createElement('div');
 
     dragImage.id = `drag-image-${_.generateId()}`;
@@ -216,7 +241,7 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   *
+   * Remove drag image from DOM.
    */
   private removeDragImage(): void {
     document.querySelector('[id^="drag-image-"]')?.remove();

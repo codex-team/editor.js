@@ -313,7 +313,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       } else {
         this.blockActions.hide();
       }
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 50)();
   }
 
@@ -422,7 +422,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
     });
 
-    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }: {block: BlockAPI }) => {
+    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }: { block: BlockAPI }) => {
       const { BlockManager, Caret } = this.Editor;
       const newBlock = BlockManager.getBlockById(block.id);
 
@@ -462,7 +462,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Settings toggler
      *
-     * dargstart is used to select the current block/s and hide the tooltip for dragging.
+     * dargstart is used to select the current block/s to hide
+     * the tooltip and close Inilne toolbar for dragging.
      */
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
       const { BlockManager, InlineToolbar } = this.Editor;
@@ -514,11 +515,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
       /**
        * Subscribe to the 'block-hovered' event
        */
-      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: { block: Block }) => {
         /**
-         * Do not move toolbar if Block Settings or Toolbox opened
+         * Do not move toolbar if Block Settings or Toolbox opened or Drag started.
          */
-        if (this.Editor.BlockSettings.opened || this.toolboxInstance.opened || this.Editor.DragNDrop.isDragStarted) {
+        if (this.Editor.BlockSettings.opened ||
+          this.toolboxInstance.opened ||
+          this.Editor.DragNDrop.isDragStarted) {
           return;
         }
 
