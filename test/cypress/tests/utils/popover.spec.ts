@@ -31,20 +31,17 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
       doc.body.append(popover.getElement());
 
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', actionIcon);
 
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-label')
+        .get('.ce-popover-item__title')
         .should('have.text', actionTitle);
 
       // First click on item
@@ -52,12 +49,12 @@ describe('Popover', () => {
 
       // Check icon has changed
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', confirmActionIcon);
 
       // Check label has changed
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-label')
+        .get('.ce-popover-item__title')
         .should('have.text', confirmActionTitle);
 
       // Second click
@@ -83,9 +80,6 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -93,7 +87,7 @@ describe('Popover', () => {
 
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 
@@ -110,9 +104,6 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -120,7 +111,7 @@ describe('Popover', () => {
 
       /* Check item has disabled class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'ce-popover__item--disabled')
+        .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
           // Check onActivate callback has never been called
@@ -141,9 +132,6 @@ describe('Popover', () => {
     ];
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.spy(popover, 'hide');
@@ -171,9 +159,6 @@ describe('Popover', () => {
     ];
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -182,7 +167,7 @@ describe('Popover', () => {
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
         .click()
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 
@@ -207,9 +192,6 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -217,20 +199,20 @@ describe('Popover', () => {
 
       /** Check first item is active */
       cy.get('[data-item-name=testItem1]')
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
 
       /** Check second item is not active */
       cy.get('[data-item-name=testItem2]')
-        .should('not.have.class', 'ce-popover__item--active');
+        .should('not.have.class', 'ce-popover-item--active');
 
       /* Click second item and check it became active */
       cy.get('[data-item-name=testItem2]')
         .click()
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
 
       /** Check first item became not active */
       cy.get('[data-item-name=testItem1]')
-        .should('not.have.class', 'ce-popover__item--active');
+        .should('not.have.class', 'ce-popover-item--active');
     });
   });
 
@@ -246,9 +228,6 @@ describe('Popover', () => {
     ];
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -257,7 +236,25 @@ describe('Popover', () => {
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
         .click()
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
+    });
+  });
+
+  it('should render custom html content', () => {
+    const customHtml = document.createElement('div');
+
+    customHtml.setAttribute('data-cy-name', 'customContent');
+    customHtml.innerText = 'custom html content';
+    const popover = new Popover({
+      customContent: customHtml,
+      items: [],
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /* Check custom content exists in the popover */
+      cy.get('[data-cy-name=customContent]');
     });
   });
 });
