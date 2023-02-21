@@ -1,6 +1,7 @@
 /**
  * Contains keyboard and mouse events bound on each Block by Block Manager
  */
+import Block from '../block';
 import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
@@ -27,6 +28,10 @@ export default class BlockEvents extends Module {
     switch (event.keyCode) {
       case _.keyCodes.BACKSPACE:
         this.backspace(event);
+        break;
+
+      case _.keyCodes.DELETE:
+        this.delete(event);
         break;
 
       case _.keyCodes.ENTER:
@@ -329,17 +334,81 @@ export default class BlockEvents extends Module {
       /**
        * Merge Blocks
        */
-      this.mergeBlocks();
+      this.mergeBlocks(BlockManager.previousBlock, BlockManager.currentBlock);
+    }
+  }
+
+  /**
+   * Handle delete keydown on Block
+   *
+   * @param {KeyboardEvent} event - keydown
+   */
+  private delete(event: KeyboardEvent): void {
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+    const tool = currentBlock.tool;
+
+    /**
+     * Check if Block should be removed by current Delete keydown
+     */
+    if (currentBlock.selected || (currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput)) {
+      event.preventDefault();
+
+      const index = BlockManager.currentBlockIndex;
+
+      BlockManager.removeBlock();
+
+      Caret.setToBlock(
+        BlockManager.getBlockByIndex(index),
+        Caret.positions.START
+      );
+
+      /** Close Toolbar */
+      this.Editor.Toolbar.close();
+
+      /** Clear selection */
+      BlockSelection.clearSelection(event);
+
+      return;
+    }
+
+    /**
+     * Don't handle Delete when Tool sets enableLineBreaks to true.
+     * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     *
+     * But if caret is at end of the block, we allow to remove it by delete
+     */
+    if (tool.isLineBreaksEnabled && !Caret.isAtEnd) {
+      return;
+    }
+
+    const isLastBlock = BlockManager.currentBlockIndex >= (BlockManager.blocks.length - 1);
+    const canMergeBlocks = Caret.isAtEnd &&
+      SelectionUtils.isCollapsed &&
+      currentBlock.currentInput === currentBlock.lastInput &&
+      !isLastBlock;
+
+    if (canMergeBlocks) {
+      /**
+       * preventing browser default behaviour
+       */
+      event.preventDefault();
+
+      /**
+       * Merge Blocks
+       */
+      this.mergeBlocks(BlockManager.currentBlock, BlockManager.nextBlock);
     }
   }
 
   /**
    * Merge current and previous Blocks if they have the same type
+   *
+   * @param {Block} targetBlock target block to merge into
+   * @param {Block} blockToMerge source block to merge from
    */
-  private mergeBlocks(): void {
+  private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
     const { BlockManager, Caret, Toolbar } = this.Editor;
-    const targetBlock = BlockManager.previousBlock;
-    const blockToMerge = BlockManager.currentBlock;
 
     /**
      * Blocks that can be merged:
