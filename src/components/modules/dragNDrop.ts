@@ -81,11 +81,13 @@ export default class DragNDrop extends Module {
       BlockManager,
       Caret,
       Paste,
+      BlockSelection,
     } = this.Editor;
 
     dropEvent.preventDefault();
-
-    this.processBlockDrop(dropEvent);
+    if (this.isStartedAtEditor && BlockSelection.anyBlockSelected) {
+      this.processBlockDrop(dropEvent);
+    }
 
     BlockManager.clearDropTargets();
 
@@ -102,11 +104,7 @@ export default class DragNDrop extends Module {
     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
-        Caret.setToBlock(targetBlock, Caret.positions.START);
-      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
-        Caret.setToBlock(targetBlock, Caret.positions.END);
-      }
+      Caret.setToBlock(targetBlock, Caret.positions.END);
     } else {
       const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
 
@@ -166,13 +164,9 @@ export default class DragNDrop extends Module {
    * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
-    const { BlockManager, InlineToolbar } = this.Editor;
+    const { BlockManager } = this.Editor;
 
-    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
-      this.isStartedAtEditor = true;
-    }
-
-    InlineToolbar.close();
+    this.isStartedAtEditor = true;
 
     const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
 

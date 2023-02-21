@@ -460,10 +460,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * dargstart is used to select the current block/s and hide the tooltip for dragging.
      */
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
-      this.Editor.BlockManager.currentBlock = this.hoveredBlock;
-      this.Editor.BlockManager.currentBlock.selected = true;
+      const { BlockManager, InlineToolbar } = this.Editor;
 
       this.tooltip.hide(true);
+      InlineToolbar.close();
+
+      BlockManager.currentBlock = this.hoveredBlock;
+      BlockManager.currentBlock.selected = true;
     }, true);
 
     /**
