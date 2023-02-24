@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.26.0-rc.6",
+  "version": "2.27.0-rc.1",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -52,7 +52,7 @@
     "@cypress/webpack-preprocessor": "^5.6.0",
     "@editorjs/code": "^2.7.0",
     "@editorjs/delimiter": "^1.2.0",
-    "@editorjs/header": "^2.6.1",
+    "@editorjs/header": "^2.7.0",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^14.14.35",
     "@types/webpack": "^4.41.12",
@@ -94,7 +94,7 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
-    "@codexteam/icons": "^0.0.4",
+    "@codexteam/icons": "0.1.0",
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.5",
     "html-janitor": "^2.0.4",

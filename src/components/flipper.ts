@@ -279,15 +279,17 @@ export default class Flipper {
     }
 
     if (this.iterator.currentItem) {
+      /**
+       * Stop Enter propagation only if flipper is ready to select focused item
+       */
+      event.stopPropagation();
+      event.preventDefault();
       this.iterator.currentItem.click();
     }
 
     if (_.isFunction(this.activateCallback)) {
       this.activateCallback(this.iterator.currentItem);
     }
-
-    event.preventDefault();
-    event.stopPropagation();
   }
 
   /**

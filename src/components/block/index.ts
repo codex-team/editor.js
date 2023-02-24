@@ -21,6 +21,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
+import { TunesMenuConfigItem } from '../../../types/tools';
 
 /**
  * Interface describes Block class constructor argument
@@ -201,16 +202,52 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Is fired when DOM mutation has been happened
+   *
+   * mutationsOrInputEvent — actual changes
+   *   - MutationRecord[] - any DOM change
+   *   - InputEvent — <input> change
+   *   - undefined — manual triggering of block.dispatchChange()
    */
-  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = []): void => {
-    const shouldFireUpdate = mutationsOrInputEvent instanceof InputEvent ||
-      !mutationsOrInputEvent.some(({
-        addedNodes = [],
-        removedNodes,
-      }) => {
-        return [...Array.from(addedNodes), ...Array.from(removedNodes)]
-          .some(node => $.isElement(node) && (node as HTMLElement).dataset.mutationFree === 'true');
+  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
+    /**
+     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
+     */
+    let shouldFireUpdate;
+
+    if (mutationsOrInputEvent === undefined) {
+      shouldFireUpdate = true;
+    } else if (mutationsOrInputEvent instanceof InputEvent) {
+      shouldFireUpdate = true;
+    } else {
+      /**
+       * Update from 2023, Feb 17:
+       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
+       *    since there could be a real mutations same-time with mutation-free changes,
+       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
+       *    — we should fire 'didMutated' event in that case
+       */
+      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
+        const { addedNodes, removedNodes } = record;
+        const changedNodes = [
+          ...Array.from(addedNodes),
+          ...Array.from(removedNodes),
+        ];
+
+        return changedNodes.some((node) => {
+          if ($.isElement(node) === false) {
+            return false;
+          }
+
+          return (node as HTMLElement).dataset.mutationFree === 'true';
+        });
       });
+
+      if (everyRecordIsMutationFree) {
+        shouldFireUpdate = false;
+      } else {
+        shouldFireUpdate = true;
+      }
+    }
 
     /**
      * In case some mutation free elements are added or removed, do not trigger didMutated event
@@ -646,15 +683,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public getTunes(): [PopoverItem[], HTMLElement] {
     const customHtmlTunesContainer = document.createElement('div');
-    const tunesItems: PopoverItem[] = [];
+    const tunesItems: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [
-      ...this.defaultTunesInstances.values(),
       ...this.tunesInstances.values(),
+      ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
     [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {

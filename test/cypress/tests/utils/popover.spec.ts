@@ -6,9 +6,9 @@ import { PopoverItem } from '../../../../types';
 describe('Popover', () => {
   it('should support confirmation chains', () => {
     const actionIcon = 'Icon 1';
-    const actionLabel = 'Action';
+    const actionTitle = 'Action';
     const confirmActionIcon = 'Icon 2';
-    const confirmActionLabel = 'Confirm action';
+    const confirmActionTitle = 'Confirm action';
 
     /**
      * Confirmation is moved to separate variable to be able to test it's callback execution.
@@ -16,14 +16,14 @@ describe('Popover', () => {
      */
     const confirmation = {
       icon: confirmActionIcon,
-      label: confirmActionLabel,
+      title: confirmActionTitle,
       onActivate: cy.stub(),
     };
 
     const items: PopoverItem[] = [
       {
         icon: actionIcon,
-        label: actionLabel,
+        title: actionTitle,
         name: 'testItem',
         confirmation,
       },
@@ -31,34 +31,31 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
       doc.body.append(popover.getElement());
 
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', actionIcon);
 
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-label')
-        .should('have.text', actionLabel);
+        .get('.ce-popover-item__title')
+        .should('have.text', actionTitle);
 
       // First click on item
       cy.get('[data-item-name=testItem]').click();
 
       // Check icon has changed
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-icon')
+        .get('.ce-popover-item__icon')
         .should('have.text', confirmActionIcon);
 
       // Check label has changed
       cy.get('[data-item-name=testItem]')
-        .get('.ce-popover__item-label')
-        .should('have.text', confirmActionLabel);
+        .get('.ce-popover-item__title')
+        .should('have.text', confirmActionTitle);
 
       // Second click
       cy.get('[data-item-name=testItem]')
@@ -74,7 +71,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         isActive: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -83,9 +80,6 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -93,7 +87,7 @@ describe('Popover', () => {
 
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
     });
   });
 
@@ -101,7 +95,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         isDisabled: true,
         name: 'testItem',
         onActivate: cy.stub(),
@@ -110,9 +104,6 @@ describe('Popover', () => {
 
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -120,7 +111,7 @@ describe('Popover', () => {
 
       /* Check item has disabled class */
       cy.get('[data-item-name=testItem]')
-        .should('have.class', 'ce-popover__item--disabled')
+        .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
           // Check onActivate callback has never been called
@@ -133,7 +124,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         closeOnActivate: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -141,9 +132,6 @@ describe('Popover', () => {
     ];
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.spy(popover, 'hide');
@@ -163,7 +151,7 @@ describe('Popover', () => {
     const items: PopoverItem[] = [
       {
         icon: 'Icon',
-        label: 'Label',
+        title: 'Title',
         toggle: true,
         name: 'testItem',
         onActivate: (): void => {},
@@ -171,9 +159,6 @@ describe('Popover', () => {
     ];
     const popover = new Popover({
       items,
-      filterLabel: '',
-      nothingFoundLabel: '',
-      scopeElement: null,
     });
 
     cy.document().then(doc => {
@@ -182,7 +167,94 @@ describe('Popover', () => {
       /* Check item has active class */
       cy.get('[data-item-name=testItem]')
         .click()
-        .should('have.class', 'ce-popover__item--active');
+        .should('have.class', 'ce-popover-item--active');
+    });
+  });
+
+  it('should perform radiobutton-like behavior among the items that have toggle property value set to the same string value', () => {
+    const items: PopoverItem[] = [
+      {
+        icon: 'Icon 1',
+        title: 'Title 1',
+        toggle: 'group-name',
+        name: 'testItem1',
+        isActive: true,
+        onActivate: (): void => {},
+      },
+      {
+        icon: 'Icon 2',
+        title: 'Title 2',
+        toggle: 'group-name',
+        name: 'testItem2',
+        onActivate: (): void => {},
+      },
+    ];
+
+    const popover = new Popover({
+      items,
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /** Check first item is active */
+      cy.get('[data-item-name=testItem1]')
+        .should('have.class', 'ce-popover-item--active');
+
+      /** Check second item is not active */
+      cy.get('[data-item-name=testItem2]')
+        .should('not.have.class', 'ce-popover-item--active');
+
+      /* Click second item and check it became active */
+      cy.get('[data-item-name=testItem2]')
+        .click()
+        .should('have.class', 'ce-popover-item--active');
+
+      /** Check first item became not active */
+      cy.get('[data-item-name=testItem1]')
+        .should('not.have.class', 'ce-popover-item--active');
+    });
+  });
+
+  it('should toggle item if it is the only item in toggle group', () => {
+    const items: PopoverItem[] = [
+      {
+        icon: 'Icon',
+        title: 'Title',
+        toggle: 'key',
+        name: 'testItem',
+        onActivate: (): void => {},
+      },
+    ];
+    const popover = new Popover({
+      items,
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /* Check item has active class */
+      cy.get('[data-item-name=testItem]')
+        .click()
+        .should('have.class', 'ce-popover-item--active');
+    });
+  });
+
+  it('should render custom html content', () => {
+    const customHtml = document.createElement('div');
+
+    customHtml.setAttribute('data-cy-name', 'customContent');
+    customHtml.innerText = 'custom html content';
+    const popover = new Popover({
+      customContent: customHtml,
+      items: [],
+    });
+
+    cy.document().then(doc => {
+      doc.body.append(popover.getElement());
+
+      /* Check custom content exists in the popover */
+      cy.get('[data-cy-name=customContent]');
     });
   });
 });

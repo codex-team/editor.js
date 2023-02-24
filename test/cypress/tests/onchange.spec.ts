@@ -131,7 +131,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=delimiter]')
+      .get('div.ce-popover-item[data-item-name=delimiter]')
       .click();
 
     cy.get('@onChange').should('be.calledThrice');
@@ -178,7 +178,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=header]')
+      .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
     cy.get('@onChange').should('be.calledTwice');
@@ -221,14 +221,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('span.cdx-settings-button[data-level=4]')
-      .click()
-      /**
-       * For some reason, the first click fires the mutation of removeFakeCursor only, so we need to click again.
-       * Reproduced only in Cypress.
-       *
-       * @todo debug it later
-       */
+      .get('.ce-settings .ce-popover-item:nth-child(4)')
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({

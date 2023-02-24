@@ -70,7 +70,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: Popover;
+  private popover: Popover | undefined;
 
   /**
    * List of Tools available. Some of them will be shown in the Toolbox
@@ -86,7 +86,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Current module HTML Elements
    */
   private nodes: {
-    toolbox: HTMLElement;
+    toolbox: HTMLElement | null;
   } = {
       toolbox: null,
     };
@@ -101,11 +101,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       toolbox: 'ce-toolbox',
     };
   }
-
-  /**
-   * Id of listener added used to remove it on destroy()
-   */
-  private clickListenerId: string = null;
 
   /**
    * Toolbox constructor
@@ -128,14 +123,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   public make(): Element {
     this.popover = new Popover({
       scopeElement: this.api.ui.nodes.redactor,
-      className: Toolbox.CSS.toolbox,
       searchable: true,
-      filterLabel: this.i18nLabels.filter,
-      nothingFoundLabel: this.i18nLabels.nothingFound,
+      messages: {
+        nothingFound: this.i18nLabels.nothingFound,
+        search: this.i18nLabels.filter,
+      },
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
     /**
      * Enable tools shortcuts
@@ -143,6 +139,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     this.enableShortcuts();
 
     this.nodes.toolbox = this.popover.getElement();
+    this.nodes.toolbox.classList.add(Toolbox.CSS.toolbox);
 
     return this.nodes.toolbox;
   }
@@ -150,8 +147,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   /**
    * Returns true if the Toolbox has the Flipper activated and the Flipper has selected button
    */
-  public hasFocus(): boolean {
-    return this.popover.hasFocus();
+  public hasFocus(): boolean | undefined {
+    return this.popover?.hasFocus();
   }
 
   /**
@@ -165,10 +162,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       this.nodes.toolbox = null;
     }
 
-    this.api.listeners.offById(this.clickListenerId);
-
     this.removeAllShortcuts();
-    this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
   }
 
   /**
@@ -189,7 +184,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       return;
     }
 
-    this.popover.show();
+    this.popover?.show();
     this.opened = true;
     this.emit(ToolboxEvent.Opened);
   }
@@ -198,7 +193,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    * Close Toolbox
    */
   public close(): void {
-    this.popover.hide();
+    this.popover?.hide();
     this.opened = false;
     this.emit(ToolboxEvent.Closed);
   }
@@ -215,10 +210,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
   }
 
   /**
-   * Handles overlay click
+   * Handles popover close event
    */
-  private onOverlayClicked = (): void => {
-    this.close();
+  private onPopoverClose = (): void => {
+    this.opened = false;
+    this.emit(ToolboxEvent.Closed);
   };
 
   /**
@@ -226,24 +222,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
    */
   @_.cacheable
   private get toolsToBeDisplayed(): BlockTool[] {
-    return Array
-      .from(this.tools.values())
-      .reduce((result, tool) => {
-        const toolToolboxSettings = tool.toolbox;
+    const result: BlockTool[] = [];
 
-        if (toolToolboxSettings) {
-          const validToolboxSettings = toolToolboxSettings.filter(item => {
-            return this.areToolboxSettingsValid(item, tool.name);
-          });
+    this.tools.forEach((tool) => {
+      const toolToolboxSettings = tool.toolbox;
 
-          result.push({
-            ...tool,
-            toolbox: validToolboxSettings,
-          });
-        }
+      if (toolToolboxSettings) {
+        result.push(tool);
+      }
+    });
 
-        return result;
-      }, []);
+    return result;
   }
 
   /**
@@ -257,7 +246,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
       return {
         icon: toolboxItem.icon,
-        label: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
+        title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
         name: tool.name,
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
@@ -267,40 +256,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
     };
 
     return this.toolsToBeDisplayed
-      .reduce((result, tool) => {
+      .reduce<PopoverItem[]>((result, tool) => {
         if (Array.isArray(tool.toolbox)) {
           tool.toolbox.forEach(item => {
             result.push(toPopoverItem(item, tool));
           });
-        } else {
+        } else if (tool.toolbox !== undefined)  {
           result.push(toPopoverItem(tool.toolbox, tool));
         }
 
         return result;
       }, []);
-  }
-
-  /**
-   * Validates tool's toolbox settings
-   *
-   * @param toolToolboxSettings - item to validate
-   * @param toolName - name of the tool used in console warning if item is not valid
-   */
-  private areToolboxSettingsValid(toolToolboxSettings: ToolboxConfigEntry, toolName: string): boolean {
-    /**
-     * Skip tools that don't pass 'toolbox' property
-     */
-    if (!toolToolboxSettings) {
-      return false;
-    }
-
-    if (toolToolboxSettings && !toolToolboxSettings.icon) {
-      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
-
-      return false;
-    }
-
-    return true;
   }
 
   /**

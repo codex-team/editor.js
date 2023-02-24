@@ -2,10 +2,12 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
+import { TunesMenuConfigItem } from '../../../../types/tools';
+import { resolveAliases } from '../../utils/resolve-aliases';
+import Popover, { PopoverEvent } from '../../utils/popover';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -52,7 +54,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @todo remove once BlockSettings becomes standalone non-module class
    */
   public get flipper(): Flipper {
-    return this.popover.flipper;
+    return this.popover?.flipper;
   }
 
   /**
@@ -63,7 +65,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: Popover;
+  private popover: Popover | undefined;
+
 
   /**
    * Panel with block settings with 2 sections:
@@ -71,7 +74,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *  - Default Settings [Move, Remove, etc]
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div');
+    this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
   }
 
   /**
@@ -108,19 +111,19 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-
     this.popover = new Popover({
-      className: this.CSS.settings,
       searchable: true,
-      filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItems,
+      items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
+      messages: {
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+        search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+      },
     });
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
-    this.popover.on(PopoverEvent.Close, () => this.close());
+
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
     this.nodes.wrapper.append(this.popover.getElement());
 
@@ -164,12 +167,19 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
-      this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+      this.popover.off(PopoverEvent.Close, this.onPopoverClose);
       this.popover.destroy();
       this.popover.getElement().remove();
       this.popover = null;
     }
   }
+
+  /**
+   * Handles popover close event
+   */
+  private onPopoverClose = (): void => {
+    this.close();
+  };
 
   /**
    * Returns list of buttons and inputs inside specified container
@@ -187,9 +197,17 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Handles overlay click
+   * Resolves aliases in tunes menu items
+   *
+   * @param item - item with resolved aliases
    */
-  private onOverlayClicked = (): void => {
-    this.close();
-  };
+  private resolveTuneAliases(item: TunesMenuConfigItem): TunesMenuConfigItem {
+    const result = resolveAliases(item, { label: 'title' });
+
+    if (item.confirmation) {
+      result.confirmation = this.resolveTuneAliases(item.confirmation);
+    }
+
+    return result;
+  }
 }

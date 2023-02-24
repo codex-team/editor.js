@@ -2,7 +2,7 @@
 import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
 
-describe.only('Block ids', () => {
+describe('Block ids', () => {
   beforeEach(function () {
     cy.createEditor({
       tools: {
@@ -33,7 +33,7 @@ describe.only('Block ids', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=header]')
+      .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
     cy.get('[data-cy=editorjs]')

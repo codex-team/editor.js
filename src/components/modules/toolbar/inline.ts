@@ -68,7 +68,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 5;
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  private readonly toolbarVerticalMargin: number = _.isMobileScreen() ? 20 : 6;
 
   /**
    * TODO: Get rid of this
@@ -458,10 +459,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     });
 
-    this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
-      placement: 'top',
-      hidingDelay: 100,
-    });
+    if (_.isMobileScreen() === false ) {
+      this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+        placement: 'top',
+        hidingDelay: 100,
+      });
+    }
   }
 
   /**
@@ -585,10 +588,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }));
     }
 
-    this.tooltip.onHover(button, tooltipContent, {
-      placement: 'top',
-      hidingDelay: 100,
-    });
+    if (_.isMobileScreen() === false ) {
+      this.tooltip.onHover(button, tooltipContent, {
+        placement: 'top',
+        hidingDelay: 100,
+      });
+    }
 
     instance.checkState(SelectionUtils.get());
   }

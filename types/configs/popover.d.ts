@@ -3,14 +3,14 @@
  */
 interface PopoverItemBase {
   /**
-   * Item icon to be appeared near a title
-   */
-  icon: string;
-
-  /**
    * Displayed text
    */
-  label: string;
+  title?: string;
+
+  /**
+   * Item icon to be appeared near a title
+   */
+  icon?: string;
 
   /**
    * Additional displayed text
@@ -39,9 +39,11 @@ interface PopoverItemBase {
   name?: string;
 
   /**
-   * True if item should be highlighted once activated
+   * Defines whether item should toggle on click. 
+   * Can be represented as boolean value or a string key. 
+   * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
-  toggle?: boolean;
+  toggle?: boolean | string;
 }
 
 /**
@@ -52,7 +54,7 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: Partial<PopoverItem>;
+  confirmation: PopoverItem;
 
   onActivate?: never;
 }

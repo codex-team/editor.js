@@ -1,12 +1,12 @@
-import Dom from '../dom';
-import Listeners from './listeners';
+import Dom from '../../dom';
+import Listeners from '../listeners';
 import { IconSearch } from '@codexteam/icons';
 
 /**
  * Item that could be searched
  */
 interface SearchableItem {
-  label: string;
+  title?: string;
 }
 
 /**
@@ -41,7 +41,7 @@ export default class SearchInput {
   /**
    * Externally passed callback for the search
    */
-  private readonly onSearch: (items: SearchableItem[]) => void;
+  private readonly onSearch: (query: string, items: SearchableItem[]) => void;
 
   /**
    * Styles
@@ -66,7 +66,7 @@ export default class SearchInput {
    */
   constructor({ items, onSearch, placeholder }: {
     items: SearchableItem[];
-    onSearch: (items: SearchableItem[]) => void;
+    onSearch: (query: string, items: SearchableItem[]) => void;
     placeholder: string;
   }) {
     this.listeners = new Listeners();
@@ -96,7 +96,7 @@ export default class SearchInput {
   public clear(): void {
     this.input.value = '';
     this.searchQuery = '';
-    this.onSearch(this.foundItems);
+    this.onSearch('', this.foundItems);
   }
 
   /**
@@ -128,7 +128,7 @@ export default class SearchInput {
     this.listeners.on(this.input, 'input', () => {
       this.searchQuery = this.input.value;
 
-      this.onSearch(this.foundItems);
+      this.onSearch(this.searchQuery, this.foundItems);
     });
   }
 
@@ -145,7 +145,7 @@ export default class SearchInput {
    * @param item - item to be checked
    */
   private checkItem(item: SearchableItem): boolean {
-    const text = item.label.toLowerCase();
+    const text = item.title?.toLowerCase() || '';
     const query = this.searchQuery.toLowerCase();
 
     return text.includes(query);
