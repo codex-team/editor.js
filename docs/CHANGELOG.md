@@ -3,38 +3,39 @@
 ### 2.27.0
 
 - `Refactoring` — Popover class refactored.
-- `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
+- `Improvement` — _Toolbox_ — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
 - `Fix` — Resolve compiler error from importing the BlockToolData type
+- `Fix` — Check if element supports selection before setting caret to it [#1853](https://github.com/codex-team/editor.js/issues/1853)
 
 ### 2.26.5
 
-- `Fix` — *Types* — Remove unnecessary import that creates a dependency on the `cypress`.
+- `Fix` — _Types_ — Remove unnecessary import that creates a dependency on the `cypress`.
 
 ### 2.26.4
 
-- `Improvement` — *Menu Config* — Property `label` renamed to `title`.
+- `Improvement` — _Menu Config_ — Property `label` renamed to `title`.
 
 ### 2.26.3
 
-- `Fix` — *Paste Module* — fix for a problem with specifying of `pasteConfig().tags` in upper case  [#2208](https://github.com/codex-team/editor.js/issues/2208).
+- `Fix` — _Paste Module_ — fix for a problem with specifying of `pasteConfig().tags` in upper case [#2208](https://github.com/codex-team/editor.js/issues/2208).
 
 ### 2.26.2
 
-- `Fix` — *Menu Config* — Installed tunes are rendered above default tunes again.
+- `Fix` — _Menu Config_ — Installed tunes are rendered above default tunes again.
 
 ### 2.26.1
 
-- `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
+- `Improvement` — _Menu Config_ — Now it becomes possible to create toggle groups.
 
 ### 2.26.0
 
-- `New` — *UI* — Block Tunes became vertical just like the Toolbox 🤩
-- `New` — *Block Tunes API* — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This improvement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
-- `New` — *Tools API* — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
-- `New` — *UI* — Meet the new icons from [CodeX Icons](https://github.com/codex-team/icons) pack 🛍 💝
-- `New` — *BlocksAPI* — the `blocks.insert()` method now also have the optional `id` param. If passed, this id will be used instead of the generated one.
-- `Deprecated` — *Styles API* — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
+- `New` — _UI_ — Block Tunes became vertical just like the Toolbox 🤩
+- `New` — _Block Tunes API_ — Now `render()` method of a Block Tune can return config with just icon, label and callback instead of custom HTML. This improvement is a key to the new straightforward way of configuring tune's appearance in Block Tunes menu.
+- `New` — _Tools API_ — As well as `render()` in `Tunes API`, Tool's `renderSettings()` now also supports new configuration format.
+- `New` — _UI_ — Meet the new icons from [CodeX Icons](https://github.com/codex-team/icons) pack 🛍 💝
+- `New` — _BlocksAPI_ — the `blocks.insert()` method now also have the optional `id` param. If passed, this id will be used instead of the generated one.
+- `Deprecated` — _Styles API_ — CSS classes `.cdx-settings-button` and `.cdx-settings-button--active` are not recommended to use. Consider configuring your block settings with new JSON API instead.
 - `Fix` — Wrong element not highlighted anymore when popover opened.
 - `Fix` — When Tunes Menu open keydown events can not be handled inside plugins.
 - `Fix` — If a Tool specifies some tags to substitute on paste, all attributes of that tags will be removed before passing them to the tool. Possible XSS vulnerability fixed.
@@ -42,15 +43,15 @@
 - `Fix` — Workaround for the HTMLJanitor bug with Tables (https://github.com/guardian/html-janitor/issues/3) added
 - `Fix` — Toolbox shortcuts appearance and execution fixed [#2112](https://github.com/codex-team/editor.js/issues/2112)
 - `Fix` — Inline Tools click handling on mobile devices improved
-- `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
-- `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
-- `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
+- `Improvement` — _Tools API_ — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
+- `Improvement` — _CodeStyle_ — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
+- `Improvement` — _ToolsAPI_ — The `icon` property of the `toolbox` getter became optional.
 
 ### 2.25.0
 
-- `New` — *Tools API* — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
-Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
-- `New` — *Blocks API* — `composeBlockData()` method was added.
+- `New` — _Tools API_ — Introducing new feature — toolbox now can have multiple entries for one tool! <br>
+  Due to that API changes: tool's `toolbox` getter now can return either a single config item or an array of config items
+- `New` — _Blocks API_ — `composeBlockData()` method was added.
 
 ### 2.24.4
 
@@ -65,8 +66,8 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Fix` — Scrolling issue when opening toolbox on mobile fixed
 - `Fix` — Typo in toolbox empty placeholder fixed
 - `Fix` — The issue with scroll jumping on block hovering have fixed [2036](https://github.com/codex-team/editor.js/issues/2036)
-- `Improvement` — *Dev Example Page* - Add popup example page
-- `Improvement` — *UI* - The Toolbox will restore the internal scroll on every opening
+- `Improvement` — _Dev Example Page_ - Add popup example page
+- `Improvement` — _UI_ - The Toolbox will restore the internal scroll on every opening
 
 ### 2.24.1
 
@@ -74,9 +75,9 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.24.0
 
-- `New` — *UI* — The Toolbox became vertical 🥳
-- `Improvement` — *UI* — the Plus button will always be shown (previously, it appears only for empty blocks)
-- `Improvement` — *Dev Example Page* - Server added to allow opening example page on other devices in network.
+- `New` — _UI_ — The Toolbox became vertical 🥳
+- `Improvement` — _UI_ — the Plus button will always be shown (previously, it appears only for empty blocks)
+- `Improvement` — _Dev Example Page_ - Server added to allow opening example page on other devices in network.
 - `Fix` — `UI` — the Toolbar won't move on hover at mobile viewports. Resolves [#1972](https://github.com/codex-team/editor.js/issues/1972)
 - `Fix` — `OnChange` event invocation after block insertion. [#1997](https://github.com/codex-team/editor.js/issues/1997)
 - `Fix` — `ReadOnly` — the `readonly.isEnabled` API getter now works correctly after `readonly.toggle()` calling. Resolves [#1822](https://github.com/codex-team/editor.js/issues/1822)
@@ -92,21 +93,21 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.23.0
 
-- `Improvement` — *EditorConfig* — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
-- `New` — *Block API* — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
-- `Improvement` — *UI* — Block Tunes toggler moved to the left
-- `Improvement` — *UI* — Block Actions (BT toggler + Plus Button) will appear on block hovering instead of click
-- `Improvement` — *UI* — Block Tunes toggler icon and Plus button icon updated
-- `Improvement` — *Dev Example Page* — The menu with helpful buttons added to the bottom of the screen
-- `Improvement` — *Dev Example Page* — The 'dark' theme added. Now we can code at night more comfortably.
-- `Improvement` — *Rectangle Selection* — paint optimized
-- `Fix` — *Rectangle Selection* — the first click after RS was not clear selection state. Now does.
-- `Improvement` — *Blocks API* — toolbar moving logic removed from `blocks.move()` and `blocks.swap()` methods. Instead, you should use Toolbar API (it was used by MoveUp and MoveDown tunes, they were updated).
-- `New` — *Blocks API* — The `getBlockIndex()` method added
-- `New` — *Blocks API* — the `insert()` method now has the `replace: boolean` parameter
-- `New` — *Blocks API* —  the `insert()` method now returns the inserted `Block API`
-- `New` — *Listeners API* — the `on()` method now returns the listener id.
-- `New` — *Listeners API* — the new `offById()` method added
+- `Improvement` — _EditorConfig_ — The `onChange` callback now accepts two arguments: EditorJS API and the CustomEvent with `type` and `detail` allowing to determine what happened with a Block
+- `New` — _Block API_ — The new `dispatchChange()` method allows to manually trigger the 'onChange' callback. Useful when Tool made a state mutation that is invisible for editor core.
+- `Improvement` — _UI_ — Block Tunes toggler moved to the left
+- `Improvement` — _UI_ — Block Actions (BT toggler + Plus Button) will appear on block hovering instead of click
+- `Improvement` — _UI_ — Block Tunes toggler icon and Plus button icon updated
+- `Improvement` — _Dev Example Page_ — The menu with helpful buttons added to the bottom of the screen
+- `Improvement` — _Dev Example Page_ — The 'dark' theme added. Now we can code at night more comfortably.
+- `Improvement` — _Rectangle Selection_ — paint optimized
+- `Fix` — _Rectangle Selection_ — the first click after RS was not clear selection state. Now does.
+- `Improvement` — _Blocks API_ — toolbar moving logic removed from `blocks.move()` and `blocks.swap()` methods. Instead, you should use Toolbar API (it was used by MoveUp and MoveDown tunes, they were updated).
+- `New` — _Blocks API_ — The `getBlockIndex()` method added
+- `New` — _Blocks API_ — the `insert()` method now has the `replace: boolean` parameter
+- `New` — _Blocks API_ — the `insert()` method now returns the inserted `Block API`
+- `New` — _Listeners API_ — the `on()` method now returns the listener id.
+- `New` — _Listeners API_ — the new `offById()` method added
 - `New` — `API` — The new `UiApi` section was added. It allows accessing some editor UI nodes and methods.
 - `Refactoring` — Toolbox became a standalone class instead of a Module. It can be accessed only through the Toolbar module.
 - `Refactoring` — CI flow optimized.
@@ -120,9 +121,9 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 ### 2.22.2
 
 - `Improvement` — Inline Toolbar might be used for any contenteditable element inside Editor.js zone
-- `Improvement` *Tunes API* - Tunes now can provide sanitize configuration
-- `Fix` *Tunes API* - Tune config now passed to constructor under `config` property
-- `Fix` *Types* - Add common type for internal and external Tools configuration
+- `Improvement` _Tunes API_ - Tunes now can provide sanitize configuration
+- `Fix` _Tunes API_ - Tune config now passed to constructor under `config` property
+- `Fix` _Types_ - Add common type for internal and external Tools configuration
 - `Fix` — Block's destroy method is called on block deletion
 - `Fix` - Fix jump to the button of editor zone on CBS
 
@@ -183,7 +184,6 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Refactoring` - Shortcuts module is util now.
 - `Fix` - Fix bubbling on BlockManagers' listener [#1433](https://github.com/codex-team/editor.js/issues/1433).
 
-
 ### 2.19.1
 
 - `Improvements` - The [Cypress](https://www.cypress.io) was integrated as the end-to-end testing framework
@@ -203,7 +203,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `New` - Tool's `reset` static method added to the API to clean up any data added by Tool on initialization
 - `Improvements` - The `initialBlock` property of Editor config is deprecated. Use the `defaultBlock` instead. [#993](https://github.com/codex-team/editor.js/issues/993)
 - `Improvements` - BlockAPI `call()` method now returns the result of calling method, thus allowing it to expose arbitrary data as needed [#1205](https://github.com/codex-team/editor.js/pull/1205)
-- `Improvements` - Useless log about missed i18n section has been removed  [#1269](https://github.com/codex-team/editor.js/issues/1269)
+- `Improvements` - Useless log about missed i18n section has been removed [#1269](https://github.com/codex-team/editor.js/issues/1269)
 - `Improvements` - Allowed to set `false` as `toolbox` config in order to hide Toolbox button [#1221](https://github.com/codex-team/editor.js/issues/1221)
 - `Fix` — Fix problem with types usage [#1183](https://github.com/codex-team/editor.js/issues/1183)
 - `Fix` - Fixed issue with Spam clicking the "Click to tune" button duplicates the icons on FireFox. [#1273](https://github.com/codex-team/editor.js/issues/1273)
@@ -221,7 +221,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.18
 
-- `New` *I18n API* — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
+- `New` _I18n API_ — Ability to provide internalization for Editor.js core and tools. [#751](https://github.com/codex-team/editor.js/issues/751)
 - `New` — Block API that allows you to access certain Block properties and methods
 - `Improvements` - TSLint (deprecated) replaced with ESLint, old config changed to [CodeX ESLint Config](https://github.com/codex-team/eslint-config).
 - `Improvements` - Fix many code-style issues, add missed annotations.
@@ -237,11 +237,11 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Fix` - Editor's styles won't be appended to the `<head>` when another instance have already do that [#1079](https://github.com/codex-team/editor.js/issues/1079)
 - `Fix` - Fixed wrong toolbar icon centering in Firefox [#1120](https://github.com/codex-team/editor.js/pull/1120)
 - `Fix` - Toolbox: Tool's order in Toolbox now saved in accordance with `tools` object keys order [#1073](https://github.com/codex-team/editor.js/issues/1073)
-- `Fix` - Setting `autofocus` config property to `true` cause adding `.ce-block--focused` for the autofocused block  [#1073](https://github.com/codex-team/editor.js/issues/1124)
+- `Fix` - Setting `autofocus` config property to `true` cause adding `.ce-block--focused` for the autofocused block [#1073](https://github.com/codex-team/editor.js/issues/1124)
 - `Fix` - Public getter `shortcut` now works for Inline Tools [#1132](https://github.com/codex-team/editor.js/issues/1132)
 - `Fix` - `CMD+A` handler removed after Editor.js destroy [#1133](https://github.com/codex-team/editor.js/issues/1133)
 
->  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
+> _Breaking changes_ `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
 
 ### 2.17
 
@@ -258,7 +258,6 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Fix` — Improve plain text paste [#1012](https://github.com/codex-team/editor.js/issues/1012)
 - `Fix` — Fix multiline paste [#1015](https://github.com/codex-team/editor.js/issues/1015)
 
-
 ### 2.16.1
 
 - `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)
@@ -274,8 +273,8 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 - `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
 - `Improvements` — All buttons now have beautiful Tooltips provided by [CodeX Tooltips](https://github.com/codex-team/codex.tooltips)
 - `New` — new Tooltips API for displaying tooltips near your custom elements
-- `New` *API* — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
-- `New` *Inline Tools API* — Ability to specify Tool's title via `title` static getter.
+- `New` _API_ — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
+- `New` _Inline Tools API_ — Ability to specify Tool's title via `title` static getter.
 - `Fix` — On selection from end to start backspace is working as expected now [#869](https://github.com/codex-team/editor.js/issues/869)
 - `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
 - `Fix` — Normalize node before walking through children at `isEmpty` method [#943](https://github.com/codex-team/editor.js/issues/943)
@@ -297,8 +296,8 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 ### 2.15
 
 - `New` — New [`blocks.insert()`](api.md) API method [#715](https://github.com/codex-team/editor.js/issues/715).
-- `New` *Conversion Toolbar* — Ability to convert one block to another [#704](https://github.com/codex-team/editor.js/issues/704)
-- `New` *Cross-block selection* — Ability to select multiple blocks by mouse and with SHIFT+ARROWS [#703](https://github.com/codex-team/editor.js/issues/703)
+- `New` _Conversion Toolbar_ — Ability to convert one block to another [#704](https://github.com/codex-team/editor.js/issues/704)
+- `New` _Cross-block selection_ — Ability to select multiple blocks by mouse and with SHIFT+ARROWS [#703](https://github.com/codex-team/editor.js/issues/703)
 - `Deprecated` — [`blocks.insertNewBlock()`](api.md) method is deprecated. Use `blocks.insert()` instead.
 - `Improvements` — Inline Toolbar now works on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
 - `Improvements` — Toolbar looks better on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
@@ -311,7 +310,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.14
 
-- `Fix` *Config* — User config now has higher priority than internal settings [#771](https://github.com/codex-team/editor.js/issues/771)
+- `Fix` _Config_ — User config now has higher priority than internal settings [#771](https://github.com/codex-team/editor.js/issues/771)
 - `New` — Ability to work with Block Actions and Inline Toolbar from the keyboard by Tab. [#705](https://github.com/codex-team/editor.js/issues/705)
 - `Fix` — Fix error thrown by click on the empty editor after `blocks.clear()` method calling [#761](https://github.com/codex-team/editor.js/issues/761)
 - `Fix` — Fix placeholder property appearance. Now you can assign it via `placeholder` property of EditorConfig. [#714](https://github.com/codex-team/editor.js/issues/714)
@@ -319,13 +318,13 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.13
 
-- `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A
-- `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
-- `New` *Config* - Added new property in EditorConfig `holder`, use this property for append Editor instead `holderId`. `holder` property now support reference on dom element. [#696](https://github.com/codex-team/editor.js/issues/696)
-- `Deprecated` *Config* - `holderId` property now is deprecated and will removed in next major release. Use `holder` instead.
-- `Fix` *Types* — Fixed error with `codex-notifier` package [#713](https://github.com/codex-team/editor.js/issues/713)
+- `Improvements` _BlockSelection_ — Block Selection allows to select single editable element via CMD+A
+- `New` _API_ — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
+- `New` _Config_ - Added new property in EditorConfig `holder`, use this property for append Editor instead `holderId`. `holder` property now support reference on dom element. [#696](https://github.com/codex-team/editor.js/issues/696)
+- `Deprecated` _Config_ - `holderId` property now is deprecated and will removed in next major release. Use `holder` instead.
+- `Fix` _Types_ — Fixed error with `codex-notifier` package [#713](https://github.com/codex-team/editor.js/issues/713)
 - `Improvements` — Close inline toolbar after creating a new link.
-- `New` *Config* — Option `minHeight` for customizing Editor's bottom zone height added.
+- `New` _Config_ — Option `minHeight` for customizing Editor's bottom zone height added.
 
 ### 2.12.4
 
@@ -340,7 +339,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.12.2
 
-- New *Inline Tools* — pass tool settings from configuration to Tool constructor
+- New _Inline Tools_ — pass tool settings from configuration to Tool constructor
 
 ### 2.12.1
 
@@ -348,7 +347,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.12.0
 
-- `New` *API* - new `blocks` API method `renderFromHTML`
+- `New` _API_ - new `blocks` API method `renderFromHTML`
 
 ### 2.11.11
 
@@ -368,15 +367,15 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.11.7
 
-- `Fix` *Paste* — Fix pasting into non-initial Blocks
+- `Fix` _Paste_ — Fix pasting into non-initial Blocks
 
 ### 2.11.6
 
-- `Fix` *Paste* — Polyfill for Microsoft Edge
+- `Fix` _Paste_ — Polyfill for Microsoft Edge
 
 ### 2.11.5
 
-- `Fix` *RectangleSelection* — Redesign of the scrolling zones
+- `Fix` _RectangleSelection_ — Redesign of the scrolling zones
 
 ### 2.11.4
 
@@ -392,7 +391,7 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.11.1
 
-- `Fix` *RectangleSelection* — Selection is available only for the main mouse button
+- `Fix` _RectangleSelection_ — Selection is available only for the main mouse button
 
 ### 2.11.0
 
@@ -424,19 +423,19 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.9.0
 
-- `New` *RectangleSelection* — Ability to select Block or several Blocks with mouse
+- `New` _RectangleSelection_ — Ability to select Block or several Blocks with mouse
 
 ### 2.8.1
 
-- `Fix` *Caret* — Fix "History back" call on backspace in Firefox
+- `Fix` _Caret_ — Fix "History back" call on backspace in Firefox
 
 ### 2.8.0
 
-- `Improvements` *API* — Added [API methods](api.md#caretapi) to manage caret position
+- `Improvements` _API_ — Added [API methods](api.md#caretapi) to manage caret position
 
 ### 2.7.32
 
-- `Improvements` *Types* — TypeScript types sre updated
+- `Improvements` _Types_ — TypeScript types sre updated
 
 ### 2.7.31
 
@@ -456,37 +455,37 @@ Due to that API changes: tool's `toolbox` getter now can return either a single 
 
 ### 2.2.27
 
-- `New` *Mobile view* — Editor now adopted for mobile devices
-- `New` *Narrow mode* — Editor now adopted for narrow containers
+- `New` _Mobile view_ — Editor now adopted for mobile devices
+- `New` _Narrow mode_ — Editor now adopted for narrow containers
 
 ### 2.2.26
 
-- `Improvements` *Caret* — Improvements of the caret behaviour: arrows, backspace and enter keys better handling.
+- `Improvements` _Caret_ — Improvements of the caret behaviour: arrows, backspace and enter keys better handling.
 
 ### 2.2.25
 
-- `New` *Autofocus* — Now you can set focus at Editor after page has been loaded
+- `New` _Autofocus_ — Now you can set focus at Editor after page has been loaded
 
 ### 2.2.24
 
-- `Improvements` *Paste* handling — minor paste handling improvements
+- `Improvements` _Paste_ handling — minor paste handling improvements
 
 ### 2.2.23
 
-- `New` *Shortcuts* — copy and cut Blocks selected by CMD+A
+- `New` _Shortcuts_ — copy and cut Blocks selected by CMD+A
 
 ### 2.2—2.7
 
-- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
-- `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
-- `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
-- `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc.
-- `New` *Block Tool* — [Table](http://github.com/editor-js/table) constructor 💪
-- `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed
+- `New` _Sanitize API_ — [Sanitize Config](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
+- `New` _Block Selection_ — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
+- `New` _[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)_ — Added `button` class for stylization of any buttons provided by Tools with one unified style.
+- `New` _[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)_ — methods for showing user notifications: on success, errors, warnings, etc.
+- `New` _Block Tool_ — [Table](http://github.com/editor-js/table) constructor 💪
+- `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with _Dummy Block_, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed
 - `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
-- `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
-- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
-- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
+- `Changes` _Tools API_ — options `irreplaceable` and `contentless` was removed.
+- `Changes` _Tools API_ — [Paste API](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
+- `Changes` _Tools API_ — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
 - `Improvements` — All Projects code now on TypeScript
 - `Improvements` — NPM package size decreased from 1300kb to 422kb
 - `Improvements` — Bundle size decreased from 438kb to 252kb
@@ -504,8 +503,8 @@ See a whole [Changelog](/docs/)
 
 ### 2.1-beta changelog
 
-- `New` *Tools API* — support pasted content via drag-n-drop or from the Buffer. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling) and [example](https://github.com/editor-js/simple-image/blob/master/src/index.js#L177) at the Simple Image Tool.
-- `New` *Tools API* — new `sanitize` getter for Tools for automatic HTML sanitizing of returned data. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#sanitize) and [example](https://github.com/editor-js/paragraph/blob/master/src/index.js#L121) at the Paragraph Tool
+- `New` _Tools API_ — support pasted content via drag-n-drop or from the Buffer. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling) and [example](https://github.com/editor-js/simple-image/blob/master/src/index.js#L177) at the Simple Image Tool.
+- `New` _Tools API_ — new `sanitize` getter for Tools for automatic HTML sanitizing of returned data. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#sanitize) and [example](https://github.com/editor-js/paragraph/blob/master/src/index.js#L121) at the Paragraph Tool
 - `New` Added `onChange`-callback, fired after any modifications at the Editor. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/installation.md#features).
 - `New` New Inline Tool example — [Marker](https://github.com/editor-js/marker)
 - `New` New Inline Tool example — [Code](https://github.com/editor-js/code)

@@ -50,8 +50,8 @@ export default class Caret extends Module {
     const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
     let focusNode = selection.focusNode;
 
-    /** In case lastNode is native input */
-    if ($.isNativeInput(firstNode)) {
+    /** In case lastNode is native input and supports selection */
+    if ($.canSetCaret(firstNode)) {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
@@ -143,8 +143,8 @@ export default class Caret extends Module {
 
     const lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
-    /** In case lastNode is native input */
-    if ($.isNativeInput(lastNode)) {
+    /** In case lastNode is native input and supports selection */
+    if ($.canSetCaret(lastNode)) {
       return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
     }
 
@@ -304,7 +304,14 @@ export default class Caret extends Module {
    * @param {number} offset - offset
    */
   public set(element: HTMLElement, offset = 0): void {
-    const { top, bottom } = Selection.setCursor(element, offset);
+    const domRect = Selection.setCursor(element, offset);
+
+    /** There are some cases when caret can not be set, e.g. input type 'email' */
+    if (domRect === undefined) {
+      return;
+    }
+
+    const { top, bottom } = domRect;
 
     /** If new cursor position is not visible, scroll to it */
     const { innerHeight } = window;
@@ -354,7 +361,7 @@ export default class Caret extends Module {
       selectRange.deleteContents();
 
       if (currentBlockInput) {
-        if ($.isNativeInput(currentBlockInput)) {
+        if ($.canSetCaret(currentBlockInput)) {
           /**
            * If input is native text input we need to use it's value
            * Text before the caret stays in the input,

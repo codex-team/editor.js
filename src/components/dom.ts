@@ -319,27 +319,20 @@ export default class Dom {
    * @param {HTMLElement} target - target to check
    * @returns {boolean}
    */
-  public static canSetCaret(target: HTMLElement): boolean {
-    let result = true;
+  public static canSetCaret(target: HTMLElement | Node): boolean {
+    /**
+     * @see https://html.spec.whatwg.org/multipage/input.html#concept-input-apply
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
+     * @todo currently nothing happens when you try to move caret to input of unsupported type.
+     * Instead, caret should move to the next input of supported type.
+     */
+    const selectionSupportedTypes = ['text', 'search', 'tel', 'url', 'password'];
 
     if (Dom.isNativeInput(target)) {
-      switch (target.type) {
-        case 'file':
-        case 'checkbox':
-        case 'radio':
-        case 'hidden':
-        case 'submit':
-        case 'button':
-        case 'image':
-        case 'reset':
-          result = false;
-          break;
-      }
-    } else {
-      result = Dom.isContentEditable(target);
+      return selectionSupportedTypes.includes(target.type) || target.tagName === 'TEXTAREA';
     }
 
-    return result;
+    return false;
   }
 
   /**

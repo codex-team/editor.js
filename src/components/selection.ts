@@ -327,7 +327,7 @@ export default class SelectionUtils {
    * @param element - element where to set focus
    * @param offset - offset of cursor
    */
-  public static setCursor(element: HTMLElement, offset = 0): DOMRect {
+  public static setCursor(element: HTMLElement, offset = 0): DOMRect | undefined {
     const range = document.createRange();
     const selection = window.getSelection();
 
