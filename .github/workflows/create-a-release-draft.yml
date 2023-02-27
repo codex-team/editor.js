@@ -97,4 +97,3 @@ jobs:
           asset_path: dist/editor.js
           asset_name: editor.js
           asset_content_type: application/javascript
-
