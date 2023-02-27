@@ -42,4 +42,3 @@ jobs:
         run: npm dist-tag add ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-

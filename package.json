@@ -99,5 +99,14 @@
     "codex-tooltip": "^1.0.5",
     "html-janitor": "^2.0.4",
     "nanoid": "^3.1.22"
+  },
+  "bugs": {
+    "url": "https://github.com/codex-team/editor.js/issues"
+  },
+  "homepage": "https://github.com/codex-team/editor.js#readme",
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
   }
 }
