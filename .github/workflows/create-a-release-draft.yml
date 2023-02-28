@@ -97,12 +97,3 @@ jobs:
           asset_path: dist/editor.js
           asset_name: editor.js
           asset_content_type: application/javascript
-
-      # Send a notification message
-      - name: Send a message
-        uses: codex-team/action-codexbot-notify@v1
-        with:
-          webhook: ${{ secrets.CODEX_BOT_WEBHOOK_FRONTEND }}
-          message: '🦥 [Draft release v${{ steps.package.outputs.version }}](${{ steps.create_release.outputs.html_url }}) for package [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) has been created. Add changelog and publish it!'
-          parse_mode: 'markdown'
-          disable_web_page_preview: true
