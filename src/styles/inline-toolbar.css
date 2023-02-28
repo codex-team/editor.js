@@ -18,7 +18,7 @@
   }
 
   &--left-oriented {
-    transform: translateX(-23px) translateY(8px) scale(0.94);
+    transform: translateX(-23px) translateY(-8px) scale(0.94);
   }
 
   &--left-oriented&--showed {
@@ -26,7 +26,7 @@
   }
 
   &--right-oriented {
-    transform: translateX(-100%) translateY(8px) scale(0.94);
+    transform: translateX(-100%) translateY(-8px) scale(0.94);
     margin-left: 23px;
   }
 
