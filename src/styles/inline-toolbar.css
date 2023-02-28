@@ -1,7 +1,5 @@
 .ce-inline-toolbar {
-
-  @apply --overlay-pane;
-  transform: translateX(-50%) translateY(-8px) scale(0.94);
+  transform: translateX(-50%) translateY(-50%) scale(0.94);
   opacity: 0;
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
@@ -13,24 +11,24 @@
   &--showed {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(-8px) scale(0.94);
+    transform: translateX(-50%) translateY(-50%) scale(0.94);
   }
 
   &--left-oriented {
-    transform: translateX(-23px) translateY(-8px) scale(0.94);
+    transform: translateX(-23px) translateY(-50%) scale(0.94);
   }
 
   &--left-oriented&--showed {
-    transform: translateX(-23px) translateY(-8px) scale(0.94);;
+    transform: translateX(-23px) translateY(-50%) scale(0.94);
   }
 
   &--right-oriented {
-    transform: translateX(-100%) translateY(-8px) scale(0.94);
+    transform: translateX(-100%) translateY(-50%) scale(0.94);
     margin-left: 23px;
   }
 
   &--right-oriented&--showed {
-    transform: translateX(-100%) translateY(-8px) scale(0.94);;
+    transform: translateX(-100%) translateY(-50%) scale(0.94);;
   }
 
   [hidden] {
