@@ -163,7 +163,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
-      y: selectionRect.y - 20
+      y: selectionRect.y - 80
     };
 
     /**
