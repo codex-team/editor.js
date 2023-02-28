@@ -1,8 +1,8 @@
 .ce-inline-toolbar {
-  --y-offset: 8px;
+  --y-offset: -8px;
 
   @apply --overlay-pane;
-  transform: translateX(-50%) translateY(8px) scale(0.94);
+  transform: translateX(-50%) translateY(-8px) scale(0.94);
   opacity: 0;
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
