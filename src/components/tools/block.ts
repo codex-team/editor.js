@@ -116,7 +116,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
-   * Returns sanitize configuration for Block Tool including conifgs from Inline Tools
+   * Returns sanitize configuration for Block Tool including configs from related Inline Tools and Block Tunes
    */
   @_.cacheable
   public get sanitizeConfig(): SanitizerConfig {
@@ -159,6 +159,10 @@ export default class BlockTool extends BaseTool<IBlockTool> {
     Array
       .from(this.inlineTools.values())
       .forEach(tool => Object.assign(baseConfig, tool.sanitizeConfig));
+
+    Array
+      .from(this.tunes.values())
+      .forEach(tune => Object.assign(baseConfig, tune.sanitizeConfig));
 
     return baseConfig;
   }

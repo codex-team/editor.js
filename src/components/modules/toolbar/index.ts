@@ -5,8 +5,8 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import EventsDispatcher from '../../utils/events';
 import { EditorConfig } from '../../../../types';
+import SelectionUtils from '../../selection';
 
 /**
  * HTML Elements used for Toolbar UI
@@ -348,10 +348,19 @@ export default class Toolbar extends Module<ToolbarNodes> {
   private enableModuleBindings(): void {
     /**
      * Settings toggler
+     *
+     * mousedown is used because on click selection is lost in Safari and FF
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'click', () => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
+      /**
+       * Stop propagation to prevent block selection clearance
+       *
+       * @see UI.documentClicked
+       */
+      e.stopPropagation();
+
       this.settingsTogglerClicked();
-    });
+    }, true);
   }
 
   /**

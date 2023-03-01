@@ -439,6 +439,7 @@ export default class BlockManager extends Module {
 
     const blockToRemove = this._blocks[index];
 
+    blockToRemove.destroy();
     this._blocks.remove(index);
 
     /**

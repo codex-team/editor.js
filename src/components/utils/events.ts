@@ -1,3 +1,5 @@
+import { isEmpty } from '../utils';
+
 /**
  * @class EventDispatcher
  *
@@ -68,7 +70,7 @@ export default class EventsDispatcher<Events extends string = string> {
    * @param {object} data - subscribers get this data when they were fired
    */
   public emit(eventName: Events, data?: object): void {
-    if (!this.subscribers[eventName]) {
+    if (isEmpty(this.subscribers) || !this.subscribers[eventName]) {
       return;
     }
 

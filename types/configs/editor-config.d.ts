@@ -53,7 +53,9 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+  tools?: {
+    [toolName: string]: ToolConstructable|ToolSettings;
+  }
 
   /**
    * Data to render on Editor start

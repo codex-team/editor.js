@@ -134,10 +134,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Shows Inline Toolbar if something is selected
    *
-   * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
+   * @param [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public tryToShow(needToClose = false): void {
+  public tryToShow(needToClose = false, needToShowConversionToolbar = true): void {
     if (!this.allowedToShow()) {
       if (needToClose) {
         this.close();
@@ -147,7 +148,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.move();
-    this.open();
+    this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
   }
 
@@ -233,8 +234,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Shows Inline Toolbar
+   *
+   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public open(): void {
+  public open(needToShowConversionToolbar = true): void {
     if (this.opened) {
       return;
     }
@@ -251,7 +254,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    if (this.Editor.ConversionToolbar.hasTools()) {
+    if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
       /**
        * Change Conversion Dropdown content for current tool
        */
@@ -407,7 +410,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return false;
     }
 
-    return currentBlock.tool.inlineTools.size !== 0;
+    // .size !== 0
+    return !!currentBlock.tool.inlineTools;
   }
 
   /**
@@ -513,9 +517,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.nodes.actions.innerHTML = '';
     this.toolsInstances = new Map();
 
-    Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
-      this.addTool(tool);
-    });
+    const tools = Array.from(currentBlock.tool.inlineTools.values())
+    if (tools && tools.length > 0) {
+      this.nodes.buttons.hidden = false
+      Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
+        this.addTool(tool);
+      });
+    } else {
+      this.nodes.buttons.hidden = true
+    }
+
 
     if (inlineToolbarOrder.length == 0) {
       this.nodes.buttons.hidden = true

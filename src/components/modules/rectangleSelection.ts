@@ -211,7 +211,16 @@ export default class RectangleSelection extends Module {
     if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
       return;
     }
-    this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+
+    /**
+     * Do not enable the Rectangle Selection when mouse dragging started some editable input
+     * Used to prevent Rectangle Selection on Block Tune wrappers' inputs that also can be inside the Block
+     */
+    const startedFromContentEditable = (mouseEvent.target as Element).closest($.allInputsSelector) !== null;
+
+    if (!startedFromContentEditable) {
+      this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+    }
   }
 
   /**
