@@ -115,18 +115,17 @@ export default class DragNDrop extends Module {
     let targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
-        const currrentIndex = BlockManager.getBlockIndex(targetBlock);
+      if (targetBlock.dropTarget === BlockDropZonePosition.Top) {
+        const currentIndex = BlockManager.getBlockIndex(targetBlock);
 
-        if (currrentIndex > 0) {
-          targetBlock = BlockManager.getBlockByIndex(currrentIndex - 1);
+        if (currentIndex > 0) {
+          targetBlock = BlockManager.getBlockByIndex(currentIndex - 1);
           Caret.setToBlock(targetBlock, Caret.positions.END);
-        } else {
-          /**
-           * If we are trying to drop a block before the first block,
-           * we should insert it before the first block.
-           */
         }
+        /**
+         *  @todo -Implement to drop a block before the first block,
+         * we should insert it before the first block.
+         */
       } else {
         Caret.setToBlock(targetBlock, Caret.positions.END);
       }
@@ -137,6 +136,8 @@ export default class DragNDrop extends Module {
     }
 
     BlockManager.clearDropTargets();
+    // Clear the selection.
+    BlockSelection.clearSelection();
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
   }
@@ -174,13 +175,13 @@ export default class DragNDrop extends Module {
       /**
        * Calculate the index where the block should be moved to.
        */
-      if (targetBlock.dropTarget === BlockDropZonePosition.TOP) {
+      if (targetBlock.dropTarget === BlockDropZonePosition.Top) {
         if (targetIndex > currentStartIndex) {
           toIndex = targetIndex - 1;
         } else {
           toIndex = targetIndex + i;
         }
-      } else if (targetBlock.dropTarget === BlockDropZonePosition.BOTTOM) {
+      } else if (targetBlock.dropTarget === BlockDropZonePosition.Bottom) {
         if (targetIndex > currentStartIndex) {
           toIndex = targetIndex;
         } else {

@@ -87,9 +87,9 @@ export enum BlockToolAPI {
  * Available block drop zones position w.r.t. focused block.
  */
 export enum BlockDropZonePosition {
-  TOP = 'top',
-  BOTTOM = 'bottom',
-  // Left, Right could be added in the future
+  Top = 'top',
+  Bottom = 'bottom',
+  // @todo - Left, Right could be added in the future
 }
 
 /**
@@ -567,8 +567,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * Otherwise, toggle the block's drop target and drop zone position.
        */
       this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
-      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.TOP);
-      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePosition.BOTTOM);
+      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.Top);
+      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePosition.Bottom);
     }
   }
 
@@ -579,9 +579,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public get dropTarget(): undefined | BlockDropZonePosition {
     if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
-      return BlockDropZonePosition.TOP;
+      return BlockDropZonePosition.Top;
     } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
-      return BlockDropZonePosition.BOTTOM;
+      return BlockDropZonePosition.Bottom;
     }
 
     return undefined;
@@ -862,8 +862,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-        contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.toolInstance.render();
+      contentNode = $.make('div', Block.CSS.content),
+      pluginsContent = this.toolInstance.render();
 
     contentNode.appendChild(pluginsContent);
 

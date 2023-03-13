@@ -167,8 +167,8 @@ export default class BlockEvents extends Module {
      * Add style for target drop zone position.
      */
     block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
-      BlockDropZonePosition.TOP :
-      BlockDropZonePosition.BOTTOM;
+      BlockDropZonePosition.Top :
+      BlockDropZonePosition.Bottom;
   }
 
   /**
