@@ -340,12 +340,12 @@ export default class Core {
          *
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
-        this.moduleInstances[Module.displayName] = new Module({
+        this.moduleInstances[Module.name] = new Module({
           config: this.configuration,
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log(`Module ${Module.displayName} skipped because`, 'error', e);
+        _.log(`Module ${Module.name} skipped because`, 'error', e);
       }
     });
   }
