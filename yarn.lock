@@ -857,6 +857,11 @@
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.1.0.tgz#a02885fe8699f69902d05b077b5f1cd48a2ca6b9"
   integrity sha512-jW1fWnwtWzcP4FBGsaodbJY3s1ZaRU+IJy1pvJ7ygNQxkQinybJcwXoyt0a5mWwu/4w30A42EWhCrZn8lp4fdw==
 
+"@codexteam/icons@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.5.tgz#d17f39b6a0497c6439f57dd42711817a3dd3679c"
+  integrity sha512-s6H2KXhLz2rgbMZSkRm8dsMJvyUNZsEjxobBEg9ztdrb1B2H3pEzY6iTwI4XUPJWJ3c3qRKwV4TrO3J5jUdoQA==
+
 "@codexteam/shortcuts@^1.1.1":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@codexteam/shortcuts/-/shortcuts-1.2.0.tgz#b8dd7396962b0bd845a5c8f8f19bc6119b520e19"
@@ -944,9 +949,12 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@editorjs/delimiter/-/delimiter-1.2.0.tgz#5075f1a3e68765cfb6aec8694b316d81e2b41607"
 
-"@editorjs/header@^2.6.1":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.6.2.tgz#523b6dda72ff882e53f64325840ee7bfc68ee6b7"
+"@editorjs/header@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.7.0.tgz#755d104a9210a8e2d9ccf22b175b2a93bdbb2330"
+  integrity sha512-4fGKGe2ZYblVqR/P/iw5ieG00uXInFgNMftBMqJRYcB2hUPD30kuu7Sn6eJDcLXoKUMOeqi8Z2AlUxYAmvw7zQ==
+  dependencies:
+    "@codexteam/icons" "^0.0.5"
 
 "@editorjs/simple-image@^1.4.1":
   version "1.4.1"
