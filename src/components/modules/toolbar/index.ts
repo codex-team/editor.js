@@ -228,8 +228,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Close Toolbox when we move toolbar
      */
-    this.toolboxInstance.close();
-    this.Editor.BlockSettings.close();
+    if (this.toolboxInstance.opened) {
+      this.toolboxInstance.close();
+    }
+
+    if (this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.close();
+    }
 
     /**
      * If no one Block selected as a Current
@@ -468,7 +473,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
       this.settingsTogglerClicked();
 
-      this.toolboxInstance.close();
+      if (this.toolboxInstance.opened) {
+        this.toolboxInstance.close();
+      }
 
       this.tooltip.hide(true);
     }, true);

@@ -3,9 +3,9 @@ contact_links:
   - name: Team
     url: mailto:team@codex.so
     about: Direct team contact.
+  - name: 💬 Discussions
+    url: https://github.com/codex-team/editor.js/discussions
+    about: Use discussions if you have an issue draft, an idea for improvement or for asking questions.
   - name: Editor.js Telegram chat
     url: https://t.me/codex_editor
     about: Telegram chat for Editor.js users communication.
-  - name: Editor.js contributors Telegram chat
-    url: https://t.me/editorjsdev
-    about: Telegram chat for Editor.js contributors communication.
