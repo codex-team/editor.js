@@ -85,7 +85,7 @@ describe('Flipper', () => {
      * Check whether we focus the Delete Tune or not
      */
     cy.get('[data-item-name="delete"]')
-      .should('have.class', 'ce-popover__item--focused');
+      .should('have.class', 'ce-popover-item--focused');
 
     cy.get('[data-cy=editorjs]')
       .get('.cdx-some-plugin')
