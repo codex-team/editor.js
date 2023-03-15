@@ -785,7 +785,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {HTMLDivElement}
    */
   private compose(): HTMLDivElement {
-    const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
+    const wrapper = $.make('div', [Block.CSS.wrapper, `${Block.CSS.wrapper}--type-${this.tool.name}`]) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
