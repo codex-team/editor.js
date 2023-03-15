@@ -383,7 +383,7 @@ export default class UI extends Module<UINodes> {
     let blockHoveredEmitted;
 
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', _.throttle((event: MouseEvent | TouchEvent) => {
-      const hoveredBlock = (event.target as Element).closest('.ce-block');
+      const hoveredBlock = Array.from(this.nodes.redactor.children).find((block) => block.contains(event.target as Element));
 
       /**
        * Do not trigger 'block-hovered' for cross-block selection
@@ -626,6 +626,9 @@ export default class UI extends Module<UINodes> {
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
     const target = event.target as HTMLElement;
+
+    if (this.Editor.BlockManager.currentBlockIndex === -1) { return }
+
     const clickedInsideOfEditor = this.nodes.holder.contains(target) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
@@ -658,9 +661,11 @@ export default class UI extends Module<UINodes> {
     }
 
     /**
-     * Clear Selection if user clicked somewhere
+     * Clear Selection if user clicked somewhere outside of the Editor
      */
-    this.Editor.BlockSelection.clearSelection(event);
+    if (!clickedInsideOfEditor) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**
@@ -704,9 +709,13 @@ export default class UI extends Module<UINodes> {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
        */
-      if (!this.Editor.RectangleSelection.isRectActivated()) {
-        this.Editor.Caret.setToTheLastBlock();
-      }
+      
+      
+      // Maybe don't do this? Not sure what this is supposed to achieve vs just not doing anything …
+      
+      // if (!this.Editor.RectangleSelection.isRectActivated()) {
+      //   this.Editor.Caret.setToTheLastBlock();
+      // }
     }
 
     /**
