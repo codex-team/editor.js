@@ -8,6 +8,7 @@
 - `Fix` — Resolve compiler error from importing the BlockToolData type.
 - `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
 - `Improvement` — Package size reduced by removing redundant files
+- `Fix`- Entire block being deleted on backspace key press when the browser has 3rd party grammer checker extension
 
 ### 2.26.5
 
@@ -27,7 +28,6 @@
 
 ### 2.26.1
 
-- `Fix`- Fix of Block deletion after Backspace press in case when node cotains 3rd party grammar checker extension
 - `Improvement` — *Menu Config* — Now it becomes possible to create toggle groups.
 
 ### 2.26.0
