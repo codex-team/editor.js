@@ -5,7 +5,10 @@
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
-- `Fix` — Resolve compiler error from importing the BlockToolData type
+- `Fix` — Resolve compiler error from importing the BlockToolData type.
+- `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
+- `Improvement` — Package size reduced by removing redundant files
+- `Fix`- Entire block being deleted on backspace key press when the browser has 3rd party grammer checker extension
 
 ### 2.26.5
 
@@ -45,6 +48,7 @@
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 - `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
+
 
 ### 2.25.0
 

@@ -558,10 +558,16 @@ export default class Dom {
    */
   public static isExtensionNode(node: Node): boolean {
     const extensions = [
-      'GRAMMARLY-EXTENSION',
+      'grammarly-extension',
+      'mci-extension',
+      'gdiv',
+      'pwa-container-wrapper',
+      'pwa-editor-bar-cnt',
+      'editor-squiggler',
+      'quillbot-extension',
     ];
 
-    return node && extensions.includes(node.nodeName);
+    return node && extensions.includes(node.nodeName.toLowerCase());
   }
 
   /**
