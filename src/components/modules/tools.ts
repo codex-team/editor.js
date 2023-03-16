@@ -189,7 +189,7 @@ export default class Tools extends Module {
         isInternal: true,
       },
       paragraph: {
-        class: Paragraph,
+        class: Paragraph.default,
         inlineToolbar: true,
         isInternal: true,
       },

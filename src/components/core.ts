@@ -25,6 +25,8 @@ contextRequire.keys().forEach((filename) => {
    */
   if (filename.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
     modules.push(contextRequire(filename));
+
+    _.log(`Module ${filename} is loaded`, 'log');
   }
 });
 
@@ -292,9 +294,15 @@ export default class Core {
       'ReadOnly',
     ];
 
+
+    // console.log(`[this.moduleInstances]`, this.moduleInstances);
+
+
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {
-        // _.log(`Preparing ${module} module`, 'time');
+        _.log(`Preparing ${module} module`, 'time');
+
+        // console.log(`[modulesToPrepare] this.moduleInstances[module]`, this.moduleInstances[module]);
 
         try {
           await this.moduleInstances[module].prepare();
@@ -325,11 +333,16 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
+    console.log('[constructModules] modules', modules);
+
     modules.forEach((module) => {
       /**
        * If module has non-default exports, passed object contains them all and default export as 'default' property
        */
       const Module = _.isFunction(module) ? module : module.default;
+
+      // console.log('[constructModules] Module', module);
+      // console.log('[constructModules]', Module, Module.displayName);
 
       try {
         /**
@@ -340,12 +353,12 @@ export default class Core {
          *
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
-        this.moduleInstances[Module.name] = new Module({
+        this.moduleInstances[Module.displayName] = new Module({
           config: this.configuration,
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log(`Module ${Module.name} skipped because`, 'error', e);
+        _.log('[constructModules]', `Module ${Module.displayName} skipped because`, 'error', e);
       }
     });
   }

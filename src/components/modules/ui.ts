@@ -13,7 +13,7 @@ import Block from '../block';
 import Flipper from '../flipper';
 import { mobileScreenBreakpoint } from '../utils';
 
-import styles from '../../styles/main.css';
+import styles from '../../styles/main.css?inline';
 /**
  * HTML Elements used for UI
  */

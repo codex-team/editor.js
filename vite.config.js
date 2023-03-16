@@ -3,6 +3,7 @@ import path from 'path';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import ViteRequireContext from '@originjs/vite-plugin-require-context';
 // import EnvironmentPlugin from 'vite-plugin-environment';
+import react from '@vitejs/plugin-react';
 
 const pkg = require('./package.json');
 
@@ -41,5 +42,29 @@ export default {
     // }),
     ViteRequireContext(),
     cssInjectedByJsPlugin(),
+    react({
+      babel: {
+        plugins: [
+          // 'babel-plugin-add-module-exports',
+          'babel-plugin-class-display-name',
+          // '@babel/plugin-transform-runtime',
+
+          // 'babel-plugin-class-display-name',
+          [
+            '@babel/plugin-proposal-decorators',
+            {
+              legacy: true,
+            },
+          ],
+          // [
+          //   'babel-plugin-styled-components',
+          //   {
+          //     displayName: true,
+          //     fileName: false,
+          //   },
+          // ],
+        ],
+      },
+    }),
   ],
 };
