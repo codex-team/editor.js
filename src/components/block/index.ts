@@ -154,7 +154,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private cachedInputs: HTMLElement[] = [];
 
   /**
-   * We'll store a link to the tool's rendered element to access it later
+   * We'll store a reference to the tool's rendered element to access it later
    */
   private toolRenderedElement: HTMLElement | null = null;
 
@@ -815,7 +815,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         pluginsContent = this.toolInstance.render();
 
     /**
-     * Saving a link to plugin's content element for guaranteed accessing it later
+     * Saving a reference to plugin's content element for guaranteed accessing it later
      */
     this.toolRenderedElement = pluginsContent;
 
