@@ -8,7 +8,7 @@
 - `Fix` — Resolve compiler error from importing the BlockToolData type.
 - `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
 - `Improvement` — Package size reduced by removing redundant files
-- `Fix`- Entire block being deleted on backspace key press when the browser has 3rd party grammer checker extension
+- `Fix`- Several bugs caused by random browser extensions
 
 ### 2.26.5
 
