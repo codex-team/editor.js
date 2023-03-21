@@ -8,6 +8,8 @@ import Tooltip from '../../utils/tooltip';
  * @classdesc Tooltip API
  */
 export default class TooltipAPI extends Module {
+  public static readonly displayName: string = 'TooltipAPI';
+
   /**
    * Tooltip utility Instance
    */

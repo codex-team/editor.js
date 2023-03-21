@@ -5,6 +5,8 @@ import Module from '../__module';
  *
  */
 export default class DragNDrop extends Module {
+  public static readonly displayName: string = 'DragNDrop';
+
   /**
    * If drag has been started at editor, we save it
    *

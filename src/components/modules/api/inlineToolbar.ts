@@ -6,6 +6,8 @@ import Module from '../../__module';
  * Provides methods for working with the Inline Toolbar
  */
 export default class InlineToolbarAPI extends Module {
+  public static readonly displayName: string = 'InlineToolbarAPI';
+
   /**
    * Available methods
    *

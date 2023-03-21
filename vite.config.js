@@ -45,24 +45,12 @@ export default {
     react({
       babel: {
         plugins: [
-          // 'babel-plugin-add-module-exports',
-          'babel-plugin-class-display-name',
-          // '@babel/plugin-transform-runtime',
-
-          // 'babel-plugin-class-display-name',
           [
             '@babel/plugin-proposal-decorators',
             {
               legacy: true,
             },
           ],
-          // [
-          //   'babel-plugin-styled-components',
-          //   {
-          //     displayName: true,
-          //     fileName: false,
-          //   },
-          // ],
         ],
       },
     }),

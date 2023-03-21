@@ -1,4 +1,4 @@
-import * as Paragraph from '../../tools/paragraph/dist/bundle';
+import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
 import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
@@ -25,6 +25,8 @@ import ToolsCollection from '../tools/collection';
  * Modules that works with tools classes
  */
 export default class Tools extends Module {
+  public static readonly displayName: string = 'Tools';
+
   /**
    * Name of Stub Tool
    * Stub Tool is used to substitute unavailable block Tools and store their data
@@ -189,7 +191,7 @@ export default class Tools extends Module {
         isInternal: true,
       },
       paragraph: {
-        class: Paragraph.default,
+        class: Paragraph,
         inlineToolbar: true,
         isInternal: true,
       },

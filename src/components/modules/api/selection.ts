@@ -7,6 +7,8 @@ import Module from '../../__module';
  * Provides with methods working with SelectionUtils
  */
 export default class SelectionAPI extends Module {
+  public static readonly displayName: string = 'SelectionAPI';
+
   /**
    * Available methods
    *

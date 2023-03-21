@@ -10,6 +10,8 @@ import Flipper from '../flipper';
  *
  */
 export default class BlockEvents extends Module {
+  public static readonly displayName: string = 'BlockEvents';
+
   /**
    * All keydowns on Block
    *

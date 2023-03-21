@@ -17,6 +17,8 @@ import * as _ from '../utils';
  * @typedef {Caret} Caret
  */
 export default class Caret extends Module {
+  public static readonly displayName: string = 'Caret';
+
   /**
    * Allowed caret positions in input
    *

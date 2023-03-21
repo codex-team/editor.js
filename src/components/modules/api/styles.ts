@@ -5,6 +5,8 @@ import Module from '../../__module';
  *
  */
 export default class StylesAPI extends Module {
+  public static readonly displayName: string = 'StylesAPI';
+
   /**
    * Exported classes
    */

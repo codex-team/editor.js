@@ -6,6 +6,8 @@ import Module from '../../__module';
  * provides with methods to work with caret
  */
 export default class CaretAPI extends Module {
+  public static readonly displayName: string = 'CaretAPI';
+
   /**
    * Available methods
    *

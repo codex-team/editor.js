@@ -18,6 +18,8 @@ import { clean } from '../utils/sanitizer';
  *
  */
 export default class BlockSelection extends Module {
+  public static readonly displayName: string = 'BlockSelection';
+
   /**
    * Sometimes .anyBlockSelected can be called frequently,
    * for example at ui@selectionChange (to clear native browser selection in CBS)

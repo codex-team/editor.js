@@ -6,6 +6,8 @@ import Module from '../../__module';
  * Provides with methods working with DOM Listener
  */
 export default class ListenersAPI extends Module {
+  public static readonly displayName: string = 'ListenersAPI';
+
   /**
    * Available methods
    *

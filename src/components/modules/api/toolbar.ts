@@ -6,6 +6,8 @@ import * as _ from './../../utils';
  * Provides methods for working with the Toolbar
  */
 export default class ToolbarAPI extends Module {
+  public static readonly displayName: string = 'ToolbarAPI';
+
   /**
    * Available methods
    *

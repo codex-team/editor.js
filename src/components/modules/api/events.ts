@@ -6,6 +6,8 @@ import { Events } from '../../../../types/api';
  * provides with methods working with Toolbar
  */
 export default class EventsAPI extends Module {
+  public static readonly displayName: string = 'EventsAPI';
+
   /**
    * Available methods
    *

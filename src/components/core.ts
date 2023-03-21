@@ -333,16 +333,11 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    console.log('[constructModules] modules', modules);
-
     modules.forEach((module) => {
       /**
        * If module has non-default exports, passed object contains them all and default export as 'default' property
        */
       const Module = _.isFunction(module) ? module : module.default;
-
-      // console.log('[constructModules] Module', module);
-      // console.log('[constructModules]', Module, Module.displayName);
 
       try {
         /**

@@ -41,6 +41,7 @@ interface UINodes {
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module<UINodes> {
+  public static readonly displayName: string = 'UI';
   /**
    * Events could be emitted by this module.
    */

@@ -20,6 +20,8 @@ import { BlockMutationType } from '../../../types/events/block/mutation-type';
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
 export default class BlockManager extends Module {
+  public static readonly displayName: string = 'BlockManager';
+
   /**
    * Returns current Block index
    *

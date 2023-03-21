@@ -8,6 +8,8 @@ import { clean } from '../../utils/sanitizer';
  * Provides Editor.js Sanitizer that allows developers to clean their HTML
  */
 export default class SanitizerAPI extends Module {
+  public static readonly displayName: string = 'SanitizerAPI';
+
   /**
    * Available methods
    *

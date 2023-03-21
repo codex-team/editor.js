@@ -5,6 +5,8 @@ import * as _ from '../utils';
  * Single entry point for Block mutation events
  */
 export default class ModificationsObserver extends Module {
+  public static readonly displayName: string = 'ModificationsObserver';
+
   /**
    * Flag shows onChange event is disabled
    */
