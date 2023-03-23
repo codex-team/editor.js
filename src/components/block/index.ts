@@ -194,16 +194,16 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Mutation observer to handle DOM mutations
    *
-   * @type {MutationObserver}
+   * @type {MutationObserver | undefined}
    */
-  private mutationObserver: MutationObserver;
+  private mutationObserver: MutationObserver | undefined;
 
   /**
-   * Debounce Timer
+   * Minimum time to wait between mutation events, in milliseconds.
    *
    * @type {number}
    */
-  private readonly modificationDebounceTimer = 450;
+  private readonly modificationDebounceTimer = _.modificationDebounceTimer;
 
   /**
    * Is fired when DOM mutation has been happened
@@ -306,10 +306,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.api = api;
     this.blockAPI = new BlockAPI(this);
 
-    this.mutationObserver = new MutationObserver(this.didMutated);
-
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
+
+    if (tool.shouldUpdateOnMutation) {
+      this.mutationObserver = new MutationObserver(this.didMutated);
+    }
 
     /**
      * @type {BlockTune[]}
@@ -716,31 +718,45 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public willSelect(): void {
     /**
-     * Observe DOM mutations to update Block inputs
+     * If the tool allows it, observe mutations and input changes in the
+     * element tree to trigger updates. Tools allow observation by default.
+     * To disable observation, set BlockTool.shouldUpdateOnMutation to false.
      */
-    this.mutationObserver.observe(
-      this.holder.firstElementChild,
-      {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-      }
-    );
+    if (this.tool.shouldUpdateOnMutation) {
+      /**
+       * Observe DOM mutations to update Block inputs
+       */
+      this.mutationObserver.observe(
+        this.holder.firstElementChild,
+        {
+          childList: true,
+          subtree: true,
+          characterData: true,
+          attributes: true,
+        }
+      );
 
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
+      /**
+       * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+       * so we need to track focus events to update current input and clear cache.
+       */
+      this.addInputEvents();
+    }
   }
 
   /**
    * Is fired when Block will be unselected
    */
   public willUnselect(): void {
-    this.mutationObserver.disconnect();
-    this.removeInputEvents();
+    /**
+     * There's no need to disconnect the observer or
+     * remove listeners if shouldUpdateOnMutation is false,
+     * since they weren't set up in the first place.
+     */
+    if (this.tool.shouldUpdateOnMutation) {
+      this.mutationObserver.disconnect();
+      this.removeInputEvents();
+    }
   }
 
   /**

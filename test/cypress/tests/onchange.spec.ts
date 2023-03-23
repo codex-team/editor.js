@@ -1,7 +1,10 @@
+/* tslint:disable:max-classes-per-file */
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
 import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import BlockTool from '../../../src/components/tools/block';
+import * as _ from '../../../src/components/utils';
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
@@ -13,12 +16,14 @@ describe('onChange callback', () => {
    * Creates Editor instance
    *
    * @param blocks - list of blocks to prefill the editor
+   * @param additionalTools - object with additional tools used by the editor
    */
-  function createEditor(blocks = null): void {
+  function createEditor(blocks = null, additionalTools = {}): void {
     const config = {
       tools: {
         header: Header,
         code: Code,
+        ...additionalTools,
       },
       onChange: (api, event): void => {
         console.log('something changed', api, event);
@@ -319,5 +324,73 @@ describe('onChange callback', () => {
         index: 0,
       },
     }));
+  });
+
+  it('should not fire onChange when observing an input change on a tool with shouldUpdateOnMutation disabled', () => {
+    /**
+     * Equal to Code, but shouldn't trigger updates on input changes.
+     */
+    class StaticCode extends Code {
+      public static get shouldUpdateOnMutation(): boolean {
+        return false;
+      }
+    }
+
+    createEditor([ {
+      type: 'staticCode',
+      data: {
+        code: '',
+      },
+    } ], {
+      staticCode: StaticCode,
+    });
+
+    cy.get('[data-cy=editorjs')
+      .get('textarea')
+      .type('Some input to the textarea');
+
+    cy.wait(_.modificationDebounceTimer)
+      .get('@onChange')
+      .should('not.be.called');
+  });
+
+  it('should not fire onChange when observing a mutation on a tool with shouldUpdateOnMutation disabled', () => {
+    /**
+     * Renders a button that adds new elements to the DOM every time it is
+     * clicked. It shouldn't trigger updates when adding these elements.
+     */
+    class SpawnerBlock extends BlockTool {
+      public render(): HTMLElement {
+        const wrapper = document.createElement('div');
+        const button = document.createElement('button');
+
+        button.setAttribute('data-name', 'testButton');
+        button.addEventListener('click', () => {
+          wrapper.appendChild(document.createElement('span'));
+        });
+
+        wrapper.appendChild(button);
+
+        return wrapper;
+      }
+
+      public static get shouldUpdateOnMutation(): boolean {
+        return false;
+      }
+    }
+
+    createEditor([ {
+      type: 'spawner',
+      data: {},
+    } ], {
+      spawner: SpawnerBlock,
+    });
+
+    cy.get('[data-name=testButton]')
+      .click();
+
+    cy.wait(_.modificationDebounceTimer)
+      .get('@onChange')
+      .should('not.be.called');
   });
 });

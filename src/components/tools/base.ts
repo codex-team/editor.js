@@ -89,7 +89,12 @@ export enum InternalBlockToolSettings {
   /**
    * Tool paste config
    */
-  PasteConfig = 'pasteConfig'
+  PasteConfig = 'pasteConfig',
+  /**
+   * Should observe for mutations and input changes in the rendered
+   * element tree and trigger updates automatically.
+   */
+  ShouldUpdateOnMutation = 'shouldUpdateOnMutation'
 }
 
 /**

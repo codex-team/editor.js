@@ -787,3 +787,10 @@ export function equals(var1: unknown, var2: unknown): boolean {
 
   return var1 === var2;
 }
+
+/**
+ * Minimum time to wait between mutation events, in milliseconds.
+ *
+ * @type {number}
+ */
+export const modificationDebounceTimer = 450;
