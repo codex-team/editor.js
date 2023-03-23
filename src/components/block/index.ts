@@ -199,11 +199,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private mutationObserver: MutationObserver | undefined;
 
   /**
-   * Debounce Timer
+   * Minimum time to wait between mutation events, in milliseconds.
    *
    * @type {number}
    */
-  private readonly modificationDebounceTimer = 450;
+  private readonly modificationDebounceTimer = _.modificationDebounceTimer;
 
   /**
    * Is fired when DOM mutation has been happened
@@ -309,7 +309,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
-    if (tool.isMutationObserverEnabled) {
+    if (tool.shouldUpdateOnMutation) {
       this.mutationObserver = new MutationObserver(this.didMutated);
     }
 
