@@ -748,8 +748,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when Block will be unselected
    */
   public willUnselect(): void {
-    this.mutationObserver?.disconnect();
-    this.removeInputEvents();
+    /**
+     * There's no need to disconnect the observer or
+     * remove listeners if shouldUpdateOnMutation is false,
+     * since they weren't set up in the first place.
+     */
+    if (this.tool.shouldUpdateOnMutation) {
+      this.mutationObserver.disconnect();
+      this.removeInputEvents();
+    }
   }
 
   /**
