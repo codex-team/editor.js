@@ -1,15 +1,7 @@
 plugins:
-  # Consumes files by @import rule
-  # https://github.com/postcss/postcss-import
-  postcss-import: {}
-
-  # # Apply custom property sets via @apply rule
-  # # https://github.com/pascalduez/postcss-apply
+  # Apply custom property sets via @apply rule
+  # https://github.com/pascalduez/postcss-apply
   postcss-apply: {}
-
-  # Use Custom Properties in CSS
-  # https://github.com/postcss/postcss-custom-properties
-  postcss-custom-properties: {}
 
   # Convert modern CSS into something most browsers can understand
   # https://github.com/csstools/postcss-preset-env
@@ -25,20 +17,6 @@ plugins:
     browsers:
       - 'last 2 versions'
       - '> 1%'
-
-    # Instruct all plugins to omit pre-polyfilled CSS
-    # https://github.com/csstools/postcss-preset-env#preserve
-    preserve: false
-
-    # # Enable or disable specific polyfills
-    # # https://github.com/csstools/postcss-preset-env#features
-    # #
-    # # List of available plugins
-    # # https://github.com/csstools/postcss-preset-env/blob/master/src/lib/plugins-by-id.js
-    # features:
-    #   # Modify colors using the color-mod() function in CSS
-    #   # https://github.com/jonathantneal/postcss-color-mod-function
-    #   color-mod-function: {}
 
   # Nested rules unwrapper
   # https://github.com/postcss/postcss-nested

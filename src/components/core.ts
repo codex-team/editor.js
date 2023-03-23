@@ -25,8 +25,6 @@ contextRequire.keys().forEach((filename) => {
    */
   if (filename.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
     modules.push(contextRequire(filename));
-
-    _.log(`Module ${filename} is loaded`, 'log');
   }
 });
 

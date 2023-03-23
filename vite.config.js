@@ -2,12 +2,23 @@ import path from 'path';
 
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import ViteRequireContext from '@originjs/vite-plugin-require-context';
-// import EnvironmentPlugin from 'vite-plugin-environment';
 import react from '@vitejs/plugin-react';
+import license from 'rollup-plugin-license';
+import banner from 'vite-plugin-banner';
 
-const pkg = require('./package.json');
+import * as pkg from './package.json';
 
-process.env.VERSION = pkg.version;
+const NODE_ENV = process.argv.mode || 'development';
+const VERSION = pkg.version;
+const BANNER = `
+Editor.js
+
+@version ${VERSION}
+@licence Apache-2.0
+@author CodeX <https://codex.so>
+
+@uses html-janitor
+@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`;
 
 /**
  * Trick to use Vite server.open option on macOS
@@ -20,9 +31,40 @@ export default {
     lib: {
       entry: path.resolve(__dirname, 'src', 'codex.ts'),
       name: 'EditorJS',
-      formats: [ 'umd' ],
-      fileName: '[name].js',
-    }
+      fileName: 'editorjs',
+    },
+    rollupOptions: {
+      plugins: [
+        license({
+          thirdParty: {
+            allow: {
+              test: (dependency) => {
+                // Allow html-janitor (https://github.com/guardian/html-janitor/blob/master/LICENSE)
+                if (dependency.name === 'html-janitor') {
+                  return true;
+                }
+
+                // Return false for unlicensed dependencies.
+                if (!dependency.license) {
+                  return false;
+                }
+
+                // Allow MIT and Apache-2.0 licenses.
+                return ['MIT', 'Apache-2.0'].includes(dependency.license);
+              },
+              failOnUnlicensed: true,
+              failOnViolation: true,
+            },
+            output: path.resolve(__dirname, 'dist', 'assets', 'vendor.LICENSE.txt'),
+          },
+        }),
+      ],
+    },
+  },
+
+  define: {
+    'NODE_ENV': JSON.stringify(NODE_ENV),
+    'VERSION': JSON.stringify(VERSION),
   },
 
   server: {
@@ -30,16 +72,8 @@ export default {
     open: true,
   },
 
-  define: {
-    // 'process.env.NODE_ENV': process.argv.mode || 'development',
-    'VERSION': () => pkg.version,
-  },
-
   plugins: [
-    // EnvironmentPlugin({
-    //   'NODE_ENV': process.argv.mode || 'development',
-    //   'VERSION': process.env.VERSION || pkg.version,
-    // }),
+    banner(BANNER),
     ViteRequireContext(),
     cssInjectedByJsPlugin(),
     react({

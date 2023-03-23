@@ -5,7 +5,7 @@ import ToolsFactory from '../../../../src/components/tools/factory';
 import InlineTool from '../../../../src/components/tools/inline';
 import BlockTool from '../../../../src/components/tools/block';
 import BlockTune from '../../../../src/components/tools/tune';
-import Paragraph from '../../../../src/tools/paragraph/dist/bundle';
+import Paragraph from '@editorjs/paragraph';
 
 describe('ToolsFactory', (): void => {
   let factory;
