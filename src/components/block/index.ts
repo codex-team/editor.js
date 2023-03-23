@@ -718,23 +718,30 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public willSelect(): void {
     /**
-     * Observe DOM mutations to update Block inputs
+     * If the tool allows it, observe mutations and input changes in the
+     * element tree to trigger updates. Tools allow observation by default.
+     * To disable observation, set BlockTool.shouldUpdateOnMutation to false.
      */
-    this.mutationObserver?.observe(
-      this.holder.firstElementChild,
-      {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-      }
-    );
+    if (this.tool.shouldUpdateOnMutation) {
+      /**
+       * Observe DOM mutations to update Block inputs
+       */
+      this.mutationObserver.observe(
+        this.holder.firstElementChild,
+        {
+          childList: true,
+          subtree: true,
+          characterData: true,
+          attributes: true,
+        }
+      );
 
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
+      /**
+       * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+       * so we need to track focus events to update current input and clear cache.
+       */
+      this.addInputEvents();
+    }
   }
 
   /**
