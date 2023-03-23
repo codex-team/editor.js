@@ -70,6 +70,13 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   }
 
   /**
+   * Returns true if mutations in the rendered element tree should trigger data updates.
+   */
+  public get isMutationObserverEnabled(): boolean {
+    return this.constructable[InternalBlockToolSettings.IsMutationObserverEnabled] !== false;
+  }
+
+  /**
    * Returns Tool toolbox configuration (internal or user-specified).
    *
    * Merges internal and user-defined toolbox configs based on the following rules:

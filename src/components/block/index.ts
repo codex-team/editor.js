@@ -194,9 +194,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Mutation observer to handle DOM mutations
    *
-   * @type {MutationObserver}
+   * @type {MutationObserver | undefined}
    */
-  private mutationObserver: MutationObserver;
+  private mutationObserver: MutationObserver | undefined;
 
   /**
    * Debounce Timer
@@ -306,10 +306,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.api = api;
     this.blockAPI = new BlockAPI(this);
 
-    this.mutationObserver = new MutationObserver(this.didMutated);
-
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
+
+    if (tool.isMutationObserverEnabled) {
+      this.mutationObserver = new MutationObserver(this.didMutated);
+    }
 
     /**
      * @type {BlockTune[]}
@@ -718,7 +720,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     /**
      * Observe DOM mutations to update Block inputs
      */
-    this.mutationObserver.observe(
+    this.mutationObserver?.observe(
       this.holder.firstElementChild,
       {
         childList: true,
@@ -739,7 +741,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when Block will be unselected
    */
   public willUnselect(): void {
-    this.mutationObserver.disconnect();
+    this.mutationObserver?.disconnect();
     this.removeInputEvents();
   }
 
