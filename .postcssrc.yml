@@ -5,7 +5,7 @@ plugins:
 
   # # Apply custom property sets via @apply rule
   # # https://github.com/pascalduez/postcss-apply
-  # postcss-apply: {}
+  postcss-apply: {}
 
   # Use Custom Properties in CSS
   # https://github.com/postcss/postcss-custom-properties
