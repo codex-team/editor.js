@@ -17,12 +17,12 @@ So how to use the Editor after [Installation](installation.md).
  
 - Select text fragment and apply a style or insert a link from the Inline Toolbar
 
-![](https://capella.pics/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
+![](assets/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
 
 - Use «three-dots» button on the right to open Block Settings. From here, you can move and delete a Block 
 or apply Tool's settings, if it provided. For example, set a Heading level or List style.
 
-![](https://capella.pics/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)    
+![](assets/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)   
 
 ## Shortcuts
 
