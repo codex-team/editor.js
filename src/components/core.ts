@@ -292,15 +292,9 @@ export default class Core {
       'ReadOnly',
     ];
 
-
-    // console.log(`[this.moduleInstances]`, this.moduleInstances);
-
-
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {
-        _.log(`Preparing ${module} module`, 'time');
-
-        // console.log(`[modulesToPrepare] this.moduleInstances[module]`, this.moduleInstances[module]);
+        // _.log(`Preparing ${module} module`, 'time');
 
         try {
           await this.moduleInstances[module].prepare();

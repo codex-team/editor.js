@@ -84,7 +84,6 @@ export default class Renderer extends Module {
         });
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', { data, error });
-        console.error(error);
         throw Error(error);
       }
     } else {
