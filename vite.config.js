@@ -2,7 +2,6 @@ import path from 'path';
 
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import ViteRequireContext from '@originjs/vite-plugin-require-context';
-import react from '@vitejs/plugin-react';
 import license from 'rollup-plugin-license';
 import banner from 'vite-plugin-banner';
 
@@ -76,17 +75,5 @@ export default {
     banner(BANNER),
     ViteRequireContext(),
     cssInjectedByJsPlugin(),
-    react({
-      babel: {
-        plugins: [
-          [
-            '@babel/plugin-proposal-decorators',
-            {
-              legacy: true,
-            },
-          ],
-        ],
-      },
-    }),
   ],
 };
