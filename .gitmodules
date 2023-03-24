@@ -1,57 +1,57 @@
 [submodule "example/tools/inline-code"]
 	path = example/tools/inline-code
-	url = https://github.com/editor-js/inline-code
+	url = https://github.com/rogueturnip/inline-code
 [submodule "example/tools/header"]
 	path = example/tools/header
-	url = https://github.com/editor-js/header
+	url = https://github.com/rogueturnip/header
 [submodule "example/tools/delimiter"]
 	path = example/tools/delimiter
-	url = https://github.com/editor-js/delimiter
+	url = https://github.com/rogueturnip/delimiter
 [submodule "example/tools/list"]
 	path = example/tools/list
-	url = https://github.com/editor-js/list
+	url = https://github.com/rogueturnip/list
 [submodule "example/tools/quote"]
 	path = example/tools/quote
-	url = https://github.com/editor-js/quote
+	url = https://github.com/rogueturnip/quote
 [submodule "example/tools/simple-image"]
 	path = example/tools/simple-image
-	url = https://github.com/editor-js/simple-image
+	url = https://github.com/rogueturnip/simple-image
 [submodule "src/tools/paragraph"]
 	path = src/tools/paragraph
-	url = https://github.com/editor-js/paragraph
+	url = https://github.com/rogueturnip/paragraph
 [submodule "example/tools/marker"]
 	path = example/tools/marker
-	url = https://github.com/editor-js/marker
+	url = https://github.com/rogueturnip/marker
 [submodule "example/tools/code"]
 	path = example/tools/code
-	url = https://github.com/editor-js/code
+	url = https://github.com/rogueturnip/code
 [submodule "example/tools/image"]
 	path = example/tools/image
-	url = https://github.com/editor-js/image
+	url = https://github.com/rogueturnip/image
 [submodule "example/tools/embed"]
 	path = example/tools/embed
-	url = https://github.com/editor-js/embed
+	url = https://github.com/rogueturnip/embed
 [submodule "example/tools/table"]
 	path = example/tools/table
-	url = https://github.com/editor-js/table
+	url = https://github.com/rogueturnip/table
 [submodule "example/tools/checklist"]
 	path = example/tools/checklist
-	url = https://github.com/editor-js/checklist
+	url = https://github.com/rogueturnip/checklist
 [submodule "example/tools/link"]
 	path = example/tools/link
-	url = https://github.com/editor-js/link
+	url = https://github.com/rogueturnip/link
 [submodule "example/tools/raw"]
 	path = example/tools/raw
-	url = https://github.com/editor-js/raw
+	url = https://github.com/rogueturnip/raw
 [submodule "example/tools/warning"]
 	path = example/tools/warning
-	url = https://github.com/editor-js/warning
+	url = https://github.com/rogueturnip/warning
 [submodule "example/tools/underline"]
 	path = example/tools/underline
-	url = https://github.com/editor-js/underline
+	url = https://github.com/rogueturnip/underline
 [submodule "example/tools/nested-list"]
 	path = example/tools/nested-list
-	url = https://github.com/editor-js/nested-list
+	url = https://github.com/rogueturnip/nested-list
 [submodule "example/tools/text-variant-tune"]
 	path = example/tools/text-variant-tune
-	url = https://github.com/editor-js/text-variant-tune
+	url = https://github.com/rogueturnip/text-variant-tune
