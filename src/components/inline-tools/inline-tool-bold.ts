@@ -23,13 +23,14 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Sanitizer Rule
-   * Leave <b> tags
+   * Leave <b> and <strong> tags
    *
    * @returns {object}
    */
   public static get sanitize(): SanitizerConfig {
     return {
       b: {},
+      strong: {},
     } as SanitizerConfig;
   }
 
