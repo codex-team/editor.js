@@ -1,8 +1,8 @@
 ---
-name: Discussion
-about: Any question about the Editor.js to discuss
+name: General Issue
+about: Well-designed, algorithmized feature/idea/improvement issue for Editor.js
 title: ''
-labels: discussion
+labels: ''
 assignees: ''
 
 ---

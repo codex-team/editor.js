@@ -2,16 +2,18 @@
 import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
 
-describe.only('Block ids', () => {
-  beforeEach(() => {
-    if (this && this.editorInstance) {
+describe('Block ids', () => {
+  beforeEach(function () {
+    cy.createEditor({
+      tools: {
+        header: Header,
+      },
+    }).as('editorInstance');
+  });
+
+  afterEach(function () {
+    if (this.editorInstance) {
       this.editorInstance.destroy();
-    } else {
-      cy.createEditor({
-        tools: {
-          header: Header,
-        },
-      }).as('editorInstance');
     }
   });
 
@@ -31,7 +33,7 @@ describe.only('Block ids', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover__item[data-item-name=header]')
+      .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
     cy.get('[data-cy=editorjs]')

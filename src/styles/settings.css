@@ -1,46 +1,4 @@
 .ce-settings {
-  @apply --overlay-pane;
-  top: var(--toolbar-buttons-size);
-  left: 0;
-  min-width: 114px;
-  box-sizing: content-box;
-
-  @media (--mobile){
-    bottom: 40px;
-    right: auto;
-    top: auto;
-  }
-
-  &::before{
-    left: auto;
-    right: 12px;
-
-    @media (--mobile){
-      bottom: -5px;
-      top: auto;
-    }
-  }
-
-  display: none;
-
-  &--opened {
-    display: block;
-    animation-duration: 0.1s;
-    animation-name: panelShowing;
-  }
-
-  &__plugin-zone {
-    &:not(:empty){
-      padding: 3px 3px 0;
-    }
-  }
-
-  &__default-zone {
-    &:not(:empty){
-      padding: 3px;
-    }
-  }
-
   &__button {
     @apply --toolbar-button;
 
@@ -62,28 +20,14 @@
     &--selected {
       color: var(--color-active-icon);
     }
+  }
+}
 
-    &--delete {
-      transition: background-color 300ms ease;
-      will-change: background-color;
-
-      .icon {
-        transition: transform 200ms ease-out;
-        will-change: transform;
-      }
-    }
-
-    &--confirm {
-      background-color: var(--color-confirm) !important;
-      color: #fff;
-
-      &:hover {
-        background-color: color-mod(var(--color-confirm) blackness(+5%)) !important;
-      }
-
-      .icon {
-        transform: rotate(90deg);
-      }
+.codex-editor--narrow .ce-settings {
+  @media (--not-mobile){
+    .ce-popover {
+      right: 0;
+      left: unset;
     }
   }
 }

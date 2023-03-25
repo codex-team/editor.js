@@ -4,9 +4,12 @@ jobs:
   firefox:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node14.16.0-chrome89-ff86
+      image: cypress/browsers:node14.17.0-chrome88-ff89
       options: --user 1001
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
@@ -17,6 +20,9 @@ jobs:
   chrome:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2
@@ -27,6 +33,9 @@ jobs:
   edge:
     runs-on: windows-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v2

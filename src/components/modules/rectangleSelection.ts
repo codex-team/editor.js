@@ -1,7 +1,6 @@
 /**
  * @class RectangleSelection
  * @classdesc Manages Block selection with mouse
- *
  * @module RectangleSelection
  * @version 1.0.0
  */
@@ -188,6 +187,7 @@ export default class RectangleSelection extends Module {
 
     this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10), {
       passive: true,
     });
@@ -198,6 +198,7 @@ export default class RectangleSelection extends Module {
 
     this.listeners.on(window, 'scroll', _.throttle((mouseEvent: MouseEvent) => {
       this.processScroll(mouseEvent);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10), {
       passive: true,
     });
@@ -290,7 +291,7 @@ export default class RectangleSelection extends Module {
   /**
    * Generates required HTML elements
    *
-   * @returns {object<string, Element>}
+   * @returns {Object<string, Element>}
    */
   private genHTML(): {container: Element; overlay: Element} {
     const { UI } = this.Editor;

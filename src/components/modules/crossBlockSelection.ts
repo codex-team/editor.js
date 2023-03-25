@@ -176,7 +176,7 @@ export default class CrossBlockSelection extends Module {
   private onMouseUp = (): void => {
     this.listeners.off(document, 'mouseover', this.onMouseOver);
     this.listeners.off(document, 'mouseup', this.onMouseUp);
-  }
+  };
 
   /**
    * Mouse over event handler
@@ -222,7 +222,7 @@ export default class CrossBlockSelection extends Module {
 
     this.toggleBlocksSelectedState(relatedBlock, targetBlock);
     this.lastSelectedBlock = targetBlock;
-  }
+  };
 
   /**
    * Change blocks selection state between passed two blocks.

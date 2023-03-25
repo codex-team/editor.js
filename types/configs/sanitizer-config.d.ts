@@ -2,7 +2,9 @@
  * Sanitizer config of each HTML element
  * @see {@link https://github.com/guardian/html-janitor#options}
  */
-type TagConfig = boolean | { [attr: string]: boolean | string };
+export type TagConfig = boolean | { [attr: string]: boolean | string };
+
+export type SanitizerRule = TagConfig | ((el: Element) => TagConfig)
 
 export interface SanitizerConfig {
   /**
@@ -37,5 +39,5 @@ export interface SanitizerConfig {
    *   }
    * }
    */
-  [key: string]: TagConfig | ((el: Element) => TagConfig);
+  [key: string]: SanitizerRule;
 }

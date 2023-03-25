@@ -3,7 +3,7 @@ import { ToolboxConfig } from '../../../types';
 
 describe('Editor i18n', () => {
   context('Toolbox', () => {
-    it('should translate tool title in a toolbox', () => {
+    it('should translate tool title in a toolbox', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
@@ -31,11 +31,11 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=header]')
+        .get('div.ce-popover-item[data-item-name=header]')
         .should('contain.text', toolNamesDictionary.Heading);
     });
 
-    it('should translate titles of toolbox entries', () => {
+    it('should translate titles of toolbox entries', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
@@ -85,17 +85,17 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.ce-popover-item[data-item-name=testTool]')
         .first()
         .should('contain.text', toolNamesDictionary.Title1);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.ce-popover-item[data-item-name=testTool]')
         .last()
         .should('contain.text', toolNamesDictionary.Title2);
     });
 
-    it('should use capitalized tool name as translation key if toolbox title is missing', () => {
+    it('should use capitalized tool name as translation key if toolbox title is missing', function () {
       if (this && this.editorInstance) {
         this.editorInstance.destroy();
       }
@@ -137,7 +137,7 @@ describe('Editor i18n', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover__item[data-item-name=testTool]')
+        .get('div.ce-popover-item[data-item-name=testTool]')
         .should('contain.text', toolNamesDictionary.TestTool);
     });
   });

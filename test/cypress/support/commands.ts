@@ -126,3 +126,33 @@ Cypress.Commands.add('render', { prevSubject: true }, async (subject: EditorJS, 
 
   return subject;
 });
+
+
+/**
+ * Select passed text in element
+ * Note. Previous subject should have 'textNode' as firstChild
+ *
+ * Usage
+ * cy.get('[data-cy=editorjs]')
+ *  .find('.ce-paragraph')
+ *  .selectText('block te')
+ *
+ * @param text - text to select
+ */
+Cypress.Commands.add('selectText', {
+  prevSubject: true,
+}, (subject, text: string) => {
+  const el = subject[0];
+  const document = el.ownerDocument;
+  const range = document.createRange();
+  const textNode = el.firstChild;
+  const selectionPositionStart = textNode.textContent.indexOf(text);
+  const selectionPositionEnd = selectionPositionStart + text.length;
+
+  range.setStart(textNode, selectionPositionStart);
+  range.setEnd(textNode, selectionPositionEnd);
+  document.getSelection().removeAllRanges();
+  document.getSelection().addRange(range);
+
+  return subject;
+});

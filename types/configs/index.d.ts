@@ -5,3 +5,4 @@ export * from './conversion-config';
 export * from './log-levels';
 export * from './i18n-config';
 export * from './i18n-dictionary';
+export * from './popover'
