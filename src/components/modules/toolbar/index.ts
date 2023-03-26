@@ -467,10 +467,12 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
       const { BlockManager, InlineToolbar, BlockSelection } = this.Editor;
-
+     
+      /** Close components */
       this.tooltip.hide(true);
-      this.close();
-      InlineToolbar.close();
+      this.blockActions.hide();
+      this.toolboxInstance.close();
+      BlockSettings.close();
 
       BlockManager.currentBlock = this.hoveredBlock;
       BlockSelection.selectBlockByIndex(BlockManager.currentBlockIndex);
