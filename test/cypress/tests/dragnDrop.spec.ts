@@ -40,6 +40,8 @@ describe("Drag and drop the block of Editor", function () {
             cy.get("[data-cy=editorjs]")
                 .get('div.ce-block')
                 .last()
+                // drop the file from the given path
+                // use cypress-file-upload command attached.
                 .attachFile('../../../example/assets/codex2x.png', { subjectType: 'drag-n-drop' })
                 .wait(10);
 
@@ -49,6 +51,82 @@ describe("Drag and drop the block of Editor", function () {
                 .get('img', { timeout: 10000 })
                 .should('have.attr', 'src', uri);
         })
+    });
+
+    it("should have block dragover style on the top of target block", function () {
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .first()
+            .click();
+
+        const dataTransfer = new DataTransfer();
+
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragstart", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(2)
+            .trigger("dragenter").then((blocks) => {
+                // Get the target block rect.
+                const targetBlockRect = blocks[0].getBoundingClientRect();
+                const yShiftFromMiddleLine = -20;
+                // Dragover on target block little bit above the middle line. 
+                const dragOverYCoord = (targetBlockRect.y + (targetBlockRect.height / 2 + yShiftFromMiddleLine));
+
+                cy.get('[data-cy=editorjs]')
+                    .get('div.ce-block')
+                    .eq(2)
+                    .trigger("dragover", {
+                        clientX: targetBlockRect.x,
+                        clientY: dragOverYCoord
+                    })
+                    .then($element => {
+                        // check for dragover top style on target element.
+                        const classes = $element.attr('class').split(' ');
+                        expect(classes).to.include('ce-block--drop-target');
+                        expect(classes).to.include('ce-block--drop-target-top');
+                    });
+            })
+    });
+
+    it("should have block dragover style on the bottom of target block", function () {
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .first()
+            .click();
+
+        const dataTransfer = new DataTransfer();
+
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragstart", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(2)
+            .trigger("dragenter").then((blocks) => {
+                // Get the target block rect.
+                const targetBlockRect = blocks[0].getBoundingClientRect();
+                const yShiftFromMiddleLine = 20;
+                // Dragover on target block little bit below the middle line. 
+                const dragOverYCoord = (targetBlockRect.y + (targetBlockRect.height / 2 + yShiftFromMiddleLine));
+
+                cy.get('[data-cy=editorjs]')
+                    .get('div.ce-block')
+                    .eq(2)
+                    .trigger("dragover", {
+                        clientX: targetBlockRect.x,
+                        clientY: dragOverYCoord
+                    })
+                    .then($element => {
+                        // check for dragover top style on target element.
+                        const classes = $element.attr('class').split(' ');
+                        expect(classes).to.include('ce-block--drop-target');
+                        expect(classes).to.include('ce-block--drop-target-bottom');
+                    });
+            })
     });
 
     // it("should drag the block", function () {
