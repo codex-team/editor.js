@@ -466,8 +466,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * the tooltip and close Inilne toolbar for dragging.
      */
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
-      const { BlockManager, InlineToolbar, BlockSelection } = this.Editor;
-     
+      const { BlockManager, BlockSettings, BlockSelection } = this.Editor;
+      
       /** Close components */
       this.tooltip.hide(true);
       this.blockActions.hide();
