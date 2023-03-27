@@ -146,7 +146,7 @@ function _log(
     } else {
       console[type](msg, ...argsToPass);
     }
-  } catch (ignored) {}
+  } catch (ignored) { }
 }
 
 /**
@@ -315,9 +315,9 @@ export function isPrintableKey(keyCode: number): boolean {
 export async function sequence(
   chains: ChainData[],
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  success: (data: object) => void = (): void => {},
+  success: (data: object) => void = (): void => { },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fallback: (data: object) => void = (): void => {}
+  fallback: (data: object) => void = (): void => { }
 ): Promise<void> {
   /**
    * Decorator
@@ -376,8 +376,8 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
   return function (): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
-        // eslint-disable-next-line prefer-rest-params
-        args = arguments;
+      // eslint-disable-next-line prefer-rest-params
+      args = arguments;
 
     window.setTimeout(() => method.apply(context, args), timeout);
   };
@@ -449,7 +449,7 @@ export function debounce(func: (...args: unknown[]) => void, wait?: number, imme
  *                  but if you'd like to disable the execution on the leading edge, pass
  *                  `{leading: false}`. To disable execution on the trailing edge, ditto.
  */
-export function throttle(func, wait, options: {leading?: boolean; trailing?: boolean} = undefined): () => void {
+export function throttle(func, wait, options: { leading?: boolean; trailing?: boolean } = undefined): () => void {
   let context, args, result;
   let timeout = null;
   let previous = 0;
@@ -529,7 +529,7 @@ export function copyTextToClipboard(text): void {
 /**
  * Returns object with os name as key and boolean as value. Shows current user OS
  */
-export function getUserOS(): {[key: string]: boolean} {
+export function getUserOS(): { [key: string]: boolean } {
   const OS = {
     win: false,
     mac: false,
@@ -786,4 +786,36 @@ export function equals(var1: unknown, var2: unknown): boolean {
   }
 
   return var1 === var2;
+}
+
+
+/**
+ * Scrolls the viewport to bring the specified element into view.
+ *
+ * @param {HTMLElement} elem - The element to scroll to.
+ */
+export function scrollToView(elem: HTMLElement) {
+  // Get the target element and its bounding rectangle
+  const targetRect = elem.getBoundingClientRect();
+
+  // Get the size of the viewport
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  // Check if the target element is within the viewport
+  const isTargetInViewport = (
+    targetRect.top >= 0 &&
+    targetRect.left >= 0 &&
+    targetRect.bottom <= viewportHeight &&
+    targetRect.right <= viewportWidth
+  );
+
+  // Scroll the page if the target element is not within the viewport
+  if (!isTargetInViewport) {
+    window.scrollTo({
+      top: targetRect.top,
+      left: targetRect.left,
+      behavior: 'smooth'
+    });
+  }
 }

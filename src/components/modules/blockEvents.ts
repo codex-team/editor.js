@@ -145,8 +145,19 @@ export default class BlockEvents extends Module {
   /**
    * All drag enter on block
    *  - use to clear previous drop target zone style.
+   * 
+   * @param {DragEvent} event - drag over event
    */
-  public dragEnter(): void {
+  public dragEnter(event: DragEvent): void {
+
+    const { BlockManager } = this.Editor;
+    const block = BlockManager.getBlockByChildNode(event.target as Node);
+
+    /**
+     * Scroll to make element inside the viewport.
+     */
+    _.scrollToView(block.holder);
+    
     /**
      * Clear previous drop target zone for every block.
      */
