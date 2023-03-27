@@ -214,4 +214,107 @@ describe("Drag and drop the block of Editor", function () {
                 expect(blocks[2].textContent).to.eq('Block 1');
             });
     });
+
+    it("should drag the first two block and drop after the last block.", function () {
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(0)
+            .type('{movetoend}')
+            .trigger('keydown', {
+                shiftKey: true,
+                keyCode: _.keyCodes.UP,
+            })
+            .trigger('keydown', {
+                shiftKey: true,
+                keyCode: _.keyCodes.DOWN,
+            }).click();
+
+        const dataTransfer = new DataTransfer();
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragstart", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(2)
+            .trigger("dragenter").then((blocks) => {
+                // Get the target block rect.
+                const targetBlockRect = blocks[0].getBoundingClientRect();
+                const yShiftFromMiddleLine = 20;
+                // Dragover on target block little bit below the middle line. 
+                const dragOverYCoord = (targetBlockRect.y + (targetBlockRect.height / 2 + yShiftFromMiddleLine));
+
+                cy.get('[data-cy=editorjs]')
+                    .get('div.ce-block')
+                    .eq(2)
+                    .trigger("dragover", {
+                        clientX: targetBlockRect.x,
+                        clientY: dragOverYCoord
+                    })
+                    .trigger("drop", { dataTransfer });
+            })
+
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragend", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .then(blocks => {
+                expect(blocks[0].textContent).to.eq('Block 2');
+                expect(blocks[1].textContent).to.eq('Block 0');
+                expect(blocks[2].textContent).to.eq('Block 1');
+            });
+    });
+
+    it("should drag the last two block and drop before the first block.", function () {
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(1)
+            .type('{movetoend}')
+            .trigger('keydown', {
+                shiftKey: true,
+                keyCode: _.keyCodes.UP,
+            })
+            .trigger('keydown', {
+                shiftKey: true,
+                keyCode: _.keyCodes.DOWN,
+            }).click();
+
+        const dataTransfer = new DataTransfer();
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragstart", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .eq(0)
+            .trigger("dragenter").then((blocks) => {
+                // Get the target block rect.
+                const targetBlockRect = blocks[0].getBoundingClientRect();
+                const yShiftFromMiddleLine = -20;
+                // Dragover on target block little bit below the middle line. 
+                const dragOverYCoord = (targetBlockRect.y + (targetBlockRect.height / 2 + yShiftFromMiddleLine));
+
+                cy.get('[data-cy=editorjs]')
+                    .get('div.ce-block')
+                    .eq(0)
+                    .trigger("dragover", {
+                        clientX: targetBlockRect.x,
+                        clientY: dragOverYCoord
+                    })
+                    .trigger("drop", { dataTransfer });
+            })
+
+        cy.get('.ce-toolbar__settings-btn')
+            .trigger("dragend", { dataTransfer });
+
+        cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .then(blocks => {
+                expect(blocks[0].textContent).to.eq('Block 1');
+                expect(blocks[1].textContent).to.eq('Block 2');
+                expect(blocks[2].textContent).to.eq('Block 0');
+            });
+    });
+
 });
