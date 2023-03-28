@@ -211,11 +211,7 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .eq(0)
-      .type('{movetoend}')
-      .trigger('keydown', {
-        shiftKey: true,
-        keyCode: _.keyCodes.UP,
-      })
+      .type('{selectall}')
       .trigger('keydown', {
         shiftKey: true,
         keyCode: _.keyCodes.DOWN,
@@ -263,11 +259,7 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .eq(1)
-      .type('{movetoend}')
-      .trigger('keydown', {
-        shiftKey: true,
-        keyCode: _.keyCodes.UP,
-      })
+      .type('{selectall}')
       .trigger('keydown', {
         shiftKey: true,
         keyCode: _.keyCodes.DOWN,
