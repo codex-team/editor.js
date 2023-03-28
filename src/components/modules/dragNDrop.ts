@@ -1,6 +1,7 @@
 import SelectionUtils from '../selection';
 import Block, { BlockDropZonePosition } from '../block';
 import * as _ from '../utils';
+import Dom from '../dom';
 import Module from '../__module';
 /**
  *
@@ -220,13 +221,13 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   * Create drag image for drag-n-drop.
+   * Create drag image for drag-n-drop and add to Editor holder. 
    *
    * @param blocks {Block[]} - blocks to create drag image for.
    * @returns {HTMLElement} - drag image.
    */
   private createDragImage(blocks: Block[]): HTMLElement {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, UI } = this.Editor;
 
     /**
      * If we are dragging only one block, return its content.
@@ -240,25 +241,26 @@ export default class DragNDrop extends Module {
     /**
      * If we are dragging multiple blocks, create a drag image with all blocks content.
      */
-    const dragImage: HTMLElement = document.createElement('div');
+    const dragImage: HTMLElement = Dom.make('div');
 
     dragImage.id = `drag-image-${_.generateId()}`;
     dragImage.style.position = 'absolute';
     dragImage.style.top = '-1000px';
-    blocks.forEach(block => {
-      const blockContent = block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true);
 
-      dragImage.appendChild(blockContent);
-    });
-    document.body.appendChild(dragImage);
+    const clones = blocks.map(block => block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true));
+    dragImage.append(...clones);
+
+    UI.nodes.holder.appendChild(dragImage);
 
     return dragImage;
   }
 
   /**
-   * Remove drag image from DOM.
+   * Remove drag image from Editor holder.
    */
   private removeDragImage(): void {
-    document.querySelector('[id^="drag-image-"]')?.remove();
+    const { UI } = this.Editor;
+
+    UI.nodes.holder.querySelector('[id^="drag-image-"]')?.remove();
   }
 }
