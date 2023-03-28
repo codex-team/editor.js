@@ -148,14 +148,14 @@ export default class DragNDrop extends Module {
    * @param dropEvent {DragEvent} - drop event
    */
   private processBlockDrop(dropEvent: DragEvent): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     /**
      * Remove drag image from DOM.
      */
     this.removeDragImage();
 
-    const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
+    const selectedBlocks = BlockSelection.selectedBlocks;
     const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
 
     if (!targetBlock) {
@@ -198,14 +198,14 @@ export default class DragNDrop extends Module {
    * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
-    const { BlockManager } = this.Editor;
+    const { BlockManager, BlockSelection } = this.Editor;
 
     /**
      * If we are dragging a block, set the flag to true.
      */
     this.isStartedAtEditor = true;
 
-    const selectedBlocks = BlockManager.blocks.filter(block => block.selected);
+    const selectedBlocks = BlockSelection.selectedBlocks;
 
     const dragImage = this.createDragImage(selectedBlocks);
 
