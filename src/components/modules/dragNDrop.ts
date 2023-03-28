@@ -199,7 +199,7 @@ export default class DragNDrop extends Module {
    * @param dragStartEvent - drag start event
    */
   private processDragStart(dragStartEvent: DragEvent): void {
-    const { BlockManager, BlockSelection } = this.Editor;
+    const { BlockSelection } = this.Editor;
 
     /**
      * If we are dragging a block, set the flag to true.
@@ -221,7 +221,7 @@ export default class DragNDrop extends Module {
   }
 
   /**
-   * Create drag image for drag-n-drop and add to Editor holder. 
+   * Create drag image for drag-n-drop and add to Editor holder.
    *
    * @param blocks {Block[]} - blocks to create drag image for.
    * @returns {HTMLElement} - drag image.
@@ -248,6 +248,7 @@ export default class DragNDrop extends Module {
     dragImage.style.top = '-1000px';
 
     const clones = blocks.map(block => block.holder.querySelector(`.${Block.CSS.content}`).cloneNode(true));
+
     dragImage.append(...clones);
 
     UI.nodes.holder.appendChild(dragImage);

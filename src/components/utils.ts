@@ -376,8 +376,8 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
   return function (): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this,
-      // eslint-disable-next-line prefer-rest-params
-      args = arguments;
+        // eslint-disable-next-line prefer-rest-params
+        args = arguments;
 
     window.setTimeout(() => method.apply(context, args), timeout);
   };
@@ -794,7 +794,7 @@ export function equals(var1: unknown, var2: unknown): boolean {
  *
  * @param {HTMLElement} elem - The element to scroll to.
  */
-export function scrollToView(elem: HTMLElement) {
+export function scrollToView(elem: HTMLElement):void {
   // Get the target element and its bounding rectangle
   const targetRect = elem.getBoundingClientRect();
 
@@ -815,7 +815,7 @@ export function scrollToView(elem: HTMLElement) {
     window.scrollTo({
       top: targetRect.top,
       left: targetRect.left,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }
 }
