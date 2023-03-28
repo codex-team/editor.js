@@ -629,7 +629,7 @@ export default class BlockManager extends Module {
    */
   public clearDropTargets(): void {
     this.blocks.forEach((block) => {
-      block.dropTarget = undefined;
+      block.dropTarget = false;
     });
   }
 
