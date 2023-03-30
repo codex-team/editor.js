@@ -458,7 +458,7 @@
     tunnel-agent "^0.6.0"
     uuid "^8.3.2"
 
-"@cypress/webpack-preprocessor@^5.11.0", "@cypress/webpack-preprocessor@^5.6.0":
+"@cypress/webpack-preprocessor@^5.11.0":
   version "5.17.0"
   resolved "https://registry.yarnpkg.com/@cypress/webpack-preprocessor/-/webpack-preprocessor-5.17.0.tgz#3f58cf333c5931094780e3ca14c9302a1965025e"
   integrity sha512-HyFqHkrOrIIYOt4G+r3VK0kVYTcev1tEcqBI/0DJ4AzEuEgW/TB+cX56txy4Cgn60XXdJoul2utclZwUqOsPZA==
@@ -6451,11 +6451,6 @@ vite-plugin-babel@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/vite-plugin-babel/-/vite-plugin-babel-1.1.3.tgz#4ce93f573f8f49e1760bce51b07860876f705c76"
   integrity sha512-WE8ORQm8530kj0geiDL1r/+P2MaU0b+5wL5E8Jq07aounFwRIUeJXziGiMr2DFQs78vaefB5GRKh257M8Z6gFQ==
-
-vite-plugin-banner@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-banner/-/vite-plugin-banner-0.7.0.tgz#d765257ae499bd383c8e363097e1754bcd12180e"
-  integrity sha512-g0cm0wbrR6b6wR8FWtfD1RSDPacdumKEOAnneXv+NpJ9ez+j6rklRv6lMOO+aPf+Y6Zb8OzgIk0FXBZ6h+DeZQ==
 
 vite-plugin-css-injected-by-js@^3.0.1:
   version "3.0.1"

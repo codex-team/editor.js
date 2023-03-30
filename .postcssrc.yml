@@ -18,6 +18,10 @@ plugins:
       - 'last 2 versions'
       - '> 1%'
 
+    # Instruct all plugins to omit pre-polyfilled CSS
+    # https://github.com/csstools/postcss-preset-env#preserve
+    preserve: false
+
   # Nested rules unwrapper
   # https://github.com/postcss/postcss-nested
   #

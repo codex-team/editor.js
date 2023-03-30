@@ -3,21 +3,11 @@ import path from 'path';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import ViteRequireContext from '@originjs/vite-plugin-require-context';
 import license from 'rollup-plugin-license';
-import banner from 'vite-plugin-banner';
 
 import * as pkg from './package.json';
 
 const NODE_ENV = process.argv.mode || 'development';
 const VERSION = pkg.version;
-const BANNER = `
-Editor.js
-
-@version ${VERSION}
-@licence Apache-2.0
-@author CodeX <https://codex.so>
-
-@uses html-janitor
-@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`;
 
 /**
  * Trick to use Vite server.open option on macOS
@@ -38,7 +28,8 @@ export default {
           thirdParty: {
             allow: {
               test: (dependency) => {
-                // Allow html-janitor (https://github.com/guardian/html-janitor/blob/master/LICENSE)
+                // Manually allow html-janitor (https://github.com/guardian/html-janitor/blob/master/LICENSE)
+                // because of missing LICENSE file in published package
                 if (dependency.name === 'html-janitor') {
                   return true;
                 }
@@ -54,7 +45,7 @@ export default {
               failOnUnlicensed: true,
               failOnViolation: true,
             },
-            output: path.resolve(__dirname, 'dist', 'assets', 'vendor.LICENSE.txt'),
+            output: path.resolve(__dirname, 'dist', 'vendor.LICENSE.txt'),
           },
         }),
       ],
@@ -72,7 +63,6 @@ export default {
   },
 
   plugins: [
-    banner(BANNER),
     ViteRequireContext(),
     cssInjectedByJsPlugin(),
   ],

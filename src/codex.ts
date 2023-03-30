@@ -16,11 +16,9 @@ declare const VERSION: string;
 /**
  * Editor.js
  *
- * Short Description (눈_눈;)
- *
- * @version 2.18.0
  * @license Apache-2.0
- * @author CodeX-Team <https://ifmo.su>
+ * @see Editor.js <https://editorjs.io>
+ * @author CodeX Team <https://codex.so>
  */
 export default class EditorJS {
   /**
