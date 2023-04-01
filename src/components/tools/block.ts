@@ -157,7 +157,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Returns Tool paste configuration
    */
-  public get pasteConfig(): PasteConfig | false {
+  public get pasteConfig(): PasteConfig {
     return this.constructable[InternalBlockToolSettings.PasteConfig] ?? {};
   }
 
