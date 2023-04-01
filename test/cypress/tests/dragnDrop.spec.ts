@@ -1,7 +1,6 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import 'cypress-file-upload';
 
 describe('Drag and drop the block of Editor', function () {
   beforeEach(function () {
@@ -47,7 +46,8 @@ describe('Drag and drop the block of Editor', function () {
           const file = new File([blob], fileName, { type: fileType })
           const dataTransfer = new DataTransfer();
           // add the file to the DataTransfer object
-          dataTransfer.items.add(file)
+          dataTransfer.items.add(file);
+
           // Test by dropping the image.
           cy.get('[data-cy=editorjs]')
             .get('div.ce-block')
