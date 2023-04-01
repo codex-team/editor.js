@@ -37,13 +37,13 @@ describe('Drag and drop the block of Editor', function () {
       const uri = 'data:image/png;base64,' + base64;
 
       // define the file to be dropped
-      const fileName = '../../../example/assets/codex2x.png'
-      const fileType = 'image/png'
+      const fileName = '../../../example/assets/codex2x.png';
+      const fileType = 'image/png';
 
       cy.fixture(fileName, 'binary')
         .then(Cypress.Blob.binaryStringToBlob)
         .then((blob) => {
-          const file = new File([blob], fileName, { type: fileType })
+          const file = new File([blob], fileName, { type: fileType });
           const dataTransfer = new DataTransfer();
           // add the file to the DataTransfer object
           dataTransfer.items.add(file);
@@ -67,15 +67,11 @@ describe('Drag and drop the block of Editor', function () {
   });
 
   it('should have block dragover style on the top of target block', function () {
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .first()
-      .click();
+    cy.get('[data-cy=editorjs]').get('div.ce-block').first().click();
 
     const dataTransfer = new DataTransfer();
 
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragstart', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragstart', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -107,15 +103,11 @@ describe('Drag and drop the block of Editor', function () {
   });
 
   it('should have block dragover style on the bottom of target block', function () {
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .first()
-      .click();
+    cy.get('[data-cy=editorjs]').get('div.ce-block').first().click();
 
     const dataTransfer = new DataTransfer();
 
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragstart', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragstart', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -147,14 +139,10 @@ describe('Drag and drop the block of Editor', function () {
   });
 
   it('should drag the first block and drop after the last block.', function () {
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .first()
-      .click();
+    cy.get('[data-cy=editorjs]').get('div.ce-block').first().click();
 
     const dataTransfer = new DataTransfer();
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragstart', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragstart', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -179,8 +167,7 @@ describe('Drag and drop the block of Editor', function () {
           .trigger('drop', { dataTransfer });
       });
 
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragend', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragend', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -198,8 +185,7 @@ describe('Drag and drop the block of Editor', function () {
       .click();
 
     const dataTransfer = new DataTransfer();
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragstart', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragstart', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -310,8 +296,7 @@ describe('Drag and drop the block of Editor', function () {
       .trigger("mouseleave");
 
     const dataTransfer = new DataTransfer();
-    cy.get('.ce-toolbar__settings-btn')
-      .trigger('dragstart', { dataTransfer });
+    cy.get('.ce-toolbar__settings-btn').trigger('dragstart', { dataTransfer });
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
