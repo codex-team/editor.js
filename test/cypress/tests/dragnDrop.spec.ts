@@ -36,22 +36,35 @@ describe('Drag and drop the block of Editor', function () {
     cy.readFile('example/assets/codex2x.png', 'base64').then((base64) => {
       // Create URI
       const uri = 'data:image/png;base64,' + base64;
-      // Test by dropping the image.
-      cy.get('[data-cy=editorjs]')
-        .get('div.ce-block')
-        .last()
-        // drop the file from the given path
-        // use cypress-file-upload command attached.
-        .attachFile('../../../example/assets/codex2x.png', {
-          subjectType: 'drag-n-drop',
-        })
-        .wait(10);
 
-      cy.get('[data-cy=editorjs]')
-        // In Edge test are performed slower, so we need to
-        // increase timeout to wait until image is loaded on the page
-        .get('img', { timeout: 10000 })
-        .should('have.attr', 'src', uri);
+      // define the file to be dropped
+      const fileName = '../../../example/assets/codex2x.png'
+      const fileType = 'image/png'
+
+      cy.fixture(fileName, 'binary')
+        .then(Cypress.Blob.binaryStringToBlob)
+        .then((blob) => {
+          const file = new File([blob], fileName, { type: fileType })
+          const dataTransfer = new DataTransfer();
+          // add the file to the DataTransfer object
+          dataTransfer.items.add(file)
+          // Test by dropping the image.
+          cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .last()
+            .trigger('dragover')
+          cy.get('[data-cy=editorjs]')
+            .get('div.ce-block')
+            .last()
+            .trigger('drop', { dataTransfer })
+            .wait(1000);
+
+          cy.get('[data-cy=editorjs]')
+            // In Edge test are performed slower, so we need to
+            // increase timeout to wait until image is loaded on the page
+            .get('img', { timeout: 10000 })
+            .should('have.attr', 'src', uri);
+        });
     });
   });
 
