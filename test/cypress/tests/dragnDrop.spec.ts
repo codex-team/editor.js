@@ -52,10 +52,8 @@ describe('Drag and drop the block of Editor', function () {
           cy.get('[data-cy=editorjs]')
             .get('div.ce-block')
             .last()
+            .trigger('dragenter')
             .trigger('dragover')
-          cy.get('[data-cy=editorjs]')
-            .get('div.ce-block')
-            .last()
             .trigger('drop', { dataTransfer })
             .wait(1000);
 
