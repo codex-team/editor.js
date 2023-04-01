@@ -1,13 +1,48 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
+import { BlockTool, BlockToolData } from '../../../types';
+import $ from '../../../src/components/dom';
 
 describe('Copy pasting from Editor', function () {
+  const onPasteStub = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onpaste: () => {},
+  };
+
+  /**
+   * Tool with disabled preventing default behavior of onPaste event
+   */
+  class BlockToolWithPasteHandler implements BlockTool {
+    public static pasteConfig = false;
+
+    /**
+     * Render block
+     */
+    public render(): HTMLElement {
+      const block = $.make('div', 'ce-block-with-disabled-prevent-default', {
+        contentEditable: 'true',
+      });
+
+      block.addEventListener('paste', onPasteStub.onpaste);
+
+      return block;
+    }
+
+    /**
+     * Save data method
+     */
+    public save(): BlockToolData {
+      return {};
+    }
+  }
+
   beforeEach(function () {
     cy.createEditor({
       tools: {
         header: Header,
         image: Image,
+        blockToolWithPasteHandler: BlockToolWithPasteHandler,
       },
     }).as('editorInstance');
   });
@@ -138,6 +173,33 @@ describe('Copy pasting from Editor', function () {
         // In Edge test are performed slower, so we need to increase timeout to wait until image is loaded on the page
         .get('img', { timeout: 10000 })
         .should('have.attr', 'src', 'https://codex.so/public/app/img/external/codex2x.png');
+    });
+
+    it('should not prevent default behaviour if block\'s paste config equals false', function () {
+      onPasteStub.onpaste = cy.stub().as('onPaste');
+
+      cy.get('@editorInstance')
+        .render({
+          blocks: [
+            {
+              type: 'blockToolWithPasteHandler',
+              data: {},
+            },
+          ],
+        });
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block-with-disabled-prevent-default')
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/plain': 'Hello',
+        });
+
+      cy.get('@onPaste')
+        .should('have.been.calledWithMatch', {
+          defaultPrevented: false,
+        });
     });
   });
 
