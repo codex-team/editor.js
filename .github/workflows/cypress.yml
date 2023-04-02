@@ -3,14 +3,11 @@ on: [pull_request]
 jobs:
   firefox:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node14.17.0-chrome88-ff89
-      options: --user 1001
     steps:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v5
         with:
@@ -23,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v5
         with:
@@ -36,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: yarn ci:pull_paragraph
       - uses: cypress-io/github-action@v5
         with:
