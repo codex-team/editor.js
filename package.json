@@ -19,7 +19,7 @@
     "build:webpack:prod": "webpack --mode production",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
     "lint:errors": "eslint src/ --ext .ts --quiet",
-    "lint:fix": "eslint src/ --ext .ts --fix",
+    "lint:fix": "eslint src/ --ext .ts --fix && eslint test/ --ext .ts  --fix",
     "lint:tests": "eslint test/ --ext .ts",
     "ci:pull_paragraph": "git submodule update --init ./src/tools/paragraph",
     "pull_tools": "git submodule update --init --recursive",
