@@ -31,7 +31,7 @@ declare global {
        * @usage
        * cy.get('div').copy().then(data => {})
        */
-      copy(): Chainable<{ [type: string]: any }>;
+      copy(): Chainable<Subject>;
 
       /**
        * Cut command to dispatch cut event on subject
@@ -39,14 +39,14 @@ declare global {
        * @usage
        * cy.get('div').cut().then(data => {})
        */
-      cut(): Chainable<{ [type: string]: any }>;
+      cut(): Chainable<Subject>;
 
       /**
        * Calls EditorJS API render method
        *
        * @param data — data to render
        */
-      render(data: OutputData): Chainable<EditorJS>;
+      render(data: OutputData): Chainable<Subject>;
 
       /**
        * Select passed text in element
