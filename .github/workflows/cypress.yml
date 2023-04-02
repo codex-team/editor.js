@@ -12,7 +12,7 @@ jobs:
           node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v5
         with:
           config: video=false
           browser: firefox
@@ -25,7 +25,7 @@ jobs:
           node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v5
         with:
           config: video=false
           browser: chrome
@@ -38,7 +38,7 @@ jobs:
           node-version: 16
       - uses: actions/checkout@v2
       - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v5
         with:
           config: video=false
           browser: edge
