@@ -28,7 +28,7 @@ jobs:
           browser: chrome
           build: yarn build
   edge:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v3
         with:
