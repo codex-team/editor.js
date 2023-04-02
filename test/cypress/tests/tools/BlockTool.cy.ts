@@ -253,10 +253,36 @@ describe('BlockTool', () => {
     expect(tool.conversionConfig).to.be.deep.eq(options.constructable.conversionConfig);
   });
 
-  it('.pasteConfig should return correct value', () => {
-    const tool = new BlockTool(options as any);
+  describe('.pasteConfig', () => {
+    it('should return correct value', () => {
+      const tool = new BlockTool(options as any);
 
-    expect(tool.pasteConfig).to.be.deep.eq(options.constructable.pasteConfig);
+      expect(tool.pasteConfig).to.be.deep.eq(options.constructable.pasteConfig);
+    });
+
+    it('should return false if `false` value was provided', () => {
+      const optionsWithDisabledPaste = {
+        ...options,
+        constructable: class extends (options.constructable as any) {
+          public static pasteConfig = false;
+        },
+      };
+      const tool = new BlockTool(optionsWithDisabledPaste as any);
+
+      expect(tool.pasteConfig).to.be.deep.eq(optionsWithDisabledPaste.constructable.pasteConfig);
+    });
+
+    it('should return empty object if getter isn\'t provided', () => {
+      const optionsWithoutPasteConfig = {
+        ...options,
+        constructable: class extends (options.constructable as any) {
+          public static pasteConfig = undefined;
+        },
+      };
+      const tool = new BlockTool(optionsWithoutPasteConfig as any);
+
+      expect(tool.pasteConfig).to.be.deep.eq({});
+    });
   });
 
   context('.enabledInlineTools', () => {
