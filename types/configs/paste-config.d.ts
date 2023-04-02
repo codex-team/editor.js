@@ -3,7 +3,7 @@ import { SanitizerConfig } from './sanitizer-config';
 /**
  * Tool onPaste configuration object
  */
-interface IPasteConfig {
+interface PasteConfigSpecified {
   /**
    * Array of tags Tool can substitute.
    *
@@ -35,4 +35,4 @@ interface IPasteConfig {
 /**
  * Alias for PasteConfig with false
  */
-export type PasteConfig = IPasteConfig | false;
+export type PasteConfig = PasteConfigSpecified | false;
