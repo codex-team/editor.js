@@ -7,8 +7,10 @@
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
 - `Fix` — Resolve compiler error from importing the BlockToolData type.
 - `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
-- `Improvement` — Package size reduced by removing redundant files
-- `Fix`- Several bugs caused by random browser extensions
+- `Improvement` — Package size reduced by removing redundant files.
+- `Fix`- Several bugs caused by random browser extensions.
+- `Improvement` — *Dependencies* — Upgrade TypeScript to v5.
+- `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
 
 ### 2.26.5
 
