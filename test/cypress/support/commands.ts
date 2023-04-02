@@ -70,7 +70,7 @@ Cypress.Commands.add('paste', {
  * Usage:
  * cy.get('div').copy().then(data => {})
  */
-Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
+Cypress.Commands.add('copy', { prevSubject: true }, (subject) => {
   const clipboardData: {[type: string]: any} = {};
 
   const copyEvent = Object.assign(new Event('copy', {
@@ -87,7 +87,7 @@ Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
 
   subject[0].dispatchEvent(copyEvent);
 
-  return clipboardData;
+  return cy.wrap(clipboardData);
 });
 
 /**
@@ -96,7 +96,7 @@ Cypress.Commands.add('copy', { prevSubject: true }, async (subject) => {
  * Usage:
  * cy.get('div').cut().then(data => {})
  */
-Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
+Cypress.Commands.add('cut', { prevSubject: true }, (subject) => {
   const clipboardData: {[type: string]: any} = {};
 
   const copyEvent = Object.assign(new Event('cut', {
@@ -113,7 +113,7 @@ Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
 
   subject[0].dispatchEvent(copyEvent);
 
-  return clipboardData;
+  return cy.wrap(clipboardData);
 });
 
 /**
@@ -121,10 +121,10 @@ Cypress.Commands.add('cut', { prevSubject: true }, async (subject) => {
  *
  * @param data — data to render
  */
-Cypress.Commands.add('render', { prevSubject: true }, async (subject: EditorJS, data: OutputData): Promise<EditorJS> => {
-  await subject.render(data);
+Cypress.Commands.add('render', { prevSubject: true }, (subject: EditorJS, data: OutputData) => {
+  subject.render(data);
 
-  return subject;
+  return cy.wrap(subject);
 });
 
 
