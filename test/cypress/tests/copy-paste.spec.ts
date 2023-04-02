@@ -1,54 +1,21 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import { BlockTool, BlockToolData } from '../../../types';
+import EditorJS, { BlockTool, BlockToolData } from '../../../types';
 import $ from '../../../src/components/dom';
 
 describe('Copy pasting from Editor', function () {
-  const onPasteStub = {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    onpaste: () => {},
-  };
-
-  /**
-   * Tool with disabled preventing default behavior of onPaste event
-   */
-  class BlockToolWithPasteHandler implements BlockTool {
-    public static pasteConfig = false;
-
-    /**
-     * Render block
-     */
-    public render(): HTMLElement {
-      const block = $.make('div', 'ce-block-with-disabled-prevent-default', {
-        contentEditable: 'true',
-      });
-
-      block.addEventListener('paste', onPasteStub.onpaste);
-
-      return block;
-    }
-
-    /**
-     * Save data method
-     */
-    public save(): BlockToolData {
-      return {};
-    }
-  }
-
   beforeEach(function () {
     cy.createEditor({
       tools: {
         header: Header,
         image: Image,
-        blockToolWithPasteHandler: BlockToolWithPasteHandler,
       },
     }).as('editorInstance');
   });
 
   afterEach(function () {
-    if (this.editorInstance) {
+    if (this.editorInstance && this.editorInstance.destroy) {
       this.editorInstance.destroy();
     }
   });
@@ -176,9 +143,48 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should not prevent default behaviour if block\'s paste config equals false', function () {
-      onPasteStub.onpaste = cy.stub().as('onPaste');
-
+      /**
+       * Destroy default Editor to render custom one with different tools
+       */
       cy.get('@editorInstance')
+        .then((editorInstance: unknown) => (editorInstance as EditorJS).destroy());
+
+      const onPasteStub = cy.stub().as('onPaste');
+
+      /**
+       * Tool with disabled preventing default behavior of onPaste event
+       */
+      class BlockToolWithPasteHandler implements BlockTool {
+        public static pasteConfig = false;
+
+        /**
+         * Render block
+         */
+        public render(): HTMLElement {
+          const block = $.make('div', 'ce-block-with-disabled-prevent-default', {
+            contentEditable: 'true',
+          });
+
+          block.addEventListener('paste', onPasteStub);
+
+          return block;
+        }
+
+        /**
+         * Save data method
+         */
+        public save(): BlockToolData {
+          return {};
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          blockToolWithPasteHandler: BlockToolWithPasteHandler,
+        },
+      }).as('editorInstanceWithBlockToolWithPasteHandler');
+
+      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
         .render({
           blocks: [
             {
@@ -188,7 +194,7 @@ describe('Copy pasting from Editor', function () {
           ],
         });
 
-      cy.get('[data-cy=editorjs]')
+      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
         .get('div.ce-block-with-disabled-prevent-default')
         .click()
         .paste({
@@ -200,6 +206,9 @@ describe('Copy pasting from Editor', function () {
         .should('have.been.calledWithMatch', {
           defaultPrevented: false,
         });
+
+      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
+        .then((editorInstance: unknown) => (editorInstance as EditorJS).destroy());
     });
   });
 
