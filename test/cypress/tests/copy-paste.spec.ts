@@ -206,9 +206,6 @@ describe('Copy pasting from Editor', function () {
         .should('have.been.calledWithMatch', {
           defaultPrevented: false,
         });
-
-      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
-        .then((editorInstance: unknown) => (editorInstance as EditorJS).destroy());
     });
   });
 
