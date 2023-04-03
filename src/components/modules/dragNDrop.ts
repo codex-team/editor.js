@@ -228,19 +228,10 @@ export default class DragNDrop extends Module {
    * @returns {HTMLElement} - drag image.
    */
   private createDragImage(blocks: Block[]): HTMLElement {
-    const { BlockManager, UI } = this.Editor;
+    const { UI } = this.Editor;
 
     /**
-     * If we are dragging only one block, return its content.
-     */
-    if (blocks.length == 1) {
-      const block = BlockManager.currentBlock;
-
-      return block.holder.querySelector(`.${Block.CSS.content}`);
-    }
-
-    /**
-     * If we are dragging multiple blocks, create a drag image with all blocks content.
+     * Create a drag image with all blocks content.
      */
     const dragImage: HTMLElement = Dom.make('div');
 
