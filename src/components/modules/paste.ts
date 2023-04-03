@@ -109,8 +109,6 @@ interface PasteData {
  * @version 2.0.0
  */
 export default class Paste extends Module {
-  public static readonly displayName: string = 'Paste';
-
   /** If string`s length is greater than this number we don't check paste patterns */
   public static readonly PATTERN_PROCESSING_MAX_LENGTH = 450;
 

@@ -25,8 +25,6 @@ import ToolsCollection from '../tools/collection';
  * Modules that works with tools classes
  */
 export default class Tools extends Module {
-  public static readonly displayName: string = 'Tools';
-
   /**
    * Name of Stub Tool
    * Stub Tool is used to substitute unavailable block Tools and store their data

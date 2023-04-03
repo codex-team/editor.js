@@ -8,8 +8,6 @@ import Module from '../../__module';
  * provides with methods to save data
  */
 export default class SaverAPI extends Module {
-  public static readonly displayName: string = 'SaverAPI';
-
   /**
    * Available methods
    *

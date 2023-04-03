@@ -6,8 +6,6 @@ import Module from '../../__module';
  * @classdesc ReadOnly API
  */
 export default class ReadOnlyAPI extends Module {
-  public static readonly displayName: string = 'ReadOnlyAPI';
-
   /**
    * Available methods
    */

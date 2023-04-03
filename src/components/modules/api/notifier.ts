@@ -8,8 +8,6 @@ import { ModuleConfig } from '../../../types-internal/module-config';
  *
  */
 export default class NotifierAPI extends Module {
-  public static readonly displayName: string = 'NotifierAPI';
-
   /**
    * Notifier utility Instance
    */

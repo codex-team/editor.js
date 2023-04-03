@@ -37,8 +37,6 @@ interface InlineToolbarNodes {
  * |________________________|
  */
 export default class InlineToolbar extends Module<InlineToolbarNodes> {
-  public static readonly displayName: string = 'InlineToolbar';
-
   /**
    * CSS styles
    */

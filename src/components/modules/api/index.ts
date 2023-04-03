@@ -13,8 +13,6 @@ import { ToolClass } from '../../tools/collection';
  * @class API
  */
 export default class API extends Module {
-  public static readonly displayName: string = 'API';
-
   /**
    * Editor.js Core API modules
    */

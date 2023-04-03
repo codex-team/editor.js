@@ -22,8 +22,6 @@ interface BlockSettingsNodes {
  *  @todo Make Block Settings no-module but a standalone class, like Toolbox
  */
 export default class BlockSettings extends Module<BlockSettingsNodes> {
-  public static readonly displayName: string = 'BlockSettings';
-
   /**
    * Module Events
    *

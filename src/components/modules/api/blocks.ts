@@ -10,8 +10,6 @@ import Block from '../../block';
  * provides with methods working with Block
  */
 export default class BlocksAPI extends Module {
-  public static readonly displayName: string = 'BlocksAPI';
-
   /**
    * Available methods
    *

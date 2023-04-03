@@ -91,8 +91,6 @@ interface ToolbarNodes {
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module<ToolbarNodes> {
-  public static readonly displayName: string = 'Toolbar';
-
   /**
    * Tooltip utility Instance
    */

@@ -11,8 +11,6 @@ import { CriticalError } from '../errors/critical';
  * @property {boolean} readOnlyEnabled - read-only state
  */
 export default class ReadOnly extends Module {
-  public static readonly displayName: string = 'ReadOnly';
-
   /**
    * Array of tools name which don't support read-only mode
    */

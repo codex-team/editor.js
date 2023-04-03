@@ -8,8 +8,6 @@ import { ToolClass } from '../../tools/collection';
  * Provides methods for working with i18n
  */
 export default class I18nAPI extends Module {
-  public static readonly displayName: string = 'I18nAPI';
-
   /**
    * Return namespace section for tool or block tune
    *

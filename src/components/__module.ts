@@ -19,8 +19,6 @@ export type ModuleNodes = object;
  * @property {EditorModules} Editor - List of Editor modules
  */
 export default class Module<T extends ModuleNodes = Record<string, HTMLElement>> {
-  public static readonly displayName: string;
-
   /**
    * Each module can provide some UI elements that will be stored in this property
    */

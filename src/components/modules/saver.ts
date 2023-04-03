@@ -21,8 +21,6 @@ declare const VERSION: string;
  * @property {string} json - Editor JSON output
  */
 export default class Saver extends Module {
-  public static readonly displayName: string = 'Saver';
-
   /**
    * Composes new chain of Promises to fire them alternatelly
    *

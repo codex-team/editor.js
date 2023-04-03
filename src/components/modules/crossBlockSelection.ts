@@ -7,8 +7,6 @@ import * as _ from '../utils';
  *
  */
 export default class CrossBlockSelection extends Module {
-  public static readonly displayName: string = 'CrossBlockSelection';
-
   /**
    * Block where selection is started
    */

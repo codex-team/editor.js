@@ -11,8 +11,6 @@ import BlockTool from '../tools/block';
  * @version 2.0.0
  */
 export default class Renderer extends Module {
-  public static readonly displayName: string = 'Renderer';
-
   /**
    * @typedef {object} RendererBlocks
    * @property {string} type - tool name

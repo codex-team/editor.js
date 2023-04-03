@@ -15,8 +15,6 @@ import * as _ from '../utils';
  *
  */
 export default class RectangleSelection extends Module {
-  public static readonly displayName: string = 'RectangleSelection';
-
   /**
    * CSS classes for the Block
    *

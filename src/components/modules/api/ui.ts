@@ -5,8 +5,6 @@ import { Ui, UiNodes } from '../../../../types/api';
  * API module allowing to access some Editor UI elements
  */
 export default class UiAPI extends Module {
-  public static readonly displayName: string = 'UiAPI';
-
   /**
    * Available methods / getters
    */

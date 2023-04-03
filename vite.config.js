@@ -1,7 +1,6 @@
 import path from 'path';
 
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
-import ViteRequireContext from '@originjs/vite-plugin-require-context';
 import license from 'rollup-plugin-license';
 
 import * as pkg from './package.json';
@@ -63,7 +62,6 @@ export default {
   },
 
   plugins: [
-    ViteRequireContext(),
     cssInjectedByJsPlugin(),
   ],
 };
