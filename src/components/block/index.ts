@@ -555,12 +555,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Toggle drop target state.
+   * Set the drop zone position and update the style to drop zone target style.
    *
-   * @param {boolean | BlockDropZonePosition} state - 'undefined' if block is not a drop target or
+   * @param {boolean | BlockDropZonePosition} state - 'false' if block is not a drop zone or
    * position of drop zone.
    */
-  public set dropTarget(state: boolean | BlockDropZonePosition) {
+  public set dropZonePosition(state: boolean | BlockDropZonePosition) {
     if (!state || this.selected) {
       /**
        * If state is undefined or block is selected for drag
@@ -578,11 +578,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Return Block's dropTarget state.
+   * Return Block's drop zone position or false if block is not a drop zone.
    *
    * @returns {BlockDropZonePosition | boolean}
    */
-  public get dropTarget(): boolean | BlockDropZonePosition {
+  public get dropZonePosition(): boolean | BlockDropZonePosition {
     if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
       return BlockDropZonePosition.Top;
     } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
@@ -851,8 +851,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
-        contentNode = $.make('div', Block.CSS.content),
-        pluginsContent = this.toolInstance.render();
+      contentNode = $.make('div', Block.CSS.content),
+      pluginsContent = this.toolInstance.render();
 
     /**
      * Saving a reference to plugin's content element for guaranteed accessing it later

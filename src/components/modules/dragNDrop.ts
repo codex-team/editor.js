@@ -62,7 +62,7 @@ export default class DragNDrop extends Module {
      */
     this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragend', (dragEndEvent: DragEvent) => {
       if (dragEndEvent.dataTransfer.dropEffect === 'none') {
-        BlockManager.clearDropTargets();
+        BlockManager.clearDropZonePosition();
       }
     });
 
@@ -116,7 +116,7 @@ export default class DragNDrop extends Module {
     let targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      if (targetBlock.dropTarget === BlockDropZonePosition.Top) {
+      if (targetBlock.dropZonePosition === BlockDropZonePosition.Top) {
         const currentIndex = BlockManager.getBlockIndex(targetBlock);
 
         if (currentIndex > 0) {
@@ -136,7 +136,8 @@ export default class DragNDrop extends Module {
       Caret.setToBlock(lastBlock, Caret.positions.END);
     }
 
-    BlockManager.clearDropTargets();
+    // Clear drop zones.
+    BlockManager.clearDropZonePosition();
     // Clear the selection.
     BlockSelection.clearSelection();
 
@@ -176,13 +177,13 @@ export default class DragNDrop extends Module {
       /**
        * Calculate the index where the block should be moved to.
        */
-      if (targetBlock.dropTarget === BlockDropZonePosition.Top) {
+      if (targetBlock.dropZonePosition === BlockDropZonePosition.Top) {
         if (targetIndex > currentStartIndex) {
           toIndex = targetIndex - 1;
         } else {
           toIndex = targetIndex + i;
         }
-      } else if (targetBlock.dropTarget === BlockDropZonePosition.Bottom) {
+      } else if (targetBlock.dropZonePosition === BlockDropZonePosition.Bottom) {
         if (targetIndex > currentStartIndex) {
           toIndex = targetIndex;
         } else {

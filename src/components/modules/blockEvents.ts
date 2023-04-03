@@ -160,7 +160,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear previous drop target zone for every block.
      */
-    this.Editor.BlockManager.clearDropTargets();
+    BlockManager.clearDropZonePosition();
   }
 
   /**
@@ -176,7 +176,7 @@ export default class BlockEvents extends Module {
     /**
      * Add style for target drop zone position.
      */
-    block.dropTarget = (rect.top + rect.height / 2 >= event.clientY) ?
+    block.dropZonePosition = (rect.top + rect.height / 2 >= event.clientY) ?
       BlockDropZonePosition.Top :
       BlockDropZonePosition.Bottom;
   }

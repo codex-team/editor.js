@@ -625,11 +625,11 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Remove drop targets style from all Blocks.
+   * Remove drop zone positions from all Blocks.
    */
-  public clearDropTargets(): void {
+  public clearDropZonePosition(): void {
     this.blocks.forEach((block) => {
-      block.dropTarget = false;
+      block.dropZonePosition = false;
     });
   }
 
