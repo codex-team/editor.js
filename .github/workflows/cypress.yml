@@ -7,14 +7,12 @@ jobs:
     strategy:
       matrix:
         browser: [firefox, chrome, edge]
-        os: [ubuntu-latest]
-        node-version: [16]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
