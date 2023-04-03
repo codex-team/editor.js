@@ -32,7 +32,7 @@ import DragNDrop from './dragNDrop';
 import ModificationsObserver from './modificationsObserver';
 import Paste from './paste';
 import ReadOnly from './readonly';
-import RectangleSelection from './RectangleSelection';
+import RectangleSelection from './rectangleSelection';
 import Renderer from './renderer';
 import Saver from './saver';
 import Tools from './tools';
