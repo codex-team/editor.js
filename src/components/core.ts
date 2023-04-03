@@ -324,10 +324,10 @@ export default class Core {
       /**
        * If module has non-default exports, passed object contains them all and default export as 'default' property
        */
-      const Module = _.isFunction(module) ? module : module.default;
+      const ModuleConstructable = _.isFunction(module) ? module : module.default;
 
       try {
-        this.moduleInstances[name] = new Module({
+        this.moduleInstances[name] = new ModuleConstructable({
           config: this.configuration,
           eventsDispatcher: this.eventsDispatcher,
         });

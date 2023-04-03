@@ -78,6 +78,6 @@ const Modules = {
   Saver,
   Tools,
   UI,
-}
+};
 
 export default Modules;

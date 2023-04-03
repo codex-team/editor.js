@@ -1,7 +1,7 @@
 /**
  * This file contains connection of Cypres plugins
  */
-const codeCoverageTask = require('@cypress/code-coverage/task');
+import codeCoverageTask from '@cypress/code-coverage/task';
 
 module.exports = (on, config): unknown => {
   /**
