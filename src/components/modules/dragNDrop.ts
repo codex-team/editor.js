@@ -53,8 +53,8 @@ export default class DragNDrop extends Module {
       await this.processDrop(dropEvent);
     }, true);
 
-    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', (startDragEvent: DragEvent) => {
-      this.processDragStart(startDragEvent);
+    this.readOnlyMutableListeners.on(UI.nodes.holder, 'dragstart', (dragStartEvent: DragEvent) => {
+      this.processDragStart(dragStartEvent);
     });
 
     /**
