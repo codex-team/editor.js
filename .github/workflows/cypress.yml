@@ -3,9 +3,6 @@ on: [pull_request]
 jobs:
   firefox:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node14.17.0-chrome88-ff89
-      options: --user 1001
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -29,7 +26,7 @@ jobs:
           browser: chrome
           build: yarn build
   edge:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v3
         with:

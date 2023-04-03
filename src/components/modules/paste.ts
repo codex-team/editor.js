@@ -348,6 +348,10 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getTagsConfig(tool: BlockTool): void {
+    if (tool.pasteConfig === false) {
+      return;
+    }
+
     const tagsOrSanitizeConfigs = tool.pasteConfig.tags || [];
     const toolTags = [];
 
@@ -389,6 +393,10 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getFilesConfig(tool: BlockTool): void {
+    if (tool.pasteConfig === false) {
+      return;
+    }
+
     const { files = {} } = tool.pasteConfig;
     let { extensions, mimeTypes } = files;
 
@@ -430,7 +438,11 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getPatternsConfig(tool: BlockTool): void {
-    if (!tool.pasteConfig.patterns || _.isEmpty(tool.pasteConfig.patterns)) {
+    if (
+      tool.pasteConfig === false ||
+      !tool.pasteConfig.patterns ||
+      _.isEmpty(tool.pasteConfig.patterns)
+    ) {
       return;
     }
 
@@ -604,7 +616,10 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig;
+        /**
+         * Returns empty array if there is no paste config
+         */
+        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig || { tags: [] };
 
         /**
          * Reduce the tags or sanitize configs to a single array of sanitize config.
