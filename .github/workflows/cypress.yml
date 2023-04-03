@@ -1,9 +1,9 @@
-name: Run Cypress Tests
+name: Cypress
 
 on: [pull_request]
 
 jobs:
-  tests:
+  run-tests:
     strategy:
       matrix:
         browser: [firefox, chrome, edge]
