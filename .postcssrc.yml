@@ -29,7 +29,3 @@ plugins:
   # 'postcss-nesting' feature but it does not work with BEM
   # Report: https://github.com/csstools/postcss-preset-env/issues/40
   postcss-nested: {}
-
-  # Compression tool
-  # https://github.com/cssnano/cssnano
-  cssnano: {}
