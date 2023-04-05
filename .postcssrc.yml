@@ -20,7 +20,7 @@ plugins:
 
     # Instruct all plugins to omit pre-polyfilled CSS
     # https://github.com/csstools/postcss-preset-env#preserve
-    preserve: false
+    preserve: true
 
   # Nested rules unwrapper
   # https://github.com/postcss/postcss-nested
