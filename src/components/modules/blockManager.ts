@@ -527,6 +527,11 @@ export default class BlockManager extends Module {
    */
   public split(): Block {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
+
+    this.blockDidMutated(BlockMutationType.Changed, this.currentBlock, {
+      index: this.currentBlockIndex,
+    });
+
     const wrapper = $.make('div');
 
     wrapper.appendChild(extractedFragment as DocumentFragment);
