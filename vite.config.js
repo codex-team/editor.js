@@ -16,6 +16,7 @@ process.env.BROWSER = 'open';
 
 export default {
   build: {
+    copyPublicDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src', 'codex.ts'),
       name: 'EditorJS',
