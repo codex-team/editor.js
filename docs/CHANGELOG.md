@@ -5,8 +5,14 @@
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
-- `Fix` — Resolve compiler error from importing the BlockToolData type
-- `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport
+- `Fix` — Resolve compiler error from importing the BlockToolData type.
+- `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
+- `Improvement` — Package size reduced by removing redundant files.
+- `Fix`- Several bugs caused by random browser extensions.
+- `Improvement` — *Dependencies* — Upgrade TypeScript to v5.
+- `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
+- `Improvement` — *Dependencies* — Upgrade Cypress to v12, upgrade related libraries to latest versions.
+- `CI` — Use Ubuntu container for Edge tests runner.
 
 ### 2.26.5
 
@@ -46,6 +52,7 @@
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 - `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
+
 
 ### 2.25.0
 

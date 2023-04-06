@@ -551,20 +551,6 @@ export default class Dom {
   }
 
   /**
-   * Method checks passed Node if it is some extension Node
-   *
-   * @param {Node} node - any node
-   * @returns {boolean}
-   */
-  public static isExtensionNode(node: Node): boolean {
-    const extensions = [
-      'GRAMMARLY-EXTENSION',
-    ];
-
-    return node && extensions.includes(node.nodeName);
-  }
-
-  /**
    * Returns true if element is anchor (is A tag)
    *
    * @param {Element} element - element to check
