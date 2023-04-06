@@ -6,22 +6,6 @@ import I18n from './i18n';
 import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
 import Modules from './modules';
-import Module from './__module';
-
-/**
- * @typedef {Core} Core - editor core class
- */
-
-/**
- * Require Editor modules
- * Create a list of modules to load with names
- */
-const modules: { name: string, module: Module }[] = Object.keys(Modules).map((key) => {
-  return {
-    name: key,
-    module: Modules[key],
-  };
-});
 
 /**
  * @class Core
@@ -223,7 +207,7 @@ export default class Core {
    *
    * @returns {EditorConfig}
    */
-  public get configuration(): EditorConfig|string {
+  public get configuration(): EditorConfig {
     return this.config;
   }
 
@@ -320,19 +304,14 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach(({ name, module }) => {
-      /**
-       * If module has non-default exports, passed object contains them all and default export as 'default' property
-       */
-      const ModuleConstructable = _.isFunction(module) ? module : module.default;
-
+    Object.entries(Modules).forEach(([key, module]) => {
       try {
-        this.moduleInstances[name] = new ModuleConstructable({
+        this.moduleInstances[key] = new module({
           config: this.configuration,
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log('[constructModules]', `Module ${name} skipped because`, 'error', e);
+        _.log('[constructModules]', `Module ${key} skipped because`, 'error', e);
       }
     });
   }

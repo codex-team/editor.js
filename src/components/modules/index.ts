@@ -38,7 +38,7 @@ import Saver from './saver';
 import Tools from './tools';
 import UI from './ui';
 
-const Modules = {
+export default {
   // API Modules
   BlocksAPI,
   CaretAPI,
@@ -79,5 +79,3 @@ const Modules = {
   Tools,
   UI,
 };
-
-export default Modules;
