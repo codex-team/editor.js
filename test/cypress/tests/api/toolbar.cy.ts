@@ -32,12 +32,51 @@ describe('api.toolbar', () => {
     }
   });
 
-  describe('*.openToolbox()', () => {
+  describe('*.toggleToolbox()', () => {
+    const isToolboxVisible = (): void => {
+      cy.get('div.ce-toolbox').then((toolbox) => {
+        if (toolbox.is(':visible')) {
+          assert.isOk(true, 'Toolbox visible');
+        } else {
+          assert.isNotOk(false, 'Toolbox should be visible');
+        }
+      });
+    };
+
+    const isToolboxNotVisible = (): void => {
+      cy.get('div.ce-toolbox').then((toolbox) => {
+        if (!toolbox.is(':visible')) {
+          assert.isOk(true, 'Toolbox not visible');
+        } else {
+          assert.isNotOk(false, 'Toolbox should not be visible');
+        }
+      });
+    };
+
     it('should open the toolbox', function () {
       cy.get('@editorInstance').then(async function (editor: any) {
-        editor.toolbar.openToolbox(true);
+        editor.toolbar.toggleToolbox(true);
+        isToolboxVisible();
+      });
+    });
 
-        cy.get('.ce-toolbox').should('exist');
+    it('should close the toolbox', function () {
+      cy.get('@editorInstance').then(async function (editor: any) {
+        editor.toolbar.toggleToolbox(true);
+
+        isToolboxVisible();
+
+        editor.toolbar.toggleToolbox(false);
+        isToolboxNotVisible();
+      });
+    });
+    it('should toggle the toolbox', function () {
+      cy.get('@editorInstance').then(async function (editor: any) {
+        editor.toolbar.toggleToolbox();
+        isToolboxVisible();
+
+        editor.toolbar.toggleToolbox();
+        isToolboxNotVisible();
       });
     });
   });
