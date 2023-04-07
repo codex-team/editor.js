@@ -283,28 +283,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
   }
 
   /**
-   * Move and open the Toolbar with toolbox opened
-   *
-   * @param {boolean} openingState - Opening state of the toolbox
-   */
-  public moveAndOpenToolbox(openingState?: boolean): void {
-    if (this.Editor.BlockManager.currentBlockIndex === -1) {
-      _.logLabeled('Could\'t toggle the Toolbox because there is no block selected ', 'warn');
-
-      return;
-    }
-
-    const canOpenToolbox = openingState ?? !this.toolboxInstance.opened;
-
-    if (canOpenToolbox) {
-      this.moveAndOpen();
-      this.toolboxInstance.open();
-    } else {
-      this.toolboxInstance.close();
-    }
-  }
-
-  /**
    * Close the Toolbar
    */
   public close(): void {

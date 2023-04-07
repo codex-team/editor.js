@@ -22,5 +22,5 @@ export interface Toolbar {
    * Toggle toolbox
    * @param {boolean} openingState —  opening state of the toolbox
    */
-  openToolbox(openingState?: boolean): void;
+  toggleToolbox(openingState?: boolean): void;
 }
