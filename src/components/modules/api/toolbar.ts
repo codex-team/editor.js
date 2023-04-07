@@ -16,6 +16,7 @@ export default class ToolbarAPI extends Module {
       close: (): void => this.close(),
       open: (): void => this.open(),
       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
+      openToolbox: (openingState?: boolean): void => this.openToolbox(openingState),
     };
   }
 
@@ -54,5 +55,15 @@ export default class ToolbarAPI extends Module {
     } else {
       this.Editor.BlockSettings.close();
     }
+  }
+
+
+  /**
+   * Open toolbox
+   *
+   * @param {boolean} openingState - Opening state of toolbox
+   */
+  public openToolbox(openingState: boolean): void {
+    this.Editor.Toolbar.moveAndOpenToolbox(openingState);
   }
 }
