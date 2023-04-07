@@ -2,7 +2,7 @@
 
 ### 2.27.0
 
-- `Improvement` — *Toolbox* — Added toolbox toggling method.
+- `New` — *Toolbar API* — Toolbox toggling method added.
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
