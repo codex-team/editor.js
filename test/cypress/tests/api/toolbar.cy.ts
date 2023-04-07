@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * There will be described test cases of 'api.toolbar.*' API
  */
+import EditorJS from '../../../../types';
+
 describe('api.toolbar', () => {
   /**
    * api.toolbar.openToolbox(openingState?: boolean)
@@ -54,14 +55,14 @@ describe('api.toolbar', () => {
     };
 
     it('should open the toolbox', function () {
-      cy.get('@editorInstance').then(async function (editor: any) {
+      cy.get<EditorJS>('@editorInstance').then(async function (editor) {
         editor.toolbar.toggleToolbox(true);
         isToolboxVisible();
       });
     });
 
     it('should close the toolbox', function () {
-      cy.get('@editorInstance').then(async function (editor: any) {
+      cy.get<EditorJS>('@editorInstance').then(async function (editor) {
         editor.toolbar.toggleToolbox(true);
 
         isToolboxVisible();
@@ -71,7 +72,7 @@ describe('api.toolbar', () => {
       });
     });
     it('should toggle the toolbox', function () {
-      cy.get('@editorInstance').then(async function (editor: any) {
+      cy.get<EditorJS>('@editorInstance').then(async function (editor) {
         editor.toolbar.toggleToolbox();
         isToolboxVisible();
 
