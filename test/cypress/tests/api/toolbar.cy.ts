@@ -35,23 +35,25 @@ describe('api.toolbar', () => {
 
   describe('*.toggleToolbox()', () => {
     const isToolboxVisible = (): void => {
-      cy.get('div.ce-toolbox').then((toolbox) => {
-        if (toolbox.is(':visible')) {
-          assert.isOk(true, 'Toolbox visible');
-        } else {
-          assert.isNotOk(false, 'Toolbox should be visible');
-        }
-      });
+      cy.get('[data-cy=editorjs]').find('div.ce-toolbox')
+        .then((toolbox) => {
+          if (toolbox.is(':visible')) {
+            assert.isOk(true, 'Toolbox visible');
+          } else {
+            assert.isNotOk(false, 'Toolbox should be visible');
+          }
+        });
     };
 
     const isToolboxNotVisible = (): void => {
-      cy.get('div.ce-toolbox').then((toolbox) => {
-        if (!toolbox.is(':visible')) {
-          assert.isOk(true, 'Toolbox not visible');
-        } else {
-          assert.isNotOk(false, 'Toolbox should not be visible');
-        }
-      });
+      cy.get('[data-cy=editorjs]').find('div.ce-toolbox')
+        .then((toolbox) => {
+          if (!toolbox.is(':visible')) {
+            assert.isOk(true, 'Toolbox not visible');
+          } else {
+            assert.isNotOk(false, 'Toolbox should not be visible');
+          }
+        });
     };
 
     it('should open the toolbox', function () {
