@@ -16,6 +16,7 @@ export default class ToolbarAPI extends Module {
       close: (): void => this.close(),
       open: (): void => this.open(),
       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
+      toggleToolbox: (openingState?: boolean): void => this.toggleToolbox(openingState),
     };
   }
 
@@ -53,6 +54,29 @@ export default class ToolbarAPI extends Module {
       this.Editor.BlockSettings.open();
     } else {
       this.Editor.BlockSettings.close();
+    }
+  }
+
+
+  /**
+   * Open toolbox
+   *
+   * @param {boolean} openingState - Opening state of toolbox
+   */
+  public toggleToolbox(openingState: boolean): void {
+    if (this.Editor.BlockManager.currentBlockIndex === -1) {
+      _.logLabeled('Could\'t toggle the Toolbox because there is no block selected ', 'warn');
+
+      return;
+    }
+
+    const canOpenToolbox = openingState ?? !this.Editor.Toolbar.toolbox.opened;
+
+    if (canOpenToolbox) {
+      this.Editor.Toolbar.moveAndOpen();
+      this.Editor.Toolbar.toolbox.open();
+    } else {
+      this.Editor.Toolbar.toolbox.close();
     }
   }
 }
