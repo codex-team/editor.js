@@ -14,6 +14,7 @@
 - `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
 - `Improvement` — *Dependencies* — Upgrade Cypress to v12, upgrade related libraries to latest versions.
 - `CI` — Use Ubuntu container for Edge tests runner.
+- `Improvement` — Use Vite as build system instead of Webpack.
 
 ### 2.26.5
 
