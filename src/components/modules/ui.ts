@@ -13,6 +13,7 @@ import Block from '../block';
 import Flipper from '../flipper';
 import { mobileScreenBreakpoint } from '../utils';
 
+import styles from '../../styles/main.css?inline';
 /**
  * HTML Elements used for UI
  */
@@ -306,7 +307,6 @@ export default class UI extends Module<UINodes> {
      * Load CSS
      */
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const styles = require('../../styles/main.css');
     const styleTagId = 'editor-js-styles';
 
     /**

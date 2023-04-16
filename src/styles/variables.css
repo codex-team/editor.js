@@ -70,7 +70,7 @@
 
   --color-line-gray: #EFF0F1;
 
-  --overlay-pane: {
+  --overlay-pane {
     position: absolute;
     background-color: #FFFFFF;
     border: 1px solid #E8E8EB;
@@ -94,17 +94,17 @@
     }
   };
 
-  --button-focused: {
+  --button-focused {
     box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
     background: rgba(34, 186, 255, 0.08) !important;
   };
 
-  --button-active: {
+  --button-active {
     background: rgba(56, 138, 229, 0.1);
     color:  var(--color-active-icon);
   };
 
-  --button-disabled: {
+  --button-disabled {
     color: var(--grayText);
     cursor: default;
     pointer-events: none;
@@ -113,7 +113,7 @@
   /**
    * Styles for Toolbox Buttons and Plus Button
    */
-  --toolbox-button: {
+  --toolbox-button {
     color: var(--color-dark);
     cursor: pointer;
     width: var(--toolbox-buttons-size);
@@ -145,7 +145,7 @@
   /**
    * Styles for Settings Button in Toolbar
    */
-  --toolbar-button: {
+  --toolbar-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -193,7 +193,7 @@
   /**
    * Tool icon with border
    */
-  --tool-icon: {
+  --tool-icon {
     display: inline-flex;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
