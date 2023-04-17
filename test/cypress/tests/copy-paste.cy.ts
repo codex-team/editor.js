@@ -1,6 +1,8 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
+import EditorJS, { BlockTool, BlockToolData } from '../../../types';
+import $ from '../../../src/components/dom';
 
 describe('Copy pasting from Editor', function () {
   beforeEach(function () {
@@ -13,7 +15,7 @@ describe('Copy pasting from Editor', function () {
   });
 
   afterEach(function () {
-    if (this.editorInstance) {
+    if (this.editorInstance && this.editorInstance.destroy) {
       this.editorInstance.destroy();
     }
   });
@@ -138,6 +140,72 @@ describe('Copy pasting from Editor', function () {
         // In Edge test are performed slower, so we need to increase timeout to wait until image is loaded on the page
         .get('img', { timeout: 10000 })
         .should('have.attr', 'src', 'https://codex.so/public/app/img/external/codex2x.png');
+    });
+
+    it('should not prevent default behaviour if block\'s paste config equals false', function () {
+      /**
+       * Destroy default Editor to render custom one with different tools
+       */
+      cy.get('@editorInstance')
+        .then((editorInstance: unknown) => (editorInstance as EditorJS).destroy());
+
+      const onPasteStub = cy.stub().as('onPaste');
+
+      /**
+       * Tool with disabled preventing default behavior of onPaste event
+       */
+      class BlockToolWithPasteHandler implements BlockTool {
+        public static pasteConfig = false;
+
+        /**
+         * Render block
+         */
+        public render(): HTMLElement {
+          const block = $.make('div', 'ce-block-with-disabled-prevent-default', {
+            contentEditable: 'true',
+          });
+
+          block.addEventListener('paste', onPasteStub);
+
+          return block;
+        }
+
+        /**
+         * Save data method
+         */
+        public save(): BlockToolData {
+          return {};
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          blockToolWithPasteHandler: BlockToolWithPasteHandler,
+        },
+      }).as('editorInstanceWithBlockToolWithPasteHandler');
+
+      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
+        .render({
+          blocks: [
+            {
+              type: 'blockToolWithPasteHandler',
+              data: {},
+            },
+          ],
+        });
+
+      cy.get('@editorInstanceWithBlockToolWithPasteHandler')
+        .get('div.ce-block-with-disabled-prevent-default')
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/plain': 'Hello',
+        });
+
+      cy.get('@onPaste')
+        .should('have.been.calledWithMatch', {
+          defaultPrevented: false,
+        });
     });
   });
 

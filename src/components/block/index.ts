@@ -154,6 +154,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private cachedInputs: HTMLElement[] = [];
 
   /**
+   * We'll store a reference to the tool's rendered element to access it later
+   */
+  private toolRenderedElement: HTMLElement | null = null;
+
+  /**
    * Tool class instance
    */
   private readonly toolInstance: IBlockTool;
@@ -557,23 +562,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {HTMLElement}
    */
   public get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
-
-    if (blockContentNodes && blockContentNodes.childNodes.length) {
-      /**
-       * Editors Block content can contain different Nodes from extensions
-       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
-       */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
-        const contentNode = blockContentNodes.childNodes[child];
-
-        if (!$.isExtensionNode(contentNode)) {
-          return contentNode as HTMLElement;
-        }
-      }
-    }
-
-    return null;
+    return this.toolRenderedElement;
   }
 
   /**
@@ -829,7 +818,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
-    contentNode.appendChild(pluginsContent);
+    /**
+     * Saving a reference to plugin's content element for guaranteed accessing it later
+     */
+    this.toolRenderedElement = pluginsContent;
+
+    contentNode.appendChild(this.toolRenderedElement);
 
     /**
      * Block Tunes might wrap Block's content node to provide any UI changes
