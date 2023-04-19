@@ -16,6 +16,7 @@ export default class ToolbarAPI extends Module {
       close: (): void => this.close(),
       open: (): void => this.open(),
       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
+      toggleToolbox: (openingState?: boolean): void => this.toggleToolbox(openingState),
     };
   }
 
@@ -23,7 +24,7 @@ export default class ToolbarAPI extends Module {
    * Open toolbar
    */
   public open(): void {
-    this.Editor.Toolbar.open();
+    this.Editor.Toolbar.moveAndOpen();
   }
 
   /**
@@ -48,19 +49,34 @@ export default class ToolbarAPI extends Module {
     /** Check that opening state is set or not */
     const canOpenBlockSettings = openingState ?? !this.Editor.BlockSettings.opened;
 
-    /** Check if state same as current state */
-    if (openingState === this.Editor.BlockSettings.opened) {
-      return;
-    }
-
     if (canOpenBlockSettings) {
-      if (!this.Editor.Toolbar.opened) {
-        this.Editor.Toolbar.open(true, false);
-        this.Editor.Toolbar.plusButton.hide();
-      }
+      this.Editor.Toolbar.moveAndOpen();
       this.Editor.BlockSettings.open();
     } else {
       this.Editor.BlockSettings.close();
+    }
+  }
+
+
+  /**
+   * Open toolbox
+   *
+   * @param {boolean} openingState - Opening state of toolbox
+   */
+  public toggleToolbox(openingState: boolean): void {
+    if (this.Editor.BlockManager.currentBlockIndex === -1) {
+      _.logLabeled('Could\'t toggle the Toolbox because there is no block selected ', 'warn');
+
+      return;
+    }
+
+    const canOpenToolbox = openingState ?? !this.Editor.Toolbar.toolbox.opened;
+
+    if (canOpenToolbox) {
+      this.Editor.Toolbar.moveAndOpen();
+      this.Editor.Toolbar.toolbox.open();
+    } else {
+      this.Editor.Toolbar.toolbox.close();
     }
   }
 }

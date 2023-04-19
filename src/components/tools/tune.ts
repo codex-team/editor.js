@@ -28,7 +28,7 @@ export default class BlockTune extends BaseTool<IBlockTune> {
     // eslint-disable-next-line new-cap
     return new this.constructable({
       api: this.api.getMethodsForTool(this),
-      settings: this.settings,
+      config: this.settings,
       block,
       data,
     });

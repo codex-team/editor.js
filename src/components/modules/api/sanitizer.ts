@@ -11,7 +11,7 @@ export default class SanitizerAPI extends Module {
   /**
    * Available methods
    *
-   * @returns {Sanitizer}
+   * @returns {SanitizerConfig}
    */
   public get methods(): ISanitizer {
     return {
@@ -24,7 +24,6 @@ export default class SanitizerAPI extends Module {
    *
    * @param {string} taintString - what to sanitize
    * @param {SanitizerConfig} config - sanitizer config
-   *
    * @returns {string}
    */
   public clean(taintString: string, config: SanitizerConfig): string {

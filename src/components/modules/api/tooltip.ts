@@ -1,10 +1,8 @@
 import { Tooltip as ITooltip } from '../../../../types/api';
-import { TooltipContent, TooltipOptions } from 'codex-tooltip';
+import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 import Module from '../../__module';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import Tooltip from '../../utils/tooltip';
-import EventsDispatcher from '../../utils/events';
-import { EditorConfig } from '../../../../types';
 /**
  * @class TooltipAPI
  * @classdesc Tooltip API
@@ -16,9 +14,9 @@ export default class TooltipAPI extends Module {
   private tooltip: Tooltip;
   /**
    * @class
-   * @param {object} moduleConfiguration - Module Configuration
-   * @param {EditorConfig} moduleConfiguration.config - Editor's config
-   * @param {EventsDispatcher} moduleConfiguration.eventsDispatcher - Editor's event dispatcher
+   * @param moduleConfiguration - Module Configuration
+   * @param moduleConfiguration.config - Editor's config
+   * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
   constructor({ config, eventsDispatcher }: ModuleConfig) {
     super({

@@ -1,7 +1,6 @@
 /**
  * @class RectangleSelection
  * @classdesc Manages Block selection with mouse
- *
  * @module RectangleSelection
  * @version 1.0.0
  */
@@ -10,6 +9,7 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
+import * as _ from '../utils';
 
 /**
  *
@@ -185,17 +185,23 @@ export default class RectangleSelection extends Module {
       this.processMouseDown(mouseEvent);
     }, false);
 
-    this.listeners.on(document.body, 'mousemove', (mouseEvent: MouseEvent) => {
+    this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
-    }, false);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    }, 10), {
+      passive: true,
+    });
 
     this.listeners.on(document.body, 'mouseleave', () => {
       this.processMouseLeave();
     });
 
-    this.listeners.on(window, 'scroll', (mouseEvent: MouseEvent) => {
+    this.listeners.on(window, 'scroll', _.throttle((mouseEvent: MouseEvent) => {
       this.processScroll(mouseEvent);
-    }, false);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    }, 10), {
+      passive: true,
+    });
 
     this.listeners.on(document.body, 'mouseup', () => {
       this.processMouseUp();
@@ -211,7 +217,16 @@ export default class RectangleSelection extends Module {
     if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
       return;
     }
-    this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+
+    /**
+     * Do not enable the Rectangle Selection when mouse dragging started some editable input
+     * Used to prevent Rectangle Selection on Block Tune wrappers' inputs that also can be inside the Block
+     */
+    const startedFromContentEditable = (mouseEvent.target as Element).closest($.allInputsSelector) !== null;
+
+    if (!startedFromContentEditable) {
+      this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+    }
   }
 
   /**
@@ -243,6 +258,7 @@ export default class RectangleSelection extends Module {
    * Handle mouse up
    */
   private processMouseUp(): void {
+    this.clearSelection();
     this.endSelection();
   }
 
@@ -275,7 +291,7 @@ export default class RectangleSelection extends Module {
   /**
    * Generates required HTML elements
    *
-   * @returns {object<string, Element>}
+   * @returns {Object<string, Element>}
    */
   private genHTML(): {container: Element; overlay: Element} {
     const { UI } = this.Editor;
@@ -347,6 +363,11 @@ export default class RectangleSelection extends Module {
 
     this.updateRectangleSize();
 
+    /**
+     * Hide Block Settings Toggler (along with the Toolbar) (if showed) when the Rectangle Selection is activated
+     */
+    this.Editor.Toolbar.close();
+
     if (index === undefined) {
       return;
     }
@@ -356,7 +377,6 @@ export default class RectangleSelection extends Module {
     this.inverseSelection();
 
     SelectionUtils.get().removeAllRanges();
-    event.preventDefault();
   }
 
   /**

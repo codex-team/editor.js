@@ -1,18 +1,28 @@
+import { SanitizerConfig } from './sanitizer-config';
+
 /**
  * Tool onPaste configuration object
  */
-export interface PasteConfig {
+interface PasteConfigSpecified {
   /**
-   * Array of tags Tool can substitute
+   * Array of tags Tool can substitute.
+   *
+   * Could also contain a sanitize-config if you need to save some tag's attribute.
+   * For example:
+   * [
+   *   {
+   *     img: { src: true },
+   *   }
+   * ],
    * @type string[]
    */
-  tags?: string[];
+  tags?: (string | SanitizerConfig)[];
 
   /**
    * Object of string patterns Tool can substitute.
    * Key is your internal key and value is RegExp
    *
-   * @type {{[key: string]: Regexp}}
+   * @type {{[key: string]: RegExp}}
    */
   patterns?: {[key: string]: RegExp};
 
@@ -21,3 +31,8 @@ export interface PasteConfig {
    */
   files?: {extensions?: string[], mimeTypes?: string[]};
 }
+
+/**
+ * Alias for PasteConfig with false
+ */
+export type PasteConfig = PasteConfigSpecified | false;

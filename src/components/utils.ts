@@ -2,6 +2,7 @@
  * Class Util
  */
 
+import { nanoid } from 'nanoid';
 import Dom from './dom';
 
 /**
@@ -23,7 +24,6 @@ declare const VERSION: string;
  * @typedef {object} ChainData
  * @property {object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronously
- *
  * @interface ChainData
  */
 export interface ChainData {
@@ -37,7 +37,7 @@ export interface ChainData {
  */
 
 /**
- * Returns basic keycodes as constants
+ * Returns basic key codes as constants
  *
  * @returns {{}}
  */
@@ -177,7 +177,6 @@ export const logLabeled = _log.bind(window, true);
  * Return string representation of the object type
  *
  * @param {*} object - object to get type
- *
  * @returns {string}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -189,19 +188,17 @@ export function typeOf(object: any): string {
  * Check if passed variable is a function
  *
  * @param {*} fn - function to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isFunction(fn: any): fn is Function {
-  return typeOf(fn) === 'function';
+export function isFunction(fn: any): fn is (...args: any[]) => any {
+  return typeOf(fn) === 'function' || typeOf(fn) === 'asyncfunction';
 }
 
 /**
  * Checks if passed argument is an object
  *
  * @param {*} v - object to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -213,7 +210,6 @@ export function isObject(v: any): v is object {
  * Checks if passed argument is a string
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -225,7 +221,6 @@ export function isString(v: any): v is string {
  * Checks if passed argument is boolean
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -237,7 +232,6 @@ export function isBoolean(v: any): v is boolean {
  * Checks if passed argument is number
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -249,7 +243,6 @@ export function isNumber(v: any): v is number {
  * Checks if passed argument is undefined
  *
  * @param {*} v - variable to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -261,7 +254,6 @@ export function isUndefined(v: any): v is undefined {
  * Check if passed function is a class
  *
  * @param {Function} fn - function to check
- *
  * @returns {boolean}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -273,7 +265,6 @@ export function isClass(fn: any): boolean {
  * Checks if object is empty
  *
  * @param {object} object - object to check
- *
  * @returns {boolean}
  */
 export function isEmpty(object: object): boolean {
@@ -295,22 +286,23 @@ export function isPromise(object: any): object is Promise<any> {
   return Promise.resolve(object) === object;
 }
 
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /**
  * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
  *
  * @param {number} keyCode - key code
- *
  * @returns {boolean}
  */
 export function isPrintableKey(keyCode: number): boolean {
   return (keyCode > 47 && keyCode < 58) || // number keys
-    keyCode === 32 || keyCode === 13 || // Spacebar & return key(s)
+    keyCode === 32 || keyCode === 13 || // Space bar & return key(s)
     keyCode === 229 || // processing key input for certain languages — Chinese, Japanese, etc.
     (keyCode > 64 && keyCode < 91) || // letter keys
     (keyCode > 95 && keyCode < 112) || // Numpad keys
     (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
     (keyCode > 218 && keyCode < 223); // [\]' (in order)
 }
+/* eslint-enable @typescript-eslint/no-magic-numbers */
 
 /**
  * Fires a promise sequence asynchronously
@@ -318,7 +310,6 @@ export function isPrintableKey(keyCode: number): boolean {
  * @param {ChainData[]} chains - list or ChainData's
  * @param {Function} success - success callback
  * @param {Function} fallback - callback that fires in case of errors
- *
  * @returns {Promise}
  */
 export async function sequence(
@@ -332,10 +323,8 @@ export async function sequence(
    * Decorator
    *
    * @param {ChainData} chainData - Chain data
-   *
    * @param {Function} successCallback - success callback
    * @param {Function} fallbackCallback - fail callback
-   *
    * @returns {Promise}
    */
   async function waitNextBlock(
@@ -369,7 +358,6 @@ export async function sequence(
  * Make array from array-like collection
  *
  * @param {ArrayLike} collection - collection to convert to array
- *
  * @returns {Array}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -399,7 +387,6 @@ export function delay(method: (...args: any[]) => any, timeout: number) {
  * Get file extension
  *
  * @param {File} file - file
- *
  * @returns {string}
  */
 export function getFileExtension(file: File): string {
@@ -410,7 +397,6 @@ export function getFileExtension(file: File): string {
  * Check if string is MIME type
  *
  * @param {string} type - string to check
- *
  * @returns {boolean}
  */
 export function isValidMimeType(type: string): boolean {
@@ -428,14 +414,12 @@ export function isValidMimeType(type: string): boolean {
  * @param {boolean} immediate - call now
  * @returns {Function}
  */
-export function debounce(func: () => void, wait?: number, immediate?: boolean): () => void {
+export function debounce(func: (...args: unknown[]) => void, wait?: number, immediate?: boolean): () => void {
   let timeout;
 
-  return (): void => {
+  return (...args: unknown[]): void => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const context = this,
-        // eslint-disable-next-line prefer-rest-params
-        args = arguments;
+    const context = this;
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const later = () => {
@@ -452,6 +436,69 @@ export function debounce(func: () => void, wait?: number, immediate?: boolean): 
     if (callNow) {
       func.apply(context, args);
     }
+  };
+}
+
+/**
+ * Returns a function, that, when invoked, will only be triggered at most once during a given window of time.
+ *
+ * @param func - function to throttle
+ * @param wait - function will be called only once for that period
+ * @param options - Normally, the throttled function will run as much as it can
+ *                  without ever going more than once per `wait` duration;
+ *                  but if you'd like to disable the execution on the leading edge, pass
+ *                  `{leading: false}`. To disable execution on the trailing edge, ditto.
+ */
+export function throttle(func, wait, options: {leading?: boolean; trailing?: boolean} = undefined): () => void {
+  let context, args, result;
+  let timeout = null;
+  let previous = 0;
+
+  if (!options) {
+    options = {};
+  }
+
+  const later = function (): void {
+    previous = options.leading === false ? 0 : Date.now();
+    timeout = null;
+    result = func.apply(context, args);
+
+    if (!timeout) {
+      context = args = null;
+    }
+  };
+
+  return function (): unknown {
+    const now = Date.now();
+
+    if (!previous && options.leading === false) {
+      previous = now;
+    }
+
+    const remaining = wait - (now - previous);
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    context = this;
+
+    // eslint-disable-next-line prefer-rest-params
+    args = arguments;
+
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+
+      if (!timeout) {
+        context = args = null;
+      }
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+
+    return result;
   };
 }
 
@@ -490,7 +537,7 @@ export function getUserOS(): {[key: string]: boolean} {
     linux: false,
   };
 
-  const userOS = Object.keys(OS).find((os: string) => navigator.appVersion.toLowerCase().indexOf(os) !== -1);
+  const userOS = Object.keys(OS).find((os: string) => window.navigator.appVersion.toLowerCase().indexOf(os) !== -1);
 
   if (userOS) {
     OS[userOS] = true;
@@ -505,7 +552,6 @@ export function getUserOS(): {[key: string]: boolean} {
  * Capitalizes first letter of the string
  *
  * @param {string} text - text to capitalize
- *
  * @returns {string}
  */
 export function capitalize(text: string): string {
@@ -549,7 +595,6 @@ export function deepMerge<T extends object>(target, ...sources): T {
  * To detect touch devices more carefully, use 'touchstart' event listener
  *
  * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
- *
  * @returns {boolean}
  */
 export const isTouchSupported: boolean = 'ontouchstart' in document.documentElement;
@@ -608,6 +653,17 @@ export function getValidUrl(url: string): string {
 }
 
 /**
+ * Create a block id
+ *
+ * @returns {string}
+ */
+export function generateBlockId(): string {
+  const idLen = 10;
+
+  return nanoid(idLen);
+}
+
+/**
  * Opens new Tab with passed URL
  *
  * @param {string} url - URL address to redirect
@@ -620,11 +676,10 @@ export function openTab(url: string): void {
  * Returns random generated identifier
  *
  * @param {string} prefix - identifier prefix
- *
  * @returns {string}
  */
 export function generateId(prefix = ''): string {
-  // tslint:disable-next-line:no-bitwise
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   return `${prefix}${(Math.floor(Math.random() * 1e8)).toString(16)}`;
 }
 
@@ -650,7 +705,7 @@ export function deprecationAssert(condition: boolean, oldProperty: string, newPr
  * @param propertyKey - method or accessor name
  * @param descriptor - property descriptor
  */
-export function cacheable<Target, Value, Arguments extends any[] = any[]>(
+export function cacheable<Target, Value, Arguments extends unknown[] = unknown[]>(
   target: Target,
   propertyKey: string,
   descriptor: PropertyDescriptor
@@ -662,7 +717,7 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
   /**
    * Override get or value descriptor property to cache return value
    *
-   * @param args
+   * @param args - method args
    */
   descriptor[propertyToOverride] = function (...args: Arguments): Value {
     /**
@@ -678,12 +733,12 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
   /**
    * If get accessor has been overridden, we need to override set accessor to clear cache
    *
-   * @param value
+   * @param value - value to set
    */
   if (propertyToOverride === 'get' && descriptor.set) {
     const originalSet = descriptor.set;
 
-    descriptor.set = function (value: any): void {
+    descriptor.set = function (value: unknown): void {
       delete target[cacheKey];
 
       originalSet.apply(this, value);
@@ -691,4 +746,44 @@ export function cacheable<Target, Value, Arguments extends any[] = any[]>(
   }
 
   return descriptor;
-};
+}
+
+/**
+ * All screens below this width will be treated as mobile;
+ */
+export const mobileScreenBreakpoint = 650;
+
+/**
+ * True if screen has mobile size
+ */
+export function isMobileScreen(): boolean {
+  return window.matchMedia(`(max-width: ${mobileScreenBreakpoint}px)`).matches;
+}
+
+/**
+ * True if current device runs iOS
+ */
+export const isIosDevice =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.platform &&
+  (/iP(ad|hone|od)/.test(window.navigator.platform) ||
+    (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1));
+
+/**
+ * Compares two values with unknown type
+ *
+ * @param var1 - value to compare
+ * @param var2 - value to compare with
+ * @returns {boolean} true if they are equal
+ */
+export function equals(var1: unknown, var2: unknown): boolean {
+  const isVar1NonPrimitive = Array.isArray(var1) || isObject(var1);
+  const isVar2NonPrimitive = Array.isArray(var2) || isObject(var2);
+
+  if (isVar1NonPrimitive || isVar2NonPrimitive) {
+    return JSON.stringify(var1) === JSON.stringify(var2);
+  }
+
+  return var1 === var2;
+}

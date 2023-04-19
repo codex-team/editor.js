@@ -8,7 +8,6 @@ import BlockTool from '../tools/block';
  *
  * @module Renderer
  * @author CodeX Team
- *
  * @version 2.0.0
  */
 export default class Renderer extends Module {
@@ -23,19 +22,20 @@ export default class Renderer extends Module {
    *
    * blocks: [
    *   {
+   *     id   : 'oDe-EVrGWA',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Hello from Codex!'
    *     }
    *   },
    *   {
+   *     id   : 'Ld5BJjJCHs',
    *     type : 'paragraph',
    *     data : {
    *       text : 'Leave feedback if you like it!'
    *     }
    *   },
    * ]
-   *
    */
 
   /**
@@ -46,7 +46,14 @@ export default class Renderer extends Module {
   public async render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
 
+    /**
+     * Disable onChange callback on render to not to spam those events
+     */
+    this.Editor.ModificationsObserver.disable();
+
     const sequence = await _.sequence(chainData as _.ChainData[]);
+
+    this.Editor.ModificationsObserver.enable();
 
     this.Editor.UI.checkEmptiness();
 
@@ -59,28 +66,32 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
-   *
    * @returns {Promise<void>}
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;
-    const { type: tool, data, tunes } = item;
+    const { type: tool, data, tunes, id } = item;
 
     if (Tools.available.has(tool)) {
       try {
         BlockManager.insert({
+          id,
           tool,
           data,
           tunes,
         });
       } catch (error) {
-        _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
+        _.log(`Block «${tool}» skipped because of plugins error`, 'warn', {
+          data,
+          error,
+        });
         throw Error(error);
       }
     } else {
       /** If Tool is unavailable, create stub Block for it */
       const stubData = {
         savedData: {
+          id,
           type: tool,
           data,
         },
@@ -89,11 +100,13 @@ export default class Renderer extends Module {
 
       if (Tools.unavailable.has(tool)) {
         const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+        const toolboxTitle = toolboxSettings[0]?.title;
 
-        stubData.title = toolboxSettings?.title || stubData.title;
+        stubData.title = toolboxTitle || stubData.title;
       }
 
       const stub = BlockManager.insert({
+        id,
         tool: Tools.stubTool,
         data: stubData,
       });

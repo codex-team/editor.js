@@ -1,0 +1,419 @@
+/**
+ * Styles for the example page
+ */
+
+:root {
+  --color-bg-main: #fff;
+  --color-border-light: #E8E8EB;
+  --color-text-main: #000;
+}
+
+.dark-mode {
+  --color-border-light: rgba(255, 255, 255,.08);
+  --color-bg-main: #1c1e24;
+  --color-text-main: #737886;
+}
+
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5em;
+  margin: 0;
+  background: var(--color-bg-main);
+  color: var(--color-text-main);
+}
+
+.ce-example {
+  font-size: 16.2px;
+}
+
+.ce-example__header {
+  border-bottom: 1px solid var(--color-border-light);
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  padding: 0 30px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.ce-example__header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ce-example__header-logo {
+  font-weight: bold;
+}
+
+.ce-example__header-menu {
+  margin-left: auto;
+}
+
+@media all and (max-width: 730px){
+  .ce-example__header-menu {
+    margin-left: 0;
+    margin-top: 10px;
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+}
+
+.ce-example__header-menu a {
+  margin-left: 20px;
+}
+
+@media all and (max-width: 730px){
+  .ce-example__header-menu a {
+    margin-left: 0;
+    margin-right: 15px;
+  }
+}
+
+.ce-example__content {
+  max-width: 1100px;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.thin-mode .ce-example__content {
+  max-width: 500px;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  padding: 0 15px;
+}
+
+.ce-example__output {
+  background: #1B202B;
+  overflow-x: auto;
+  padding: 0 30px 80px;
+}
+
+.ce-example__output-content {
+  max-width: 650px;
+  margin: 30px auto;
+  color: #ABADC3;
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+  font-size: 13.3px;
+}
+
+.ce-example__output-content:empty {
+  display: none;
+}
+
+.ce-example__button {
+  display: block;
+  margin: 50px auto;
+  max-width: 180px;
+  background: #4A9DF8;
+  padding: 17px 30px;
+  box-shadow: 0 22px 18px -4px rgba(137, 207, 255, 0.77);
+  transition: all 150ms ease;
+  cursor: pointer;
+  border-radius: 31px;
+  color: #fff;
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+  text-align: center;
+}
+
+.ce-example__button:hover {
+  background: #3D8DE5;
+  transform: translateY(2px);
+  box-shadow: 0 20px 15px -4px rgba(137, 207, 255, 0.77);
+}
+
+.ce-example__output-footer {
+  padding: 30px 0;
+  font-size: 14.2px;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.ce-example__output-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.ce-example__statusbar {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: var(--color-bg-main);
+  border-radius: 8px 8px 0 0;
+  border-top: 1px solid var(--color-border-light);
+  box-shadow: 0 2px 6px var(--color-border-light);
+  font-size: 13px;
+  padding: 8px 15px;
+  z-index: 1;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .ce-example__statusbar {
+    display: none;
+  }
+}
+
+.ce-example__statusbar-item:not(:last-of-type)::after {
+  content: '|';
+  color: #ddd;
+  margin: 0 15px 0 12px;
+}
+
+.ce-example__statusbar-item--right {
+  margin-left: auto;
+}
+
+.ce-example__statusbar-button {
+  display: inline-block;
+  padding: 3px 12px;
+  transition: all 150ms ease;
+  cursor: pointer;
+  border-radius: 31px;
+  background: #eff1f4;
+  text-align: center;
+  user-select: none;
+}
+
+.ce-example__statusbar-button:hover {
+  background: #e0e4eb;
+}
+
+.ce-example__statusbar-button-primary {
+  background: #4A9DF8;
+  color: #fff;
+  box-shadow: 0 7px 8px -4px rgba(137, 207, 255, 0.77);
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+}
+
+.ce-example__statusbar {
+  --toggler-size: 20px;
+}
+
+.ce-example__statusbar-toggler {
+  position: relative;
+  background: #7b8799;
+  border-radius: 20px;
+  padding: 2px;
+  width: calc(var(--toggler-size) * 2.2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ce-example__statusbar-toggler::before {
+  display: block;
+  content: '';
+  width: var(--toggler-size);
+  height: var(--toggler-size);
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 100ms ease-in;
+}
+
+.ce-example__statusbar-toggler::after {
+  --moon-size: calc(var(--toggler-size) * 0.5);
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: var(--moon-size);
+  width: var(--moon-size);
+  box-shadow: calc(var(--moon-size) * 0.25 * -1) calc(var(--moon-size) * 0.18) 0 calc(var(--moon-size) * 0.05) white;
+  border-radius: 50%;
+}
+
+@media all and (max-width: 730px){
+  .ce-example__header,
+  .ce-example__content{
+    padding: 0 20px;
+  }
+}
+
+/**
+ * JSON highlighter
+ */
+.sc_attr {
+  color: rgb(148, 162, 192);
+}
+.sc_key {
+  color: rgb(190, 213, 255);
+}
+.sc_toolname {
+  color: rgb(15, 205, 251);
+}
+.sc_tag {
+  color: rgb(4, 131, 216);
+}
+.sc_bool {
+  color: rgb(247, 60, 173);
+}
+
+.ce-example .ce-block:first-of-type h1.ce-header{
+  font-size: 50px;
+}
+
+.ce-example-multiple {
+  display: grid;
+  grid-template-columns: calc(50% - 15px) calc(50% - 15px);
+  gap: 30px;
+  padding: 30px;
+}
+
+.ce-example-multiple > div {
+  background: #fff;
+  border-radius: 7px;
+  padding: 30px;
+}
+
+
+/**
+ * Styles for the popup example page
+ */
+.ce-example--popup {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ce-example--popup .ce-example__content {
+  flex-grow: 2;
+}
+
+.ce-example-popup__overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #00000085;
+}
+
+.ce-example-popup__popup {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 800px;
+  max-width: 100%;
+  max-height: 90vh;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+@media all and (max-width: 730px){
+  .ce-example-popup__popup {
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    transform: none;
+    max-height: none;
+
+  }
+}
+
+.show-block-boundaries .ce-block {
+  box-shadow: inset 0 0 0 1px #eff2f5;
+}
+
+.show-block-boundaries .ce-block__content {
+  box-shadow: 0 0 0 1px rgba(224, 231, 241, 0.61) inset;
+}
+.show-block-boundaries #showBlocksBoundariesButton span,
+.thin-mode #enableThinModeButton span {
+  font-size: 0;
+  vertical-align: bottom;
+}
+
+.show-block-boundaries #showBlocksBoundariesButton span::before,
+.thin-mode #enableThinModeButton span::before {
+  content: attr(data-toggled-text);
+  display: inline;
+  font-size: 13px;
+}
+
+
+
+/**
+ * Dark theme overrides
+ */
+.dark-mode img {
+  opacity: 0.5;
+}
+
+.dark-mode .cdx-simple-image__picture--with-border,
+.dark-mode .cdx-input {
+  border-color: var(--color-border-light);
+}
+
+.dark-mode .ce-example__button {
+  box-shadow: 0 24px 18px -14px rgba(4, 154, 255, 0.24);
+}
+
+.dark-mode .ce-example__output {
+  background-color: #17191f;
+}
+
+.dark-mode .inline-code {
+  background-color: rgba(53, 56, 68, 0.62);
+  color: #727683;
+}
+
+.dark-mode a {
+  color: #959ba8;
+}
+
+.dark-mode .ce-example__statusbar-toggler,
+.dark-mode .ce-example__statusbar-button {
+  background-color: #343842;
+}
+
+.dark-mode .ce-example__statusbar-toggler::before {
+  transform: translateX(calc(var(--toggler-size) * 2.2 - var(--toggler-size)));
+}
+
+.dark-mode .ce-example__statusbar-toggler::after {
+  content: '*';
+  right: auto;
+  left: 6px;
+  top: 7px;
+  color: #fff;
+  box-shadow: none;
+  font-size: 32px;
+}
+
+.dark-mode.show-block-boundaries .ce-block,
+.dark-mode.show-block-boundaries .ce-block__content {
+  box-shadow: 0 0 0 1px rgba(128, 144, 159, 0.09) inset;
+}
+
+.dark-mode.thin-mode .ce-example__content{
+  border-color: var(--color-border-light);
+}
+
+.dark-mode .ce-example__statusbar-item:not(:last-of-type)::after {
+  color: var(--color-border-light);
+}
+
+.dark-mode .ce-block--selected .ce-block__content,
+.dark-mode ::selection{
+  background-color: rgba(57, 68, 84, 0.57);
+}
+
+.dark-mode .ce-toolbox__button,
+.dark-mode .ce-toolbar__settings-btn,
+.dark-mode .ce-toolbar__plus {
+  color: inherit;
+}
+
+.dark-mode .ce-stub {
+  opacity: 0.3;
+}

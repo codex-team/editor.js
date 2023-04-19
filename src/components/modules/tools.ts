@@ -1,7 +1,7 @@
-import Paragraph from '../../tools/paragraph/dist/bundle';
+import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
-import { SanitizerConfig, ToolConstructable, ToolSettings } from '../../../types';
+import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
@@ -21,17 +21,8 @@ import ToolsCollection from '../tools/collection';
  * Creates Instances from Plugins and binds external config to the instances
  */
 
-type ToolClass = BlockTool | InlineTool | BlockTune;
-
 /**
- * Class properties:
- *
- * @typedef {Tools} Tools
- * @property {Tools[]} toolsAvailable - available Tools
- * @property {Tools[]} toolsUnavailable - unavailable Tools
- * @property {object} toolsClasses - all classes
- * @property {object} toolsSettings - Tools settings
- * @property {EditorConfig} config - Editor config
+ * Modules that works with tools classes
  */
 export default class Tools extends Module {
   /**
@@ -44,8 +35,6 @@ export default class Tools extends Module {
 
   /**
    * Returns available Tools
-   *
-   * @returns {object<Tool>}
    */
   public get available(): ToolsCollection {
     return this.toolsAvailable;
@@ -53,8 +42,6 @@ export default class Tools extends Module {
 
   /**
    * Returns unavailable Tools
-   *
-   * @returns {Tool[]}
    */
   public get unavailable(): ToolsCollection {
     return this.toolsUnavailable;
@@ -62,8 +49,6 @@ export default class Tools extends Module {
 
   /**
    * Return Tools for the Inline Toolbar
-   *
-   * @returns {object} - object of Inline Tool's classes
    */
   public get inlineTools(): ToolsCollection<InlineTool> {
     return this.available.inlineTools;
@@ -212,15 +197,15 @@ export default class Tools extends Module {
         class: Stub,
         isInternal: true,
       },
-      moveUpTune: {
+      moveUp: {
         class: MoveUpTune,
         isInternal: true,
       },
-      deleteTune: {
+      delete: {
         class: DeleteTune,
         isInternal: true,
       },
-      moveDownTune: {
+      moveDown: {
         class: MoveDownTune,
         isInternal: true,
       },
@@ -274,12 +259,12 @@ export default class Tools extends Module {
    * @param config - tools config
    */
   private getListOfPrepareFunctions(config: {[name: string]: ToolSettings}): {
-    function: (data: { toolName: string }) => void | Promise<void>;
-    data: { toolName: string };
+    function: (data: { toolName: string; config: ToolConfig }) => void | Promise<void>;
+    data: { toolName: string; config: ToolConfig };
   }[] {
     const toolPreparationList: {
       function: (data: { toolName: string }) => void | Promise<void>;
-      data: { toolName: string };
+      data: { toolName: string; config: ToolConfig };
     }[] = [];
 
     Object
@@ -290,6 +275,7 @@ export default class Tools extends Module {
           function: _.isFunction(settings.class.prepare) ? settings.class.prepare : (): void => {},
           data: {
             toolName,
+            config: settings.config,
           },
         });
       });

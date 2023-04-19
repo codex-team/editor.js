@@ -2,7 +2,7 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
-import type { EditorConfig } from './../../../types/index';
+import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index'
 
 declare global {
@@ -31,7 +31,7 @@ declare global {
        * @usage
        * cy.get('div').copy().then(data => {})
        */
-      copy(): Chainable<{ [type: string]: any }>;
+      copy(): Chainable<Subject>;
 
       /**
        * Cut command to dispatch cut event on subject
@@ -39,7 +39,27 @@ declare global {
        * @usage
        * cy.get('div').cut().then(data => {})
        */
-      cut(): Chainable<{ [type: string]: any }>;
+      cut(): Chainable<Subject>;
+
+      /**
+       * Calls EditorJS API render method
+       *
+       * @param data — data to render
+       */
+      render(data: OutputData): Chainable<Subject>;
+
+      /**
+       * Select passed text in element
+       * Note. Previous subject should have 'textNode' as firstChild
+       *
+       * Usage
+       * cy.get('[data-cy=editorjs]')
+       *  .find('.ce-paragraph')
+       *  .selectText('block te')
+       *
+       * @param text - text to select
+       */
+      selectText(text: string): Chainable<Subject>;
     }
 
     interface ApplicationWindow {

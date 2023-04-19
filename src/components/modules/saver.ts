@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import { OutputData } from '../../../types';
-import { ValidatedData } from '../../../types/data-formats';
+import { SavedData, ValidatedData } from '../../../types/data-formats';
 import Block from '../block';
 import * as _ from '../utils';
 import { sanitizeBlocks } from '../utils/sanitizer';
@@ -16,7 +16,6 @@ declare const VERSION: string;
 
 /**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
- *
  * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
  * @property {string} json - Editor JSON output
@@ -28,28 +27,23 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const { BlockManager, ModificationsObserver, Tools } = this.Editor;
+    const { BlockManager, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
         chainData = [];
-
-    /**
-     * Disable modifications observe while saving
-     */
-    ModificationsObserver.disable();
 
     try {
       blocks.forEach((block: Block) => {
         chainData.push(this.getSavedData(block));
       });
 
-      const extractedData = await Promise.all(chainData);
+      const extractedData = await Promise.all(chainData) as Array<Pick<SavedData, 'data' | 'tool'>>;
       const sanitizedData = await sanitizeBlocks(extractedData, (name) => {
         return Tools.blockTools.get(name).sanitizeConfig;
       });
 
       return this.makeOutput(sanitizedData);
-    } finally {
-      ModificationsObserver.enable();
+    } catch (e) {
+      _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
     }
   }
 
@@ -81,7 +75,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({ tool, data, tunes, time, isValid }) => {
+    allExtractedData.forEach(({ id, tool, data, tunes, time, isValid }) => {
       totalTime += time;
 
       /**
@@ -108,6 +102,7 @@ export default class Saver extends Module {
       }
 
       const output = {
+        id,
         type: tool,
         data,
         ...!_.isEmpty(tunes) && {

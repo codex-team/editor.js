@@ -4,7 +4,9 @@ import {
   BlockToolData,
   BlockTune as IBlockTune,
   SanitizerConfig,
-  ToolConfig
+  ToolConfig,
+  ToolboxConfigEntry,
+  PopoverItem
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -18,11 +20,18 @@ import BlockTool from '../tools/block';
 import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
+import EventsDispatcher from '../utils/events';
+import { TunesMenuConfigItem } from '../../../types/tools';
 
 /**
  * Interface describes Block class constructor argument
  */
 interface BlockConstructorOptions {
+  /**
+   * Block's id. Should be passed for existed block, and omitted for a new one.
+   */
+  id?: string;
+
   /**
    * Initial Block data
    */
@@ -46,16 +55,14 @@ interface BlockConstructorOptions {
   /**
    * Tunes data for current Block
    */
-  tunesData: {[name: string]: BlockTuneData};
+  tunesData: { [name: string]: BlockTuneData };
 }
 
 /**
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
  * @property {BlockTool} tool — current block tool (Paragraph, for example)
  * @property {object} CSS — block`s css classes
- *
  */
 
 /**
@@ -66,28 +73,34 @@ export enum BlockToolAPI {
    * @todo remove method in 3.0.0
    * @deprecated — use 'rendered' hook instead
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
   MOVED = 'moved',
   UPDATED = 'updated',
   REMOVED = 'removed',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   ON_PASTE = 'onPaste',
 }
 
 /**
+ * Names of events supported by Block class
+ */
+type BlockEvents = 'didMutated';
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property {HTMLElement} pluginsContent - HTML content that returns by Tool's render function
  */
-export default class Block {
+export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * CSS classes for the Block
    *
    * @returns {{wrapper: string, content: string}}
    */
-  public static get CSS(): {[name: string]: string} {
+  public static get CSS(): { [name: string]: string } {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
@@ -97,6 +110,11 @@ export default class Block {
       dropTarget: 'ce-block--drop-target',
     };
   }
+
+  /**
+   * Block unique identifier
+   */
+  public id: string;
 
   /**
    * Block Tool`s name
@@ -136,6 +154,11 @@ export default class Block {
   private cachedInputs: HTMLElement[] = [];
 
   /**
+   * We'll store a reference to the tool's rendered element to access it later
+   */
+  private toolRenderedElement: HTMLElement | null = null;
+
+  /**
    * Tool class instance
    */
   private readonly toolInstance: IBlockTool;
@@ -154,7 +177,7 @@ export default class Block {
    * If there is saved data for Tune which is not available at the moment,
    * we will store it here and provide back on save so data is not lost
    */
-  private unavailableTunesData: {[name: string]: BlockTuneData} = {};
+  private unavailableTunesData: { [name: string]: BlockTuneData } = {};
 
   /**
    * Editor`s API module
@@ -184,8 +207,60 @@ export default class Block {
 
   /**
    * Is fired when DOM mutation has been happened
+   *
+   * mutationsOrInputEvent — actual changes
+   *   - MutationRecord[] - any DOM change
+   *   - InputEvent — <input> change
+   *   - undefined — manual triggering of block.dispatchChange()
    */
-  private didMutated = _.debounce((): void => {
+  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
+    /**
+     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
+     */
+    let shouldFireUpdate;
+
+    if (mutationsOrInputEvent === undefined) {
+      shouldFireUpdate = true;
+    } else if (mutationsOrInputEvent instanceof InputEvent) {
+      shouldFireUpdate = true;
+    } else {
+      /**
+       * Update from 2023, Feb 17:
+       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
+       *    since there could be a real mutations same-time with mutation-free changes,
+       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
+       *    — we should fire 'didMutated' event in that case
+       */
+      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
+        const { addedNodes, removedNodes } = record;
+        const changedNodes = [
+          ...Array.from(addedNodes),
+          ...Array.from(removedNodes),
+        ];
+
+        return changedNodes.some((node) => {
+          if ($.isElement(node) === false) {
+            return false;
+          }
+
+          return (node as HTMLElement).dataset.mutationFree === 'true';
+        });
+      });
+
+      if (everyRecordIsMutationFree) {
+        shouldFireUpdate = false;
+      } else {
+        shouldFireUpdate = true;
+      }
+    }
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
     /**
      * Drop cache
      */
@@ -197,6 +272,8 @@ export default class Block {
     this.updateCurrentInput();
 
     this.call(BlockToolAPI.UPDATED);
+
+    this.emit('didMutated', this);
   }, this.modificationDebounceTimer);
 
   /**
@@ -206,20 +283,24 @@ export default class Block {
 
   /**
    * @param {object} options - block constructor options
+   * @param {string} [options.id] - block's id. Will be generated if omitted.
    * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockToolConstructable} options.Tool — Tool's class
-   * @param {ToolSettings} options.settings - default tool's config
+   * @param {BlockTool} options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param {boolean} options.readOnly - Read-Only flag
    */
   constructor({
+    id = _.generateBlockId(),
     data,
     tool,
     api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions) {
+    super();
+
     this.name = tool.name;
+    this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
@@ -241,7 +322,7 @@ export default class Block {
   }
 
   /**
-   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+   * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
    *
    * @returns {HTMLElement[]}
    */
@@ -356,7 +437,7 @@ export default class Block {
 
   /**
    * is block mergeable
-   * We plugin have merge function then we call it mergable
+   * We plugin have merge function then we call it mergeable
    *
    * @returns {boolean}
    */
@@ -377,7 +458,7 @@ export default class Block {
   }
 
   /**
-   * Check if block has a media content such as images, iframes and other
+   * Check if block has a media content such as images, iframe and other
    *
    * @returns {boolean}
    */
@@ -426,8 +507,12 @@ export default class Block {
   public set selected(state: boolean) {
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
+
+      SelectionUtils.addFakeCursor(this.holder);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
+
+      SelectionUtils.removeFakeCursor(this.holder);
     }
   }
 
@@ -443,7 +528,7 @@ export default class Block {
   /**
    * Set stretched state
    *
-   * @param {boolean} state - 'true' to enable, 'false' to disable stretched statte
+   * @param {boolean} state - 'true' to enable, 'false' to disable stretched state
    */
   public set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
@@ -473,23 +558,7 @@ export default class Block {
    * @returns {HTMLElement}
    */
   public get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
-
-    if (blockContentNodes && blockContentNodes.childNodes.length) {
-      /**
-       * Editors Block content can contain different Nodes from extensions
-       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
-       */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
-        const contentNode = blockContentNodes.childNodes[child];
-
-        if (!$.isExtensionNode(contentNode)) {
-          return contentNode as HTMLElement;
-        }
-      }
-    }
-
-    return null;
+    return this.toolRenderedElement;
   }
 
   /**
@@ -537,9 +606,9 @@ export default class Block {
    *
    * @returns {object}
    */
-  public async save(): Promise<void|SavedData> {
+  public async save(): Promise<void | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
-    const tunesData: {[name: string]: BlockTuneData} = this.unavailableTunesData;
+    const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
 
     [
       ...this.tunesInstances.entries(),
@@ -567,6 +636,7 @@ export default class Block {
         measuringEnd = window.performance.now();
 
         return {
+          id: this.id,
           tool: this.name,
           data: finishedExtraction,
           tunes: tunesData,
@@ -574,7 +644,7 @@ export default class Block {
         };
       })
       .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+        _.log(`Saving process for ${this.name} tool failed due to the ${error}`, 'log', 'red');
       });
   }
 
@@ -583,7 +653,6 @@ export default class Block {
    * Tool's validation method is optional
    *
    * @description Method returns true|false whether data passed the validation or not
-   *
    * @param {BlockToolData} data - data to validate
    * @returns {Promise<boolean>} valid
    */
@@ -598,22 +667,33 @@ export default class Block {
   }
 
   /**
-   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
-   *
-   * @returns {DocumentFragment[]}
+   * Returns data to render in tunes menu.
+   * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public renderTunes(): [DocumentFragment, DocumentFragment] {
-    const tunesElement = document.createDocumentFragment();
-    const defaultTunesElement = document.createDocumentFragment();
+  public getTunes(): [PopoverItem[], HTMLElement] {
+    const customHtmlTunesContainer = document.createElement('div');
+    const tunesItems: TunesMenuConfigItem[] = [];
 
-    this.tunesInstances.forEach((tune) => {
-      $.append(tunesElement, tune.render());
-    });
-    this.defaultTunesInstances.forEach((tune) => {
-      $.append(defaultTunesElement, tune.render());
+    /** Tool's tunes: may be defined as return value of optional renderSettings method */
+    const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
+
+    /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
+    const commonTunes = [
+      ...this.tunesInstances.values(),
+      ...this.defaultTunesInstances.values(),
+    ].map(tuneInstance => tuneInstance.render());
+
+    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
+      if ($.isElement(rendered)) {
+        customHtmlTunesContainer.appendChild(rendered);
+      } else if (Array.isArray(rendered)) {
+        tunesItems.push(...rendered);
+      } else {
+        tunesItems.push(rendered);
+      }
     });
 
-    return [tunesElement, defaultTunesElement];
+    return [tunesItems, customHtmlTunesContainer];
   }
 
   /**
@@ -664,21 +744,64 @@ export default class Block {
   }
 
   /**
+   * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
+   * Can be useful for block changes invisible for editor core.
+   */
+  public dispatchChange(): void {
+    this.didMutated();
+  }
+
+  /**
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    super.destroy();
+
     if (_.isFunction(this.toolInstance.destroy)) {
       this.toolInstance.destroy();
     }
   }
 
   /**
-   * Call Tool instance renderSettings method
+   * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+   * This method returns the entry that is related to the Block (depended on the Block data)
    */
-  public renderSettings(): HTMLElement | undefined {
-    if (_.isFunction(this.toolInstance.renderSettings)) {
-      return this.toolInstance.renderSettings();
+  public async getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+    const toolboxSettings = this.tool.toolbox;
+
+    /**
+     * If Tool specifies just the single entry, treat it like an active
+     */
+    if (toolboxSettings.length === 1) {
+      return Promise.resolve(this.tool.toolbox[0]);
     }
+
+    /**
+     * If we have several entries with their own data overrides,
+     * find those who matches some current data property
+     *
+     * Example:
+     *  Tools' toolbox: [
+     *    {title: "Heading 1", data: {level: 1} },
+     *    {title: "Heading 2", data: {level: 2} }
+     *  ]
+     *
+     *  the Block data: {
+     *    text: "Heading text",
+     *    level: 2
+     *  }
+     *
+     *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+     */
+    const blockData = await this.data;
+    const toolboxItems = toolboxSettings;
+
+    return toolboxItems.find((item) => {
+      return Object.entries(item.data)
+        .some(([propName, propValue]) => {
+          return blockData[propName] && _.equals(blockData[propName], propValue);
+        });
+    });
   }
 
   /**
@@ -691,7 +814,12 @@ export default class Block {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
-    contentNode.appendChild(pluginsContent);
+    /**
+     * Saving a reference to plugin's content element for guaranteed accessing it later
+     */
+    this.toolRenderedElement = pluginsContent;
+
+    contentNode.appendChild(this.toolRenderedElement);
 
     /**
      * Block Tunes might wrap Block's content node to provide any UI changes
@@ -726,7 +854,7 @@ export default class Block {
    * @param tunesData - current Block tunes data
    * @private
    */
-  private composeTunes(tunesData: {[name: string]: BlockTuneData}): void {
+  private composeTunes(tunesData: { [name: string]: BlockTuneData }): void {
     Array.from(this.tunes.values()).forEach((tune) => {
       const collection = tune.isInternal ? this.defaultTunesInstances : this.tunesInstances;
 
@@ -756,23 +884,34 @@ export default class Block {
      * Update current input
      */
     this.updateCurrentInput();
-  }
+  };
 
   /**
-   * Adds focus event listeners to all inputs and contentEditables
+   * Adds focus event listeners to all inputs and contenteditable
    */
   private addInputEvents(): void {
     this.inputs.forEach(input => {
       input.addEventListener('focus', this.handleFocus);
+
+      /**
+       * If input is native input add oninput listener to observe changes
+       */
+      if ($.isNativeInput(input)) {
+        input.addEventListener('input', this.didMutated);
+      }
     });
   }
 
   /**
-   * removes focus event listeners from all inputs and contentEditables
+   * removes focus event listeners from all inputs and contenteditable
    */
   private removeInputEvents(): void {
     this.inputs.forEach(input => {
       input.removeEventListener('focus', this.handleFocus);
+
+      if ($.isNativeInput(input)) {
+        input.removeEventListener('input', this.didMutated);
+      }
     });
   }
 }
