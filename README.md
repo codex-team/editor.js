@@ -249,4 +249,4 @@ Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">
 
 [codex.so](https://codex.so)
 
-(Trigger analysis again)
+(Trigger analysis with bells and whistles)
