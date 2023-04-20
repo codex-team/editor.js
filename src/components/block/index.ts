@@ -214,6 +214,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *   - undefined — manual triggering of block.dispatchChange()
    */
   private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
+    console.log('didMutated', mutationsOrInputEvent);
+
     /**
      * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
      */
@@ -288,6 +290,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {BlockTool} options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param {boolean} options.readOnly - Read-Only flag
+   * @param eventBus - Editor common event bus. Allows to subscribe on some Editor events.
    */
   constructor({
     id = _.generateBlockId(),
@@ -296,7 +299,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
-  }: BlockConstructorOptions) {
+  }: BlockConstructorOptions, eventBus: EventsDispatcher) {
     super();
 
     this.name = tool.name;
@@ -306,7 +309,25 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.api = api;
     this.blockAPI = new BlockAPI(this);
 
-    this.mutationObserver = new MutationObserver(this.didMutated);
+    // this.mutationObserver = new MutationObserver(this.didMutated);
+
+    eventBus.on('dom changed', (payload: {mutations: MutationRecord[]}) => {
+      const { mutations } = payload;
+      const mutationBelongsToBlock = mutations.some(record => {
+        const { addedNodes, removedNodes } = record;
+
+        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.holder.contains(node));
+        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.holder.contains(node));
+
+        return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
+      });
+
+      console.log('mutationBelongsToBlock', mutationBelongsToBlock);
+
+      if (mutationBelongsToBlock) {
+        this.didMutated(mutations);
+      }
+    });
 
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
@@ -715,18 +736,18 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when Block will be selected as current
    */
   public willSelect(): void {
-    /**
-     * Observe DOM mutations to update Block inputs
-     */
-    this.mutationObserver.observe(
-      this.holder.firstElementChild,
-      {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-      }
-    );
+    // /**
+    //  * Observe DOM mutations to update Block inputs
+    //  */
+    // this.mutationObserver.observe(
+    //   this.holder.firstElementChild,
+    //   {
+    //     childList: true,
+    //     subtree: true,
+    //     characterData: true,
+    //     attributes: true,
+    //   }
+    // );
 
     /**
      * Mutation observer doesn't track changes in "<input>" and "<textarea>"
@@ -739,7 +760,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Is fired when Block will be unselected
    */
   public willUnselect(): void {
-    this.mutationObserver.disconnect();
+    // this.mutationObserver.disconnect();
     this.removeInputEvents();
   }
 

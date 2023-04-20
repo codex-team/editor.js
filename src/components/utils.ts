@@ -414,7 +414,7 @@ export function isValidMimeType(type: string): boolean {
  * @param {boolean} immediate - call now
  * @returns {Function}
  */
-export function debounce(func: (...args: unknown[]) => void, wait?: number, immediate?: boolean): () => void {
+export function debounce(func: (...args: unknown[]) => void, wait?: number, immediate?: boolean): (unknown) => void {
   let timeout;
 
   return (...args: unknown[]): void => {

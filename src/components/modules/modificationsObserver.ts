@@ -1,3 +1,4 @@
+import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
 import * as _ from '../utils';
 
@@ -9,11 +10,36 @@ export default class ModificationsObserver extends Module {
    * Flag shows onChange event is disabled
    */
   private disabled = false;
+  private readonly mutationObserver: MutationObserver;
+
+  /**
+   *
+   * @param root0
+   */
+  constructor({ config, eventsDispatcher }: ModuleConfig) {
+    super({
+      config,
+      eventsDispatcher,
+    });
+
+    this.mutationObserver = new MutationObserver((mutations) => {
+      this.onChange(mutations);
+    });
+  }
 
   /**
    * Enables onChange event
    */
   public enable(): void {
+    this.mutationObserver.observe(
+      this.Editor.UI.nodes.redactor,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+      }
+    );
     this.disabled = false;
   }
 
@@ -21,19 +47,39 @@ export default class ModificationsObserver extends Module {
    * Disables onChange event
    */
   public disable(): void {
-    this.disabled = true;
+    this.mutationObserver.disconnect();
   }
+
+  /**
+   * @param mutations
+   */
+  private onChange(mutations: MutationRecord[]): void {
+    // if (this.disabled || !_.isFunction(this.config.onChange)) {
+    //   return;
+    // }
+
+    // this.config.onChange(this.Editor.API.methods, event);
+
+    this.eventsDispatcher.emit('dom changed', {
+      mutations,
+    });
+  }
+
 
   /**
    * Call onChange event passed to Editor.js configuration
    *
    * @param event - some of our custom change events
    */
-  public onChange(event: CustomEvent): void {
+  public _onChange(event: CustomEvent): void {
     if (this.disabled || !_.isFunction(this.config.onChange)) {
       return;
     }
 
     this.config.onChange(this.Editor.API.methods, event);
+
+    this.eventsDispatcher.emit('dom changed', {
+      block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
+    });
   }
 }

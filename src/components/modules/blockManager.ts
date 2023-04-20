@@ -242,7 +242,7 @@ export default class BlockManager extends Module {
       api: this.Editor.API,
       readOnly,
       tunesData,
-    });
+    }, this.eventsDispatcher);
 
     if (!readOnly) {
       this.bindBlockEvents(block);
@@ -861,7 +861,7 @@ export default class BlockManager extends Module {
       },
     });
 
-    this.Editor.ModificationsObserver.onChange(event);
+    // this.Editor.ModificationsObserver.onChange(event);
 
     return block;
   }
