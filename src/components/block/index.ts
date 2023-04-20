@@ -313,16 +313,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     eventBus.on('dom changed', (payload: {mutations: MutationRecord[]}) => {
       const { mutations } = payload;
-      const mutationBelongsToBlock = mutations.some(record => {
-        const { addedNodes, removedNodes } = record;
 
-        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.holder.contains(node));
-        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.holder.contains(node));
+      const mutationBelongsToBlock = mutations.some(record => {
+        const { type, target, addedNodes, removedNodes } = record;
+
+        if (['characterData', 'attributes'].includes(type)) {
+          const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
+
+          return this.pluginsContent.contains(targetElement);
+        }
+
+
+        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.pluginsContent.contains(node));
+        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.pluginsContent.contains(node));
 
         return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
       });
-
-      console.log('mutationBelongsToBlock', mutationBelongsToBlock);
 
       if (mutationBelongsToBlock) {
         this.didMutated(mutations);
