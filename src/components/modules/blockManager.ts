@@ -861,7 +861,7 @@ export default class BlockManager extends Module {
       },
     });
 
-    // this.Editor.ModificationsObserver.onChange(event);
+    this.Editor.ModificationsObserver.dispatchOnChange(event);
 
     return block;
   }

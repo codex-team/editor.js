@@ -214,7 +214,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *   - undefined — manual triggering of block.dispatchChange()
    */
   private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
-    console.log('didMutated', mutationsOrInputEvent);
+    /**
+     * If tool updates its own root element, we need to renew it in our memory
+     */
+    if ('length' in mutationsOrInputEvent) {
+      this.detectToolRootChange(mutationsOrInputEvent);
+    }
 
     /**
      * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
@@ -320,12 +325,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         if (['characterData', 'attributes'].includes(type)) {
           const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
 
-          return this.pluginsContent.contains(targetElement);
+          return this.toolRenderedElement.contains(targetElement);
         }
 
 
-        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.pluginsContent.contains(node));
-        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.pluginsContent.contains(node));
+        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.toolRenderedElement.contains(node));
+        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.toolRenderedElement.contains(node));
 
         return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
       });
@@ -938,6 +943,25 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
       if ($.isNativeInput(input)) {
         input.removeEventListener('input', this.didMutated);
+      }
+    });
+  }
+
+  /**
+   * Sometimes Tool can replace own main element, for example H2 -> H4 or UL -> OL
+   * We need to detect such changes and update a link to tools main element with the new one
+   *
+   * @param mutations - records of block content mutations
+   */
+  private detectToolRootChange(mutations: MutationRecord[]): void {
+    mutations.forEach(record => {
+      const toolRootHasBeenUpdated = Array.from(record.removedNodes).includes(this.toolRenderedElement);
+
+      if (toolRootHasBeenUpdated) {
+        const newToolElement = record.addedNodes[record.addedNodes.length - 1];
+
+        console.warn('Original element changed', newToolElement);
+        this.toolRenderedElement = newToolElement as HTMLElement;
       }
     });
   }
