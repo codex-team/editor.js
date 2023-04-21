@@ -2,6 +2,7 @@
 
 ### 2.27.0
 
+- `New` — *Toolbar API* — Toolbox toggling method added.
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
@@ -13,6 +14,7 @@
 - `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
 - `Improvement` — *Dependencies* — Upgrade Cypress to v12, upgrade related libraries to latest versions.
 - `CI` — Use Ubuntu container for Edge tests runner.
+- `Improvement` — Use Vite as build system instead of Webpack.
 
 ### 2.26.5
 
