@@ -5,28 +5,7 @@ import { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
-
-/**
- * @typedef {Core} Core - editor core class
- */
-
-/**
- * Require Editor modules places in components/modules dir
- */
-const contextRequire = require.context('./modules', true);
-
-const modules = [];
-
-contextRequire.keys().forEach((filename) => {
-  /**
-   * Include files if:
-   * - extension is .js or .ts
-   * - does not starts with _
-   */
-  if (filename.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
-    modules.push(contextRequire(filename));
-  }
-});
+import Modules from './modules';
 
 /**
  * @class Core
@@ -228,7 +207,7 @@ export default class Core {
    *
    * @returns {EditorConfig}
    */
-  public get configuration(): EditorConfig|string {
+  public get configuration(): EditorConfig {
     return this.config;
   }
 
@@ -325,27 +304,14 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach((module) => {
-      /**
-       * If module has non-default exports, passed object contains them all and default export as 'default' property
-       */
-      const Module = _.isFunction(module) ? module : module.default;
-
+    Object.entries(Modules).forEach(([key, module]) => {
       try {
-        /**
-         * We use class name provided by displayName property
-         *
-         * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
-         * To prevent this, we use 'babel-plugin-class-display-name' plugin
-         *
-         * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
-         */
-        this.moduleInstances[Module.displayName] = new Module({
+        this.moduleInstances[key] = new module({
           config: this.configuration,
           eventsDispatcher: this.eventsDispatcher,
         });
       } catch (e) {
-        _.log(`Module ${Module.displayName} skipped because`, 'error', e);
+        _.log('[constructModules]', `Module ${key} skipped because`, 'error', e);
       }
     });
   }
