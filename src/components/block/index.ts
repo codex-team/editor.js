@@ -22,6 +22,8 @@ import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { TunesMenuConfigItem } from '../../../types/tools';
+import { isMutationBelongsToElement } from '../utils/mutations';
+import { RedactorDomChanged } from '../events';
 
 /**
  * Interface describes Block class constructor argument
@@ -192,18 +194,21 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private inputIndex = 0;
 
   /**
-   * Mutation observer to handle DOM mutations
-   *
-   * @type {MutationObserver}
-   */
-  private mutationObserver: MutationObserver;
-
-  /**
    * Debounce Timer
    *
    * @type {number}
    */
   private readonly modificationDebounceTimer = 450;
+
+  /**
+   * Common editor event bus
+   */
+  private readonly editorEventBus: EventsDispatcher;
+
+  /**
+   * Link to editor dom change callback. Used to remove listener on remove
+   */
+  private redactorDomChangedCallback: (payload: { mutations: MutationRecord[]; }) => void;
 
   /**
    * Is fired when DOM mutation has been happened
@@ -312,33 +317,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
+    this.editorEventBus = eventBus;
     this.blockAPI = new BlockAPI(this);
-
-    // this.mutationObserver = new MutationObserver(this.didMutated);
-
-    eventBus.on('dom changed', (payload: {mutations: MutationRecord[]}) => {
-      const { mutations } = payload;
-
-      const mutationBelongsToBlock = mutations.some(record => {
-        const { type, target, addedNodes, removedNodes } = record;
-
-        if (['characterData', 'attributes'].includes(type)) {
-          const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
-
-          return this.toolRenderedElement.contains(targetElement);
-        }
-
-
-        const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => this.toolRenderedElement.contains(node));
-        const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => this.toolRenderedElement.contains(node));
-
-        return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
-      });
-
-      if (mutationBelongsToBlock) {
-        this.didMutated(mutations);
-      }
-    });
 
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
@@ -351,6 +331,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.composeTunes(tunesData);
 
     this.holder = this.compose();
+
+    /**
+     * Start watching block mutations
+     */
+    this.watchBlockMutations();
+
+    /**
+     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+     * so we need to track focus events to update current input and clear cache.
+     */
+    this.addInputEvents();
   }
 
   /**
@@ -744,38 +735,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Is fired when Block will be selected as current
-   */
-  public willSelect(): void {
-    // /**
-    //  * Observe DOM mutations to update Block inputs
-    //  */
-    // this.mutationObserver.observe(
-    //   this.holder.firstElementChild,
-    //   {
-    //     childList: true,
-    //     subtree: true,
-    //     characterData: true,
-    //     attributes: true,
-    //   }
-    // );
-
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
-  }
-
-  /**
-   * Is fired when Block will be unselected
-   */
-  public willUnselect(): void {
-    // this.mutationObserver.disconnect();
-    this.removeInputEvents();
-  }
-
-  /**
    * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
    * Can be useful for block changes invisible for editor core.
    */
@@ -787,6 +746,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    this.unwatchBlockMutations();
+    this.removeInputEvents();
+
     super.destroy();
 
     if (_.isFunction(this.toolInstance.destroy)) {
@@ -945,6 +907,35 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         input.removeEventListener('input', this.didMutated);
       }
     });
+  }
+
+  /**
+   * Listen common editor Dom Changed event and detect mutations related to the  Block
+   */
+  private watchBlockMutations(): void {
+    /**
+     * Save callback to a property to remove it on Block destroy
+     *
+     * @param payload - event payload
+     */
+    this.redactorDomChangedCallback = (payload: {mutations: MutationRecord[]}) => {
+      const { mutations } = payload;
+
+      const mutationBelongsToBlock = mutations.some(record => isMutationBelongsToElement(record, this.toolRenderedElement));
+
+      if (mutationBelongsToBlock) {
+        this.didMutated(mutations);
+      }
+    };
+
+    this.editorEventBus.on(RedactorDomChanged, this.redactorDomChangedCallback);
+  }
+
+  /**
+   * Remove redactor dom change event listener
+   */
+  private unwatchBlockMutations(): void {
+    this.editorEventBus.off(RedactorDomChanged, this.redactorDomChangedCallback);
   }
 
   /**

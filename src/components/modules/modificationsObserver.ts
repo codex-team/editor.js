@@ -1,6 +1,13 @@
 import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
+import { RedactorDomChanged } from '../events';
 import * as _ from '../utils';
+
+/**
+ * @todo mute mutations on render
+ * @todo bulk mutations
+ * @todo remove listener after block deletion
+ */
 
 /**
  * Single entry point for Block mutation events
@@ -73,10 +80,8 @@ export default class ModificationsObserver extends Module {
 
     // this.config.onChange(this.Editor.API.methods, event);
 
-    this.eventsDispatcher.emit('dom changed', {
+    this.eventsDispatcher.emit(RedactorDomChanged, {
       mutations,
     });
   }
-
-
 }

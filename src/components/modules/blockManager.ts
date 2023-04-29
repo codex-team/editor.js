@@ -35,14 +35,6 @@ export default class BlockManager extends Module {
    * @param {number} newIndex - index of Block to set as current
    */
   public set currentBlockIndex(newIndex: number) {
-    if (this._blocks[this._currentBlockIndex]) {
-      this._blocks[this._currentBlockIndex].willUnselect();
-    }
-
-    if (this._blocks[newIndex]) {
-      this._blocks[newIndex].willSelect();
-    }
-
     this._currentBlockIndex = newIndex;
   }
 
