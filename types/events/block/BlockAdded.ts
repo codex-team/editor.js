@@ -1,4 +1,3 @@
-import type { BlockMutationCustomEvent } from '../../../src/components/events/BlockMutation';
 import { BlockMutationEventDetail } from './Base';
 
 /**
@@ -19,4 +18,4 @@ export interface BlockAddedEventDetail extends BlockMutationEventDetail {
 /**
  * Event will be fired when the new block is added to the editor
  */
-export type BlockAddedEvent = BlockMutationCustomEvent<typeof BlockAddedMutationType, BlockAddedEventDetail>;
+export type BlockAddedEvent = CustomEvent<BlockAddedEventDetail>;

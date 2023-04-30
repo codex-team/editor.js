@@ -1,4 +1,3 @@
-import type { BlockMutationCustomEvent } from '../../../src/components/events/BlockMutation';
 import { BlockMutationEventDetail } from './Base';
 
 /**
@@ -19,4 +18,4 @@ export interface BlockRemovedEventDetail extends BlockMutationEventDetail {
 /**
  * Event will be fired when some block is removed
  */
-export type BlockRemovedEvent = BlockMutationCustomEvent<typeof BlockRemovedMutationType, BlockRemovedEventDetail>;
+export type BlockRemovedEvent = CustomEvent<BlockRemovedEventDetail>;

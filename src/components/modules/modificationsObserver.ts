@@ -1,5 +1,5 @@
 import { BlockId } from '../../../types';
-import { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
+import { BlockMutationEvent, BlockMutationType, BlockMutationEventMap } from '../../../types/events/block';
 import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
 import { RedactorDomChanged } from '../events';
@@ -89,18 +89,21 @@ export default class ModificationsObserver extends Module {
    *
    * @param event - some of our custom change events
    */
-  public dispatchOnChange(event: BlockMutationEvent): void {
+  public dispatchOnChange<Type extends BlockMutationType>(event: BlockMutationEventMap[Type]): void {
     if (this.disabled || !_.isFunction(this.config.onChange)) {
       return;
     }
 
-    this.batchingOnChangeQueue.set(`block:${event.detail.target.id}:event:${event.type}`, event);
+    this.batchingOnChangeQueue.set(`block:${event.detail.target.id}:event:${event.type as Type}`, event);
 
     if (this.batchingTimeout) {
       clearTimeout(this.batchingTimeout);
     }
 
     this.batchingTimeout = setTimeout(() => {
+      /**
+       * Ih we have only 1 event in a queue, pass it without array
+       */
       if (this.batchingOnChangeQueue.size === 1) {
         this.config.onChange(this.Editor.API.methods, this.batchingOnChangeQueue.values().next().value);
       } else {
