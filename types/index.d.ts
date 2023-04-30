@@ -76,7 +76,8 @@ export {
   PopoverItemWithConfirmation,
   PopoverItemWithoutConfirmation
 } from './configs';
-export {OutputData, OutputBlockData} from './data-formats/output-data';
+export { OutputData, OutputBlockData} from './data-formats/output-data';
+export { BlockId } from './data-formats/block-id';
 export { BlockAPI } from './api'
 
 /**

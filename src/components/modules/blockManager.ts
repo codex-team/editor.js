@@ -9,10 +9,15 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent } from '../../../types';
+import { BlockAPI as BlockAPIInterface, BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
-import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import { BlockMutationEvent, BlockMutationEventDetail, BlockMutationType } from '../../../types/events/block';
+import { BlockMutationCustomEvent } from '../events/BlockMutation';
+import { BlockRemovedEventDetail, BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
+import { BlockAddedEventDetail, BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
+import { BlockMovedEventDetail, BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
+import { BlockChangedEventDetail, BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -290,8 +295,9 @@ export default class BlockManager extends Module {
      * we need to dispatch the 'block-removing' event for the replacing block
      */
     if (replace) {
-      this.blockDidMutated(BlockMutationType.Removed, this.getBlockByIndex(newIndex), {
+      this.blockDidMutated(BlockRemovedMutationType, this.getBlockByIndex(newIndex), {
         index: newIndex,
+        // a: 1,
       });
     }
 
@@ -300,7 +306,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block, {
+    this.blockDidMutated(BlockAddedMutationType, block, {
       index: newIndex,
     });
 
@@ -376,7 +382,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block, {
+    this.blockDidMutated(BlockAddedMutationType, block, {
       index,
     });
 
@@ -452,7 +458,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block removal
      */
-    this.blockDidMutated(BlockMutationType.Removed, blockToRemove, {
+    this.blockDidMutated(BlockRemovedMutationType, blockToRemove, {
       index,
     });
 
@@ -728,9 +734,10 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block movement
      */
-    this.blockDidMutated(BlockMutationType.Moved, this.currentBlock, {
+    this.blockDidMutated(BlockMovedMutationType, this.currentBlock, {
       fromIndex,
       toIndex,
+      aa: 'a',
     });
   }
 
@@ -799,8 +806,9 @@ export default class BlockManager extends Module {
     });
 
     block.on('didMutated', (affectedBlock: Block) => {
-      return this.blockDidMutated(BlockMutationType.Changed, affectedBlock, {
-        index: this.getBlockIndex(affectedBlock),
+      return this.blockDidMutated(BlockChangedMutationType, affectedBlock, {
+        index1: this.getBlockIndex(affectedBlock),
+        adad: 2,
       });
     });
   }
@@ -843,18 +851,23 @@ export default class BlockManager extends Module {
    *
    * @param mutationType - what happened with block
    * @param block - mutated block
-   * @param details - additional data to pass with change event
+   * @param detailData - additional data to pass with change event
    */
-  private blockDidMutated(mutationType: BlockMutationType, block: Block, details: Record<string, unknown> = {}): Block {
-    const event = new CustomEvent(mutationType, {
-      detail: {
-        target: new BlockAPI(block),
-        ...details,
-      },
-    });
+  private blockDidMutated<
+    Type extends BlockMutationType,
+    DetailData extends OmitTarget<Extract<BlockMutationEvent, { type: Type }>['detail']>
+  >(mutationType: Type, block: Block, detailData: DetailData): Block {
+    const detail = {
+      target: new BlockAPI(block) as BlockAPIInterface,
+      ...detailData,
+    };
+
+    const event = new BlockMutationCustomEvent(mutationType as Extract<BlockMutationEvent, { type: typeof mutationType }>['type'], detail);
 
     this.Editor.ModificationsObserver.dispatchOnChange(event);
 
     return block;
   }
 }
+
+type OmitTarget<T extends object> = Omit<T, 'target'>;

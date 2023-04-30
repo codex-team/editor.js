@@ -1,7 +1,7 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
-import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import { BlockMutationType } from '../../../types/events/block';
 
 /**
  * @todo Add checks that correct block API object is passed to onChange

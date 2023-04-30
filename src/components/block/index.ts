@@ -194,13 +194,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private inputIndex = 0;
 
   /**
-   * Debounce Timer
-   *
-   * @type {number}
-   */
-  private readonly modificationDebounceTimer = 450;
-
-  /**
    * Common editor event bus
    */
   private readonly editorEventBus: EventsDispatcher;
@@ -209,84 +202,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Link to editor dom change callback. Used to remove listener on remove
    */
   private redactorDomChangedCallback: (payload: { mutations: MutationRecord[]; }) => void;
-
-  /**
-   * Is fired when DOM mutation has been happened
-   *
-   * mutationsOrInputEvent — actual changes
-   *   - MutationRecord[] - any DOM change
-   *   - InputEvent — <input> change
-   *   - undefined — manual triggering of block.dispatchChange()
-   */
-  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
-    /**
-     * If tool updates its own root element, we need to renew it in our memory
-     */
-    if ('length' in mutationsOrInputEvent) {
-      this.detectToolRootChange(mutationsOrInputEvent);
-    }
-
-    /**
-     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
-     */
-    let shouldFireUpdate;
-
-    if (mutationsOrInputEvent === undefined) {
-      shouldFireUpdate = true;
-    } else if (mutationsOrInputEvent instanceof InputEvent) {
-      shouldFireUpdate = true;
-    } else {
-      /**
-       * Update from 2023, Feb 17:
-       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
-       *    since there could be a real mutations same-time with mutation-free changes,
-       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
-       *    — we should fire 'didMutated' event in that case
-       */
-      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
-        const { addedNodes, removedNodes } = record;
-        const changedNodes = [
-          ...Array.from(addedNodes),
-          ...Array.from(removedNodes),
-        ];
-
-        return changedNodes.some((node) => {
-          if ($.isElement(node) === false) {
-            return false;
-          }
-
-          return (node as HTMLElement).dataset.mutationFree === 'true';
-        });
-      });
-
-      if (everyRecordIsMutationFree) {
-        shouldFireUpdate = false;
-      } else {
-        shouldFireUpdate = true;
-      }
-    }
-
-    /**
-     * In case some mutation free elements are added or removed, do not trigger didMutated event
-     */
-    if (!shouldFireUpdate) {
-      return;
-    }
-
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
-
-    this.call(BlockToolAPI.UPDATED);
-
-    this.emit('didMutated', this);
-  }, this.modificationDebounceTimer);
 
   /**
    * Current block API interface
@@ -891,7 +806,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * If input is native input add oninput listener to observe changes
        */
       if ($.isNativeInput(input)) {
-        input.addEventListener('input', this.didMutated);
+        input.addEventListener('input', this.didMutated as EventListener);
       }
     });
   }
@@ -904,10 +819,88 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       input.removeEventListener('focus', this.handleFocus);
 
       if ($.isNativeInput(input)) {
-        input.removeEventListener('input', this.didMutated);
+        input.removeEventListener('input', this.didMutated as EventListener);
       }
     });
   }
+
+  /**
+   * Is fired when DOM mutation has been happened
+   *
+   * @param mutationsOrInputEvent - actual changes
+   *   - MutationRecord[] - any DOM change
+   *   - InputEvent — <input> change
+   *   - undefined — manual triggering of block.dispatchChange()
+   */
+  private readonly didMutated = (mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
+    /**
+     * If tool updates its own root element, we need to renew it in our memory
+     */
+    if ('length' in mutationsOrInputEvent) {
+      this.detectToolRootChange(mutationsOrInputEvent);
+    }
+
+    /**
+     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
+     */
+    let shouldFireUpdate;
+
+    if (mutationsOrInputEvent === undefined) {
+      shouldFireUpdate = true;
+    } else if (mutationsOrInputEvent instanceof InputEvent) {
+      shouldFireUpdate = true;
+    } else {
+      /**
+       * Update from 2023, Feb 17:
+       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
+       *    since there could be a real mutations same-time with mutation-free changes,
+       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
+       *    — we should fire 'didMutated' event in that case
+       */
+      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
+        const { addedNodes, removedNodes } = record;
+        const changedNodes = [
+          ...Array.from(addedNodes),
+          ...Array.from(removedNodes),
+        ];
+
+        return changedNodes.some((node) => {
+          if ($.isElement(node) === false) {
+            return false;
+          }
+
+          return (node as HTMLElement).dataset.mutationFree === 'true';
+        });
+      });
+
+      if (everyRecordIsMutationFree) {
+        shouldFireUpdate = false;
+      } else {
+        shouldFireUpdate = true;
+      }
+    }
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+
+    this.call(BlockToolAPI.UPDATED);
+
+    this.emit('didMutated', this);
+  };
 
   /**
    * Listen common editor Dom Changed event and detect mutations related to the  Block
