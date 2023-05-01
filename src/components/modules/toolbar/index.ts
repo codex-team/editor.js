@@ -5,7 +5,6 @@ import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import { BlockAPI } from '../../../../types';
 import Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
@@ -422,7 +421,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
     });
 
-    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }: {block: BlockAPI }) => {
+    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }) => {
       const { BlockManager, Caret } = this.Editor;
       const newBlock = BlockManager.getBlockById(block.id);
 

@@ -1,5 +1,5 @@
-import { BlockMutationType } from '../../../../types/events/block';
 import EditorJS from '../../../../types';
+import { BlockChangedMutationType } from '../../../../types/events/block/BlockChanged';
 
 /**
  * There will be described test cases of BlockAPI
@@ -56,7 +56,7 @@ describe('BlockAPI', () => {
         block.dispatchChange();
 
         cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-          type: BlockMutationType.Changed,
+          type: BlockChangedMutationType,
           detail: {
             index: 0,
           },

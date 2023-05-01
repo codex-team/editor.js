@@ -9,7 +9,7 @@ import * as _ from '../utils';
  * @todo remove listener after block deletion
  * @todo testcase: batching
  * @todo testcase: batching should filter same events
- * @todo replace dispatchOnChange with Block Mutated event in editor event bus
+ * @todo handle new/removed inputs inside a block
  */
 
 /**

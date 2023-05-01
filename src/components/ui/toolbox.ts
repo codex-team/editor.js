@@ -1,5 +1,5 @@
 import * as _ from '../utils';
-import Block, { BlockToolAPI } from '../block';
+import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';

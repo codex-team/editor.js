@@ -1,7 +1,10 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
-import { BlockMutationType } from '../../../types/events/block';
+import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
+import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
+import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
+import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
@@ -73,7 +76,7 @@ describe('onChange callback', () => {
       .type('{enter}');
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Added,
+      type: BlockAddedMutationType,
       detail: {
         target: {
           name: 'paragraph',
@@ -93,7 +96,7 @@ describe('onChange callback', () => {
       .type('{enter}');
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Added,
+      type: BlockAddedMutationType,
       detail: {
         target: {
           name: 'paragraph',
@@ -112,7 +115,7 @@ describe('onChange callback', () => {
       .type('some text');
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Changed,
+      type: BlockChangedMutationType,
       detail: {
         index: 0,
       },
@@ -136,7 +139,7 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should('be.calledThrice');
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Removed,
+      type: BlockRemovedMutationType,
       detail: {
         index: 0,
         target: {
@@ -146,7 +149,7 @@ describe('onChange callback', () => {
     }));
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Added,
+      type: BlockAddedMutationType,
       detail: {
         index: 0,
         target: {
@@ -156,7 +159,7 @@ describe('onChange callback', () => {
     }));
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Added,
+      type: BlockAddedMutationType,
       detail: {
         index: 1,
         target: {
@@ -183,7 +186,7 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should('be.calledTwice');
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Removed,
+      type: BlockRemovedMutationType,
       detail: {
         index: 0,
         target: {
@@ -192,7 +195,7 @@ describe('onChange callback', () => {
       },
     }));
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Added,
+      type: BlockAddedMutationType,
       detail: {
         index: 0,
         target: {
@@ -225,7 +228,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Changed,
+      type: BlockChangedMutationType,
       detail: {
         index: 0,
         target: {
@@ -264,7 +267,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Removed,
+      type: BlockRemovedMutationType,
       detail: {
         index: 0,
       },
@@ -293,7 +296,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Moved,
+      type: BlockMovedMutationType,
       detail: {
         fromIndex: 1,
         toIndex: 0,
@@ -314,10 +317,49 @@ describe('onChange callback', () => {
       .type('Some input to the textarea');
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockMutationType.Changed,
+      type: BlockChangedMutationType,
       detail: {
         index: 0,
       },
     }));
+  });
+
+  it.only('should be fired with batched events when several changes happened at one', () => {
+    const firstBlockId = '1234';
+
+    createEditor([
+      {
+        id: firstBlockId,
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+    ]);
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('change')
+      .type('{enter}');
+
+    cy.get('@onChange').should('be.calledOnce');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match([
+      {
+        type: BlockChangedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            id: firstBlockId,
+          },
+        },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
+        },
+      },
+    ]));
   });
 });
