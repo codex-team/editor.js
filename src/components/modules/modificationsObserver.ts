@@ -1,14 +1,15 @@
 import { BlockId } from '../../../types';
-import { BlockMutationEvent, BlockMutationType, BlockMutationEventMap } from '../../../types/events/block';
+import { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
 import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
-import { RedactorDomChanged } from '../events';
+import { BlockChanged, RedactorDomChanged } from '../events';
 import * as _ from '../utils';
 
 /**
  * @todo remove listener after block deletion
  * @todo testcase: batching
  * @todo testcase: batching should filter same events
+ * @todo replace dispatchOnChange with Block Mutated event in editor event bus
  */
 
 /**
@@ -56,7 +57,11 @@ export default class ModificationsObserver extends Module {
     });
 
     this.mutationObserver = new MutationObserver((mutations) => {
-      this.onChange(mutations);
+      this.redactorChanged(mutations);
+    });
+
+    this.eventsDispatcher.on(BlockChanged, (payload) => {
+      this.particularBlockChanged(payload.event);
     });
   }
 
@@ -89,26 +94,30 @@ export default class ModificationsObserver extends Module {
    *
    * @param event - some of our custom change events
    */
-  public dispatchOnChange<Type extends BlockMutationType>(event: BlockMutationEventMap[Type]): void {
+  private particularBlockChanged(event: BlockMutationEvent): void {
     if (this.disabled || !_.isFunction(this.config.onChange)) {
       return;
     }
 
-    this.batchingOnChangeQueue.set(`block:${event.detail.target.id}:event:${event.type as Type}`, event);
+    this.batchingOnChangeQueue.set(`block:${event.detail.target.id}:event:${event.type as BlockMutationType}`, event);
 
     if (this.batchingTimeout) {
       clearTimeout(this.batchingTimeout);
     }
 
     this.batchingTimeout = setTimeout(() => {
+      let eventsToEmit;
+
       /**
-       * Ih we have only 1 event in a queue, pass it without array
+       * Ih we have only 1 event in a queue, unwrap it
        */
       if (this.batchingOnChangeQueue.size === 1) {
-        this.config.onChange(this.Editor.API.methods, this.batchingOnChangeQueue.values().next().value);
+        eventsToEmit = this.batchingOnChangeQueue.values().next().value;
       } else {
-        this.config.onChange(this.Editor.API.methods, Array.from(this.batchingOnChangeQueue.values()));
+        eventsToEmit = Array.from(this.batchingOnChangeQueue.values());
       }
+
+      this.config.onChange(this.Editor.API.methods, eventsToEmit);
 
       this.batchingOnChangeQueue.clear();
     }, this.batchTime);
@@ -119,7 +128,7 @@ export default class ModificationsObserver extends Module {
    *
    * @param mutations - mutations happened
    */
-  private onChange(mutations: MutationRecord[]): void {
+  private redactorChanged(mutations: MutationRecord[]): void {
     this.eventsDispatcher.emit(RedactorDomChanged, {
       mutations,
     });

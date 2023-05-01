@@ -64,11 +64,18 @@ export enum PopoverEvent {
   Close = 'close'
 }
 
+/**
+ * Events fired by the Popover
+ */
+interface PopoverEventMap extends Record<string, unknown> {
+  [PopoverEvent.Close]: undefined;
+}
+
 
 /**
  * Class responsible for rendering popover and handling its behaviour
  */
-export default class Popover extends EventsDispatcher<PopoverEvent> {
+export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Flipper - module for keyboard iteration between elements
    */

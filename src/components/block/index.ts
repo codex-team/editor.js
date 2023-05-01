@@ -23,7 +23,8 @@ import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
-import { RedactorDomChanged } from '../events';
+import { EditorEventMap, RedactorDomChanged } from '../events';
+import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 
 /**
  * Interface describes Block class constructor argument
@@ -86,9 +87,11 @@ export enum BlockToolAPI {
 }
 
 /**
- * Names of events supported by Block class
+ * Names of events used in Block
  */
-type BlockEvents = 'didMutated';
+interface BlockEvents extends Record<string, unknown>{
+  'didMutated': Block,
+}
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -196,12 +199,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Common editor event bus
    */
-  private readonly editorEventBus: EventsDispatcher;
+  private readonly editorEventBus: EventsDispatcher<EditorEventMap>;
 
   /**
    * Link to editor dom change callback. Used to remove listener on remove
    */
-  private redactorDomChangedCallback: (payload: { mutations: MutationRecord[]; }) => void;
+  private redactorDomChangedCallback: (payload: RedactorDomChangedPayload) => void;
 
   /**
    * Current block API interface
@@ -209,12 +212,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private readonly blockAPI: BlockAPIInterface;
 
   /**
-   * @param {object} options - block constructor options
-   * @param {string} [options.id] - block's id. Will be generated if omitted.
-   * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockTool} options.tool — block's tool
+   * @param options - block constructor options
+   * @param [options.id] - block's id. Will be generated if omitted.
+   * @param options.data - Tool's initial data
+   * @param options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
-   * @param {boolean} options.readOnly - Read-Only flag
+   * @param options.readOnly - Read-Only flag
    * @param eventBus - Editor common event bus. Allows to subscribe on some Editor events.
    */
   constructor({
@@ -224,7 +227,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
-  }: BlockConstructorOptions, eventBus: EventsDispatcher) {
+  }: BlockConstructorOptions, eventBus: EventsDispatcher<EditorEventMap>) {
     super();
 
     this.name = tool.name;
@@ -911,7 +914,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      *
      * @param payload - event payload
      */
-    this.redactorDomChangedCallback = (payload: {mutations: MutationRecord[]}) => {
+    this.redactorDomChangedCallback = (payload) => {
       const { mutations } = payload;
 
       const mutationBelongsToBlock = mutations.some(record => isMutationBelongsToElement(record, this.toolRenderedElement));

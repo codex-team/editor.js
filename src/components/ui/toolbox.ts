@@ -1,9 +1,9 @@
 import * as _ from '../utils';
-import { BlockToolAPI } from '../block';
+import Block, { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
@@ -34,6 +34,19 @@ export enum ToolboxEvent {
 }
 
 /**
+ * Events fired by the Toolbox
+ *
+ * Event name -> payload
+ */
+export interface ToolboxEventMap extends Record<string, unknown> {
+  [ToolboxEvent.Opened]: undefined;
+  [ToolboxEvent.Closed]: undefined;
+  [ToolboxEvent.BlockAdded]: {
+    block: BlockAPI
+  };
+}
+
+/**
  * Available i18n dict keys that should be passed to the constructor
  */
 type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
@@ -45,7 +58,7 @@ type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
  *
  * @implements {EventsDispatcher} with some events, see {@link ToolboxEvent}
  */
-export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
+export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   /**
    * Returns True if Toolbox is Empty and nothing to show
    *

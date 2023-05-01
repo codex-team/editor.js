@@ -17,6 +17,7 @@ import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemov
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
+import { BlockChanged } from '../events';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -857,7 +858,9 @@ export default class BlockManager extends Module {
       },
     });
 
-    this.Editor.ModificationsObserver.dispatchOnChange<typeof mutationType>(event as BlockMutationEventMap[Type]);
+    this.eventsDispatcher.emit(BlockChanged, {
+      event: event as BlockMutationEventMap[Type],
+    });
 
     return block;
   }

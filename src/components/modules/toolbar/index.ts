@@ -9,6 +9,7 @@ import { BlockAPI } from '../../../../types';
 import Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
+import { BlockHovered } from '../../events/BlockHovered';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -489,7 +490,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       /**
        * Subscribe to the 'block-hovered' event
        */
-      this.eventsDispatcher.on(this.Editor.UI.events.blockHovered, (data: {block: Block}) => {
+      this.eventsDispatcher.on(BlockHovered, (data) => {
         /**
          * Do not move toolbar if Block Settings or Toolbox opened
          */
