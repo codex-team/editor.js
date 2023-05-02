@@ -8,7 +8,7 @@ export const BlockAddedMutationType = 'block-added';
 /**
  * Information about added block
  */
-export interface BlockAddedEventDetail extends BlockMutationEventDetail {
+interface BlockAddedEventDetail extends BlockMutationEventDetail {
   /**
    * Index of added block
    */

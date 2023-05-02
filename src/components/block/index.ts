@@ -23,7 +23,7 @@ import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
-import { EditorEventMap, RedactorDomChanged } from '../events';
+import { EditorEventMap, FakeCursorAboutToBeSet, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 
 /**
@@ -446,14 +446,23 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
   public set selected(state: boolean) {
-    if (state) {
-      this.holder.classList.add(Block.CSS.selected);
+    this.holder.classList.toggle(Block.CSS.selected, state);
 
-      SelectionUtils.addFakeCursor(this.holder);
-    } else {
-      this.holder.classList.remove(Block.CSS.selected);
+    const fakeCursorWillBeAdded = state === true && SelectionUtils.isRangeInsideContainer(this.holder);
+    const fakeCursorWillBeRemoved = state === false && SelectionUtils.isElementContainsFakeCursor(this.holder);
 
-      SelectionUtils.removeFakeCursor(this.holder);
+    if (fakeCursorWillBeAdded || fakeCursorWillBeRemoved) {
+      this.editorEventBus.emit(FakeCursorAboutToBeSet, { state }); // mutex
+
+      if (fakeCursorWillBeAdded) {
+        SelectionUtils.addFakeCursor();
+      } else {
+        SelectionUtils.removeFakeCursor(this.holder);
+      }
+
+      window.requestAnimationFrame(() => {
+        this.editorEventBus.emit(FakeCursorHaveBeenSet, { state });
+      });
     }
   }
 

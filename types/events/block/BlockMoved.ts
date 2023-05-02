@@ -8,7 +8,7 @@ export const BlockMovedMutationType = 'block-moved';
 /**
  * Information about moved block
  */
-export interface BlockMovedEventDetail extends BlockMutationEventDetail {
+interface BlockMovedEventDetail extends BlockMutationEventDetail {
   /**
    * Previous block position
    */

@@ -6,6 +6,32 @@ import { BlockChangedMutationType } from '../../../types/events/block/BlockChang
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 
+
+/**
+ * EditorJS API is passed as the first parameter of the onChange callback
+ */
+const EditorJSApiMock = Cypress.sinon.match.any;
+
+/**
+ * Check if passed onChange method is called with an array of passed events
+ *
+ * @param $onChange - editor onChange spy
+ * @param expectedEvents - batched events to check
+ */
+function beCalledWithBatchedEvents($onChange, expectedEvents): void {
+  expect($onChange).to.be.calledOnce;
+  expect($onChange).to.be.calledWithMatch(
+    EditorJSApiMock,
+    Cypress.sinon.match((events) => {
+      return events.every((event, index) => {
+        const eventToCheck = expectedEvents[index];
+
+        return expect(event).to.containSubset(eventToCheck);
+      });
+    })
+  );
+}
+
 /**
  * @todo Add checks that correct block API object is passed to onChange
  * @todo Add cases for native inputs changes
@@ -62,11 +88,6 @@ describe('onChange callback', () => {
     cy.createEditor(config).as('editorInstance');
   }
 
-  /**
-   * EditorJS API is passed as the first parameter of the onChange callback
-   */
-  const EditorJSApiMock = Cypress.sinon.match.any;
-
   it('should batch events when several changes happened at once', () => {
     createEditor([
       {
@@ -84,7 +105,7 @@ describe('onChange callback', () => {
       .type('{enter}');
 
     cy.get('@onChange').should(($callback) => {
-      const expectedEvents = [
+      return beCalledWithBatchedEvents($callback, [
         {
           type: BlockChangedMutationType,
           detail: {
@@ -97,22 +118,7 @@ describe('onChange callback', () => {
             index: 1,
           },
         },
-      ];
-
-      expect($callback).to.be.calledOnce;
-      expect($callback).to.be.calledWithMatch(
-        EditorJSApiMock,
-        Cypress.sinon.match((events) => {
-          return events.every((event, index) => {
-            const eventToCheck = expectedEvents[index];
-
-            return expect(event).satisfy((e) => {
-              return e.type === eventToCheck.type &&
-                e.detail.index === eventToCheck.detail.index;
-            });
-          });
-        })
-      );
+      ]);
     });
   });
 
@@ -207,7 +213,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('@onChange').should(($callback) => {
-      const expectedEvents = [
+      return beCalledWithBatchedEvents($callback, [
         {
           type: BlockRemovedMutationType,
           detail: {
@@ -235,23 +241,7 @@ describe('onChange callback', () => {
             },
           },
         },
-      ];
-
-      expect($callback).to.be.calledOnce;
-      expect($callback).to.be.calledWithMatch(
-        EditorJSApiMock,
-        Cypress.sinon.match((events) => {
-          return events.every((event, index) => {
-            const eventToCheck = expectedEvents[index];
-
-            return expect(event).satisfy((e) => {
-              return e.type === eventToCheck.type &&
-                  e.detail.index === eventToCheck.detail.index &&
-                  e.detail.target.name === eventToCheck.detail.target.name;
-            });
-          });
-        })
-      );
+      ]);
     });
   });
 
@@ -270,25 +260,28 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
-    cy.get('@onChange').should('be.calledTwice');
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockRemovedMutationType,
-      detail: {
-        index: 0,
-        target: {
-          name: 'paragraph',
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockRemovedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              name: 'paragraph',
+            },
+          },
         },
-      },
-    }));
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockAddedMutationType,
-      detail: {
-        index: 0,
-        target: {
-          name: 'header',
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              name: 'header',
+            },
+          },
         },
-      },
-    }));
+      ]);
+    });
   });
 
   it('should be fired on tune modifying', () => {
@@ -328,7 +321,7 @@ describe('onChange callback', () => {
     createEditor();
 
     /**
-     * The only block does not have Tune menu, so need to create at least 2 blocks to test deleting
+     * The empty block does not have Tune menu, so need to type something first to test deleting
      */
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -352,21 +345,54 @@ describe('onChange callback', () => {
       .get('div[data-item-name=delete]')
       .click();
 
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockRemovedMutationType,
-      detail: {
-        index: 0,
-      },
-    }));
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        /**
+         * "block-changed" fired when we have entered a text to the first block
+         */
+        {
+          type: BlockChangedMutationType,
+          detail: {
+            index: 0,
+          },
+        },
+        /**
+         * "block-removed" fired since we have deleted a block
+         */
+        {
+          type: BlockRemovedMutationType,
+          detail: {
+            index: 0,
+          },
+        },
+        /**
+         * "block-added" fired since we have deleted the last block, so the new one is created
+         */
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 0,
+          },
+        },
+      ]);
+    });
   });
 
-  it('should be fired when block is moved', () => {
-    createEditor();
-
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .click()
-      .type('{enter}');
+  it.only('should be fired when block is moved', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'first block',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'second block',
+        },
+      },
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')

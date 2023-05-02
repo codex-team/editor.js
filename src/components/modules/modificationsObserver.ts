@@ -2,13 +2,14 @@ import { BlockId } from '../../../types';
 import { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
 import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
-import { BlockChanged, RedactorDomChanged } from '../events';
+import { BlockChanged, FakeCursorAboutToBeSet, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import * as _ from '../utils';
 
 /**
  * @todo remove listener after block deletion
  * @todo testcase: batching
  * @todo testcase: batching should filter same events
+ * @todo testcase: addFakeCursor should not fire "block-changed"
  * @todo handle new/removed inputs inside a block
  */
 
@@ -29,7 +30,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Timeout used to batched several events in a single onChange call
    */
-  private batchingTimeout = null;
+  private batchingTimeout: null | ReturnType<typeof setTimeout> = null;
 
   /**
    * Array of onChange events used to batch them
@@ -62,6 +63,14 @@ export default class ModificationsObserver extends Module {
 
     this.eventsDispatcher.on(BlockChanged, (payload) => {
       this.particularBlockChanged(payload.event);
+    });
+
+    this.eventsDispatcher.on(FakeCursorAboutToBeSet, () => {
+      this.disable();
+    });
+
+    this.eventsDispatcher.on(FakeCursorHaveBeenSet, () => {
+      this.enable();
     });
   }
 
@@ -117,7 +126,9 @@ export default class ModificationsObserver extends Module {
         eventsToEmit = Array.from(this.batchingOnChangeQueue.values());
       }
 
-      this.config.onChange(this.Editor.API.methods, eventsToEmit);
+      if (this.config.onChange) {
+        this.config.onChange(this.Editor.API.methods, eventsToEmit);
+      }
 
       this.batchingOnChangeQueue.clear();
     }, this.batchTime);
