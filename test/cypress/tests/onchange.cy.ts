@@ -24,7 +24,7 @@ describe('onChange callback', () => {
         code: Code,
       },
       onChange: (api, event): void => {
-        console.log('something changed', api, event);
+        console.log('something changed', event);
       },
       data: blocks ? {
         blocks,
@@ -49,7 +49,7 @@ describe('onChange callback', () => {
         delimiter: Delimiter,
       },
       onChange: (api, event): void => {
-        console.log('something changed', api, event);
+        console.log('something changed', event);
         api.saver.save();
       },
       data: blocks ? {
@@ -67,7 +67,56 @@ describe('onChange callback', () => {
    */
   const EditorJSApiMock = Cypress.sinon.match.any;
 
-  it('should fire onChange callback with correct index on block insertion above the current (by pressing Enter at the start)', () => {
+  it('should batch events when several changes happened at once', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+    ]);
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('change')
+      .type('{enter}');
+
+    cy.get('@onChange').should(($callback) => {
+      const expectedEvents = [
+        {
+          type: BlockChangedMutationType,
+          detail: {
+            index: 0,
+          },
+        },
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 1,
+          },
+        },
+      ];
+
+      expect($callback).to.be.calledOnce;
+      expect($callback).to.be.calledWithMatch(
+        EditorJSApiMock,
+        Cypress.sinon.match((events) => {
+          return events.every((event, index) => {
+            const eventToCheck = expectedEvents[index];
+
+            return expect(event).satisfy((e) => {
+              return e.type === eventToCheck.type &&
+                e.detail.index === eventToCheck.detail.index;
+            });
+          });
+        })
+      );
+    });
+  });
+
+  it('should be fired with correct index on block insertion above the current (by pressing Enter at the start)', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -86,27 +135,47 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback with correct index on block insertion below the current (by pressing enter at the end)', () => {
-    createEditor();
+  it('should be fired with only single "block-added" event by pressing Enter at the end of a block', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'some text',
+      },
+    } ]);
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
-      .type('some text')
+      .type('{enter}');
+
+    cy.get('@onChange').should('be.calledOnce');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockAddedMutationType,
+    }));
+  });
+
+  it('should be fired with correct index on block insertion after the current (by pressing enter at the end)', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'some text',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
       .type('{enter}');
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
       type: BlockAddedMutationType,
       detail: {
-        target: {
-          name: 'paragraph',
-        },
         index: 1,
       },
     }));
   });
 
-  it('should fire onChange callback on typing into block', () => {
+  it('should be fired on typing into block', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -122,7 +191,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback on block insertion with save inside onChange', () => {
+  it('should be fired on block insertion with save inside onChange', () => {
     createEditorWithSave();
 
     cy.get('[data-cy=editorjs]')
@@ -137,39 +206,56 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=delimiter]')
       .click();
 
-    cy.get('@onChange').should('be.calledThrice');
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockRemovedMutationType,
-      detail: {
-        index: 0,
-        target: {
-          name: 'paragraph',
+    cy.get('@onChange').should(($callback) => {
+      const expectedEvents = [
+        {
+          type: BlockRemovedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              name: 'paragraph',
+            },
+          },
         },
-      },
-    }));
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              name: 'delimiter',
+            },
+          },
+        },
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 1,
+            target: {
+              name: 'paragraph',
+            },
+          },
+        },
+      ];
 
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockAddedMutationType,
-      detail: {
-        index: 0,
-        target: {
-          name: 'delimiter',
-        },
-      },
-    }));
+      expect($callback).to.be.calledOnce;
+      expect($callback).to.be.calledWithMatch(
+        EditorJSApiMock,
+        Cypress.sinon.match((events) => {
+          return events.every((event, index) => {
+            const eventToCheck = expectedEvents[index];
 
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-      type: BlockAddedMutationType,
-      detail: {
-        index: 1,
-        target: {
-          name: 'paragraph',
-        },
-      },
-    }));
+            return expect(event).satisfy((e) => {
+              return e.type === eventToCheck.type &&
+                  e.detail.index === eventToCheck.detail.index &&
+                  e.detail.target.name === eventToCheck.detail.target.name;
+            });
+          });
+        })
+      );
+    });
   });
 
-  it('should fire onChange callback on block replacement for both of blocks', () => {
+  it('should be fired on block replacement for both of blocks', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -205,7 +291,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback on tune modifying', () => {
+  it('should be fired on tune modifying', () => {
     createEditor([
       {
         type: 'header',
@@ -238,7 +324,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback when block is removed', () => {
+  it('should be fired when block is removed', () => {
     createEditor();
 
     /**
@@ -274,7 +360,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange callback when block is moved', () => {
+  it('should be fired when block is moved', () => {
     createEditor();
 
     cy.get('[data-cy=editorjs]')
@@ -322,44 +408,5 @@ describe('onChange callback', () => {
         index: 0,
       },
     }));
-  });
-
-  it.only('should be fired with batched events when several changes happened at one', () => {
-    const firstBlockId = '1234';
-
-    createEditor([
-      {
-        id: firstBlockId,
-        type: 'paragraph',
-        data: {
-          text: 'The first paragraph',
-        },
-      },
-    ]);
-
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .click()
-      .type('change')
-      .type('{enter}');
-
-    cy.get('@onChange').should('be.calledOnce');
-    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match([
-      {
-        type: BlockChangedMutationType,
-        detail: {
-          index: 0,
-          target: {
-            id: firstBlockId,
-          },
-        },
-      },
-      {
-        type: BlockAddedMutationType,
-        detail: {
-          index: 1,
-        },
-      },
-    ]));
   });
 });
