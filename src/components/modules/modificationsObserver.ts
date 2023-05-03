@@ -6,11 +6,6 @@ import { BlockChanged, FakeCursorAboutToBeSet, FakeCursorHaveBeenSet, RedactorDo
 import * as _ from '../utils';
 
 /**
- * @todo remove listener after block deletion
- * @todo handle new/removed inputs inside a block
- */
-
-/**
  * Single entry point for Block mutation events
  */
 export default class ModificationsObserver extends Module {
