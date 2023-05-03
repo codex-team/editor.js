@@ -122,6 +122,37 @@ describe('onChange callback', () => {
     });
   });
 
+  it.only('should filter out similar events on batching', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+    ]);
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .click()
+      .type('first change')
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      .wait(100)
+      .type('second change');
+
+    cy.get('@onChange').should('be.calledOnce');
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        target: {
+          name: 'paragraph',
+        },
+        index: 0,
+      },
+    }));
+  });
+
   it('should be fired with correct index on block insertion above the current (by pressing Enter at the start)', () => {
     createEditor();
 

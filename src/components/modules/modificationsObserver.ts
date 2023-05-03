@@ -7,7 +7,6 @@ import * as _ from '../utils';
 
 /**
  * @todo remove listener after block deletion
- * @todo testcase: batching should filter same events
  * @todo handle new/removed inputs inside a block
  */
 
