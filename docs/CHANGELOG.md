@@ -7,7 +7,7 @@
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
 - `Improvement` — **Breaking Change** — Batching added to the `onChange` callback. Now the second argument can contain an array of CustomEvents as well as a single one. If several changes will be made in short period of time, they will be batched under the single `onChange` call
-- `Improvement` — When the new Block have been created by Enter press at a very end of the previous Block, only the `block-added` mutation will be dispatched instead of both `block-changed` and `block-added`.
+- `Improvement` — Pressing "Enter" at the end of a Block won't lead to redundant `block-changed` event triggering. Only `block-added` event will be dispatched.
 - `Fix` — The `onChange` won't be triggered with Block Tunes opening and closing.
 - `Refactoring` — `EventDispatcher` types improved. Now we can pass `EventsMap` via generic to specify a map of event names and their payloads that can be used in a particular EventDispatcher instance.
 - `Refactoring` — All events in common editor Event Bus now have own type declarations.
