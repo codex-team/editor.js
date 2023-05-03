@@ -252,7 +252,7 @@ export default class BlockEvents extends Module {
      * to prevent unnecessary dom mutation observing
      */
     } else if (this.Editor.Caret.isAtEnd) {
-      this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
+      newCurrent = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
       /**
        * Split the Current Block into two blocks
