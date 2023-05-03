@@ -23,24 +23,23 @@ describe('BlockAPI', () => {
    */
   const EditorJSApiMock = Cypress.sinon.match.any;
 
-  beforeEach(function () {
+  /**
+   * Creates Editor instance
+   *
+   * @param [data] - data to render
+   */
+  function createEditor(data = undefined): void {
     const config = {
-      data: editorDataMock,
-      onChange: (): void => {
-        console.log('something changed');
+      onChange: (api, event): void => {
+        console.log('something changed', event);
       },
+      data,
     };
 
-    cy.createEditor(config).as('editorInstance');
-
     cy.spy(config, 'onChange').as('onChange');
-  });
 
-  afterEach(function () {
-    if (this.editorInstance) {
-      this.editorInstance.destroy();
-    }
-  });
+    cy.createEditor(config).as('editorInstance');
+  }
 
   /**
    * block.dispatchChange();
@@ -50,18 +49,21 @@ describe('BlockAPI', () => {
      * Check that blocks.dispatchChange() triggers Editor 'onChange' callback
      */
     it('should trigger onChange with corresponded block', () => {
-      cy.get('@editorInstance').then(async (editor: unknown) => {
-        const block = (editor as EditorJS).blocks.getById(firstBlock.id);
+      createEditor(editorDataMock);
 
-        block.dispatchChange();
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const block = editor.blocks.getById(firstBlock.id);
 
-        cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
-          type: BlockChangedMutationType,
-          detail: {
-            index: 0,
-          },
-        }));
-      });
+          block.dispatchChange();
+
+          cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+            type: BlockChangedMutationType,
+            detail: {
+              index: 0,
+            },
+          }));
+        });
     });
   });
 });

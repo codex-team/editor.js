@@ -199,7 +199,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Common editor event bus
    */
-  private readonly editorEventBus: EventsDispatcher<EditorEventMap>;
+  private readonly editorEventBus: EventsDispatcher<EditorEventMap> | null = null;
 
   /**
    * Link to editor dom change callback. Used to remove listener on remove
@@ -218,7 +218,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
    * @param options.readOnly - Read-Only flag
-   * @param eventBus - Editor common event bus. Allows to subscribe on some Editor events.
+   * @param [eventBus] - Editor common event bus. Allows to subscribe on some Editor events. Could be omitted when "virtual" Block is created. See BlocksAPI@composeBlockData.
    */
   constructor({
     id = _.generateBlockId(),
@@ -227,7 +227,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
-  }: BlockConstructorOptions, eventBus: EventsDispatcher<EditorEventMap>) {
+  }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
 
     this.name = tool.name;
@@ -235,7 +235,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
-    this.editorEventBus = eventBus;
+    this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
 
     this.tool = tool;
@@ -452,7 +452,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const fakeCursorWillBeRemoved = state === false && SelectionUtils.isElementContainsFakeCursor(this.holder);
 
     if (fakeCursorWillBeAdded || fakeCursorWillBeRemoved) {
-      this.editorEventBus.emit(FakeCursorAboutToBeSet, { state }); // mutex
+      this.editorEventBus?.emit(FakeCursorAboutToBeSet, { state }); // mutex
 
       if (fakeCursorWillBeAdded) {
         SelectionUtils.addFakeCursor();
@@ -460,7 +460,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         SelectionUtils.removeFakeCursor(this.holder);
       }
 
-      this.editorEventBus.emit(FakeCursorHaveBeenSet, { state });
+      this.editorEventBus?.emit(FakeCursorHaveBeenSet, { state });
     }
   }
 
@@ -844,9 +844,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private readonly didMutated = (mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
     /**
+     * Block API have dispatchChange() method. In this case, mutations list will be undefined.
+     */
+    const isManuallyDispatched = mutationsOrInputEvent === undefined;
+
+    /**
      * If tool updates its own root element, we need to renew it in our memory
      */
-    if ('length' in mutationsOrInputEvent) {
+    if (!isManuallyDispatched && 'length' in mutationsOrInputEvent) {
       this.detectToolRootChange(mutationsOrInputEvent);
     }
 
@@ -931,14 +936,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       }
     };
 
-    this.editorEventBus.on(RedactorDomChanged, this.redactorDomChangedCallback);
+    this.editorEventBus?.on(RedactorDomChanged, this.redactorDomChangedCallback);
   }
 
   /**
    * Remove redactor dom change event listener
    */
   private unwatchBlockMutations(): void {
-    this.editorEventBus.off(RedactorDomChanged, this.redactorDomChangedCallback);
+    this.editorEventBus?.off(RedactorDomChanged, this.redactorDomChangedCallback);
   }
 
   /**
