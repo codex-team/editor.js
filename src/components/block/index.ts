@@ -460,9 +460,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         SelectionUtils.removeFakeCursor(this.holder);
       }
 
-      window.requestAnimationFrame(() => {
-        this.editorEventBus.emit(FakeCursorHaveBeenSet, { state });
-      });
+      this.editorEventBus.emit(FakeCursorHaveBeenSet, { state });
     }
   }
 

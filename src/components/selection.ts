@@ -364,7 +364,7 @@ export default class SelectionUtils {
       return false;
     }
 
-    return !container.contains(range.startContainer);
+    return container.contains(range.startContainer);
   }
 
   /**

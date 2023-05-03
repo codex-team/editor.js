@@ -7,9 +7,7 @@ import * as _ from '../utils';
 
 /**
  * @todo remove listener after block deletion
- * @todo testcase: batching
  * @todo testcase: batching should filter same events
- * @todo testcase: addFakeCursor should not fire "block-changed"
  * @todo handle new/removed inputs inside a block
  */
 
@@ -65,6 +63,9 @@ export default class ModificationsObserver extends Module {
       this.particularBlockChanged(payload.event);
     });
 
+    /**
+     * Mutex for fake cursor setting/removing operation
+     */
     this.eventsDispatcher.on(FakeCursorAboutToBeSet, () => {
       this.disable();
     });

@@ -318,15 +318,14 @@ describe('onChange callback', () => {
   });
 
   it('should be fired when block is removed', () => {
-    createEditor();
-
-    /**
-     * The empty block does not have Tune menu, so need to type something first to test deleting
-     */
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .click()
-      .type('some text');
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'some text',
+        },
+      },
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
@@ -347,15 +346,6 @@ describe('onChange callback', () => {
 
     cy.get('@onChange').should(($callback) => {
       return beCalledWithBatchedEvents($callback, [
-        /**
-         * "block-changed" fired when we have entered a text to the first block
-         */
-        {
-          type: BlockChangedMutationType,
-          detail: {
-            index: 0,
-          },
-        },
         /**
          * "block-removed" fired since we have deleted a block
          */
@@ -378,7 +368,7 @@ describe('onChange callback', () => {
     });
   });
 
-  it.only('should be fired when block is moved', () => {
+  it('should be fired when block is moved', () => {
     createEditor([
       {
         type: 'paragraph',
@@ -416,7 +406,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should fire onChange if something changed inside native input', () => {
+  it('should be fired if something changed inside native input', () => {
     createEditor([ {
       type: 'code',
       data: {
@@ -434,5 +424,37 @@ describe('onChange callback', () => {
         index: 0,
       },
     }));
+  });
+
+  it('should not be fired on fake cursor adding and removing', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'some text',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs')
+      .get('div.ce-block')
+      .click();
+
+    /**
+     * Open Block Tunes, add fake cursor
+     */
+    cy.get('[data-cy=editorjs]')
+      .get('span.ce-toolbar__settings-btn')
+      .click();
+
+    /**
+     * Close Block Tunes, remove fake cursor
+     */
+    cy.get('[data-cy=editorjs')
+      .get('div.ce-block')
+      .click();
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
   });
 });
