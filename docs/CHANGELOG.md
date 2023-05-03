@@ -6,10 +6,20 @@
 - `Refactoring` — Popover class refactored.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
 - `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
+- `Improvement` — **Breaking Change** — Batching added to the `onChange` callback. Now the second argument can contain an array of CustomEvents as well as a single one. If several changes will be made in short period of time, they will be batched under the single `onChange` call
+- `Improvement` — When the new Block have been created by Enter press at a very end of the previous Block, only the `block-added` mutation will be dispatched instead of both `block-changed` and `block-added`.
+- `Fix` — The `onChange` won't be triggered with Block Tunes opening and closing.
+- `Refactoring` — `EventDispatcher` types improved. Now we can pass `EventsMap` via generic to specify a map of event names and their payloads that can be used in a particular EventDispatcher instance.
+- `Refactoring` — All events in common editor Event Bus now have own type declarations.
+- `Refactoring` — Now Blocks don't have own Mutation Observer. The single observer attached to the editor's blocks wrapper element. `ModificationsObserver` listens blocks wrapper changes, then emits an event into the common editor Event Bus. Each Block subscribes to such events and handle those who related to a particular Block.
+- `Improvement` — Block's mutation handler now will be called on every block change (including background changes). Previously, it have worked only if a particular Block have been focused.
+- `Refactoring` — Debounce have been removed from Block's mutation handler. The batching in `ModificationObserver` used instead.
+- `Improvement` — Number of caret saving method calls optimized for Block Tunes opening/closing.
+- `New` — Types for Block mutation events added.
 - `Fix` — Resolve compiler error from importing the BlockToolData type.
 - `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
 - `Improvement` — Package size reduced by removing redundant files.
-- `Fix`- Several bugs caused by random browser extensions.
+- `Fix`- Several bugs caused by random browser extensions. Now we are not searching for a block's container in the DOM on saving. Instead, we keep it in memory and update it when the tool changes a container element.
 - `Improvement` — *Dependencies* — Upgrade TypeScript to v5.
 - `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
 - `Improvement` — *Dependencies* — Upgrade Cypress to v12, upgrade related libraries to latest versions.

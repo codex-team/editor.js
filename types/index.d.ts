@@ -31,6 +31,11 @@ import {
 } from './api';
 
 import { OutputData } from './data-formats';
+import { BlockMutationEventMap } from './events/block';
+import { BlockAddedMutationType, BlockAddedEvent } from './events/block/BlockAdded';
+import { BlockChangedMutationType, BlockChangedEvent } from './events/block/BlockChanged';
+import { BlockMovedMutationType, BlockMovedEvent } from './events/block/BlockMoved';
+import { BlockRemovedMutationType, BlockRemovedEvent } from './events/block/BlockRemoved';
 
 /**
  * Interfaces used for development
@@ -79,6 +84,17 @@ export {
 export { OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockId } from './data-formats/block-id';
 export { BlockAPI } from './api'
+export {
+  BlockMutationEventMap,
+  BlockAddedMutationType,
+  BlockAddedEvent,
+  BlockRemovedMutationType,
+  BlockRemovedEvent,
+  BlockMovedMutationType,
+  BlockMovedEvent,
+  BlockChangedMutationType,
+  BlockChangedEvent,
+}
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface

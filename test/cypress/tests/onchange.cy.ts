@@ -122,7 +122,7 @@ describe('onChange callback', () => {
     });
   });
 
-  it.only('should filter out similar events on batching', () => {
+  it('should filter out similar events on batching', () => {
     createEditor([
       {
         type: 'paragraph',
