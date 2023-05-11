@@ -849,9 +849,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const isManuallyDispatched = mutationsOrInputEvent === undefined;
 
     /**
+     * True if didMutated has been called as "input" event handler
+     */
+    const isInputEventHandler = mutationsOrInputEvent instanceof InputEvent;
+
+    /**
      * If tool updates its own root element, we need to renew it in our memory
      */
-    if (!isManuallyDispatched && 'length' in mutationsOrInputEvent) {
+    if (!isManuallyDispatched && !isInputEventHandler) {
       this.detectToolRootChange(mutationsOrInputEvent);
     }
 
@@ -860,9 +865,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     let shouldFireUpdate;
 
-    if (mutationsOrInputEvent === undefined) {
+    if (isManuallyDispatched) {
       shouldFireUpdate = true;
-    } else if (mutationsOrInputEvent instanceof InputEvent) {
+    } else if (isInputEventHandler) {
       shouldFireUpdate = true;
     } else {
       /**
@@ -888,11 +893,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         });
       });
 
-      if (everyRecordIsMutationFree) {
-        shouldFireUpdate = false;
-      } else {
-        shouldFireUpdate = true;
-      }
+      shouldFireUpdate = !everyRecordIsMutationFree;
     }
 
     /**
