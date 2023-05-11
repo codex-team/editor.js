@@ -10,22 +10,22 @@ export interface BlockMutationEventMap {
   /**
    * New Block added
    */
-  [BlockAddedMutationType]: BlockAddedEvent,
+  [BlockAddedMutationType]: BlockAddedEvent;
 
   /**
    * On Block deletion
    */
-  [BlockRemovedMutationType]: BlockRemovedEvent,
+  [BlockRemovedMutationType]: BlockRemovedEvent;
 
   /**
    * Moving of a Block
    */
-  [BlockMovedMutationType]: BlockMovedEvent,
+  [BlockMovedMutationType]: BlockMovedEvent;
 
   /**
    * Any changes inside the Block
    */
-  [BlockChangedMutationType]: BlockChangedEvent,
+  [BlockChangedMutationType]: BlockChangedEvent;
 }
 
 /**

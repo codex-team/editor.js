@@ -1,12 +1,17 @@
 import { isEmpty } from '../utils';
 
 /**
+ * Event Dispatcher event listener
+ */
+type Listener<Data> = (data?: Data) => void;
+
+/**
  * Mapped type with subscriptions list
  *
  * event name -> array of callbacks
  */
 type Subscriptions<EventMap> = {
-  [name in keyof EventMap]: Array<(data?: EventMap[name]) => unknown>
+  [Key in keyof EventMap]: Listener<EventMap[Key]>[];
 };
 
 /**
@@ -20,7 +25,7 @@ export default class EventsDispatcher<EventMap> {
    * All subscribers grouped by event name
    * Object with events` names as key and array of callback functions as value
    */
-  private subscribers: Subscriptions<EventMap> = <Subscriptions<EventMap>>{};
+  private subscribers = <Subscriptions<EventMap>>{};
 
   /**
    * Subscribe any event on callback
@@ -28,7 +33,7 @@ export default class EventsDispatcher<EventMap> {
    * @param eventName - event name
    * @param callback - subscriber
    */
-  public on<Name extends keyof EventMap>(eventName: Name, callback: (data: EventMap[Name]) => unknown): void {
+  public on<Name extends keyof EventMap>(eventName: Name, callback: Listener<EventMap[Name]>): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -43,12 +48,12 @@ export default class EventsDispatcher<EventMap> {
    * @param eventName - event name
    * @param callback - subscriber
    */
-  public once<Name extends keyof EventMap>(eventName: Name, callback: (data: EventMap[Name]) => unknown): void {
+  public once<Name extends keyof EventMap>(eventName: Name, callback: Listener<EventMap[Name]>): void {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
 
-    const wrappedCallback = (data: EventMap[typeof eventName]): unknown => {
+    const wrappedCallback = (data: EventMap[typeof eventName]): void => {
       const result = callback(data);
 
       const indexOfHandler = this.subscribers[eventName].indexOf(wrappedCallback);
@@ -78,7 +83,7 @@ export default class EventsDispatcher<EventMap> {
     this.subscribers[eventName].reduce((previousData, currentHandler) => {
       const newData = currentHandler(previousData);
 
-      return newData || previousData;
+      return newData !== undefined ? newData : previousData;
     }, data);
   }
 
@@ -88,7 +93,7 @@ export default class EventsDispatcher<EventMap> {
    * @param eventName - event name
    * @param callback - event handler
    */
-  public off<Name extends keyof EventMap>(eventName: Name, callback: (data: EventMap[Name]) => unknown): void {
+  public off<Name extends keyof EventMap>(eventName: Name, callback: Listener<EventMap[Name]>): void {
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];
