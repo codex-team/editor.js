@@ -449,7 +449,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.holder.classList.toggle(Block.CSS.selected, state);
 
     const fakeCursorWillBeAdded = state === true && SelectionUtils.isRangeInsideContainer(this.holder);
-    const fakeCursorWillBeRemoved = state === false && SelectionUtils.isElementContainsFakeCursor(this.holder);
+    const fakeCursorWillBeRemoved = state === false && SelectionUtils.isFakeCursorInsideContainer(this.holder);
 
     if (fakeCursorWillBeAdded || fakeCursorWillBeRemoved) {
       this.editorEventBus?.emit(FakeCursorAboutToBeToggled, { state }); // mutex

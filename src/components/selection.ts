@@ -390,7 +390,7 @@ export default class SelectionUtils {
    *
    * @param el - where to check
    */
-  public static isElementContainsFakeCursor(el: HTMLElement): boolean {
+  public static isFakeCursorInsideContainer(el: HTMLElement): boolean {
     return $.find(el, `.codex-editor__fake-cursor`) !== null;
   }
 
