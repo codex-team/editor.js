@@ -18,9 +18,9 @@ export {
  * Event name -> Event payload
  */
 export interface EditorEventMap {
-  [BlockHovered]: BlockHoveredPayload,
-  [RedactorDomChanged]: RedactorDomChangedPayload,
-  [BlockChanged]: BlockChangedPayload,
-  [FakeCursorAboutToBeToggled]: FakeCursorAboutToBeToggledPayload,
-  [FakeCursorHaveBeenSet]: FakeCursorHaveBeenSetPayload,
+  [BlockHovered]: BlockHoveredPayload;
+  [RedactorDomChanged]: RedactorDomChangedPayload;
+  [BlockChanged]: BlockChangedPayload;
+  [FakeCursorAboutToBeToggled]: FakeCursorAboutToBeToggledPayload;
+  [FakeCursorHaveBeenSet]: FakeCursorHaveBeenSetPayload;
 }

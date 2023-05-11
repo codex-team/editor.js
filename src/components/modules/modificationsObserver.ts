@@ -6,6 +6,11 @@ import { BlockChanged, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, Redact
 import * as _ from '../utils';
 
 /**
+ * We use map of block mutations to filter only unique events
+ */
+type UniqueBlockMutationKey = `block:${BlockId}:event:${BlockMutationType}`;
+
+/**
  * Single entry point for Block mutation events
  */
 export default class ModificationsObserver extends Module {
@@ -29,7 +34,7 @@ export default class ModificationsObserver extends Module {
    *
    * Map is used to filter duplicated events related to the same block
    */
-  private batchingOnChangeQueue: Map<`block:${BlockId}:event:${BlockMutationType}`, BlockMutationEvent> = new Map();
+  private batchingOnChangeQueue = new Map<UniqueBlockMutationKey, BlockMutationEvent>();
 
   /**
    * Fired onChange events will be batched by this time

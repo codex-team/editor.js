@@ -850,11 +850,11 @@ export default class BlockManager extends Module {
    * @param block - mutated block
    * @param detailData - additional data to pass with change event
    */
-  private blockDidMutated<Type extends BlockMutationType>(mutationType: Type, block: Block, detailData: Omit<BlockMutationEventMap[Type]['detail'], 'target'>): Block {
+  private blockDidMutated<Type extends BlockMutationType>(mutationType: Type, block: Block, detailData: BlockMutationEventDetailWithoutTarget<Type>): Block {
     const event = new CustomEvent(mutationType, {
       detail: {
         target: new BlockAPI(block),
-        ...detailData as Omit<BlockMutationEventMap[Type]['detail'], 'target'>,
+        ...detailData as BlockMutationEventDetailWithoutTarget<Type>,
       },
     });
 
@@ -865,3 +865,8 @@ export default class BlockManager extends Module {
     return block;
   }
 }
+
+/**
+ * Type alias for Block Mutation event without 'target' field, used in 'blockDidMutated' method
+ */
+type BlockMutationEventDetailWithoutTarget<Type extends BlockMutationType> = Omit<BlockMutationEventMap[Type]['detail'], 'target'>;
