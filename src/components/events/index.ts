@@ -17,7 +17,7 @@ export {
 /**
  * Event name -> Event payload
  */
-export interface EditorEventMap extends Record<string, unknown> {
+export interface EditorEventMap {
   [BlockHovered]: BlockHoveredPayload,
   [RedactorDomChanged]: RedactorDomChangedPayload,
   [BlockChanged]: BlockChangedPayload,

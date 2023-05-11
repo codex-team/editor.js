@@ -89,7 +89,7 @@ export enum BlockToolAPI {
 /**
  * Names of events used in Block
  */
-interface BlockEvents extends Record<string, unknown>{
+interface BlockEvents {
   'didMutated': Block,
 }
 

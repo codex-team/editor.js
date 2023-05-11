@@ -67,7 +67,7 @@ export enum PopoverEvent {
 /**
  * Events fired by the Popover
  */
-interface PopoverEventMap extends Record<string, unknown> {
+interface PopoverEventMap {
   [PopoverEvent.Close]: undefined;
 }
 
@@ -210,7 +210,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
-   * Returns HTML element correcponding to the popover
+   * Returns HTML element corresponding to the popover
    */
   public getElement(): HTMLElement | null {
     return this.nodes.wrapper;
@@ -322,7 +322,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
-   * Adds seach to the popover
+   * Adds search to the popover
    */
   private addSearch(): void {
     this.search = new SearchInput({
@@ -481,10 +481,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Toggles nothing found message visibility
    *
-   * @param isDislayed - true if the message should be displayed
+   * @param isDisplayed - true if the message should be displayed
    */
-  private toggleNothingFoundMessage(isDislayed: boolean): void {
-    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDislayed);
+  private toggleNothingFoundMessage(isDisplayed: boolean): void {
+    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**
@@ -500,7 +500,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * - Toggles item active state, if clicked popover item has property 'toggle' set to true.
    *
    * - Performs radiobutton-like behavior if the item has property 'toggle' set to string key.
-   * (All the other items with the same key get unactive, and the item gets active)
+   * (All the other items with the same key get inactive, and the item gets active)
    *
    * @param clickedItem - popover item that was clicked
    */

@@ -38,7 +38,7 @@ export enum ToolboxEvent {
  *
  * Event name -> payload
  */
-export interface ToolboxEventMap extends Record<string, unknown> {
+export interface ToolboxEventMap {
   [ToolboxEvent.Opened]: undefined;
   [ToolboxEvent.Closed]: undefined;
   [ToolboxEvent.BlockAdded]: {
