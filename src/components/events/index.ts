@@ -1,7 +1,7 @@
 import { RedactorDomChanged, RedactorDomChangedPayload } from './RedactorDomChanged';
 import { BlockChanged, BlockChangedPayload } from './BlockChanged';
 import { BlockHovered, BlockHoveredPayload } from './BlockHovered';
-import { FakeCursorAboutToBeSet, FakeCursorAboutToBeSetPayload } from './FakeCursorAboutToBeSet';
+import { FakeCursorAboutToBeToggled, FakeCursorAboutToBeToggledPayload } from './FakeCursorAboutToBeToggled';
 import { FakeCursorHaveBeenSet, FakeCursorHaveBeenSetPayload } from './FakeCursorHaveBeenSet';
 
 /**
@@ -10,7 +10,7 @@ import { FakeCursorHaveBeenSet, FakeCursorHaveBeenSetPayload } from './FakeCurso
 export {
   RedactorDomChanged,
   BlockChanged,
-  FakeCursorAboutToBeSet,
+  FakeCursorAboutToBeToggled,
   FakeCursorHaveBeenSet
 };
 
@@ -21,6 +21,6 @@ export interface EditorEventMap extends Record<string, unknown> {
   [BlockHovered]: BlockHoveredPayload,
   [RedactorDomChanged]: RedactorDomChangedPayload,
   [BlockChanged]: BlockChangedPayload,
-  [FakeCursorAboutToBeSet]: FakeCursorAboutToBeSetPayload,
+  [FakeCursorAboutToBeToggled]: FakeCursorAboutToBeToggledPayload,
   [FakeCursorHaveBeenSet]: FakeCursorHaveBeenSetPayload,
 }

@@ -23,7 +23,7 @@ import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
-import { EditorEventMap, FakeCursorAboutToBeSet, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
+import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 
 /**
@@ -452,7 +452,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const fakeCursorWillBeRemoved = state === false && SelectionUtils.isElementContainsFakeCursor(this.holder);
 
     if (fakeCursorWillBeAdded || fakeCursorWillBeRemoved) {
-      this.editorEventBus?.emit(FakeCursorAboutToBeSet, { state }); // mutex
+      this.editorEventBus?.emit(FakeCursorAboutToBeToggled, { state }); // mutex
 
       if (fakeCursorWillBeAdded) {
         SelectionUtils.addFakeCursor();
@@ -959,7 +959,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       if (toolRootHasBeenUpdated) {
         const newToolElement = record.addedNodes[record.addedNodes.length - 1];
 
-        console.warn('Original element changed', newToolElement);
         this.toolRenderedElement = newToolElement as HTMLElement;
       }
     });

@@ -2,7 +2,7 @@ import { BlockId } from '../../../types';
 import { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
 import { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
-import { BlockChanged, FakeCursorAboutToBeSet, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
+import { BlockChanged, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import * as _ from '../utils';
 
 /**
@@ -60,7 +60,7 @@ export default class ModificationsObserver extends Module {
     /**
      * Mutex for fake cursor setting/removing operation
      */
-    this.eventsDispatcher.on(FakeCursorAboutToBeSet, () => {
+    this.eventsDispatcher.on(FakeCursorAboutToBeToggled, () => {
       this.disable();
     });
 
