@@ -795,9 +795,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private handleFocus = (): void => {
     /**
-     * Drop cache
+     * Drop inputs cache to query the new ones
      */
-    this.cachedInputs = [];
+    this.dropInputsCache();
 
     /**
      * Update current input
@@ -885,7 +885,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         ];
 
         return changedNodes.some((node) => {
-          if ($.isElement(node) === false) {
+          if (!$.isElement(node)) {
             return false;
           }
 
@@ -903,10 +903,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       return;
     }
 
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
+    this.dropInputsCache();
 
     /**
      * Update current input
@@ -915,6 +912,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     this.call(BlockToolAPI.UPDATED);
 
+    /**
+     * Emit a Block Event with current Block instance.
+     * Block Manager subscribed to these events
+     */
     this.emit('didMutated', this);
   };
 
@@ -963,5 +964,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         this.toolRenderedElement = newToolElement as HTMLElement;
       }
     });
+  }
+
+  /**
+   * Clears inputs cached value
+   */
+  private dropInputsCache(): void {
+    this.cachedInputs = [];
   }
 }
