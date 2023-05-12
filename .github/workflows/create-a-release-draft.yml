@@ -12,6 +12,9 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       # Checkout to target branch
       - uses: actions/checkout@v2
         with:
