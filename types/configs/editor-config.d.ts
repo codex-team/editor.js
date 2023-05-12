@@ -1,7 +1,8 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {API, BlockAPI, LogLevels, OutputData} from '../index';
+import {API, LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 import {I18nConfig} from './i18n-config';
+import { BlockMutationEvent } from '../events/block';
 
 export interface EditorConfig {
   /**
@@ -89,10 +90,10 @@ export interface EditorConfig {
 
   /**
    * Fires when something changed in DOM
-   * @param {API} api - editor.js api
-   * @param event - custom event describing mutation
+   * @param api - editor.js api
+   * @param event - custom event describing mutation. If several mutations happened at once, they will be batched and you'll get an array of events here.
    */
-  onChange?(api: API, event: CustomEvent): void;
+  onChange?(api: API, event: BlockMutationEvent | BlockMutationEvent[]): void;
 
   /**
    * Defines default toolbar for all tools.

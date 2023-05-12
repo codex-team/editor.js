@@ -66,4 +66,16 @@ declare global {
       EditorJS: typeof EditorJS
     }
   }
+
+  /**
+   * Chai plugins
+   */
+  namespace Chai {
+    interface Assertion {
+      /**
+       * "containSubset" object properties matcher
+       */
+      containSubset(subset: any): Assertion;
+    }
+  }
 }

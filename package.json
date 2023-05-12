@@ -47,6 +47,7 @@
     "@editorjs/paragraph": "^2.9.0",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^18.15.11",
+    "chai-subset": "^1.6.0",
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.5",
     "core-js": "3.30.0",

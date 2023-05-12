@@ -13,6 +13,13 @@ import '@cypress/code-coverage/support';
  */
 import './commands';
 
+import chaiSubset from 'chai-subset';
+
+/**
+ * "containSubset" object properties matcher
+ */
+chai.use(chaiSubset);
+
 /**
  * Before-each hook for the cypress tests
  */
