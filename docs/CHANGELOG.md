@@ -13,7 +13,7 @@
 - `Improvement` — Package size reduced by removing redundant files.
 - `Refactoring` — Switched from Webpack to Vite as the build system.
 - `Refactoring` — *Dependencies* — Upgraded Cypress to v12 and related libraries to the latest versions.
-- `Refactoring` — *Dependencies* — Upgrade TypeScript to v5.
+- `Refactoring` — *Dependencies* — Upgraded TypeScript to v5.
 - `Refactoring` — `EventDispatcher` types improved. Now we can pass `EventsMap` via generic to specify a map of event names and their payloads that can be used in a particular EventDispatcher instance.
 - `Refactoring` — All events in common editor Event Bus now have own type declarations.
 - `Refactoring` — Removed the block mutation observer from blocks and attached a single observer to the editor's blocks wrapper element.
