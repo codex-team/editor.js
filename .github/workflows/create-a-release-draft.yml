@@ -97,7 +97,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/editorjs.umd.js
-          asset_name: editor.js
+          asset_name: editorjs.umd.js
           asset_content_type: application/javascript
           
       # Build and upload target Editor.js MJS build to release as artifact
@@ -108,7 +108,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/editorjs.mjs
-          asset_name: editor.js
+          asset_name: editorjs.mjs
           asset_content_type: application/javascript          
 
       # Send a notification message
