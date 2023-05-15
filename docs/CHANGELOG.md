@@ -25,7 +25,7 @@
 - `Fix`- Fixed several bugs caused by browser extensions — Removed the search for a block's container in the DOM on saving and kept it in memory instead, updating it when the tool changes a container element.
 - `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
 - `CI` — Ubuntu container is now used for Edge tests runner.
-- `CI` — Node 16 is used for most of GitHib Actions.
+- `CI` — Node 16 is used for GitHib Actions.
 
 ### 2.26.5
 
