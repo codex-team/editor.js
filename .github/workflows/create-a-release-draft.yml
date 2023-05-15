@@ -56,8 +56,7 @@ jobs:
       # Setup node environment
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.17.0
-          registry-url: https://registry.npmjs.org/
+          node-version: 16
 
       # Prepare, build and publish project
       - name: Install dependencies
