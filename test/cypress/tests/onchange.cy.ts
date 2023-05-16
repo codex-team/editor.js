@@ -191,6 +191,39 @@ describe('onChange callback', () => {
     }));
   });
 
+  it('should be fired onChange with BlockChange and BlockAdded at split event by pressing Enter in the middle of a sentence', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'The block with some text',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .click()
+      .selectText('some')
+      // .wait(0)
+      .type('{enter}');
+
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockChangedMutationType,
+          detail: {
+            index: 0,
+          },
+        },
+        {
+          type: BlockAddedMutationType,
+          detail: {
+            index: 1,
+          },
+        },
+      ]);
+    });
+  });
+
   it('should be fired with correct index on block insertion after the current (by pressing enter at the end)', () => {
     createEditor([ {
       type: 'paragraph',
