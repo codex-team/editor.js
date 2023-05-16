@@ -199,6 +199,7 @@ describe('onChange callback', () => {
       },
     } ]);
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
       .click()
