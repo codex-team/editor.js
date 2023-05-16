@@ -191,7 +191,7 @@ describe('onChange callback', () => {
     }));
   });
 
-  it('should be fired onChange with BlockChange and BlockAdded at split event by pressing Enter in the middle of a sentence', () => {
+  it('should be fired with BlockChange and BlockAdded at split event by pressing Enter in the middle of a sentence', () => {
     createEditor([ {
       type: 'paragraph',
       data: {
@@ -203,7 +203,7 @@ describe('onChange callback', () => {
       .find('.ce-paragraph')
       .click()
       .selectText('some')
-      // .wait(0)
+      .wait(0)
       .type('{enter}');
 
     cy.get('@onChange').should(($callback) => {
