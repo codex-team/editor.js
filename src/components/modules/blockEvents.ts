@@ -246,6 +246,13 @@ export default class BlockEvents extends Module {
      */
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
+
+    /**
+     * If caret is at very end of the block, just append the new block without splitting
+     * to prevent unnecessary dom mutation observing
+     */
+    } else if (this.Editor.Caret.isAtEnd) {
+      newCurrent = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
       /**
        * Split the Current Block into two blocks

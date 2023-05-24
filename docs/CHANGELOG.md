@@ -2,19 +2,30 @@
 
 ### 2.27.0
 
-- `New` — *Toolbar API* — Toolbox toggling method added.
-- `Refactoring` — Popover class refactored.
+- `New` — *Toolbar API* — Added a new method for toggling the toolbox.
+- `New` — Added types for block mutation events
+- `New` — Batching added to the `onChange` callback. Now the second argument can contain an array of CustomEvents as well as a single one. Multiple changes made in a short period of time will be batched under a single `onChange` call.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
-- `Improvement` — The `onChange` callback won't be triggered only if all mutations contain nodes with the `data-mutation-free` attributes.
-- `Fix` — Resolve compiler error from importing the BlockToolData type.
-- `Fix` — Resolved a problem when document was being scrolled to the beginning after moving up a Block above the viewport.
+- `Improvement` — The `onChange` callback can be muted if all mutations contain nodes with the `data-mutation-free` attribute.
+- `Improvement` — Pressing "Enter" at the end of a Block won't lead to redundant `block-changed` event triggering. Only `block-added` event will be dispatched.
+- `Improvement` — The block mutation handler is now called on every block change (including background changes), instead of only when a block is focused
+- `Improvement` — Number of caret saving method calls optimized for Block Tunes opening/closing.
 - `Improvement` — Package size reduced by removing redundant files.
-- `Fix`- Several bugs caused by random browser extensions.
-- `Improvement` — *Dependencies* — Upgrade TypeScript to v5.
+- `Refactoring` — Switched from Webpack to Vite as the build system.
+- `Refactoring` — *Dependencies* — Upgraded Cypress to v12 and related libraries to the latest versions.
+- `Refactoring` — *Dependencies* — Upgraded TypeScript to v5.
+- `Refactoring` — `EventDispatcher` types improved. Now we can pass `EventsMap` via generic to specify a map of event names and their payloads that can be used in a particular EventDispatcher instance.
+- `Refactoring` — All events in common editor Event Bus now have own type declarations.
+- `Refactoring` — Removed the block mutation observer from blocks and attached a single observer to the editor's blocks wrapper element.
+- `Refactoring` — Removed the debounce from the block mutation handler and used batching instead.
+- `Refactoring` — Refactored the popover class for better performance and maintenance.
+- `Fix` — The `onChange` callback won't trigger when block tunes are opened or closed.
+- `Fix` — Resolved a compiler error caused by importing the `BlockToolData` type.
+- `Fix` — Resolved a problem where the document would scroll to the beginning after moving a block above the viewport.
+- `Fix`- Fixed several bugs caused by browser extensions — Removed the search for a block's container in the DOM on saving and kept it in memory instead, updating it when the tool changes a container element.
 - `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
-- `Improvement` — *Dependencies* — Upgrade Cypress to v12, upgrade related libraries to latest versions.
-- `CI` — Use Ubuntu container for Edge tests runner.
-- `Improvement` — Use Vite as build system instead of Webpack.
+- `CI` — Ubuntu container is now used for Edge tests runner.
+- `CI` — Node 16 is used for GitHib Actions.
 
 ### 2.26.5
 

@@ -14,6 +14,7 @@ import Flipper from '../flipper';
 import { mobileScreenBreakpoint } from '../utils';
 
 import styles from '../../styles/main.css?inline';
+import { BlockHovered } from '../events/BlockHovered';
 /**
  * HTML Elements used for UI
  */
@@ -41,15 +42,6 @@ interface UINodes {
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module<UINodes> {
-  /**
-   * Events could be emitted by this module.
-   */
-  public get events(): { blockHovered: string } {
-    return {
-      blockHovered: 'block-hovered',
-    };
-  }
-
   /**
    * Editor.js UI CSS class names
    *
@@ -402,7 +394,7 @@ export default class UI extends Module<UINodes> {
 
       blockHoveredEmitted = hoveredBlock;
 
-      this.eventsDispatcher.emit(this.events.blockHovered, {
+      this.eventsDispatcher.emit(BlockHovered, {
         block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
       });
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
