@@ -18,6 +18,12 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
+   * Block Tool`s render method
+   * Returns tool`s wrapper or null
+   */
+  render(): HTMLElement | null;
+
+  /**
    * Process Tool's element in DOM and return raw data
    * @param {HTMLElement} block - element created by {@link BlockTool#render} function
    * @return {BlockToolData}

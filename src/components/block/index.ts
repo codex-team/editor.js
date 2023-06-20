@@ -738,7 +738,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.toolRenderedElement = pluginsContent;
 
-    contentNode.appendChild(this.toolRenderedElement);
+    if (this.toolRenderedElement !== null) {
+      contentNode.appendChild(this.toolRenderedElement);
+    }
 
     /**
      * Block Tunes might wrap Block's content node to provide any UI changes

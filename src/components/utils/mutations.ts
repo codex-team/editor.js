@@ -13,14 +13,14 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   if (['characterData', 'attributes'].includes(type)) {
     const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
 
-    return element.contains(targetElement);
+    return element && element.contains(targetElement);
   }
 
   /**
    * Check new/removed nodes
    */
-  const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => element.contains(node));
-  const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => element.contains(node));
+  const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => element && element.contains(node));
+  const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => element && element.contains(node));
 
   return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
 }
