@@ -18,8 +18,8 @@ export interface BlockTool extends BaseTool {
   sanitize?: SanitizerConfig;
 
   /**
-   * Block Tool`s render method
-   * Returns tool`s wrapper or null
+   * Block Tool's render method
+   * Returns tool's wrapper or null
    */
   render(): HTMLElement | null;
 
