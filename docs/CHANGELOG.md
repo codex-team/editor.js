@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.27.1
+
+- `Fix` - `onChange` will be called on removing the whole text in the last block
+
 ### 2.27.0
 
 - `New` — *Toolbar API* — Added a new method for toggling the toolbox.
