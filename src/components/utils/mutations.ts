@@ -8,6 +8,15 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   const { type, target, addedNodes, removedNodes } = mutationRecord;
 
   /**
+   * In case of removing the whole text in element, mutation type will be 'childList',
+   * 'removedNodes' will contain text node that is not existed anymore, so we can't check it with 'contains' method
+   * But Target will be the element itself, so we can detect it.
+   */
+  if (target === element) {
+    return true;
+  }
+
+  /**
    * Check typing and attributes changes
    */
   if (['characterData', 'attributes'].includes(type)) {

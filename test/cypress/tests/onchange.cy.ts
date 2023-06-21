@@ -488,4 +488,25 @@ describe('onChange callback', () => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
+
+  it('should be fired when the whole text inside block is removed', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'a',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs')
+      .get('div.ce-block')
+      .click()
+      .type('{backspace}');
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
+  });
 });
