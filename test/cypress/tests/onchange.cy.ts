@@ -489,7 +489,7 @@ describe('onChange callback', () => {
     });
   });
 
-  it.only('should be fired when the whole text inside block is removed', () => {
+  it('should be fired when the whole text inside block is removed', () => {
     createEditor([ {
       type: 'paragraph',
       data: {
