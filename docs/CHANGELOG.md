@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.27.2
+
+- `Fix` - `onChange` won't be called when element with data-mutation-free changes some attribute
+
 ### 2.27.1
 
-- `Fix` - `onChange` will be called on removing the whole text in the last block
+- `Fix` - `onChange` will be called on removing the whole text in a block
 
 ### 2.27.0
 

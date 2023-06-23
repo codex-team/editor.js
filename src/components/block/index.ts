@@ -880,10 +880,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        *    — we should fire 'didMutated' event in that case
        */
       const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
-        const { addedNodes, removedNodes } = record;
+        const { addedNodes, removedNodes, target } = record;
         const changedNodes = [
           ...Array.from(addedNodes),
           ...Array.from(removedNodes),
+          target,
         ];
 
         return changedNodes.some((node) => {
