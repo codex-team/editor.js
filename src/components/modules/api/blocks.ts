@@ -139,7 +139,9 @@ export default class BlocksAPI extends Module {
    */
   public delete(blockIndex?: number): void {
     try {
-      this.Editor.BlockManager.removeBlock(blockIndex);
+      const block = this.Editor.BlockManager.getBlockByIndex(blockIndex);
+
+      this.Editor.BlockManager.removeBlock(block);
     } catch (e) {
       _.logLabeled(e, 'warn');
 
