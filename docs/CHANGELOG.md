@@ -2,7 +2,8 @@
 
 ### 2.28.0
 
-- `Improvement` - Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
+- `Improvement` - The Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
+- `Improvement` - The Delete keydown will work like a Backspace when several Blocks are selected.
 - `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of current.
 
 

@@ -437,6 +437,7 @@ export default class UI extends Module<UINodes> {
         break;
 
       case _.keyCodes.BACKSPACE:
+      case _.keyCodes.DELETE:
         this.backspacePressed(event);
         break;
 
@@ -496,7 +497,6 @@ export default class UI extends Module<UINodes> {
     /**
      * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
      * remove selected blocks
-     * @todo add Delete support here
      */
     if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
