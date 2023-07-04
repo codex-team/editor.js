@@ -405,7 +405,10 @@ export default class BlockEvents extends Module {
     if (currentBlock.isEmpty) {
       BlockManager.removeBlock(currentBlock);
 
-      Caret.setToBlock(BlockManager.nextBlock, Caret.positions.START);
+      /**
+       * Next Block is now current
+       */
+      Caret.setToBlock(BlockManager.currentBlock, Caret.positions.START);
 
       return;
     }
