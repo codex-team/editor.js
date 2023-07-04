@@ -292,21 +292,28 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const isFirstInputFocused = currentBlock.currentInput === currentBlock.firstInput;
-
     /**
      * If caret is not at the start, leave native behaviour
      */
-    if (!Caret.isAtStart || !isFirstInputFocused) {
+    if (!Caret.isAtStart) {
       return;
     }
-
     /**
      * All the cases below have custom behaviour, so we don't need a native one
      */
     event.preventDefault();
-
     this.Editor.Toolbar.close();
+
+    const isFirstInputFocused = currentBlock.currentInput === currentBlock.firstInput;
+
+    /**
+     * For example, caret at the start of the Quote second input (caption) — just navigate previous input
+     */
+    if (!isFirstInputFocused) {
+      Caret.navigatePrevious();
+
+      return;
+    }
 
     /**
      * If prev Block is empty, it should be removed just like a character
@@ -337,10 +344,7 @@ export default class BlockEvents extends Module {
     if (bothBlocksMergeable) {
       this.mergeBlocks(currentBlock, previousBlock);
     } else {
-      Caret.setToBlock(
-        BlockManager.previousBlock,
-        Caret.positions.END
-      );
+      Caret.setToBlock(BlockManager.previousBlock, Caret.positions.END);
     }
   }
 
@@ -362,12 +366,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const isLastInputFocused = currentBlock.currentInput === currentBlock.lastInput;
-
     /**
      * If caret is not at the end, leave native behaviour
      */
-    if (!Caret.isAtEnd || !isLastInputFocused) {
+    if (!Caret.isAtEnd) {
       return;
     }
 
@@ -375,8 +377,18 @@ export default class BlockEvents extends Module {
      * All the cases below have custom behaviour, so we don't need a native one
      */
     event.preventDefault();
-
     this.Editor.Toolbar.close();
+
+    const isLastInputFocused = currentBlock.currentInput === currentBlock.lastInput;
+
+    /**
+     * For example, caret at the end of the Quote first input (quote text) — just navigate next input (caption)
+     */
+    if (!isLastInputFocused) {
+      Caret.navigateNext();
+
+      return;
+    }
 
     /**
      * If next Block is empty, it should be removed just like a character
