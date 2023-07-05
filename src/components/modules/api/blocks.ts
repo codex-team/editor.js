@@ -137,7 +137,7 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} blockIndex - index of Block to delete
    */
-  public delete(blockIndex?: number): void {
+  public delete(blockIndex: number = this.Editor.BlockManager.currentBlockIndex): void {
     try {
       const block = this.Editor.BlockManager.getBlockByIndex(blockIndex);
 
