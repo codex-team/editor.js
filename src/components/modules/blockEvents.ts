@@ -440,7 +440,7 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * Merge passed Blocks if they have the same type
+   * Merge passed Blocks
    *
    * @param targetBlock - to which Block we want to merge
    * @param blockToMerge - what Block we want to merge
