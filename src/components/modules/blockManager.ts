@@ -84,7 +84,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get nextBlock(): Block {
+  public get nextBlock(): Block | null {
     const isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
 
     if (isLastBlock) {
@@ -121,7 +121,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get previousBlock(): Block {
+  public get previousBlock(): Block | null {
     const isFirstBlock = this.currentBlockIndex === 0;
 
     if (isFirstBlock) {

@@ -360,4 +360,21 @@ describe('Backspace keydown', function () {
         });
       });
   });
+
+  describe('at the start of the first Block', function () {
+    it('should do nothing if Block is not empty', function () {
+      createEditorWithTextBlocks([ 'The only block. Not empty' ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{home}')
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .should('have.length', 1)
+        .should('have.text', 'The only block. Not empty');
+    });
+  });
 });

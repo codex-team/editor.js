@@ -117,7 +117,7 @@ export default class BlockEvents extends Module {
    *
    * @param {KeyboardEvent} event - tab keydown event
    */
-  public tabPressed(event): void {
+  public tabPressed(event: KeyboardEvent): void {
     /**
      * Clear blocks selection by tab
      */
@@ -316,6 +316,13 @@ export default class BlockEvents extends Module {
     }
 
     /**
+     * Backspace at the start of the first Block should do nothing
+     */
+    if (previousBlock === null) {
+      return;
+    }
+
+    /**
      * If prev Block is empty, it should be removed just like a character
      */
     if (previousBlock.isEmpty) {
@@ -325,12 +332,14 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * If current Block is empty, just just remove it and set cursor to the previous Block (like we're removing line break char)
+     * If current Block is empty, just remove it and set cursor to the previous Block (like we're removing line break char)
      */
     if (currentBlock.isEmpty) {
       BlockManager.removeBlock(currentBlock);
 
-      Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+      const newCurrentBlock = BlockManager.currentBlock;
+
+      Caret.setToBlock(newCurrentBlock, Caret.positions.END);
 
       return;
     }
@@ -342,9 +351,9 @@ export default class BlockEvents extends Module {
      * Otherwise, just navigate previous block
      */
     if (bothBlocksMergeable) {
-      this.mergeBlocks(currentBlock, previousBlock);
+      this.mergeBlocks(previousBlock, currentBlock);
     } else {
-      Caret.setToBlock(BlockManager.previousBlock, Caret.positions.END);
+      Caret.setToBlock(previousBlock, Caret.positions.END);
     }
   }
 
@@ -391,6 +400,13 @@ export default class BlockEvents extends Module {
     }
 
     /**
+     * Delete at the end of the last Block should do nothing
+     */
+    if (nextBlock === null) {
+      return;
+    }
+
+    /**
      * If next Block is empty, it should be removed just like a character
      */
     if (nextBlock.isEmpty) {
@@ -400,15 +416,12 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * If current Block is empty, just just remove it and set cursor to the next Block (like we're removing line break char)
+     * If current Block is empty, just remove it and set cursor to the next Block (like we're removing line break char)
      */
     if (currentBlock.isEmpty) {
       BlockManager.removeBlock(currentBlock);
 
-      /**
-       * Next Block is now current
-       */
-      Caret.setToBlock(BlockManager.currentBlock, Caret.positions.START);
+      Caret.setToBlock(nextBlock, Caret.positions.START);
 
       return;
     }
@@ -417,25 +430,22 @@ export default class BlockEvents extends Module {
 
     /**
      * If Blocks could be merged, do it
-     * Otherwise, just navigate previous block
+     * Otherwise, just navigate to the next block
      */
     if (bothBlocksMergeable) {
-      this.mergeBlocks(nextBlock, currentBlock);
+      this.mergeBlocks(currentBlock, nextBlock);
     } else {
-      Caret.setToBlock(
-        BlockManager.nextBlock,
-        Caret.positions.START
-      );
+      Caret.setToBlock(nextBlock, Caret.positions.START);
     }
   }
 
   /**
-   * Merge current and previous Blocks if they have the same type
+   * Merge passed Blocks if they have the same type
    *
-   * @param blockToMerge - what Block we want to merge
    * @param targetBlock - to which Block we want to merge
+   * @param blockToMerge - what Block we want to merge
    */
-  private mergeBlocks(blockToMerge: Block, targetBlock: Block): void {
+  private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
     const { BlockManager, Caret, Toolbar } = this.Editor;
 
     Caret.createShadow(targetBlock.pluginsContent);

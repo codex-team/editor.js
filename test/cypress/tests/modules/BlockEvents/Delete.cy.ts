@@ -358,4 +358,20 @@ describe('Delete keydown', function () {
         });
       });
   });
+
+  describe('at the end of the last Block', function () {
+    it('should do nothing', function () {
+      createEditorWithTextBlocks([ 'The only block. Not empty' ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{del}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .should('have.length', 1)
+        .should('have.text', 'The only block. Not empty');
+    });
+  });
 });
