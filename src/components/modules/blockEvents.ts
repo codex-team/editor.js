@@ -6,6 +6,7 @@ import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 import type Block from '../block';
+import { areBlocksMergeable } from '../utils/blocks';
 
 /**
  *
@@ -344,7 +345,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const bothBlocksMergeable = currentBlock.mergeable && previousBlock.mergeable;
+    const bothBlocksMergeable = areBlocksMergeable(currentBlock, previousBlock);
 
     /**
      * If Blocks could be merged, do it
@@ -426,7 +427,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const bothBlocksMergeable = currentBlock.mergeable && nextBlock.mergeable;
+    const bothBlocksMergeable = areBlocksMergeable(currentBlock, nextBlock);
 
     /**
      * If Blocks could be merged, do it
