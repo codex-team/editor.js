@@ -84,7 +84,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get nextBlock(): Block {
+  public get nextBlock(): Block | null {
     const isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
 
     if (isLastBlock) {
@@ -121,7 +121,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get previousBlock(): Block {
+  public get previousBlock(): Block | null {
     const isFirstBlock = this.currentBlockIndex === 0;
 
     if (isFirstBlock) {
@@ -419,29 +419,24 @@ export default class BlockManager extends Module {
    * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
-    const blockToMergeIndex = this._blocks.indexOf(blockToMerge);
-
-    if (blockToMerge.isEmpty) {
-      return;
-    }
-
     const blockToMergeData = await blockToMerge.data;
 
     if (!_.isEmpty(blockToMergeData)) {
       await targetBlock.mergeWith(blockToMergeData);
     }
 
-    this.removeBlock(blockToMergeIndex);
+    this.removeBlock(blockToMerge);
     this.currentBlockIndex = this._blocks.indexOf(targetBlock);
   }
 
   /**
-   * Remove block with passed index or remove last
+   * Remove passed Block
    *
-   * @param {number|null} index - index of Block to remove
-   * @throws {Error} if Block to remove is not found
+   * @param block - Block to remove
    */
-  public removeBlock(index = this.currentBlockIndex): void {
+  public removeBlock(block: Block): void {
+    const index = this._blocks.indexOf(block);
+
     /**
      * If index is not passed and there is no block selected, show a warning
      */
@@ -449,15 +444,13 @@ export default class BlockManager extends Module {
       throw new Error('Can\'t find a Block to remove');
     }
 
-    const blockToRemove = this._blocks[index];
-
-    blockToRemove.destroy();
+    block.destroy();
     this._blocks.remove(index);
 
     /**
      * Force call of didMutated event on Block removal
      */
-    this.blockDidMutated(BlockRemovedMutationType, blockToRemove, {
+    this.blockDidMutated(BlockRemovedMutationType, block, {
       index,
     });
 
@@ -493,7 +486,7 @@ export default class BlockManager extends Module {
         continue;
       }
 
-      this.removeBlock(index);
+      this.removeBlock(this.blocks[index]);
       firstSelectedBlockIndex = index;
     }
 

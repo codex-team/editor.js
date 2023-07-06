@@ -130,4 +130,34 @@ describe('Block ids', () => {
         expect(data.blocks[2].id).to.eq(blocks[1].id);
       });
   });
+
+  it('should be stored at the Block wrapper\'s data-id attribute', () => {
+    const blocks = [
+      {
+        id: nanoid(),
+        type: 'paragraph',
+        data: {
+          text: 'First block',
+        },
+      },
+      {
+        id: nanoid(),
+        type: 'paragraph',
+        data: {
+          text: 'Second block',
+        },
+      },
+    ];
+
+    cy.get('@editorInstance')
+      .render({
+        blocks,
+      });
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .each(($block, index) => {
+        expect($block.attr('data-id')).to.eq(blocks[index].id);
+      });
+  });
 });
