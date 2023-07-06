@@ -734,6 +734,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         pluginsContent = this.toolInstance.render();
 
     /**
+     * Export id to the DOM three
+     * Useful for standalone modules development. For example, allows to identify Block by some child node. Or scroll to a particular Block by id.
+     */
+    wrapper.dataset.id = this.id;
+
+    /**
      * Saving a reference to plugin's content element for guaranteed accessing it later
      */
     this.toolRenderedElement = pluginsContent;

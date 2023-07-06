@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.28.0
+
+- `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want access a Block's element by id.
+
 ### 2.27.2
 
 - `Fix` - `onChange` won't be called when element with data-mutation-free changes some attribute
