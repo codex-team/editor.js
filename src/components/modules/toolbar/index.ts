@@ -322,6 +322,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   private make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+    /**
+     * @todo detect test environment and add data-cy="toolbar" to use it in tests instead of class name
+     */
 
     /**
      * Make Content Zone and Actions Zone
