@@ -34,6 +34,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       conversionTool: 'ce-conversion-tool',
       conversionToolHidden: 'ce-conversion-tool--hidden',
       conversionToolIcon: 'ce-conversion-tool__icon',
+      conversionToolSecondaryLabel: 'ce-conversion-tool__secondary-label',
 
       conversionToolFocused: 'ce-conversion-tool--focused',
       conversionToolActive: 'ce-conversion-tool--active',
@@ -252,6 +253,16 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
 
     $.append(tool, icon);
     $.append(tool, $.text(I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(toolName))));
+
+    const shortcut = this.Editor.Tools.blockTools.get(toolName)?.shortcut;
+
+    if (shortcut) {
+      const shortcutEl = $.make('span', ConversionToolbar.CSS.conversionToolSecondaryLabel, {
+        innerText: _.beautifyShortcut(shortcut),
+      });
+
+      $.append(tool, shortcutEl);
+    }
 
     $.append(this.nodes.tools, tool);
     this.tools.push({

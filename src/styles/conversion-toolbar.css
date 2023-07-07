@@ -7,7 +7,7 @@
   transition: transform 100ms ease, opacity 100ms ease;
   transform: translateY(-8px);
   left: -1px;
-  width: 150px;
+  width: 190px;
   margin-top: 5px;
   box-sizing: content-box;
 
@@ -77,5 +77,20 @@
   &--active {
     animation: bounceIn 0.75s 1;
     animation-fill-mode: forwards;
+  }
+
+  &__secondary-label {
+    color: var(--grayText);
+    font-size: 12px;
+    margin-left: auto;
+    white-space: nowrap;
+    letter-spacing: -0.1em;
+    padding-right: 5px;
+    margin-bottom: -2px;
+    opacity: 0.6;
+
+    @media (--mobile){
+      display: none;
+    }
   }
 }
