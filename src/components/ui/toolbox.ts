@@ -307,6 +307,30 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       on: this.api.ui.nodes.redactor,
       handler: (event: KeyboardEvent) => {
         event.preventDefault();
+
+        const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+        const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+
+        /**
+         * If block is not empty, convert it to shortcut's tool
+         * Otherwise, insert a Block below
+         */
+        if (currentBlock && currentBlock.isEmpty === false) {
+          /**
+           * Try to convert current Block to shortcut's tool
+           * If conversion is not possible, insert a new Block
+           */
+          try {
+            this.api.blocks.convert(currentBlock.id, toolName);
+
+            window.requestAnimationFrame(() => {
+              this.api.caret.setToBlock(currentBlockIndex, 'end');
+            });
+
+            return;
+          } catch (error) {}
+        }
+
         this.insertNewBlock(toolName);
       },
     });

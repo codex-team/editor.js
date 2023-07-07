@@ -33,6 +33,7 @@ export default class BlocksAPI extends Module {
       insert: this.insert,
       update: this.update,
       composeBlockData: this.composeBlockData,
+      convert: this.convert,
     };
   }
 
@@ -311,4 +312,38 @@ export default class BlocksAPI extends Module {
       tunes: block.tunes,
     });
   };
+
+  /**
+   * Converts block to another type. Both blocks should provide the conversionConfig.
+   *
+   * @param id - id of the existed block to convert. Should provide 'conversionConfig.export' method
+   * @param newType - new block type. Should provide 'conversionConfig.import' method
+   * @param dataOverrides - optional data overrides for the new block
+   *
+   * @throws Error if conversion is not possible
+   */
+  private convert = (id: string, newType: string, dataOverrides?: BlockToolData): void => {
+    const { BlockManager, Tools } = this.Editor;
+    const blockToConvert = BlockManager.getBlockById(id);
+
+    if (!blockToConvert) {
+      throw new Error(`Block with id "${id}" not found`);
+    }
+
+    const originalBlockTool = Tools.blockTools.get(blockToConvert.name);
+    const targetBlockTool = Tools.blockTools.get(newType);
+
+    if (!targetBlockTool) {
+      throw new Error(`Block Tool with type "${newType}" not found`);
+    }
+
+    const originalBlockConvertable = originalBlockTool?.conversionConfig?.export !== undefined;
+    const targetBlockConvertable = targetBlockTool?.conversionConfig?.import !== undefined;
+
+    if (originalBlockConvertable && targetBlockConvertable) {
+      BlockManager.convert(blockToConvert, newType, dataOverrides);
+    } else {
+      throw new Error(`Conversion from "${blockToConvert.name}" to "${newType}" is not possible. Some of tools do not support conversion`);
+    }
+  }
 }
