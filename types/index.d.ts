@@ -32,10 +32,14 @@ import {
 
 import { OutputData } from './data-formats';
 import { BlockMutationEventMap } from './events/block';
-import { BlockAddedMutationType, BlockAddedEvent } from './events/block/BlockAdded';
-import { BlockChangedMutationType, BlockChangedEvent } from './events/block/BlockChanged';
-import { BlockMovedMutationType, BlockMovedEvent } from './events/block/BlockMoved';
-import { BlockRemovedMutationType, BlockRemovedEvent } from './events/block/BlockRemoved';
+import { BlockAddedMutationType } from './BlockAdded';
+import type { BlockAddedEvent } from './BlockAdded';
+import { BlockChangedMutationType } from './BlockChanged';
+import type { BlockChangedEvent } from './BlockChanged';
+import { BlockMovedMutationType } from './BlockMoved';
+import type { BlockMovedEvent } from './BlockMoved';
+import { BlockRemovedMutationType } from './BlockRemoved';
+import type { BlockRemovedEvent } from './BlockRemoved';
 
 /**
  * Interfaces used for development
