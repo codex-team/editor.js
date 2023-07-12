@@ -157,7 +157,7 @@ describe('api.blocks', () => {
     });
   });
 
-  describe.only('.convert()', function () {
+  describe('.convert()', function () {
     it('should convert a Block to another type if original Tool has "conversionConfig.export" and target Tool has "conversionConfig.import"', function () {
       /**
        * Mock of Tool with conversionConfig
