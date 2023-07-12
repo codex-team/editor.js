@@ -767,7 +767,7 @@ export default class BlockManager extends Module {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleanedData: string = clean(
+    const cleanData: string = clean(
       exportedData,
       replacingTool.sanitizeConfig
     );
@@ -775,11 +775,11 @@ export default class BlockManager extends Module {
     /**
      * Now using Conversion Config "import" we compose a new Block data
      */
-    let newBlockData = convertStringToBlockData(cleanedData, replacingTool.conversionConfig);
+    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig);
 
     /**
-     * If this conversion fired by the one of multiple Toolbox items,
-     * extend converted data with this item's "data" overrides
+     * Optional data overrides.
+     * Used for example, by the Multiple Toolbox Items feature, where a single Tool provides several Toolbox items with "data" overrides
      */
     if (blockDataOverrides) {
       newBlockData = Object.assign(newBlockData, blockDataOverrides);

@@ -215,7 +215,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         if (!conversionConfig || !conversionConfig.import) {
           return;
         }
-        tool.toolbox.forEach((toolboxItem) =>
+        tool.toolbox?.forEach((toolboxItem) =>
           this.addToolIfValid(name, toolboxItem)
         );
       });

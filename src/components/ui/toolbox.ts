@@ -312,14 +312,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
         const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
         /**
-         * If block is not empty, convert it to shortcut's tool
-         * Otherwise, insert a Block below
+         * Try to convert current Block to shortcut's tool
+         * If conversion is not possible, insert a new Block below
          */
-        if (currentBlock && currentBlock.isEmpty === false) {
-          /**
-           * Try to convert current Block to shortcut's tool
-           * If conversion is not possible, insert a new Block
-           */
+        if (currentBlock) {
           try {
             this.api.blocks.convert(currentBlock.id, toolName);
 

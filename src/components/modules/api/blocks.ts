@@ -4,6 +4,7 @@ import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
+import { capitalize } from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -316,10 +317,9 @@ export default class BlocksAPI extends Module {
   /**
    * Converts block to another type. Both blocks should provide the conversionConfig.
    *
-   * @param id - id of the existed block to convert. Should provide 'conversionConfig.export' method
+   * @param id - id of the existing block to convert. Should provide 'conversionConfig.export' method
    * @param newType - new block type. Should provide 'conversionConfig.import' method
    * @param dataOverrides - optional data overrides for the new block
-   *
    * @throws Error if conversion is not possible
    */
   private convert = (id: string, newType: string, dataOverrides?: BlockToolData): void => {
@@ -338,12 +338,17 @@ export default class BlocksAPI extends Module {
     }
 
     const originalBlockConvertable = originalBlockTool?.conversionConfig?.export !== undefined;
-    const targetBlockConvertable = targetBlockTool?.conversionConfig?.import !== undefined;
+    const targetBlockConvertable = targetBlockTool.conversionConfig?.import !== undefined;
 
     if (originalBlockConvertable && targetBlockConvertable) {
       BlockManager.convert(blockToConvert, newType, dataOverrides);
     } else {
-      throw new Error(`Conversion from "${blockToConvert.name}" to "${newType}" is not possible. Some of tools do not support conversion`);
+      const unsupportedBlockTypes = [
+        !originalBlockConvertable ? capitalize(blockToConvert.name) : false,
+        !targetBlockConvertable ? capitalize(newType) : false,
+      ].filter(Boolean).join(' and ');
+
+      throw new Error(`Conversion from "${blockToConvert.name}" to "${newType}" is not possible. ${unsupportedBlockTypes} tool(s) should provide a "conversionConfig"`);
     }
-  }
+  };
 }
