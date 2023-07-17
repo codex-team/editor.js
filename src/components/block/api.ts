@@ -54,6 +54,11 @@ function BlockAPI(
      * @returns {boolean}
      */
     get isEmpty(): boolean {
+      // if block content is only a SLASH, replace the SLASH with selected Tool
+      const holderContent = block.holder.innerText;
+      if(holderContent === '/'){
+        return true;
+      }
       return block.isEmpty;
     },
 

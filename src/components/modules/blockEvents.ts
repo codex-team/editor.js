@@ -52,6 +52,9 @@ export default class BlockEvents extends Module {
       case _.keyCodes.TAB:
         this.tabPressed(event);
         break;
+      case _.keyCodes.SLASH:
+        this.slashPressed();
+        break;  
     }
   }
 
@@ -145,6 +148,13 @@ export default class BlockEvents extends Module {
     } else if (canOpenBlockTunes) {
       this.activateBlockSettings();
     }
+  }
+
+  /**
+   * Type slash to open Toolbox
+   */
+  public slashPressed(): void {
+    this.activateToolbox();
   }
 
   /**

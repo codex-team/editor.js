@@ -56,6 +56,7 @@ export const keyCodes = {
   RIGHT: 39,
   DELETE: 46,
   META: 91,
+  SLASH: 191,
 };
 
 /**
