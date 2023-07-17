@@ -195,7 +195,6 @@ describe('api.blocks', () => {
         tools: {
           convertableTool: {
             class: ConvertableTool,
-            shortcut: 'CMD+SHIFT+H',
           },
         },
         data: {
@@ -214,6 +213,9 @@ describe('api.blocks', () => {
 
           convert(existingBlock.id, 'convertableTool');
         });
+
+      // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers -- wait for block to be converted
+      cy.wait(100);
 
       /**
        * Check that block was converted
