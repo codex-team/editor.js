@@ -1,11 +1,9 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
-import { clean } from '../../utils/sanitizer';
 import { ToolboxConfigEntry, BlockToolData } from '../../../../types';
 
 /**
