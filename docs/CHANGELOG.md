@@ -3,9 +3,12 @@
 ### 2.28.0
 
 - `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want access a Block's element by id.
+- `New` - The `.convert(blockId, newType)` API method added
 - `Improvement` - The Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
 - `Improvement` - The Delete keydown will work like a Backspace when several Blocks are selected.
 - `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of current.
+- `Improvement` - Tools shortcuts could be used to convert one Block to another.
+- `Improvement` - Tools shortcuts displayed in the Conversion Toolbar
 
 ### 2.27.2
 
