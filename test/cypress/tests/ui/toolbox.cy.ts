@@ -89,7 +89,7 @@ describe('Toolbox', function () {
         .type('{cmd}{shift}H'); // call a shortcut
 
       /**
-       * Check that block was converted
+       * Check that the new block was appended
        */
       cy.get<EditorJS>('@editorInstance')
         .then(async (editor) => {
