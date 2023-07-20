@@ -241,13 +241,9 @@ describe('api.blocks', () => {
           const fakeId = 'WRNG_ID';
           const { convert } = editor.blocks;
 
-          try {
-            convert(fakeId, 'convertableTool');
+          const exec = (): void => convert(fakeId, 'convertableTool');
 
-            expect(true).to.be.false; // we should not pass here
-          } catch (error) {
-            expect(error.message).to.eq(`Block with id "${fakeId}" not found`);
-          }
+          expect(exec).to.throw(`Block with id "${fakeId}" not found`);
         });
     });
 
@@ -276,13 +272,9 @@ describe('api.blocks', () => {
           const nonexistingToolName = 'WRNG_TOOL_NAME';
           const { convert } = editor.blocks;
 
-          try {
-            convert(existingBlock.id, nonexistingToolName);
+          const exec = (): void => convert(existingBlock.id, nonexistingToolName);
 
-            expect(true).to.be.false; // we should not pass here
-          } catch (error) {
-            expect(error.message).to.eq(`Block Tool with type "${nonexistingToolName}" not found`);
-          }
+          expect(exec).to.throw(`Block Tool with type "${nonexistingToolName}" not found`);
         });
     });
 
@@ -321,13 +313,9 @@ describe('api.blocks', () => {
         .then(async (editor) => {
           const { convert } = editor.blocks;
 
-          try {
-            convert(existingBlock.id, 'nonConvertableTool');
+          const exec = (): void => convert(existingBlock.id, 'nonConvertableTool');
 
-            expect(true).to.be.false; // we should not pass here
-          } catch (error) {
-            expect(error.message).to.eq(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
-          }
+          expect(exec).to.throw(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
         });
     });
   });
