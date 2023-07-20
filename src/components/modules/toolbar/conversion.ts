@@ -1,11 +1,9 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
-import { SavedData } from '../../../../types/data-formats';
 import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
-import { clean } from '../../utils/sanitizer';
 import { ToolboxConfigEntry, BlockToolData } from '../../../../types';
 
 /**
@@ -34,6 +32,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
       conversionTool: 'ce-conversion-tool',
       conversionToolHidden: 'ce-conversion-tool--hidden',
       conversionToolIcon: 'ce-conversion-tool__icon',
+      conversionToolSecondaryLabel: 'ce-conversion-tool__secondary-label',
 
       conversionToolFocused: 'ce-conversion-tool--focused',
       conversionToolActive: 'ce-conversion-tool--active',
@@ -179,90 +178,21 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    * For that Tools must provide import/export methods
    *
    * @param {string} replacingToolName - name of Tool which replaces current
-   * @param blockDataOverrides - Block data overrides. Could be passed in case if Multiple Toolbox items specified
+   * @param blockDataOverrides - If this conversion fired by the one of multiple Toolbox items, extend converted data with this item's "data" overrides
    */
   public async replaceWithBlock(replacingToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
-    /**
-     * At first, we get current Block data
-     */
-    const currentBlockTool = this.Editor.BlockManager.currentBlock.tool;
-    const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-    const blockData = savedBlock.data;
+    const { BlockManager, BlockSelection, InlineToolbar, Caret } = this.Editor;
 
-    /**
-     * Getting a class of replacing Tool
-     */
-    const replacingTool = this.Editor.Tools.blockTools.get(replacingToolName);
+    BlockManager.convert(this.Editor.BlockManager.currentBlock, replacingToolName, blockDataOverrides);
 
-    /**
-     * Export property can be:
-     * 1) Function — Tool defines which data to return
-     * 2) String — the name of saved property
-     *
-     * In both cases returning value must be a string
-     */
-    let exportData = '';
-    const exportProp = currentBlockTool.conversionConfig.export;
-
-    if (_.isFunction(exportProp)) {
-      exportData = exportProp(blockData);
-    } else if (_.isString(exportProp)) {
-      exportData = blockData[exportProp];
-    } else {
-      _.log('Conversion «export» property must be a string or function. ' +
-        'String means key of saved data object to export. Function should export processed string to export.');
-
-      return;
-    }
-
-    /**
-     * Clean exported data with replacing sanitizer config
-     */
-    const cleaned: string = clean(
-      exportData,
-      replacingTool.sanitizeConfig
-    );
-
-    /**
-     * «import» property can be Function or String
-     * function — accept imported string and compose tool data object
-     * string — the name of data field to import
-     */
-    let newBlockData = {};
-    const importProp = replacingTool.conversionConfig.import;
-
-    if (_.isFunction(importProp)) {
-      newBlockData = importProp(cleaned);
-    } else if (_.isString(importProp)) {
-      newBlockData[importProp] = cleaned;
-    } else {
-      _.log('Conversion «import» property must be a string or function. ' +
-        'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
-
-      return;
-    }
-
-    /**
-     * If this conversion fired by the one of multiple Toolbox items,
-     * extend converted data with this item's "data" overrides
-     */
-    if (blockDataOverrides) {
-      newBlockData = Object.assign(newBlockData, blockDataOverrides);
-    }
-
-    this.Editor.BlockManager.replace({
-      tool: replacingToolName,
-      data: newBlockData,
-    });
-    this.Editor.BlockSelection.clearSelection();
+    BlockSelection.clearSelection();
 
     this.close();
-    this.Editor.InlineToolbar.close();
+    InlineToolbar.close();
 
-    _.delay(() => {
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    }, 10)();
+    window.requestAnimationFrame(() => {
+      Caret.setToBlock(this.Editor.BlockManager.currentBlock, Caret.positions.END);
+    });
   }
 
   /**
@@ -283,7 +213,7 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
         if (!conversionConfig || !conversionConfig.import) {
           return;
         }
-        tool.toolbox.forEach((toolboxItem) =>
+        tool.toolbox?.forEach((toolboxItem) =>
           this.addToolIfValid(name, toolboxItem)
         );
       });
@@ -321,6 +251,16 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
 
     $.append(tool, icon);
     $.append(tool, $.text(I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(toolName))));
+
+    const shortcut = this.Editor.Tools.blockTools.get(toolName)?.shortcut;
+
+    if (shortcut) {
+      const shortcutEl = $.make('span', ConversionToolbar.CSS.conversionToolSecondaryLabel, {
+        innerText: _.beautifyShortcut(shortcut),
+      });
+
+      $.append(tool, shortcutEl);
+    }
 
     $.append(this.nodes.tools, tool);
     this.tools.push({
