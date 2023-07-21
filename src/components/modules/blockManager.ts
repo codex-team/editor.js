@@ -18,6 +18,8 @@ import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockChanged } from '../events';
+import { clean } from '../utils/sanitizer';
+import { convertStringToBlockData } from '../utils/blocks';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -319,21 +321,19 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Replace current working block
+   * Replace passed Block with the new one with specified Tool and data
    *
-   * @param {object} options - replace options
-   * @param {string} options.tool — plugin name
-   * @param {BlockToolData} options.data — plugin data
-   * @returns {Block}
+   * @param block - block to replace
+   * @param newTool - new Tool name
+   * @param data - new Tool data
    */
-  public replace({
-    tool = this.config.defaultBlock,
-    data = {},
-  }): Block {
-    return this.insert({
-      tool,
+  public replace(block: Block, newTool: string, data: BlockToolData): void {
+    const blockIndex = this.getBlockIndex(block);
+
+    this.insert({
+      tool: newTool,
       data,
-      index: this.currentBlockIndex,
+      index: blockIndex,
       replace: true,
     });
   }
@@ -730,6 +730,62 @@ export default class BlockManager extends Module {
       fromIndex,
       toIndex,
     });
+  }
+
+  /**
+   * Converts passed Block to the new Tool
+   * Uses Conversion Config
+   *
+   * @param blockToConvert - Block that should be converted
+   * @param targetToolName - name of the Tool to convert to
+   * @param blockDataOverrides - optional new Block data overrides
+   */
+  public async convert(blockToConvert: Block, targetToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
+    /**
+     * At first, we get current Block data
+     */
+    const savedBlock = await blockToConvert.save();
+
+    if (!savedBlock) {
+      throw new Error('Could not convert Block. Failed to extract original Block data.');
+    }
+
+    /**
+     * Getting a class of the replacing Tool
+     */
+    const replacingTool = this.Editor.Tools.blockTools.get(targetToolName);
+
+    if (!replacingTool) {
+      throw new Error(`Could not convert Block. Tool «${targetToolName}» not found.`);
+    }
+
+    /**
+     * Using Conversion Config "export" we get a stringified version of the Block data
+     */
+    const exportedData = await blockToConvert.exportDataAsString();
+
+    /**
+     * Clean exported data with replacing sanitizer config
+     */
+    const cleanData: string = clean(
+      exportedData,
+      replacingTool.sanitizeConfig
+    );
+
+    /**
+     * Now using Conversion Config "import" we compose a new Block data
+     */
+    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig);
+
+    /**
+     * Optional data overrides.
+     * Used for example, by the Multiple Toolbox Items feature, where a single Tool provides several Toolbox items with "data" overrides
+     */
+    if (blockDataOverrides) {
+      newBlockData = Object.assign(newBlockData, blockDataOverrides);
+    }
+
+    this.replace(blockToConvert, replacingTool.name, newBlockData);
   }
 
   /**

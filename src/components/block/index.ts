@@ -25,6 +25,7 @@ import { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
+import { convertBlockDataToString } from '../utils/blocks';
 
 /**
  * Interface describes Block class constructor argument
@@ -721,6 +722,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
           return blockData[propName] && _.equals(blockData[propName], propValue);
         });
     });
+  }
+
+  /**
+   * Exports Block data as string using conversion config
+   */
+  public async exportDataAsString(): Promise<string> {
+    const blockData = await this.data;
+
+    return convertBlockDataToString(blockData, this.tool.conversionConfig);
   }
 
   /**
