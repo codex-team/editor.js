@@ -4,47 +4,19 @@ import { OutputBlockData } from '../../../types';
 import BlockTool from '../tools/block';
 
 /**
- * Editor.js Renderer Module
- *
- * @module Renderer
- * @author CodeX Team
- * @version 2.0.0
+ * Module that responsible for rendering Blocks on editor initialization
  */
 export default class Renderer extends Module {
-  /**
-   * @typedef {object} RendererBlocks
-   * @property {string} type - tool name
-   * @property {object} data - tool data
-   */
-
-  /**
-   * @example
-   *
-   * blocks: [
-   *   {
-   *     id   : 'oDe-EVrGWA',
-   *     type : 'paragraph',
-   *     data : {
-   *       text : 'Hello from Codex!'
-   *     }
-   *   },
-   *   {
-   *     id   : 'Ld5BJjJCHs',
-   *     type : 'paragraph',
-   *     data : {
-   *       text : 'Leave feedback if you like it!'
-   *     }
-   *   },
-   * ]
-   */
-
   /**
    * Make plugin blocks from array of plugin`s data
    *
    * @param {OutputBlockData[]} blocks - blocks to render
+   * @deprecated
    */
-  public async render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
+  public async _render(blocks: OutputBlockData[]): Promise<void> {
+    const chainData = blocks.map((block) => ({
+      function: (): Promise<void> => this.insertBlock(block)
+    }));
 
     /**
      * Disable onChange callback on render to not to spam those events
@@ -61,12 +33,57 @@ export default class Renderer extends Module {
   }
 
   /**
+   * Renders passed blocks as one batch
+   *
+   * @param blocksData - blocks to render
+   */
+  public async render(blocksData: OutputBlockData[]): Promise<void> {
+    /**
+     * Disable onChange callback on render to not to spam those events
+     */
+    this.Editor.ModificationsObserver.disable();
+
+    /**
+     * Create Blocks instances
+     */
+    const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+      return this.Editor.BlockManager.composeBlock({
+        id,
+        tool,
+        data,
+        tunes,
+      });
+    });
+
+    /**
+     * Insert batch of Blocks
+     */
+    this.Editor.BlockManager.insertMany(blocks);
+
+    /**
+     * Do some post-render stuff.
+     * Set current Block to the last inserted, check emptiness, etc.
+     */
+    window.requestIdleCallback(() => {
+      this.Editor.BlockManager.currentBlock = this.Editor.BlockManager.lastBlock;
+
+      this.Editor.UI.checkEmptiness();
+    });
+
+    /**
+     * Enable onChange callback back
+     */
+    this.Editor.ModificationsObserver.enable();
+  }
+
+  /**
    * Get plugin instance
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
    * @param {object} item - Block data to insert
    * @returns {Promise<void>}
+   * @deprecated
    */
   public async insertBlock(item: OutputBlockData): Promise<void> {
     const { Tools, BlockManager } = this.Editor;

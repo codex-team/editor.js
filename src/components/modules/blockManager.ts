@@ -321,6 +321,16 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Inserts several blocks at once
+   *
+   * @param blocks - blocks to insert
+   * @param index - index where to insert
+   */
+  public insertMany(blocks: Block[], index = 0): void {
+    this._blocks.insertMany(blocks, index);
+  }
+
+  /**
    * Replace passed Block with the new one with specified Tool and data
    *
    * @param block - block to replace
