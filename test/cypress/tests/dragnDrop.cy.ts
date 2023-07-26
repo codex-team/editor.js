@@ -1,25 +1,37 @@
-import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
+import type EditorJS from '../../../../types/index';
+
 
 describe('Drag and drop the block of Editor', function () {
   beforeEach(function () {
     cy.createEditor({
       tools: {
-        header: Header,
         image: Image,
       },
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Block 0',
+            },
+          },
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Block 1',
+            },
+          },
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Block 2',
+            },
+          },
+        ],
+      },
     }).as('editorInstance');
-
-    const numberOfBlocks = 3;
-
-    for (let i = 0; i < numberOfBlocks; i++) {
-      cy.get('[data-cy=editorjs]')
-        .get('div.ce-block')
-        .last()
-        .click()
-        .type(`Block ${i}{enter}`);
-    }
   });
 
   afterEach(function () {
@@ -33,44 +45,45 @@ describe('Drag and drop the block of Editor', function () {
    */
   it('should drop file', function () {
     // Read file locally
-    cy.readFile('example/assets/codex2x.png', 'base64').then((base64) => {
-      // Create URI
-      const uri = 'data:image/png;base64,' + base64;
+    // Create URI
+    const base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
-      // define the file to be dropped
-      const fileName = '../../../example/assets/codex2x.png';
-      const fileType = 'image/png';
+    const uri = 'data:image/png;base64,' + base64Image;
 
-      cy.fixture(fileName, 'binary')
-        .then(Cypress.Blob.binaryStringToBlob)
-        .then((blob) => {
-          const file = new File([ blob ], fileName, { type: fileType });
-          const dataTransfer = new DataTransfer();
+    // define the file to be dropped
+    const fileName = 'codex2x.png';
+    const fileType = 'image/png';
 
-          // add the file to the DataTransfer object
-          dataTransfer.items.add(file);
 
-          // Test by dropping the image.
-          cy.get('[data-cy=editorjs]')
-            .get('div.ce-block')
-            .last()
-            .trigger('dragenter')
-            .trigger('dragover')
-            .trigger('drop', { dataTransfer });
+    // Convert base64 to Blob
+    const blob = Cypress.Blob.base64StringToBlob(base64Image);
 
-          cy.get('[data-cy=editorjs]')
-            // In Edge test are performed slower, so we need to
-            // increase timeout to wait until image is loaded on the page
-            .get('img', { timeout: 10000 })
-            .should('have.attr', 'src', uri);
-        });
-    });
+    const file = new File([blob], fileName, { type: fileType });
+    const dataTransfer = new DataTransfer();
+
+    // add the file to the DataTransfer object
+    dataTransfer.items.add(file);
+
+    // Test by dropping the image.
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .last()
+      .trigger('dragenter')
+      .trigger('dragover')
+      .trigger('drop', { dataTransfer });
+
+    cy.get('[data-cy=editorjs]')
+      // In Edge test are performed slower, so we need to
+      // increase timeout to wait until image is loaded on the page
+      .get('img', { timeout: 10000 })
+      .should('have.attr', 'src', uri);
   });
 
   it('should have block dragover style on the top of target block', function () {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .first()
+      .click()
       .click();
 
     const dataTransfer = new DataTransfer();
@@ -113,6 +126,7 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .first()
+      .click()
       .click();
 
     const dataTransfer = new DataTransfer();
@@ -155,6 +169,7 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .first()
+      .click()
       .click();
 
     const dataTransfer = new DataTransfer();
@@ -190,12 +205,14 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('.ce-toolbar__settings-btn')
       .trigger('dragend', { dataTransfer });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .then((blocks) => {
-        expect(blocks[0].textContent).to.eq('Block 1');
-        expect(blocks[1].textContent).to.eq('Block 2');
-        expect(blocks[2].textContent).to.eq('Block 0');
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(3); // 3 blocks are still here
+        expect(blocks[0].data.text).to.eq('Block 1');
+        expect(blocks[1].data.text).to.eq('Block 2');
+        expect(blocks[2].data.text).to.eq('Block 0');
       });
   });
 
@@ -238,12 +255,14 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('.ce-toolbar__settings-btn')
       .trigger('dragend', { dataTransfer });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .then((blocks) => {
-        expect(blocks[0].textContent).to.eq('Block 2');
-        expect(blocks[1].textContent).to.eq('Block 0');
-        expect(blocks[2].textContent).to.eq('Block 1');
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(3); // 3 blocks are still here
+        expect(blocks[0].data.text).to.eq('Block 2');
+        expect(blocks[1].data.text).to.eq('Block 0');
+        expect(blocks[2].data.text).to.eq('Block 1');
       });
   });
 
@@ -298,12 +317,14 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('.ce-toolbar__settings-btn')
       .trigger('dragend', { dataTransfer });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .then((blocks) => {
-        expect(blocks[0].textContent).to.eq('Block 2');
-        expect(blocks[1].textContent).to.eq('Block 0');
-        expect(blocks[2].textContent).to.eq('Block 1');
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(3); // 3 blocks are still here
+        expect(blocks[0].data.text).to.eq('Block 2');
+        expect(blocks[1].data.text).to.eq('Block 0');
+        expect(blocks[2].data.text).to.eq('Block 1');
       });
   });
 
@@ -357,12 +378,15 @@ describe('Drag and drop the block of Editor', function () {
     cy.get('.ce-toolbar__settings-btn')
       .trigger('dragend', { dataTransfer });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .then((blocks) => {
-        expect(blocks[0].textContent).to.eq('Block 1');
-        expect(blocks[1].textContent).to.eq('Block 2');
-        expect(blocks[2].textContent).to.eq('Block 0');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(3); // 3 blocks are still here
+        expect(blocks[0].data.text).to.eq('Block 1');
+        expect(blocks[1].data.text).to.eq('Block 2');
+        expect(blocks[2].data.text).to.eq('Block 0');
       });
   });
 });
