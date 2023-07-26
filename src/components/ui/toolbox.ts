@@ -3,7 +3,7 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
@@ -34,6 +34,19 @@ export enum ToolboxEvent {
 }
 
 /**
+ * Events fired by the Toolbox
+ *
+ * Event name -> payload
+ */
+export interface ToolboxEventMap {
+  [ToolboxEvent.Opened]: undefined;
+  [ToolboxEvent.Closed]: undefined;
+  [ToolboxEvent.BlockAdded]: {
+    block: BlockAPI
+  };
+}
+
+/**
  * Available i18n dict keys that should be passed to the constructor
  */
 type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
@@ -45,7 +58,7 @@ type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
  *
  * @implements {EventsDispatcher} with some events, see {@link ToolboxEvent}
  */
-export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
+export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   /**
    * Returns True if Toolbox is Empty and nothing to show
    *
@@ -294,6 +307,26 @@ export default class Toolbox extends EventsDispatcher<ToolboxEvent> {
       on: this.api.ui.nodes.redactor,
       handler: (event: KeyboardEvent) => {
         event.preventDefault();
+
+        const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+        const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+
+        /**
+         * Try to convert current Block to shortcut's tool
+         * If conversion is not possible, insert a new Block below
+         */
+        if (currentBlock) {
+          try {
+            this.api.blocks.convert(currentBlock.id, toolName);
+
+            window.requestAnimationFrame(() => {
+              this.api.caret.setToBlock(currentBlockIndex, 'end');
+            });
+
+            return;
+          } catch (error) {}
+        }
+
         this.insertNewBlock(toolName);
       },
     });

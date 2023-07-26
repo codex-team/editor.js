@@ -130,4 +130,15 @@ export interface Blocks {
    * @param data - the new data
    */
   update(id: string, data: BlockToolData): void;
+
+  /**
+   * Converts block to another type. Both blocks should provide the conversionConfig.
+   *
+   * @param id - id of the existed block to convert. Should provide 'conversionConfig.export' method
+   * @param newType - new block type. Should provide 'conversionConfig.import' method
+   * @param dataOverrides - optional data overrides for the new block
+   *
+   * @throws Error if conversion is not possible
+   */
+  convert(id: string, newType: string, dataOverrides?: BlockToolData): void;
 }

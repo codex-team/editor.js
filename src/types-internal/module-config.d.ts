@@ -1,4 +1,5 @@
 import { EditorConfig } from '../../types/index';
+import { EditorEventMap } from '../components/events';
 import EventsDispatcher from '../components/utils/events';
 
 /**
@@ -6,5 +7,5 @@ import EventsDispatcher from '../components/utils/events';
  */
 export interface ModuleConfig {
   config: EditorConfig;
-  eventsDispatcher: EventsDispatcher;
+  eventsDispatcher: EventsDispatcher<EditorEventMap>;
 }

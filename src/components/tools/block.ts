@@ -136,7 +136,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Returns Tool conversion configuration
    */
-  public get conversionConfig(): ConversionConfig {
+  public get conversionConfig(): ConversionConfig | undefined {
     return this.constructable[InternalBlockToolSettings.ConversionConfig];
   }
 

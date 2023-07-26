@@ -6,13 +6,10 @@ import I18n from './i18n';
 import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
 import Modules from './modules';
+import { EditorEventMap } from './events';
 
 /**
- * @class Core
- * @classdesc Editor.js core class
- * @property {EditorConfig} config - all settings
- * @property {EditorModules} moduleInstances - constructed editor components
- * @type {Core}
+ * Editor.js core class. Bootstraps modules.
  */
 export default class Core {
   /**
@@ -31,9 +28,9 @@ export default class Core {
   public isReady: Promise<void>;
 
   /**
-   * Event Dispatcher util
+   * Common Editor Event Bus
    */
-  private eventsDispatcher: EventsDispatcher = new EventsDispatcher();
+  private eventsDispatcher: EventsDispatcher<EditorEventMap> = new EventsDispatcher();
 
   /**
    * @param {EditorConfig} config - user configuration

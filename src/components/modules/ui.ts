@@ -14,6 +14,7 @@ import Flipper from '../flipper';
 import { mobileScreenBreakpoint } from '../utils';
 
 import styles from '../../styles/main.css?inline';
+import { BlockHovered } from '../events/BlockHovered';
 /**
  * HTML Elements used for UI
  */
@@ -41,15 +42,6 @@ interface UINodes {
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module<UINodes> {
-  /**
-   * Events could be emitted by this module.
-   */
-  public get events(): { blockHovered: string } {
-    return {
-      blockHovered: 'block-hovered',
-    };
-  }
-
   /**
    * Editor.js UI CSS class names
    *
@@ -395,7 +387,7 @@ export default class UI extends Module<UINodes> {
 
       blockHoveredEmitted = hoveredBlock;
 
-      this.eventsDispatcher.emit(this.events.blockHovered, {
+      this.eventsDispatcher.emit(BlockHovered, {
         block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
       });
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
@@ -438,6 +430,7 @@ export default class UI extends Module<UINodes> {
         break;
 
       case _.keyCodes.BACKSPACE:
+      case _.keyCodes.DELETE:
         this.backspacePressed(event);
         break;
 
@@ -685,9 +678,11 @@ export default class UI extends Module<UINodes> {
      */
     try {
       /**
-       * Renew Current Block
+       * Renew Current Block. Use RAF to wait until Selection is set.
        */
-      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      window.requestAnimationFrame(() => {
+        this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      });
 
       /**
        * Highlight Current Node

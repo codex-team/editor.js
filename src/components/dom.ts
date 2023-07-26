@@ -145,7 +145,7 @@ export default class Dom {
    * @param {string} selector - searching string
    * @returns {Element}
    */
-  public static find(el: Element | Document = document, selector: string): Element {
+  public static find(el: Element | Document = document, selector: string): Element | null {
     return el.querySelector(selector);
   }
 

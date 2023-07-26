@@ -4,6 +4,7 @@ import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
+import { capitalize } from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -33,6 +34,7 @@ export default class BlocksAPI extends Module {
       insert: this.insert,
       update: this.update,
       composeBlockData: this.composeBlockData,
+      convert: this.convert,
     };
   }
 
@@ -137,9 +139,11 @@ export default class BlocksAPI extends Module {
    *
    * @param {number} blockIndex - index of Block to delete
    */
-  public delete(blockIndex?: number): void {
+  public delete(blockIndex: number = this.Editor.BlockManager.currentBlockIndex): void {
     try {
-      this.Editor.BlockManager.removeBlock(blockIndex);
+      const block = this.Editor.BlockManager.getBlockByIndex(blockIndex);
+
+      this.Editor.BlockManager.removeBlock(block);
     } catch (e) {
       _.logLabeled(e, 'warn');
 
@@ -308,5 +312,43 @@ export default class BlocksAPI extends Module {
       replace: true,
       tunes: block.tunes,
     });
+  };
+
+  /**
+   * Converts block to another type. Both blocks should provide the conversionConfig.
+   *
+   * @param id - id of the existing block to convert. Should provide 'conversionConfig.export' method
+   * @param newType - new block type. Should provide 'conversionConfig.import' method
+   * @param dataOverrides - optional data overrides for the new block
+   * @throws Error if conversion is not possible
+   */
+  private convert = (id: string, newType: string, dataOverrides?: BlockToolData): void => {
+    const { BlockManager, Tools } = this.Editor;
+    const blockToConvert = BlockManager.getBlockById(id);
+
+    if (!blockToConvert) {
+      throw new Error(`Block with id "${id}" not found`);
+    }
+
+    const originalBlockTool = Tools.blockTools.get(blockToConvert.name);
+    const targetBlockTool = Tools.blockTools.get(newType);
+
+    if (!targetBlockTool) {
+      throw new Error(`Block Tool with type "${newType}" not found`);
+    }
+
+    const originalBlockConvertable = originalBlockTool?.conversionConfig?.export !== undefined;
+    const targetBlockConvertable = targetBlockTool.conversionConfig?.import !== undefined;
+
+    if (originalBlockConvertable && targetBlockConvertable) {
+      BlockManager.convert(blockToConvert, newType, dataOverrides);
+    } else {
+      const unsupportedBlockTypes = [
+        !originalBlockConvertable ? capitalize(blockToConvert.name) : false,
+        !targetBlockConvertable ? capitalize(newType) : false,
+      ].filter(Boolean).join(' and ');
+
+      throw new Error(`Conversion from "${blockToConvert.name}" to "${newType}" is not possible. ${unsupportedBlockTypes} tool(s) should provide a "conversionConfig"`);
+    }
   };
 }

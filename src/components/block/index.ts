@@ -22,6 +22,10 @@ import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
 import { TunesMenuConfigItem } from '../../../types/tools';
+import { isMutationBelongsToElement } from '../utils/mutations';
+import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
+import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
+import { convertBlockDataToString } from '../utils/blocks';
 
 /**
  * Interface describes Block class constructor argument
@@ -93,9 +97,11 @@ export enum BlockDropZonePosition {
 }
 
 /**
- * Names of events supported by Block class
+ * Names of events used in Block
  */
-type BlockEvents = 'didMutated';
+interface BlockEvents {
+  'didMutated': Block,
+}
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -203,89 +209,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private inputIndex = 0;
 
   /**
-   * Mutation observer to handle DOM mutations
-   *
-   * @type {MutationObserver}
+   * Common editor event bus
    */
-  private mutationObserver: MutationObserver;
+  private readonly editorEventBus: EventsDispatcher<EditorEventMap> | null = null;
 
   /**
-   * Debounce Timer
-   *
-   * @type {number}
+   * Link to editor dom change callback. Used to remove listener on remove
    */
-  private readonly modificationDebounceTimer = 450;
-
-  /**
-   * Is fired when DOM mutation has been happened
-   *
-   * mutationsOrInputEvent — actual changes
-   *   - MutationRecord[] - any DOM change
-   *   - InputEvent — <input> change
-   *   - undefined — manual triggering of block.dispatchChange()
-   */
-  private didMutated = _.debounce((mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
-    /**
-     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
-     */
-    let shouldFireUpdate;
-
-    if (mutationsOrInputEvent === undefined) {
-      shouldFireUpdate = true;
-    } else if (mutationsOrInputEvent instanceof InputEvent) {
-      shouldFireUpdate = true;
-    } else {
-      /**
-       * Update from 2023, Feb 17:
-       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
-       *    since there could be a real mutations same-time with mutation-free changes,
-       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
-       *    — we should fire 'didMutated' event in that case
-       */
-      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
-        const { addedNodes, removedNodes } = record;
-        const changedNodes = [
-          ...Array.from(addedNodes),
-          ...Array.from(removedNodes),
-        ];
-
-        return changedNodes.some((node) => {
-          if ($.isElement(node) === false) {
-            return false;
-          }
-
-          return (node as HTMLElement).dataset.mutationFree === 'true';
-        });
-      });
-
-      if (everyRecordIsMutationFree) {
-        shouldFireUpdate = false;
-      } else {
-        shouldFireUpdate = true;
-      }
-    }
-
-    /**
-     * In case some mutation free elements are added or removed, do not trigger didMutated event
-     */
-    if (!shouldFireUpdate) {
-      return;
-    }
-
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
-
-    this.call(BlockToolAPI.UPDATED);
-
-    this.emit('didMutated', this);
-  }, this.modificationDebounceTimer);
+  private redactorDomChangedCallback: (payload: RedactorDomChangedPayload) => void;
 
   /**
    * Current block API interface
@@ -293,12 +224,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private readonly blockAPI: BlockAPIInterface;
 
   /**
-   * @param {object} options - block constructor options
-   * @param {string} [options.id] - block's id. Will be generated if omitted.
-   * @param {BlockToolData} options.data - Tool's initial data
-   * @param {BlockTool} options.tool — block's tool
+   * @param options - block constructor options
+   * @param [options.id] - block's id. Will be generated if omitted.
+   * @param options.data - Tool's initial data
+   * @param options.tool — block's tool
    * @param options.api - Editor API module for pass it to the Block Tunes
-   * @param {boolean} options.readOnly - Read-Only flag
+   * @param options.readOnly - Read-Only flag
+   * @param [eventBus] - Editor common event bus. Allows to subscribe on some Editor events. Could be omitted when "virtual" Block is created. See BlocksAPI@composeBlockData.
    */
   constructor({
     id = _.generateBlockId(),
@@ -307,7 +239,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     api,
     readOnly,
     tunesData,
-  }: BlockConstructorOptions) {
+  }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
 
     this.name = tool.name;
@@ -315,9 +247,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
     this.api = api;
+    this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
-
-    this.mutationObserver = new MutationObserver(this.didMutated);
 
     this.tool = tool;
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
@@ -330,6 +261,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.composeTunes(tunesData);
 
     this.holder = this.compose();
+
+    /**
+     * Start watching block mutations
+     */
+    this.watchBlockMutations();
+
+    /**
+     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+     * so we need to track focus events to update current input and clear cache.
+     */
+    this.addInputEvents();
   }
 
   /**
@@ -516,14 +458,21 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {boolean} state - 'true' to select, 'false' to remove selection
    */
   public set selected(state: boolean) {
-    if (state) {
-      this.holder.classList.add(Block.CSS.selected);
+    this.holder.classList.toggle(Block.CSS.selected, state);
 
-      SelectionUtils.addFakeCursor(this.holder);
-    } else {
-      this.holder.classList.remove(Block.CSS.selected);
+    const fakeCursorWillBeAdded = state === true && SelectionUtils.isRangeInsideContainer(this.holder);
+    const fakeCursorWillBeRemoved = state === false && SelectionUtils.isFakeCursorInsideContainer(this.holder);
 
-      SelectionUtils.removeFakeCursor(this.holder);
+    if (fakeCursorWillBeAdded || fakeCursorWillBeRemoved) {
+      this.editorEventBus?.emit(FakeCursorAboutToBeToggled, { state }); // mutex
+
+      if (fakeCursorWillBeAdded) {
+        SelectionUtils.addFakeCursor();
+      } else {
+        SelectionUtils.removeFakeCursor(this.holder);
+      }
+
+      this.editorEventBus?.emit(FakeCursorHaveBeenSet, { state });
     }
   }
 
@@ -752,38 +701,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Is fired when Block will be selected as current
-   */
-  public willSelect(): void {
-    /**
-     * Observe DOM mutations to update Block inputs
-     */
-    this.mutationObserver.observe(
-      this.holder.firstElementChild,
-      {
-        childList: true,
-        subtree: true,
-        characterData: true,
-        attributes: true,
-      }
-    );
-
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
-  }
-
-  /**
-   * Is fired when Block will be unselected
-   */
-  public willUnselect(): void {
-    this.mutationObserver.disconnect();
-    this.removeInputEvents();
-  }
-
-  /**
    * Allows to say Editor that Block was changed. Used to manually trigger Editor's 'onChange' callback
    * Can be useful for block changes invisible for editor core.
    */
@@ -795,6 +712,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    this.unwatchBlockMutations();
+    this.removeInputEvents();
+
     super.destroy();
 
     if (_.isFunction(this.toolInstance.destroy)) {
@@ -845,6 +765,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
+   * Exports Block data as string using conversion config
+   */
+  public async exportDataAsString(): Promise<string> {
+    const blockData = await this.data;
+
+    return convertBlockDataToString(blockData, this.tool.conversionConfig);
+  }
+
+  /**
    * Make default Block wrappers and put Tool`s content there
    *
    * @returns {HTMLDivElement}
@@ -853,6 +782,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
+
+    /**
+     * Export id to the DOM three
+     * Useful for standalone modules development. For example, allows to identify Block by some child node. Or scroll to a particular Block by id.
+     */
+    wrapper.dataset.id = this.id;
 
     /**
      * Saving a reference to plugin's content element for guaranteed accessing it later
@@ -916,9 +851,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private handleFocus = (): void => {
     /**
-     * Drop cache
+     * Drop inputs cache to query the new ones
      */
-    this.cachedInputs = [];
+    this.dropInputsCache();
 
     /**
      * Update current input
@@ -937,7 +872,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * If input is native input add oninput listener to observe changes
        */
       if ($.isNativeInput(input)) {
-        input.addEventListener('input', this.didMutated);
+        input.addEventListener('input', this.didMutated as EventListener);
       }
     });
   }
@@ -950,8 +885,148 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       input.removeEventListener('focus', this.handleFocus);
 
       if ($.isNativeInput(input)) {
-        input.removeEventListener('input', this.didMutated);
+        input.removeEventListener('input', this.didMutated as EventListener);
       }
     });
+  }
+
+  /**
+   * Is fired when DOM mutation has been happened
+   *
+   * @param mutationsOrInputEvent - actual changes
+   *   - MutationRecord[] - any DOM change
+   *   - InputEvent — <input> change
+   *   - undefined — manual triggering of block.dispatchChange()
+   */
+  private readonly didMutated = (mutationsOrInputEvent: MutationRecord[] | InputEvent = undefined): void => {
+    /**
+     * Block API have dispatchChange() method. In this case, mutations list will be undefined.
+     */
+    const isManuallyDispatched = mutationsOrInputEvent === undefined;
+
+    /**
+     * True if didMutated has been called as "input" event handler
+     */
+    const isInputEventHandler = mutationsOrInputEvent instanceof InputEvent;
+
+    /**
+     * If tool updates its own root element, we need to renew it in our memory
+     */
+    if (!isManuallyDispatched && !isInputEventHandler) {
+      this.detectToolRootChange(mutationsOrInputEvent);
+    }
+
+    /**
+     * We won't fire a Block mutation event if mutation contain only nodes marked with 'data-mutation-free' attributes
+     */
+    let shouldFireUpdate;
+
+    if (isManuallyDispatched) {
+      shouldFireUpdate = true;
+    } else if (isInputEventHandler) {
+      shouldFireUpdate = true;
+    } else {
+      /**
+       * Update from 2023, Feb 17:
+       *    Changed mutationsOrInputEvent.some() to mutationsOrInputEvent.every()
+       *    since there could be a real mutations same-time with mutation-free changes,
+       *    for example when Block Tune change: block is changing along with FakeCursor (mutation-free) removing
+       *    — we should fire 'didMutated' event in that case
+       */
+      const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
+        const { addedNodes, removedNodes, target } = record;
+        const changedNodes = [
+          ...Array.from(addedNodes),
+          ...Array.from(removedNodes),
+          target,
+        ];
+
+        return changedNodes.some((node) => {
+          if (!$.isElement(node)) {
+            return false;
+          }
+
+          return (node as HTMLElement).dataset.mutationFree === 'true';
+        });
+      });
+
+      shouldFireUpdate = !everyRecordIsMutationFree;
+    }
+
+    /**
+     * In case some mutation free elements are added or removed, do not trigger didMutated event
+     */
+    if (!shouldFireUpdate) {
+      return;
+    }
+
+    this.dropInputsCache();
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+
+    this.call(BlockToolAPI.UPDATED);
+
+    /**
+     * Emit a Block Event with current Block instance.
+     * Block Manager subscribed to these events
+     */
+    this.emit('didMutated', this);
+  };
+
+  /**
+   * Listen common editor Dom Changed event and detect mutations related to the  Block
+   */
+  private watchBlockMutations(): void {
+    /**
+     * Save callback to a property to remove it on Block destroy
+     *
+     * @param payload - event payload
+     */
+    this.redactorDomChangedCallback = (payload) => {
+      const { mutations } = payload;
+
+      const mutationBelongsToBlock = mutations.some(record => isMutationBelongsToElement(record, this.toolRenderedElement));
+
+      if (mutationBelongsToBlock) {
+        this.didMutated(mutations);
+      }
+    };
+
+    this.editorEventBus?.on(RedactorDomChanged, this.redactorDomChangedCallback);
+  }
+
+  /**
+   * Remove redactor dom change event listener
+   */
+  private unwatchBlockMutations(): void {
+    this.editorEventBus?.off(RedactorDomChanged, this.redactorDomChangedCallback);
+  }
+
+  /**
+   * Sometimes Tool can replace own main element, for example H2 -> H4 or UL -> OL
+   * We need to detect such changes and update a link to tools main element with the new one
+   *
+   * @param mutations - records of block content mutations
+   */
+  private detectToolRootChange(mutations: MutationRecord[]): void {
+    mutations.forEach(record => {
+      const toolRootHasBeenUpdated = Array.from(record.removedNodes).includes(this.toolRenderedElement);
+
+      if (toolRootHasBeenUpdated) {
+        const newToolElement = record.addedNodes[record.addedNodes.length - 1];
+
+        this.toolRenderedElement = newToolElement as HTMLElement;
+      }
+    });
+  }
+
+  /**
+   * Clears inputs cached value
+   */
+  private dropInputsCache(): void {
+    this.cachedInputs = [];
   }
 }
