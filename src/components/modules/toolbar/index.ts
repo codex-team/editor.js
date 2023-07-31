@@ -210,10 +210,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (!readOnlyEnabled) {
-      window.requestAnimationFrame(() => {
+      window.requestIdleCallback(() => {
         this.drawUI();
         this.enableModuleBindings();
-      });
+      }, { timeout: 2000 });
     } else {
       this.destroy();
       this.Editor.BlockSettings.destroy();
