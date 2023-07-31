@@ -234,18 +234,28 @@ export default class Blocks {
     }
 
     if (this.length > 0) {
-      /**
-       * @todo untested
-       */
-      const previousBlockIndex = index > 0 && index < this.length - 1 ? index - 1 : this.length - 1;
-      const previousBlock = this.blocks[previousBlockIndex];
+      if (index > 0) {
+        const previousBlockIndex = Math.min(index - 1, this.length - 1);
+        const previousBlock = this.blocks[previousBlockIndex];
 
-      this.blocks.splice(previousBlockIndex, 0, ...blocks);
-      this.workingArea.after(previousBlock.holder, fragment);
+        previousBlock.holder.after(fragment);
+      } else if (index === 0) {
+        this.workingArea.prepend(fragment);
+      }
+
+      /**
+       * Insert blocks to the array at the specified index
+       */
+      this.blocks.splice(index, 0, ...blocks);
     } else {
       this.blocks.push(...blocks);
       this.workingArea.appendChild(fragment);
     }
+
+    /**
+     * Call Rendered event for each block
+     */
+    blocks.forEach((block) => block.call(BlockToolAPI.RENDERED));
   }
 
   /**

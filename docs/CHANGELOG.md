@@ -3,7 +3,8 @@
 ### 2.28.0
 
 - `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want access a Block's element by id.
-- `New` - The `.convert(blockId, newType)` API method added
+- `New` - The `blocks.convert(blockId, newType)` API method added. It allows to convert existed Block to a Block of another type.
+- `New` - The `blocks.insertMany()` API method added. It allows to insert several Blocks to specified index.
 - `Improvement` - The Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
 - `Improvement` - The Delete keydown will work like a Backspace when several Blocks are selected.
 - `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of current.

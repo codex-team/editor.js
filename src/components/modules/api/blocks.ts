@@ -1,5 +1,5 @@
 import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
-import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
+import { BlockToolData, OutputBlockData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
@@ -32,6 +32,7 @@ export default class BlocksAPI extends Module {
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
+      insertMany: this.insertMany,
       update: this.update,
       composeBlockData: this.composeBlockData,
       convert: this.convert,
@@ -351,4 +352,51 @@ export default class BlocksAPI extends Module {
       throw new Error(`Conversion from "${blockToConvert.name}" to "${newType}" is not possible. ${unsupportedBlockTypes} tool(s) should provide a "conversionConfig"`);
     }
   };
+
+
+  /**
+   * Inserts several Blocks to a specified index
+   *
+   * @param blocks - blocks data to insert
+   * @param index - index to insert the blocks at
+   */
+  private insertMany = (
+    blocks: OutputBlockData[],
+    index: number = this.Editor.BlockManager.blocks.length - 1
+  ): BlockAPIInterface[] => {
+    this.validateIndex(index);
+
+    const blocksToInsert = blocks.map(({ id, type, data }) => {
+      return this.Editor.BlockManager.composeBlock({
+        id,
+        tool: type || (this.config.defaultBlock as string),
+        data,
+      });
+    });
+
+    this.Editor.BlockManager.insertMany(blocksToInsert, index);
+
+    // we cast to any because our BlockAPI has no "new" signature
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return blocksToInsert.map((block) => new (BlockAPI as any)(block));
+  };
+
+  /**
+   * Validated block index and throws an error if it's invalid
+   *
+   * @param index - index to validate
+   */
+  private validateIndex(index: unknown): void {
+    if (typeof index !== 'number') {
+      throw new Error('Index should be a number');
+    }
+
+    if (index < 0) {
+      throw new Error(`Index should be greater than or equal to 0`);
+    }
+
+    if (index === null) {
+      throw new Error(`Index should be greater than or equal to 0`);
+    }
+  }
 }
