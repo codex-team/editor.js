@@ -243,8 +243,8 @@ export default class Blocks {
       this.blocks.splice(previousBlockIndex, 0, ...blocks);
       this.workingArea.after(previousBlock.holder, fragment);
     } else {
-      this.workingArea.appendChild(fragment);
       this.blocks.push(...blocks);
+      this.workingArea.appendChild(fragment);
     }
   }
 

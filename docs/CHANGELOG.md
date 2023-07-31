@@ -9,6 +9,9 @@
 - `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of current.
 - `Improvement` - Tools shortcuts could be used to convert one Block to another.
 - `Improvement` - Tools shortcuts displayed in the Conversion Toolbar
+- `Improvement` - Initialization Loader has been removed.
+- `Improvement` - Selection style won't override your custom style for `::selection` outside the editor.
+- `Improvement` - Performance optimizations: initialization speed increased, `blocks.render()` API method optimized. Big documents will be displayed faster.
 
 ### 2.27.2
 

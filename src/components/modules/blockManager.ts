@@ -244,7 +244,9 @@ export default class BlockManager extends Module {
     }, this.eventsDispatcher);
 
     if (!readOnly) {
-      this.bindBlockEvents(block);
+      window.requestIdleCallback(() => {
+        this.bindBlockEvents(block);
+      }, { timeout: 2000 });
     }
 
     return block;

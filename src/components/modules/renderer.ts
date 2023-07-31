@@ -15,7 +15,7 @@ export default class Renderer extends Module {
    */
   public async _render(blocks: OutputBlockData[]): Promise<void> {
     const chainData = blocks.map((block) => ({
-      function: (): Promise<void> => this.insertBlock(block)
+      function: (): Promise<void> => this.insertBlock(block),
     }));
 
     /**
@@ -68,12 +68,11 @@ export default class Renderer extends Module {
       this.Editor.BlockManager.currentBlock = this.Editor.BlockManager.lastBlock;
 
       this.Editor.UI.checkEmptiness();
-    });
-
-    /**
-     * Enable onChange callback back
-     */
-    this.Editor.ModificationsObserver.enable();
+      /**
+       * Enable onChange callback back
+       */
+      this.Editor.ModificationsObserver.enable();
+    }, { timeout: 2000 });
   }
 
   /**
