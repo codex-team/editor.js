@@ -8,31 +8,6 @@ import BlockTool from '../tools/block';
  */
 export default class Renderer extends Module {
   /**
-   * Make plugin blocks from array of plugin`s data
-   *
-   * @param {OutputBlockData[]} blocks - blocks to render
-   * @deprecated
-   */
-  public async _render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({
-      function: (): Promise<void> => this.insertBlock(block),
-    }));
-
-    /**
-     * Disable onChange callback on render to not to spam those events
-     */
-    this.Editor.ModificationsObserver.disable();
-
-    const sequence = await _.sequence(chainData as _.ChainData[]);
-
-    this.Editor.ModificationsObserver.enable();
-
-    this.Editor.UI.checkEmptiness();
-
-    return sequence;
-  }
-
-  /**
    * Renders passed blocks as one batch
    *
    * @param blocksData - blocks to render
