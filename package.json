@@ -44,7 +44,7 @@
     "@editorjs/code": "^2.7.0",
     "@editorjs/delimiter": "^1.2.0",
     "@editorjs/header": "^2.7.0",
-    "@editorjs/paragraph": "^2.9.0",
+    "@editorjs/paragraph": "^2.10.0",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^18.15.11",
     "chai-subset": "^1.6.0",
