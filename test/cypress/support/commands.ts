@@ -61,7 +61,7 @@ Cypress.Commands.add('paste', {
 
   subject[0].dispatchEvent(pasteEvent);
 
-  return subject;
+  cy.wait(200); // wait a little since some tools (paragraph) could have async hydration
 });
 
 /**

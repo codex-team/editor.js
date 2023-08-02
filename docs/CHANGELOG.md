@@ -14,6 +14,7 @@
 - `Improvement` - Selection style won't override your custom style for `::selection` outside the editor.
 - `Improvement` - Performance optimizations: initialization speed increased, `blocks.render()` API method optimized. Big documents will be displayed faster.
 - `Improvement` - "Editor saving" log removed
+- `Improvement` - "I'm ready" log removed
 
 ### 2.27.2
 

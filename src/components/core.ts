@@ -54,8 +54,6 @@ export default class Core {
         this.init();
         await this.start();
 
-        _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
-
         await this.render();
 
         if ((this.configuration as EditorConfig).autofocus) {
@@ -68,7 +66,9 @@ export default class Core {
         /**
          * Resolve this.isReady promise
          */
-        onReady();
+        window.requestIdleCallback(() => {
+          onReady();
+        });
       })
       .catch((error) => {
         _.log(`Editor.js is not ready because of ${error}`, 'error');

@@ -132,7 +132,6 @@ describe('onChange callback', () => {
       },
     ]);
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
@@ -483,7 +482,6 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
@@ -562,7 +560,6 @@ describe('onChange callback', () => {
     /**
      * Emulate tool's internal attribute mutation
      */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(100).then(() => {
       toolWrapper.setAttribute('some-changed-attr', 'some-new-value');
     });
@@ -570,7 +567,6 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });

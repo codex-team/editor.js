@@ -22,6 +22,11 @@ export default class Renderer extends Module {
      * Create Blocks instances
      */
     const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+      /**
+       * @todo handle plugin error
+       * @todo handle stub case
+       */
+
       return this.Editor.BlockManager.composeBlock({
         id,
         tool,
@@ -29,6 +34,8 @@ export default class Renderer extends Module {
         tunes,
       });
     });
+
+
 
     /**
      * Insert batch of Blocks
@@ -48,6 +55,8 @@ export default class Renderer extends Module {
        */
       this.Editor.ModificationsObserver.enable();
     }, { timeout: 2000 });
+
+
   }
 
   /**

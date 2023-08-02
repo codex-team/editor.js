@@ -214,7 +214,7 @@ describe('api.blocks', () => {
           convert(existingBlock.id, 'convertableTool');
         });
 
-      // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers -- wait for block to be converted
+      // wait for block to be converted
       cy.wait(100);
 
       /**

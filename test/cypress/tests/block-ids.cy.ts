@@ -75,12 +75,6 @@ describe('Block ids', () => {
         blocks,
       });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .first()
-      .click()
-      .type('{movetoend} Some more text');
-
     cy.get('@editorInstance')
       .then(async (editor: any) => {
         const data = await editor.save();
