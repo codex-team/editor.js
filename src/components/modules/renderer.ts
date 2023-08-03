@@ -2,6 +2,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import { OutputBlockData } from '../../../types';
 import BlockTool from '../tools/block';
+import { RenderingFinished } from './../events';
 
 /**
  * Module that responsible for rendering Blocks on editor initialization
@@ -13,50 +14,46 @@ export default class Renderer extends Module {
    * @param blocksData - blocks to render
    */
   public async render(blocksData: OutputBlockData[]): Promise<void> {
-    /**
-     * Disable onChange callback on render to not to spam those events
-     */
-    this.Editor.ModificationsObserver.disable();
-
-    /**
-     * Create Blocks instances
-     */
-    const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+    return new Promise((resolve) => {
       /**
-       * @todo handle plugin error
-       * @todo handle stub case
+       * Disable onChange callback on render to not to spam those events
        */
+      this.Editor.ModificationsObserver.disable();
 
-      return this.Editor.BlockManager.composeBlock({
-        id,
-        tool,
-        data,
-        tunes,
+      /**
+       * Create Blocks instances
+       */
+      const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+        /**
+         * @todo handle plugin error
+         * @todo handle stub case
+         */
+
+        return this.Editor.BlockManager.composeBlock({
+          id,
+          tool,
+          data,
+          tunes,
+        });
       });
-    });
 
-
-
-    /**
-     * Insert batch of Blocks
-     */
-    this.Editor.BlockManager.insertMany(blocks);
-
-    /**
-     * Do some post-render stuff.
-     * Set current Block to the last inserted, check emptiness, etc.
-     */
-    window.requestIdleCallback(() => {
-      this.Editor.BlockManager.currentBlock = this.Editor.BlockManager.lastBlock;
-
-      this.Editor.UI.checkEmptiness();
       /**
-       * Enable onChange callback back
+       * Insert batch of Blocks
        */
-      this.Editor.ModificationsObserver.enable();
-    }, { timeout: 2000 });
+      this.Editor.BlockManager.insertMany(blocks);
 
-
+      /**
+       * Do some post-render stuff.
+       */
+      window.requestIdleCallback(() => {
+        this.Editor.UI.checkEmptiness();
+        /**
+         * Enable onChange callback back
+         */
+        this.Editor.ModificationsObserver.enable();
+        resolve();
+      }, { timeout: 2000 });
+    });
   }
 
   /**

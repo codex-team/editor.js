@@ -39,7 +39,8 @@ export default class Core {
     /**
      * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
-    let onReady, onFail;
+    let onReady: (value?: void | PromiseLike<void>) => void;
+    let onFail: (reason?: unknown) => void;
 
     this.isReady = new Promise((resolve, reject) => {
       onReady = resolve;
@@ -53,7 +54,6 @@ export default class Core {
         this.validate();
         this.init();
         await this.start();
-
         await this.render();
 
         if ((this.configuration as EditorConfig).autofocus) {
@@ -63,12 +63,7 @@ export default class Core {
           BlockManager.highlightCurrentNode();
         }
 
-        /**
-         * Resolve this.isReady promise
-         */
-        window.requestIdleCallback(() => {
-          onReady();
-        });
+        onReady();
       })
       .catch((error) => {
         _.log(`Editor.js is not ready because of ${error}`, 'error');

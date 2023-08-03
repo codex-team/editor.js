@@ -661,12 +661,7 @@ export default class UI extends Module<UINodes> {
      * Select clicked Block as Current
      */
     try {
-      /**
-       * Renew Current Block. Use RAF to wait until Selection is set.
-       */
-      window.requestAnimationFrame(() => {
-        this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-      });
+      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
       /**
        * Highlight Current Node
