@@ -253,6 +253,7 @@ export default class UI extends Module<UINodes> {
 
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
+     *
      * @todo Forced layout. Get rid of this feature
      */
     if (this.nodes.holder.offsetWidth < this.contentRect.width) {

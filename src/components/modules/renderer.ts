@@ -2,7 +2,6 @@ import Module from '../__module';
 import * as _ from '../utils';
 import { OutputBlockData } from '../../../types';
 import BlockTool from '../tools/block';
-import { RenderingFinished } from './../events';
 
 /**
  * Module that responsible for rendering Blocks on editor initialization
