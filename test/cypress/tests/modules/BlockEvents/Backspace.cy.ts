@@ -252,7 +252,8 @@ describe('Backspace keydown', function () {
       .last()
       .click()
       .type('{home}') // move caret to the beginning
-      .type('{backspace}');
+      .type('{backspace}')
+      .wait(100);
 
     /**
      * Current Block has been removed

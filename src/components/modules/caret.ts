@@ -503,13 +503,10 @@ export default class Caret extends Module {
 
     sel.expandToTag(shadowCaret as HTMLElement);
 
-    setTimeout(() => {
-      const newRange = document.createRange();
+    const newRange = document.createRange();
 
-      newRange.selectNode(shadowCaret);
-      newRange.extractContents();
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    }, 50);
+    newRange.selectNode(shadowCaret);
+    newRange.extractContents();
   }
 
   /**
