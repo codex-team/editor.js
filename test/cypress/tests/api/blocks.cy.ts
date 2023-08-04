@@ -150,6 +150,53 @@ describe('api.blocks', () => {
     });
   });
 
+  /**
+   * api.blocks.insertMany(blocks, index)
+   */
+  describe('.insertMany()', function () {
+    it('should insert several blocks to passed index', function () {
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: { text: 'first block' },
+            }
+          ],
+        },
+      }).then((editor) => {
+        const index = 0;
+
+        cy.wrap(editor.blocks.insertMany([
+          {
+            type: 'paragraph',
+            data: { text: 'inserting block #1' },
+          },
+          {
+            type: 'paragraph',
+            data: { text: 'inserting block #2' },
+          },
+        ], index)); // paste to the 0 index
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-block')
+          .each(($el, i) => {
+            switch (i) {
+              case 0:
+                cy.wrap($el).should('have.text', 'inserting block #1');
+                break;
+              case 1:
+                cy.wrap($el).should('have.text', 'inserting block #2');
+                break;
+              case 2:
+                cy.wrap($el).should('have.text', 'first block');
+                break;
+            }
+          });
+      });
+    });
+  });
+
   describe('.convert()', function () {
     it('should convert a Block to another type if original Tool has "conversionConfig.export" and target Tool has "conversionConfig.import"', function () {
       /**
