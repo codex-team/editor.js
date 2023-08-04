@@ -1,5 +1,3 @@
-import type EditorJS from '../../../../types/index';
-import type { OutputData } from '../../../../types/index';
 import ToolMock from '../../fixtures/tools/ToolMock';
 
 describe('Renderer module', function () {
@@ -89,8 +87,7 @@ describe('Renderer module', function () {
      */
     class ToolWithError extends ToolMock {
       /**
-       *
-       * @param options
+       * @param options - tool options
        */
       constructor(options) {
         super(options);
