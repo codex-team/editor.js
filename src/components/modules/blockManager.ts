@@ -20,6 +20,7 @@ import { BlockChangedMutationType } from '../../../types/events/block/BlockChang
 import { BlockChanged } from '../events';
 import { clean } from '../utils/sanitizer';
 import { convertStringToBlockData } from '../utils/blocks';
+import PromiseQueue from '../utils/promise-queue';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -445,40 +446,48 @@ export default class BlockManager extends Module {
    * Remove passed Block
    *
    * @param block - Block to remove
+   * @param addLastBlock - if true, adds new default block at the end. @todo remove this logic and use event-bus instead
    */
-  public removeBlock(block: Block): void {
-    const index = this._blocks.indexOf(block);
+  public removeBlock(block: Block, addLastBlock = true): Promise<void> {
+    return new Promise((resolve) => {
+      const index = this._blocks.indexOf(block);
 
-    /**
-     * If index is not passed and there is no block selected, show a warning
-     */
-    if (!this.validateIndex(index)) {
-      throw new Error('Can\'t find a Block to remove');
-    }
+      /**
+       * If index is not passed and there is no block selected, show a warning
+       */
+      if (!this.validateIndex(index)) {
+        throw new Error('Can\'t find a Block to remove');
+      }
 
-    block.destroy();
-    this._blocks.remove(index);
+      block.destroy();
+      this._blocks.remove(index);
 
-    /**
-     * Force call of didMutated event on Block removal
-     */
-    this.blockDidMutated(BlockRemovedMutationType, block, {
-      index,
+      /**
+       * Force call of didMutated event on Block removal
+       */
+      this.blockDidMutated(BlockRemovedMutationType, block, {
+        index,
+      });
+
+      if (this.currentBlockIndex >= index) {
+        this.currentBlockIndex--;
+      }
+
+      /**
+       * If first Block was removed, insert new Initial Block and set focus on it`s first input
+       */
+      if (!this.blocks.length) {
+        this.currentBlockIndex = -1;
+
+        if (addLastBlock) {
+          this.insert();
+        }
+      } else if (index === 0) {
+        this.currentBlockIndex = 0;
+      }
+
+      resolve();
     });
-
-    if (this.currentBlockIndex >= index) {
-      this.currentBlockIndex--;
-    }
-
-    /**
-     * If first Block was removed, insert new Initial Block and set focus on it`s first input
-     */
-    if (!this.blocks.length) {
-      this.currentBlockIndex = -1;
-      this.insert();
-    } else if (index === 0) {
-      this.currentBlockIndex = 0;
-    }
   }
 
   /**
@@ -816,8 +825,17 @@ export default class BlockManager extends Module {
    *                                             we don't need to add an empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needToAddDefaultBlock = false): void {
-    this._blocks.removeAll();
+  public async clear(needToAddDefaultBlock = false): Promise<void> {
+    const queue = new PromiseQueue();
+
+    this.blocks.forEach((block) => {
+      queue.add(async () => {
+        await this.removeBlock(block, false);
+      });
+    });
+
+    await queue.completed;
+
     this.dropPointer();
 
     if (needToAddDefaultBlock) {

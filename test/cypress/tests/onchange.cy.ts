@@ -5,6 +5,7 @@ import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
+import type EditorJS from '../../../types/index';
 
 
 /**
@@ -569,6 +570,84 @@ describe('onChange callback', () => {
      */
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should be called on blocks.clear() with removed and added blocks', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.clear());
+      });
+
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockAddedMutationType,
+        },
+      ]);
+    });
+  });
+
+  it('should be called on blocks.render() on non-empty editor with removed blocks', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.render({
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'The new paragraph',
+              },
+            },
+          ],
+        }));
+      });
+
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockRemovedMutationType,
+        },
+      ]);
     });
   });
 });

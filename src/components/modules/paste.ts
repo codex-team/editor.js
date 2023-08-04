@@ -480,7 +480,7 @@ export default class Paste extends Module {
     const { BlockManager, Toolbar } = this.Editor;
 
     /**
-     * When someone passing into some block, its more stable to set current block by event target, instead of relying on current block set before
+     * When someone pasting into a block, its more stable to set current block by event target, instead of relying on current block set before
      */
     const currentBlock = BlockManager.setCurrentBlockByChildNode(event.target as HTMLElement);
 

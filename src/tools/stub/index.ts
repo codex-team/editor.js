@@ -1,5 +1,6 @@
 import $ from '../../components/dom';
 import { API, BlockTool, BlockToolConstructorOptions, BlockToolData } from '../../../types';
+import { IconWarning } from '@codexteam/icons';
 
 export interface StubData extends BlockToolData {
   title: string;
@@ -92,7 +93,7 @@ export default class Stub implements BlockTool {
    */
   private make(): HTMLElement {
     const wrapper = $.make('div', this.CSS.wrapper);
-    const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52"><path fill="#D76B6B" fill-rule="nonzero" d="M26 52C11.64 52 0 40.36 0 26S11.64 0 26 0s26 11.64 26 26-11.64 26-26 26zm0-3.25c12.564 0 22.75-10.186 22.75-22.75S38.564 3.25 26 3.25 3.25 13.436 3.25 26 13.436 48.75 26 48.75zM15.708 33.042a2.167 2.167 0 1 1 0-4.334 2.167 2.167 0 0 1 0 4.334zm23.834 0a2.167 2.167 0 1 1 0-4.334 2.167 2.167 0 0 1 0 4.334zm-15.875 5.452a1.083 1.083 0 1 1-1.834-1.155c1.331-2.114 3.49-3.179 6.334-3.179 2.844 0 5.002 1.065 6.333 3.18a1.083 1.083 0 1 1-1.833 1.154c-.913-1.45-2.366-2.167-4.5-2.167s-3.587.717-4.5 2.167z"/></svg>`;
+    const icon = IconWarning;
     const infoContainer = $.make('div', this.CSS.info);
     const title = $.make('div', this.CSS.title, {
       textContent: this.title,

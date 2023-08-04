@@ -56,9 +56,12 @@ export default class Core {
         await this.start();
         await this.render();
 
-        if ((this.configuration as EditorConfig).autofocus) {
-          const { BlockManager, Caret } = this.moduleInstances;
+        const { BlockManager, Caret, UI, ModificationsObserver } = this.moduleInstances;
 
+        UI.checkEmptiness();
+        ModificationsObserver.enable();
+
+        if ((this.configuration as EditorConfig).autofocus) {
           Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
           BlockManager.highlightCurrentNode();
         }

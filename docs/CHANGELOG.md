@@ -15,6 +15,9 @@
 - `Improvement` - Performance optimizations: initialization speed increased, `blocks.render()` API method optimized. Big documents will be displayed faster.
 - `Improvement` - "Editor saving" log removed
 - `Improvement` - "I'm ready" log removed
+- `Improvement` - The stub-block style simplified.
+- `Improvement` - If some Block's tool will throw an error during construction, we will show Stub block instead of skipping it during render
+- `Improvement` - Call of `blocks.clear()` now will trigger onChange will "block-removed" event for all removed blocks.
 
 ### 2.27.2
 

@@ -182,8 +182,12 @@ export default class BlocksAPI extends Module {
    *
    * @param {OutputData} data — Saved Editor data
    */
-  public render(data: OutputData): Promise<void> {
-    this.Editor.BlockManager.clear();
+  public async render(data: OutputData): Promise<void> {
+    if (data === undefined || data.blocks === undefined) {
+      throw new Error('Incorrect data passed to the render() method');
+    }
+
+    await this.Editor.BlockManager.clear();
 
     return this.Editor.Renderer.render(data.blocks);
   }
