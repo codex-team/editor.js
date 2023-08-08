@@ -221,6 +221,44 @@ export default class Blocks {
   }
 
   /**
+   * Inserts several blocks at once
+   *
+   * @param blocks - blocks to insert
+   * @param index - index to insert blocks at
+   */
+  public insertMany(blocks: Block[], index: number ): void {
+    const fragment = new DocumentFragment();
+
+    for (const block of blocks) {
+      fragment.appendChild(block.holder);
+    }
+
+    if (this.length > 0) {
+      if (index > 0) {
+        const previousBlockIndex = Math.min(index - 1, this.length - 1);
+        const previousBlock = this.blocks[previousBlockIndex];
+
+        previousBlock.holder.after(fragment);
+      } else if (index === 0) {
+        this.workingArea.prepend(fragment);
+      }
+
+      /**
+       * Insert blocks to the array at the specified index
+       */
+      this.blocks.splice(index, 0, ...blocks);
+    } else {
+      this.blocks.push(...blocks);
+      this.workingArea.appendChild(fragment);
+    }
+
+    /**
+     * Call Rendered event for each block
+     */
+    blocks.forEach((block) => block.call(BlockToolAPI.RENDERED));
+  }
+
+  /**
    * Remove block
    *
    * @param {number} index - index of Block to remove

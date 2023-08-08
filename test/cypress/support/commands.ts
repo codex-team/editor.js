@@ -61,7 +61,7 @@ Cypress.Commands.add('paste', {
 
   subject[0].dispatchEvent(pasteEvent);
 
-  return subject;
+  cy.wait(200); // wait a little since some tools (paragraph) could have async hydration
 });
 
 /**
@@ -79,7 +79,6 @@ Cypress.Commands.add('copy', { prevSubject: true }, (subject) => {
   }), {
     clipboardData: {
       setData: (type: string, data: any): void => {
-        console.log(type, data);
         clipboardData[type] = data;
       },
     },
@@ -105,7 +104,6 @@ Cypress.Commands.add('cut', { prevSubject: true }, (subject) => {
   }), {
     clipboardData: {
       setData: (type: string, data: any): void => {
-        console.log(type, data);
         clipboardData[type] = data;
       },
     },
@@ -122,9 +120,10 @@ Cypress.Commands.add('cut', { prevSubject: true }, (subject) => {
  * @param data — data to render
  */
 Cypress.Commands.add('render', { prevSubject: true }, (subject: EditorJS, data: OutputData) => {
-  subject.render(data);
-
-  return cy.wrap(subject);
+  return cy.wrap(subject.render(data))
+    .then(() => {
+      return cy.wrap(subject);
+    });
 });
 
 
@@ -154,5 +153,5 @@ Cypress.Commands.add('selectText', {
   document.getSelection().removeAllRanges();
   document.getSelection().addRange(range);
 
-  return subject;
+  return cy.wrap(subject);
 });

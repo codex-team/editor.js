@@ -11,9 +11,22 @@ export default defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      return require('./test/cypress/plugins/index.ts')(on, config);
+      /**
+       * Plugin for cypress that adds better terminal output for easier debugging.
+       * Prints cy commands, browser console logs, cy.request and cy.intercept data. Great for your pipelines.
+       * https://github.com/archfz/cypress-terminal-report
+       */
+      require('cypress-terminal-report/src/installLogsPrinter')(on);
+
+      require('./test/cypress/plugins/index.ts')(on, config);
     },
     specPattern: 'test/cypress/tests/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'test/cypress/support/index.ts',
+  },
+  'retries': {
+    // Configure retry attempts for `cypress run`
+    'runMode': 2,
+    // Configure retry attempts for `cypress open`
+    'openMode': 0,
   },
 });

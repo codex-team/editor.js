@@ -5,6 +5,7 @@ import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
+import type EditorJS from '../../../types/index';
 
 
 /**
@@ -132,7 +133,6 @@ describe('onChange callback', () => {
       },
     ]);
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
@@ -483,7 +483,6 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
@@ -562,7 +561,6 @@ describe('onChange callback', () => {
     /**
      * Emulate tool's internal attribute mutation
      */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(100).then(() => {
       toolWrapper.setAttribute('some-changed-attr', 'some-new-value');
     });
@@ -570,9 +568,86 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should be called on blocks.clear() with removed and added blocks', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.clear());
+      });
+
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockAddedMutationType,
+        },
+      ]);
+    });
+  });
+
+  it('should be called on blocks.render() on non-empty editor with removed blocks', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.render({
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'The new paragraph',
+              },
+            },
+          ],
+        }));
+      });
+
+    cy.get('@onChange').should(($callback) => {
+      return beCalledWithBatchedEvents($callback, [
+        {
+          type: BlockRemovedMutationType,
+        },
+        {
+          type: BlockRemovedMutationType,
+        },
+      ]);
     });
   });
 });

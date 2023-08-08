@@ -225,7 +225,7 @@ export default class SelectionUtils {
    *
    * @param selection - Selection object to get Range from
    */
-  public static getRangeFromSelection(selection: Selection): Range {
+  public static getRangeFromSelection(selection: Selection): Range | null {
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 

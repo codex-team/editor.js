@@ -127,7 +127,8 @@ describe('Editor i18n', () => {
             toolNames: toolNamesDictionary,
           },
         },
-      }).as('editorInstance');
+      });
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click();

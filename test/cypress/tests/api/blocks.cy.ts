@@ -63,9 +63,7 @@ describe('api.blocks', () => {
     it('should update block in DOM', () => {
       cy.createEditor({
         data: editorDataMock,
-      }).as('editorInstance');
-
-      cy.get<EditorJS>('@editorInstance').then(async (editor) => {
+      }).then((editor) => {
         const idToUpdate = firstBlock.id;
         const newBlockData = {
           text: 'Updated text',
@@ -75,10 +73,7 @@ describe('api.blocks', () => {
 
         cy.get('[data-cy=editorjs]')
           .get('div.ce-block')
-          .invoke('text')
-          .then(blockText => {
-            expect(blockText).to.be.eq(newBlockData.text);
-          });
+          .should('have.text', newBlockData.text);
       });
     });
 
@@ -88,9 +83,7 @@ describe('api.blocks', () => {
     it('should update block in saved data', () => {
       cy.createEditor({
         data: editorDataMock,
-      }).as('editorInstance');
-
-      cy.get<EditorJS>('@editorInstance').then(async (editor) => {
+      }).then((editor) => {
         const idToUpdate = firstBlock.id;
         const newBlockData = {
           text: 'Updated text',
@@ -98,10 +91,14 @@ describe('api.blocks', () => {
 
         editor.blocks.update(idToUpdate, newBlockData);
 
-        const output = await editor.save();
-        const text = output.blocks[0].data.text;
+        // wait a little since some tools (paragraph) could have async hydration
+        cy.wait(100).then(() => {
+          editor.save().then((output) => {
+            const text = output.blocks[0].data.text;
 
-        expect(text).to.be.eq(newBlockData.text);
+            expect(text).to.be.eq(newBlockData.text);
+          });
+        });
       });
     });
 
@@ -111,9 +108,7 @@ describe('api.blocks', () => {
     it('shouldn\'t update any block if not-existed id passed', () => {
       cy.createEditor({
         data: editorDataMock,
-      }).as('editorInstance');
-
-      cy.get<EditorJS>('@editorInstance').then(async (editor) => {
+      }).then((editor) => {
         const idToUpdate = 'wrong-id-123';
         const newBlockData = {
           text: 'Updated text',
@@ -138,9 +133,7 @@ describe('api.blocks', () => {
     it('should preserve block id if it is passed', function () {
       cy.createEditor({
         data: editorDataMock,
-      }).as('editorInstance');
-
-      cy.get<EditorJS>('@editorInstance').then(async (editor) => {
+      }).then((editor) => {
         const type = 'paragraph';
         const data = { text: 'codex' };
         const config = undefined;
@@ -153,6 +146,53 @@ describe('api.blocks', () => {
 
         expect(block).not.to.be.undefined;
         expect(block.id).to.be.eq(id);
+      });
+    });
+  });
+
+  /**
+   * api.blocks.insertMany(blocks, index)
+   */
+  describe('.insertMany()', function () {
+    it('should insert several blocks to passed index', function () {
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: { text: 'first block' },
+            }
+          ],
+        },
+      }).then((editor) => {
+        const index = 0;
+
+        cy.wrap(editor.blocks.insertMany([
+          {
+            type: 'paragraph',
+            data: { text: 'inserting block #1' },
+          },
+          {
+            type: 'paragraph',
+            data: { text: 'inserting block #2' },
+          },
+        ], index)); // paste to the 0 index
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-block')
+          .each(($el, i) => {
+            switch (i) {
+              case 0:
+                cy.wrap($el).should('have.text', 'inserting block #1');
+                break;
+              case 1:
+                cy.wrap($el).should('have.text', 'inserting block #2');
+                break;
+              case 2:
+                cy.wrap($el).should('have.text', 'first block');
+                break;
+            }
+          });
       });
     });
   });
@@ -202,42 +242,31 @@ describe('api.blocks', () => {
             existingBlock,
           ],
         },
-      }).as('editorInstance');
+      }).then((editor) => {
+        const { convert } = editor.blocks;
 
-      /**
-       * Call the 'convert' api method
-       */
-      cy.get<EditorJS>('@editorInstance')
-        .then(async (editor) => {
-          const { convert } = editor.blocks;
+        convert(existingBlock.id, 'convertableTool');
 
-          convert(existingBlock.id, 'convertableTool');
+        // wait for block to be converted
+        cy.wait(100).then(() => {
+          /**
+           * Check that block was converted
+           */
+          editor.save().then(( { blocks }) => {
+            expect(blocks.length).to.eq(1);
+            expect(blocks[0].type).to.eq('convertableTool');
+            expect(blocks[0].data.text).to.eq(existingBlock.data.text);
+          });
         });
-
-      // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers -- wait for block to be converted
-      cy.wait(100);
-
-      /**
-       * Check that block was converted
-       */
-      cy.get<EditorJS>('@editorInstance')
-        .then(async (editor) => {
-          const { blocks } = await editor.save();
-
-          expect(blocks.length).to.eq(1);
-          expect(blocks[0].type).to.eq('convertableTool');
-          expect(blocks[0].data.text).to.eq(existingBlock.data.text);
-        });
+      });
     });
 
     it('should throw an error if nonexisting Block id passed', function () {
-      cy.createEditor({}).as('editorInstance');
-
-      /**
-       * Call the 'convert' api method with nonexisting Block id
-       */
-      cy.get<EditorJS>('@editorInstance')
-        .then(async (editor) => {
+      cy.createEditor({})
+        .then((editor) => {
+          /**
+           * Call the 'convert' api method with nonexisting Block id
+           */
           const fakeId = 'WRNG_ID';
           const { convert } = editor.blocks;
 
@@ -262,20 +291,17 @@ describe('api.blocks', () => {
             existingBlock,
           ],
         },
-      }).as('editorInstance');
+      }).then((editor) => {
+        /**
+         * Call the 'convert' api method with nonexisting tool name
+         */
+        const nonexistingToolName = 'WRNG_TOOL_NAME';
+        const { convert } = editor.blocks;
 
-      /**
-       * Call the 'convert' api method with nonexisting tool name
-       */
-      cy.get<EditorJS>('@editorInstance')
-        .then(async (editor) => {
-          const nonexistingToolName = 'WRNG_TOOL_NAME';
-          const { convert } = editor.blocks;
+        const exec = (): void => convert(existingBlock.id, nonexistingToolName);
 
-          const exec = (): void => convert(existingBlock.id, nonexistingToolName);
-
-          expect(exec).to.throw(`Block Tool with type "${nonexistingToolName}" not found`);
-        });
+        expect(exec).to.throw(`Block Tool with type "${nonexistingToolName}" not found`);
+      });
     });
 
     it('should throw an error if some tool does not provide "conversionConfig"', function () {
@@ -304,19 +330,16 @@ describe('api.blocks', () => {
             existingBlock,
           ],
         },
-      }).as('editorInstance');
+      }).then((editor) => {
+        /**
+         * Call the 'convert' api method with tool that does not provide "conversionConfig"
+         */
+        const { convert } = editor.blocks;
 
-      /**
-       * Call the 'convert' api method with tool that does not provide "conversionConfig"
-       */
-      cy.get<EditorJS>('@editorInstance')
-        .then(async (editor) => {
-          const { convert } = editor.blocks;
+        const exec = (): void => convert(existingBlock.id, 'nonConvertableTool');
 
-          const exec = (): void => convert(existingBlock.id, 'nonConvertableTool');
-
-          expect(exec).to.throw(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
-        });
+        expect(exec).to.throw(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
+      });
     });
   });
 });
