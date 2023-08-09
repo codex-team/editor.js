@@ -49,7 +49,7 @@ export default class BlockEvents extends Module {
         this.arrowLeftAndUp(event);
         break;
 
-      case _.keyCodes.TAB:
+      case event.ctrlKey && _.keyCodes.SLASH:
         this.tabPressed(event);
         break;
     }
