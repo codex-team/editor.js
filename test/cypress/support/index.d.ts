@@ -79,7 +79,7 @@ declare global {
        *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
        *   ```
        */
-      (chainer: 'be.calledWithBatchedEvents', expectedEvents: PartialBlockMutationEvent[] | PartialBlockMutationEvent): Chainable<Subject>;
+      (chainer: 'be.calledWithBatchedEvents', expectedEvents: PartialBlockMutationEvent[]): Chainable<Subject>;
     }
   }
 
@@ -102,7 +102,7 @@ declare global {
        *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
        *   ```
        */
-      calledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[] | PartialBlockMutationEvent): Assertion;
+      calledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[]): Assertion;
     }
   }
 }

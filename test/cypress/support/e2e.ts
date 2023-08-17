@@ -18,7 +18,7 @@ const beCalledWithBatchedEvents = (_chai): void => {
    *
    * @param expectedEvents - batched events to check
    */
-  function assertToBeCalledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent | PartialBlockMutationEvent[]): void {
+  function assertToBeCalledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[]): void {
     /**
      * EditorJS API is passed as the first parameter of the onChange callback
      */

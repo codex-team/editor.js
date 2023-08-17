@@ -302,7 +302,7 @@ export default class BlocksAPI extends Module {
     const block = BlockManager.getBlockById(id);
 
     if (block === undefined) {
-      throw new Error('Block with passed id was not found');
+      throw new Error(`Block with id "${id}" not found`);
     }
 
     const updatedBlock = await BlockManager.update(block, data);

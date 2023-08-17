@@ -108,19 +108,23 @@ describe('api.blocks', () => {
     it('shouldn\'t update any block if not-existed id passed', () => {
       cy.createEditor({
         data: editorDataMock,
-      }).then((editor) => {
+      }).then(async (editor) => {
         const idToUpdate = 'wrong-id-123';
         const newBlockData = {
           text: 'Updated text',
         };
 
-        editor.blocks.update(idToUpdate, newBlockData);
-
-        cy.get('[data-cy=editorjs]')
-          .get('div.ce-block')
-          .invoke('text')
-          .then(blockText => {
-            expect(blockText).to.be.eq(firstBlock.data.text);
+        editor.blocks.update(idToUpdate, newBlockData)
+          .catch(error => {
+            expect(error.message).to.be.eq(`Block with id "${idToUpdate}" not found`);
+          })
+          .finally(() => {
+            cy.get('[data-cy=editorjs]')
+              .get('div.ce-block')
+              .invoke('text')
+              .then(blockText => {
+                expect(blockText).to.be.eq(firstBlock.data.text);
+              });
           });
       });
     });
@@ -161,7 +165,7 @@ describe('api.blocks', () => {
             {
               type: 'paragraph',
               data: { text: 'first block' },
-            }
+            },
           ],
         },
       }).then((editor) => {
