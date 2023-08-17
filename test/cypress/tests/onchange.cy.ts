@@ -105,22 +105,20 @@ describe('onChange callback', () => {
       .type('change')
       .type('{enter}');
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockChangedMutationType,
-          detail: {
-            index: 0,
-          },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockChangedMutationType,
+        detail: {
+          index: 0,
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 1,
-          },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should filter out similar events on batching', () => {

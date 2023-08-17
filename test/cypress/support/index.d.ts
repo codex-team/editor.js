@@ -1,9 +1,17 @@
-// in cypress/support/index.d.ts
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
 import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index'
+import type { BlockMutationEvent, BlockMutationType } from '../../../types/index'
+
+/**
+ * Simplified version of the BlockMutationEvent with optional fields that could be used in tests
+ */
+interface PartialBlockMutationEvent {
+  type?: BlockMutationType,
+  detail?: Partial<BlockMutationEvent['detail']>
+}
 
 declare global {
   namespace Cypress {
@@ -65,6 +73,22 @@ declare global {
     interface ApplicationWindow {
       EditorJS: typeof EditorJS
     }
+
+    /**
+     * Extends Cypress assertion Chainer interface with the new assertion methods
+     */
+    interface Chainer<Subject> {
+      /**
+       * Custom Chai assertion that checks if given onChange method is called with an array of passed events
+       *
+       * @example
+       *   ```
+       *   cy.get('@onChange').should('be.calledWithBatchedEvents', [{ type: 'block-added', detail: { index: 0 }}])
+       *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
+       *   ```
+       */
+      (chainer: 'be.calledWithBatchedEvents', expectedEvents: PartialBlockMutationEvent[]): Chainable<Subject>;
+    }
   }
 
   /**
@@ -76,6 +100,17 @@ declare global {
        * "containSubset" object properties matcher
        */
       containSubset(subset: any): Assertion;
+
+      /**
+       * Custom Chai assertion that checks if given onChange method is called with an array of passed events
+       *
+       * @example
+       *   ```
+       *   cy.get('@onChange').should('be.calledWithBatchedEvents', [{ type: 'block-added', detail: { index: 0 }}])
+       *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
+       *   ```
+       */
+      calledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[]): Assertion;
     }
   }
 }
