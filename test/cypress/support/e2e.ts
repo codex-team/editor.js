@@ -5,6 +5,8 @@
 // available to them because the supportFile is bundled and served
 // prior to any spec files loading
 
+import PartialBlockMutationEvent from '../fixtures/types/PartialBlockMutationEvent';
+
 /**
  * Chai plugin for checking if passed onChange method is called with an array of passed events
  *
@@ -16,7 +18,7 @@ const beCalledWithBatchedEvents = (_chai): void => {
    *
    * @param expectedEvents - batched events to check
    */
-  function assertToBeCalledWithBatchedEvents(expectedEvents): void {
+  function assertToBeCalledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent | PartialBlockMutationEvent[]): void {
     /**
      * EditorJS API is passed as the first parameter of the onChange callback
      */
@@ -32,7 +34,9 @@ const beCalledWithBatchedEvents = (_chai): void => {
     this.assert(
       $onChange.calledWithMatch(
         EditorJSApiMock,
-        Cypress.sinon.match((events) => {
+        Cypress.sinon.match((events: PartialBlockMutationEvent[]) => {
+          expect(events).to.be.an('array');
+
           return events.every((event, index) => {
             const eventToCheck = expectedEvents[index];
 

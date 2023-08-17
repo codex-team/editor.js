@@ -297,26 +297,19 @@ export default class BlocksAPI extends Module {
    * @param id - id of the block to update
    * @param data - the new data
    */
-  public update = (id: string, data: BlockToolData): void => {
+  public update = async (id: string, data: Partial<BlockToolData>): Promise<BlockAPIInterface> => {
     const { BlockManager } = this.Editor;
     const block = BlockManager.getBlockById(id);
 
-    if (!block) {
-      _.log('blocks.update(): Block with passed id was not found', 'warn');
-
-      return;
+    if (block === undefined) {
+      throw new Error('Block with passed id was not found');
     }
 
-    const blockIndex = BlockManager.getBlockIndex(block);
+    const updatedBlock = await BlockManager.update(block, data);
 
-    BlockManager.insert({
-      id: block.id,
-      tool: block.name,
-      data,
-      index: blockIndex,
-      replace: true,
-      tunes: block.tunes,
-    });
+    // we cast to any because our BlockAPI has no "new" signature
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new (BlockAPI as any)(updatedBlock);
   };
 
   /**

@@ -3,15 +3,7 @@
 
 import type { EditorConfig, OutputData } from './../../../types/index';
 import type EditorJS from '../../../types/index'
-import type { BlockMutationEvent, BlockMutationType } from '../../../types/index'
-
-/**
- * Simplified version of the BlockMutationEvent with optional fields that could be used in tests
- */
-interface PartialBlockMutationEvent {
-  type?: BlockMutationType,
-  detail?: Partial<BlockMutationEvent['detail']>
-}
+import PartialBlockMutationEvent from '../fixtures/types/PartialBlockMutationEvent';
 
 declare global {
   namespace Cypress {
@@ -87,7 +79,7 @@ declare global {
        *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
        *   ```
        */
-      (chainer: 'be.calledWithBatchedEvents', expectedEvents: PartialBlockMutationEvent[]): Chainable<Subject>;
+      (chainer: 'be.calledWithBatchedEvents', expectedEvents: PartialBlockMutationEvent[] | PartialBlockMutationEvent): Chainable<Subject>;
     }
   }
 
@@ -110,7 +102,7 @@ declare global {
        *   expect(onChange).to.be.calledWithBatchedEvents([{ type: 'block-added', detail: { index: 0 }}])
        *   ```
        */
-      calledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[]): Assertion;
+      calledWithBatchedEvents(expectedEvents: PartialBlockMutationEvent[] | PartialBlockMutationEvent): Assertion;
     }
   }
 }

@@ -334,6 +334,36 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Update Block data.
+   *
+   * Currently we don't have an 'update' method in the Tools API, so we just create a new block with the same id and type
+   * Should not trigger 'block-removed' or 'block-added' events
+   *
+   * @param block - block to update
+   * @param data - new data
+   */
+  public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
+    const existingData = await block.data;
+
+    const newBlock = this.composeBlock({
+      id: block.id,
+      tool: block.name,
+      data: Object.assign({}, existingData, data),
+      tunes: block.tunes,
+    });
+
+    const blockIndex = this.getBlockIndex(block);
+
+    this._blocks.replace(blockIndex, newBlock);
+
+    this.blockDidMutated(BlockChangedMutationType, newBlock, {
+      index: blockIndex,
+    });
+
+    return newBlock;
+  }
+
+  /**
    * Replace passed Block with the new one with specified Tool and data
    *
    * @param block - block to replace
