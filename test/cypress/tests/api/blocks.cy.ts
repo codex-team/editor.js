@@ -108,7 +108,7 @@ describe('api.blocks', () => {
     it('shouldn\'t update any block if not-existed id passed', () => {
       cy.createEditor({
         data: editorDataMock,
-      }).then(async (editor) => {
+      }).then((editor) => {
         const idToUpdate = 'wrong-id-123';
         const newBlockData = {
           text: 'Updated text',
