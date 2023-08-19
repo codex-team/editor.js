@@ -7,31 +7,10 @@ import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemov
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import type EditorJS from '../../../types/index';
 
-
 /**
  * EditorJS API is passed as the first parameter of the onChange callback
  */
 const EditorJSApiMock = Cypress.sinon.match.any;
-
-/**
- * Check if passed onChange method is called with an array of passed events
- *
- * @param $onChange - editor onChange spy
- * @param expectedEvents - batched events to check
- */
-function beCalledWithBatchedEvents($onChange, expectedEvents): void {
-  expect($onChange).to.be.calledOnce;
-  expect($onChange).to.be.calledWithMatch(
-    EditorJSApiMock,
-    Cypress.sinon.match((events) => {
-      return events.every((event, index) => {
-        const eventToCheck = expectedEvents[index];
-
-        return expect(event).to.containSubset(eventToCheck);
-      });
-    })
-  );
-}
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
@@ -105,22 +84,20 @@ describe('onChange callback', () => {
       .type('change')
       .type('{enter}');
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockChangedMutationType,
-          detail: {
-            index: 0,
-          },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockChangedMutationType,
+        detail: {
+          index: 0,
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 1,
-          },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should filter out similar events on batching', () => {
@@ -243,37 +220,35 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=delimiter]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'paragraph',
-            },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'paragraph',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'delimiter',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'delimiter',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 1,
-            target: {
-              name: 'paragraph',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
+          target: {
+            name: 'paragraph',
           },
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired on block replacement for both of blocks', () => {
@@ -291,28 +266,26 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'paragraph',
-            },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'paragraph',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'header',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'header',
           },
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired on tune modifying', () => {
@@ -375,28 +348,26 @@ describe('onChange callback', () => {
       .get('div[data-item-name=delete]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        /**
-         * "block-removed" fired since we have deleted a block
-         */
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-          },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      /**
+       * "block-removed" fired since we have deleted a block
+       */
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
         },
-        /**
-         * "block-added" fired since we have deleted the last block, so the new one is created
-         */
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-          },
+      },
+      /**
+       * "block-added" fired since we have deleted the last block, so the new one is created
+       */
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired when block is moved', () => {
@@ -594,19 +565,17 @@ describe('onChange callback', () => {
         cy.wrap(editor.blocks.clear());
       });
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-        },
-        {
-          type: BlockRemovedMutationType,
-        },
-        {
-          type: BlockAddedMutationType,
-        },
-      ]);
-    });
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+      },
+      {
+        type: BlockRemovedMutationType,
+      },
+      {
+        type: BlockAddedMutationType,
+      },
+    ]);
   });
 
   it('should be called on blocks.render() on non-empty editor with removed blocks', () => {
@@ -639,15 +608,52 @@ describe('onChange callback', () => {
         }));
       });
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-        },
-        {
-          type: BlockRemovedMutationType,
-        },
-      ]);
-    });
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+      },
+      {
+        type: BlockRemovedMutationType,
+      },
+    ]);
+  });
+
+  it('should be called on blocks.update() with "block-changed" event', () => {
+    const block = {
+      id: 'bwnFX5LoX7',
+      type: 'paragraph',
+      data: {
+        text: 'The first block mock.',
+      },
+    };
+    const config = {
+      data: {
+        blocks: [
+          block,
+        ],
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+
+    cy.createEditor(config)
+      .then((editor) => {
+        editor.blocks.update(block.id, {
+          text: 'Updated text',
+        });
+
+        cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+          type: BlockChangedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              id: block.id,
+            },
+          },
+        }));
+      });
   });
 });

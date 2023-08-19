@@ -16,6 +16,11 @@ installLogsCollector();
  */
 import './commands';
 
+/**
+ * File with custom assertions
+ */
+import './e2e';
+
 import chaiSubset from 'chai-subset';
 
 /**
