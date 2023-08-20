@@ -61,7 +61,6 @@ export default class Caret extends Module {
     }
 
 
-
     /**
      * If caret was set by external code, it might be set to text node wrapper.
      * <div>|hello</div> <---- Selection references to <div> instead of text node
@@ -109,7 +108,7 @@ export default class Caret extends Module {
         return $.isEmpty(node) && !isLineBreak;
       });
 
-      if (nothingAtLeft && focusOffset===0) {
+      if (nothingAtLeft && focusOffset === 0) {
         return true;
       }
     }
@@ -119,7 +118,7 @@ export default class Caret extends Module {
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
 
-    return firstNode === null || (focusNode === firstNode && focusOffset ===0);
+    return firstNode === null || (focusNode === firstNode && focusOffset === 0);
   }
 
   /**
