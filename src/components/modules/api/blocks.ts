@@ -18,7 +18,7 @@ export default class BlocksAPI extends Module {
    */
   public get methods(): Blocks {
     return {
-      clear: (): void => this.clear(),
+      clear: (): Promise<void> => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
       delete: (index?: number): void => this.delete(index),
@@ -172,8 +172,8 @@ export default class BlocksAPI extends Module {
   /**
    * Clear Editor's area
    */
-  public clear(): void {
-    this.Editor.BlockManager.clear(true);
+  public async clear(): Promise<void> {
+    await this.Editor.BlockManager.clear(true);
     this.Editor.InlineToolbar.close();
   }
 
@@ -187,9 +187,16 @@ export default class BlocksAPI extends Module {
       throw new Error('Incorrect data passed to the render() method');
     }
 
-    await this.Editor.BlockManager.clear();
+    /**
+     * Semantic meaning of the "render" method: "Display the new document over the existing one that stays unchanged"
+     * So we need to disable modifications observer temporarily
+     */
+    this.Editor.ModificationsObserver.disable();
 
-    return this.Editor.Renderer.render(data.blocks);
+    await this.Editor.BlockManager.clear();
+    await this.Editor.Renderer.render(data.blocks);
+
+    this.Editor.ModificationsObserver.enable();
   }
 
   /**
