@@ -60,18 +60,7 @@ export default class Caret extends Module {
       return false;
     }
 
-    /**
-     * Workaround case when caret in the text like " |Hello!"
-     * selection.anchorOffset is 1, but real caret visible position is 0
-     *
-     * @type {number}
-     */
 
-    let firstLetterPosition = focusNode.textContent.search(/\S/);
-
-    if (firstLetterPosition === -1) { // empty text
-      firstLetterPosition = 0;
-    }
 
     /**
      * If caret was set by external code, it might be set to text node wrapper.
@@ -120,7 +109,7 @@ export default class Caret extends Module {
         return $.isEmpty(node) && !isLineBreak;
       });
 
-      if (nothingAtLeft && focusOffset === firstLetterPosition) {
+      if (nothingAtLeft && focusOffset===0) {
         return true;
       }
     }
@@ -129,7 +118,8 @@ export default class Caret extends Module {
      * We use <= comparison for case:
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
-    return firstNode === null || (focusNode === firstNode && focusOffset <= firstLetterPosition);
+
+    return firstNode === null || (focusNode === firstNode && focusOffset ===0);
   }
 
   /**
