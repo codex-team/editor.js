@@ -9,7 +9,7 @@ export interface Blocks {
   /**
    * Remove all blocks from Editor zone
    */
-  clear(): void;
+  clear(): Promise<void>;
 
   /**
    * Render passed data

@@ -18,6 +18,7 @@
 - `Improvement` - The stub-block style simplified.
 - `Improvement` - If some Block's tool will throw an error during construction, we will show Stub block instead of skipping it during render
 - `Improvement` - Call of `blocks.clear()` now will trigger onChange with "block-removed" event for all removed blocks.
+- `Improvement` - The `blocks.clear()` now can be awaited.
 - `Improvement` - `BlockMutationType` and `BlockMutationEvent` types exported
 - `Improvement` - `blocks.update(id, data)` now can accept partial data object — it will update only passed properties, others will remain the same.
 - `Improvement` - `blocks.update(id, data)` now will trigger onChange with only `block-change` event.

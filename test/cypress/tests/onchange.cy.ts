@@ -578,7 +578,7 @@ describe('onChange callback', () => {
     ]);
   });
 
-  it('should be called on blocks.render() on non-empty editor with removed blocks', () => {
+  it('should not be called on blocks.render() on non-empty editor', () => {
     createEditor([
       {
         type: 'paragraph',
@@ -608,14 +608,7 @@ describe('onChange callback', () => {
         }));
       });
 
-    cy.get('@onChange').should('be.calledWithBatchedEvents', [
-      {
-        type: BlockRemovedMutationType,
-      },
-      {
-        type: BlockRemovedMutationType,
-      },
-    ]);
+    cy.get('@onChange').should('have.callCount', 0);
   });
 
   it('should be called on blocks.update() with "block-changed" event', () => {
