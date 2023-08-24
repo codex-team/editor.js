@@ -2,12 +2,12 @@
 
 ### 2.28.0
 
-- `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want access a Block's element by id.
-- `New` - The `blocks.convert(blockId, newType)` API method added. It allows to convert existing Block to a Block of another type.
+- `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want to access a Block's element by id.
+- `New` - The `blocks.convert(blockId, newType)` API method was added. It allows to convert existing Block to a Block of another type.
 - `New` - The `blocks.insertMany()` API method added. It allows to insert several Blocks to the specified index.
 - `Improvement` - The Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
 - `Improvement` - The Delete keydown will work like a Backspace when several Blocks are selected.
-- `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of current.
+- `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of the current.
 - `Improvement` - Tools shortcuts could be used to convert one Block to another.
 - `Improvement` - Tools shortcuts displayed in the Conversion Toolbar
 - `Improvement` - Initialization Loader has been removed.
@@ -15,14 +15,14 @@
 - `Improvement` - Performance optimizations: initialization speed increased, `blocks.render()` API method optimized. Big documents will be displayed faster.
 - `Improvement` - "Editor saving" log removed
 - `Improvement` - "I'm ready" log removed
-- `Improvement` - The stub-block style simplified.
-- `Improvement` - If some Block's tool will throw an error during construction, we will show Stub block instead of skipping it during render
+- `Improvement` - The stub-block style is simplified.
+- `Improvement` - If some Block's tool throws an error during construction, we will show Stub block instead of skipping it during render
 - `Improvement` - Call of `blocks.clear()` now will trigger onChange with "block-removed" event for all removed blocks.
 - `Improvement` - The `blocks.clear()` now can be awaited.
 - `Improvement` - `BlockMutationType` and `BlockMutationEvent` types exported
 - `Improvement` - `blocks.update(id, data)` now can accept partial data object — it will update only passed properties, others will remain the same.
 - `Improvement` - `blocks.update(id, data)` now will trigger onChange with only `block-change` event.
-- `Improvement` - `blocks.update(id, data)` will return a promise with BlockAPI object of changed block.
+- `Improvement` - `blocks.update(id, data)` will return a promise with BlockAPI object of the changed block.
 
 ### 2.27.2
 
