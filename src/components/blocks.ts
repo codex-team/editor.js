@@ -323,7 +323,7 @@ export default class Blocks {
    * @param {number} index — Block index
    * @returns {Block}
    */
-  public get(index: number): Block {
+  public get(index: number): Block | undefined {
     return this.blocks[index];
   }
 

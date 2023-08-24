@@ -18,53 +18,57 @@ export default class Renderer extends Module {
     return new Promise((resolve) => {
       const { Tools, BlockManager } = this.Editor;
 
-      /**
-       * Create Blocks instances
-       */
-      const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
-        if (Tools.available.has(tool) === false) {
-          _.logLabeled(`Tool «${tool}» is not found. Check 'tools' property at the Editor.js config.`, 'warn');
+      if (blocksData.length === 0) {
+        BlockManager.insert();
+      } else {
+        /**
+         * Create Blocks instances
+         */
+        const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+          if (Tools.available.has(tool) === false) {
+            _.logLabeled(`Tool «${tool}» is not found. Check 'tools' property at the Editor.js config.`, 'warn');
 
-          data = this.composeStubDataForTool(tool, data, id);
-          tool = Tools.stubTool;
-        }
+            data = this.composeStubDataForTool(tool, data, id);
+            tool = Tools.stubTool;
+          }
 
-        let block: Block;
+          let block: Block;
 
-        try {
-          block = BlockManager.composeBlock({
-            id,
-            tool,
-            data,
-            tunes,
-          });
-        } catch (error) {
-          _.log(`Block «${tool}» skipped because of plugins error`, 'error', {
-            data,
-            error,
-          });
+          try {
+            block = BlockManager.composeBlock({
+              id,
+              tool,
+              data,
+              tunes,
+            });
+          } catch (error) {
+            _.log(`Block «${tool}» skipped because of plugins error`, 'error', {
+              data,
+              error,
+            });
 
-          /**
-           * If tool throws an error during render, we should render stub instead of it
-           */
-          data = this.composeStubDataForTool(tool, data, id);
-          tool = Tools.stubTool;
+            /**
+             * If tool throws an error during render, we should render stub instead of it
+             */
+            data = this.composeStubDataForTool(tool, data, id);
+            tool = Tools.stubTool;
 
-          block = BlockManager.composeBlock({
-            id,
-            tool,
-            data,
-            tunes,
-          });
-        }
+            block = BlockManager.composeBlock({
+              id,
+              tool,
+              data,
+              tunes,
+            });
+          }
 
-        return block;
-      });
+          return block;
+        });
 
-      /**
-       * Insert batch of Blocks
-       */
-      BlockManager.insertMany(blocks);
+        /**
+         * Insert batch of Blocks
+         */
+        BlockManager.insertMany(blocks);
+      }
 
       /**
        * Wait till browser will render inserted Blocks and resolve a promise

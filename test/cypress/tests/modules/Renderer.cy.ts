@@ -1,4 +1,5 @@
 import ToolMock from '../../fixtures/tools/ToolMock';
+import type EditorJS from '../../../../types/index';
 
 describe('Renderer module', function () {
   it('should not cause onChange firing during initial rendering', function () {
@@ -145,5 +146,34 @@ describe('Renderer module', function () {
             .should('have.text', 'failedTool');
         }
       });
+  });
+
+  it('should insert default empty block when [] passed as data.blocks', function () {
+    cy.createEditor({
+      data: {
+        blocks: [],
+      },
+    })
+      .as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-block')
+      .should('have.length', 1);
+  });
+
+  it('should insert default empty block when [] passed via blocks.render() API', function () {
+    cy.createEditor({})
+      .as('editorInstance');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then((editor) => {
+        editor.blocks.render({
+          blocks: [],
+        });
+      });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-block')
+      .should('have.length', 1);
   });
 });

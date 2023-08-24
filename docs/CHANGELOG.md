@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.29.0
+
+- `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
+
 ### 2.28.0
 
 - `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want access a Block's element by id.

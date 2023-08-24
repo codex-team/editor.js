@@ -694,16 +694,9 @@ export default class UI extends Module<UINodes> {
    *      - otherwise, add a new empty Block and set a Caret to that
    */
   private redactorClicked(event: MouseEvent): void {
-    const { BlockSelection } = this.Editor;
-
     if (!Selection.isCollapsed) {
       return;
     }
-
-    const stopPropagation = (): void => {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-    };
 
     /**
      * case when user clicks on anchor element
@@ -713,7 +706,8 @@ export default class UI extends Module<UINodes> {
     const ctrlKey = event.metaKey || event.ctrlKey;
 
     if ($.isAnchor(element) && ctrlKey) {
-      stopPropagation();
+      event.stopImmediatePropagation();
+      event.stopPropagation();
 
       const href = element.getAttribute('href');
       const validUrl = _.getValidUrl(href);
@@ -723,10 +717,22 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
+    this.processBottomZoneClick(event);
+  }
+
+  /**
+   * Check if user clicks on the Editor's bottom zone:
+   *  - set caret to the last block
+   *  - or add new empty block
+   *
+   * @param event - click event
+   */
+  private processBottomZoneClick(event: MouseEvent): void {
     const lastBlock = this.Editor.BlockManager.getBlockByIndex(-1);
+
     const lastBlockBottomCoord = $.offset(lastBlock.holder).bottom;
     const clickedCoord = event.pageY;
-
+    const { BlockSelection } = this.Editor;
     const isClickedBottom = event.target instanceof Element &&
       event.target.isEqualNode(this.nodes.redactor) &&
       /**
@@ -740,7 +746,8 @@ export default class UI extends Module<UINodes> {
       lastBlockBottomCoord < clickedCoord;
 
     if (isClickedBottom) {
-      stopPropagation();
+      event.stopImmediatePropagation();
+      event.stopPropagation();
 
       const { BlockManager, Caret, Toolbar } = this.Editor;
 
