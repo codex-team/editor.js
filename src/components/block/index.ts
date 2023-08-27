@@ -263,15 +263,20 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.holder = this.compose();
 
     /**
-     * Start watching block mutations
+     * Bind block events in RIC for optimizing of constructing process time
      */
-    this.watchBlockMutations();
+    window.requestIdleCallback(() => {
+      /**
+       * Start watching block mutations
+       */
+      this.watchBlockMutations();
 
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
+      /**
+       * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+       * so we need to track focus events to update current input and clear cache.
+       */
+      this.addInputEvents();
+    });
   }
 
   /**

@@ -1,23 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Header from '@editorjs/header';
 import { nanoid } from 'nanoid';
+import type EditorJS from '../../../types/index';
+
 
 describe('Block ids', () => {
-  beforeEach(function () {
+  it('Should generate unique block ids for new blocks', () => {
     cy.createEditor({
       tools: {
         header: Header,
       },
     }).as('editorInstance');
-  });
 
-  afterEach(function () {
-    if (this.editorInstance) {
-      this.editorInstance.destroy();
-    }
-  });
-
-  it('Should generate unique block ids for new blocks', () => {
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
@@ -42,8 +35,8 @@ describe('Block ids', () => {
       .click()
       .type('Header');
 
-    cy.get('@editorInstance')
-      .then(async (editor: any) => {
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
         const data = await editor.save();
 
         data.blocks.forEach(block => {
@@ -53,6 +46,9 @@ describe('Block ids', () => {
   });
 
   it('should preserve passed ids', () => {
+    cy.createEditor({})
+      .as('editorInstance');
+
     const blocks = [
       {
         id: nanoid(),
@@ -70,19 +66,13 @@ describe('Block ids', () => {
       },
     ];
 
-    cy.get('@editorInstance')
+    cy.get<EditorJS>('@editorInstance')
       .render({
         blocks,
       });
 
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .first()
-      .click()
-      .type('{movetoend} Some more text');
-
-    cy.get('@editorInstance')
-      .then(async (editor: any) => {
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
         const data = await editor.save();
 
         data.blocks.forEach((block, index) => {
@@ -92,6 +82,9 @@ describe('Block ids', () => {
   });
 
   it('should preserve passed ids if blocks were added', () => {
+    cy.createEditor({})
+      .as('editorInstance');
+
     const blocks = [
       {
         id: nanoid(),
@@ -109,7 +102,7 @@ describe('Block ids', () => {
       },
     ];
 
-    cy.get('@editorInstance')
+    cy.get<EditorJS>('@editorInstance')
       .render({
         blocks,
       });
@@ -122,16 +115,20 @@ describe('Block ids', () => {
       .next()
       .type('Middle block');
 
-    cy.get('@editorInstance')
-      .then(async (editor: any) => {
-        const data = await editor.save();
-
-        expect(data.blocks[0].id).to.eq(blocks[0].id);
-        expect(data.blocks[2].id).to.eq(blocks[1].id);
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        cy.wrap(await editor.save())
+          .then((data) => {
+            expect(data.blocks[0].id).to.eq(blocks[0].id);
+            expect(data.blocks[2].id).to.eq(blocks[1].id);
+          });
       });
   });
 
   it('should be stored at the Block wrapper\'s data-id attribute', () => {
+    cy.createEditor({})
+      .as('editorInstance');
+
     const blocks = [
       {
         id: nanoid(),
@@ -149,7 +146,7 @@ describe('Block ids', () => {
       },
     ];
 
-    cy.get('@editorInstance')
+    cy.get<EditorJS>('@editorInstance')
       .render({
         blocks,
       });

@@ -1,12 +1,14 @@
 import type EditorJS from '../../../../../types/index';
+import Chainable = Cypress.Chainable;
+
 
 /**
  * Creates Editor instance with list of Paragraph blocks of passed texts
  *
  * @param textBlocks - list of texts for Paragraph blocks
  */
-function createEditorWithTextBlocks(textBlocks: string[]): void {
-  cy.createEditor({
+function createEditorWithTextBlocks(textBlocks: string[]): Chainable<EditorJS> {
+  return cy.createEditor({
     data: {
       blocks: textBlocks.map((text) => ({
         type: 'paragraph',

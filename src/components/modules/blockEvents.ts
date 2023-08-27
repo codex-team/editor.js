@@ -472,10 +472,12 @@ export default class BlockEvents extends Module {
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)
       .then(() => {
-        /** Restore caret position after merge */
-        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
-        targetBlock.pluginsContent.normalize();
-        Toolbar.close();
+        window.requestAnimationFrame(() => {
+          /** Restore caret position after merge */
+          Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
+          targetBlock.pluginsContent.normalize();
+          Toolbar.close();
+        });
       });
   }
 

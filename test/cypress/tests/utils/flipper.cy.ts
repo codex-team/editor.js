@@ -37,20 +37,6 @@ class SomePlugin {
 }
 
 describe('Flipper', () => {
-  beforeEach(function () {
-    cy.createEditor({
-      tools: {
-        sometool: SomePlugin,
-      },
-    }).as('editorInstance');
-  });
-
-  afterEach(function () {
-    if (this.editorInstance) {
-      this.editorInstance.destroy();
-    }
-  });
-
   it('should prevent plugins event handlers from being called while keyboard navigation', () => {
     const TAB_KEY_CODE = 9;
     const ARROW_DOWN_KEY_CODE = 40;
@@ -58,14 +44,22 @@ describe('Flipper', () => {
 
     const sampleText = 'sample text';
 
+    cy.createEditor({
+      tools: {
+        sometool: SomePlugin,
+      },
+      data: {
+        blocks: [
+          {
+            type: 'sometool',
+            data: {
+            },
+          },
+        ],
+      },
+    });
+
     cy.spy(SomePlugin, 'pluginInternalKeydownHandler');
-
-    // Insert sometool block and enter sample text
-    cy.get('[data-cy=editorjs]')
-      .get('div.ce-block')
-      .trigger('keydown', { keyCode: TAB_KEY_CODE });
-
-    cy.get('[data-item-name=sometool]').click();
 
     cy.get('[data-cy=editorjs]')
       .get('.cdx-some-plugin')
