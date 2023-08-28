@@ -40,42 +40,128 @@ describe('Drag and drop the block of Editor', function () {
     }
   });
 
+  // Create URI
+  const base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+  const uri = 'data:image/png;base64,' + base64Image;
+
+  // Define the file to be dropped
+  const fileName = 'codex2x.png';
+  const fileType = 'image/png';
+
+
+  // Convert base64 to Blob
+  const blob = Cypress.Blob.base64StringToBlob(base64Image);
+
+  const file = new File([blob], fileName, { type: fileType });
+  const dataTransfer = new DataTransfer();
+
+  // add the file to the DataTransfer object
+  dataTransfer.items.add(file);
+
   /**
    * @todo check with dropping file other than the image.
    */
-  it('should drop file', function () {
-    // Read file locally
-    // Create URI
-    const base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
-
-    const uri = 'data:image/png;base64,' + base64Image;
-
-    // define the file to be dropped
-    const fileName = 'codex2x.png';
-    const fileType = 'image/png';
-
-
-    // Convert base64 to Blob
-    const blob = Cypress.Blob.base64StringToBlob(base64Image);
-
-    const file = new File([blob], fileName, { type: fileType });
-    const dataTransfer = new DataTransfer();
-
-    // add the file to the DataTransfer object
-    dataTransfer.items.add(file);
+  it('should drop image before the block', function () {
 
     // Test by dropping the image.
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
-      .last()
+      .eq(1)
       .trigger('dragenter')
-      .trigger('dragover')
-      .trigger('drop', { dataTransfer });
+      .then((blocks) => {
+        // Get the target block rect.
+        const targetBlockRect = blocks[0].getBoundingClientRect();
+        const yShiftFromMiddleLine = -20;
+        // Dragover on target block little bit above the middle line.
+        const dragOverYCoord =
+          targetBlockRect.y +
+          (targetBlockRect.height / 2 + yShiftFromMiddleLine);
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .eq(1)
+          .trigger('dragover', {
+            clientX: targetBlockRect.x,
+            clientY: dragOverYCoord,
+          })
+          .trigger('drop', { dataTransfer });
+      });
 
     cy.get('[data-cy=editorjs]')
       // In Edge test are performed slower, so we need to
       // increase timeout to wait until image is loaded on the page
-      .get('img', { timeout: 10000 })
+      .get('div.ce-block')
+      .eq(1)
+      .find('img', { timeout: 10000 })
+      .should('have.attr', 'src', uri);
+  });
+
+  it('should drop image after the block', function () {
+
+    // Test by dropping the image.
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .eq(1)
+      .trigger('dragenter')
+      .then((blocks) => {
+        // Get the target block rect.
+        const targetBlockRect = blocks[0].getBoundingClientRect();
+        const yShiftFromMiddleLine = 20;
+        // Dragover on target block little bit below the middle line.
+        const dragOverYCoord =
+          targetBlockRect.y +
+          (targetBlockRect.height / 2 + yShiftFromMiddleLine);
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .eq(1)
+          .trigger('dragover', {
+            clientX: targetBlockRect.x,
+            clientY: dragOverYCoord,
+          })
+          .trigger('drop', { dataTransfer });
+      });
+
+    cy.get('[data-cy=editorjs]')
+      // In Edge test are performed slower, so we need to
+      // increase timeout to wait until image is loaded on the page
+      .get('div.ce-block')
+      .eq(2)
+      .find('img', { timeout: 10000 })
+      .should('have.attr', 'src', uri);
+  });
+
+  it('should drop image before the first block', function () {
+    // Test by dropping the image.
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      .first()
+      .trigger('dragenter')
+      .then((blocks) => {
+        // Get the target block rect.
+        const targetBlockRect = blocks[0].getBoundingClientRect();
+        const yShiftFromMiddleLine = -20;
+        // Dragover on target block little bit above the middle line.
+        const dragOverYCoord =
+          targetBlockRect.y +
+          (targetBlockRect.height / 2 + yShiftFromMiddleLine);
+
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-block')
+          .eq(0)
+          .trigger('dragover', {
+            clientX: targetBlockRect.x,
+            clientY: dragOverYCoord,
+          })
+          .trigger('drop', { dataTransfer });
+      });
+
+    cy.get('[data-cy=editorjs]')
+      .get('div.ce-block')
+      // In Edge test are performed slower, so we need to
+      // increase timeout to wait until image is loaded on the page
+      .eq(0)
+      .find('img', { timeout: 10000 })
       .should('have.attr', 'src', uri);
   });
 
@@ -236,7 +322,7 @@ describe('Drag and drop the block of Editor', function () {
         // Get the target block rect.
         const targetBlockRect = blocks[0].getBoundingClientRect();
         const yShiftFromMiddleLine = -20;
-        // Dragover on target block little bit below the middle line.
+        // Dragover on target block little bit above the middle line.
         const dragOverYCoord =
           targetBlockRect.y +
           (targetBlockRect.height / 2 + yShiftFromMiddleLine);
@@ -359,7 +445,7 @@ describe('Drag and drop the block of Editor', function () {
         // Get the target block rect.
         const targetBlockRect = blocks[0].getBoundingClientRect();
         const yShiftFromMiddleLine = -20;
-        // Dragover on target block little bit below the middle line.
+        // Dragover on target block little bit above the middle line.
         const dragOverYCoord =
           targetBlockRect.y +
           (targetBlockRect.height / 2 + yShiftFromMiddleLine);
