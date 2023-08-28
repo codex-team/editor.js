@@ -1,7 +1,7 @@
 import SelectionUtils from '../selection';
 import Block, { BlockDropZonePosition } from '../block';
 import * as _ from '../utils';
-import Dom from '../dom';
+import $ from '../dom';
 import Module from '../__module';
 /**
  *
@@ -113,24 +113,30 @@ export default class DragNDrop extends Module {
      * Try to set current block by drop target.
      * If drop target is not part of the Block, set last Block as current.
      */
-    let targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+    const firstLevelBlock = (dropEvent.target as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+    let targetBlock = BlockManager.blocks.find((block) => block.holder === firstLevelBlock);
+
+    let shouldMoveToFirst = false;
 
     if (targetBlock) {
       if (targetBlock.dropZonePosition === BlockDropZonePosition.Top) {
         const currentIndex = BlockManager.getBlockIndex(targetBlock);
-
+        let targetIndex;
         if (currentIndex > 0) {
-          targetBlock = BlockManager.getBlockByIndex(currentIndex - 1);
-          Caret.setToBlock(targetBlock, Caret.positions.END);
+          targetIndex = currentIndex - 1;
         }
         else {
-
+          // Paste the block at the end of first block.
+          targetIndex = 0;
+          // then swap the first block with second block.
+          shouldMoveToFirst = true;
         }
-      } else {
-        Caret.setToBlock(targetBlock, Caret.positions.END);
+        targetBlock = BlockManager.getBlockByIndex(targetIndex);
       }
+      Caret.setToBlock(targetBlock, Caret.positions.END);
     } else {
-      const lastBlock = BlockManager.getBlockByChildNode(BlockManager.lastBlock.holder);
+      const firstLevelBlock = (BlockManager.lastBlock.holder as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+      let lastBlock = BlockManager.blocks.find((block) => block.holder === firstLevelBlock);
 
       Caret.setToBlock(lastBlock, Caret.positions.END);
     }
@@ -141,6 +147,11 @@ export default class DragNDrop extends Module {
     BlockSelection.clearSelection();
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+    
+    // swapping of the first block with second block.
+    if (shouldMoveToFirst) {
+      BlockManager.move(1, 0);
+    }
   }
 
   /**
@@ -157,7 +168,9 @@ export default class DragNDrop extends Module {
     this.removeDragImage();
 
     const selectedBlocks = BlockSelection.selectedBlocks;
-    const targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
+
+    const firstLevelBlock = (dropEvent.target as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+    const targetBlock = BlockManager.blocks.find((block) => block.holder === firstLevelBlock);
 
     if (!targetBlock) {
       // This means that we are trying to drop a block without references.
@@ -232,7 +245,7 @@ export default class DragNDrop extends Module {
     /**
      * Create a drag image with all blocks content.
      */
-    const dragImage: HTMLElement = Dom.make('div');
+    const dragImage: HTMLElement = $.make('div');
 
     dragImage.id = `drag-image-${_.generateId()}`;
     dragImage.style.position = 'absolute';
