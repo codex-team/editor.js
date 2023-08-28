@@ -113,7 +113,7 @@ export default class DragNDrop extends Module {
      * Try to set current block by drop target.
      * If drop target is not part of the Block, set last Block as current.
      */
-    let targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
+    let targetBlock = BlockManager.getBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
       if (targetBlock.dropZonePosition === BlockDropZonePosition.Top) {
@@ -123,15 +123,14 @@ export default class DragNDrop extends Module {
           targetBlock = BlockManager.getBlockByIndex(currentIndex - 1);
           Caret.setToBlock(targetBlock, Caret.positions.END);
         }
-        /**
-         *  @todo -Implement to drop a block before the first block,
-         * we should insert it before the first block.
-         */
+        else {
+
+        }
       } else {
         Caret.setToBlock(targetBlock, Caret.positions.END);
       }
     } else {
-      const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+      const lastBlock = BlockManager.getBlockByChildNode(BlockManager.lastBlock.holder);
 
       Caret.setToBlock(lastBlock, Caret.positions.END);
     }
