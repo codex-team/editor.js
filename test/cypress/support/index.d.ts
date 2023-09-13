@@ -11,9 +11,10 @@ declare global {
       /**
        * Custom command to select DOM element by data-cy attribute.
        * @param editorConfig - config to pass to the editor
+       * @param container [window.document.body] - HTML Element to append editor element into
        * @example cy.createEditor({})
        */
-      createEditor(editorConfig: EditorConfig): Chainable<EditorJS>
+      createEditor(editorConfig: EditorConfig, container?: HTMLElement): Chainable<EditorJS>
 
       /**
        * Paste command to dispatch paste event

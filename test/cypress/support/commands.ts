@@ -15,9 +15,10 @@ import Chainable = Cypress.Chainable;
  * Then return the instance
  *
  * @param editorConfig - config to pass to the editor
+ * @param container [window.document.body] - HTML Element to append editor element into
  * @returns EditorJS - created instance
  */
-Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainable<EditorJS> => {
+Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}, container?: HTMLElement): Chainable<EditorJS> => {
   return cy.window()
     .then((window) => {
       return new Promise((resolve: (instance: EditorJS) => void) => {
@@ -27,7 +28,7 @@ Cypress.Commands.add('createEditor', (editorConfig: EditorConfig = {}): Chainabl
         editorContainer.dataset.cy = 'editorjs';
         editorContainer.style.border = '1px dotted #388AE5';
 
-        window.document.body.appendChild(editorContainer);
+        (container ?? window.document.body).appendChild(editorContainer);
 
         const editorInstance: EditorJS = new window.EditorJS(editorConfig);
 
