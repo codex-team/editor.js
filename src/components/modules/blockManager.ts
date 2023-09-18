@@ -681,6 +681,15 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Remove drop zone positions from all Blocks.
+   */
+  public clearDropZonePosition(): void {
+    this.blocks.forEach((block) => {
+      block.dropZonePosition = false;
+    });
+  }
+
+  /**
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
@@ -919,12 +928,12 @@ export default class BlockManager extends Module {
       BlockEvents.keyup(event);
     });
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
-      BlockEvents.dragOver(event);
+    this.readOnlyMutableListeners.on(block.holder, 'dragenter', (event: DragEvent) => {
+      BlockEvents.dragEnter(event);
     });
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
-      BlockEvents.dragLeave(event);
+    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
+      BlockEvents.dragOver(event);
     });
 
     block.on('didMutated', (affectedBlock: Block) => {

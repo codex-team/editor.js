@@ -5,6 +5,7 @@ import Module from '../__module';
 import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
+import { BlockDropZonePosition } from '../block';
 import type Block from '../block';
 import { areBlocksMergeable } from '../utils/blocks';
 
@@ -148,25 +149,42 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * Add drop target styles
+   * All drag enter on block
+   *  - use to clear previous drop target zone style.
+   *
+   * @param {DragEvent} event - drag over event
+   */
+  public dragEnter(event: DragEvent): void {
+    const { BlockManager } = this.Editor;
+    const block = BlockManager.getBlockByChildNode(event.target as Node);
+
+    /**
+     * Scroll to make element inside the viewport.
+     */
+    _.scrollToView(block.holder);
+
+    /**
+     * Clear previous drop target zone for every block.
+     */
+    BlockManager.clearDropZonePosition();
+  }
+
+  /**
+   * All drag over on block.
+   *  - Check the position of drag and suggest drop zone accordingly.
    *
    * @param {DragEvent} event - drag over event
    */
   public dragOver(event: DragEvent): void {
     const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
+    const rect = block.holder.getBoundingClientRect();
 
-    block.dropTarget = true;
-  }
-
-  /**
-   * Remove drop target style
-   *
-   * @param {DragEvent} event - drag leave event
-   */
-  public dragLeave(event: DragEvent): void {
-    const block = this.Editor.BlockManager.getBlockByChildNode(event.target as Node);
-
-    block.dropTarget = false;
+    /**
+     * Add style for target drop zone position.
+     */
+    block.dropZonePosition = (rect.top + rect.height / 2 >= event.clientY) ?
+      BlockDropZonePosition.Top :
+      BlockDropZonePosition.Bottom;
   }
 
   /**
@@ -511,7 +529,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
@@ -570,7 +588,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 

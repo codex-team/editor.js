@@ -17,7 +17,7 @@
     "build": "vite build",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
     "lint:errors": "eslint src/ --ext .ts --quiet",
-    "lint:fix": "eslint src/ --ext .ts --fix",
+    "lint:fix": "eslint src/ --ext .ts --fix && eslint test/ --ext .ts  --fix",
     "lint:tests": "eslint test/ --ext .ts",
     "pull_tools": "git submodule update --init --recursive",
     "_tools:checkout": "git submodule foreach \"git checkout master || git checkout main\"",

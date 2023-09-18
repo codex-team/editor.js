@@ -161,7 +161,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     open: () => void;
     toggle: () => void;
     hasFocus: () => boolean | undefined;
-    } {
+  } {
     return {
       opened: this.toolboxInstance?.opened,
       close: () => {
@@ -171,7 +171,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         /**
          * If Toolbox is not initialized yet, do nothing
          */
-        if (this.toolboxInstance === null)  {
+        if (this.toolboxInstance === null) {
           _.log('toolbox.open() called before initialization is finished', 'warn');
 
           return;
@@ -188,7 +188,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         /**
          * If Toolbox is not initialized yet, do nothing
          */
-        if (this.toolboxInstance === null)  {
+        if (this.toolboxInstance === null) {
           _.log('toolbox.toggle() called before initialization is finished', 'warn');
 
           return;
@@ -251,7 +251,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Some UI elements creates inside requestIdleCallback, so the can be not ready yet
      */
-    if (this.toolboxInstance === null)  {
+    if (this.toolboxInstance === null) {
       _.log('Can\'t open Toolbar since Editor initialization is not finished yet', 'warn');
 
       return;
@@ -345,7 +345,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       } else {
         this.blockActions.hide();
       }
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 50)();
   }
 
@@ -408,6 +408,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler, {
       innerHTML: IconMenu,
+      draggable: true,
     });
 
     $.append(this.nodes.actions, this.nodes.settingsToggler);
@@ -496,9 +497,37 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Settings toggler
      *
-     * mousedown is used because on click selection is lost in Safari and FF
+     * dargstart is used to select the current block/s to hide
+     * the tooltip and close Inilne toolbar for dragging.
      */
-    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mousedown', (e) => {
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragstart', () => {
+      const { BlockManager, BlockSettings, BlockSelection } = this.Editor;
+
+      /** Close components */
+      this.tooltip.hide(true);
+      this.blockActions.hide();
+      this.toolboxInstance.close();
+      BlockSettings.close();
+
+      BlockManager.currentBlock = this.hoveredBlock;
+      BlockSelection.selectBlockByIndex(BlockManager.currentBlockIndex);
+    }, true);
+
+    /**
+     * Settings toggler
+     *
+     * dargend is used to move the select block toolbar setting to dropped position.
+     */
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'dragend', () => {
+      this.moveAndOpen(this.Editor.BlockManager.currentBlock);
+    }, true);
+
+    /**
+     * Settings toggler
+     *
+     * mouseup is used because on click selection is lost in Safari and FF
+     */
+    this.readOnlyMutableListeners.on(this.nodes.settingsToggler, 'mouseup', (e) => {
       /**
        * Stop propagation to prevent block selection clearance
        *
@@ -526,9 +555,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
        */
       this.eventsDispatcher.on(BlockHovered, (data) => {
         /**
-         * Do not move toolbar if Block Settings or Toolbox opened
+         * Do not move toolbar if Block Settings or Toolbox opened or Drag started.
          */
-        if (this.Editor.BlockSettings.opened || this.toolboxInstance?.opened) {
+        if (this.Editor.BlockSettings.opened ||
+          this.toolboxInstance?.opened ||
+          this.Editor.DragNDrop.isDragStarted) {
           return;
         }
 

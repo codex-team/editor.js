@@ -355,13 +355,6 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', _.throttle((event: MouseEvent | TouchEvent) => {
       const hoveredBlock = (event.target as Element).closest('.ce-block');
 
-      /**
-       * Do not trigger 'block-hovered' for cross-block selection
-       */
-      if (this.Editor.BlockSelection.anyBlockSelected) {
-        return;
-      }
-
       if (!hoveredBlock) {
         return;
       }

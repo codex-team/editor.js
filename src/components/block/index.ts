@@ -88,6 +88,15 @@ export enum BlockToolAPI {
 }
 
 /**
+ * Available block drop zones position w.r.t. focused block.
+ */
+export enum BlockDropZonePosition {
+  Top = 'top',
+  Bottom = 'bottom',
+  // @todo - Left, Right could be added in the future
+}
+
+/**
  * Names of events used in Block
  */
 interface BlockEvents {
@@ -114,6 +123,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
+      dropTargetTop: 'ce-block--drop-target-top',
+      dropTargetBottom: 'ce-block--drop-target-bottom',
     };
   }
 
@@ -498,12 +509,41 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Toggle drop target state
+   * Set the drop zone position and update the style to drop zone target style.
    *
-   * @param {boolean} state - 'true' if block is drop target, false otherwise
+   * @param {boolean | BlockDropZonePosition} state - 'false' if block is not a drop zone or
+   * position of drop zone.
    */
-  public set dropTarget(state) {
-    this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  public set dropZonePosition(state: boolean | BlockDropZonePosition) {
+    if (!state || this.selected) {
+      /**
+       * If state is undefined or block is selected for drag
+       * then remove the drop target style
+       */
+      this.holder.classList.remove(Block.CSS.dropTarget, Block.CSS.dropTargetTop, Block.CSS.dropTargetBottom);
+    } else {
+      /**
+       * Otherwise, toggle the block's drop target and drop zone position.
+       */
+      this.holder.classList.toggle(Block.CSS.dropTarget, !!state);
+      this.holder.classList.toggle(Block.CSS.dropTargetTop, state === BlockDropZonePosition.Top);
+      this.holder.classList.toggle(Block.CSS.dropTargetBottom, state === BlockDropZonePosition.Bottom);
+    }
+  }
+
+  /**
+   * Return Block's drop zone position or false if block is not a drop zone.
+   *
+   * @returns {BlockDropZonePosition | boolean}
+   */
+  public get dropZonePosition(): boolean | BlockDropZonePosition {
+    if (this.holder.classList.contains(Block.CSS.dropTargetTop)) {
+      return BlockDropZonePosition.Top;
+    } else if (this.holder.classList.contains(Block.CSS.dropTargetBottom)) {
+      return BlockDropZonePosition.Bottom;
+    }
+
+    return false;
   }
 
   /**
