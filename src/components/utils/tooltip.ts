@@ -6,53 +6,66 @@ import CodeXTooltips from 'codex-tooltip';
 import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 
 /**
- * Tooltip
+ * Tooltips lib: CodeX Tooltips
  *
- * Decorates any tooltip module like adapter
+ * @see https://github.com/codex-team/codex.tooltips
  */
-export default class Tooltip {
-  /**
-   * Tooltips lib: CodeX Tooltips
-   *
-   * @see https://github.com/codex-team/codex.tooltips
-   */
-  private lib: CodeXTooltips = new CodeXTooltips();
+let lib: null | CodeXTooltips = null;
 
-  /**
-   * Release the library
-   */
-  public destroy(): void {
-    this.lib.destroy();
+/**
+ * If library is needed, but it is not initialized yet, this function will initialize it
+ *
+ * For example, if editor was destroyed and then initialized again
+ */
+function prepare(): void {
+  if (lib) {
+    return;
   }
 
-  /**
-   * Shows tooltip on element with passed HTML content
-   *
-   * @param {HTMLElement} element - any HTML element in DOM
-   * @param content - tooltip's content
-   * @param options - showing settings
-   */
-  public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.lib.show(element, content, options);
-  }
+  lib = new CodeXTooltips();
+}
 
-  /**
-   * Hides tooltip
-   *
-   * @param skipHidingDelay — pass true to immediately hide the tooltip
-   */
-  public hide(skipHidingDelay = false): void {
-    this.lib.hide(skipHidingDelay);
-  }
+/**
+ * Shows tooltip on element with passed HTML content
+ *
+ * @param {HTMLElement} element - any HTML element in DOM
+ * @param content - tooltip's content
+ * @param options - showing settings
+ */
+export function show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
+  prepare();
 
-  /**
-   * Binds 'mouseenter' and 'mouseleave' events that shows/hides the Tooltip
-   *
-   * @param {HTMLElement} element - any HTML element in DOM
-   * @param content - tooltip's content
-   * @param options - showing settings
-   */
-  public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    this.lib.onHover(element, content, options);
-  }
+  lib?.show(element, content, options);
+}
+
+/**
+ * Hides tooltip
+ *
+ * @param skipHidingDelay — pass true to immediately hide the tooltip
+ */
+export function hide(skipHidingDelay = false): void {
+  prepare();
+
+  lib?.hide(skipHidingDelay);
+}
+
+/**
+ * Binds 'mouseenter' and 'mouseleave' events that shows/hides the Tooltip
+ *
+ * @param {HTMLElement} element - any HTML element in DOM
+ * @param content - tooltip's content
+ * @param options - showing settings
+ */
+export function onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
+  prepare();
+
+  lib?.onHover(element, content, options);
+}
+
+/**
+ * Release the library
+ */
+export function destroy(): void {
+  lib?.destroy();
+  lib = null;
 }

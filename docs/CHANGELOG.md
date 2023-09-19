@@ -3,6 +3,9 @@
 ### 2.29.0
 
 - `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
+- `Fix` — Layout did not shrink when a large document cleared in Chrome
+- `Fix` — Multiple Tooltip elements creation fixed
+- `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
 
 ### 2.28.0
 
