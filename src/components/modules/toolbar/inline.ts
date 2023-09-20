@@ -7,7 +7,7 @@ import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import Tooltip from '../../utils/tooltip';
+import * as tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
@@ -98,10 +98,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private flipper: Flipper = null;
 
   /**
-   * Tooltip utility Instance
-   */
-  private tooltip: Tooltip;
-  /**
    * @class
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
@@ -112,7 +108,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       config,
       eventsDispatcher,
     });
-    this.tooltip = new Tooltip();
   }
 
   /**
@@ -158,52 +153,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
-   * Move Toolbar to the selected text
-   */
-  public move(): void {
-    const selectionRect = SelectionUtils.rect as DOMRect;
-    const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-    const newCoords = {
-      x: selectionRect.x - wrapperOffset.left,
-      y: selectionRect.y +
-        selectionRect.height -
-        // + window.scrollY
-        wrapperOffset.top +
-        this.toolbarVerticalMargin,
-    };
-
-    /**
-     * If we know selections width, place InlineToolbar to center
-     */
-    if (selectionRect.width) {
-      newCoords.x += Math.floor(selectionRect.width / 2);
-    }
-
-    /**
-     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
-     */
-    const realLeftCoord = newCoords.x - this.width / 2;
-    const realRightCoord = newCoords.x + this.width / 2;
-
-    /**
-     * By default, Inline Toolbar has top-corner at the center
-     * We are adding a modifiers for to move corner to the left or right
-     */
-    this.nodes.wrapper.classList.toggle(
-      this.CSS.inlineToolbarLeftOriented,
-      realLeftCoord < this.Editor.UI.contentRect.left - wrapperOffset.x
-    );
-
-    this.nodes.wrapper.classList.toggle(
-      this.CSS.inlineToolbarRightOriented,
-      realRightCoord > this.Editor.UI.contentRect.right - wrapperOffset.x
-    );
-
-    this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-    this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-  }
-
-  /**
    * Hides Inline Toolbar
    */
   public close(): void {
@@ -231,6 +180,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }
     });
 
+    this.reset();
     this.opened = false;
 
     this.flipper.deactivate();
@@ -304,7 +254,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.removeAllNodes();
-    this.tooltip.destroy();
   }
 
   /**
@@ -372,6 +321,65 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Buttons will be filled on opening
      */
     this.enableFlipper();
+  }
+
+  /**
+   * Move Toolbar to the selected text
+   */
+  private move(): void {
+    const selectionRect = SelectionUtils.rect as DOMRect;
+    const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+    const newCoords = {
+      x: selectionRect.x - wrapperOffset.left,
+      y: selectionRect.y +
+        selectionRect.height -
+        // + window.scrollY
+        wrapperOffset.top +
+        this.toolbarVerticalMargin,
+    };
+
+    /**
+     * If we know selections width, place InlineToolbar to center
+     */
+    if (selectionRect.width) {
+      newCoords.x += Math.floor(selectionRect.width / 2);
+    }
+
+    /**
+     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
+     */
+    const realLeftCoord = newCoords.x - this.width / 2;
+    const realRightCoord = newCoords.x + this.width / 2;
+
+    /**
+     * By default, Inline Toolbar has top-corner at the center
+     * We are adding a modifiers for to move corner to the left or right
+     */
+    this.nodes.wrapper.classList.toggle(
+      this.CSS.inlineToolbarLeftOriented,
+      realLeftCoord < this.Editor.UI.contentRect.left - wrapperOffset.x
+    );
+
+    this.nodes.wrapper.classList.toggle(
+      this.CSS.inlineToolbarRightOriented,
+      realRightCoord > this.Editor.UI.contentRect.right - wrapperOffset.x
+    );
+
+    this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+    this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+  }
+
+  /**
+   * Clear orientation classes and reset position
+   */
+  private reset(): void {
+    this.nodes.wrapper.classList.remove(
+      this.CSS.inlineToolbarLeftOriented,
+      this.CSS.inlineToolbarRightOriented
+    );
+
+    this.nodes.wrapper.style.left = 'unset';
+    this.nodes.wrapper.style.top = 'unset';
   }
 
   /**
@@ -465,7 +473,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     });
 
     if (_.isMobileScreen() === false ) {
-      this.tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
+      tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
         placement: 'top',
         hidingDelay: 100,
       });
@@ -594,7 +602,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     if (_.isMobileScreen() === false ) {
-      this.tooltip.onHover(button, tooltipContent, {
+      tooltip.onHover(button, tooltipContent, {
         placement: 'top',
         hidingDelay: 100,
       });

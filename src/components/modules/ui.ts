@@ -310,11 +310,17 @@ export default class UI extends Module<UINodes> {
 
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousedown', (event: MouseEvent | TouchEvent) => {
       this.documentTouched(event);
-    }, true);
+    }, {
+      capture: true,
+      passive: true,
+    });
 
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'touchstart', (event: MouseEvent | TouchEvent) => {
       this.documentTouched(event);
-    }, true);
+    }, {
+      capture: true,
+      passive: true,
+    });
 
     this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
       this.documentKeydown(event);
@@ -479,7 +485,9 @@ export default class UI extends Module<UINodes> {
     if (BlockSelection.anyBlockSelected && !Selection.isSelectionExists) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
 
-      Caret.setToBlock(BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      const newBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
+
+      Caret.setToBlock(newBlock, Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
