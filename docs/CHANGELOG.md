@@ -23,6 +23,7 @@
 - `Improvement` - `blocks.update(id, data)` now can accept partial data object — it will update only passed properties, others will remain the same.
 - `Improvement` - `blocks.update(id, data)` now will trigger onChange with only `block-change` event.
 - `Improvement` - `blocks.update(id, data)` will return a promise with BlockAPI object of the changed block.
+- `Fix` — Some Block were be skipped on saving after pasting them as HTML
 
 ### 2.27.2
 
