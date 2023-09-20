@@ -6,7 +6,7 @@
 - `Fix` — Layout did not shrink when a large document cleared in Chrome
 - `Fix` — Multiple Tooltip elements creation fixed
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
-- `Fix` — Some Block were be skipped on saving after pasting them as HTML in Firefox
+- `Fix` — Some Block were be skipped on saving after pasting them as HTML
 
 ### 2.28.0
 
