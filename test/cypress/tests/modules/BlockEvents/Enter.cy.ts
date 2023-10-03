@@ -13,15 +13,12 @@ describe('Enter keydown', function () {
       },
     });
 
-
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
       .click()
       .selectText('with so')
       .wait(0)
       .type('{enter}');
-
 
     cy.get('[data-cy=editorjs]')
       .find('div.ce-block')

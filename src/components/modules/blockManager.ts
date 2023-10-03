@@ -20,6 +20,7 @@ import { BlockChangedMutationType } from '../../../types/events/block/BlockChang
 import { BlockChanged } from '../events';
 import { clean } from '../utils/sanitizer';
 import { convertStringToBlockData } from '../utils/blocks';
+import PromiseQueue from '../utils/promise-queue';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -244,7 +245,9 @@ export default class BlockManager extends Module {
     }, this.eventsDispatcher);
 
     if (!readOnly) {
-      this.bindBlockEvents(block);
+      window.requestIdleCallback(() => {
+        this.bindBlockEvents(block);
+      }, { timeout: 2000 });
     }
 
     return block;
@@ -318,6 +321,46 @@ export default class BlockManager extends Module {
     }
 
     return block;
+  }
+
+  /**
+   * Inserts several blocks at once
+   *
+   * @param blocks - blocks to insert
+   * @param index - index where to insert
+   */
+  public insertMany(blocks: Block[], index = 0): void {
+    this._blocks.insertMany(blocks, index);
+  }
+
+  /**
+   * Update Block data.
+   *
+   * Currently we don't have an 'update' method in the Tools API, so we just create a new block with the same id and type
+   * Should not trigger 'block-removed' or 'block-added' events
+   *
+   * @param block - block to update
+   * @param data - new data
+   */
+  public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
+    const existingData = await block.data;
+
+    const newBlock = this.composeBlock({
+      id: block.id,
+      tool: block.name,
+      data: Object.assign({}, existingData, data),
+      tunes: block.tunes,
+    });
+
+    const blockIndex = this.getBlockIndex(block);
+
+    this._blocks.replace(blockIndex, newBlock);
+
+    this.blockDidMutated(BlockChangedMutationType, newBlock, {
+      index: blockIndex,
+    });
+
+    return newBlock;
   }
 
   /**
@@ -433,40 +476,48 @@ export default class BlockManager extends Module {
    * Remove passed Block
    *
    * @param block - Block to remove
+   * @param addLastBlock - if true, adds new default block at the end. @todo remove this logic and use event-bus instead
    */
-  public removeBlock(block: Block): void {
-    const index = this._blocks.indexOf(block);
+  public removeBlock(block: Block, addLastBlock = true): Promise<void> {
+    return new Promise((resolve) => {
+      const index = this._blocks.indexOf(block);
 
-    /**
-     * If index is not passed and there is no block selected, show a warning
-     */
-    if (!this.validateIndex(index)) {
-      throw new Error('Can\'t find a Block to remove');
-    }
+      /**
+       * If index is not passed and there is no block selected, show a warning
+       */
+      if (!this.validateIndex(index)) {
+        throw new Error('Can\'t find a Block to remove');
+      }
 
-    block.destroy();
-    this._blocks.remove(index);
+      block.destroy();
+      this._blocks.remove(index);
 
-    /**
-     * Force call of didMutated event on Block removal
-     */
-    this.blockDidMutated(BlockRemovedMutationType, block, {
-      index,
+      /**
+       * Force call of didMutated event on Block removal
+       */
+      this.blockDidMutated(BlockRemovedMutationType, block, {
+        index,
+      });
+
+      if (this.currentBlockIndex >= index) {
+        this.currentBlockIndex--;
+      }
+
+      /**
+       * If first Block was removed, insert new Initial Block and set focus on it`s first input
+       */
+      if (!this.blocks.length) {
+        this.currentBlockIndex = -1;
+
+        if (addLastBlock) {
+          this.insert();
+        }
+      } else if (index === 0) {
+        this.currentBlockIndex = 0;
+      }
+
+      resolve();
     });
-
-    if (this.currentBlockIndex >= index) {
-      this.currentBlockIndex--;
-    }
-
-    /**
-     * If first Block was removed, insert new Initial Block and set focus on it`s first input
-     */
-    if (!this.blocks.length) {
-      this.currentBlockIndex = -1;
-      this.insert();
-    } else if (index === 0) {
-      this.currentBlockIndex = 0;
-    }
   }
 
   /**
@@ -539,10 +590,25 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
+   * If we pass -1 as index, the last block will be returned
+   * There shouldn't be a case when there is no blocks at all — at least one always should exist
+   */
+  public getBlockByIndex(index: -1): Block;
+
+  /**
+   * Returns Block by passed index.
+   *
+   * Could return undefined if there is no block with such index
+   */
+  public getBlockByIndex(index: number): Block | undefined;
+
+  /**
+   * Returns Block by passed index
+   *
    * @param {number} index - index to get. -1 to get last
    * @returns {Block}
    */
-  public getBlockByIndex(index): Block {
+  public getBlockByIndex(index: number): Block | undefined {
     if (index === -1) {
       index = this._blocks.length - 1;
     }
@@ -804,8 +870,17 @@ export default class BlockManager extends Module {
    *                                             we don't need to add an empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needToAddDefaultBlock = false): void {
-    this._blocks.removeAll();
+  public async clear(needToAddDefaultBlock = false): Promise<void> {
+    const queue = new PromiseQueue();
+
+    this.blocks.forEach((block) => {
+      queue.add(async () => {
+        await this.removeBlock(block, false);
+      });
+    });
+
+    await queue.completed;
+
     this.dropPointer();
 
     if (needToAddDefaultBlock) {

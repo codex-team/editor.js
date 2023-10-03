@@ -11,10 +11,6 @@
   }
 
   &__redactor {
-    &--hidden {
-      display: none;
-    }
-
     /**
      * Workaround firefox bug: empty content editable elements has collapsed height
      * https://bugzilla.mozilla.org/show_bug.cgi?id=1098151#c18
@@ -43,28 +39,6 @@
   &--narrow .ce-toolbar__actions {
     @media (--not-mobile) {
       right: -5px;
-    }
-  }
-
-  &__loader {
-    position: relative;
-    height: 30vh;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 30px;
-      height: 30px;
-      margin-top: -15px;
-      margin-left: -15px;
-      border-radius: 50%;
-      border: 2px solid var(--color-gray-border);
-      border-top-color: transparent;
-      box-sizing: border-box;
-      animation: editor-loader-spin 800ms infinite linear;
-      will-change: transform;
     }
   }
 
@@ -107,27 +81,19 @@
   path {
     stroke: currentColor;
   }
+
+
+  /**
+  * Set color for native selection
+  */
+  ::selection{
+    background-color: var(--inlineSelectionColor);
+  }
 }
 
-/**
- * Set color for native selection
- */
-::selection{
-  background-color: var(--inlineSelectionColor);
-}
 
 .codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus::before {
   opacity: 0 !important;
-}
-
-@keyframes editor-loader-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .ce-scroll-locked {

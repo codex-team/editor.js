@@ -479,9 +479,14 @@ export default class Paste extends Module {
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const { BlockManager, Toolbar } = this.Editor;
 
+    /**
+     * When someone pasting into a block, its more stable to set current block by event target, instead of relying on current block set before
+     */
+    const currentBlock = BlockManager.setCurrentBlockByChildNode(event.target as HTMLElement);
+
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !BlockManager.currentBlock || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
+      !currentBlock || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
     ) {
       return;
     }
@@ -489,7 +494,7 @@ export default class Paste extends Module {
     /**
      * If Tools is in list of errors, skip processing of paste event
      */
-    if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
+    if (currentBlock && this.exceptionList.includes(currentBlock.name)) {
       return;
     }
 

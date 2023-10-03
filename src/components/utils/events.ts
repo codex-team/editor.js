@@ -94,6 +94,12 @@ export default class EventsDispatcher<EventMap> {
    * @param callback - event handler
    */
   public off<Name extends keyof EventMap>(eventName: Name, callback: Listener<EventMap[Name]>): void {
+    if (this.subscribers[eventName] === undefined) {
+      console.warn(`EventDispatcher .off(): there is no subscribers for event "${eventName.toString()}". Probably, .off() called before .on()`);
+
+      return;
+    }
+
     for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];
@@ -107,6 +113,6 @@ export default class EventsDispatcher<EventMap> {
    * clears subscribers list
    */
   public destroy(): void {
-    this.subscribers = null;
+    this.subscribers = {} as Subscriptions<EventMap>;
   }
 }
