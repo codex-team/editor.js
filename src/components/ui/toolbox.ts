@@ -3,48 +3,19 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItem } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import Popover, { PopoverEvent } from '../utils/popover';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
+import { ToolboxOpened } from '../events/ToolboxOpened';
+import { ToolboxClosed } from '../events/ToolboxClosed';
+import { EditorEventMap } from '../events';
+import { ToolboxBlockAdded } from '../events/ToolboxBlockAdded';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
  */
-
-/**
- * Event that can be triggered by the Toolbox
- */
-export enum ToolboxEvent {
-  /**
-   * When the Toolbox is opened
-   */
-  Opened = 'toolbox-opened',
-
-  /**
-   * When the Toolbox is closed
-   */
-  Closed = 'toolbox-closed',
-
-  /**
-   * When the new Block added by Toolbox
-   */
-  BlockAdded = 'toolbox-block-added',
-}
-
-/**
- * Events fired by the Toolbox
- *
- * Event name -> payload
- */
-export interface ToolboxEventMap {
-  [ToolboxEvent.Opened]: undefined;
-  [ToolboxEvent.Closed]: undefined;
-  [ToolboxEvent.BlockAdded]: {
-    block: BlockAPI
-  };
-}
 
 /**
  * Available i18n dict keys that should be passed to the constructor
@@ -56,9 +27,9 @@ type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
  * This UI element contains list of Block Tools available to be inserted
  * It appears after click on the Plus Button
  *
- * @implements {EventsDispatcher} with some events, see {@link ToolboxEvent}
+ * @implements {EventsDispatcher} with some events, see {@link EditorEventMap}
  */
-export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
+export default class Toolbox extends EventsDispatcher<EditorEventMap> {
   /**
    * Returns True if Toolbox is Empty and nothing to show
    *
@@ -199,7 +170,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
     this.popover?.show();
     this.opened = true;
-    this.emit(ToolboxEvent.Opened);
+    this.emit(ToolboxOpened);
+    this.api.events.emit(ToolboxOpened, undefined);
   }
 
   /**
@@ -208,7 +180,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   public close(): void {
     this.popover?.hide();
     this.opened = false;
-    this.emit(ToolboxEvent.Closed);
+    this.emit(ToolboxClosed);
+    this.api.events.emit(ToolboxClosed, undefined);
   }
 
   /**
@@ -227,7 +200,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    */
   private onPopoverClose = (): void => {
     this.opened = false;
-    this.emit(ToolboxEvent.Closed);
+    this.emit(ToolboxClosed);
+    this.api.events.emit(ToolboxClosed, undefined);
   };
 
   /**
@@ -394,7 +368,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
     this.api.caret.setToBlock(index);
 
-    this.emit(ToolboxEvent.BlockAdded, {
+    this.emit(ToolboxBlockAdded, {
+      block: newBlock,
+    });
+    this.api.events.emit(ToolboxBlockAdded, {
       block: newBlock,
     });
 

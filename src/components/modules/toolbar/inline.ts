@@ -12,6 +12,8 @@ import { ModuleConfig } from '../../../types-internal/module-config';
 import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
 import { IconChevronDown } from '@codexteam/icons';
+import { InlineToolbarOpened } from '../../events/InlineToolbarOpened';
+import { InlineToolbarClosed } from '../../events/InlineToolbarClosed';
 
 /**
  * Inline Toolbar elements
@@ -182,6 +184,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.reset();
     this.opened = false;
+    this.eventsDispatcher.emit(InlineToolbarClosed);
 
     this.flipper.deactivate();
     this.Editor.ConversionToolbar.close();
@@ -208,6 +211,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
+    this.eventsDispatcher.emit(InlineToolbarOpened);
 
     if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
       /**
