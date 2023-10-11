@@ -599,10 +599,25 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
+   * If we pass -1 as index, the last block will be returned
+   * There shouldn't be a case when there is no blocks at all — at least one always should exist
+   */
+  public getBlockByIndex(index: -1): Block;
+
+  /**
+   * Returns Block by passed index.
+   *
+   * Could return undefined if there is no block with such index
+   */
+  public getBlockByIndex(index: number): Block | undefined;
+
+  /**
+   * Returns Block by passed index
+   *
    * @param {number} index - index to get. -1 to get last
    * @returns {Block}
    */
-  public getBlockByIndex(index): Block {
+  public getBlockByIndex(index: number): Block | undefined {
     if (index === -1) {
       index = this._blocks.length - 1;
     }
