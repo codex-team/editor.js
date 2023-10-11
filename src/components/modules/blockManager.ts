@@ -399,7 +399,16 @@ export default class BlockManager extends Module {
     });
 
     try {
-      block.call(BlockToolAPI.ON_PASTE, pasteEvent);
+      /**
+       * We need to call onPaste after Block will be ready
+       * because onPaste could change tool's root element, and we need to do that after block.watchBlockMutations() bound
+       * to detect tool root element change
+       *
+       * @todo make this.insert() awaitable and remove requestIdleCallback
+       */
+      window.requestIdleCallback(() => {
+        block.call(BlockToolAPI.ON_PASTE, pasteEvent);
+      });
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
