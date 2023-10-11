@@ -7,6 +7,10 @@
 - `Fix` — Multiple Tooltip elements creation fixed
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
 
+### 2.28.1
+
+- `Fix` — Some Block were be skipped on saving after pasting them as HTML
+
 ### 2.28.0
 
 - `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want to access a Block's element by id.
@@ -30,7 +34,7 @@
 - `Improvement` - `blocks.update(id, data)` now can accept partial data object — it will update only passed properties, others will remain the same.
 - `Improvement` - `blocks.update(id, data)` now will trigger onChange with only `block-change` event.
 - `Improvement` - `blocks.update(id, data)` will return a promise with BlockAPI object of the changed block.
-- `Fix` — Some Block were be skipped on saving after pasting them as HTML
+
 
 ### 2.27.2
 
