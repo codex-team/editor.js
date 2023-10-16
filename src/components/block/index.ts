@@ -26,6 +26,7 @@ import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 import { convertBlockDataToString } from '../utils/blocks';
+import { NOTIMP } from 'dns';
 
 /**
  * Interface describes Block class constructor argument
@@ -553,6 +554,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public async mergeWith(data: BlockToolData): Promise<void> {
     await this.toolInstance.merge(data);
   }
+
+  /**
+   * Performs block specific readOnly functionality. Specific type of Blocks need to override accordingly
+   */
+  public toggleReadOnly() : void {
+    throw NOTIMP;
+  } 
 
   /**
    * Extracts data from Block

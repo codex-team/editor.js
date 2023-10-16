@@ -1,4 +1,6 @@
 import Module from '../__module';
+import Block from '../block';
+import * as _ from '../utils';
 import { CriticalError } from '../errors/critical';
 
 /**
@@ -90,6 +92,30 @@ export default class ReadOnly extends Module {
     if (oldState === state) {
       return this.readOnlyEnabled;
     }
+
+    /**
+     * Call toggleReadOnly for all the blocks which handle their own behavior 
+     */
+    this.Editor.BlockManager.blocks.forEach(async block => {
+      var wasReadOnlyHandled = false;
+      try {
+        block.toggleReadOnly();
+        wasReadOnlyHandled = true;
+      }
+      catch (e) {
+        _.log(
+          `toggleReadOnly not implemented by «${block.id}» Block type. Therefore, we save state and rerender`,
+          'info',
+          e
+        );
+      }
+
+      if (!wasReadOnlyHandled) {
+        await this.Editor.BlockManager.removeBlock(block);
+        // get only OutputBlockData for just this block
+        await this.Editor.Renderer.render(await block.data);
+      }
+    });
 
     /**
      * Save current Editor Blocks and render again
