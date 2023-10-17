@@ -571,10 +571,10 @@
   dependencies:
     "@codexteam/icons" "^0.0.5"
 
-"@editorjs/paragraph@^2.10.0":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/paragraph/-/paragraph-2.10.0.tgz#dcf152e69738a9399b4af83262606d76cf1376e5"
-  integrity sha512-AzaGxR9DQAdWhx43yupBcwqtwH0WWi5jBDOCSeALIK86IYOnO6Lp4anEbH8IYmYrE/5MdnRiTwdU8/Xs8W15Nw==
+"@editorjs/paragraph@^2.11.1":
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/@editorjs/paragraph/-/paragraph-2.11.1.tgz#86e14a9f4856eaa9577ddf65cfcf21a89f0b4bca"
+  integrity sha512-OekbO6/47yTV7n6+uF/Qw2/blsI+QpveqdFUK5dh0Hq6hfKMjBYkENiShmEUKP69EbI9BQrlMNVnrmz8W4V2jw==
   dependencies:
     "@codexteam/icons" "^0.0.4"
 
