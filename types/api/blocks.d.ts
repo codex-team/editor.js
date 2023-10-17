@@ -9,7 +9,7 @@ export interface Blocks {
   /**
    * Remove all blocks from Editor zone
    */
-  clear(): void;
+  clear(): Promise<void>;
 
   /**
    * Render passed data
@@ -134,9 +134,9 @@ export interface Blocks {
    * Updates block data by id
    *
    * @param id - id of the block to update
-   * @param data - the new data
+   * @param data - the new data. Can be partial.
    */
-  update(id: string, data: BlockToolData): void;
+  update(id: string, data: Partial<BlockToolData>): Promise<BlockAPI>;
 
   /**
    * Converts block to another type. Both blocks should provide the conversionConfig.

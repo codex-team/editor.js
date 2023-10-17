@@ -31,7 +31,7 @@ import {
 } from './api';
 
 import { OutputData } from './data-formats';
-import { BlockMutationEventMap } from './events/block';
+import { BlockMutationEvent, BlockMutationEventMap, BlockMutationType } from './events/block';
 import { BlockAddedMutationType, BlockAddedEvent } from './events/block/BlockAdded';
 import { BlockChangedMutationType, BlockChangedEvent } from './events/block/BlockChanged';
 import { BlockMovedMutationType, BlockMovedEvent } from './events/block/BlockMoved';
@@ -85,6 +85,8 @@ export { OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockId } from './data-formats/block-id';
 export { BlockAPI } from './api'
 export {
+  BlockMutationType,
+  BlockMutationEvent,
   BlockMutationEventMap,
   BlockAddedMutationType,
   BlockAddedEvent,

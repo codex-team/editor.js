@@ -221,6 +221,24 @@ export default class Blocks {
   }
 
   /**
+   * Replaces block under passed index with passed block
+   *
+   * @param index - index of existed block
+   * @param block - new block
+   */
+  public replace(index: number, block: Block): void {
+    if (this.blocks[index] === undefined) {
+      throw Error('Incorrect index');
+    }
+
+    const prevBlock = this.blocks[index];
+
+    prevBlock.holder.replaceWith(block.holder);
+
+    this.blocks[index] = block;
+  }
+
+  /**
    * Inserts several blocks at once
    *
    * @param blocks - blocks to insert
@@ -305,7 +323,7 @@ export default class Blocks {
    * @param {number} index — Block index
    * @returns {Block}
    */
-  public get(index: number): Block {
+  public get(index: number): Block | undefined {
     return this.blocks[index];
   }
 

@@ -1,8 +1,10 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import { BlockTool, BlockToolData } from '../../../types';
+import { BlockTool, BlockToolData, OutputData } from '../../../types';
 import $ from '../../../src/components/dom';
+import type EditorJS from '../../../types/index';
+
 
 describe('Copy pasting from Editor', function () {
   context('pasting', function () {
@@ -111,7 +113,7 @@ describe('Copy pasting from Editor', function () {
         tools: {
           header: Header,
         },
-      });
+      }).as('editorInstance');
 
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
@@ -121,6 +123,9 @@ describe('Copy pasting from Editor', function () {
           'text/html': '<h2>First block</h2><p>Second block</p>',
         });
 
+      /**
+       * Check inserted blocks
+       */
       cy.get('[data-cy=editorjs]')
         .get('h2.ce-header')
         .should('contain', 'First block');
@@ -128,6 +133,28 @@ describe('Copy pasting from Editor', function () {
       cy.get('[data-cy=editorjs]')
         .get('div.ce-paragraph')
         .should('contain', 'Second block');
+
+      /**
+       * Check saved data as well
+       */
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          cy.wrap<OutputData>(await editor.save())
+            .then((data) => {
+              /**
+               * <h2> has been correctly saved
+               */
+              expect(data.blocks[0].type).to.eq('header');
+              expect(data.blocks[0].data.text).to.eq('First block');
+              expect(data.blocks[0].data.level).to.eq(2);
+
+              /**
+               * <p> has been correctly saved
+               */
+              expect(data.blocks[1].type).to.eq('paragraph');
+              expect(data.blocks[1].data.text).to.eq('Second block');
+            });
+        });
     });
 
     it('should parse pattern', function () {
