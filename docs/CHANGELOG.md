@@ -7,6 +7,10 @@
 - `Fix` — Multiple Tooltip elements creation fixed
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
 
+### 2.28.2
+
+- `Fix` — Get rid of redundant logs from the build
+
 ### 2.28.1
 
 - `Fix` — Some Block were be skipped on saving after pasting them as HTML
