@@ -7,6 +7,7 @@
 - `Fix` — Multiple Tooltip elements creation fixed
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
 - `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
+- `Fix` — Editor wrapper element growing on the Inline Toolbar close
 
 ### 2.28.2
 
