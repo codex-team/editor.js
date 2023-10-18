@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.29.0-rc.1",
+  "version": "2.29.0-rc.3",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -44,7 +44,7 @@
     "@editorjs/code": "^2.7.0",
     "@editorjs/delimiter": "^1.2.0",
     "@editorjs/header": "^2.7.0",
-    "@editorjs/paragraph": "^2.10.0",
+    "@editorjs/paragraph": "^2.11.1",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^18.15.11",
     "chai-subset": "^1.6.0",
