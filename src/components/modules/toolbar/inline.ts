@@ -379,8 +379,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.CSS.inlineToolbarRightOriented
     );
 
-    this.nodes.wrapper.style.left = 'unset';
-    this.nodes.wrapper.style.top = 'unset';
+    this.nodes.wrapper.style.left = '0';
+    this.nodes.wrapper.style.top = '0';
   }
 
   /**
