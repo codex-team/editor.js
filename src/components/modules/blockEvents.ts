@@ -49,7 +49,7 @@ export default class BlockEvents extends Module {
         this.arrowLeftAndUp(event);
         break;
 
-      case _.keyCodes.TAB:
+      case this.config.toolboxKeyCode:
         this.tabPressed(event);
         break;
     }
@@ -135,18 +135,35 @@ export default class BlockEvents extends Module {
     const canOpenToolbox = currentBlock.tool.isDefault && isEmptyBlock;
     const conversionToolbarOpened = !isEmptyBlock && ConversionToolbar.opened;
     const inlineToolbarOpened = !isEmptyBlock && !SelectionUtils.isCollapsed && InlineToolbar.opened;
-    const canOpenBlockTunes = !conversionToolbarOpened && !inlineToolbarOpened;
+    const canOpenBlockTunes = !conversionToolbarOpened && !inlineToolbarOpened && this.isBlockSettingKeyPressed(event);
 
     /**
      * For empty Blocks we show Plus button via Toolbox only for default Blocks
      */
     if (canOpenToolbox) {
+      event.stopPropagation();
+      event.preventDefault();
       this.activateToolbox();
     } else if (canOpenBlockTunes) {
+      event.stopPropagation();
+      event.preventDefault();
       this.activateBlockSettings();
     }
   }
 
+  /**
+   * Returns whether the setting key is pressed
+   *
+   * @param {KeyboardEvent} event keyboard event
+   * @private
+   */
+  private isBlockSettingKeyPressed(event: KeyboardEvent): boolean {
+    if (this.config.blockSettingModifier === undefined) {
+      return true;
+    }
+
+    return event.getModifierState(this.config.blockSettingModifier);
+  }
   /**
    * Add drop target styles
    *

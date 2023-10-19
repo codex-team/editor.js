@@ -104,4 +104,15 @@ export interface EditorConfig {
    * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
    */
   tunes?: string[];
+
+  /**
+   * KeyCode for activate toolbox
+   */
+  toolboxKeyCode?: number;
+
+  /**
+   * Modifier key for activate block setting
+   */
+  blockSettingModifier?: string;
+
 }

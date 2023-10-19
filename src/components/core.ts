@@ -7,6 +7,7 @@ import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
 import Modules from './modules';
 import { EditorEventMap } from './events';
+import { keyCodes } from './utils';
 
 /**
  * Editor.js core class. Bootstraps modules.
@@ -187,6 +188,11 @@ export default class Core {
      * Text direction. If not set, uses ltr
      */
     this.config.i18n.direction = this.config.i18n?.direction || 'ltr';
+
+    /**
+     * KeyCode for activate toolbox. If not set, uses TAB key
+     */
+    this.config.toolboxKeyCode = this.config.toolboxKeyCode || keyCodes.TAB;
   }
 
   /**
