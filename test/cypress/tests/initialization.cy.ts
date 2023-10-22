@@ -48,5 +48,21 @@ describe('Editor basic initialization', () => {
           .should('eq', 'false');
       });
     });
+
+    describe('style', () => {
+      describe('nonce', () => {
+        it('should add passed nonce as attribute to editor style tag', () => {
+          cy.createEditor({
+            style: {
+              nonce: 'test-nonce',
+            },
+          }).as('editorInstance');
+
+          cy.get('[data-cy=editorjs]')
+            .get('#editor-js-styles')
+            .should('have.attr', 'nonce', 'test-nonce');
+        });
+      });
+    });
   });
 });
