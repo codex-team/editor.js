@@ -2,6 +2,7 @@
 
 ### 2.29.0
 
+- `New` — Editor Config now has the `style.nonce` attribute that could be used to allowlist editor style tag for Content Security Policy "style-src"
 - `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
 - `Fix` — Layout did not shrink when a large document cleared in Chrome
 - `Fix` — Multiple Tooltip elements creation fixed

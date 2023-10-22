@@ -104,4 +104,15 @@ export interface EditorConfig {
    * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
    */
   tunes?: string[];
+
+  /**
+   * Section for style-related settings
+   */
+  style?: {
+    /**
+     * A random value to handle Content Security Policy "style-src" policy
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce
+     */
+    nonce?: string;
+  }
 }

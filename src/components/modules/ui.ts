@@ -295,6 +295,15 @@ export default class UI extends Module<UINodes> {
     });
 
     /**
+     * If user enabled Content Security Policy, he can pass nonce through the config
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce
+     */
+    if (this.config.style && !_.isEmpty(this.config.style) && this.config.style.nonce) {
+      tag.setAttribute('nonce', this.config.style.nonce);
+    }
+
+    /**
      * Append styles at the top of HEAD tag
      */
     $.prepend(document.head, tag);
