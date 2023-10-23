@@ -46,14 +46,14 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    tooltip.show(element, content, options);
+    tooltip.show(element, content, options, this.config);
   }
 
   /**
    * Method hides tooltip on HTML page
    */
   public hide(): void {
-    tooltip.hide();
+    tooltip.hide(false, this.config);
   }
 
   /**
@@ -64,6 +64,6 @@ export default class TooltipAPI extends Module {
    * @param {TooltipOptions} options - tooltip options
    */
   public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    tooltip.onHover(element, content, options);
+    tooltip.onHover(element, content, options, this.config);
   }
 }
