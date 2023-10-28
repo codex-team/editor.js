@@ -476,6 +476,11 @@ export default class UI extends Module<UINodes> {
     this.Editor.BlockManager.dropPointer();
 
     /**
+     * Close InlineToolbar
+     */
+    this.Editor.InlineToolbar.close();
+
+    /**
      * Close Toolbar
      */
     this.Editor.Toolbar.close();
@@ -485,7 +490,12 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const { BlockManager, BlockSelection, Caret, InlineToolbar } = this.Editor;
+
+    /**
+     *  Close InlineToolbar
+     */
+    InlineToolbar.close();
 
     /**
      * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
