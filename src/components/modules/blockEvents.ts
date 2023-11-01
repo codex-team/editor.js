@@ -6,7 +6,7 @@ import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 import type Block from '../block';
-import { areBlocksMergeable } from '../utils/blocks';
+import {areBlocksMergeable} from '../utils/blocks';
 
 /**
  *
@@ -38,7 +38,9 @@ export default class BlockEvents extends Module {
       case _.keyCodes.ENTER:
         this.enter(event);
         break;
-
+      case _.keyCodes.TAB:
+        this.enter(event);
+        break;
       case _.keyCodes.DOWN:
       case _.keyCodes.RIGHT:
         this.arrowRightAndDown(event);
@@ -49,7 +51,7 @@ export default class BlockEvents extends Module {
         this.arrowLeftAndUp(event);
         break;
 
-      case event.ctrlKey && _.keyCodes.SLASH:
+      case (event.ctrlKey || event.metaKey) && _.keyCodes.SLASH:
         this.tabPressed(event);
         break;
     }
@@ -124,7 +126,7 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    const { BlockManager, InlineToolbar, ConversionToolbar } = this.Editor;
+    const {BlockManager, InlineToolbar, ConversionToolbar} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
@@ -176,7 +178,7 @@ export default class BlockEvents extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   public handleCommandC(event: ClipboardEvent): void {
-    const { BlockSelection } = this.Editor;
+    const {BlockSelection} = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
@@ -192,7 +194,7 @@ export default class BlockEvents extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   public handleCommandX(event: ClipboardEvent): void {
-    const { BlockSelection, BlockManager, Caret } = this.Editor;
+    const {BlockSelection, BlockManager, Caret} = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
@@ -219,7 +221,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const { BlockManager, UI } = this.Editor;
+    const {BlockManager, UI} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     /**
@@ -245,7 +247,17 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * 处理普通文本首行tab
+     * @author asan
+     */
+    if (event.keyCode === _.keyCodes.TAB && currentBlock.name === 'paragraph') {
+      event.preventDefault();
+      return;
+    }
+
     let newCurrent = this.Editor.BlockManager.currentBlock;
+
 
     /**
      * If enter has been pressed at the start of the text, just insert paragraph Block above
@@ -253,10 +265,10 @@ export default class BlockEvents extends Module {
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
 
-    /**
-     * If caret is at very end of the block, just append the new block without splitting
-     * to prevent unnecessary dom mutation observing
-     */
+      /**
+       * If caret is at very end of the block, just append the new block without splitting
+       * to prevent unnecessary dom mutation observing
+       */
     } else if (this.Editor.Caret.isAtEnd) {
       newCurrent = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
@@ -283,8 +295,16 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private backspace(event: KeyboardEvent): void {
-    const { BlockManager, Caret } = this.Editor;
-    const { currentBlock, previousBlock } = BlockManager;
+    const {BlockManager, Caret} = this.Editor;
+    const {currentBlock, previousBlock} = BlockManager;
+
+
+    /**
+     * 文本在非首行首列时，不处理backspace事件
+     */
+    if (currentBlock.name === 'paragraph' && !Caret.isAtStartForText) {
+      return;
+    }
 
     /**
      * If some fragment is selected, leave native behaviour
@@ -366,9 +386,12 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private delete(event: KeyboardEvent): void {
-    const { BlockManager, Caret } = this.Editor;
-    const { currentBlock, nextBlock } = BlockManager;
+    const {BlockManager, Caret} = this.Editor;
+    const {currentBlock, nextBlock} = BlockManager;
 
+    if (currentBlock.name === 'paragraph' && !Caret.isAtStartForText) {
+      return;
+    }
     /**
      * If some fragment is selected, leave native behaviour
      */
@@ -447,7 +470,7 @@ export default class BlockEvents extends Module {
    * @param blockToMerge - what Block we want to merge
    */
   private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
-    const { BlockManager, Caret, Toolbar } = this.Editor;
+    const {BlockManager, Caret, Toolbar} = this.Editor;
 
     Caret.createShadow(targetBlock.pluginsContent);
 
@@ -511,7 +534,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
@@ -527,6 +550,13 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keyboard event
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    const {BlockManager, Caret} = this.Editor;
+    const {currentBlock} = BlockManager;
+
+    if (currentBlock.name === 'paragraph' && !Caret.isAtStartForText) {
+      return;
+    }
+
     /**
      * Arrows might be handled on toolbars by flipper
      * Check for Flipper.usedKeys to allow navigate by UP and disallow by LEFT
@@ -570,7 +600,7 @@ export default class BlockEvents extends Module {
         if (this.Editor.BlockManager.currentBlock) {
           this.Editor.BlockManager.currentBlock.updateCurrentInput();
         }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 20)();
     }
 
@@ -587,10 +617,10 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event: KeyboardEvent): boolean {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbar.toolbox.opened),
-        blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
-        inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
-        conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
-        flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
+      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+      inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
+      conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
+      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
     /**
      * Do not close Toolbar in cases:

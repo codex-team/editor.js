@@ -368,7 +368,7 @@ export default class SelectionUtils {
   }
 
   /**
-   * Adds fake cursor to the current range
+   * adds fake cursor to the current range
    */
   public static addFakeCursor(): void {
     const range = SelectionUtils.range;
