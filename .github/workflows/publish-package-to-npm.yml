@@ -46,6 +46,8 @@ jobs:
   notify:
     needs: publish
     runs-on: ubuntu-latest
+    env:
+      GITHUB_LINK: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}
     steps:
         # Checkout to target branch
         - uses: actions/checkout@v4
@@ -53,23 +55,11 @@ jobs:
         - name: Get package info
           id: package
           uses: codex-team/action-nodejs-package-info@v1
-
-        - name: Set link to the github repository
-          if: ${{ github.event_name != 'release ' }}
-          run: |
-            echo "GITHUB_LINK=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
-          shell: bash
-        
-        # If package is released, set the link to the released version
-        - name: Set github link to latest version
-          if: ${{ github.event_name == 'release' }}
-          run: |
-            echo "GITHUB_LINK=${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}" >> $GITHUB_ENV
   
         - name: Send a message
           uses: codex-team/action-codexbot-notify@v1
           with:
-            webhook: https://notify.bot.codex.so/u/IJBC1JPEBK5P
+            webhook: ${{ secrets.CODEX_BOT_NOTIFY_EDITORJS_PUBLIC_CHAT }}
             message: '📦 [${{ steps.package.outputs.name }} ${{ steps.package.outputs.version }}](${{ env.GITHUB_LINK }}) was published'
             parse_mode: 'markdown'
             disable_web_page_preview: true
