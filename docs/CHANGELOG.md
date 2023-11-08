@@ -9,6 +9,7 @@
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
 - `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
 - `Fix` — Editor wrapper element growing on the Inline Toolbar close
+- `Fix` — Fix errors thrown by clicks on a document when the editor is being initialized
 
 ### 2.28.2
 

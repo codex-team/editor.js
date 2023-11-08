@@ -13,7 +13,10 @@ import Popover, { PopoverEvent } from '../../utils/popover';
  * HTML Elements that used for BlockSettings
  */
 interface BlockSettingsNodes {
-  wrapper: HTMLElement;
+  /**
+   * Block Settings wrapper. Undefined when before "make" method called
+   */
+  wrapper: HTMLElement | undefined;
 }
 
 /**
