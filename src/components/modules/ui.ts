@@ -150,12 +150,20 @@ export default class UI extends Module<UINodes> {
      */
     if (!readOnlyEnabled) {
       /**
-       * Unbind all events
+       * Postpone events binding to the next tick to make sure all ui elements are ready
        */
-      this.enableModuleBindings();
+      window.requestIdleCallback(() => {
+        /**
+         * Bind events for the UI elements
+         */
+        this.enableModuleBindings();
+      }, {
+        timeout: 2000,
+      });
     } else {
       /**
-       * Bind events for the UI elements
+       * Unbind all events
+       *
        */
       this.disableModuleBindings();
     }
@@ -633,8 +641,8 @@ export default class UI extends Module<UINodes> {
      * But allow clicking inside Block Settings.
      * Also, do not process clicks on the Block Settings Toggler, because it has own click listener
      */
-    const isClickedInsideBlockSettings = this.Editor.BlockSettings.nodes.wrapper.contains(target);
-    const isClickedInsideBlockSettingsToggler = this.Editor.Toolbar.nodes.settingsToggler.contains(target);
+    const isClickedInsideBlockSettings = this.Editor.BlockSettings.nodes.wrapper?.contains(target);
+    const isClickedInsideBlockSettingsToggler = this.Editor.Toolbar.nodes.settingsToggler?.contains(target);
     const doNotProcess = isClickedInsideBlockSettings || isClickedInsideBlockSettingsToggler;
 
     if (this.Editor.BlockSettings.opened && !doNotProcess) {

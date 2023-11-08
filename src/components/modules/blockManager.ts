@@ -744,7 +744,11 @@ export default class BlockManager extends Module {
    * @param {Node} childNode - node to get Block by
    * @returns {Block}
    */
-  public getBlockByChildNode(childNode: Node): Block {
+  public getBlockByChildNode(childNode: Node): Block | undefined {
+    if (!childNode || childNode instanceof Node === false) {
+      return undefined;
+    }
+
     /**
      * If node is Text TextNode
      */
