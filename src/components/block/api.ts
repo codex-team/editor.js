@@ -104,6 +104,10 @@ function BlockAPI(
       return block.save();
     },
 
+    markdown(): string {
+      return block.markdown();
+    },
+
     /**
      * Validate Block data
      *

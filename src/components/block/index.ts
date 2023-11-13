@@ -620,6 +620,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return isValid;
   }
 
+  public markdown(): string {
+    if (this.toolInstance.markdown instanceof Function) {
+      return this.toolInstance.markdown();
+    }
+    return '';
+  }
+
   /**
    * Returns data to render in tunes menu.
    * Splits block tunes settings into 2 groups: popover items and custom html.

@@ -53,6 +53,13 @@ export interface BlockAPI {
   call(methodName: string, param?: object): void;
 
   /**
+   * support markdown file export
+   * @return {string}
+   * @author asan
+   */
+  markdown(): string;
+
+  /**
    * Save Block content
    *
    * @return {Promise<void|SavedData>}

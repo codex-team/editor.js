@@ -11,10 +11,11 @@ import * as _ from '../utils';
 import Selection from '../selection';
 import Block from '../block';
 import Flipper from '../flipper';
-import { mobileScreenBreakpoint } from '../utils';
+import {mobileScreenBreakpoint} from '../utils';
 
 import styles from '../../styles/main.css?inline';
-import { BlockHovered } from '../events/BlockHovered';
+import {BlockHovered} from '../events/BlockHovered';
+
 /**
  * HTML Elements used for UI
  */
@@ -49,7 +50,7 @@ export default class UI extends Module<UINodes> {
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
     editorEmpty: string; editorRtlFix: string;
-    } {
+  } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
@@ -110,7 +111,7 @@ export default class UI extends Module<UINodes> {
    */
   private resizeDebouncer: () => void = _.debounce(() => {
     this.windowResize();
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   }, 200);
 
   /**
@@ -165,7 +166,7 @@ export default class UI extends Module<UINodes> {
    * Check if Editor is empty and set CSS class to wrapper
    */
   public checkEmptiness(): void {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
   }
@@ -177,7 +178,7 @@ export default class UI extends Module<UINodes> {
    * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const {Toolbar, BlockSettings, InlineToolbar, ConversionToolbar} = this.Editor;
 
     return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbar.toolbox.opened;
   }
@@ -216,7 +217,7 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const {Toolbar, BlockSettings, InlineToolbar, ConversionToolbar} = this.Editor;
 
     BlockSettings.close();
     InlineToolbar.close();
@@ -247,7 +248,7 @@ export default class UI extends Module<UINodes> {
      */
     this.nodes.wrapper = $.make('div', [
       this.CSS.editorWrapper,
-      ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
+      ...(this.isRtl ? [this.CSS.editorRtlFix] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
@@ -276,7 +277,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Load CSS
      */
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
     const styleTagId = 'editor-js-styles';
 
     /**
@@ -381,7 +382,7 @@ export default class UI extends Module<UINodes> {
       this.eventsDispatcher.emit(BlockHovered, {
         block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
       });
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 20), {
       passive: true,
     });
@@ -441,7 +442,7 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const { currentBlock } = this.Editor.BlockManager;
+    const {currentBlock} = this.Editor.BlockManager;
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
@@ -476,7 +477,7 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private backspacePressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
 
     /**
      * If any block selected and selection doesn't exists on the page (that means no other editable element is focused),
@@ -535,7 +536,7 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection } = this.Editor;
+    const {BlockManager, BlockSelection} = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -660,9 +661,22 @@ export default class UI extends Module<UINodes> {
      * If click was fired on Editor`s wrapper, try to get clicked node by elementFromPoint method
      */
     if (clickedNode === this.nodes.redactor) {
-      const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-      const clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+      // let clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+      // let clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+      let clientX: number, clientY: number;
 
+      if (event instanceof MouseEvent) {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      } else if (event.touches) {
+        if (event.touches.length > 1) {
+          clientX = event.touches[0].clientX;
+          clientY = event.touches[0].clientY;
+        }
+      } else if (event instanceof MouseEvent) {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
       clickedNode = document.elementFromPoint(clientX, clientY) as HTMLElement;
     }
 
@@ -740,7 +754,7 @@ export default class UI extends Module<UINodes> {
 
     const lastBlockBottomCoord = $.offset(lastBlock.holder).bottom;
     const clickedCoord = event.pageY;
-    const { BlockSelection } = this.Editor;
+    const {BlockSelection} = this.Editor;
     const isClickedBottom = event.target instanceof Element &&
       event.target.isEqualNode(this.nodes.redactor) &&
       /**
@@ -757,7 +771,7 @@ export default class UI extends Module<UINodes> {
       event.stopImmediatePropagation();
       event.stopPropagation();
 
-      const { BlockManager, Caret, Toolbar } = this.Editor;
+      const {BlockManager, Caret, Toolbar} = this.Editor;
 
       /**
        * Insert a default-block at the bottom if:
@@ -782,7 +796,7 @@ export default class UI extends Module<UINodes> {
    * Uses for showing the Inline Toolbar
    */
   private selectionChanged(): void {
-    const { CrossBlockSelection, BlockSelection } = this.Editor;
+    const {CrossBlockSelection, BlockSelection} = this.Editor;
     const focusedElement = Selection.anchorElement;
 
     if (CrossBlockSelection.isCrossBlockSelectionStarted) {

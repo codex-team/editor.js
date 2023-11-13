@@ -24,6 +24,8 @@ export interface BlockTool extends BaseTool {
    */
   save(block: HTMLElement): BlockToolData;
 
+  markdown?(): string;
+
   /**
    * Create Block's settings block
    */

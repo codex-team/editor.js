@@ -9,8 +9,8 @@ import {
   SanitizerRule
 } from '../../../types';
 import Block from '../block';
-import { SavedData } from '../../../types/data-formats';
-import { clean, sanitizeBlocks } from '../utils/sanitizer';
+import {SavedData} from '../../../types/data-formats';
+import {clean, sanitizeBlocks} from '../utils/sanitizer';
 import BlockTool from '../tools/block';
 
 /**
@@ -165,13 +165,13 @@ export default class Paste extends Module {
    * @param {boolean} isDragNDrop - true if data transfer comes from drag'n'drop events
    */
   public async processDataTransfer(dataTransfer: DataTransfer, isDragNDrop = false): Promise<void> {
-    const { Tools } = this.Editor;
+    const {Tools} = this.Editor;
     const types = dataTransfer.types;
 
     /**
      * In Microsoft Edge types is DOMStringList. So 'contains' is used to check if 'Files' type included
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const includesFiles = types.includes ? types.includes('Files') : (types as any).contains('Files');
 
     if (includesFiles && !_.isEmpty(this.toolsFiles)) {
@@ -192,7 +192,8 @@ export default class Paste extends Module {
         this.insertEditorJSData(JSON.parse(editorJSData));
 
         return;
-      } catch (e) { } // Do nothing and continue execution as usual if error appears
+      } catch (e) {
+      } // Do nothing and continue execution as usual if error appears
     }
 
     /**
@@ -213,7 +214,7 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = Object.assign({}, toolsTags, Tools.getAllInlineToolsSanitizeConfig(), { br: {} });
+    const customConfig = Object.assign({}, toolsTags, Tools.getAllInlineToolsSanitizeConfig(), {br: {}});
     const cleanData = clean(htmlData, customConfig);
 
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
@@ -231,7 +232,7 @@ export default class Paste extends Module {
    * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   public async processText(data: string, isHTML = false): Promise<void> {
-    const { Caret, BlockManager } = this.Editor;
+    const {Caret, BlockManager} = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
@@ -327,7 +328,7 @@ export default class Paste extends Module {
      * If string, then it is a tag name.
      */
     if (_.isString(tagOrSanitizeConfig)) {
-      return [ tagOrSanitizeConfig ];
+      return [tagOrSanitizeConfig];
     }
     /**
      * If object, then its keys are tags.
@@ -395,8 +396,8 @@ export default class Paste extends Module {
       return;
     }
 
-    const { files = {} } = tool.pasteConfig;
-    let { extensions, mimeTypes } = files;
+    const {files = {}} = tool.pasteConfig;
+    let {extensions, mimeTypes} = files;
 
     if (!extensions && !mimeTypes) {
       return;
@@ -477,16 +478,17 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event - clipboard event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const { BlockManager, Toolbar } = this.Editor;
+    const {BlockManager, Toolbar} = this.Editor;
 
     /**
      * When someone pasting into a block, its more stable to set current block by event target, instead of relying on current block set before
      */
     const currentBlock = BlockManager.setCurrentBlockByChildNode(event.target as HTMLElement);
 
+
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !currentBlock || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
+      !currentBlock || currentBlock.name === 'threeWireMeter' || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
     ) {
       return;
     }
@@ -511,7 +513,7 @@ export default class Paste extends Module {
    * @param {FileList} items - pasted or dropped items
    */
   private async processFiles(items: FileList): Promise<void> {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     let dataToInsert: { type: string; event: PasteEvent }[];
 
@@ -543,7 +545,7 @@ export default class Paste extends Module {
     const foundConfig = Object
       .entries(this.toolsFiles)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-      .find(([toolName, { mimeTypes, extensions } ]) => {
+      .find(([toolName, {mimeTypes, extensions}]) => {
         const [fileType, fileSubtype] = file.type.split('/');
 
         const foundExt = extensions.find((ext) => ext.toLowerCase() === extension.toLowerCase());
@@ -560,7 +562,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const [ tool ] = foundConfig;
+    const [tool] = foundConfig;
     const pasteEvent = this.composePasteEvent('file', {
       file,
     });
@@ -578,7 +580,7 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processHTML(innerHTML: string): PasteData[] {
-    const { Tools } = this.Editor;
+    const {Tools} = this.Editor;
 
     /**
      * @todo Research, do we really need to always wrap innerHTML to a div:
@@ -622,7 +624,7 @@ export default class Paste extends Module {
         /**
          * Returns empty array if there is no paste config
          */
-        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig || { tags: [] };
+        const {tags: tagsOrSanitizeConfigs} = tool.pasteConfig || {tags: []};
 
         /**
          * Reduce the tags or sanitize configs to a single array of sanitize config.
@@ -708,7 +710,7 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processPlain(plain: string): PasteData[] {
-    const { defaultBlock } = this.config as { defaultBlock: string };
+    const {defaultBlock} = this.config as { defaultBlock: string };
 
     if (!plain) {
       return [];
@@ -743,8 +745,8 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
-    const { Caret, BlockManager } = this.Editor;
-    const { currentBlock } = BlockManager;
+    const {Caret, BlockManager} = this.Editor;
+    const {currentBlock} = BlockManager;
 
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
@@ -771,8 +773,8 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert - data of Block to insert
    */
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
-    const { BlockManager, Caret } = this.Editor;
-    const { content } = dataToInsert;
+    const {BlockManager, Caret} = this.Editor;
+    const {content} = dataToInsert;
 
     const currentBlockIsDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
 
@@ -846,8 +848,8 @@ export default class Paste extends Module {
    * @returns {void}
    */
   private insertBlock(data: PasteData, canReplaceCurrentBlock = false): void {
-    const { BlockManager, Caret } = this.Editor;
-    const { currentBlock } = BlockManager;
+    const {BlockManager, Caret} = this.Editor;
+    const {currentBlock} = BlockManager;
     let block: Block;
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
@@ -869,12 +871,12 @@ export default class Paste extends Module {
    * @returns {void}
    */
   private insertEditorJSData(blocks: Pick<SavedData, 'id' | 'data' | 'tool'>[]): void {
-    const { BlockManager, Caret, Tools } = this.Editor;
+    const {BlockManager, Caret, Tools} = this.Editor;
     const sanitizedBlocks = sanitizeBlocks(blocks, (name) =>
       Tools.blockTools.get(name).sanitizeConfig
     );
 
-    sanitizedBlocks.forEach(({ tool, data }, i) => {
+    sanitizedBlocks.forEach(({tool, data}, i) => {
       let needToReplaceCurrentBlock = false;
 
       if (i === 0) {
@@ -905,7 +907,7 @@ export default class Paste extends Module {
 
     const element = node as HTMLElement;
 
-    const { tool } = this.toolsTags[element.tagName] || {};
+    const {tool} = this.toolsTags[element.tagName] || {};
     const toolTags = this.tagsByTool[tool?.name] || [];
 
     const isSubstitutable = tags.includes(element.tagName);
@@ -913,11 +915,11 @@ export default class Paste extends Module {
     const containsAnotherToolTags = Array
       .from(element.children)
       .some(
-        ({ tagName }) => tags.includes(tagName) && !toolTags.includes(tagName)
+        ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName)
       );
 
     const containsBlockElements = Array.from(element.children).some(
-      ({ tagName }) => $.blockElements.includes(tagName.toLowerCase())
+      ({tagName}) => $.blockElements.includes(tagName.toLowerCase())
     );
 
     /** Append inline elements to previous fragment */
