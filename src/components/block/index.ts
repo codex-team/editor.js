@@ -911,7 +911,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
             return false;
           }
 
-          return !!node.closest('[data-mutation-free="true"]');
+          return node.closest('[data-mutation-free="true"]') !== null;
         });
       });
 
