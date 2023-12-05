@@ -17,16 +17,16 @@ import { IconChevronDown } from '@codexteam/icons';
  * Inline Toolbar elements
  */
 interface InlineToolbarNodes {
-  wrapper: HTMLElement;
-  togglerAndButtonsWrapper: HTMLElement;
-  buttons: HTMLElement;
-  conversionToggler: HTMLElement;
-  conversionTogglerContent: HTMLElement;
+  wrapper: HTMLElement | undefined;
+  togglerAndButtonsWrapper: HTMLElement | undefined;
+  buttons: HTMLElement | undefined;
+  conversionToggler: HTMLElement | undefined;
+  conversionTogglerContent: HTMLElement | undefined;
   /**
    * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
    * For example, input for the 'link' tool or textarea for the 'comment' tool
    */
-  actions: HTMLElement;
+  actions: HTMLElement | undefined;
 }
 
 /**
@@ -238,6 +238,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {Node} node — node to check
    */
   public containsNode(node: Node): boolean {
+    if (this.nodes.wrapper === undefined) {
+      return false;
+    }
+
     return this.nodes.wrapper.contains(node);
   }
 
@@ -379,8 +383,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.CSS.inlineToolbarRightOriented
     );
 
-    this.nodes.wrapper.style.left = 'unset';
-    this.nodes.wrapper.style.top = 'unset';
+    this.nodes.wrapper.style.left = '0';
+    this.nodes.wrapper.style.top = '0';
   }
 
   /**

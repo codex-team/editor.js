@@ -70,7 +70,7 @@ to the `tools` property of Editor Config.
 
 ```javascript
 var editor = new EditorJS({
-  holderId : 'editorjs',
+  holder : 'editorjs',
   tools: {
     text: {
       class: Text,

@@ -52,7 +52,7 @@ export default class Dom {
    * @param  {object} [attributes] - any attributes
    * @returns {HTMLElement}
    */
-  public static make(tagName: string, classNames: string | string[] = null, attributes: object = {}): HTMLElement {
+  public static make(tagName: string, classNames: string | string[] | null = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
