@@ -544,7 +544,7 @@ describe('onChange callback', () => {
     });
   });
 
-  it('should not be fired when child element of "data-mutation-free=deep" mark changes some attribute', () => {
+  it('should not be fired when mutation happened in a child of element with the "data-mutation-free" mark', () => {
     /**
      * Mock for tool wrapper which we will mutate in a test
      */
