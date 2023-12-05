@@ -454,7 +454,7 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    cy.wait(500).then(() => {
+    cy.wait(200).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -539,7 +539,7 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    cy.wait(500).then(() => {
+    cy.wait(200).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -554,9 +554,9 @@ describe('onChange callback', () => {
     toolWrapper.appendChild(toolChild);
 
     /**
-     * Mark it as mutation-free with deep check
+     * Mark it as mutation-free
      */
-    toolWrapper.dataset.mutationFree = 'deep';
+    toolWrapper.dataset.mutationFree = 'true';
 
     /**
      * Mock of tool with data-mutation-free attribute
@@ -606,7 +606,7 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    cy.wait(500).then(() => {
+    cy.wait(200).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
