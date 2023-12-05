@@ -45,6 +45,8 @@ jobs:
   release-draft:
     needs: check-version-changing
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       # Checkout to target branch
       - uses: actions/checkout@v2
