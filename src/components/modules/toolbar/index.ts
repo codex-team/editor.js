@@ -6,9 +6,12 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import * as tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import Block from '../../block';
-import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
+import Toolbox from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
+import { ToolboxOpened } from '../../events/ToolboxOpened';
+import { ToolboxClosed } from '../../events/ToolboxClosed';
+import { ToolboxBlockAdded } from '../../events/ToolboxBlockAdded';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -447,15 +450,15 @@ export default class Toolbar extends Module<ToolbarNodes> {
       },
     });
 
-    this.toolboxInstance.on(ToolboxEvent.Opened, () => {
+    this.toolboxInstance.on(ToolboxOpened, () => {
       this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolboxHolderModifier);
     });
 
-    this.toolboxInstance.on(ToolboxEvent.Closed, () => {
+    this.toolboxInstance.on(ToolboxClosed, () => {
       this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
     });
 
-    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }) => {
+    this.toolboxInstance.on(ToolboxBlockAdded, ({ block }) => {
       const { BlockManager, Caret } = this.Editor;
       const newBlock = BlockManager.getBlockById(block.id);
 
