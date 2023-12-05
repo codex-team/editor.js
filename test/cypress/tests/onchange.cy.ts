@@ -544,6 +544,73 @@ describe('onChange callback', () => {
     });
   });
 
+  it('should not be fired when child element of "data-mutation-free=deep" mark changes some attribute', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+    const toolChild = document.createElement('div');
+
+    toolWrapper.appendChild(toolChild);
+
+    /**
+     * Mark it as mutation-free with deep check
+     */
+    toolWrapper.dataset.mutationFree = 'deep';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's internal attribute mutation
+     */
+    cy.wait(100).then(() => {
+      toolChild.setAttribute('some-changed-attr', 'some-new-value');
+    });
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
   it('should be called on blocks.clear() with removed and added blocks', () => {
     createEditor([
       {
