@@ -258,6 +258,7 @@ export default class UI extends Module<UINodes> {
       ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    this.nodes.redactor.contentEditable = 'true';
 
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
