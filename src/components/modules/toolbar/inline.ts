@@ -139,11 +139,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
   public async tryToShow(needToClose = false, needToShowConversionToolbar = true): Promise<void> {
-    if (!this.allowedToShow()) {
-      if (needToClose) {
-        this.close();
-      }
+    if (needToClose) {
+      this.close();
+    }
 
+    if (!this.allowedToShow()) {
       return;
     }
 
