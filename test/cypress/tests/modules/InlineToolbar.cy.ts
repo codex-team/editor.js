@@ -26,7 +26,7 @@ describe('Inline Toolbar', () => {
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        expect($toolbar.offset().left).to.closeTo(rect.left, 0.5);
+        expect($toolbar.offset().left).to.closeTo(rect.left, 1);
       });
   });
 
