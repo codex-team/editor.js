@@ -17,7 +17,7 @@ describe('Inline Toolbar', () => {
       .find('.ce-paragraph')
       .selectText('block');
 
-    cy.get('.ce-inline-toolbar')
+    cy.get('[data-cy="inline-toolbar"]')
       .should('be.visible')
       .then(($toolbar) => {
         const editorWindow = $toolbar.get(0).ownerDocument.defaultView;
@@ -59,7 +59,7 @@ describe('Inline Toolbar', () => {
           .selectTextByOffset([firstLineWrapIndex - 5, firstLineWrapIndex - 1]);
       });
 
-    cy.get('.ce-inline-toolbar')
+    cy.get('[data-cy="inline-toolbar"]')
       .should('be.visible')
       .then(($toolbar) => {
         cy.get('@blockWrapper')

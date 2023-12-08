@@ -224,6 +224,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.CSS.inlineToolbar,
       ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.wrapper.setAttribute('data-cy', 'inline-toolbar');
+    }
+
     /**
      * Creates a different wrapper for toggler and buttons.
      */
