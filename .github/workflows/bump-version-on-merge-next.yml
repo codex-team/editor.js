@@ -31,13 +31,12 @@ jobs:
         id: packageOld
         uses: codex-team/action-nodejs-package-info@v1
 
-      # Stop workflow and do not bump version if it was changed already
-      - name: Stop workflow and do not bump version if it was changed already
-        uses: actions/github-script@v3
+      # Stop workflow if version was not changed
+      - name: Stop workflow if version was not changed
+        uses: styfle/cancel-workflow-action@0.12.0
         if: steps.packageOld.outputs.version != steps.packageNew.outputs.version
         with:
-          script: |
-            core.setFailed('Version was changed! ${{ steps.packageOld.outputs.version }} -> ${{ steps.packageNew.outputs.version }}')
+          workflow_id: ${{ github.run_id }}
 
   bump-version:
     needs: check-for-no-version-changing
