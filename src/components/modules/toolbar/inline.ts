@@ -450,7 +450,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       tooltip.onHover(this.nodes.conversionToggler, I18n.ui(I18nInternalNS.ui.inlineToolbar.converter, 'Convert to'), {
         placement: 'top',
         hidingDelay: 100,
-      });
+      }, this.config);
     }
   }
 
@@ -593,7 +593,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       tooltip.onHover(button, tooltipContent, {
         placement: 'top',
         hidingDelay: 100,
-      });
+      }, this.config);
     }
 
     instance.checkState(SelectionUtils.get());

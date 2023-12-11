@@ -397,7 +397,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     tooltip.onHover(this.nodes.plusButton, tooltipContent, {
       hidingDelay: 400,
-    });
+    }, this.config);
 
     /**
      * Fill Actions Zone:
@@ -416,7 +416,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
       {
         hidingDelay: 400,
-      }
+      },
+      this.config
     );
 
     /**
