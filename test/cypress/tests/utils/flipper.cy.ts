@@ -64,7 +64,8 @@ describe('Flipper', () => {
     cy.get('[data-cy=editorjs]')
       .get('.cdx-some-plugin')
       .focus()
-      .type(sampleText);
+      .type(sampleText)
+      .wait(100);
 
     // Try to delete the block via keyboard
     cy.get('[data-cy=editorjs]')

@@ -350,9 +350,12 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.readOnlyMutableListeners.on(document, 'selectionchange', () => {
+    const selectionChangeDebounceTimeout = 180;
+    const selectionChangeDebounced = _.debounce(() => {
       this.selectionChanged();
-    }, true);
+    }, selectionChangeDebounceTimeout);
+
+    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -860,9 +863,6 @@ export default class UI extends Module<UINodes> {
 
     const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
 
-    /**
-     * @todo add debounce
-     */
     this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
   }
 }
