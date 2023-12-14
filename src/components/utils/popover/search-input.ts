@@ -120,6 +120,12 @@ export default class SearchInput {
 
     this.input = Dom.make('input', SearchInput.CSS.input, {
       placeholder,
+      /**
+       * Used to prevent focusing on the input by Tab key
+       * (Popover in the Toolbar lays below the blocks,
+       * so Tab in the last block will focus this hidden input if this property is not set)
+       */
+      tabIndex: -1,
     }) as HTMLInputElement;
 
     this.wrapper.appendChild(iconWrapper);

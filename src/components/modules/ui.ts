@@ -249,6 +249,7 @@ export default class UI extends Module<UINodes> {
      * @type {Element}
      */
     this.nodes.holder = $.getHolder(this.config.holder);
+    this.nodes.holder.tabIndex = -1;
 
     /**
      * Create and save main UI elements
@@ -537,7 +538,7 @@ export default class UI extends Module<UINodes> {
 
     if (this.Editor.Toolbar.toolbox.opened) {
       this.Editor.Toolbar.toolbox.close();
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.ConversionToolbar.opened) {

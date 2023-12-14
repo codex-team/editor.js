@@ -52,6 +52,13 @@ export default class BlockEvents extends Module {
       case _.keyCodes.TAB:
         this.tabPressed(event);
         break;
+      case _.keyCodes.SLASH:
+        if (event.ctrlKey || event.metaKey) {
+          this.commandSlashPressed();
+        } else {
+          this.slashPressed();
+        }
+        break;
     }
   }
 
@@ -111,40 +118,6 @@ export default class BlockEvents extends Module {
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
     this.Editor.UI.checkEmptiness();
-  }
-
-  /**
-   * Open Toolbox to leaf Tools
-   *
-   * @param {KeyboardEvent} event - tab keydown event
-   */
-  public tabPressed(event: KeyboardEvent): void {
-    /**
-     * Clear blocks selection by tab
-     */
-    this.Editor.BlockSelection.clearSelection(event);
-
-    const { BlockManager, InlineToolbar, ConversionToolbar } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
-
-    if (!currentBlock) {
-      return;
-    }
-
-    const isEmptyBlock = currentBlock.isEmpty;
-    const canOpenToolbox = currentBlock.tool.isDefault && isEmptyBlock;
-    const conversionToolbarOpened = !isEmptyBlock && ConversionToolbar.opened;
-    const inlineToolbarOpened = !isEmptyBlock && !SelectionUtils.isCollapsed && InlineToolbar.opened;
-    const canOpenBlockTunes = !conversionToolbarOpened && !inlineToolbarOpened;
-
-    /**
-     * For empty Blocks we show Plus button via Toolbox only for default Blocks
-     */
-    if (canOpenToolbox) {
-      this.activateToolbox();
-    } else if (canOpenBlockTunes) {
-      this.activateBlockSettings();
-    }
   }
 
   /**
@@ -211,6 +184,87 @@ export default class BlockEvents extends Module {
       /** Clear selection */
       BlockSelection.clearSelection(event);
     });
+  }
+
+  /**
+   * Tab pressed inside a Block.
+   *
+   * @param {KeyboardEvent} event - keydown
+   */
+  private tabPressed(event: KeyboardEvent): void {
+    /**
+     * Clear blocks selection by tab
+     */
+    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockManager.clearFocused();
+
+    const { BlockManager, InlineToolbar, ConversionToolbar, Caret } = this.Editor;
+    const isFlipperActivated = ConversionToolbar.opened || InlineToolbar.opened;
+
+    if (isFlipperActivated) {
+      return;
+    }
+
+    /**
+     * Block to be focused by tab
+     */
+    const nextBlock: Block | null | undefined = BlockManager.nextBlock;
+
+    /**
+     * If we have next Block to focus, then focus it. Otherwise, leave native Tab behaviour
+     */
+    if (nextBlock !== null) {
+      event.preventDefault();
+
+      /**
+       * If next Block is not focusable, just select (highlight) it
+       */
+      if (!nextBlock.focusable) {
+        /**
+         * Hide current cursor
+         */
+        window.getSelection()?.removeAllRanges();
+
+        /**
+         * Highlight Block
+         */
+        nextBlock.selected = true;
+        BlockManager.currentBlock = nextBlock;
+
+        return;
+      } else {
+        Caret.setToBlock(nextBlock, Caret.positions.START);
+      }
+    }
+  }
+
+  /**
+   * '/' + 'command' keydown inside a Block
+   */
+  private commandSlashPressed(): void {
+    if (this.Editor.BlockSelection.selectedBlocks.length > 1) {
+      return;
+    }
+
+    this.Editor.BlockSelection.clearSelection();
+    this.activateBlockSettings();
+  }
+
+  /**
+   * '/' keydown inside a Block
+   */
+  private slashPressed(): void {
+    const currentBlock = this.Editor.BlockManager.currentBlock;
+    const canOpenToolbox = currentBlock.isEmpty;
+
+    /**
+     * Toolbox will be opened only if Block is empty
+     */
+    if (!canOpenToolbox) {
+      return;
+    }
+
+    this.activateToolbox();
   }
 
   /**

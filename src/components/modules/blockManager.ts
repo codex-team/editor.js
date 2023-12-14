@@ -686,6 +686,7 @@ export default class BlockManager extends Module {
   public clearFocused(): void {
     this.blocks.forEach((block) => {
       block.focused = false;
+      block.selected = false;
     });
   }
 
