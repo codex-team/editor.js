@@ -14,6 +14,10 @@ import { isFunction, isString, log } from '../utils';
  * @param blockToMerge - block to merge from
  */
 export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boolean {
+  if (blockToMerge.mergeableWithBlocks?.includes(targetBlock.name)) {
+    return true;
+  }
+
   return targetBlock.mergeable && targetBlock.name === blockToMerge.name;
 }
 

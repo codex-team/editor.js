@@ -549,9 +549,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call plugins merge method
    *
    * @param {BlockToolData} data - data to merge
+   * @param {string} type - type of the block to merge
    */
-  public async mergeWith(data: BlockToolData): Promise<void> {
-    await this.toolInstance.merge(data);
+  public async mergeWith(data: BlockToolData, type: string): Promise<void> {
+    await this.toolInstance.merge(data, type);
   }
 
   /**
@@ -993,5 +994,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
+  }
+
+  /**
+   * Get the list of mergeable blocks with the current block
+   */
+  public get mergeableWithBlocks(): string[]|undefined {
+    return this.tool.mergeableBlocks;
   }
 }

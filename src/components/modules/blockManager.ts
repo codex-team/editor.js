@@ -474,7 +474,7 @@ export default class BlockManager extends Module {
     const blockToMergeData = await blockToMerge.data;
 
     if (!_.isEmpty(blockToMergeData)) {
-      await targetBlock.mergeWith(blockToMergeData);
+      await targetBlock.mergeWith(blockToMergeData, targetBlock.name);
     }
 
     this.removeBlock(blockToMerge);

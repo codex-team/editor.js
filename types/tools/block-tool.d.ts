@@ -12,6 +12,12 @@ import { TunesMenuConfig } from './tool-settings';
  * @see {@link docs/tools.md}
  */
 export interface BlockTool extends BaseTool {
+
+  /**
+   * Block that can be merged with the block
+   */
+  mergeableBlocks?: string[];
+
   /**
    * Sanitizer rules description
    */
@@ -40,8 +46,9 @@ export interface BlockTool extends BaseTool {
    * Method that specified how to merge two Blocks with same type.
    * Called by backspace at the beginning of the Block
    * @param {BlockToolData} blockData
+   * @param {string} type
    */
-  merge?(blockData: BlockToolData): void;
+  merge?(blockData: BlockToolData, type: string): void;
 
   /**
    * On paste callback. Fired when pasted content can be substituted by a Tool
@@ -92,6 +99,12 @@ export interface BlockToolConstructorOptions<D extends object = any, C extends o
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
+
+  /**
+   * Block types that can be merged with the block
+   */
+  mergeableBlocks?: string[];
+
   /**
    * Tool's Toolbox settings
    */

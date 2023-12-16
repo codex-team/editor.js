@@ -35,7 +35,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Tool's constructable blueprint
    */
-  protected constructable: BlockToolConstructable;
+  public constructable: BlockToolConstructable;
 
   /**
    * Creates new Tool instance
@@ -211,5 +211,12 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       .forEach(tune => Object.assign(baseConfig, tune.sanitizeConfig));
 
     return baseConfig;
+  }
+
+  /**
+   *
+   */
+  public get mergeableBlocks(): string[]|undefined {
+    return this.constructable[InternalBlockToolSettings.MergeableBlocks];
   }
 }

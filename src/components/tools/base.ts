@@ -89,7 +89,9 @@ export enum InternalBlockToolSettings {
   /**
    * Tool paste config
    */
-  PasteConfig = 'pasteConfig'
+  PasteConfig = 'pasteConfig',
+
+  MergeableBlocks = 'mergeableBlocks'
 }
 
 /**
