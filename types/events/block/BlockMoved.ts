@@ -1,4 +1,4 @@
-import { BlockMutationEventDetail } from './Base';
+import type { BlockMutationEventDetail } from './Base';
 
 /**
  * Type name of CustomEvent related to block moved event

@@ -18,4 +18,4 @@ jobs:
         with:
           config: video=false
           browser: ${{ matrix.browser }}
-          build: yarn build
+          build: yarn build:test
