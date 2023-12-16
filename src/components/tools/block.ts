@@ -35,7 +35,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
   /**
    * Tool's constructable blueprint
    */
-  public constructable: BlockToolConstructable;
+  protected constructable: BlockToolConstructable;
 
   /**
    * Creates new Tool instance
