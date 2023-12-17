@@ -36,7 +36,7 @@ export default class BlockEvents extends Module {
         break;
 
       case _.keyCodes.ENTER:
-        // this.enter(event);
+        // this.enter(event); 
         break;
 
       case _.keyCodes.DOWN:
