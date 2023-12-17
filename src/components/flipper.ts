@@ -232,7 +232,7 @@ export default class Flipper {
         this.flipRight();
         break;
       case _.keyCodes.ENTER:
-        this.handleEnterPress(event);
+        // this.handleEnterPress(event);
         break;
     }
   };
