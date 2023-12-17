@@ -32,12 +32,12 @@ import { BlockHovered } from '../../events/BlockHovered';
  * HTML Elements used for Toolbar UI
  */
 interface ToolbarNodes {
-  wrapper: HTMLElement;
-  content: HTMLElement;
-  actions: HTMLElement;
+  wrapper: HTMLElement | undefined;
+  content: HTMLElement | undefined;
+  actions: HTMLElement | undefined;
 
-  plusButton: HTMLElement;
-  settingsToggler: HTMLElement;
+  plusButton: HTMLElement | undefined;
+  settingsToggler: HTMLElement | undefined;
 }
 /**
  *
@@ -316,7 +316,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       return;
     }
 
-    this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
+    this.nodes.wrapper?.classList.remove(this.CSS.toolbarOpened);
 
     /** Close components */
     this.blockActions.hide();
