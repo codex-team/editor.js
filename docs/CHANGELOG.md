@@ -7,8 +7,11 @@
 - `Fix` — Layout did not shrink when a large document cleared in Chrome
 - `Fix` — Multiple Tooltip elements creation fixed
 - `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
+- `Fix` - Compiler error "This import is never used as a value and must use 'import type'..." fixed
 - `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
 - `Fix` — Editor wrapper element growing on the Inline Toolbar close
+- `Fix` — Fix errors thrown by clicks on a document when the editor is being initialized
+- `Fix` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
 
 ### 2.28.2
 

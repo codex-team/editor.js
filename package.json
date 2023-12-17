@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.29.0-rc.5",
+  "version": "2.29.0-rc.7",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -14,7 +14,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
+    "build:test": "vite build --mode test",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
@@ -26,8 +27,8 @@
     "_tools:build": "git submodule foreach yarn build",
     "_tools:make": "yarn _tools:yarn && yarn _tools:build",
     "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
-    "test:e2e": "yarn build && cypress run",
-    "test:e2e:open": "yarn build && cypress open",
+    "test:e2e": "yarn build:test && cypress run",
+    "test:e2e:open": "yarn build:test && cypress open",
     "devserver:start": "yarn build && node ./devserver.js"
   },
   "author": "CodeX",
