@@ -426,7 +426,7 @@ export default class UI extends Module<UINodes> {
   private documentKeydown(event: KeyboardEvent): void {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
-        // this.enterPressed(event);
+        // this.enterPressed(event); 
         break;
 
       case _.keyCodes.BACKSPACE:
