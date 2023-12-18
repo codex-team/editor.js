@@ -1,6 +1,6 @@
 {
   "name": "clientify-editorjs",
-  "version": "2.30",
+  "version": "2.29.1",
   "private": false,
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
