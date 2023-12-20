@@ -173,6 +173,30 @@ describe('Tab keydown', function () {
       .parents('.ce-block')
       .should('have.class', 'ce-block--selected');
   });
+
+  it('should focus next input after Editor when pressed in last Block', () => {
+    cy.createEditor({});
+
+    /**
+     * Add regular input after Editor
+     */
+    cy.window()
+      .then((window) => {
+        const input = window.document.createElement('input');
+
+        input.setAttribute('data-cy', 'regular-input');
+
+        window.document.body.appendChild(input);
+      });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .click()
+      .tab();
+
+    cy.get('[data-cy=regular-input]')
+      .should('have.focus');
+  });
 });
 
 describe('Shift+Tab keydown', function () {
@@ -313,5 +337,29 @@ describe('Shift+Tab keydown', function () {
     cy.get('[data-cy=contentless-tool]')
       .parents('.ce-block')
       .should('have.class', 'ce-block--selected');
+  });
+
+  it('should focus previous input before Editor when pressed in first Block', () => {
+    cy.createEditor({});
+
+    /**
+     * Add regular input before Editor
+     */
+    cy.window()
+      .then((window) => {
+        const input = window.document.createElement('input');
+
+        input.setAttribute('data-cy', 'regular-input');
+
+        window.document.body.insertBefore(input, window.document.body.firstChild);
+      });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .click()
+      .tab({ shift: true });
+
+    cy.get('[data-cy=regular-input]')
+      .should('have.focus');
   });
 });

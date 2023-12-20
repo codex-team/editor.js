@@ -26,7 +26,7 @@ describe('Slash keydown', function () {
   });
 
   describe('pressed in non-empty block', function () {
-    it('should not open Toolbox', () => {
+    it('should not open Toolbox and just add the / char', () => {
       cy.createEditor({
         data: {
           blocks: [
