@@ -111,7 +111,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
-      focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
     };
@@ -434,22 +433,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     ];
 
     return !!this.holder.querySelector(mediaTags.join(','));
-  }
-
-  /**
-   * Set focused state
-   *
-   * @param {boolean} state - 'true' to select, 'false' to remove selection
-   */
-  public set focused(state: boolean) {
-    this.holder.classList.toggle(Block.CSS.focused, state);
-  }
-
-  /**
-   * Get Block's focused state
-   */
-  public get focused(): boolean {
-    return this.holder.classList.contains(Block.CSS.focused);
   }
 
   /**

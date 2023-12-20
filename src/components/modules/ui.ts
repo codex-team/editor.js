@@ -249,7 +249,6 @@ export default class UI extends Module<UINodes> {
      * @type {Element}
      */
     this.nodes.holder = $.getHolder(this.config.holder);
-    this.nodes.holder.tabIndex = -1;
 
     /**
      * Create and save main UI elements
@@ -595,11 +594,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.Caret.setToBlock(newBlock);
 
       /**
-       * And highlight
-       */
-      this.Editor.BlockManager.highlightCurrentNode();
-
-      /**
        * Move toolbar and show plus button because new Block is empty
        */
       this.Editor.Toolbar.moveAndOpen(newBlock);
@@ -692,11 +686,6 @@ export default class UI extends Module<UINodes> {
      */
     try {
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-
-      /**
-       * Highlight Current Node
-       */
-      this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block

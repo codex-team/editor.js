@@ -93,7 +93,6 @@ export default class BlockEvents extends Module {
       const isShortcut = event.ctrlKey || event.metaKey || event.altKey || event.shiftKey;
 
       if (!isShortcut) {
-        this.Editor.BlockManager.clearFocused();
         this.Editor.BlockSelection.clearSelection(event);
       }
     }
@@ -192,49 +191,21 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private tabPressed(event: KeyboardEvent): void {
-    /**
-     * Clear blocks selection by tab
-     */
-    this.Editor.BlockSelection.clearSelection();
-    this.Editor.BlockManager.clearFocused();
+    const { InlineToolbar, ConversionToolbar, Caret } = this.Editor;
 
-    const { BlockManager, InlineToolbar, ConversionToolbar, Caret } = this.Editor;
     const isFlipperActivated = ConversionToolbar.opened || InlineToolbar.opened;
 
     if (isFlipperActivated) {
       return;
     }
 
-    /**
-     * Block to be focused by tab
-     */
-    const nextBlock: Block | null | undefined = BlockManager.nextBlock;
+    const isNavigated = event.shiftKey ? Caret.navigatePrevious(true) : Caret.navigateNext(true);
 
     /**
-     * If we have next Block to focus, then focus it. Otherwise, leave native Tab behaviour
+     * If we have next Block/input to focus, then focus it. Otherwise, leave native Tab behaviour
      */
-    if (nextBlock !== null) {
+    if (isNavigated) {
       event.preventDefault();
-
-      /**
-       * If next Block is not focusable, just select (highlight) it
-       */
-      if (!nextBlock.focusable) {
-        /**
-         * Hide current cursor
-         */
-        window.getSelection()?.removeAllRanges();
-
-        /**
-         * Highlight Block
-         */
-        nextBlock.selected = true;
-        BlockManager.currentBlock = nextBlock;
-
-        return;
-      } else {
-        Caret.setToBlock(nextBlock, Caret.positions.START);
-      }
     }
   }
 
@@ -535,9 +506,8 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Close Toolbar and highlighting when user moves cursor
+     * Close Toolbar when user moves cursor
      */
-    this.Editor.BlockManager.clearFocused();
     this.Editor.Toolbar.close();
 
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
@@ -556,18 +526,20 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
-    } else {
-      /**
-       * After caret is set, update Block input index
-       */
-      _.delay(() => {
-        /** Check currentBlock for case when user moves selection out of Editor */
-        if (this.Editor.BlockManager.currentBlock) {
-          this.Editor.BlockManager.currentBlock.updateCurrentInput();
-        }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 20)();
+
+      return;
     }
+
+    /**
+     * After caret is set, update Block input index
+     */
+    _.delay(() => {
+      /** Check currentBlock for case when user moves selection out of Editor */
+      if (this.Editor.BlockManager.currentBlock) {
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+      }
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    }, 20)();
 
     /**
      * Clear blocks selection by arrows
@@ -594,9 +566,8 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Close Toolbar and highlighting when user moves cursor
+     * Close Toolbar when user moves cursor
      */
-    this.Editor.BlockManager.clearFocused();
     this.Editor.Toolbar.close();
 
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
@@ -615,18 +586,20 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
-    } else {
-      /**
-       * After caret is set, update Block input index
-       */
-      _.delay(() => {
-        /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
-        if (this.Editor.BlockManager.currentBlock) {
-          this.Editor.BlockManager.currentBlock.updateCurrentInput();
-        }
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 20)();
+
+      return;
     }
+
+    /**
+     * After caret is set, update Block input index
+     */
+    _.delay(() => {
+      /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
+      if (this.Editor.BlockManager.currentBlock) {
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+      }
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    }, 20)();
 
     /**
      * Clear blocks selection by arrows
@@ -677,7 +650,6 @@ export default class BlockEvents extends Module {
    */
   private activateBlockSettings(): void {
     if (!this.Editor.Toolbar.opened) {
-      this.Editor.BlockManager.currentBlock.focused = true;
       this.Editor.Toolbar.moveAndOpen();
     }
 
