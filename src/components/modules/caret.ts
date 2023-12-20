@@ -433,7 +433,7 @@ export default class Caret extends Module {
    * @param {boolean} force - pass true to skip check for caret position
    */
   public navigateNext(force = false): boolean {
-    const { BlockManager, BlockSelection } = this.Editor;
+    const { BlockManager } = this.Editor;
     const { currentBlock, nextBlock } = BlockManager;
     const { nextInput } = currentBlock;
     const isAtEnd = this.isAtEnd;

@@ -217,7 +217,6 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    this.Editor.BlockSelection.clearSelection();
     this.activateBlockSettings();
   }
 
@@ -227,6 +226,10 @@ export default class BlockEvents extends Module {
   private slashPressed(): void {
     const currentBlock = this.Editor.BlockManager.currentBlock;
     const canOpenToolbox = currentBlock.isEmpty;
+
+    /**
+     * @todo Handle case when slash pressed when several blocks are selected
+     */
 
     /**
      * Toolbox will be opened only if Block is empty
