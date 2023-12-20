@@ -5,7 +5,7 @@
 - `New` — Editor Config now has the `style.nonce` attribute that could be used to allowlist editor style tag for Content Security Policy "style-src"
 - `New` — Toolbox now will be opened by '/' in empty Block instead of Tab
 - `New` — Block Tunes now will be opened by 'CMD+/' instead of Tab in non-empty block
-- `New` — Tab now will navigate through Blocks. In last block Tab will navigate to the next page input.
+- `New` — Tab now will navigate through Blocks. In last block Tab will navigate to the next input on page.
 - `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
 - `Fix` — Layout did not shrink when a large document cleared in Chrome
 - `Fix` — Multiple Tooltip elements creation fixed
@@ -14,7 +14,7 @@
 - `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
 - `Fix` — Editor wrapper element growing on the Inline Toolbar close
 - `Fix` — Fix errors thrown by clicks on a document when the editor is being initialized
-- `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter that has no inputs.
+- `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter which have no inputs.
 - `Improvement` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
 - `Refactoring` — `ce-block--focused` class toggling removed as unused.
 

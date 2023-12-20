@@ -78,6 +78,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
+    }
   }
 
   /**

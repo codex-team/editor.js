@@ -212,8 +212,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Returns HTML element corresponding to the popover
    */
-  public getElement(): HTMLElement | null {
-    return this.nodes.wrapper;
+  public getElement(): HTMLElement {
+    return this.nodes.wrapper as HTMLElement;
   }
 
   /**
@@ -285,6 +285,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    */
   private make(): void {
     this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.popover.setAttribute('data-cy', 'popover');
+    }
 
     this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
