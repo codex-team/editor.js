@@ -20,7 +20,7 @@ describe('Slash keydown', function () {
         .type('/');
 
       cy.get('[data-cy="toolbox"]')
-        .get('[data-cy="popover"]')
+        .get('.ce-popover')
         .should('be.visible');
     });
   });
@@ -46,7 +46,7 @@ describe('Slash keydown', function () {
         .type('/');
 
       cy.get('[data-cy="toolbox"]')
-        .get('[data-cy="popover"]')
+        .get('.ce-popover')
         .should('not.be.visible');
 
       /**
@@ -81,7 +81,7 @@ describe('CMD+Slash keydown', function () {
       .type('{cmd}/');
 
     cy.get('[data-cy="block-tunes"]')
-      .get('[data-cy="popover"]')
+      .get('.ce-popover')
       .should('be.visible');
   });
 });

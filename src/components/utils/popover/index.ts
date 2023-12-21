@@ -286,10 +286,6 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private make(): void {
     this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
 
-    if (import.meta.env.MODE === 'test') {
-      this.nodes.popover.setAttribute('data-cy', 'popover');
-    }
-
     this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
