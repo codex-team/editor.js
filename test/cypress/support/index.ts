@@ -8,6 +8,7 @@
 
 import '@cypress/code-coverage/support';
 import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector';
+import 'cypress-plugin-tab';
 
 installLogsCollector();
 

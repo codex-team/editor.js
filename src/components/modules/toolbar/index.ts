@@ -9,6 +9,7 @@ import Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
+import { beautifyShortcut } from '../../utils';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -392,7 +393,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
     tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
+      textContent: '/',
     }));
 
     tooltip.onHover(this.nodes.plusButton, tooltipContent, {
@@ -411,13 +412,17 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     $.append(this.nodes.actions, this.nodes.settingsToggler);
 
-    tooltip.onHover(
-      this.nodes.settingsToggler,
-      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
-      {
-        hidingDelay: 400,
-      }
-    );
+    const blockTunesTooltip = $.make('div');
+    const blockTunesTooltipEl = $.text(I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'));
+
+    blockTunesTooltip.appendChild(blockTunesTooltipEl);
+    blockTunesTooltip.appendChild($.make('div', this.CSS.plusButtonShortcut, {
+      textContent: beautifyShortcut('CMD + /'),
+    }));
+
+    tooltip.onHover(this.nodes.settingsToggler, blockTunesTooltip, {
+      hidingDelay: 400,
+    });
 
     /**
      * Appending Toolbar components to itself
