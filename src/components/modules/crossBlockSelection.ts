@@ -130,11 +130,6 @@ export default class CrossBlockSelection extends Module {
           default:
             Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
         }
-      } else {
-        /**
-         * By default set caret at the end of the last selected block
-         */
-        Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
       }
     }
 

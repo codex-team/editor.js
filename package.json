@@ -54,6 +54,7 @@
     "core-js": "3.30.0",
     "cypress": "^12.9.0",
     "cypress-intellij-reporter": "^0.0.7",
+    "cypress-plugin-tab": "^1.0.5",
     "cypress-terminal-report": "^5.3.2",
     "eslint": "^8.37.0",
     "eslint-config-codex": "^1.7.1",

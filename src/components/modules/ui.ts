@@ -537,7 +537,7 @@ export default class UI extends Module<UINodes> {
 
     if (this.Editor.Toolbar.toolbox.opened) {
       this.Editor.Toolbar.toolbox.close();
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.ConversionToolbar.opened) {
@@ -592,11 +592,6 @@ export default class UI extends Module<UINodes> {
       const newBlock = this.Editor.BlockManager.insert();
 
       this.Editor.Caret.setToBlock(newBlock);
-
-      /**
-       * And highlight
-       */
-      this.Editor.BlockManager.highlightCurrentNode();
 
       /**
        * Move toolbar and show plus button because new Block is empty
@@ -691,11 +686,6 @@ export default class UI extends Module<UINodes> {
      */
     try {
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-
-      /**
-       * Highlight Current Node
-       */
-      this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
