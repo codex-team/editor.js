@@ -14,6 +14,7 @@
 - `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
 - `Fix` — Editor wrapper element growing on the Inline Toolbar close
 - `Fix` — Fix errors thrown by clicks on a document when the editor is being initialized
+- `Fix` — Caret losing on Mobile Devices when adding a block via Toolbox or via Backspace at the beginning of a Block
 - `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter which have no inputs.
 - `Improvement` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
 - `Refactoring` — `ce-block--focused` class toggling removed as unused.
