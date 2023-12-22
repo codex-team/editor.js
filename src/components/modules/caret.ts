@@ -255,13 +255,7 @@ export default class Caret extends Module {
         break;
     }
 
-    /**
-     * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-     */
-    _.delay(() => {
-      this.set(nodeToSet as HTMLElement, offset);
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    }, 20)();
+    this.set(nodeToSet as HTMLElement, offset);
 
     BlockManager.setCurrentBlockByChildNode(block.holder);
     BlockManager.currentBlock.currentInput = element;
