@@ -43,6 +43,11 @@ class ContentlessTool extends ToolMock {
   }
 }
 
+/**
+ * Time to wait for caret to finish moving
+ */
+const CARET_MOVE_TIME = 100;
+
 describe('Tab keydown', function () {
   it('should focus next Block if Block contains only one input', () => {
     cy.createEditor({
@@ -69,7 +74,7 @@ describe('Tab keydown', function () {
       .first()
       .click()
       .trigger('keydown', { keyCode: 9 })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
@@ -115,7 +120,7 @@ describe('Tab keydown', function () {
       .first()
       .click()
       .trigger('keydown', { keyCode: 9 })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=tool-with-two-inputs]')
       .find('[contenteditable=true]')
@@ -167,7 +172,7 @@ describe('Tab keydown', function () {
       .first()
       .click()
       .trigger('keydown', { keyCode: 9 })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=contentless-tool]')
       .parents('.ce-block')
@@ -228,7 +233,7 @@ describe('Shift+Tab keydown', function () {
         keyCode: 9,
         shiftKey: true,
       })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
@@ -277,7 +282,7 @@ describe('Shift+Tab keydown', function () {
         keyCode: 9,
         shiftKey: true,
       })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=tool-with-two-inputs]')
       .find('[contenteditable=true]')
@@ -332,7 +337,7 @@ describe('Shift+Tab keydown', function () {
         keyCode: 9,
         shiftKey: true,
       })
-      .wait(100);
+      .wait(CARET_MOVE_TIME);
 
     cy.get('[data-cy=contentless-tool]')
       .parents('.ce-block')

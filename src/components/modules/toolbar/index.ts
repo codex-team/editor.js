@@ -413,8 +413,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
     $.append(this.nodes.actions, this.nodes.settingsToggler);
 
     const blockTunesTooltip = $.make('div');
+    const blockTunesTooltipEl = $.text(I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'));
 
-    blockTunesTooltip.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune')));
+    blockTunesTooltip.appendChild(blockTunesTooltipEl);
     blockTunesTooltip.appendChild($.make('div', this.CSS.plusButtonShortcut, {
       textContent: beautifyShortcut('CMD + /'),
     }));
