@@ -11,7 +11,6 @@ import Selection from '../selection';
 import Module from '../__module';
 import Block from '../block';
 import $ from '../dom';
-import * as _ from '../utils';
 
 /**
  * @typedef {Caret} Caret
