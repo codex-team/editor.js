@@ -21,6 +21,7 @@ import { BlockChanged } from '../events';
 import { clean } from '../utils/sanitizer';
 import { convertStringToBlockData } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
+import { isString } from '../utils';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -477,9 +478,9 @@ export default class BlockManager extends Module {
       const importConfig = targetBlock.tool.conversionConfig.import;
       const exportConfig = blockToMerge.tool.conversionConfig.export;
 
-      if (typeof importConfig === 'string') {
+      if (isString(importConfig)) {
         return {
-          [importConfig]: typeof exportConfig === 'string' ? data[exportConfig] : exportConfig(data),
+          [importConfig]: isString(exportConfig) ? data[exportConfig] : exportConfig(data),
         };
       }
 
