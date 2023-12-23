@@ -682,32 +682,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Remove selection from all Blocks then highlight only Current Block
-   */
-  public highlightCurrentNode(): void {
-    /**
-     * Remove previous selected Block's state
-     */
-    this.clearFocused();
-
-    /**
-     * Mark current Block as selected
-     *
-     * @type {boolean}
-     */
-    this.currentBlock.focused = true;
-  }
-
-  /**
-   * Remove selection from all Blocks
-   */
-  public clearFocused(): void {
-    this.blocks.forEach((block) => {
-      block.focused = false;
-    });
-  }
-
-  /**
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
@@ -891,7 +865,6 @@ export default class BlockManager extends Module {
    */
   public dropPointer(): void {
     this.currentBlockIndex = -1;
-    this.clearFocused();
   }
 
   /**

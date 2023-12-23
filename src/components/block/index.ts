@@ -111,7 +111,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
-      focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
     };
@@ -393,12 +392,19 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
+   * If Block contains inputs, it is focusable
+   */
+  public get focusable(): boolean {
+    return this.inputs.length !== 0;
+  }
+
+  /**
    * Check block for emptiness
    *
    * @returns {boolean}
    */
   public get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyText = $.isEmpty(this.pluginsContent, '/');
     const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
@@ -427,22 +433,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     ];
 
     return !!this.holder.querySelector(mediaTags.join(','));
-  }
-
-  /**
-   * Set focused state
-   *
-   * @param {boolean} state - 'true' to select, 'false' to remove selection
-   */
-  public set focused(state: boolean) {
-    this.holder.classList.toggle(Block.CSS.focused, state);
-  }
-
-  /**
-   * Get Block's focused state
-   */
-  public get focused(): boolean {
-    return this.holder.classList.contains(Block.CSS.focused);
   }
 
   /**
