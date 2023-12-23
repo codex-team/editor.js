@@ -93,7 +93,6 @@ export interface BlockToolConstructorOptions<D extends object = any, C extends o
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
-
   /**
    * Tool's Toolbox settings
    */
