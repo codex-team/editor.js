@@ -1,4 +1,4 @@
-import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
+import { Tool, ToolConfig, ToolConstructable, ToolSettings } from '../../../types/tools';
 import { SanitizerConfig } from '../../../types';
 import * as _ from '../utils';
 import type InlineTool from './inline';
@@ -213,6 +213,17 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   public reset(): void | Promise<void> {
     if (_.isFunction(this.constructable.reset)) {
       return this.constructable.reset();
+    }
+  }
+
+  /**
+   * Update tool's current config
+   *
+   * @param {ToolConfig} config - Tool's config
+   */
+  public updateConfig(config: ToolConfig):void {
+    if (this.config) {
+      this.config[UserSettings.Config] = config;
     }
   }
 

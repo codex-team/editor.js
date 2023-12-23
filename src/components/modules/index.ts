@@ -14,6 +14,7 @@ import SelectionAPI from './api/selection';
 import StylesAPI from './api/styles';
 import ToolbarAPI from './api/toolbar';
 import TooltipAPI from './api/tooltip';
+import ToolsAPI from './api/tools';
 import UiAPI from './api/ui';
 
 /** ./toolbar */
@@ -55,6 +56,7 @@ export default {
   StylesAPI,
   ToolbarAPI,
   TooltipAPI,
+  ToolsAPI,
   UiAPI,
 
   // Toolbar Modules
