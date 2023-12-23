@@ -471,7 +471,24 @@ export default class BlockManager extends Module {
    * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
-    const blockToMergeData = await blockToMerge.data;
+    const data = await blockToMerge.data;
+
+    const getBlockToolData = async (): Promise<BlockToolData> => {
+      const importConfig = targetBlock.tool.conversionConfig.import;
+      const exportConfig = blockToMerge.tool.conversionConfig.export;
+
+      if (typeof importConfig === 'string') {
+        return {
+          [importConfig]: typeof exportConfig === 'string' ? data[exportConfig] : exportConfig(data),
+        };
+      }
+
+      return importConfig(await blockToMerge.exportDataAsString());
+    };
+
+    const blockToMergeData = targetBlock.name !== blockToMerge.name
+      ? await getBlockToolData()
+      : data;
 
     if (!_.isEmpty(blockToMergeData)) {
       await targetBlock.mergeWith(blockToMergeData, targetBlock.name);

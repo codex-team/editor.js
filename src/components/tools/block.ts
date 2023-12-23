@@ -212,11 +212,4 @@ export default class BlockTool extends BaseTool<IBlockTool> {
 
     return baseConfig;
   }
-
-  /**
-   *
-   */
-  public get mergeableBlocks(): string[]|undefined {
-    return this.constructable[InternalBlockToolSettings.MergeableBlocks];
-  }
 }

@@ -12,12 +12,6 @@ import { TunesMenuConfig } from './tool-settings';
  * @see {@link docs/tools.md}
  */
 export interface BlockTool extends BaseTool {
-
-  /**
-   * Block that can be merged with the block
-   */
-  mergeableBlocks?: string[];
-
   /**
    * Sanitizer rules description
    */
@@ -99,11 +93,6 @@ export interface BlockToolConstructorOptions<D extends object = any, C extends o
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
-
-  /**
-   * Block types that can be merged with the block
-   */
-  mergeableBlocks?: string[];
 
   /**
    * Tool's Toolbox settings

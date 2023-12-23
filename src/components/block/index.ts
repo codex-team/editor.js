@@ -389,6 +389,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {boolean}
    */
   public get mergeable(): boolean {
+    console.log(this.toolInstance.merge);
+
     return _.isFunction(this.toolInstance.merge);
   }
 
@@ -994,12 +996,5 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
-  }
-
-  /**
-   * Get the list of mergeable blocks with the current block
-   */
-  public get mergeableWithBlocks(): string[]|undefined {
-    return this.tool.mergeableBlocks;
   }
 }
