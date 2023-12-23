@@ -389,8 +389,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @returns {boolean}
    */
   public get mergeable(): boolean {
-    console.log(this.toolInstance.merge);
-
     return _.isFunction(this.toolInstance.merge);
   }
 
