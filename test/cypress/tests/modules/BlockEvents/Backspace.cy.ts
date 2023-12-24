@@ -1,5 +1,7 @@
 import type EditorJS from '../../../../../types/index';
 import Chainable = Cypress.Chainable;
+import Header from '../../../../../example/tools/header/dist/header.mjs';
+import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
 
 
 /**
@@ -291,6 +293,48 @@ describe('Backspace keydown', function () {
     cy.get('[data-cy=editorjs]')
       .find('.ce-toolbar')
       .should('not.have.class', 'ce-toolbar--opened');
+  });
+
+  it('should merge different types of blocks if they valid conversion config', function () {
+    cy.createEditor({
+      tools: {
+        header: SimpleHeader,
+      },
+      data: {
+        blocks: [
+          {
+            id: 'block1',
+            type: 'header',
+            data: {
+              text: 'First block heading',
+            },
+          },
+          {
+            id: 'block2',
+            type: 'paragraph',
+            data: {
+              text: 'Second block paragraph',
+            },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .last()
+      .click()
+      .type('{home}') // move caret to the beginning
+      .type('{backspace}');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(1); // one block has been removed
+        expect(blocks[0].id).to.eq('block1'); // second block is still here
+        expect(blocks[0].data.text).to.eq('First block headingSecond block paragraph'); // text has been merged
+      });
   });
 
   it('should simply set Caret to the end of the previous Block if Caret at the start of the Block but Blocks are not mergeable. Also, should close the Toolbox.', function () {
