@@ -1,6 +1,5 @@
 import type EditorJS from '../../../../../types/index';
 import Chainable = Cypress.Chainable;
-import Header from '../../../../../example/tools/header/dist/header.mjs';
 import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
 
 
