@@ -36,6 +36,11 @@ export interface BlockAPI {
   readonly selected: boolean;
 
   /**
+   * True if Block has inputs to be focused
+   */
+  readonly focusable: boolean;
+
+  /**
    * Setter sets Block's stretch state
    *
    * Getter returns true if Block is stretched

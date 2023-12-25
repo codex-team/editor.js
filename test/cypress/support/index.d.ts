@@ -60,6 +60,31 @@ declare global {
        * @param text - text to select
        */
       selectText(text: string): Chainable<Subject>;
+
+      /**
+       * Select element's text by offset
+       * Note. Previous subject should have 'textNode' as firstChild
+       *
+       * Usage
+       * cy.get('[data-cy=editorjs]')
+       *  .find('.ce-paragraph')
+       *  .selectTextByOffset([0, 5])
+       *
+       * @param offset - offset to select
+       */
+      selectTextByOffset(offset: [number, number]): Chainable<Subject>;
+
+      /**
+       * Returns line wrap positions for passed element
+       *
+       * Usage
+       * cy.get('[data-cy=editorjs]')
+       *  .find('.ce-paragraph')
+       *  .getLineWrapPositions()
+       *
+       * @returns number[] - array of line wrap positions
+       */
+      getLineWrapPositions(): Chainable<number[]>;
     }
 
     interface ApplicationWindow {

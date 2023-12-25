@@ -138,15 +138,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
    * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public tryToShow(needToClose = false, needToShowConversionToolbar = true): void {
-    if (!this.allowedToShow()) {
-      if (needToClose) {
-        this.close();
-      }
+  public async tryToShow(needToClose = false, needToShowConversionToolbar = true): Promise<void> {
+    if (needToClose) {
+      this.close();
+    }
 
+    if (!this.allowedToShow()) {
       return;
     }
 
+    await this.addToolsFiltered(needToShowConversionToolbar);
     this.move();
     this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
@@ -188,51 +189,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
-   * Shows Inline Toolbar
-   *
-   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
-   */
-  public open(needToShowConversionToolbar = true): void {
-    if (this.opened) {
-      return;
-    }
-    /**
-     * Filter inline-tools and show only allowed by Block's Tool
-     */
-    this.addToolsFiltered();
-
-    /**
-     * Show Inline Toolbar
-     */
-    this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-
-    this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
-    this.opened = true;
-
-    if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
-      /**
-       * Change Conversion Dropdown content for current tool
-       */
-      this.setConversionTogglerContent();
-    } else {
-      /**
-       * hide Conversion Dropdown with there are no tools
-       */
-      this.nodes.conversionToggler.hidden = true;
-    }
-
-    /**
-     * Get currently visible buttons to pass it to the Flipper
-     */
-    let visibleTools = Array.from(this.buttonsList);
-
-    visibleTools.unshift(this.nodes.conversionToggler);
-    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden);
-
-    this.flipper.activate(visibleTools as HTMLElement[]);
-  }
-
-  /**
    * Check if node is contained by Inline Toolbar
    *
    * @param {Node} node — node to check
@@ -268,6 +224,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.CSS.inlineToolbar,
       ...(this.isRtl ? [ this.Editor.UI.CSS.editorRtlFix ] : []),
     ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.wrapper.setAttribute('data-cy', 'inline-toolbar');
+    }
+
     /**
      * Creates a different wrapper for toggler and buttons.
      */
@@ -328,13 +289,40 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
+   * Shows Inline Toolbar
+   */
+  private open(): void {
+    if (this.opened) {
+      return;
+    }
+
+    /**
+     * Show Inline Toolbar
+     */
+    this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+
+    this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
+    this.opened = true;
+
+    /**
+     * Get currently visible buttons to pass it to the Flipper
+     */
+    let visibleTools = Array.from(this.buttonsList);
+
+    visibleTools.unshift(this.nodes.conversionToggler);
+    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden);
+
+    this.flipper.activate(visibleTools as HTMLElement[]);
+  }
+
+  /**
    * Move Toolbar to the selected text
    */
   private move(): void {
     const selectionRect = SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
-      x: selectionRect.x - wrapperOffset.left,
+      x: selectionRect.x - wrapperOffset.x,
       y: selectionRect.y +
         selectionRect.height -
         // + window.scrollY
@@ -342,33 +330,14 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         this.toolbarVerticalMargin,
     };
 
+    const realRightCoord = newCoords.x + this.width + wrapperOffset.x;
+
     /**
-     * If we know selections width, place InlineToolbar to center
+     * Prevent InlineToolbar from overflowing the content zone on the right side
      */
-    if (selectionRect.width) {
-      newCoords.x += Math.floor(selectionRect.width / 2);
+    if (realRightCoord > this.Editor.UI.contentRect.right) {
+      newCoords.x = this.Editor.UI.contentRect.right - this.width - wrapperOffset.x;
     }
-
-
-    /**
-     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
-     */
-    const realLeftCoord = newCoords.x - this.width / 2;
-    const realRightCoord = newCoords.x + this.width / 2;
-
-    /**
-     * By default, Inline Toolbar has top-corner at the center
-     * We are adding a modifiers for to move corner to the left or right
-     */
-    this.nodes.wrapper.classList.toggle(
-      this.CSS.inlineToolbarLeftOriented,
-      realLeftCoord < this.Editor.UI.contentRect.left
-    );
-
-    this.nodes.wrapper.classList.toggle(
-      this.CSS.inlineToolbarRightOriented,
-      realRightCoord > this.Editor.UI.contentRect.right
-    );
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
@@ -529,8 +498,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Append only allowed Tools
+   *
+   * @param {boolean} needToShowConversionToolbar - pass false to not to show Conversion Toolbar (e.g. for Footnotes-like tools)
    */
-  private addToolsFiltered(): void {
+  private async addToolsFiltered(needToShowConversionToolbar = true): Promise<void> {
     const currentSelection = SelectionUtils.get();
     const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
@@ -544,6 +515,18 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     Array.from(currentBlock.tool.inlineTools.values()).forEach(tool => {
       this.addTool(tool);
     });
+
+    if (needToShowConversionToolbar && this.Editor.ConversionToolbar.hasTools()) {
+      /**
+       * Change Conversion Dropdown content for current tool
+       */
+      await this.setConversionTogglerContent();
+    } else {
+      /**
+       * hide Conversion Dropdown with there are no tools
+       */
+      this.nodes.conversionToggler.hidden = true;
+    }
 
     /**
      * Recalculate width because some buttons can be hidden

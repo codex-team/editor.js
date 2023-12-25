@@ -64,7 +64,6 @@ export default class Core {
         try {
           if ((this.configuration as EditorConfig).autofocus) {
             Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
-            BlockManager.highlightCurrentNode();
           }
         } catch {}
 
