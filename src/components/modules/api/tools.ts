@@ -15,7 +15,7 @@ export default class ToolsAPI extends Module {
    */
   public get methods(): Tools {
     return {
-      updateToolConfig:(toolName:string, config: ToolConfig) => this.updateToolConfig(toolName, config),
+      updateToolConfig: (toolName: string, config: ToolConfig) => this.updateToolConfig(toolName, config),
     };
   }
 
@@ -25,7 +25,7 @@ export default class ToolsAPI extends Module {
    * @param toolName Name of the tool
    * @param config Tools Config
    */
-  public updateToolConfig(toolName:string, config: ToolConfig): void {
+  public updateToolConfig(toolName: string, config: ToolConfig): void {
     const tool = this.Editor.Tools.available.get(toolName);
 
     if (tool) {

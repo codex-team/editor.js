@@ -221,7 +221,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    *
    * @param {ToolConfig} config - Tool's config
    */
-  public updateConfig(config: ToolConfig):void {
+  public updateConfig(config: ToolConfig): void {
     if (this.config) {
       this.config[UserSettings.Config] = config;
     }
