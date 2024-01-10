@@ -154,6 +154,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.nodes.toolbox = this.popover.getElement();
     this.nodes.toolbox.classList.add(Toolbox.CSS.toolbox);
 
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.toolbox.setAttribute('data-cy', 'toolbox');
+    }
+
     return this.nodes.toolbox;
   }
 

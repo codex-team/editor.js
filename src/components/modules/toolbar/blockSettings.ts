@@ -78,6 +78,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
+    }
   }
 
   /**
@@ -104,7 +108,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Highlight content of a Block we are working with
      */
-    targetBlock.selected = true;
+    this.Editor.BlockSelection.selectBlock(targetBlock);
     this.Editor.BlockSelection.clearCache();
 
     /**
@@ -144,6 +148,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Close Block Settings pane
    */
   public close(): void {
+    if (!this.opened) {
+      return;
+    }
+
     this.opened = false;
 
     /**
@@ -163,7 +171,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
      * Remove highlighted content of a Block we are working with
      */
     if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock) {
-      this.Editor.BlockManager.currentBlock.selected = false;
+      this.Editor.BlockSelection.unselectBlock(this.Editor.BlockManager.currentBlock);
     }
 
     /** Tell to subscribers that block settings is closed */

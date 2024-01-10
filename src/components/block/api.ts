@@ -85,6 +85,13 @@ function BlockAPI(
     },
 
     /**
+     * True if Block has inputs to be focused
+     */
+    get focusable(): boolean {
+      return block.focusable;
+    },
+
+    /**
      * Call Tool method with errors handler under-the-hood
      *
      * @param {string} methodName - method to call

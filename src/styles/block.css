@@ -89,10 +89,3 @@
     font-style: italic;
   }
 }
-
-.codex-editor--narrow .ce-block--focused {
-  @media (--not-mobile) {
-    margin-right: calc(var(--narrow-mode-right-padding) * -1);
-    padding-right: var(--narrow-mode-right-padding);
-  }
-}
