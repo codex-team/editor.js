@@ -18,6 +18,7 @@
 - `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter which have no inputs.
 - `Improvement` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
 - `Improvement` - Now the `data-mutation-free` supports deep nesting, so you can mark some element with it to prevent the onChange call caused by child element mutating
+- `Improvement` - Now the `data-mutation-free` also allows to skip "characterData" mutations (eg. text content change)
 - `Refactoring` — `ce-block--focused` class toggling removed as unused.
 
 ### 2.28.2
