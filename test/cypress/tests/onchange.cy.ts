@@ -454,7 +454,7 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    cy.wait(200).then(() => {
+    cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
