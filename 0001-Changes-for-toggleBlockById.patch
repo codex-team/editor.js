@@ -1,0 +1,99 @@
+From 0a42123ba8c6a99690f0af9a4ecb4a6b363d15d8 Mon Sep 17 00:00:00 2001
+From: Vishal Pradhan <vishal.pradhan@aalda.in>
+Date: Thu, 25 Jan 2024 17:14:08 +0530
+Subject: [PATCH] Changes for toggleBlockById
+
+---
+ .gitignore                            |  1 +
+ package.json                          |  4 ++--
+ src/components/modules/api/toolbar.ts | 22 ++++++++++++++++++++++
+ types/api/toolbar.d.ts                |  2 ++
+ 4 files changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index db93fc4..fe0fc1d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -17,3 +17,4 @@ dist/
+ 
+ coverage/
+ .nyc_output/
++pnpm-lock.yaml
+diff --git a/package.json b/package.json
+index a45444d..817e68b 100644
+--- a/package.json
++++ b/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "@editorjs/editorjs",
++  "name": "editor-js",
+   "version": "2.29.0",
+   "description": "Editor.js — Native JS, based on API and Open Source",
+   "main": "dist/editorjs.umd.js",
+@@ -76,4 +76,4 @@
+     "type": "opencollective",
+     "url": "https://opencollective.com/editorjs"
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/src/components/modules/api/toolbar.ts b/src/components/modules/api/toolbar.ts
+index 321cbf4..1354192 100644
+--- a/src/components/modules/api/toolbar.ts
++++ b/src/components/modules/api/toolbar.ts
+@@ -1,5 +1,6 @@
+ import { Toolbar } from '../../../../types/api';
+ import Module from '../../__module';
++import Block from '../../block';
+ import * as _ from './../../utils';
+ /**
+  * @class ToolbarAPI
+@@ -16,6 +17,7 @@ export default class ToolbarAPI extends Module {
+       close: (): void => this.close(),
+       open: (): void => this.open(),
+       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
++      toggleBlockSettingsById: (id:string): void => this.toggleBlockSettingsById(id),
+       toggleToolbox: (openingState?: boolean): void => this.toggleToolbox(openingState),
+     };
+   }
+@@ -56,6 +58,26 @@ export default class ToolbarAPI extends Module {
+       this.Editor.BlockSettings.close();
+     }
+   }
++  /**
++   * Toggles Block Setting of the current block
++   *
++   * @param {boolean} openingState —  opening state of Block Setting
++   */
++  public toggleBlockSettingsById(id: String): void {
++    const block = this.Editor.BlockManager.getBlockById(id)
++    if (!block) {
++      _.logLabeled('Block not found', 'warn');
++      return;
++    }
++      this.Editor.BlockSelection.selectBlock(block);
++      this.Editor.BlockManager.currentBlock = block;
++    if (this.Editor.BlockManager.currentBlockIndex === -1) {
++      _.logLabeled('Could\'t toggle the Toolbar because there is no block selected ', 'warn');
++      return;
++    }
++      this.Editor.Toolbar.moveAndOpen();
++      this.Editor.BlockSettings.open();
++  }
+ 
+ 
+   /**
+diff --git a/types/api/toolbar.d.ts b/types/api/toolbar.d.ts
+index 8e6eefb..c822613 100644
+--- a/types/api/toolbar.d.ts
++++ b/types/api/toolbar.d.ts
+@@ -23,4 +23,6 @@ export interface Toolbar {
+    * @param {boolean} openingState —  opening state of the toolbox
+    */
+   toggleToolbox(openingState?: boolean): void;
++
++  toggleBlockSettingsById(id:string): void;
+ }
+-- 
+2.39.3 (Apple Git-145)
+
