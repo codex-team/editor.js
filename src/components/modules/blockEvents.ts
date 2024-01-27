@@ -52,13 +52,17 @@ export default class BlockEvents extends Module {
       case _.keyCodes.TAB:
         this.tabPressed(event);
         break;
-      case _.keyCodes.SLASH:
-        if (event.ctrlKey || event.metaKey) {
-          this.commandSlashPressed();
-        } else {
-          this.slashPressed();
-        }
-        break;
+    }
+
+    /**
+     * Keyboard-layout independent handling of Slash key
+     */
+    if (event.key === '/' || event.code === 'Slash') {
+      if (event.ctrlKey || event.metaKey) {
+        this.commandSlashPressed();
+      } else if (!event.shiftKey && !event.altKey) {
+        this.slashPressed();
+      }
     }
   }
 

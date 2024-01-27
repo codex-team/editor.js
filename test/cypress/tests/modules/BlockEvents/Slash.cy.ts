@@ -23,6 +23,36 @@ describe('Slash keydown', function () {
         .get('.ce-popover')
         .should('be.visible');
     });
+
+    [
+      '{shift}',
+      '{alt}',
+      '{option}',
+    ].forEach((key) => {
+      it(`should not open Toolbox if Slash pressed with ${key}`, () => {
+        cy.createEditor({
+          data: {
+            blocks: [
+              {
+                type: 'paragraph',
+                data: {
+                  text: '',
+                },
+              },
+            ],
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .click()
+          .type(`${key}/`);
+
+        cy.get('[data-cy="toolbox"]')
+          .get('.ce-popover')
+          .should('not.be.visible');
+      });
+    });
   });
 
   describe('pressed in non-empty block', function () {
