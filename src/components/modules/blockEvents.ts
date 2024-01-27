@@ -55,14 +55,21 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Keyboard-layout independent handling of Slash key
+     * We check for "key" here since on different keyboard layouts "/" can be typed as "Shift + 7" etc
+     *
+     * @todo probably using "beforeInput" event would be better here
      */
-    if (event.key === '/' || event.code === 'Slash') {
-      if (event.ctrlKey || event.metaKey) {
-        this.commandSlashPressed();
-      } else if (!event.shiftKey && !event.altKey) {
-        this.slashPressed();
-      }
+    if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
+      this.slashPressed();
+    }
+
+    /**
+     * If user pressed "Ctrl + /" or "Cmd + /" — open Block Settings
+     * We check for "code" here since on different keyboard layouts there can be different keys in place of Slash.
+     */
+    if (event.code === 'Slash' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      this.commandSlashPressed();
     }
   }
 

@@ -3,7 +3,7 @@
 ### 2.29.1
 
 - `Fix` — Toolbox wont be shown when Slash pressed with along with Shift or Alt
-- `Fix` — Toolbox will be opened when Slash pressed in ASCII-capable keyboard layout.
+- `Fix` — Toolbox will be opened when Slash pressed in non-US keyboard layout where there is no physical '/' key.
 
 ### 2.29.0
 
