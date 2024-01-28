@@ -346,6 +346,10 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getTagsConfig(tool: BlockTool): void {
+    if (tool.pasteConfig === false) {
+      return;
+    }
+
     const tagsOrSanitizeConfigs = tool.pasteConfig.tags || [];
     const toolTags = [];
 
@@ -387,6 +391,10 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getFilesConfig(tool: BlockTool): void {
+    if (tool.pasteConfig === false) {
+      return;
+    }
+
     const { files = {} } = tool.pasteConfig;
     let { extensions, mimeTypes } = files;
 
@@ -428,7 +436,11 @@ export default class Paste extends Module {
    * @param tool - BlockTool object
    */
   private getPatternsConfig(tool: BlockTool): void {
-    if (!tool.pasteConfig.patterns || _.isEmpty(tool.pasteConfig.patterns)) {
+    if (
+      tool.pasteConfig === false ||
+      !tool.pasteConfig.patterns ||
+      _.isEmpty(tool.pasteConfig.patterns)
+    ) {
       return;
     }
 
@@ -467,9 +479,14 @@ export default class Paste extends Module {
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const { BlockManager, Toolbar } = this.Editor;
 
+    /**
+     * When someone pasting into a block, its more stable to set current block by event target, instead of relying on current block set before
+     */
+    const currentBlock = BlockManager.setCurrentBlockByChildNode(event.target as HTMLElement);
+
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !BlockManager.currentBlock || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
+      !currentBlock || (this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))
     ) {
       return;
     }
@@ -477,14 +494,13 @@ export default class Paste extends Module {
     /**
      * If Tools is in list of errors, skip processing of paste event
      */
-    if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
+    if (currentBlock && this.exceptionList.includes(currentBlock.name)) {
       return;
     }
 
     event.preventDefault();
     this.processDataTransfer(event.clipboardData);
 
-    BlockManager.clearFocused();
     Toolbar.close();
   };
 
@@ -602,7 +618,10 @@ export default class Paste extends Module {
             break;
         }
 
-        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig;
+        /**
+         * Returns empty array if there is no paste config
+         */
+        const { tags: tagsOrSanitizeConfigs } = tool.pasteConfig || { tags: [] };
 
         /**
          * Reduce the tags or sanitize configs to a single array of sanitize config.

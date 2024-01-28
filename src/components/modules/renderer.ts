@@ -1,116 +1,111 @@
 import Module from '../__module';
 import * as _ from '../utils';
-import { OutputBlockData } from '../../../types';
-import BlockTool from '../tools/block';
+import type { BlockId, BlockToolData, OutputBlockData } from '../../../types';
+import type BlockTool from '../tools/block';
+import type { StubData } from '../../tools/stub';
+import Block from '../block';
 
 /**
- * Editor.js Renderer Module
- *
- * @module Renderer
- * @author CodeX Team
- * @version 2.0.0
+ * Module that responsible for rendering Blocks on editor initialization
  */
 export default class Renderer extends Module {
   /**
-   * @typedef {object} RendererBlocks
-   * @property {string} type - tool name
-   * @property {object} data - tool data
-   */
-
-  /**
-   * @example
+   * Renders passed blocks as one batch
    *
-   * blocks: [
-   *   {
-   *     id   : 'oDe-EVrGWA',
-   *     type : 'paragraph',
-   *     data : {
-   *       text : 'Hello from Codex!'
-   *     }
-   *   },
-   *   {
-   *     id   : 'Ld5BJjJCHs',
-   *     type : 'paragraph',
-   *     data : {
-   *       text : 'Leave feedback if you like it!'
-   *     }
-   *   },
-   * ]
+   * @param blocksData - blocks to render
    */
+  public async render(blocksData: OutputBlockData[]): Promise<void> {
+    return new Promise((resolve) => {
+      const { Tools, BlockManager } = this.Editor;
 
-  /**
-   * Make plugin blocks from array of plugin`s data
-   *
-   * @param {OutputBlockData[]} blocks - blocks to render
-   */
-  public async render(blocks: OutputBlockData[]): Promise<void> {
-    const chainData = blocks.map((block) => ({ function: (): Promise<void> => this.insertBlock(block) }));
+      if (blocksData.length === 0) {
+        BlockManager.insert();
+      } else {
+        /**
+         * Create Blocks instances
+         */
+        const blocks = blocksData.map(({ type: tool, data, tunes, id }) => {
+          if (Tools.available.has(tool) === false) {
+            _.logLabeled(`Tool «${tool}» is not found. Check 'tools' property at the Editor.js config.`, 'warn');
 
-    /**
-     * Disable onChange callback on render to not to spam those events
-     */
-    this.Editor.ModificationsObserver.disable();
+            data = this.composeStubDataForTool(tool, data, id);
+            tool = Tools.stubTool;
+          }
 
-    const sequence = await _.sequence(chainData as _.ChainData[]);
+          let block: Block;
 
-    this.Editor.ModificationsObserver.enable();
+          try {
+            block = BlockManager.composeBlock({
+              id,
+              tool,
+              data,
+              tunes,
+            });
+          } catch (error) {
+            _.log(`Block «${tool}» skipped because of plugins error`, 'error', {
+              data,
+              error,
+            });
 
-    this.Editor.UI.checkEmptiness();
+            /**
+             * If tool throws an error during render, we should render stub instead of it
+             */
+            data = this.composeStubDataForTool(tool, data, id);
+            tool = Tools.stubTool;
 
-    return sequence;
+            block = BlockManager.composeBlock({
+              id,
+              tool,
+              data,
+              tunes,
+            });
+          }
+
+          return block;
+        });
+
+        /**
+         * Insert batch of Blocks
+         */
+        BlockManager.insertMany(blocks);
+      }
+
+      /**
+       * Wait till browser will render inserted Blocks and resolve a promise
+       */
+      window.requestIdleCallback(() => {
+        resolve();
+      }, { timeout: 2000 });
+    });
   }
 
   /**
-   * Get plugin instance
-   * Add plugin instance to BlockManager
-   * Insert block to working zone
+   * Create data for the Stub Tool that will be used instead of unavailable tool
    *
-   * @param {object} item - Block data to insert
-   * @returns {Promise<void>}
+   * @param tool - unavailable tool name to stub
+   * @param data - data of unavailable block
+   * @param [id] - id of unavailable block
    */
-  public async insertBlock(item: OutputBlockData): Promise<void> {
-    const { Tools, BlockManager } = this.Editor;
-    const { type: tool, data, tunes, id } = item;
+  private composeStubDataForTool(tool: string, data: BlockToolData, id?: BlockId): StubData {
+    const { Tools } = this.Editor;
 
-    if (Tools.available.has(tool)) {
-      try {
-        BlockManager.insert({
-          id,
-          tool,
-          data,
-          tunes,
-        });
-      } catch (error) {
-        _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
-        throw Error(error);
+    let title = tool;
+
+    if (Tools.unavailable.has(tool)) {
+      const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+
+      if (toolboxSettings !== undefined && toolboxSettings[0].title !== undefined) {
+        title = toolboxSettings[0].title;
       }
-    } else {
-      /** If Tool is unavailable, create stub Block for it */
-      const stubData = {
-        savedData: {
-          id,
-          type: tool,
-          data,
-        },
-        title: tool,
-      };
-
-      if (Tools.unavailable.has(tool)) {
-        const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
-        const toolboxTitle = toolboxSettings[0]?.title;
-
-        stubData.title = toolboxTitle || stubData.title;
-      }
-
-      const stub = BlockManager.insert({
-        id,
-        tool: Tools.stubTool,
-        data: stubData,
-      });
-
-      stub.stretched = true;
-
-      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
     }
+
+    return {
+      savedData: {
+        id,
+        type: tool,
+        data,
+      },
+      title,
+    };
   }
 }

@@ -69,11 +69,18 @@ export enum PopoverEvent {
   Close = 'close'
 }
 
+/**
+ * Events fired by the Popover
+ */
+interface PopoverEventMap {
+  [PopoverEvent.Close]: undefined;
+}
+
 
 /**
  * Class responsible for rendering popover and handling its behaviour
  */
-export default class Popover extends EventsDispatcher<PopoverEvent> {
+export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Flipper - module for keyboard iteration between elements
    */
@@ -210,10 +217,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Returns HTML element correcponding to the popover
+   * Returns HTML element corresponding to the popover
    */
-  public getElement(): HTMLElement | null {
-    return this.nodes.wrapper;
+  public getElement(): HTMLElement {
+    return this.nodes.wrapper as HTMLElement;
   }
 
   /**
@@ -237,10 +244,9 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     this.flipper.activate(this.flippableElements);
 
     if (this.search !== undefined) {
-      setTimeout(() => {
-        this.search.focus();
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 100);
+      requestAnimationFrame(() => {
+        this.search?.focus();
+      });
     }
 
     if (isMobileScreen()) {
@@ -324,7 +330,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   }
 
   /**
-   * Adds seach to the popover
+   * Adds search to the popover
    */
   private addSearch(): void {
     this.search = new SearchInput({
@@ -508,10 +514,10 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   /**
    * Toggles nothing found message visibility
    *
-   * @param isDislayed - true if the message should be displayed
+   * @param isDisplayed - true if the message should be displayed
    */
-  private toggleNothingFoundMessage(isDislayed: boolean): void {
-    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDislayed);
+  private toggleNothingFoundMessage(isDisplayed: boolean): void {
+    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**
@@ -527,7 +533,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    * - Toggles item active state, if clicked popover item has property 'toggle' set to true.
    *
    * - Performs radiobutton-like behavior if the item has property 'toggle' set to string key.
-   * (All the other items with the same key get unactive, and the item gets active)
+   * (All the other items with the same key get inactive, and the item gets active)
    *
    * @param clickedItem - popover item that was clicked
    */

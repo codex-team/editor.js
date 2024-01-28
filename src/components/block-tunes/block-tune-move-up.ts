@@ -82,7 +82,7 @@ export default class MoveUpTune implements BlockTune {
     if (previousBlockCoords.top > 0) {
       scrollUpOffset = Math.abs(currentBlockCoords.top) - Math.abs(previousBlockCoords.top);
     } else {
-      scrollUpOffset = window.innerHeight - Math.abs(currentBlockCoords.top) + Math.abs(previousBlockCoords.top);
+      scrollUpOffset = Math.abs(currentBlockCoords.top) + previousBlockCoords.height;
     }
     // document.getElementById('editorjs').parentElement.scrollBy(0, -1 * scrollUpOffset);
     window.scrollBy(0, -1 * scrollUpOffset);

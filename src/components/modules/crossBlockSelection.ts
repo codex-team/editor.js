@@ -130,11 +130,6 @@ export default class CrossBlockSelection extends Module {
           default:
             Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
         }
-      } else {
-        /**
-         * By default set caret at the end of the last selected block
-         */
-        Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
       }
     }
 
@@ -186,6 +181,13 @@ export default class CrossBlockSelection extends Module {
    */
   private onMouseOver = (event: MouseEvent): void => {
     const { BlockManager, BlockSelection } = this.Editor;
+
+    /**
+     * Probably, editor is not initialized yet
+     */
+    if (event.relatedTarget === null && event.target === null) {
+      return;
+    }
 
     const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node) || this.lastSelectedBlock;
     const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);

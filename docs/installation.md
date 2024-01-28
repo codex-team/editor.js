@@ -69,7 +69,7 @@ Check [Editor.js's community](https://github.com/editor-js/) to see Tools exampl
 ## Create Editor instance
 
 Create an instance of Editor.js and pass [Configuration Object](../src/types-internal/editor-config.ts).
-At least the `holderId` option is required.
+At least the `holder` option is required.
 
 ```html
 <div id="editorjs"></div>
@@ -92,7 +92,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'editorjs',
+    holder : 'editorjs',
 
     /**
      * Available Tools list.

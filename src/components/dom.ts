@@ -52,7 +52,7 @@ export default class Dom {
    * @param  {object} [attributes] - any attributes
    * @returns {HTMLElement}
    */
-  public static make(tagName: string, classNames: string | string[] = null, attributes: object = {}): HTMLElement {
+  public static make(tagName: string, classNames: string | string[] | null = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
@@ -145,7 +145,7 @@ export default class Dom {
    * @param {string} selector - searching string
    * @returns {Element}
    */
-  public static find(el: Element | Document = document, selector: string): Element {
+  public static find(el: Element | Document = document, selector: string): Element | null {
     return el.querySelector(selector);
   }
 
@@ -348,9 +348,10 @@ export default class Dom {
    * @description Method checks simple Node without any childs for emptiness
    * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
    * @param {Node} node - node to check
+   * @param {string} [ignoreChars] - char or substring to treat as empty
    * @returns {boolean} true if it is empty
    */
-  public static isNodeEmpty(node: Node): boolean {
+  public static isNodeEmpty(node: Node, ignoreChars?: string): boolean {
     let nodeText;
 
     if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
@@ -361,6 +362,10 @@ export default class Dom {
       nodeText = (node as HTMLInputElement).value;
     } else {
       nodeText = node.textContent.replace('\u200B', '');
+    }
+
+    if (ignoreChars) {
+      nodeText = nodeText.replace(new RegExp(ignoreChars, 'g'), '');
     }
 
     return nodeText.trim().length === 0;
@@ -386,9 +391,10 @@ export default class Dom {
    *
    * @description Pushes to stack all DOM leafs and checks for emptiness
    * @param {Node} node - node to check
+   * @param {string} [ignoreChars] - char or substring to treat as empty
    * @returns {boolean}
    */
-  public static isEmpty(node: Node): boolean {
+  public static isEmpty(node: Node, ignoreChars?: string): boolean {
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
@@ -403,7 +409,7 @@ export default class Dom {
         continue;
       }
 
-      if (this.isLeaf(node) && !this.isNodeEmpty(node)) {
+      if (this.isLeaf(node) && !this.isNodeEmpty(node, ignoreChars)) {
         return false;
       }
 
@@ -548,20 +554,6 @@ export default class Dom {
     }
 
     return element;
-  }
-
-  /**
-   * Method checks passed Node if it is some extension Node
-   *
-   * @param {Node} node - any node
-   * @returns {boolean}
-   */
-  public static isExtensionNode(node: Node): boolean {
-    const extensions = [
-      'GRAMMARLY-EXTENSION',
-    ];
-
-    return node && extensions.includes(node.nodeName);
   }
 
   /**

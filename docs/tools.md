@@ -70,7 +70,7 @@ to the `tools` property of Editor Config.
 
 ```javascript
 var editor = new EditorJS({
-  holderId : 'editorjs',
+  holder : 'editorjs',
   tools: {
     text: {
       class: Text,
@@ -410,7 +410,7 @@ static get sanitize() {
 
 Editor.js has a Conversion Toolbar that allows user to convert one Block to another.
 
-![](https://capella.pics/6c1f708b-a30c-4ffd-a427-5b59a1a472e0.jpg)
+![](assets/6c1f708b-a30c-4ffd-a427-5b59a1a472e0.jpg)
 
 1. You can add ability to your Tool to be converted. Specify «export» property of `conversionConfig`.
 2. You can add ability to convert other Tools to your Tool. Specify «import» property of `conversionConfig`.

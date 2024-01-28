@@ -1,9 +1,98 @@
 # Changelog
 
+### 2.29.1
+
+- `Fix` — Toolbox wont be shown when Slash pressed with along with Shift or Alt
+- `Fix` — Toolbox will be opened when Slash pressed in non-US keyboard layout where there is no physical '/' key.
+
+### 2.29.0
+
+- `New` — Editor Config now has the `style.nonce` attribute that could be used to allowlist editor style tag for Content Security Policy "style-src"
+- `New` — Toolbox now will be opened by '/' in empty Block instead of Tab
+- `New` — Block Tunes now will be opened by 'CMD+/' instead of Tab in non-empty block
+- `New` — Tab now will navigate through Blocks. In last block Tab will navigate to the next input on page.
+- `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
+- `Fix` — Layout did not shrink when a large document cleared in Chrome
+- `Fix` — Multiple Tooltip elements creation fixed
+- `Fix` — When the focusing Block is out of the viewport, the page will be scrolled.
+- `Fix` - Compiler error "This import is never used as a value and must use 'import type'..." fixed
+- `Fix` — `blocks.render()` won't lead the `onChange` call in Safari
+- `Fix` — Editor wrapper element growing on the Inline Toolbar close
+- `Fix` — Fix errors thrown by clicks on a document when the editor is being initialized
+- `Fix` — Caret losing on Mobile Devices when adding a block via Toolbox or via Backspace at the beginning of a Block
+- `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter which have no inputs.
+- `Improvement` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
+- `Improvement` - Now the `data-mutation-free` supports deep nesting, so you can mark some element with it to prevent the onChange call caused by child element mutating
+- `Improvement` - Now the `data-mutation-free` also allows to skip "characterData" mutations (eg. text content change)
+- `Refactoring` — `ce-block--focused` class toggling removed as unused.
+
+### 2.28.2
+
+- `Fix` — Get rid of redundant logs from the build
+
+### 2.28.1
+
+- `Fix` — Some Block were be skipped on saving after pasting them as HTML
+
+### 2.28.0
+
+- `New` - Block ids now displayed in DOM via a data-id attribute. Could be useful for plugins that want to access a Block's element by id.
+- `New` - The `blocks.convert(blockId, newType)` API method was added. It allows to convert existing Block to a Block of another type.
+- `New` - The `blocks.insertMany()` API method added. It allows to insert several Blocks to the specified index.
+- `Improvement` - The Delete keydown at the end of the Block will now work opposite a Backspace at the start. Next Block will be removed (if empty) or merged with the current one.
+- `Improvement` - The Delete keydown will work like a Backspace when several Blocks are selected.
+- `Improvement` - If we have two empty Blocks, and press Backspace at the start of the second one, the previous will be removed instead of the current.
+- `Improvement` - Tools shortcuts could be used to convert one Block to another.
+- `Improvement` - Tools shortcuts displayed in the Conversion Toolbar
+- `Improvement` - Initialization Loader has been removed.
+- `Improvement` - Selection style won't override your custom style for `::selection` outside the editor.
+- `Improvement` - Performance optimizations: initialization speed increased, `blocks.render()` API method optimized. Big documents will be displayed faster.
+- `Improvement` - "Editor saving" log removed
+- `Improvement` - "I'm ready" log removed
+- `Improvement` - The stub-block style is simplified.
+- `Improvement` - If some Block's tool throws an error during construction, we will show Stub block instead of skipping it during render
+- `Improvement` - Call of `blocks.clear()` now will trigger onChange with "block-removed" event for all removed blocks.
+- `Improvement` - The `blocks.clear()` now can be awaited.
+- `Improvement` - `BlockMutationType` and `BlockMutationEvent` types exported
+- `Improvement` - `blocks.update(id, data)` now can accept partial data object — it will update only passed properties, others will remain the same.
+- `Improvement` - `blocks.update(id, data)` now will trigger onChange with only `block-change` event.
+- `Improvement` - `blocks.update(id, data)` will return a promise with BlockAPI object of the changed block.
+
+
+### 2.27.2
+
+- `Fix` - `onChange` won't be called when element with data-mutation-free changes some attribute
+
+### 2.27.1
+
+- `Fix` - `onChange` will be called on removing the whole text in a block
+
 ### 2.27.0
 
-- `Refactoring` — Popover class refactored.
+- `New` — *Toolbar API* — Added a new method for toggling the toolbox.
+- `New` — Added types for block mutation events
+- `New` — Batching added to the `onChange` callback. Now the second argument can contain an array of CustomEvents as well as a single one. Multiple changes made in a short period of time will be batched under a single `onChange` call.
 - `Improvement` — *Toolbox* — Number of `close()` method calls optimized.
+- `Improvement` — The `onChange` callback can be muted if all mutations contain nodes with the `data-mutation-free` attribute.
+- `Improvement` — Pressing "Enter" at the end of a Block won't lead to redundant `block-changed` event triggering. Only `block-added` event will be dispatched.
+- `Improvement` — The block mutation handler is now called on every block change (including background changes), instead of only when a block is focused
+- `Improvement` — Number of caret saving method calls optimized for Block Tunes opening/closing.
+- `Improvement` — Package size reduced by removing redundant files.
+- `Refactoring` — Switched from Webpack to Vite as the build system.
+- `Refactoring` — *Dependencies* — Upgraded Cypress to v12 and related libraries to the latest versions.
+- `Refactoring` — *Dependencies* — Upgraded TypeScript to v5.
+- `Refactoring` — `EventDispatcher` types improved. Now we can pass `EventsMap` via generic to specify a map of event names and their payloads that can be used in a particular EventDispatcher instance.
+- `Refactoring` — All events in common editor Event Bus now have own type declarations.
+- `Refactoring` — Removed the block mutation observer from blocks and attached a single observer to the editor's blocks wrapper element.
+- `Refactoring` — Removed the debounce from the block mutation handler and used batching instead.
+- `Refactoring` — Refactored the popover class for better performance and maintenance.
+- `Fix` — The `onChange` callback won't trigger when block tunes are opened or closed.
+- `Fix` — Resolved a compiler error caused by importing the `BlockToolData` type.
+- `Fix` — Resolved a problem where the document would scroll to the beginning after moving a block above the viewport.
+- `Fix`- Fixed several bugs caused by browser extensions — Removed the search for a block's container in the DOM on saving and kept it in memory instead, updating it when the tool changes a container element.
+- `Fix` — *ToolsAPI* — `pasteConfig` getter with `false` value could be used to disable paste handling by Editor.js core. Could be useful if your tool has its own paste handler.
+- `CI` — Ubuntu container is now used for Edge tests runner.
+- `CI` — Node 16 is used for GitHib Actions.
 
 ### 2.26.5
 
@@ -43,6 +132,7 @@
 - `Improvement` — *Tools API* — `pasteConfig().tags` now support sanitizing configuration. It allows you to leave some explicitly specified attributes for pasted content.
 - `Improvement` — *CodeStyle* — [CodeX ESLint Config](https://github.com/codex-team/eslint-config) has bee updated. All ESLint/Spelling issues resolved
 - `Improvement` — *ToolsAPI* — The `icon` property of the `toolbox` getter became optional.
+
 
 ### 2.25.0
 

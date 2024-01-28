@@ -56,6 +56,7 @@ export const keyCodes = {
   RIGHT: 39,
   DELETE: 46,
   META: 91,
+  SLASH: 191,
 };
 
 /**
@@ -311,6 +312,7 @@ export function isPrintableKey(keyCode: number): boolean {
  * @param {Function} success - success callback
  * @param {Function} fallback - callback that fires in case of errors
  * @returns {Promise}
+ * @deprecated use PromiseQueue.ts instead
  */
 export async function sequence(
   chains: ChainData[],

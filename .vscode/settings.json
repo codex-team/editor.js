@@ -8,6 +8,7 @@
       "colspan",
       "contenteditable",
       "contentless",
+      "Convertable",
       "cssnano",
       "cssnext",
       "Debouncer",
@@ -34,6 +35,7 @@
       "textareas",
       "twitterwidget",
       "typeof",
+      "Unmergeable",
       "viewports"
     ]
 }

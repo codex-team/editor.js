@@ -225,7 +225,7 @@ export default class SelectionUtils {
    *
    * @param selection - Selection object to get Range from
    */
-  public static getRangeFromSelection(selection: Selection): Range {
+  public static getRangeFromSelection(selection: Selection): Range | null {
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 
@@ -353,22 +353,45 @@ export default class SelectionUtils {
   }
 
   /**
-   * Adds fake cursor to the current range
+   * Check if current range exists and belongs to container
    *
-   * @param [container] - if passed cursor will be added only if container contains current range
+   * @param container - where range should be
    */
-  public static addFakeCursor(container?: HTMLElement): void {
+  public static isRangeInsideContainer(container: HTMLElement): boolean {
     const range = SelectionUtils.range;
+
+    if (range === null) {
+      return false;
+    }
+
+    return container.contains(range.startContainer);
+  }
+
+  /**
+   * Adds fake cursor to the current range
+   */
+  public static addFakeCursor(): void {
+    const range = SelectionUtils.range;
+
+    if (range === null) {
+      return;
+    }
+
     const fakeCursor = $.make('span', 'codex-editor__fake-cursor');
 
     fakeCursor.dataset.mutationFree = 'true';
 
-    if (!range || (container && !container.contains(range.startContainer))) {
-      return;
-    }
-
     range.collapse();
     range.insertNode(fakeCursor);
+  }
+
+  /**
+   * Check if passed element contains a fake cursor
+   *
+   * @param el - where to check
+   */
+  public static isFakeCursorInsideContainer(el: HTMLElement): boolean {
+    return $.find(el, `.codex-editor__fake-cursor`) !== null;
   }
 
   /**
@@ -379,7 +402,11 @@ export default class SelectionUtils {
   public static removeFakeCursor(container: HTMLElement = document.body): void {
     const fakeCursor = $.find(container, `.codex-editor__fake-cursor`);
 
-    fakeCursor && fakeCursor.remove();
+    if (!fakeCursor) {
+      return;
+    }
+
+    fakeCursor.remove();
   }
 
   /**
