@@ -38,9 +38,14 @@ interface PopoverParams {
   searchable?: boolean;
 
   /**
+   * True if popover is nested inside another popover
+   */
+  nested?: boolean;
+
+  /**
    * Popover texts overrides
    */
-  messages?: PopoverMessages
+  messages?: PopoverMessages;
 }
 
 /**
@@ -110,6 +115,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
    */
   private static get CSS(): {
     popover: string;
+    popoverNested: string;
     popoverOpenTop: string;
     popoverOpened: string;
     search: string;
@@ -123,6 +129,7 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     } {
     return {
       popover: 'ce-popover',
+      popoverNested: 'ce-popover--nested',
       popoverOpenTop: 'ce-popover--open-top',
       popoverOpened: 'ce-popover--opened',
       search: 'ce-popover__search',
@@ -280,6 +287,8 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
   private make(): void {
     this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
 
+    if (this.)
+
     this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
@@ -381,6 +390,13 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     /** Cleanup other items state */
     this.items.filter(x => x !== item).forEach(x => x.reset());
 
+    /** If item has children, display them in nested popover */
+    if (item.children.length > 0) {
+      this.showNestedPopoverFor(item);
+
+      return;
+    }
+
     item.handleClick();
 
     this.toggleItemActivenessIfNeeded(item);
@@ -388,6 +404,24 @@ export default class Popover extends EventsDispatcher<PopoverEvent> {
     if (item.closeOnActivate) {
       this.hide();
     }
+  }
+
+  /**
+   *
+   * @param item
+   */
+  private showNestedPopoverFor(item: PopoverItem): void {
+    const nestedPopover = new Popover({
+      items: item.children,
+    });
+
+    const itemEl = item.getElement();
+
+    console.log(itemEl.offsetTop);
+
+    this.nodes.wrapper.appendChild(nestedPopover.getElement());
+
+    nestedPopover.show();
   }
 
   /**
