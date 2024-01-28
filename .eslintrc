@@ -32,6 +32,7 @@
     "ArrayLike": true,
     "InputEvent": true,
     "unknown": true,
-    "requestAnimationFrame": true
+    "requestAnimationFrame": true,
+    "navigator": true
   }
 }
