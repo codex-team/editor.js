@@ -60,7 +60,7 @@ export default class Caret extends Module {
 
     /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
-      return (firstNode as HTMLInputElement).selectionEnd === 0;
+      return (firstNode as HTMLInputElement)?.selectionEnd === 0;
     }
 
     /** Case when selection have been cleared programmatically, for example after CBS */
@@ -162,7 +162,7 @@ export default class Caret extends Module {
 
     /** In case lastNode is native input */
     if ($.isNativeInput(lastNode)) {
-      return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
+      return (lastNode as HTMLInputElement)?.selectionEnd === (lastNode as HTMLInputElement).value.length;
     }
 
     /** Case when selection have been cleared programmatically, for example after CBS */
