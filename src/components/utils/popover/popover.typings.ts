@@ -33,6 +33,11 @@ export interface PopoverParams {
    * Popover texts overrides
    */
   messages?: PopoverMessages
+
+  /**
+   * CSS class name for popover root element
+   */
+  class?: string;
 }
 
 /**

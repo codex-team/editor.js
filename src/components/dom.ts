@@ -56,6 +56,7 @@ export default class Dom {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
+      classNames = classNames.filter(className => className !== undefined);
       el.classList.add(...classNames);
     } else if (classNames) {
       el.classList.add(classNames);

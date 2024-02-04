@@ -1,5 +1,5 @@
 import Dom from '../../dom';
-import { IconDotCircle } from '@codexteam/icons';
+import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
 
 /**
@@ -72,25 +72,13 @@ export class PopoverItem {
   /**
    * Popover item CSS classes
    */
-  public static get CSS(): {
-    container: string,
-    title: string,
-    secondaryTitle: string,
-    icon: string,
-    active: string,
-    disabled: string,
-    focused: string,
-    hidden: string,
-    confirmationState: string,
-    noHover: string,
-    noFocus: string,
-    wobbleAnimation: string
-    } {
+  public static get CSS(): { [key: string]: string } {
     return {
       container: 'ce-popover-item',
       title: 'ce-popover-item__title',
       secondaryTitle: 'ce-popover-item__secondary-title',
       icon: 'ce-popover-item__icon',
+      iconChevronRight: 'ce-popover-item__icon-chevron-right',
       active: 'ce-popover-item--active',
       disabled: 'ce-popover-item--disabled',
       focused: 'ce-popover-item--focused',
@@ -167,6 +155,13 @@ export class PopoverItem {
   }
 
   /**
+   * Returns list of item children
+   */
+  public get children(): PopoverItemParams[] {
+    return 'children' in this.params ? this.params.children.items : [];
+  }
+
+  /**
    * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
@@ -191,6 +186,12 @@ export class PopoverItem {
     if (params.secondaryLabel) {
       el.appendChild(Dom.make('div', PopoverItem.CSS.secondaryTitle, {
         textContent: params.secondaryLabel,
+      }));
+    }
+
+    if (this.children.length > 0) {
+      el.appendChild(Dom.make('div', PopoverItem.CSS.iconChevronRight, {
+        innerHTML: IconChevronRight,
       }));
     }
 
