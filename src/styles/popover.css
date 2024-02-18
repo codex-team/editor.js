@@ -21,6 +21,7 @@
   --color-background-item-hover: #eff2f5;
   --color-background-item-confirm: #E24A4A;
   --color-background-item-confirm-hover: #CE4343;
+  --popover-top: calc(100% + var(--offset-from-target));
 
   &__container {
     min-width: var(--width);
@@ -32,7 +33,8 @@
     box-shadow: 0 3px 15px -3px var(--color-shadow);
     position: absolute;
     left: 0;
-    top: calc(100% + var(--offset-from-target));
+    top: var(--popover-top);
+
     background: var(--color-background);
     display: flex;
     flex-direction: column;
@@ -89,7 +91,7 @@
 
   &--open-top {
     .ce-popover__container {
-      top: calc(-1 * (var(--offset-from-target) + var(--popover-height)));
+      --popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)));
     }
   }
 
@@ -145,16 +147,21 @@
 
   &--nested {
 
-    /* &.ce-popover--opened {
-      opacity: 1;
-    } */
-
     .ce-popover__container {
       left: calc(var(--width) - 4px);
-      
-      top: calc(var(--nesting-popover-item-top) + 100% + var(--offset-from-target) - 4px);
+      top: calc(var(--nesting-popover-item-top) + var(--popover-top) - 4px);
       position: absolute;
-      /* opacity: 0; */
+    }
+  }
+
+  &--open-top {
+    --parent-popover-height: var(--popover-height);
+
+    .ce-popover--nested {
+      .ce-popover__container {
+        /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
+        top: calc(var(--popover-top) - var(--popover-height) + var(--parent-popover-height));
+      }
     }
   }
 }
