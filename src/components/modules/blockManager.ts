@@ -549,7 +549,7 @@ export default class BlockManager extends Module {
       /**
        * prevent deletion if return -1
        */
-      const ret: any = this.blocks[index].call('beforeDestroy');
+      const ret: any = this.blocks[index].call('beforeSelectedDestroy');
       if (ret === -1) {
         continue;
       }
