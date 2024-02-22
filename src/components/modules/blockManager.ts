@@ -546,6 +546,14 @@ export default class BlockManager extends Module {
         continue;
       }
 
+      /**
+       * prevent deletion if return -1
+       */
+      const ret: any = this.blocks[index].call('beforeDestroy');
+      if (ret === -1) {
+        continue;
+      }
+
       this.removeBlock(this.blocks[index]);
       firstSelectedBlockIndex = index;
     }
