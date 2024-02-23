@@ -225,16 +225,27 @@ export default class Paste extends Module {
     }
   }
 
-  public isDomElementInCdxInput(elem):boolean{
-    try{
-      for(const i in document.querySelectorAll('.cdx-input')){
-        if(document.querySelectorAll('.cdx-input')[i] && document.querySelectorAll('.cdx-input')[i].contains(elem)){
+  /**
+   * Check if elem has input class in parents html elements
+   *
+   * @param {HTMLElement} elem - pasted or dropped data transfer object
+   */
+  public isDomElementInCdxInput(elem): boolean {
+    const { StylesAPI } = this.Editor;
+    const elements = document.querySelectorAll(`.${StylesAPI.classes.input}`);
+
+    try {
+      for (const i in elements) {
+        if (elements[i] && elements[i].contains(elem)) {
           return true;
         }
       }
-      return  false;
-    }catch (e){
-      return  false;
+
+      return false;
+    } catch (e) {
+      console.log(e);
+
+      return false;
     }
   }
 
@@ -252,16 +263,26 @@ export default class Paste extends Module {
       return;
     }
 
-    if(this.pasteEvent && this.pasteEvent.target && this.isDomElementInCdxInput(this.pasteEvent.target)){
-
+    if (this.pasteEvent && this.pasteEvent.target && this.isDomElementInCdxInput(this.pasteEvent.target)) {
       const p = document.createElement('p');
+
       p.innerText = '';
       dataToInsert.forEach((item, index) => {
         p.innerText = p.innerText + item.content.innerText;
-        if(index !== dataToInsert.length-1) p.innerText = p.innerText + '';
+
+        if (index<dataToInsert.length-1) {
+          p.innerText = p.innerText + ' ';
+        }
       });
-      const pasteDataObj = {content:p, isBlock:false, tool: 'paragraph', event:this.pasteEvent};
+      const pasteDataObj = {
+        content:p,
+        isBlock:false,
+        tool: 'paragraph',
+        event:this.pasteEvent,
+      };
+
       this.processInlinePaste(pasteDataObj);
+
       return;
     }
 
