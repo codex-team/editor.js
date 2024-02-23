@@ -109,6 +109,7 @@ interface PasteData {
  * @version 2.0.0
  */
 export default class Paste extends Module {
+  public pasteEvent;
   /** If string`s length is greater than this number we don't check paste patterns */
   public static readonly PATTERN_PROCESSING_MAX_LENGTH = 450;
 
@@ -224,6 +225,19 @@ export default class Paste extends Module {
     }
   }
 
+  public isDomElementInCdxInput(elem):boolean{
+    try{
+      for(const i in document.querySelectorAll('.cdx-input')){
+        if(document.querySelectorAll('.cdx-input')[i] && document.querySelectorAll('.cdx-input')[i].contains(elem)){
+          return true;
+        }
+      }
+      return  false;
+    }catch (e){
+      return  false;
+    }
+  }
+
   /**
    * Process pasted text and divide them into Blocks
    *
@@ -235,6 +249,19 @@ export default class Paste extends Module {
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
+      return;
+    }
+
+    if(this.pasteEvent && this.pasteEvent.target && this.isDomElementInCdxInput(this.pasteEvent.target)){
+
+      const p = document.createElement('p');
+      p.innerText = '';
+      dataToInsert.forEach((item, index) => {
+        p.innerText = p.innerText + item.content.innerText;
+        if(index !== dataToInsert.length-1) p.innerText = p.innerText + '';
+      });
+      const pasteDataObj = {content:p, isBlock:false, tool: 'paragraph', event:this.pasteEvent};
+      this.processInlinePaste(pasteDataObj);
       return;
     }
 
@@ -478,7 +505,7 @@ export default class Paste extends Module {
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const { BlockManager, Toolbar } = this.Editor;
-
+    this.pasteEvent = event;
     /**
      * When someone pasting into a block, its more stable to set current block by event target, instead of relying on current block set before
      */
