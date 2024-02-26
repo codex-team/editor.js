@@ -38,7 +38,6 @@ class SomePlugin {
 
 describe('Flipper', () => {
   it('should prevent plugins event handlers from being called while keyboard navigation', () => {
-    const SLASH_KEY_CODE = 191;
     const ARROW_DOWN_KEY_CODE = 40;
     const ENTER_KEY_CODE = 13;
 
@@ -72,7 +71,7 @@ describe('Flipper', () => {
     cy.get('[data-cy=editorjs]')
       .get('.cdx-some-plugin')
       // Open tunes menu
-      .trigger('keydown', { keyCode: SLASH_KEY_CODE, ctrlKey: true })
+      .trigger('keydown', { code: 'Slash', ctrlKey: true })
       // Navigate to delete button (the second button)
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE })
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE });
