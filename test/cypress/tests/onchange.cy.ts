@@ -28,7 +28,7 @@ describe('onChange callback', () => {
     const config = {
       tools: {
         header: Header,
-        code: Code
+        code: Code,
       },
       onChange: (api, event): void => {
         console.log('something changed', event);
@@ -790,15 +790,24 @@ describe('onChange callback', () => {
   });
 
   it('should be fired when the whole text inside some descendant of the block is removed', () => {
+    /**
+     * Mock of Tool with nested contenteditable element
+     */
     class ToolWithContentEditableDescendant extends ToolMock {
+      /**
+       * Creates element with nested contenteditable element
+       */
       public render(): HTMLElement {
         const contenteditable = document.createElement('div');
+
         contenteditable.contentEditable = 'true';
         contenteditable.innerText = 'a';
         contenteditable.setAttribute('data-cy', 'nested-contenteditable');
 
         const wrapper = document.createElement('div');
+
         wrapper.appendChild(contenteditable);
+
         return wrapper;
       }
     }
@@ -813,14 +822,15 @@ describe('onChange callback', () => {
         blocks: [
           {
             type: 'testTool',
-            data: 'a'
-          }
-        ]
+            data: 'a',
+          },
+        ],
       },
       onChange: (): void => {
         console.log('something changed');
-      }
-    }
+      },
+    };
+
     cy.spy(config, 'onChange').as('onChange');
     cy.createEditor(config).as('editorInstance');
 
