@@ -11,6 +11,9 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
     return true;
   }
 
+  /**
+   * In case of removing/adding the element itself, mutation type will be 'childList' and 'removedNodes'/'addedNodes' will contain the element.
+   */
   if (type === 'childList') {
     const elementAddedItself = Array.from(addedNodes).some(node => node === element);
     if (elementAddedItself) {
