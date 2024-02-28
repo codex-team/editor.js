@@ -550,6 +550,13 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@editorjs/checklist@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/checklist/-/checklist-1.6.0.tgz#f3e501b0422917ca78fd08cb51578098a26a1823"
+  integrity sha512-hRNP36DInr73mSK3noHBQeoQb7DA12ANfqTXufEkTgQzx+k4mRJ0HdeGukTIR4JbwjHJ9ecUBnnQqIEGnxCFEg==
+  dependencies:
+    "@codexteam/icons" "^0.3.0"
+
 "@editorjs/code@^2.7.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@editorjs/code/-/code-2.8.0.tgz#d31fdd947b9c763daae2cd2eabdf8dc37c0c6f5a"

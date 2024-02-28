@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import Checklist from '@editorjs/checklist';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
@@ -28,6 +29,7 @@ describe('onChange callback', () => {
       tools: {
         header: Header,
         code: Code,
+        checklist: Checklist
       },
       onChange: (api, event): void => {
         console.log('something changed', event);
@@ -786,5 +788,33 @@ describe('onChange callback', () => {
           },
         }));
       });
+  });
+
+  it('should be fired when the whole text inside some descendant of the block is removed', () => {
+    createEditor([
+      {
+        type: "checklist",
+        data: {
+          items: [
+            {
+              text: 'a',
+              checked: false
+            }
+          ]
+        }
+      }
+    ]);
+
+    cy.get('[data-cy=editorjs')
+      .get('div.cdx-checklist__item-text')
+      .click()
+      .clear();
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
   });
 });
