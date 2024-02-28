@@ -1,6 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
-import Checklist from '@editorjs/checklist';
+import ToolMock from '../fixtures/tools/ToolMock';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
@@ -28,8 +28,7 @@ describe('onChange callback', () => {
     const config = {
       tools: {
         header: Header,
-        code: Code,
-        checklist: Checklist
+        code: Code
       },
       onChange: (api, event): void => {
         console.log('something changed', event);
@@ -791,22 +790,41 @@ describe('onChange callback', () => {
   });
 
   it('should be fired when the whole text inside some descendant of the block is removed', () => {
-    createEditor([
-      {
-        type: "checklist",
-        data: {
-          items: [
-            {
-              text: 'a',
-              checked: false
-            }
-          ]
-        }
-      }
-    ]);
+    class ToolWithContentEditableDescendant extends ToolMock {
+      public render(): HTMLElement {
+        const contenteditable = document.createElement('div');
+        contenteditable.contentEditable = 'true';
+        contenteditable.innerText = 'a';
+        contenteditable.setAttribute('data-cy', 'nested-contenteditable');
 
-    cy.get('[data-cy=editorjs')
-      .get('div.cdx-checklist__item-text')
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(contenteditable);
+        return wrapper;
+      }
+    }
+
+    const config = {
+      tools: {
+        testTool: {
+          class: ToolWithContentEditableDescendant,
+        },
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: 'a'
+          }
+        ]
+      },
+      onChange: (): void => {
+        console.log('something changed');
+      }
+    }
+    cy.spy(config, 'onChange').as('onChange');
+    cy.createEditor(config).as('editorInstance');
+
+    cy.get('[data-cy=nested-contenteditable]')
       .click()
       .clear();
 
