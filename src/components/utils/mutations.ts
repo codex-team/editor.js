@@ -7,6 +7,9 @@
 export function isMutationBelongsToElement(mutationRecord: MutationRecord, element: Element): boolean {
   const { type, target, addedNodes, removedNodes } = mutationRecord;
 
+  /**
+   * Covers all types of mutations happened to the element or it's descendants with the only one exception - removing/adding the element itself;
+   */
   if (element.contains(target)) {
     return true;
   }
