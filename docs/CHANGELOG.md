@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.0
+
+- `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
+
 ### 2.29.1
 
 - `Fix` — Toolbox wont be shown when Slash pressed with along with Shift or Alt
