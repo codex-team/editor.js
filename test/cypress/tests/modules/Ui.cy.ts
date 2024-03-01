@@ -92,5 +92,58 @@ describe('Ui module', function () {
           });
       });
     });
+
+    describe('Clicking outside', function () {
+      it('should clear current block even if selection was inside the editor before clicking', function () {
+        cy.createEditor({
+          data: {
+            blocks: [
+              {
+                id: 'block1',
+                type: 'paragraph',
+                data: {
+                  text: '',
+                },
+              },
+            ],
+          },
+        }).as('editorInstance');
+
+        cy.get('[data-cy=editorjs]')
+          .then(editor => {
+            const editorsParent = editor[0].parentNode;
+            const input = editorsParent.ownerDocument.createElement('div');
+
+            input.contentEditable = 'true';
+            input.style.width = '20px';
+            input.style.height = '20px';
+            input.setAttribute('data-cy', 'test-input');
+
+            editorsParent.appendChild(input);
+          });
+
+        /**
+         * Put cursor inside the editor
+         */
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .first()
+          .click();
+
+        /**
+         * Click outside of the editor and type '/'
+         */
+        cy.get('[data-cy=test-input]')
+          .click()
+          .type('/');
+
+        /**
+         * Toolbox shouldn't be open
+         */
+        cy.get('[data-cy=editorjs]')
+          .get('div.ce-toolbox .ce-popover')
+          .should('not.be.visible');
+      });
+    });
   });
 });
