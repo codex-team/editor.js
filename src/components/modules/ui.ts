@@ -557,12 +557,9 @@ export default class UI extends Module<UINodes> {
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection } = this.Editor;
 
-    console.log('this.someToolbarOpened', this.someToolbarOpened);
-
-
-    // if (this.someToolbarOpened) {
-    //   return;
-    // }
+    if (this.someToolbarOpened) {
+      return;
+    }
 
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
@@ -586,11 +583,6 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    console.log('event.target', event.target, (event.target as HTMLElement).tagName);
-    console.log('hasPointerToBlock', hasPointerToBlock);
-
-
-
     /**
      * If Caret is not set anywhere, event target on Enter is always Element that we handle
      * In our case it is document.body
@@ -604,6 +596,10 @@ export default class UI extends Module<UINodes> {
        */
       const newBlock = this.Editor.BlockManager.insert();
 
+      /**
+       * Prevent default enter behaviour to prevent adding a new line (<div><br></div>) to the inserted block
+       */
+      event.preventDefault();
       this.Editor.Caret.setToBlock(newBlock);
 
       /**
