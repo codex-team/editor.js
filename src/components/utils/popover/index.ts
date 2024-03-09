@@ -202,6 +202,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     }
 
     this.emit(PopoverEvent.Close);
+
+    this.destroyNestedPopoverIfExists();
   }
 
   /**
@@ -210,6 +212,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   public destroy(): void {
     this.flipper.deactivate();
     this.listeners.removeAll();
+    this.destroyNestedPopoverIfExists();
 
     if (isMobileScreen()) {
       this.scrollLocker.unlock();
@@ -394,7 +397,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     if (this.nestedPopover === undefined || this.nestedPopover === null) {
       return;
     }
+
     this.nestedPopover.hide();
+    this.nestedPopover.destroy();
     this.nestedPopover.getElement().remove();
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
