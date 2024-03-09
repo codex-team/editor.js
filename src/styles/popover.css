@@ -410,3 +410,32 @@
     transform: translate3d(0, 0, 0);
   }
 }
+
+/**
+ * Popover header styles
+ */
+.ce-popover-header {
+  margin-bottom: 8px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  
+  &__text {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__back-button {
+    border: 0;
+    background: transparent;
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-primary);
+
+    svg {
+      display: block;
+      width: 28px;
+      height: 28px;
+    }
+  }
+}
