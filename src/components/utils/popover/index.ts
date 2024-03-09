@@ -7,7 +7,8 @@ import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.typings';
-
+import { PopoverItem as PopoverItemParams } from '../../../../types';
+import { PopoverHeader } from './components/popover-header';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -22,6 +23,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * List of popover items
    */
   private items: PopoverItem[];
+
+  private itemsParams: PopoverItemParams[];
+
+  private title;
 
   /**
    * Element of the page that creates 'scope' of the popover.
@@ -55,6 +60,13 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private nestedPopover: Popover | undefined;
 
   /**
+   * Reference to popover header if exists
+   */
+  private header: PopoverHeader | undefined | null;
+
+  private history = [];
+
+  /**
    * Last hovered item inside popover.
    * Is used to track hovered item changes.
    */
@@ -78,6 +90,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       overlay: 'ce-popover__overlay',
       overlayHidden: 'ce-popover__overlay--hidden',
       popoverNested: 'ce-popover--nested',
+      popoverHeader: 'ce-popover__header',
     };
   }
 
@@ -91,6 +104,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     customContent: HTMLElement | null;
     items: HTMLElement | null;
     overlay: HTMLElement | null;
+    header: HTMLElement | null;
   } = {
       popover: null,
       popoverContainer: null,
@@ -98,6 +112,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       customContent: null,
       items: null,
       overlay: null,
+      header: null,
     };
 
   /**
@@ -115,6 +130,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    */
   constructor(private readonly params: PopoverParams) {
     super();
+
+    this.itemsParams = params.items;
 
     this.items = params.items.map(item => new PopoverItem(item));
 
@@ -246,7 +263,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.nodes.popoverContainer.appendChild(this.nodes.items);
 
     this.listeners.on(this.nodes.popoverContainer, 'click', (event: PointerEvent) => this.handleClick(event));
-    this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: PointerEvent) => this.handleHover(event));
+
+    if (!isMobileScreen()) {
+      this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: PointerEvent) => this.handleHover(event));
+    }
 
     this.nodes.popover = Dom.make('div', [Popover.CSS.popover, this.params.class]);
     this.nodes.overlay = Dom.make('div', [Popover.CSS.overlay, Popover.CSS.overlayHidden]);
@@ -330,8 +350,17 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     }
 
     if (item.children.length > 0) {
-      if (this.nestedPopover == null || this.nestedPopover === undefined) {
-        this.showNestedPopoverForItem(item);
+      if (isMobileScreen()) {
+        this.history.push({
+          title: this.title,
+          items: this.itemsParams,
+        });
+
+        this.showNestedItems(item.children, item.title);
+      } else {
+        if (this.nestedPopover == null || this.nestedPopover === undefined) {
+          this.showNestedPopoverForItem(item);
+        }
       }
 
       return;
@@ -374,6 +403,52 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     }
 
     this.showNestedPopoverForItem(item);
+  }
+
+  /**
+   *
+   * @param title
+   * @param items
+   * @param pushToHistory
+   */
+  private showNestedItems(items: PopoverItemParams[], title?: string ): void {
+    this.itemsParams = items;
+    this.title = title;
+
+    if (this.header !== null && this.header !== undefined) {
+      this.header.destroy();
+      this.header = null;
+    }
+    if (title !== undefined) {
+      this.header = new PopoverHeader({
+        text: title,
+        onBackButtonClick: () => {
+          const prevState = this.history.pop();
+
+          this.showNestedItems(prevState.items, prevState.title);
+        },
+      });
+      this.nodes.popoverContainer.insertBefore(this.header.getElement(), this.nodes.popoverContainer.firstChild);
+    }
+
+    this.renderItems(items);
+  }
+
+  /**
+   *
+   * @param itemsParams
+   */
+  private renderItems(itemsParams: PopoverItemParams[]): void {
+    this.flipper.deactivate();
+    this.items.forEach(item => item.getElement().remove());
+
+    this.items = itemsParams.map(params => new PopoverItem(params));
+
+    this.items.forEach(item => {
+      this.nodes.items.appendChild(item.getElement());
+    });
+
+    this.flipper.activate(this.flippableElements);
   }
 
 
