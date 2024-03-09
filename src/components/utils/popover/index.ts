@@ -162,6 +162,13 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
+   * Scroll position inside items container of the popover
+   */
+  public get scrollTop(): number {
+    return this.nodes.items.scrollTop;
+  }
+
+  /**
    * Open popover
    */
   public show(): void {
@@ -384,7 +391,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     const nestedPopoverEl = this.nestedPopover.getElement();
 
     this.nodes.popover.appendChild(nestedPopoverEl);
-    nestedPopoverEl.style.setProperty('--nesting-popover-item-top', item.getElement().offsetTop + 'px');
+    const itemOffsetTop = item.getElement().offsetTop - this.scrollTop;
+
+    nestedPopoverEl.style.setProperty('--nesting-popover-item-top', itemOffsetTop + 'px');
 
     this.nestedPopover.show();
     this.flipper.deactivate();
