@@ -128,10 +128,6 @@ export default class SearchInput {
       tabIndex: -1,
     }) as HTMLInputElement;
 
-    if (import.meta.env.MODE === 'test') {
-      this.input.setAttribute('data-cy', 'search-input');
-    }
-
     this.wrapper.appendChild(iconWrapper);
     this.wrapper.appendChild(this.input);
 
