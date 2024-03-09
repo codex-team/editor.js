@@ -78,7 +78,8 @@ export class PopoverItem {
       title: 'ce-popover-item__title',
       secondaryTitle: 'ce-popover-item__secondary-title',
       icon: 'ce-popover-item__icon',
-      iconChevronRight: 'ce-popover-item__icon-chevron-right',
+      iconTool: 'ce-popover-item__icon--tool',
+      iconChevronRight: 'ce-popover-item__icon--chevron-right',
       active: 'ce-popover-item--active',
       disabled: 'ce-popover-item--disabled',
       focused: 'ce-popover-item--focused',
@@ -173,7 +174,7 @@ export class PopoverItem {
       el.dataset.itemName = params.name;
     }
 
-    this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
+    this.nodes.icon = Dom.make('div', [PopoverItem.CSS.icon, PopoverItem.CSS.iconTool], {
       innerHTML: params.icon || IconDotCircle,
     });
 
@@ -190,7 +191,7 @@ export class PopoverItem {
     }
 
     if (this.children.length > 0) {
-      el.appendChild(Dom.make('div', PopoverItem.CSS.iconChevronRight, {
+      el.appendChild(Dom.make('div', [PopoverItem.CSS.icon, PopoverItem.CSS.iconChevronRight], {
         innerHTML: IconChevronRight,
       }));
     }
