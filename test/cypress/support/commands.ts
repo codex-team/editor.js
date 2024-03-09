@@ -244,7 +244,8 @@ Cypress.Commands.add('keydown', {
 }, (subject, keyCode: number) => {
   /**
    * We use the "reason instanceof KeyboardEvent" statement in blockSelection.ts
-   * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent
+   * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent,
+   * so real-world and Cypress behaviour were different.
    *
    * To make it work we need to trigger Cypres event with "eventConstructor: 'KeyboardEvent'",
    *
