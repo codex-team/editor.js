@@ -234,3 +234,28 @@ Cypress.Commands.add('getLineWrapPositions', {
 
   return cy.wrap(lineWraps);
 });
+
+/**
+ * Dispatches keydown event on subject
+ * Uses the correct KeyboardEvent object to make it work with our code (see below)
+ */
+Cypress.Commands.add('keydown', {
+  prevSubject: true,
+}, (subject, keyCode: number) => {
+  /**
+   * We use the "reason instanceof KeyboardEvent" statement in blockSelection.ts
+   * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent
+   *
+   * To make it work we need to trigger Cypres event with "eventConstructor: 'KeyboardEvent'",
+   *
+   * @see https://github.com/cypress-io/cypress/issues/5650
+   * @see https://github.com/cypress-io/cypress/pull/8305/files
+   */
+  subject.trigger('keydown', {
+    eventConstructor: 'KeyboardEvent',
+    keyCode,
+    bubbles: false,
+  });
+
+  return subject;
+});

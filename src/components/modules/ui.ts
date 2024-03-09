@@ -15,6 +15,7 @@ import { mobileScreenBreakpoint } from '../utils';
 
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
+import { selectionChangeDebounceTimeout } from '../constants';
 /**
  * HTML Elements used for UI
  */
@@ -350,7 +351,6 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    const selectionChangeDebounceTimeout = 180;
     const selectionChangeDebounced = _.debounce(() => {
       this.selectionChanged();
     }, selectionChangeDebounceTimeout);
