@@ -19,9 +19,36 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"]')
-        .get('.ce-popover')
+      cy.get('[data-cy="toolbox"] .ce-popover')
         .should('be.visible');
+    });
+
+    [
+      'ctrl',
+      'cmd',
+    ].forEach((key) => {
+      it(`should not open Toolbox if Slash pressed with ${key}`, () => {
+        cy.createEditor({
+          data: {
+            blocks: [
+              {
+                type: 'paragraph',
+                data: {
+                  text: '',
+                },
+              },
+            ],
+          },
+        });
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .click()
+          .type(`{${key}}/`);
+
+        cy.get('[data-cy="toolbox"] .ce-popover')
+          .should('not.be.visible');
+      });
     });
   });
 
@@ -45,8 +72,7 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"]')
-        .get('.ce-popover')
+      cy.get('[data-cy="toolbox"] .ce-popover')
         .should('not.be.visible');
 
       /**
@@ -80,8 +106,7 @@ describe('CMD+Slash keydown', function () {
       .click()
       .type('{cmd}/');
 
-    cy.get('[data-cy="block-tunes"]')
-      .get('.ce-popover')
+    cy.get('[data-cy="block-tunes"] .ce-popover')
       .should('be.visible');
   });
 });
