@@ -242,6 +242,7 @@ Cypress.Commands.add('getLineWrapPositions', {
 Cypress.Commands.add('keydown', {
   prevSubject: true,
 }, (subject, keyCode: number) => {
+  cy.log('Dispatching KeyboardEvent with keyCode: ' + keyCode);
   /**
    * We use the "reason instanceof KeyboardEvent" statement in blockSelection.ts
    * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent,
@@ -258,5 +259,5 @@ Cypress.Commands.add('keydown', {
     bubbles: false,
   });
 
-  return subject;
+  return cy.wrap(subject);
 });
