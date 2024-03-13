@@ -212,8 +212,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Returns HTML element corresponding to the popover
    */
-  public getElement(): HTMLElement | null {
-    return this.nodes.wrapper;
+  public getElement(): HTMLElement {
+    return this.nodes.wrapper as HTMLElement;
   }
 
   /**
@@ -237,10 +237,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.flipper.activate(this.flippableElements);
 
     if (this.search !== undefined) {
-      setTimeout(() => {
-        this.search.focus();
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 100);
+      this.search?.focus();
     }
 
     if (isMobileScreen()) {

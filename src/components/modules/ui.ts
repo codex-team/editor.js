@@ -15,6 +15,7 @@ import { mobileScreenBreakpoint } from '../utils';
 
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
+import { selectionChangeDebounceTimeout } from '../constants';
 /**
  * HTML Elements used for UI
  */
@@ -351,9 +352,11 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.readOnlyMutableListeners.on(document, 'selectionchange', () => {
+    const selectionChangeDebounced = _.debounce(() => {
       this.selectionChanged();
-    }, true);
+    }, selectionChangeDebounceTimeout);
+
+    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -535,7 +538,7 @@ export default class UI extends Module<UINodes> {
 
     if (this.Editor.Toolbar.toolbox.opened) {
       this.Editor.Toolbar.toolbox.close();
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.ConversionToolbar.opened) {
@@ -554,6 +557,11 @@ export default class UI extends Module<UINodes> {
    */
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection } = this.Editor;
+
+    if (this.someToolbarOpened) {
+      return;
+    }
+
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -589,12 +597,11 @@ export default class UI extends Module<UINodes> {
        */
       const newBlock = this.Editor.BlockManager.insert();
 
-      this.Editor.Caret.setToBlock(newBlock);
-
       /**
-       * And highlight
+       * Prevent default enter behaviour to prevent adding a new line (<div><br></div>) to the inserted block
        */
-      this.Editor.BlockManager.highlightCurrentNode();
+      event.preventDefault();
+      this.Editor.Caret.setToBlock(newBlock);
 
       /**
        * Move toolbar and show plus button because new Block is empty
@@ -689,11 +696,6 @@ export default class UI extends Module<UINodes> {
      */
     try {
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-
-      /**
-       * Highlight Current Node
-       */
-      this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
@@ -861,9 +863,6 @@ export default class UI extends Module<UINodes> {
 
     const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
 
-    /**
-     * @todo add debounce
-     */
     this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
   }
 }

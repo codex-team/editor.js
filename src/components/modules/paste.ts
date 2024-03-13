@@ -501,7 +501,6 @@ export default class Paste extends Module {
     event.preventDefault();
     this.processDataTransfer(event.clipboardData);
 
-    BlockManager.clearFocused();
     Toolbar.close();
   };
 

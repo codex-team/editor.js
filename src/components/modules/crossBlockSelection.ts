@@ -48,11 +48,11 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
-   * return boolean is cross block selection started
+   * Return boolean is cross block selection started:
+   * there should be at least 2 selected blocks
    */
   public get isCrossBlockSelectionStarted(): boolean {
-    return !!this.firstSelectedBlock &&
-      !!this.lastSelectedBlock;
+    return !!this.firstSelectedBlock && !!this.lastSelectedBlock && this.firstSelectedBlock !== this.lastSelectedBlock;
   }
 
   /**
@@ -130,11 +130,6 @@ export default class CrossBlockSelection extends Module {
           default:
             Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
         }
-      } else {
-        /**
-         * By default set caret at the end of the last selected block
-         */
-        Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
       }
     }
 

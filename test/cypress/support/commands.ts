@@ -155,3 +155,109 @@ Cypress.Commands.add('selectText', {
 
   return cy.wrap(subject);
 });
+
+/**
+ * Select element's text by offset
+ * Note. Previous subject should have 'textNode' as firstChild
+ *
+ * Usage
+ * cy.get('[data-cy=editorjs]')
+ *  .find('.ce-paragraph')
+ *  .selectTextByOffset([0, 5])
+ *
+ * @param offset - offset to select
+ */
+Cypress.Commands.add('selectTextByOffset', {
+  prevSubject: true,
+}, (subject, offset: [number, number]) => {
+  const el = subject[0];
+  const document = el.ownerDocument;
+  const range = document.createRange();
+  const textNode = el.firstChild;
+  const selectionPositionStart = offset[0];
+  const selectionPositionEnd = offset[1];
+
+  range.setStart(textNode, selectionPositionStart);
+  range.setEnd(textNode, selectionPositionEnd);
+  document.getSelection().removeAllRanges();
+  document.getSelection().addRange(range);
+
+  return cy.wrap(subject);
+});
+
+/**
+ * Returns line wrap positions for passed element
+ *
+ * Usage
+ * cy.get('[data-cy=editorjs]')
+ *  .find('.ce-paragraph')
+ *  .getLineWrapPositions()
+ *
+ * @returns number[] - array of line wrap positions
+ */
+Cypress.Commands.add('getLineWrapPositions', {
+  prevSubject: true,
+}, (subject) => {
+  const element = subject[0];
+  const document = element.ownerDocument;
+  const text = element.textContent;
+  const lineWraps = [];
+
+  let currentLineY = 0;
+
+  /**
+   * Iterate all chars in text, create range for each char and get its position
+   */
+  for (let i = 0; i < text.length; i++) {
+    const range = document.createRange();
+
+    range.setStart(element.firstChild, i);
+    range.setEnd(element.firstChild, i);
+
+    const rect = range.getBoundingClientRect();
+
+    if (i === 0) {
+      currentLineY = rect.top;
+
+      continue;
+    }
+
+    /**
+     * If current char Y position is higher than previously saved line Y, that means a line wrap
+     */
+    if (rect.top > currentLineY) {
+      lineWraps.push(i);
+
+      currentLineY = rect.top;
+    }
+  }
+
+  return cy.wrap(lineWraps);
+});
+
+/**
+ * Dispatches keydown event on subject
+ * Uses the correct KeyboardEvent object to make it work with our code (see below)
+ */
+Cypress.Commands.add('keydown', {
+  prevSubject: true,
+}, (subject, keyCode: number) => {
+  cy.log('Dispatching KeyboardEvent with keyCode: ' + keyCode);
+  /**
+   * We use the "reason instanceof KeyboardEvent" statement in blockSelection.ts
+   * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent,
+   * so real-world and Cypress behaviour were different.
+   *
+   * To make it work we need to trigger Cypress event with "eventConstructor: 'KeyboardEvent'",
+   *
+   * @see https://github.com/cypress-io/cypress/issues/5650
+   * @see https://github.com/cypress-io/cypress/pull/8305/files
+   */
+  subject.trigger('keydown', {
+    eventConstructor: 'KeyboardEvent',
+    keyCode,
+    bubbles: false,
+  });
+
+  return cy.wrap(subject);
+});

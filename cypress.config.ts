@@ -6,6 +6,7 @@ export default defineConfig({
   },
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
+  video: false,
   videosFolder: 'test/cypress/videos',
   e2e: {
     // We've imported your old cypress plugins here.
