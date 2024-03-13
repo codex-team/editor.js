@@ -248,7 +248,7 @@ Cypress.Commands.add('keydown', {
    * but by default cypress' KeyboardEvent is not an instance of the native KeyboardEvent,
    * so real-world and Cypress behaviour were different.
    *
-   * To make it work we need to trigger Cypres event with "eventConstructor: 'KeyboardEvent'",
+   * To make it work we need to trigger Cypress event with "eventConstructor: 'KeyboardEvent'",
    *
    * @see https://github.com/cypress-io/cypress/issues/5650
    * @see https://github.com/cypress-io/cypress/pull/8305/files
