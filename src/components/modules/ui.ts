@@ -15,6 +15,7 @@ import { mobileScreenBreakpoint } from '../utils';
 
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
+import { selectionChangeDebounceTimeout } from '../constants';
 /**
  * HTML Elements used for UI
  */
@@ -350,7 +351,6 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    const selectionChangeDebounceTimeout = 180;
     const selectionChangeDebounced = _.debounce(() => {
       this.selectionChanged();
     }, selectionChangeDebounceTimeout);
@@ -556,6 +556,11 @@ export default class UI extends Module<UINodes> {
    */
   private enterPressed(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection } = this.Editor;
+
+    if (this.someToolbarOpened) {
+      return;
+    }
+
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -591,6 +596,10 @@ export default class UI extends Module<UINodes> {
        */
       const newBlock = this.Editor.BlockManager.insert();
 
+      /**
+       * Prevent default enter behaviour to prevent adding a new line (<div><br></div>) to the inserted block
+       */
+      event.preventDefault();
       this.Editor.Caret.setToBlock(newBlock);
 
       /**
