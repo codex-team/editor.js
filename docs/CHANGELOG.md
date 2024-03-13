@@ -3,6 +3,9 @@
 ### 2.30.0
 
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
+- `Fix` - Unexpected new line on Enter press with selected block without caret
+- `Fix` - Search input autofocus loosing after Block Tunes opening
+- `Fix` - Block removing while Enter press on Block Tunes
 
 ### 2.29.1
 
