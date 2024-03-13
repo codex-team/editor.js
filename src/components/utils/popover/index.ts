@@ -9,6 +9,7 @@ import ScrollLocker from '../scroll-locker';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.typings';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
 import { PopoverHeader } from './components/popover-header';
+import { PopoverStatesHistory } from './utils/popover-states-history';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -23,10 +24,6 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * List of popover items
    */
   private items: PopoverItem[];
-
-  private itemsParams: PopoverItemParams[];
-
-  private title;
 
   /**
    * Element of the page that creates 'scope' of the popover.
@@ -64,7 +61,13 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    */
   private header: PopoverHeader | undefined | null;
 
-  private history = [];
+  /**
+   * History of popover states for back navigation.
+   * Is used for mobile version of popover,
+   * where we can not display nested popover of the screen and
+   * have to render nested items in the same popover switching to new state
+   */
+  private history = new PopoverStatesHistory();
 
   /**
    * Last hovered item inside popover.
@@ -131,8 +134,6 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   constructor(private readonly params: PopoverParams) {
     super();
 
-    this.itemsParams = params.items;
-
     this.items = params.items.map(item => new PopoverItem(item));
 
     if (params.scopeElement !== undefined) {
@@ -160,8 +161,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       this.addSearch();
     }
 
-
     this.initializeFlipper();
+
+    /* Save state to history for proper navigation between nested and parent popovers */
+    this.history.push({ items: params.items });
   }
 
   /**
@@ -351,12 +354,13 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
 
     if (item.children.length > 0) {
       if (isMobileScreen()) {
-        this.history.push({
-          title: this.title,
-          items: this.itemsParams,
-        });
+        /** Show nested items */
+        this.applyPopoverState(item.children, item.title);
 
-        this.showNestedItems(item.children, item.title);
+        this.history.push({
+          title: item.title,
+          items: item.children,
+        });
       } else {
         if (this.nestedPopover == null || this.nestedPopover === undefined) {
           this.showNestedPopoverForItem(item);
@@ -406,15 +410,13 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
+   * Changes current state of the popover. Updates rendered header and items
    *
-   * @param title
-   * @param items
-   * @param pushToHistory
+   * @param title - new popover header text
+   * @param items - new popover items
    */
-  private showNestedItems(items: PopoverItemParams[], title?: string ): void {
-    this.itemsParams = items;
-    this.title = title;
-
+  private applyPopoverState(items: PopoverItemParams[], title?: string ): void {
+    /** Re-render header */
     if (this.header !== null && this.header !== undefined) {
       this.header.destroy();
       this.header = null;
@@ -423,26 +425,19 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       this.header = new PopoverHeader({
         text: title,
         onBackButtonClick: () => {
-          const prevState = this.history.pop();
+          this.history.pop();
 
-          this.showNestedItems(prevState.items, prevState.title);
+          this.applyPopoverState(this.history.currentItems, this.history.currentTitle);
         },
       });
       this.nodes.popoverContainer.insertBefore(this.header.getElement(), this.nodes.popoverContainer.firstChild);
     }
 
-    this.renderItems(items);
-  }
-
-  /**
-   *
-   * @param itemsParams
-   */
-  private renderItems(itemsParams: PopoverItemParams[]): void {
+    /** Re-render items */
     this.flipper.deactivate();
     this.items.forEach(item => item.getElement().remove());
 
-    this.items = itemsParams.map(params => new PopoverItem(params));
+    this.items = items.map(params => new PopoverItem(params));
 
     this.items.forEach(item => {
       this.nodes.items.appendChild(item.getElement());
