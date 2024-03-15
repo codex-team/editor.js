@@ -298,6 +298,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
 
+    this.assignToolbarLeftPosition(block);
+
     /**
      * Do not show Block Tunes Toggler near single and empty block
      */
@@ -496,6 +498,27 @@ export default class Toolbar extends Module<ToolbarNodes> {
   }
 
   /**
+   * Move Toolbar to the Left coordinate of Block
+   *
+   * @param block - block to move Toolbar near it
+   */
+  private assignToolbarLeftPosition(block: Block = this.Editor.BlockManager.currentBlock): void {
+    /**
+     * If no Block is selected as a Current
+     */
+    if (!block) {
+      return;
+    }
+
+    const targetBlockHolder = block.holder;
+    const blockContentNode = targetBlockHolder.querySelector(`.${Block.CSS.content}`) as HTMLElement | null;
+
+    if (blockContentNode) {
+      this.nodes.wrapper.style.left = `${Math.floor(blockContentNode.offsetLeft)}px`;
+    }
+  }
+
+  /**
    * Enable bindings
    */
   private enableModuleBindings(): void {
@@ -539,6 +562,16 @@ export default class Toolbar extends Module<ToolbarNodes> {
         }
 
         this.moveAndOpen(data.block);
+      });
+
+      /**
+       * Need to move toolbar on resize because we are now moving it to te left of a Block
+       * This is needed because max-width is removed from Toolbar content to accommodate different block layouts
+       */
+      this.readOnlyMutableListeners.on(window, 'resize', () => {
+        this.assignToolbarLeftPosition(this.hoveredBlock);
+      }, {
+        passive: true,
       });
     }
   }
