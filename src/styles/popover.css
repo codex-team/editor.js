@@ -151,7 +151,7 @@
   &--nested {
     .ce-popover__container {
       /* Variable --nesting-level is set via js in showNestedPopoverForItem() method */
-      left: calc(var(--nesting-level) * var(--width) - 4px);
+      left: calc(var(--nesting-level) * (var(--width) - 4px));
       /* Variable --nested-popover-top is set via js in showNestedPopoverForItem() method */
       top: var(--nested-popover-top);
       position: absolute;
