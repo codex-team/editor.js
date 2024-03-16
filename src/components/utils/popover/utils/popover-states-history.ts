@@ -36,14 +36,14 @@ export class PopoverStatesHistory {
   /**
    * Pop last popover state
    */
-  public pop(): PopoverStatesHistoryItem {
+  public pop(): PopoverStatesHistoryItem | undefined {
     return this.history.pop();
   }
 
   /**
    * Title retrieved from the current state
    */
-  public get currentTitle(): string {
+  public get currentTitle(): string | undefined {
     if (this.history.length === 0) {
       return '';
     }
