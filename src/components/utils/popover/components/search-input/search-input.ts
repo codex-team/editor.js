@@ -1,18 +1,13 @@
-import Dom from '../../dom';
-import Listeners from '../listeners';
+import Dom from '../../../../dom';
+import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
-
-/**
- * Item that could be searched
- */
-export interface SearchableItem {
-  title?: string;
-}
+import { SearchableItem } from './search-input.typings';
+import { cls } from './search-input.const';
 
 /**
  * Provides search input element and search logic
  */
-export default class SearchInput {
+export class SearchInput {
   /**
    * Input wrapper element
    */
@@ -42,21 +37,6 @@ export default class SearchInput {
    * Externally passed callback for the search
    */
   private readonly onSearch: (query: string, items: SearchableItem[]) => void;
-
-  /**
-   * Styles
-   */
-  private static get CSS(): {
-    input: string;
-    icon: string;
-    wrapper: string;
-    } {
-    return {
-      wrapper: 'cdx-search-field',
-      icon: 'cdx-search-field__icon',
-      input: 'cdx-search-field__input',
-    };
-  }
 
   /**
    * @param options - available config
@@ -115,13 +95,13 @@ export default class SearchInput {
    * @param placeholder - input placeholder
    */
   private render(placeholder?: string): void {
-    this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
+    this.wrapper = Dom.make('div', cls.wrapper);
 
-    const iconWrapper = Dom.make('div', SearchInput.CSS.icon, {
+    const iconWrapper = Dom.make('div', cls.icon, {
       innerHTML: IconSearch,
     });
 
-    this.input = Dom.make('input', SearchInput.CSS.input, {
+    this.input = Dom.make('input', cls.input, {
       placeholder,
       /**
        * Used to prevent focusing on the input by Tab key

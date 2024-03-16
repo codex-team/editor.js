@@ -1,8 +1,8 @@
-import { PopoverItem } from './popover-item';
+import { PopoverItem, cls as popoverItemCls } from './components/popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
-import SearchInput, { SearchableItem } from './search-input';
+import { SearchInput, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
@@ -557,7 +557,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private initializeFlipper(): void {
     this.flipper = new Flipper({
       items: this.flippableElements,
-      focusedItemClass: PopoverItem.CSS.focused,
+      focusedItemClass: popoverItemCls.focused,
       allowedKeys: [
         keyCodes.TAB,
         keyCodes.UP,
