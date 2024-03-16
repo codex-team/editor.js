@@ -48,7 +48,6 @@
   }
 
   &--opened {
-
     .ce-popover__container {
       opacity: 1;
       padding: var(--padding);
@@ -62,6 +61,12 @@
       }
     }
 
+  }
+
+  &--open-top {
+    .ce-popover__container {
+      --popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)));
+    }
   }
 
   &__items {
@@ -89,11 +94,6 @@
     }
   }
 
-  &--open-top {
-    .ce-popover__container {
-      --popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)));
-    }
-  }
 
   @media (--mobile) {
 
@@ -149,21 +149,20 @@
   }
 
   &--nested {
-
     .ce-popover__container {
-      left: calc(var(--width) - 4px);
-      top: calc(var(--nesting-popover-item-top) + var(--popover-top) - 4px);
+      /* Variable --nesting-level is set via js in showNestedPopoverForItem() method */
+      left: calc(var(--nesting-level) * var(--width) - 4px);
+      /* Variable --nested-popover-top is set via js in showNestedPopoverForItem() method */
+      top: var(--nested-popover-top);
       position: absolute;
     }
   }
 
   &--open-top {
-    --parent-popover-height: var(--popover-height);
-
     .ce-popover--nested {
       .ce-popover__container {
         /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
-        top: calc(var(--popover-top) - var(--popover-height) + var(--parent-popover-height));
+        top: min(var(--popover-top), var(--nested-popover-top))
       }
     }
   }

@@ -76,6 +76,11 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private previouslyHoveredItem: PopoverItem | undefined | null;
 
   /**
+   * Popover nesting level. 0 value means that it is a root popover
+   */
+  private nestingLevel = 0;
+
+  /**
    * Popover CSS classes
    */
   private static get CSS(): { [key: string]: string } {
@@ -140,6 +145,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       this.scopeElement = params.scopeElement;
     }
 
+    if (params.nestingLevel) {
+      this.nestingLevel = params.nestingLevel;
+    }
+
     if (params.messages) {
       this.messages = {
         ...this.messages,
@@ -189,11 +198,19 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
+   * Returns visible element offset top
+   */
+  public get offsetTop(): number {
+    return this.nodes.popoverContainer.offsetTop;
+  }
+
+  /**
    * Open popover
    */
   public show(): void {
+    this.nodes.popover.style.setProperty('--popover-height', this.height + 'px');
+
     if (!this.shouldOpenBottom) {
-      this.nodes.popover.style.setProperty('--popover-height', this.height + 'px');
       this.nodes.popover.classList.add(Popover.CSS.popoverOpenTop);
     }
 
@@ -271,7 +288,12 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: PointerEvent) => this.handleHover(event));
     }
 
-    this.nodes.popover = Dom.make('div', [Popover.CSS.popover, this.params.class]);
+    this.nodes.popover = Dom.make('div', [
+      Popover.CSS.popover,
+      this.nestingLevel > 0 ? Popover.CSS.popoverNested : undefined,
+      this.params.class,
+    ]);
+
     this.nodes.overlay = Dom.make('div', [Popover.CSS.overlay, Popover.CSS.overlayHidden]);
 
     this.listeners.on(this.nodes.overlay, 'click', () => {
@@ -448,22 +470,26 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
 
 
   /**
-   * Creates and displays nested popover for specified item
+   * Creates and displays nested popover for specified item.
+   * Is used only on desktop
    *
    * @param item - item to display nested popover by
    */
   private showNestedPopoverForItem(item: PopoverItem): void {
     this.nestedPopover = new Popover({
       items: item.children,
-      class: Popover.CSS.popoverNested,
+      nestingLevel: this.nestingLevel + 1,
     });
 
     const nestedPopoverEl = this.nestedPopover.getElement();
 
     this.nodes.popover.appendChild(nestedPopoverEl);
     const itemOffsetTop = item.getElement().offsetTop - this.scrollTop;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    const topOffset = this.offsetTop + itemOffsetTop - 4;
 
-    nestedPopoverEl.style.setProperty('--nesting-popover-item-top', itemOffsetTop + 'px');
+    nestedPopoverEl.style.setProperty('--nested-popover-top', topOffset + 'px');
+    nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
 
     this.nestedPopover.show();
     this.flipper.deactivate();

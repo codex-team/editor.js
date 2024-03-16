@@ -38,6 +38,11 @@ export interface PopoverParams {
    * CSS class name for popover root element
    */
   class?: string;
+
+  /**
+   * Popover nesting level. 0 value means that it is a root popover
+   */
+  nestingLevel?: number;
 }
 
 /**
