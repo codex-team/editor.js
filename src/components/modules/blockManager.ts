@@ -866,7 +866,7 @@ export default class BlockManager extends Module {
     });
 
     await queue.completed;
-
+    this.Editor.InlineToolbar.close();
     this.dropPointer();
 
     if (needToAddDefaultBlock) {
