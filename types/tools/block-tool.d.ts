@@ -65,6 +65,11 @@ export interface BlockTool extends BaseTool {
   rendered?(): void;
 
   /**
+   * Call to update block content
+   */
+  update?(data: Partial<BlockToolData>): void;
+
+  /**
    * Called each time block content is updated
    */
   updated?(): void;
