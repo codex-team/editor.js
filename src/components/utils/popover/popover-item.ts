@@ -1,6 +1,7 @@
 import Dom from '../../dom';
 import { IconDotCircle } from '@codexteam/icons';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
+// import Popover from './index';
 
 /**
  * Represents sigle popover item node
@@ -46,6 +47,13 @@ export class PopoverItem {
    */
   public get isFocused(): boolean {
     return this.nodes.root.classList.contains(PopoverItem.CSS.focused);
+  }
+
+  /**
+   * Returns list of item children
+   */
+  public get children(): PopoverItemParams[] {
+    return 'children' in this.params ? this.params.children : [];
   }
 
   /**
@@ -123,6 +131,12 @@ export class PopoverItem {
    * Called on popover item click
    */
   public handleClick(): void {
+    // if ('children' in this.params && this.params.children.length > 0) {
+    //   this.showChildren(this.params.children);
+
+    //   return;
+    // }
+
     if (this.isConfirmationStateEnabled) {
       this.activateOrEnableConfirmationMode(this.confirmationState);
 
@@ -205,6 +219,21 @@ export class PopoverItem {
     return el;
   }
 
+  // /**
+  //  *
+  //  * @param items
+  //  */
+  // private showChildren(items: PopoverItemParams[]): void {
+  //   // if ('children' in this.params && this.params.children.length > 0)
+  //   const nestedPopover = new Popover({
+  //     items,
+  //   });
+
+  //   this.nodes.root.appendChild(nestedPopover.getElement());
+
+  //   nestedPopover.show();
+  // }
+
   /**
    * Activates confirmation mode for the item.
    *
@@ -281,15 +310,18 @@ export class PopoverItem {
    * @param item - item to activate or bring to confirmation mode
    */
   private activateOrEnableConfirmationMode(item: PopoverItemParams): void {
-    if (item.confirmation === undefined) {
+    if (item.confirmation !== undefined) {
+      this.enableConfirmationMode(item.confirmation);
+    } else if ('onActivate' in item) {
       try {
         item.onActivate(item);
-        this.disableConfirmationMode();
+
+        if (this.isConfirmationStateEnabled) {
+          this.disableConfirmationMode();
+        }
       } catch {
         this.animateError();
       }
-    } else {
-      this.enableConfirmationMode(item.confirmation);
     }
   }
 

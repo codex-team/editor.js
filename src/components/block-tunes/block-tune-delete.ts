@@ -40,11 +40,23 @@ export default class DeleteTune implements BlockTune {
       icon: IconCross,
       title: this.api.i18n.t('Delete'),
       name: 'delete',
-      confirmation: {
-        title: this.api.i18n.t('Click to delete'),
-        onActivate: (): void => this.handleClick(),
-      },
+      children: [
+        {
+          icon: IconCross,
+          title: this.api.i18n.t('Delete'),
+          onActivate: (): void => this.handleClick(),
+        },
+      ],
     };
+    // return {
+    //   icon: IconCross,
+    //   title: this.api.i18n.t('Delete'),
+    //   name: 'delete',
+    //   confirmation: {
+    //     title: this.api.i18n.t('Click to delete'),
+    //     onActivate: (): void => this.handleClick(),
+    //   },
+    // };
   }
 
   /**

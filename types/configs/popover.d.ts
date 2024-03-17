@@ -69,13 +69,22 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
    * Popover item activation handler
    *
    * @param item - activated item
-   * @param event - event that initiated item activation
    */
-  onActivate: (item: PopoverItem, event?: PointerEvent) => void;
+  onActivate: (item: PopoverItem) => void;
+}
+
+export interface PopoverItemWithChildren extends PopoverItemBase {
+  confirmation?: never;
+  
+  onActivate?: never
+
+  /**
+   * List of nested popover items 
+   */
+  children: PopoverItem[]
 }
 
 /**
  * Represents single popover item
  */
-export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation
-
+export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation | PopoverItemWithChildren;
