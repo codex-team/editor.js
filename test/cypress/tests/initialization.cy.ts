@@ -37,8 +37,12 @@ describe('Editor basic initialization', () => {
       });
 
       it('should create editor without editing ability when true passed', () => {
+      /**
+       * Create readonly editor with a placeholder, to create a readonly paragraph block
+       */
         cy.createEditor({
           readOnly: true,
+          placeholder: "readonly-test"
         }).as('editorInstance');
 
         cy.get('[data-cy=editorjs]')
