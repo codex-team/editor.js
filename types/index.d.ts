@@ -137,6 +137,7 @@ declare class EditorJS {
   public toolbar: Toolbar;
   public inlineToolbar: InlineToolbar;
   public readOnly: ReadOnly;
+  public configuration: EditorConfig;
   constructor(configuration?: EditorConfig|string);
 
   /**
