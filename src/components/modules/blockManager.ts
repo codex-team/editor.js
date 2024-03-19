@@ -70,7 +70,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public get currentBlock(): Block {
-    return this._blocks[this.currentBlockIndex];
+    return (this.currentBlockIndex >= 0) ? this._blocks[this.currentBlockIndex] : undefined;
   }
 
   /**
