@@ -18,6 +18,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   public keydown(event: KeyboardEvent): void {
+    console.log('BlockEvents::keydown', event);
     /**
      * Run common method for all keydown events
      */

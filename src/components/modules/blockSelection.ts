@@ -257,7 +257,7 @@ export default class BlockSelection extends Module {
       }, 20)();
     }
 
-    this.Editor.CrossBlockSelection.clear(reason);
+    // this.Editor.CrossBlockSelection.clear(reason);
 
     if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();

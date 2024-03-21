@@ -16,6 +16,17 @@ import { mobileScreenBreakpoint } from '../utils';
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
+
+
+/**
+ * CBS
+ * @todo disable native ENTER and use a custom one
+ * @todo disable native BACKSPACE/DELETE and use a custom ones
+ * @todo get rid of BlockEvents, use event listener on redactor instead
+ *
+ *
+ */
+
 /**
  * HTML Elements used for UI
  */
@@ -344,6 +355,12 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(document, 'keydown', (event: KeyboardEvent) => {
       this.documentKeydown(event);
     }, true);
+
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'keydown', (event: MouseEvent | TouchEvent) => {
+      this.Editor.RedactorKeydown.keydown(event);
+    }, {
+      capture: true,
+    });
 
     this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
@@ -805,12 +822,12 @@ export default class UI extends Module<UINodes> {
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
 
-    if (CrossBlockSelection.isCrossBlockSelectionStarted) {
-      // Removes all ranges when any Block is selected
-      if (BlockSelection.anyBlockSelected) {
-        Selection.get().removeAllRanges();
-      }
-    }
+    // if (CrossBlockSelection.isCrossBlockSelectionStarted) {
+    //   // Removes all ranges when any Block is selected
+    //   if (BlockSelection.anyBlockSelected) {
+    //     Selection.get().removeAllRanges();
+    //   }
+    // }
 
     /**
      * Usual clicks on some controls, for example, Block Tunes Toggler

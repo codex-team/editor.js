@@ -37,6 +37,7 @@ import Renderer from './renderer';
 import Saver from './saver';
 import Tools from './tools';
 import UI from './ui';
+import RedactorKeydown from './redactorKeydown';
 
 export default {
   // API Modules
@@ -68,7 +69,7 @@ export default {
   BlockManager,
   BlockSelection,
   Caret,
-  CrossBlockSelection,
+  // CrossBlockSelection,
   DragNDrop,
   ModificationsObserver,
   Paste,
@@ -78,4 +79,5 @@ export default {
   Saver,
   Tools,
   UI,
+  RedactorKeydown,
 };

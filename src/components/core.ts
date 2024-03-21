@@ -251,7 +251,7 @@ export default class Core {
       'Paste',
       'BlockSelection',
       'RectangleSelection',
-      'CrossBlockSelection',
+      // 'CrossBlockSelection',
       'ReadOnly',
     ];
 

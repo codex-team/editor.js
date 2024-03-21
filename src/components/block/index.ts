@@ -738,7 +738,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
-    wrapper.contentEditable = 'false';
+    // wrapper.contentEditable = 'false';
 
     if (import.meta.env.MODE === 'test') {
       wrapper.setAttribute('data-cy', 'block-wrapper');
