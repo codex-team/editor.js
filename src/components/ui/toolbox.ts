@@ -122,7 +122,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
+  constructor({ api, tools, i18nLabels }: { api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string> }) {
     super();
 
     this.api = api;
@@ -240,10 +240,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   @_.cacheable
   private get toolsToBeDisplayed(): BlockTool[] {
     const result: BlockTool[] = [];
-
     this.tools.forEach((tool) => {
       const toolToolboxSettings = tool.toolbox;
-
       if (toolToolboxSettings) {
         result.push(tool);
       }
@@ -268,6 +266,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
+        type: tool.type,
         secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
       };
     };
@@ -278,7 +277,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
           tool.toolbox.forEach(item => {
             result.push(toPopoverItem(item, tool));
           });
-        } else if (tool.toolbox !== undefined)  {
+        } else if (tool.toolbox !== undefined) {
           result.push(toPopoverItem(tool.toolbox, tool));
         }
 
@@ -328,7 +327,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
             });
 
             return;
-          } catch (error) {}
+          } catch (error) { }
         }
 
         this.insertNewBlock(toolName);

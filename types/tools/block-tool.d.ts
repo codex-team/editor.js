@@ -78,6 +78,8 @@ export interface BlockTool extends BaseTool {
    * Called after block was moved
    */
   moved?(event: MoveEvent): void;
+
+  config?:ToolConfig;
 }
 
 /**

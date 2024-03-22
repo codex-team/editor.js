@@ -57,6 +57,8 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
   confirmation: PopoverItem;
 
   onActivate?: never;
+
+  type?:number;
 }
 
 /**
@@ -72,6 +74,8 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
    * @param event - event that initiated item activation
    */
   onActivate: (item: PopoverItem, event?: PointerEvent) => void;
+
+  type?:number;
 }
 
 /**

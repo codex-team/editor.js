@@ -16,7 +16,7 @@ export class PopoverItem {
   /**
    * Exposes popover item toggle parameter
    */
-  public get toggle(): boolean | string | undefined {
+  public get toggle(): boolean | (() => boolean) | string | undefined {
     return this.params.toggle;
   }
 
@@ -85,7 +85,7 @@ export class PopoverItem {
     noHover: string,
     noFocus: string,
     wobbleAnimation: string
-    } {
+  } {
     return {
       container: 'ce-popover-item',
       title: 'ce-popover-item__title',
@@ -178,12 +178,13 @@ export class PopoverItem {
       el.dataset.itemName = params.name;
     }
 
-    this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
-      innerHTML: params.icon || IconDotCircle,
-    });
+    if (params?.icon) {
+      this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
+        innerHTML: params.icon || IconDotCircle,
+      });
 
-    el.appendChild(this.nodes.icon);
-
+      el.appendChild(this.nodes.icon);
+    }
     el.appendChild(Dom.make('div', PopoverItem.CSS.title, {
       innerHTML: params.title || '',
     }));
@@ -254,7 +255,7 @@ export class PopoverItem {
   /**
    * Disables special focus and hover behavior
    */
-  private disableSpecialHoverAndFocusBehavior(): void  {
+  private disableSpecialHoverAndFocusBehavior(): void {
     this.removeSpecialFocusBehavior();
     this.removeSpecialHoverBehavior();
 

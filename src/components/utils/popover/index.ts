@@ -7,6 +7,8 @@ import SearchInput from './search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
+import I18n from '../../i18n';
+import { I18nInternalNS } from '../../i18n/namespace-internal';
 
 /**
  * Params required to render popover
@@ -127,7 +129,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     items: string;
     overlay: string;
     overlayHidden: string;
-    } {
+  } {
     return {
       popover: 'ce-popover',
       popoverOpenTop: 'ce-popover--open-top',
@@ -178,7 +180,43 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   constructor(params: PopoverParams) {
     super();
 
-    this.items = params.items.map(item => new PopoverItem(item));
+    const isFirst = (params.items?.[0]?.type === 0)
+    const medicineUsed = [
+      "Key Vitals",
+      "PE/ROS",
+      "Test & Report",
+      "Internal Documents",
+      "Procedures",
+      "Vaccination",
+      "Anti-Parasitic",
+      "Medicine",
+      "Soap"
+    ];
+    const medicines = [], common = [];
+
+    if (isFirst) {
+      medicines.push(new PopoverItem({
+        name: 'Medical Section',
+        title: I18n.t(I18nInternalNS.toolNames, 'Medical Section'),
+        isActive: false,
+        onActivate: () => { },
+        icon: ''
+      }));
+      common.push(new PopoverItem({
+        name: 'Basic Block',
+        title: I18n.t(I18nInternalNS.toolNames, 'Basic Block'),
+        isActive: false,
+        onActivate: () => { },
+        icon: ''
+      }));
+    }
+    params.items.map(item => {
+      if (medicineUsed.includes(item.name))
+        medicines.push(new PopoverItem(item))
+      else
+        common.push(new PopoverItem(item))
+    });
+    this.items = medicines.concat(...common);
 
     if (params.scopeElement !== undefined) {
       this.scopeElement = params.scopeElement;
@@ -284,14 +322,14 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * Constructs HTML element corresponding to popover
    */
   private make(): void {
-    this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
+    this.nodes.popover = Dom.make('div', [Popover.CSS.popover]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [Popover.CSS.nothingFoundMessage], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popover.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ Popover.CSS.items ]);
+    this.nodes.items = Dom.make('div', [Popover.CSS.items]);
 
     this.items.forEach(item => {
       this.nodes.items.appendChild(item.getElement());
@@ -504,6 +542,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * @param clickedItem - popover item that was clicked
    */
   private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
+    if (typeof clickedItem.toggle === 'function') {
+      clickedItem.toggleActive(clickedItem.toggle());
+    }
     if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
     }
