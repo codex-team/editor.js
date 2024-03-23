@@ -21,7 +21,7 @@ export default class BlocksAPI extends Module {
       clear: (): Promise<void> => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
-      delete: (index?: number): void => this.delete(index),
+      delete: (index?: string | number): void => this.delete(index),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface | undefined => this.getBlockByIndex(index),
@@ -136,20 +136,37 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Deletes Block
+   * Deletes the Block by id or index
    *
-   * @param {number} blockIndex - index of Block to delete
+   * @param idOrIndex - id of Block to delete. Index supported for backward compatibility
    */
-  public delete(blockIndex: number = this.Editor.BlockManager.currentBlockIndex): void {
-    try {
-      const block = this.Editor.BlockManager.getBlockByIndex(blockIndex);
+  public delete(idOrIndex?: string | number ): void {
+    /**
+     * @todo find a way how to utilize index -> id migration
+     */
+    _.deprecationAssert(
+      typeof idOrIndex === 'number',
+      'blocks.delete(index)',
+      'blocks.delete(id)'
+    );
 
-      this.Editor.BlockManager.removeBlock(block);
-    } catch (e) {
-      _.logLabeled(e, 'warn');
+    let block: Block | undefined;
+
+    if (idOrIndex === undefined) {
+      block = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex);
+    } else if (typeof idOrIndex === 'number') {
+      block = this.Editor.BlockManager.getBlockByIndex(idOrIndex);
+    } else {
+      block = this.Editor.BlockManager.getBlockById(idOrIndex);
+    }
+
+    if (block === undefined) {
+      _.logLabeled('Can not find block to delete', 'warn');
 
       return;
     }
+
+    this.Editor.BlockManager.removeBlock(block);
 
     /**
      * in case of last block deletion

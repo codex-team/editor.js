@@ -16,9 +16,10 @@ export default class BlockEvents extends Module {
    * All keydowns on Block
    *
    * @param {KeyboardEvent} event - keydown
+   * @deprecated
    */
   public keydown(event: KeyboardEvent): void {
-    console.log('BlockEvents::keydown', event);
+    console.warn('BlockEvents::keydown');
     /**
      * Run common method for all keydown events
      */

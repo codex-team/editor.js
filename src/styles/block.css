@@ -88,4 +88,9 @@
   i {
     font-style: italic;
   }
+
+  &--unselectable {
+    user-select: none;
+    border: 1px solid red;
+  }
 }

@@ -23,9 +23,9 @@ export default class CrossBlockSelection extends Module {
    * @returns {Promise}
    */
   public async prepare(): Promise<void> {
-    this.listeners.on(document, 'mousedown', (event: MouseEvent) => {
-      this.enableCrossBlockSelection(event);
-    });
+    // this.listeners.on(document, 'mousedown', (event: MouseEvent) => {
+    //   this.enableCrossBlockSelection(event);
+    // });
   }
 
   /**

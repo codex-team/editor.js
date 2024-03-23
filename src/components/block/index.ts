@@ -740,6 +740,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     // wrapper.contentEditable = 'false';
 
+    if (this.tool.isLineBreaksEnabled) {
+      wrapper.classList.add('ce-block--unselectable');
+      wrapper.contentEditable = 'false';
+    }
+
     if (import.meta.env.MODE === 'test') {
       wrapper.setAttribute('data-cy', 'block-wrapper');
     }

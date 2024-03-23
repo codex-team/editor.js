@@ -16,6 +16,7 @@ import { mobileScreenBreakpoint } from '../utils';
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
+import { SelectionChanged } from '../events';
 
 
 /**
@@ -356,7 +357,7 @@ export default class UI extends Module<UINodes> {
       this.documentKeydown(event);
     }, true);
 
-    this.readOnlyMutableListeners.on(this.nodes.redactor, 'keydown', (event: MouseEvent | TouchEvent) => {
+    this.readOnlyMutableListeners.on(this.nodes.redactor, 'keydown', (event: KeyboardEvent) => {
       this.Editor.RedactorKeydown.keydown(event);
     }, {
       capture: true,
@@ -819,6 +820,9 @@ export default class UI extends Module<UINodes> {
    * Uses for showing the Inline Toolbar
    */
   private selectionChanged(): void {
+    this.eventsDispatcher.emit(SelectionChanged);
+
+
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
 

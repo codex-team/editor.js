@@ -28,10 +28,10 @@ export interface Blocks {
   renderFromHTML(data: string): Promise<void>;
 
   /**
-   * Removes current Block
-   * @param {number} index - index of a block to delete
+   * Removes a particular Block
+   * @param id - id (previously, index) of a block to delete
    */
-  delete(index?: number): void;
+  delete(id?: string | number): void;
 
   /**
    * Swaps two Blocks

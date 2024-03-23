@@ -638,9 +638,8 @@ export default class BlockManager extends Module {
    * Returns the Block by passed id
    *
    * @param id - id of block to get
-   * @returns {Block}
    */
-  public getBlockById(id): Block | undefined {
+  public getBlockById(id: Block['id']): Block | undefined {
     return this._blocks.array.find(block => block.id === id);
   }
 
@@ -648,6 +647,7 @@ export default class BlockManager extends Module {
    * Get Block instance by html element
    *
    * @param {Node} element - html element to get Block by
+   * @deprecated use getBlockByChildNode instead
    */
   public getBlock(element: HTMLElement): Block {
     if (!$.isElement(element) as boolean) {
@@ -733,6 +733,16 @@ export default class BlockManager extends Module {
     const firstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
 
     return this.blocks.find((block) => block.holder === firstLevelBlock);
+  }
+
+  public getBlockByBlockWrapper(blockWrapper: HTMLElement): Block | undefined {
+    const id = blockWrapper.dataset.id;
+
+    if (id === undefined) {
+      throw new Error('Block wrapper should have data-id attribute');
+    }
+
+    return this.getBlockById(id);
   }
 
   /**

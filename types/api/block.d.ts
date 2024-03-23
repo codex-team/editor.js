@@ -40,6 +40,8 @@ export interface BlockAPI {
    */
   readonly focusable: boolean;
 
+  readonly inputs: HTMLElement[];
+
   /**
    * Setter sets Block's stretch state
    *

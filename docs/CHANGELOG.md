@@ -6,6 +6,8 @@
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
+- `New` - API blocks.delete() not works by id instead of index.
+- `Deprecated` - API blocks.delete(index) is deprecated. Use blocks.delete(id) instead
 
 ### 2.29.1
 

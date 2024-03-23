@@ -91,6 +91,10 @@ function BlockAPI(
       return block.focusable;
     },
 
+    get inputs(): HTMLElement[] {
+      return block.inputs;
+    },
+
     /**
      * Call Tool method with errors handler under-the-hood
      *
