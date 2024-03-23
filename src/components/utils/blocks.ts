@@ -15,7 +15,8 @@ import { isFunction, isString, log } from '../utils';
  * @param blockToMerge - block to merge from
  */
 export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boolean {
-  if (blockToMerge.tool.conversionConfig?.export !== undefined &&
+  if (blockToMerge.mergeable &&
+    blockToMerge.tool.conversionConfig?.export !== undefined &&
     targetBlock.tool.conversionConfig?.import !== undefined) {
     return true;
   }
