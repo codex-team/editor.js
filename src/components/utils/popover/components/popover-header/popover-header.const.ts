@@ -1,9 +1,9 @@
-import { cn } from '../../../classnames';
+import { bem } from '../../../bem';
 
 /**
  * Popover header block CSS class constructor
  */
-const popoverHeaderCn = cn('ce-popover-header');
+const popoverHeaderCn = bem('ce-popover-header');
 
 /**
  * CSS class names to be used in popover header class

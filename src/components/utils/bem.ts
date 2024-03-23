@@ -8,7 +8,7 @@ const MODIFIER_DELIMITER = '--';
  * @param elementName - string with element name
  * @param modifier - modifier to be appended
  */
-export function cn(blockName: string) {
+export function bem(blockName: string) {
   return (elementName?: string, modifier?: string) => {
     const className = [blockName, elementName]
       .filter(x => !!x)

@@ -1,9 +1,9 @@
-import { cn } from '../../../classnames';
+import { bem } from '../../../bem';
 
 /**
  * Popover item block CSS class constructor
  */
-const className = cn('ce-popover-item');
+const className = bem('ce-popover-item');
 
 /**
  * CSS class names to be used in popover item class
@@ -22,5 +22,5 @@ export const cls = {
   icon: className('icon'),
   iconTool: className('icon', 'tool'),
   iconChevronRight: className('icon', 'chevron-right'),
-  wobbleAnimation: cn('wobble')(),
+  wobbleAnimation: bem('wobble')(),
 };
