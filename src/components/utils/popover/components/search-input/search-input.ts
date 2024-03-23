@@ -2,7 +2,7 @@ import Dom from '../../../../dom';
 import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
 import { SearchableItem } from './search-input.typings';
-import { cls } from './search-input.const';
+import { css } from './search-input.const';
 
 /**
  * Provides search input element and search logic
@@ -95,13 +95,13 @@ export class SearchInput {
    * @param placeholder - input placeholder
    */
   private render(placeholder?: string): void {
-    this.wrapper = Dom.make('div', cls.wrapper);
+    this.wrapper = Dom.make('div', css.wrapper);
 
-    const iconWrapper = Dom.make('div', cls.icon, {
+    const iconWrapper = Dom.make('div', css.icon, {
       innerHTML: IconSearch,
     });
 
-    this.input = Dom.make('input', cls.input, {
+    this.input = Dom.make('input', css.input, {
       placeholder,
       /**
        * Used to prevent focusing on the input by Tab key

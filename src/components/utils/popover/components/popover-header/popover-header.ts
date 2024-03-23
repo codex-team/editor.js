@@ -1,6 +1,6 @@
 import { PopoverHeaderParams } from './popover-header.typings';
 import Dom from '../../../../dom';
-import { cls } from './popover-header.const';
+import { css } from './popover-header.const';
 import { IconChevronLeft } from '@codexteam/icons';
 import Listeners from '../../../listeners';
 
@@ -70,14 +70,14 @@ export class PopoverHeader {
    * Constructs HTML elements corresponding to popover header params
    */
   private make(): void {
-    this.nodes.root = Dom.make('div', [ cls.root ]);
+    this.nodes.root = Dom.make('div', [ css.root ]);
 
-    this.nodes.backButton = Dom.make('button', [ cls.backButton ]);
+    this.nodes.backButton = Dom.make('button', [ css.backButton ]);
     this.nodes.backButton.innerHTML = IconChevronLeft;
     this.nodes.root.appendChild(this.nodes.backButton);
     this.listeners.on(this.nodes.backButton, 'click', this.onBackButtonClick);
 
-    this.nodes.text = Dom.make('div', [ cls.text ]);
+    this.nodes.text = Dom.make('div', [ css.text ]);
     this.nodes.text.innerText = this.text;
     this.nodes.root.appendChild(this.nodes.text);
   }

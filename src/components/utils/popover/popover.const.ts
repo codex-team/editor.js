@@ -8,7 +8,7 @@ const className = bem('ce-popover');
 /**
  * CSS class names to be used in popover
  */
-export const cls = {
+export const css = {
   popover: className(),
   popoverContainer: className('container'),
   popoverOpenTop: className(null, 'open-top'),

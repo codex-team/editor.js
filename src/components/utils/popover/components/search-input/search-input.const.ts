@@ -8,7 +8,7 @@ const className = bem('cdx-search-field');
 /**
  * CSS class names to be used in popover search input class
  */
-export const cls = {
+export const css = {
   wrapper: className(),
   icon: className('icon'),
   input: className('input'),

@@ -8,7 +8,7 @@ const popoverHeaderCn = bem('ce-popover-header');
 /**
  * CSS class names to be used in popover header class
  */
-export const cls = {
+export const css = {
   root: popoverHeaderCn(),
   text: popoverHeaderCn('text'),
   backButton: popoverHeaderCn('back-button'),

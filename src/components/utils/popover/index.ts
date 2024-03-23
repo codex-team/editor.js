@@ -1,4 +1,4 @@
-import { PopoverItem, cls as popoverItemCls } from './components/popover-item';
+import { PopoverItem, css as popoverItemCls } from './components/popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
@@ -10,7 +10,7 @@ import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from '.
 import { PopoverItem as PopoverItemParams } from '../../../../types';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
-import { cls } from './popover.const';
+import { css } from './popover.const';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -203,11 +203,11 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.nodes.popover?.style.setProperty('--popover-height', this.height + 'px');
 
     if (!this.shouldOpenBottom) {
-      this.nodes.popover?.classList.add(cls.popoverOpenTop);
+      this.nodes.popover?.classList.add(css.popoverOpenTop);
     }
 
-    this.nodes.overlay?.classList.remove(cls.overlayHidden);
-    this.nodes.popover?.classList.add(cls.popoverOpened);
+    this.nodes.overlay?.classList.remove(css.overlayHidden);
+    this.nodes.popover?.classList.add(css.popoverOpened);
     this.flipper?.activate(this.flippableElements);
 
     if (this.search !== undefined) {
@@ -223,9 +223,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * Closes popover
    */
   public hide(): void {
-    this.nodes.popover?.classList.remove(cls.popoverOpened);
-    this.nodes.popover?.classList.remove(cls.popoverOpenTop);
-    this.nodes.overlay?.classList.add(cls.overlayHidden);
+    this.nodes.popover?.classList.remove(css.popoverOpened);
+    this.nodes.popover?.classList.remove(css.popoverOpenTop);
+    this.nodes.overlay?.classList.add(css.overlayHidden);
     this.flipper?.deactivate();
     this.items.forEach(item => item.reset());
 
@@ -261,14 +261,14 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * Constructs HTML element corresponding to popover
    */
   private make(): void {
-    this.nodes.popoverContainer = Dom.make('div', [ cls.popoverContainer ]);
+    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [ cls.nothingFoundMessage ], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ cls.items ]);
+    this.nodes.items = Dom.make('div', [ css.items ]);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
@@ -289,12 +289,12 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     }
 
     this.nodes.popover = Dom.make('div', [
-      cls.popover,
-      this.nestingLevel > 0 ? cls.popoverNested : undefined,
+      css.popover,
+      this.nestingLevel > 0 ? css.popoverNested : undefined,
       this.params.class,
     ]);
 
-    this.nodes.overlay = Dom.make('div', [cls.overlay, cls.overlayHidden]);
+    this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);
 
     this.listeners.on(this.nodes.overlay, 'click', () => {
       this.hide();
@@ -337,7 +337,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       return;
     }
 
-    searchElement.classList.add(cls.search);
+    searchElement.classList.add(css.search);
 
     this.nodes.popoverContainer?.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
   }
@@ -349,7 +349,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    */
   private addCustomContent(content: HTMLElement): void {
     this.nodes.customContent = content;
-    this.nodes.customContent.classList.add(cls.customContent);
+    this.nodes.customContent.classList.add(css.customContent);
     this.nodes.popoverContainer?.insertBefore(content, this.nodes.popoverContainer.firstChild);
   }
 
@@ -583,11 +583,11 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     popoverClone.style.position = 'absolute';
     popoverClone.style.top = '-1000px';
 
-    popoverClone.classList.add(cls.popoverOpened);
-    popoverClone.querySelector('.' + cls.popoverNested)?.remove();
+    popoverClone.classList.add(css.popoverOpened);
+    popoverClone.querySelector('.' + css.popoverNested)?.remove();
     document.body.appendChild(popoverClone);
 
-    const container =  popoverClone.querySelector('.' + cls.popoverContainer) as HTMLElement;
+    const container =  popoverClone.querySelector('.' + css.popoverContainer) as HTMLElement;
 
     height = container.offsetHeight;
 
@@ -629,7 +629,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * @param isDisplayed - true if the message should be displayed
    */
   private toggleNothingFoundMessage(isDisplayed: boolean): void {
-    this.nodes.nothingFoundMessage?.classList.toggle(cls.nothingFoundMessageDisplayed, isDisplayed);
+    this.nodes.nothingFoundMessage?.classList.toggle(css.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**
@@ -638,7 +638,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * @param isDisplayed - true if custom content should be displayed
    */
   private toggleCustomContent(isDisplayed: boolean): void {
-    this.nodes.customContent?.classList.toggle(cls.customContentHidden, isDisplayed);
+    this.nodes.customContent?.classList.toggle(css.customContentHidden, isDisplayed);
   }
 
   /**
