@@ -1,5 +1,6 @@
 import Popover from '../../../../src/components/utils/popover';
 import { PopoverItem } from '../../../../types';
+import { TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -256,5 +257,80 @@ describe('Popover', () => {
       /* Check custom content exists in the popover */
       cy.get('[data-cy-name=customContent]');
     });
+  });
+
+  it('should display nested popover', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  {
+          icon: 'Icon',
+          title: 'Title',
+          toggle: 'key',
+          name: 'test-item',
+          children: {
+            items: [
+              {
+                icon: 'Icon',
+                title: 'Title',
+                name: 'nested-test-item',
+              },
+            ],
+          },
+        };
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check item with children has arrow icon */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .get('.ce-popover-item__icon--chevron-right')
+      .should('be.visible');
+
+    /** Click the item */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .click();
+
+    /** Check nested popover opened */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover--nested .ce-popover__container')
+      .should('be.visible');
+
+    /** Check child item displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover--nested .ce-popover__container')
+      .get('[data-item-name="nested-test-item"]')
+      .should('be.visible');
   });
 });
