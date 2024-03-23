@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import ToolMock from '../fixtures/tools/ToolMock';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
@@ -786,5 +787,62 @@ describe('onChange callback', () => {
           },
         }));
       });
+  });
+
+  it('should be fired when the whole text inside some descendant of the block is removed', () => {
+    /**
+     * Mock of Tool with nested contenteditable element
+     */
+    class ToolWithContentEditableDescendant extends ToolMock {
+      /**
+       * Creates element with nested contenteditable element
+       */
+      public render(): HTMLElement {
+        const contenteditable = document.createElement('div');
+
+        contenteditable.contentEditable = 'true';
+        contenteditable.innerText = 'a';
+        contenteditable.setAttribute('data-cy', 'nested-contenteditable');
+
+        const wrapper = document.createElement('div');
+
+        wrapper.appendChild(contenteditable);
+
+        return wrapper;
+      }
+    }
+
+    const config = {
+      tools: {
+        testTool: {
+          class: ToolWithContentEditableDescendant,
+        },
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: 'a',
+          },
+        ],
+      },
+      onChange: (): void => {
+        console.log('something changed');
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+    cy.createEditor(config).as('editorInstance');
+
+    cy.get('[data-cy=nested-contenteditable]')
+      .click()
+      .clear();
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
   });
 });

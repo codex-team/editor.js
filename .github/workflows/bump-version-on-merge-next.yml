@@ -1,7 +1,14 @@
 name: Bump version on merge
 
+# Caution: 
+# the use of "pull_request_target" trigger allows to successfully
+# run workflow even when triggered from a fork. The trigger grants
+# access to repo's secrets and gives write permission to the runner.
+# This can be used to run malicious code on untrusted PR, so, please
+# DO NOT checkout any PR's ongoing commits (aka github.event.pull_request.head.sha)
+# while using this trigger.
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - next
     types: [closed]

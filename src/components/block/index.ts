@@ -738,6 +738,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
+    if (import.meta.env.MODE === 'test') {
+      wrapper.setAttribute('data-cy', 'block-wrapper');
+    }
+
     /**
      * Export id to the DOM three
      * Useful for standalone modules development. For example, allows to identify Block by some child node. Or scroll to a particular Block by id.
