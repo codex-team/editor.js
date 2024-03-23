@@ -71,9 +71,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
 
   /**
    * Last hovered item inside popover.
-   * Is used to track hovered item changes.
+   * Is used to determine if cursor is moving inside one item or already moved away to another one.
+   * Helps prevent reopening nested popover while cursor is moving inside one item area.
    */
-  private previouslyHoveredItem: PopoverItem | undefined | null;
+  private previouslyHoveredItem: PopoverItem | null = null;
 
   /**
    * Popover nesting level. 0 value means that it is a root popover
@@ -260,6 +261,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.emit(PopoverEvent.Close);
 
     this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = null;
   }
 
   /**
@@ -407,7 +410,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     if (item.children.length > 0) {
       if (isMobileScreen()) {
         /** Show nested items */
-        this.applyPopoverState(item.children, item.title);
+        this.updateItemsAndHeader(item.children, item.title);
 
         this.history.push({
           title: item.title,
@@ -462,12 +465,12 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
-   * Changes current state of the popover. Updates rendered header and items
+   * Removes rendered popover items and header and displays new ones
    *
    * @param title - new popover header text
    * @param items - new popover items
    */
-  private applyPopoverState(items: PopoverItemParams[], title?: string ): void {
+  private updateItemsAndHeader(items: PopoverItemParams[], title?: string ): void {
     /** Re-render header */
     if (this.header !== null && this.header !== undefined) {
       this.header.destroy();
@@ -479,7 +482,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
         onBackButtonClick: () => {
           this.history.pop();
 
-          this.applyPopoverState(this.history.currentItems, this.history.currentTitle);
+          this.updateItemsAndHeader(this.history.currentItems, this.history.currentTitle);
         },
       });
       const headerEl = this.header.getElement();
