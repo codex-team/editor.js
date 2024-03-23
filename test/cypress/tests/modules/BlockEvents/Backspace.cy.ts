@@ -294,7 +294,7 @@ describe('Backspace keydown', function () {
       .should('not.have.class', 'ce-toolbar--opened');
   });
 
-  it('should merge different types of blocks if they valid conversion config', function () {
+  it('should merge different types of blocks if they valid have a conversion config', function () {
     cy.createEditor({
       tools: {
         header: SimpleHeader,
