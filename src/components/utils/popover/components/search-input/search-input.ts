@@ -1,27 +1,22 @@
-import Dom from '../../dom';
-import Listeners from '../listeners';
+import Dom from '../../../../dom';
+import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
-
-/**
- * Item that could be searched
- */
-interface SearchableItem {
-  title?: string;
-}
+import { SearchableItem } from './search-input.typings';
+import { cls } from './search-input.const';
 
 /**
  * Provides search input element and search logic
  */
-export default class SearchInput {
+export class SearchInput {
   /**
    * Input wrapper element
    */
-  private wrapper: HTMLElement;
+  private wrapper: HTMLElement | undefined;
 
   /**
    * Editable input itself
    */
-  private input: HTMLInputElement;
+  private input: HTMLInputElement | undefined;
 
   /**
    * The instance of the Listeners util
@@ -36,27 +31,12 @@ export default class SearchInput {
   /**
    * Current search query
    */
-  private searchQuery: string;
+  private searchQuery: string | undefined;
 
   /**
    * Externally passed callback for the search
    */
   private readonly onSearch: (query: string, items: SearchableItem[]) => void;
-
-  /**
-   * Styles
-   */
-  private static get CSS(): {
-    input: string;
-    icon: string;
-    wrapper: string;
-    } {
-    return {
-      wrapper: 'cdx-search-field',
-      icon: 'cdx-search-field__icon',
-      input: 'cdx-search-field__input',
-    };
-  }
 
   /**
    * @param options - available config
@@ -67,7 +47,7 @@ export default class SearchInput {
   constructor({ items, onSearch, placeholder }: {
     items: SearchableItem[];
     onSearch: (query: string, items: SearchableItem[]) => void;
-    placeholder: string;
+    placeholder?: string;
   }) {
     this.listeners = new Listeners();
     this.items = items;
@@ -79,7 +59,7 @@ export default class SearchInput {
   /**
    * Returns search field element
    */
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | undefined {
     return this.wrapper;
   }
 
@@ -87,14 +67,17 @@ export default class SearchInput {
    * Sets focus to the input
    */
   public focus(): void {
-    this.input.focus();
+    this.input?.focus();
   }
 
   /**
    * Clears search query and results
    */
   public clear(): void {
-    this.input.value = '';
+    if (this.input !== undefined) {
+      this.input.value = '';
+    }
+
     this.searchQuery = '';
     this.onSearch('', this.foundItems);
   }
@@ -111,14 +94,14 @@ export default class SearchInput {
    *
    * @param placeholder - input placeholder
    */
-  private render(placeholder: string): void {
-    this.wrapper = Dom.make('div', SearchInput.CSS.wrapper);
+  private render(placeholder?: string): void {
+    this.wrapper = Dom.make('div', cls.wrapper);
 
-    const iconWrapper = Dom.make('div', SearchInput.CSS.icon, {
+    const iconWrapper = Dom.make('div', cls.icon, {
       innerHTML: IconSearch,
     });
 
-    this.input = Dom.make('input', SearchInput.CSS.input, {
+    this.input = Dom.make('input', cls.input, {
       placeholder,
       /**
        * Used to prevent focusing on the input by Tab key
@@ -132,6 +115,10 @@ export default class SearchInput {
     this.wrapper.appendChild(this.input);
 
     this.listeners.on(this.input, 'input', () => {
+      if (this.input === undefined) {
+        return;
+      }
+
       this.searchQuery = this.input.value;
 
       this.onSearch(this.searchQuery, this.foundItems);
@@ -152,8 +139,8 @@ export default class SearchInput {
    */
   private checkItem(item: SearchableItem): boolean {
     const text = item.title?.toLowerCase() || '';
-    const query = this.searchQuery.toLowerCase();
+    const query = this.searchQuery?.toLowerCase();
 
-    return text.includes(query);
+    return query !== undefined ? text.includes(query) : false;
   }
 }

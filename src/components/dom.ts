@@ -52,11 +52,13 @@ export default class Dom {
    * @param  {object} [attributes] - any attributes
    * @returns {HTMLElement}
    */
-  public static make(tagName: string, classNames: string | string[] | null = null, attributes: object = {}): HTMLElement {
+  public static make(tagName: string, classNames: string | (string | undefined)[] | null = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
-      el.classList.add(...classNames);
+      const validClassnames = classNames.filter(className => className !== undefined) as string[];
+
+      el.classList.add(...validClassnames);
     } else if (classNames) {
       el.classList.add(classNames);
     }

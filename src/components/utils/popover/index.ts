@@ -1,76 +1,16 @@
-import { PopoverItem } from './popover-item';
+import { PopoverItem, cls as popoverItemCls } from './components/popover-item';
 import Dom from '../../dom';
 import { cacheable, keyCodes, isMobileScreen } from '../../utils';
 import Flipper from '../../flipper';
-import { PopoverItem as PopoverItemParams } from '../../../../types';
-import SearchInput from './search-input';
+import { SearchInput, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import ScrollLocker from '../scroll-locker';
-
-/**
- * Params required to render popover
- */
-interface PopoverParams {
-  /**
-   * Popover items config
-   */
-  items: PopoverItemParams[];
-
-  /**
-   * Element of the page that creates 'scope' of the popover
-   */
-  scopeElement?: HTMLElement;
-
-  /**
-   * Arbitrary html element to be inserted before items list
-   */
-  customContent?: HTMLElement;
-
-  /**
-   * List of html elements inside custom content area that should be available for keyboard navigation
-   */
-  customContentFlippableItems?: HTMLElement[];
-
-  /**
-   * True if popover should contain search field
-   */
-  searchable?: boolean;
-
-  /**
-   * Popover texts overrides
-   */
-  messages?: PopoverMessages
-}
-
-/**
- * Texts used inside popover
- */
-interface PopoverMessages {
-  /** Text displayed when search has no results */
-  nothingFound?: string;
-
-  /** Search input label */
-  search?: string
-}
-
-/**
- * Event that can be triggered by the Popover
- */
-export enum PopoverEvent {
-  /**
-   * When popover closes
-   */
-  Close = 'close'
-}
-
-/**
- * Events fired by the Popover
- */
-interface PopoverEventMap {
-  [PopoverEvent.Close]: undefined;
-}
-
+import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.typings';
+import { PopoverItem as PopoverItemParams } from '../../../../types';
+import { PopoverHeader } from './components/popover-header';
+import { PopoverStatesHistory } from './utils/popover-states-history';
+import { cls } from './popover.const';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -79,7 +19,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   /**
    * Flipper - module for keyboard iteration between elements
    */
-  public flipper: Flipper;
+  public flipper: Flipper | undefined;
 
   /**
    * List of popover items
@@ -113,53 +53,54 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private scrollLocker = new ScrollLocker();
 
   /**
-   * Popover CSS classes
+   * Reference to nested popover if exists
    */
-  private static get CSS(): {
-    popover: string;
-    popoverOpenTop: string;
-    popoverOpened: string;
-    search: string;
-    nothingFoundMessage: string;
-    nothingFoundMessageDisplayed: string;
-    customContent: string;
-    customContentHidden: string;
-    items: string;
-    overlay: string;
-    overlayHidden: string;
-    } {
-    return {
-      popover: 'ce-popover',
-      popoverOpenTop: 'ce-popover--open-top',
-      popoverOpened: 'ce-popover--opened',
-      search: 'ce-popover__search',
-      nothingFoundMessage: 'ce-popover__nothing-found-message',
-      nothingFoundMessageDisplayed: 'ce-popover__nothing-found-message--displayed',
-      customContent: 'ce-popover__custom-content',
-      customContentHidden: 'ce-popover__custom-content--hidden',
-      items: 'ce-popover__items',
-      overlay: 'ce-popover__overlay',
-      overlayHidden: 'ce-popover__overlay--hidden',
-    };
-  }
+  private nestedPopover: Popover | undefined | null;
+
+  /**
+   * Reference to popover header if exists
+   */
+  private header: PopoverHeader | undefined | null;
+
+  /**
+   * History of popover states for back navigation.
+   * Is used for mobile version of popover,
+   * where we can not display nested popover of the screen and
+   * have to render nested items in the same popover switching to new state
+   */
+  private history = new PopoverStatesHistory();
+
+  /**
+   * Last hovered item inside popover.
+   * Is used to determine if cursor is moving inside one item or already moved away to another one.
+   * Helps prevent reopening nested popover while cursor is moving inside one item area.
+   */
+  private previouslyHoveredItem: PopoverItem | null = null;
+
+  /**
+   * Popover nesting level. 0 value means that it is a root popover
+   */
+  private nestingLevel = 0;
 
   /**
    * Refs to created HTML elements
    */
   private nodes: {
-    wrapper: HTMLElement | null;
     popover: HTMLElement | null;
+    popoverContainer: HTMLElement | null;
     nothingFoundMessage: HTMLElement | null;
     customContent: HTMLElement | null;
     items: HTMLElement | null;
     overlay: HTMLElement | null;
+    header: HTMLElement | null;
   } = {
-      wrapper: null,
       popover: null,
+      popoverContainer: null,
       nothingFoundMessage: null,
       customContent: null,
       items: null,
       overlay: null,
+      header: null,
     };
 
   /**
@@ -175,13 +116,17 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    *
    * @param params - popover construction params
    */
-  constructor(params: PopoverParams) {
+  constructor(private readonly params: PopoverParams) {
     super();
 
     this.items = params.items.map(item => new PopoverItem(item));
 
     if (params.scopeElement !== undefined) {
       this.scopeElement = params.scopeElement;
+    }
+
+    if (params.nestingLevel) {
+      this.nestingLevel = params.nestingLevel;
     }
 
     if (params.messages) {
@@ -205,36 +150,65 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
       this.addSearch();
     }
 
-
     this.initializeFlipper();
+
+    /* Save state to history for proper navigation between nested and parent popovers */
+    this.history.push({ items: params.items });
   }
 
   /**
    * Returns HTML element corresponding to the popover
    */
   public getElement(): HTMLElement {
-    return this.nodes.wrapper as HTMLElement;
+    return this.nodes.popover as HTMLElement;
   }
 
   /**
    * Returns true if some item inside popover is focused
    */
   public hasFocus(): boolean {
+    if (this.flipper === undefined) {
+      return false;
+    }
+
     return this.flipper.hasFocus();
+  }
+
+  /**
+   * Scroll position inside items container of the popover
+   */
+  public get scrollTop(): number {
+    if (this.nodes.items === null) {
+      return 0;
+    }
+
+    return this.nodes.items.scrollTop;
+  }
+
+  /**
+   * Returns visible element offset top
+   */
+  public get offsetTop(): number {
+    if (this.nodes.popoverContainer === null) {
+      return 0;
+    }
+
+    return this.nodes.popoverContainer.offsetTop;
   }
 
   /**
    * Open popover
    */
   public show(): void {
+    this.nodes.popover?.style.setProperty('--popover-height', this.height + 'px');
+
     if (!this.shouldOpenBottom) {
-      this.nodes.popover.style.setProperty('--popover-height', this.height + 'px');
-      this.nodes.popover.classList.add(Popover.CSS.popoverOpenTop);
+      this.nodes.popover?.classList.add(cls.popoverOpenTop);
     }
 
-    this.nodes.overlay.classList.remove(Popover.CSS.overlayHidden);
-    this.nodes.popover.classList.add(Popover.CSS.popoverOpened);
-    this.flipper.activate(this.flippableElements);
+    this.nodes.overlay?.classList.remove(cls.overlayHidden);
+    this.nodes.popover?.classList.add(cls.popoverOpened);
+    this.flipper?.activate(this.flippableElements);
 
     if (this.search !== undefined) {
       this.search?.focus();
@@ -249,10 +223,10 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * Closes popover
    */
   public hide(): void {
-    this.nodes.popover.classList.remove(Popover.CSS.popoverOpened);
-    this.nodes.popover.classList.remove(Popover.CSS.popoverOpenTop);
-    this.nodes.overlay.classList.add(Popover.CSS.overlayHidden);
-    this.flipper.deactivate();
+    this.nodes.popover?.classList.remove(cls.popoverOpened);
+    this.nodes.popover?.classList.remove(cls.popoverOpenTop);
+    this.nodes.overlay?.classList.add(cls.overlayHidden);
+    this.flipper?.deactivate();
     this.items.forEach(item => item.reset());
 
     if (this.search !== undefined) {
@@ -264,14 +238,19 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     }
 
     this.emit(PopoverEvent.Close);
+
+    this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = null;
   }
 
   /**
    * Clears memory
    */
   public destroy(): void {
-    this.flipper.deactivate();
+    this.flipper?.deactivate();
     this.listeners.removeAll();
+    this.destroyNestedPopoverIfExists();
 
     if (isMobileScreen()) {
       this.scrollLocker.unlock();
@@ -282,40 +261,47 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * Constructs HTML element corresponding to popover
    */
   private make(): void {
-    this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
+    this.nodes.popoverContainer = Dom.make('div', [ cls.popoverContainer ]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [ cls.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
 
-    this.nodes.popover.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ Popover.CSS.items ]);
+    this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
+    this.nodes.items = Dom.make('div', [ cls.items ]);
 
     this.items.forEach(item => {
-      this.nodes.items.appendChild(item.getElement());
-    });
+      const itemEl = item.getElement();
 
-    this.nodes.popover.appendChild(this.nodes.items);
-
-    this.listeners.on(this.nodes.popover, 'click', (event: PointerEvent) => {
-      const item = this.getTargetItem(event);
-
-      if (item === undefined) {
+      if (itemEl === null) {
         return;
       }
 
-      this.handleItemClick(item);
+      this.nodes.items?.appendChild(itemEl);
     });
 
-    this.nodes.wrapper = Dom.make('div');
-    this.nodes.overlay = Dom.make('div', [Popover.CSS.overlay, Popover.CSS.overlayHidden]);
+    this.nodes.popoverContainer.appendChild(this.nodes.items);
+
+    this.listeners.on(this.nodes.popoverContainer, 'click', (event: Event) => this.handleClick(event));
+
+    if (!isMobileScreen()) {
+      this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: Event) => this.handleHover(event));
+    }
+
+    this.nodes.popover = Dom.make('div', [
+      cls.popover,
+      this.nestingLevel > 0 ? cls.popoverNested : undefined,
+      this.params.class,
+    ]);
+
+    this.nodes.overlay = Dom.make('div', [cls.overlay, cls.overlayHidden]);
 
     this.listeners.on(this.nodes.overlay, 'click', () => {
       this.hide();
     });
 
-    this.nodes.wrapper.appendChild(this.nodes.overlay);
-    this.nodes.wrapper.appendChild(this.nodes.popover);
+    this.nodes.popover.appendChild(this.nodes.overlay);
+    this.nodes.popover.appendChild(this.nodes.popoverContainer);
   }
 
   /**
@@ -325,7 +311,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.search = new SearchInput({
       items: this.items,
       placeholder: this.messages.search,
-      onSearch: (query: string, result: PopoverItem[]): void => {
+      onSearch: (query: string, result: SearchableItem[]): void => {
         this.items.forEach(item => {
           const isHidden = !result.includes(item);
 
@@ -335,21 +321,25 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
         this.toggleCustomContent(query !== '');
 
         /** List of elements available for keyboard navigation considering search query applied */
-        const flippableElements = query === '' ? this.flippableElements : result.map(item => item.getElement());
+        const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
 
-        if (this.flipper.isActivated) {
+        if (this.flipper?.isActivated) {
           /** Update flipper items with only visible */
           this.flipper.deactivate();
-          this.flipper.activate(flippableElements);
+          this.flipper.activate(flippableElements as HTMLElement[]);
         }
       },
     });
 
     const searchElement = this.search.getElement();
 
-    searchElement.classList.add(Popover.CSS.search);
+    if (searchElement === undefined) {
+      return;
+    }
 
-    this.nodes.popover.insertBefore(searchElement, this.nodes.popover.firstChild);
+    searchElement.classList.add(cls.search);
+
+    this.nodes.popoverContainer?.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
   }
 
   /**
@@ -359,8 +349,8 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    */
   private addCustomContent(content: HTMLElement): void {
     this.nodes.customContent = content;
-    this.nodes.customContent.classList.add(Popover.CSS.customContent);
-    this.nodes.popover.insertBefore(content, this.nodes.popover.firstChild);
+    this.nodes.customContent.classList.add(cls.customContent);
+    this.nodes.popoverContainer?.insertBefore(content, this.nodes.popoverContainer.firstChild);
   }
 
   /**
@@ -368,17 +358,49 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    *
    * @param event - event to retrieve popover item from
    */
-  private getTargetItem(event: PointerEvent): PopoverItem | undefined {
-    return this.items.find(el => event.composedPath().includes(el.getElement()));
+  private getTargetItem(event: Event): PopoverItem | undefined {
+    return this.items.find(el => {
+      const itemEl = el.getElement();
+
+      if (itemEl === null) {
+        return false;
+      }
+
+      return event.composedPath().includes(itemEl);
+    });
   }
 
   /**
-   * Handles item clicks
+   * Handles clicks inside popover
    *
-   * @param item - item to handle click of
+   * @param event - item to handle click of
    */
-  private handleItemClick(item: PopoverItem): void {
+  private handleClick(event: Event): void {
+    const item = this.getTargetItem(event);
+
+    if (item === undefined) {
+      return;
+    }
+
     if (item.isDisabled) {
+      return;
+    }
+
+    if (item.children.length > 0) {
+      if (isMobileScreen()) {
+        /** Show nested items */
+        this.updateItemsAndHeader(item.children, item.title);
+
+        this.history.push({
+          title: item.title,
+          items: item.children,
+        });
+      } else {
+        if (this.nestedPopover == null || this.nestedPopover === undefined) {
+          this.showNestedPopoverForItem(item);
+        }
+      }
+
       return;
     }
 
@@ -395,12 +417,129 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   }
 
   /**
+   * Handles hover events inside popover items container
+   *
+   * @param event - hover event data
+   */
+  private handleHover(event: Event): void {
+    const item = this.getTargetItem(event);
+
+    if (item === undefined) {
+      return;
+    }
+
+    if (this.previouslyHoveredItem === item) {
+      return;
+    }
+
+    this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = item;
+
+    if (item.children.length === 0) {
+      return;
+    }
+
+    this.showNestedPopoverForItem(item);
+  }
+
+  /**
+   * Removes rendered popover items and header and displays new ones
+   *
+   * @param title - new popover header text
+   * @param items - new popover items
+   */
+  private updateItemsAndHeader(items: PopoverItemParams[], title?: string ): void {
+    /** Re-render header */
+    if (this.header !== null && this.header !== undefined) {
+      this.header.destroy();
+      this.header = null;
+    }
+    if (title !== undefined) {
+      this.header = new PopoverHeader({
+        text: title,
+        onBackButtonClick: () => {
+          this.history.pop();
+
+          this.updateItemsAndHeader(this.history.currentItems, this.history.currentTitle);
+        },
+      });
+      const headerEl = this.header.getElement();
+
+      if (headerEl !== null) {
+        this.nodes.popoverContainer?.insertBefore(headerEl, this.nodes.popoverContainer.firstChild);
+      }
+    }
+
+    /** Re-render items */
+    this.flipper?.deactivate();
+    this.items.forEach(item => item.getElement()?.remove());
+
+    this.items = items.map(params => new PopoverItem(params));
+
+    this.items.forEach(item => {
+      const itemEl = item.getElement();
+
+      if (itemEl === null) {
+        return;
+      }
+      this.nodes.items?.appendChild(itemEl);
+    });
+
+    this.flipper?.activate(this.flippableElements);
+  }
+
+
+  /**
+   * Creates and displays nested popover for specified item.
+   * Is used only on desktop
+   *
+   * @param item - item to display nested popover by
+   */
+  private showNestedPopoverForItem(item: PopoverItem): void {
+    this.nestedPopover = new Popover({
+      items: item.children,
+      nestingLevel: this.nestingLevel + 1,
+    });
+
+    const nestedPopoverEl = this.nestedPopover.getElement();
+
+    this.nodes.popover?.appendChild(nestedPopoverEl);
+    const itemEl =  item.getElement();
+    const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    const topOffset = this.offsetTop + itemOffsetTop - 4;
+
+    nestedPopoverEl.style.setProperty('--nested-popover-top', topOffset + 'px');
+    nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
+
+    this.nestedPopover.show();
+    this.flipper?.deactivate();
+  }
+
+  /**
+   * Destroys existing nested popover
+   */
+  private destroyNestedPopoverIfExists(): void {
+    if (this.nestedPopover === undefined || this.nestedPopover === null) {
+      return;
+    }
+
+    this.nestedPopover.hide();
+    this.nestedPopover.destroy();
+    this.nestedPopover.getElement().remove();
+    this.nestedPopover = null;
+    this.flipper?.activate(this.flippableElements);
+  }
+
+
+  /**
    * Creates Flipper instance which allows to navigate between popover items via keyboard
    */
   private initializeFlipper(): void {
     this.flipper = new Flipper({
       items: this.flippableElements,
-      focusedItemClass: PopoverItem.CSS.focused,
+      focusedItemClass: popoverItemCls.focused,
       allowedKeys: [
         keyCodes.TAB,
         keyCodes.UP,
@@ -423,7 +562,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     /**
      * Combine elements inside custom content area with popover items elements
      */
-    return customContentControlsElements.concat(popoverItemsElements);
+    return customContentControlsElements.concat(popoverItemsElements as HTMLElement[]);
   }
 
   /**
@@ -443,9 +582,15 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     popoverClone.style.visibility = 'hidden';
     popoverClone.style.position = 'absolute';
     popoverClone.style.top = '-1000px';
-    popoverClone.classList.add(Popover.CSS.popoverOpened);
+
+    popoverClone.classList.add(cls.popoverOpened);
+    popoverClone.querySelector('.' + cls.popoverNested)?.remove();
     document.body.appendChild(popoverClone);
-    height = popoverClone.offsetHeight;
+
+    const container =  popoverClone.querySelector('.' + cls.popoverContainer) as HTMLElement;
+
+    height = container.offsetHeight;
+
     popoverClone.remove();
 
     return height;
@@ -456,6 +601,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * It should happen when there is enough space below or not enough space above
    */
   private get shouldOpenBottom(): boolean {
+    if (this.nodes.popover === undefined || this.nodes.popover === null) {
+      return false;
+    }
     const popoverRect = this.nodes.popover.getBoundingClientRect();
     const scopeElementRect = this.scopeElement.getBoundingClientRect();
     const popoverHeight = this.height;
@@ -472,7 +620,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private onFlip = (): void => {
     const focusedItem = this.items.find(item => item.isFocused);
 
-    focusedItem.onFocus();
+    focusedItem?.onFocus();
   };
 
   /**
@@ -481,7 +629,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * @param isDisplayed - true if the message should be displayed
    */
   private toggleNothingFoundMessage(isDisplayed: boolean): void {
-    this.nodes.nothingFoundMessage.classList.toggle(Popover.CSS.nothingFoundMessageDisplayed, isDisplayed);
+    this.nodes.nothingFoundMessage?.classList.toggle(cls.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**
@@ -490,7 +638,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
    * @param isDisplayed - true if custom content should be displayed
    */
   private toggleCustomContent(isDisplayed: boolean): void {
-    this.nodes.customContent?.classList.toggle(Popover.CSS.customContentHidden, isDisplayed);
+    this.nodes.customContent?.classList.toggle(cls.customContentHidden, isDisplayed);
   }
 
   /**

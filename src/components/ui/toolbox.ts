@@ -5,9 +5,10 @@ import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
 import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
 import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent } from '../utils/popover';
+import Popover from '../utils/popover';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
+import { PopoverEvent } from '../utils/popover/popover.typings';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block

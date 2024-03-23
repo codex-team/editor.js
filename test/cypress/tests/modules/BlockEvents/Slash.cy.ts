@@ -19,7 +19,7 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"] .ce-popover')
+      cy.get('[data-cy="toolbox"] .ce-popover__container')
         .should('be.visible');
     });
 
@@ -46,7 +46,7 @@ describe('Slash keydown', function () {
           .click()
           .type(`{${key}}/`);
 
-        cy.get('[data-cy="toolbox"] .ce-popover')
+        cy.get('[data-cy="toolbox"] .ce-popover__container')
           .should('not.be.visible');
       });
     });
@@ -72,7 +72,7 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"] .ce-popover')
+      cy.get('[data-cy="toolbox"] .ce-popover__container')
         .should('not.be.visible');
 
       /**
@@ -106,7 +106,7 @@ describe('CMD+Slash keydown', function () {
       .click()
       .type('{cmd}/');
 
-    cy.get('[data-cy="block-tunes"] .ce-popover')
+    cy.get('[data-cy="block-tunes"] .ce-popover__container')
       .should('be.visible');
   });
 });

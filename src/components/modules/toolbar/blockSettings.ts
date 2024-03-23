@@ -7,7 +7,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import Popover, { PopoverEvent } from '../../utils/popover';
+import Popover from '../../utils/popover';
+import { PopoverEvent } from '../../utils/popover/popover.typings';
 
 /**
  * HTML Elements that used for BlockSettings
