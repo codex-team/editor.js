@@ -492,7 +492,7 @@ export default class BlockManager extends Module {
       : data;
 
     if (!_.isEmpty(blockToMergeData)) {
-      await targetBlock.mergeWith(blockToMergeData, targetBlock.name);
+      await targetBlock.mergeWith(blockToMergeData);
     }
 
     this.removeBlock(blockToMerge);

@@ -539,10 +539,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call plugins merge method
    *
    * @param {BlockToolData} data - data to merge
-   * @param {string} type - type of the block to merge
    */
-  public async mergeWith(data: BlockToolData, type: string): Promise<void> {
-    await this.toolInstance.merge(data, type);
+  public async mergeWith(data: BlockToolData): Promise<void> {
+    this.toolInstance.merge(data);
   }
 
   /**

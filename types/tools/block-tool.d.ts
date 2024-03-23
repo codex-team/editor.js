@@ -40,9 +40,8 @@ export interface BlockTool extends BaseTool {
    * Method that specified how to merge two Blocks with same type.
    * Called by backspace at the beginning of the Block
    * @param {BlockToolData} blockData
-   * @param {string} type
    */
-  merge?(blockData: BlockToolData, type: string): void;
+  merge?(blockData: BlockToolData): void;
 
   /**
    * On paste callback. Fired when pasted content can be substituted by a Tool
