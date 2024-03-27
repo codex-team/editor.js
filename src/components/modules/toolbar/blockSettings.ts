@@ -7,8 +7,9 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import Popover from '../../utils/popover';
+import { PopoverDesktop, PopoverMobile } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.typings';
+import { isMobileScreen } from '../../utils';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -57,8 +58,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @todo remove once BlockSettings becomes standalone non-module class
    */
-  public get flipper(): Flipper {
-    return this.popover?.flipper;
+  public get flipper(): Flipper | undefined {
+    return 'flipper' in this.popover ? this.popover?.flipper : undefined;
   }
 
   /**
@@ -69,8 +70,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: Popover | undefined;
-
+  private popover: PopoverDesktop | PopoverMobile | undefined;
 
   /**
    * Panel with block settings with 2 sections:
@@ -90,6 +90,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public destroy(): void {
     this.removeAllNodes();
+    this.listeners.destroy();
   }
 
   /**
@@ -119,6 +120,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
+
+    const Popover = isMobileScreen() ? PopoverMobile : PopoverDesktop;
+
     this.popover = new Popover({
       searchable: true,
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),

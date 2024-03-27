@@ -105,6 +105,14 @@ export default class Toolbar extends Module<ToolbarNodes> {
   private toolboxInstance: Toolbox | null = null;
 
   /**
+   * Handles window resize. Closes block tunes and toolbox in case they are open
+   */
+  private handleResize = _.debounce((): void => {
+    this.Editor.BlockSettings.close();
+    this.toolboxInstance.forceRemountPopover();
+  });
+
+  /**
    * @class
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
@@ -219,6 +227,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       show: (): void => this.nodes.settingsToggler.classList.remove(this.CSS.settingsTogglerHidden),
     };
   }
+
 
   /**
    * Toggles read-only mode
@@ -436,6 +445,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Append toolbar to the Editor
      */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    this.listeners.on(window, 'resize', this.handleResize);
   }
 
   /**
@@ -479,8 +490,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       }
     });
 
-    return this.toolboxInstance.make();
+    return this.toolboxInstance.getElement();
   }
+
 
   /**
    * Handler for Plus Button
@@ -599,5 +611,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (this.toolboxInstance) {
       this.toolboxInstance.destroy();
     }
+    this.listeners.destroy();
   }
 }

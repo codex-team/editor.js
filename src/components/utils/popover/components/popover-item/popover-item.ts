@@ -142,9 +142,7 @@ export class PopoverItem {
    * Returns list of item children
    */
   public get children(): PopoverItemParams[] {
-    return 'children' in this.params && this.params.children !== undefined ?
-      this.params.children.items :
-      [];
+    return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
   }
 
   /**

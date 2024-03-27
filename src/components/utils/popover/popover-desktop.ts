@@ -1,0 +1,333 @@
+import Flipper from '../../flipper';
+import { Popover as PopoverBase } from './popover-abstract';
+import { PopoverItem, css as popoverItemCls } from './components/popover-item';
+import { PopoverParams } from './popover.typings';
+import { keyCodes } from '../../utils';
+import { css } from './popover.const';
+import { SearchableItem } from './components/search-input';
+import { cacheable } from '../../utils';
+
+/**
+ * Class responsible for rendering popover and handling its behaviour on desktop
+ */
+export class PopoverDesktop extends PopoverBase {
+  /**
+   * Flipper - module for keyboard iteration between elements
+   */
+  public flipper: Flipper | undefined;
+
+  /**
+   * List of html elements inside custom content area that should be available for keyboard navigation
+   */
+  private customContentFlippableItems: HTMLElement[] | undefined;
+
+  /**
+   * Reference to nested popover if exists
+   */
+  private nestedPopover: PopoverDesktop | undefined | null;
+
+  /**
+   * Last hovered item inside popover.
+   * Is used to determine if cursor is moving inside one item or already moved away to another one.
+   * Helps prevent reopening nested popover while cursor is moving inside one item area.
+   */
+  private previouslyHoveredItem: PopoverItem | null = null;
+
+  /**
+   * Popover nesting level. 0 value means that it is a root popover
+   */
+  private nestingLevel = 0;
+
+  /**
+   * Element of the page that creates 'scope' of the popover.
+   * If possible, popover will not cross specified element's borders when opening.
+   */
+  private scopeElement: HTMLElement = document.body;
+
+  /**
+   * Construct the instance
+   *
+   * @param params - popover params
+   */
+  constructor(params: PopoverParams) {
+    super(params);
+
+    if (params.nestingLevel !== undefined) {
+      this.nestingLevel = params.nestingLevel;
+    }
+
+    if (this.nestingLevel > 0) {
+      this.nodes.popover.classList.add(css.popoverNested);
+    }
+
+    if (params.customContentFlippableItems) {
+      this.customContentFlippableItems = params.customContentFlippableItems;
+    }
+
+    if (params.scopeElement !== undefined) {
+      this.scopeElement = params.scopeElement;
+    }
+
+    this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: Event) => this.handleHover(event));
+
+    this.initializeFlipper();
+  }
+
+  /**
+   * Returns true if some item inside popover is focused
+   */
+  public hasFocus(): boolean {
+    if (this.flipper === undefined) {
+      return false;
+    }
+
+    return this.flipper.hasFocus();
+  }
+
+  /**
+   * Scroll position inside items container of the popover
+   */
+  public get scrollTop(): number {
+    if (this.nodes.items === null) {
+      return 0;
+    }
+
+    return this.nodes.items.scrollTop;
+  }
+
+  /**
+   * Returns visible element offset top
+   */
+  public get offsetTop(): number {
+    if (this.nodes.popoverContainer === null) {
+      return 0;
+    }
+
+    return this.nodes.popoverContainer.offsetTop;
+  }
+
+  /**
+   * Open popover
+   */
+  public show(): void {
+    this.nodes.popover?.style.setProperty('--popover-height', this.height + 'px');
+
+    if (!this.shouldOpenBottom) {
+      this.nodes.popover?.classList.add(css.popoverOpenTop);
+    }
+
+    super.show();
+    this.flipper?.activate(this.flippableElements);
+  }
+
+  /**
+   * Closes popover
+   */
+  public hide(): void {
+    super.hide();
+
+    this.flipper?.deactivate();
+
+    this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = null;
+  }
+
+  /**
+   * Clears memory
+   */
+  public destroy(): void {
+    super.destroy();
+    this.flipper?.deactivate();
+    this.destroyNestedPopoverIfExists();
+  }
+
+  /**
+   * Handles input inside search field
+   *
+   * @param query - search query text
+   * @param result - search results
+   */
+  protected override onSearch = (query: string, result: SearchableItem[]): void => {
+    super.onSearch(query, result);
+
+    /** List of elements available for keyboard navigation considering search query applied */
+    const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
+
+    if (this.flipper?.isActivated) {
+      /** Update flipper items with only visible */
+      this.flipper.deactivate();
+      this.flipper.activate(flippableElements as HTMLElement[]);
+    }
+  };
+
+  /**
+   * Handles displaying nested items for the item.
+   *
+   * @param item – item to show nested popover for
+   */
+  protected override handleShowingNestedItems(item: PopoverItem): void {
+    if (this.nestedPopover == null || this.nestedPopover === undefined) {
+      this.showNestedPopoverForItem(item);
+    }
+  }
+
+  /**
+   * Checks if popover should be opened bottom.
+   * It should happen when there is enough space below or not enough space above
+   */
+  private get shouldOpenBottom(): boolean {
+    if (this.nodes.popover === undefined || this.nodes.popover === null) {
+      return false;
+    }
+    const popoverRect = this.nodes.popover.getBoundingClientRect();
+    const scopeElementRect = this.scopeElement.getBoundingClientRect();
+    const popoverHeight = this.height;
+    const popoverPotentialBottomEdge = popoverRect.top + popoverHeight;
+    const popoverPotentialTopEdge = popoverRect.top - popoverHeight;
+    const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
+
+    return popoverPotentialTopEdge < scopeElementRect.top || popoverPotentialBottomEdge <= bottomEdgeForComparison;
+  }
+
+  /**
+   * Helps to calculate height of popover while it is not displayed on screen.
+   * Renders invisible clone of popover to get actual height.
+   */
+  @cacheable
+  private get height(): number {
+    let height = 0;
+
+    if (this.nodes.popover === null) {
+      return height;
+    }
+
+    const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;
+
+    popoverClone.style.visibility = 'hidden';
+    popoverClone.style.position = 'absolute';
+    popoverClone.style.top = '-1000px';
+
+    popoverClone.classList.add(css.popoverOpened);
+    popoverClone.querySelector('.' + css.popoverNested)?.remove();
+    document.body.appendChild(popoverClone);
+
+    const container =  popoverClone.querySelector('.' + css.popoverContainer) as HTMLElement;
+
+    height = container.offsetHeight;
+
+    popoverClone.remove();
+
+    return height;
+  }
+
+  /**
+   * Destroys existing nested popover
+   */
+  private destroyNestedPopoverIfExists(): void {
+    if (this.nestedPopover === undefined || this.nestedPopover === null) {
+      return;
+    }
+
+    this.nestedPopover.hide();
+    this.nestedPopover.destroy();
+    this.nestedPopover.getElement().remove();
+    this.nestedPopover = null;
+    this.flipper?.activate(this.flippableElements);
+  }
+
+  /**
+   * Creates Flipper instance which allows to navigate between popover items via keyboard
+   */
+  private initializeFlipper(): void {
+    this.flipper = new Flipper({
+      items: this.flippableElements,
+      focusedItemClass: popoverItemCls.focused,
+      allowedKeys: [
+        keyCodes.TAB,
+        keyCodes.UP,
+        keyCodes.DOWN,
+        keyCodes.ENTER,
+      ],
+    });
+
+    this.flipper.onFlip(this.onFlip);
+  }
+
+  /**
+   * Returns list of elements available for keyboard navigation.
+   * Contains both usual popover items elements and custom html content.
+   */
+  private get flippableElements(): HTMLElement[] {
+    const popoverItemsElements = this.items.map(item => item.getElement());
+    const customContentControlsElements = this.customContentFlippableItems || [];
+
+    /**
+     * Combine elements inside custom content area with popover items elements
+     */
+    return customContentControlsElements.concat(popoverItemsElements as HTMLElement[]);
+  }
+
+  /**
+   * Called on flipper navigation
+   */
+  private onFlip = (): void => {
+    const focusedItem = this.items.find(item => item.isFocused);
+
+    focusedItem?.onFocus();
+  };
+
+  /**
+   * Creates and displays nested popover for specified item.
+   * Is used only on desktop
+   *
+   * @param item - item to display nested popover by
+   */
+  private showNestedPopoverForItem(item: PopoverItem): void {
+    this.nestedPopover = new PopoverDesktop({
+      items: item.children,
+      nestingLevel: this.nestingLevel + 1,
+    });
+
+    const nestedPopoverEl = this.nestedPopover.getElement();
+
+    this.nodes.popover?.appendChild(nestedPopoverEl);
+    const itemEl =  item.getElement();
+    const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    const topOffset = this.offsetTop + itemOffsetTop - 4;
+
+    nestedPopoverEl.style.setProperty('--nested-popover-top', topOffset + 'px');
+    nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
+
+    this.nestedPopover.show();
+    this.flipper?.deactivate();
+  }
+
+  /**
+   * Handles hover events inside popover items container
+   *
+   * @param event - hover event data
+   */
+  private handleHover(event: Event): void {
+    const item = this.getTargetItem(event);
+
+    if (item === undefined) {
+      return;
+    }
+
+    if (this.previouslyHoveredItem === item) {
+      return;
+    }
+
+    this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = item;
+
+    if (item.children.length === 0) {
+      return;
+    }
+
+    this.showNestedPopoverForItem(item);
+  }
+}

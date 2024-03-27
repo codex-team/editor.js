@@ -4,6 +4,10 @@ const MODIFIER_DELIMITER = '--';
 /**
  * Utility function that allows to construct class names from block and element names
  *
+ * @example bem('ce-popover)() -> 'ce-popover'
+ * @example bem('ce-popover)('container') -> 'ce-popover__container'
+ * @example bem('ce-popover)('container', 'hidden') -> 'ce-popover__container--hidden'
+ * @example bem('ce-popover)(null, 'hidden') -> 'ce-popover--hidden'
  * @param blockName - string with block name
  * @param elementName - string with element name
  * @param modifier - modifier to be appended
