@@ -294,7 +294,7 @@ describe('Backspace keydown', function () {
       .should('not.have.class', 'ce-toolbar--opened');
   });
 
-  it('should merge different types of blocks if they valid have a conversion config', function () {
+  it('should merge different types of blocks if they valid have a conversion config. Also, should close the Toolbox. Caret should be places in a place of glue', function () {
     cy.createEditor({
       tools: {
         header: SimpleHeader,
@@ -334,6 +334,30 @@ describe('Backspace keydown', function () {
         expect(blocks[0].id).to.eq('block1'); // second block is still here
         expect(blocks[0].data.text).to.eq('First block headingSecond block paragraph'); // text has been merged
       });
+
+    /**
+     * Caret is set to the place of merging
+     */
+    cy.window()
+      .then((window) => {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+
+        cy.get('[data-cy=editorjs]')
+          .find('[data-cy=block-wrapper]')
+          .should(($block) => {
+            expect($block[0].contains(range.startContainer)).to.be.true;
+            range.startContainer.normalize(); // glue merged text nodes
+            expect(range.startOffset).to.be.eq('First block heading'.length);
+          });
+      });
+
+    /**
+     * Toolbox has been closed
+     */
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-toolbar')
+      .should('not.have.class', 'ce-toolbar--opened');
   });
 
   it('should simply set Caret to the end of the previous Block if Caret at the start of the Block but Blocks are not mergeable. Also, should close the Toolbox.', function () {
