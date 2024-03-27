@@ -9,11 +9,18 @@ import { isFunction, isString, log } from '../utils';
  * We can merge two blocks if:
  *  - they have the same type
  *  - they have a merge function (.mergeable = true)
+ *  - If they have valid conversions config
  *
  * @param targetBlock - block to merge to
  * @param blockToMerge - block to merge from
  */
 export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boolean {
+  if (blockToMerge.mergeable &&
+    blockToMerge.tool.conversionConfig?.export !== undefined &&
+    targetBlock.tool.conversionConfig?.import !== undefined) {
+    return true;
+  }
+
   return targetBlock.mergeable && targetBlock.name === blockToMerge.name;
 }
 
