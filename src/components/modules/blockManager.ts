@@ -21,7 +21,6 @@ import { BlockChanged } from '../events';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
-import { SavedData } from '../../../types/data-formats';
 
 /**
  * @typedef {BlockManager} BlockManager
