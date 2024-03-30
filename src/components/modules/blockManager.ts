@@ -472,37 +472,36 @@ export default class BlockManager extends Module {
    * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
-    let blockToMergeData: SavedData | undefined;
+    let blockToMergeData: BlockToolData | undefined;
 
     /**
      * We can merge:
      * 1) Blocks with the same Tool if tool provides merge method
      */
     if (targetBlock.name === blockToMerge.name && targetBlock.mergeable) {
-      blockToMergeData = await blockToMerge.save();
+      const blockToMergeDataRaw = await blockToMerge.data;
 
-      if (blockToMergeData === undefined) {
+      if (_.isEmpty(blockToMergeDataRaw)) {
         console.error('Could not merge Block. Failed to extract original Block data.');
 
         return;
       }
 
-      const [ cleanData ] = sanitizeBlocks([ blockToMergeData ], targetBlock.tool.sanitizeConfig);
+      const [ cleanData ] = sanitizeBlocks([ blockToMergeDataRaw ], targetBlock.tool.sanitizeConfig);
 
-      await targetBlock.mergeWith(cleanData.data);
-    }
+      blockToMergeData = cleanData;
 
     /**
      * 2) Blocks with different Tools if they provides conversionConfig
      */
-    if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
+    } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
       const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
       const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
 
       blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
     }
 
-    if (blockToMergeData === undefined || _.isEmpty(blockToMergeData)) {
+    if (blockToMergeData === undefined) {
       return;
     }
 

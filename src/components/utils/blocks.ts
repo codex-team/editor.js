@@ -14,9 +14,9 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
     return false;
   }
 
-  const exportProp = block.tool.conversionConfig[direction];
+  const conversionProp = block.tool.conversionConfig[direction];
 
-  return isFunction(exportProp) || isString(exportProp);
+  return isFunction(conversionProp) || isString(conversionProp);
 }
 
 /**

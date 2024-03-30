@@ -2,7 +2,7 @@
 
 ### 2.30.0
 
-- `Improvement` — Ability to merge blocks with different types
+- `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
