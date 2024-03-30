@@ -12,6 +12,7 @@ export const css = {
   popover: className(),
   popoverContainer: className('container'),
   popoverOpenTop: className(null, 'open-top'),
+  popoverOpenLeft: className(null, 'open-left'),
   popoverOpened: className(null, 'opened'),
   search: className('search'),
   nothingFoundMessage: className('nothing-found-message'),

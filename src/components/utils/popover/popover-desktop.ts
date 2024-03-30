@@ -110,10 +110,14 @@ export class PopoverDesktop extends PopoverBase {
    * Open popover
    */
   public show(): void {
-    this.nodes.popover?.style.setProperty('--popover-height', this.height + 'px');
+    this.nodes.popover?.style.setProperty('--popover-height', this.size.height + 'px');
 
     if (!this.shouldOpenBottom) {
       this.nodes.popover?.classList.add(css.popoverOpenTop);
+    }
+
+    if (!this.shouldOpenRight) {
+      this.nodes.popover?.classList.add(css.popoverOpenLeft);
     }
 
     super.show();
@@ -182,7 +186,7 @@ export class PopoverDesktop extends PopoverBase {
     }
     const popoverRect = this.nodes.popover.getBoundingClientRect();
     const scopeElementRect = this.scopeElement.getBoundingClientRect();
-    const popoverHeight = this.height;
+    const popoverHeight = this.size.height;
     const popoverPotentialBottomEdge = popoverRect.top + popoverHeight;
     const popoverPotentialTopEdge = popoverRect.top - popoverHeight;
     const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
@@ -191,15 +195,37 @@ export class PopoverDesktop extends PopoverBase {
   }
 
   /**
-   * Helps to calculate height of popover while it is not displayed on screen.
-   * Renders invisible clone of popover to get actual height.
+   * Checks if popover should be opened left.
+   * It should happen when there is enough space in the right or not enough space in the left
+   */
+  private get shouldOpenRight(): boolean {
+    if (this.nodes.popover === undefined || this.nodes.popover === null) {
+      return false;
+    }
+
+    const popoverRect = this.nodes.popover.getBoundingClientRect();
+    const scopeElementRect = this.scopeElement.getBoundingClientRect();
+    const popoverWidth = this.size.width;
+    const popoverPotentialRightEdge = popoverRect.right + popoverWidth;
+    const popoverPotentialLeftEdge = popoverRect.left - popoverWidth;
+    const rightEdgeForComparison = Math.min(window.innerWidth, scopeElementRect.right);
+
+    return popoverPotentialLeftEdge < scopeElementRect.left || popoverPotentialRightEdge <= rightEdgeForComparison;
+  }
+
+  /**
+   * Helps to calculate size of popover while it is not displayed on screen.
+   * Renders invisible clone of popover to get actual size.
    */
   @cacheable
-  private get height(): number {
-    let height = 0;
+  private get size(): {height: number; width: number} {
+    const size = {
+      height: 0,
+      width: 0,
+    };
 
     if (this.nodes.popover === null) {
-      return height;
+      return size;
     }
 
     const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;
@@ -214,11 +240,12 @@ export class PopoverDesktop extends PopoverBase {
 
     const container =  popoverClone.querySelector('.' + css.popoverContainer) as HTMLElement;
 
-    height = container.offsetHeight;
+    size.height = container.offsetHeight;
+    size.width = container.offsetWidth;
 
     popoverClone.remove();
 
-    return height;
+    return size;
   }
 
   /**
