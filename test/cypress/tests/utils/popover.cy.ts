@@ -1,4 +1,4 @@
-import Popover from '../../../../src/components/utils/popover';
+import { PopoverDesktop as Popover } from '../../../../src/components/utils/popover';
 import { PopoverItem } from '../../../../types';
 import { TunesMenuConfig } from '../../../../types/tools';
 
