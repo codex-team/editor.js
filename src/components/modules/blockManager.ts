@@ -18,9 +18,10 @@ import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockChanged } from '../events';
-import { clean } from '../utils/sanitizer';
-import { convertStringToBlockData } from '../utils/blocks';
+import { clean, sanitizeBlocks } from '../utils/sanitizer';
+import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
+import { SavedData } from '../../../types/data-formats';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -69,7 +70,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public get currentBlock(): Block {
+  public get currentBlock(): Block | undefined {
     return this._blocks[this.currentBlockIndex];
   }
 
@@ -471,17 +472,41 @@ export default class BlockManager extends Module {
    * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
-    const blockToMergeData = targetBlock.name !== blockToMerge.name
-      ? convertStringToBlockData(
-        await blockToMerge.exportDataAsString(),
-        targetBlock.tool.conversionConfig
-      )
-      : await blockToMerge.data;
+    let blockToMergeData: SavedData | undefined;
 
-    if (!_.isEmpty(blockToMergeData)) {
-      await targetBlock.mergeWith(blockToMergeData);
+    /**
+     * We can merge:
+     * 1) Blocks with the same Tool if tool provides merge method
+     */
+    if (targetBlock.name === blockToMerge.name && targetBlock.mergeable) {
+      blockToMergeData = await blockToMerge.save();
+
+      if (blockToMergeData === undefined) {
+        console.error('Could not merge Block. Failed to extract original Block data.');
+
+        return;
+      }
+
+      const [ cleanData ] = sanitizeBlocks([ blockToMergeData ], targetBlock.tool.sanitizeConfig);
+
+      await targetBlock.mergeWith(cleanData.data);
     }
 
+    /**
+     * 2) Blocks with different Tools if they provides conversionConfig
+     */
+    if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
+      const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
+      const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
+
+      blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
+    }
+
+    if (blockToMergeData === undefined || _.isEmpty(blockToMergeData)) {
+      return;
+    }
+
+    await targetBlock.mergeWith(blockToMergeData);
     this.removeBlock(blockToMerge);
     this.currentBlockIndex = this._blocks.indexOf(targetBlock);
   }

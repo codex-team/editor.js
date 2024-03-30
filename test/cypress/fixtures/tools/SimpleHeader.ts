@@ -29,6 +29,7 @@ export class SimpleHeader implements BaseTool {
   public render(): HTMLHeadingElement {
     this.element = document.createElement('h1');
 
+    this.element.contentEditable = 'true';
     this.element.innerHTML = this._data.text;
 
     return this.element;

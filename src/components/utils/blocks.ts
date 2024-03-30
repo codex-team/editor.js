@@ -4,6 +4,22 @@ import type Block from '../block';
 import { isFunction, isString, log } from '../utils';
 
 /**
+ * Check if block has valid conversion config for export or import.
+ *
+ * @param block - block to check
+ * @param direction - export for block to merge from, import for block to merge to
+ */
+export function isBlockConvertable(block: Block, direction: 'export' | 'import'): boolean {
+  if (!block.tool.conversionConfig) {
+    return false;
+  }
+
+  const exportProp = block.tool.conversionConfig[direction];
+
+  return isFunction(exportProp) || isString(exportProp);
+}
+
+/**
  * Check if two blocks could be merged.
  *
  * We can merge two blocks if:
@@ -15,13 +31,26 @@ import { isFunction, isString, log } from '../utils';
  * @param blockToMerge - block to merge from
  */
 export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boolean {
-  if (blockToMerge.mergeable &&
-    blockToMerge.tool.conversionConfig?.export !== undefined &&
-    targetBlock.tool.conversionConfig?.import !== undefined) {
+  /**
+   * If target block has not 'merge' method, we can't merge blocks.
+   *
+   * Technically we can (through the conversion) but it will lead a target block delete and recreation, which is unexpected behavior.
+   */
+  if (!targetBlock.mergeable) {
+    return false;
+  }
+
+  /**
+   * Tool knows how to merge own data format
+   */
+  if (targetBlock.name === blockToMerge.name) {
     return true;
   }
 
-  return targetBlock.mergeable && targetBlock.name === blockToMerge.name;
+  /**
+   * We can merge blocks if they have valid conversion config
+   */
+  return isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import');
 }
 
 /**
