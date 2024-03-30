@@ -57,7 +57,7 @@ export class PopoverDesktop extends PopoverBase {
     }
 
     if (this.nestingLevel > 0) {
-      this.nodes.popover.classList.add(css.popoverNested);
+      this.nodes.popover?.classList.add(css.popoverNested);
     }
 
     if (params.customContentFlippableItems) {
@@ -68,7 +68,9 @@ export class PopoverDesktop extends PopoverBase {
       this.scopeElement = params.scopeElement;
     }
 
-    this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: Event) => this.handleHover(event));
+    if (this.nodes.popoverContainer !== null) {
+      this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: Event) => this.handleHover(event));
+    }
 
     this.initializeFlipper();
   }

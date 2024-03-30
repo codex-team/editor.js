@@ -7,7 +7,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { PopoverDesktop, PopoverMobile } from '../../utils/popover';
+import { Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.typings';
 import { isMobileScreen } from '../../utils';
 
@@ -29,8 +29,6 @@ interface BlockSettingsNodes {
 export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Module Events
-   *
-   * @returns {{opened: string, closed: string}}
    */
   public get events(): { opened: string; closed: string } {
     return {
@@ -59,6 +57,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @todo remove once BlockSettings becomes standalone non-module class
    */
   public get flipper(): Flipper | undefined {
+    if (this.popover === null) {
+      return;
+    }
+
     return 'flipper' in this.popover ? this.popover?.flipper : undefined;
   }
 
@@ -70,7 +72,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: PopoverDesktop | PopoverMobile | undefined;
+  private popover: Popover | null = null;
 
   /**
    * Panel with block settings with 2 sections:
@@ -121,9 +123,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
 
-    const Popover = isMobileScreen() ? PopoverMobile : PopoverDesktop;
+    const PopoverClass = isMobileScreen() ? PopoverMobile : PopoverDesktop;
 
-    this.popover = new Popover({
+    this.popover = new PopoverClass({
       searchable: true,
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
@@ -137,7 +139,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
-    this.nodes.wrapper.append(this.popover.getElement());
+    this.nodes.wrapper?.append(this.popover.getElement());
 
     this.popover.show();
   }
@@ -145,7 +147,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Returns root block settings element
    */
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | undefined {
     return this.nodes.wrapper;
   }
 

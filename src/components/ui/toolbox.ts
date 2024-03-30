@@ -10,7 +10,7 @@ import { I18nInternalNS } from '../i18n/namespace-internal';
 import { PopoverEvent } from '../utils/popover/popover.typings';
 import Listeners from '../utils/listeners';
 import Dom from '../dom';
-import { PopoverDesktop, PopoverMobile } from '../utils/popover';
+import { Popover, PopoverDesktop, PopoverMobile } from '../utils/popover';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -91,7 +91,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   /**
    * Popover instance. There is a util for vertical lists.
    */
-  private popover: PopoverDesktop | PopoverMobile | undefined;
+  private popover: Popover | null = null;
 
   /**
    * List of Tools available. Some of them will be shown in the Toolbox
@@ -142,7 +142,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   /**
    * Returns root block settings element
    */
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | null {
     return this.nodes.toolbox;
   }
 
@@ -150,7 +150,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Returns true if the Toolbox has the Flipper activated and the Flipper has selected button
    */
   public hasFocus(): boolean | undefined {
-    return 'hasFocus' in this.popover ? this.popover?.hasFocus() : undefined;
+    if (this.popover === null) {
+      return;
+    }
+
+    return 'hasFocus' in this.popover ? this.popover.hasFocus() : undefined;
   }
 
   /**
@@ -243,9 +247,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Creates toolbox popover and appends it inside wrapper element
    */
   private initPopover(): void {
-    const Popover = _.isMobileScreen() ? PopoverMobile : PopoverDesktop;
+    const PopoverClass = _.isMobileScreen() ? PopoverMobile : PopoverDesktop;
 
-    this.popover = new Popover({
+    this.popover = new PopoverClass({
       scopeElement: this.api.ui.nodes.redactor,
       searchable: true,
       messages: {
@@ -255,19 +259,22 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
-    this.nodes.toolbox.append(this.popover.getElement());
+    this.popover?.on(PopoverEvent.Close, this.onPopoverClose);
+    this.nodes.toolbox?.append(this.popover.getElement());
   }
 
   /**
    * Destroys popover instance and removes it from DOM
    */
   private destroyPopover(): void {
-    this.popover.hide();
-    this.popover.off(PopoverEvent.Close, this.onPopoverClose);
-    this.popover.destroy();
+    this.popover?.hide();
+    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
+    this.popover?.destroy();
     this.popover = null;
-    this.nodes.toolbox.innerHTML = '';
+
+    if (this.nodes.toolbox !== null) {
+      this.nodes.toolbox.innerHTML = '';
+    }
   }
 
   /**
