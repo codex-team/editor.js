@@ -83,7 +83,7 @@ describe('Sanitizing', () => {
             id: 'block1',
             type: 'paragraph',
             data: {
-              text: 'First block paragraph',
+              text: 'First block',
             },
           },
           {
@@ -93,7 +93,7 @@ describe('Sanitizing', () => {
               /**
                * Tool does not support spans in its sanitization config
                */
-              text: 'Second <span id="taint-html">XSS<span> block heading',
+              text: 'Second <span id="taint-html">XSS<span> block',
             },
           },
         ],
@@ -111,7 +111,7 @@ describe('Sanitizing', () => {
       .then(async (editor) => {
         const { blocks } = await editor.save();
 
-        expect(blocks[0].data.text).to.eq('First block paragraphSecond XSS block heading'); // text has been merged, span has been removed
+        expect(blocks[0].data.text).to.eq('First blockSecond XSS block'); // text has been merged, span has been removed
       });
   });
 });
