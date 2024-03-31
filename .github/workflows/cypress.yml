@@ -10,6 +10,9 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - uses: actions/checkout@v4
       - uses: cypress-io/github-action@v6
         with:
