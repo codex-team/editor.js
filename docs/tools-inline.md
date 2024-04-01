@@ -146,3 +146,22 @@ export default class BoldInlineTool implements InlineTool {
   // ... other methods
 }
 ```
+
+### Using the inline tool
+
+To use the tool, you must register it in your config object under `tools`. Then you can use it in per block type.
+
+```json
+{
+  inlineToolbar: true,
+  tools: {
+      bold: BoldInlineTool,
+      paragraph: {
+          class: Paragraph,
+          inlineToolbar: [
+              'bold',
+          ]
+      },
+  },
+}
+```
