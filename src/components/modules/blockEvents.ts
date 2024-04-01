@@ -493,12 +493,9 @@ export default class BlockEvents extends Module {
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)
       .then(() => {
-        window.requestAnimationFrame(() => {
-          /** Restore caret position after merge */
-          Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
-          targetBlock.pluginsContent.normalize();
-          Toolbar.close();
-        });
+        /** Restore caret position after merge */
+        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
+        Toolbar.close();
       });
   }
 
