@@ -544,12 +544,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
   private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
     if (typeof clickedItem.toggle === 'function') {
       clickedItem.toggleActive(clickedItem.toggle());
-    }
-    if (clickedItem.toggle === true) {
+    } else if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
-    }
-
-    if (typeof clickedItem.toggle === 'string') {
+    } else if (typeof clickedItem.toggle === 'string') {
       const itemsInToggleGroup = this.items.filter(item => item.toggle === clickedItem.toggle);
 
       /** If there's only one item in toggle group, toggle it */

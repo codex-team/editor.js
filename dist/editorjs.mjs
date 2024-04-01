@@ -4010,7 +4010,11 @@ const N = class extends Ee {
    * @param clickedItem - popover item that was clicked
    */
   toggleItemActivenessIfNeeded(s) {
-    if (typeof s.toggle == "function" && s.toggleActive(s.toggle()), s.toggle === !0 && s.toggleActive(), typeof s.toggle == "string") {
+    if (typeof s.toggle == "function")
+      s.toggleActive(s.toggle());
+    else if (s.toggle === !0)
+      s.toggleActive();
+    else if (typeof s.toggle == "string") {
       const e = this.items.filter((t) => t.toggle === s.toggle);
       if (e.length === 1) {
         s.toggleActive();
