@@ -149,7 +149,7 @@ export default class BoldInlineTool implements InlineTool {
 
 ### Using the inline tool
 
-To use the tool, you must register it in your config object under `tools`. Then you can use it in per block type.
+To use the tool, you must register it in your config object under `tools`. Then you can use it in inlineToolbar.
 
 ```json
 {
