@@ -1,5 +1,18 @@
 # Changelog
 
+### 2.30.0
+
+- `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
+- `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
+- `Fix` - Unexpected new line on Enter press with selected block without caret
+- `Fix` - Search input autofocus loosing after Block Tunes opening
+- `Fix` - Block removing while Enter press on Block Tunes
+
+### 2.29.1
+
+- `Fix` — Toolbox wont be shown when Slash pressed with along with Shift or Alt
+- `Fix` — Toolbox will be opened when Slash pressed in non-US keyboard layout where there is no physical '/' key.
+
 ### 2.29.0
 
 - `New` — Editor Config now has the `style.nonce` attribute that could be used to allowlist editor style tag for Content Security Policy "style-src"
@@ -17,6 +30,8 @@
 - `Fix` — Caret losing on Mobile Devices when adding a block via Toolbox or via Backspace at the beginning of a Block
 - `Improvement` — Now you can set focus via arrows/Tab to "contentless" (decorative) blocks like Delimiter which have no inputs.
 - `Improvement` — Inline Toolbar sometimes opened in an incorrect position. Now it will be aligned by the left side of the selected text. And won't overflow the right side of the text column.
+- `Improvement` - Now the `data-mutation-free` supports deep nesting, so you can mark some element with it to prevent the onChange call caused by child element mutating
+- `Improvement` - Now the `data-mutation-free` also allows to skip "characterData" mutations (eg. text content change)
 - `Refactoring` — `ce-block--focused` class toggling removed as unused.
 
 ### 2.28.2

@@ -52,13 +52,24 @@ export default class BlockEvents extends Module {
       case _.keyCodes.TAB:
         this.tabPressed(event);
         break;
-      case _.keyCodes.SLASH:
-        if (event.ctrlKey || event.metaKey) {
-          this.commandSlashPressed();
-        } else {
-          this.slashPressed();
-        }
-        break;
+    }
+
+    /**
+     * We check for "key" here since on different keyboard layouts "/" can be typed as "Shift + 7" etc
+     *
+     * @todo probably using "beforeInput" event would be better here
+     */
+    if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
+      this.slashPressed();
+    }
+
+    /**
+     * If user pressed "Ctrl + /" or "Cmd + /" — open Block Settings
+     * We check for "code" here since on different keyboard layouts there can be different keys in place of Slash.
+     */
+    if (event.code === 'Slash' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      this.commandSlashPressed();
     }
   }
 
@@ -482,12 +493,9 @@ export default class BlockEvents extends Module {
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)
       .then(() => {
-        window.requestAnimationFrame(() => {
-          /** Restore caret position after merge */
-          Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
-          targetBlock.pluginsContent.normalize();
-          Toolbar.close();
-        });
+        /** Restore caret position after merge */
+        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
+        Toolbar.close();
       });
   }
 

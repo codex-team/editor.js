@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import ToolMock from '../fixtures/tools/ToolMock';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
@@ -544,6 +545,144 @@ describe('onChange callback', () => {
     });
   });
 
+  it('should not be fired when mutation happened in a child of element with the "data-mutation-free" mark', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+    const toolChild = document.createElement('div');
+
+    toolWrapper.appendChild(toolChild);
+
+    /**
+     * Mark it as mutation-free
+     */
+    toolWrapper.dataset.mutationFree = 'true';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's internal attribute mutation
+     */
+    cy.wait(100).then(() => {
+      toolChild.setAttribute('some-changed-attr', 'some-new-value');
+    });
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should not be fired when "characterData" mutation happened in a child of element with the "data-mutation-free" mark', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+    const toolChild = document.createElement('div');
+
+    toolChild.setAttribute('data-cy', 'tool-child');
+    toolChild.setAttribute('contenteditable', 'true');
+
+    toolWrapper.appendChild(toolChild);
+
+    /**
+     * Mark it as mutation-free
+     */
+    toolWrapper.dataset.mutationFree = 'true';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: function (api, event) {
+        console.log('something changed!!!!!!!!', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's child-element text typing
+     */
+    cy.get('[data-cy=editorjs')
+      .get('[data-cy=tool-child]')
+      .click()
+      .type('some text');
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
   it('should be called on blocks.clear() with removed and added blocks', () => {
     createEditor([
       {
@@ -648,5 +787,62 @@ describe('onChange callback', () => {
           },
         }));
       });
+  });
+
+  it('should be fired when the whole text inside some descendant of the block is removed', () => {
+    /**
+     * Mock of Tool with nested contenteditable element
+     */
+    class ToolWithContentEditableDescendant extends ToolMock {
+      /**
+       * Creates element with nested contenteditable element
+       */
+      public render(): HTMLElement {
+        const contenteditable = document.createElement('div');
+
+        contenteditable.contentEditable = 'true';
+        contenteditable.innerText = 'a';
+        contenteditable.setAttribute('data-cy', 'nested-contenteditable');
+
+        const wrapper = document.createElement('div');
+
+        wrapper.appendChild(contenteditable);
+
+        return wrapper;
+      }
+    }
+
+    const config = {
+      tools: {
+        testTool: {
+          class: ToolWithContentEditableDescendant,
+        },
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: 'a',
+          },
+        ],
+      },
+      onChange: (): void => {
+        console.log('something changed');
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+    cy.createEditor(config).as('editorInstance');
+
+    cy.get('[data-cy=nested-contenteditable]')
+      .click()
+      .clear();
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
   });
 });

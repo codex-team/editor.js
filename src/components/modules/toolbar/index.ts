@@ -10,6 +10,7 @@ import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
 import { beautifyShortcut } from '../../utils';
+import { getKeyboardKeyForCode } from '../../utils/keyboard';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -352,7 +353,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
   /**
    * Draws Toolbar elements
    */
-  private make(): void {
+  private async make(): Promise<void> {
     this.nodes.wrapper = $.make('div', this.CSS.toolbar);
     /**
      * @todo detect test environment and add data-cy="toolbar" to use it in tests instead of class name
@@ -414,10 +415,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     const blockTunesTooltip = $.make('div');
     const blockTunesTooltipEl = $.text(I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'));
+    const slashRealKey = await getKeyboardKeyForCode('Slash', '/');
 
     blockTunesTooltip.appendChild(blockTunesTooltipEl);
     blockTunesTooltip.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: beautifyShortcut('CMD + /'),
+      textContent: beautifyShortcut(`CMD + ${slashRealKey}`),
     }));
 
     tooltip.onHover(this.nodes.settingsToggler, blockTunesTooltip, {
@@ -585,7 +587,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Make Toolbar
      */
-    this.make();
+    void this.make();
   }
 
   /**

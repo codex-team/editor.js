@@ -8,28 +8,28 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   const { type, target, addedNodes, removedNodes } = mutationRecord;
 
   /**
-   * In case of removing the whole text in element, mutation type will be 'childList',
-   * 'removedNodes' will contain text node that is not existed anymore, so we can't check it with 'contains' method
-   * But Target will be the element itself, so we can detect it.
+   * Covers all types of mutations happened to the element or it's descendants with the only one exception - removing/adding the element itself;
    */
-  if (target === element) {
+  if (element.contains(target)) {
     return true;
   }
 
   /**
-   * Check typing and attributes changes
+   * In case of removing/adding the element itself, mutation type will be 'childList' and 'removedNodes'/'addedNodes' will contain the element.
    */
-  if (['characterData', 'attributes'].includes(type)) {
-    const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
+  if (type === 'childList') {
+    const elementAddedItself = Array.from(addedNodes).some(node => node === element);
 
-    return element.contains(targetElement);
+    if (elementAddedItself) {
+      return true;
+    }
+
+    const elementRemovedItself = Array.from(removedNodes).some(node => node === element);
+
+    if (elementRemovedItself) {
+      return true;
+    }
   }
 
-  /**
-   * Check new/removed nodes
-   */
-  const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => element.contains(node));
-  const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => element.contains(node));
-
-  return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
+  return false;
 }

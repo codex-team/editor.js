@@ -550,7 +550,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @returns {object}
    */
-  public async save(): Promise<void | SavedData> {
+  public async save(): Promise<undefined | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
     const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
 
@@ -738,6 +738,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
 
+    if (import.meta.env.MODE === 'test') {
+      wrapper.setAttribute('data-cy', 'block-wrapper');
+    }
+
     /**
      * Export id to the DOM three
      * Useful for standalone modules development. For example, allows to identify Block by some child node. Or scroll to a particular Block by id.
@@ -898,10 +902,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
         return changedNodes.some((node) => {
           if (!$.isElement(node)) {
-            return false;
+            /**
+             * "characterData" mutation record has Text node as a target, so we need to get parent element to check it for mutation-free attribute
+             */
+            node = node.parentElement;
           }
 
-          return (node as HTMLElement).dataset.mutationFree === 'true';
+          return node && (node as HTMLElement).closest('[data-mutation-free="true"]') !== null;
         });
       });
 
