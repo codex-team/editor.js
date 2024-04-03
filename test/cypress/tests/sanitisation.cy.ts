@@ -3,7 +3,7 @@ import { OutputData } from '../../../types/index';
 
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-describe('Output sanitization', () => {
+describe('Sanitizing', () => {
   context('Output should save inline formatting', () => {
     it('should save initial formatting for paragraph', () => {
       cy.createEditor({
@@ -74,4 +74,45 @@ describe('Output sanitization', () => {
         });
     });
   });
+
+  it('should sanitize unwanted html on blocks merging', function () {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            id: 'block1',
+            type: 'paragraph',
+            data: {
+              text: 'First block',
+            },
+          },
+          {
+            id: 'paragraph',
+            type: 'paragraph',
+            data: {
+              /**
+               * Tool does not support spans in its sanitization config
+               */
+              text: 'Second <span id="taint-html">XSS<span> block',
+            },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .last()
+      .click()
+      .type('{home}')
+      .type('{backspace}');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks[0].data.text).to.eq('First blockSecond XSS block'); // text has been merged, span has been removed
+      });
+  });
 });
+
