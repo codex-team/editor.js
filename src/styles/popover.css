@@ -23,6 +23,7 @@
   --color-background-item-confirm-hover: #CE4343;
   --popover-top: calc(100% + var(--offset-from-target));
   --popover-left: 0;
+  --nested-popover-overlap: 4px;
 
   &__container {
     min-width: var(--width);
@@ -158,9 +159,9 @@
   &--nested {
     .ce-popover__container {
       /* Variable --nesting-level is set via js in showNestedPopoverForItem() method */
-      --popover-left: calc(var(--nesting-level) * (var(--width) - 4px));
+      --popover-left: calc(var(--nesting-level) * (var(--width) - var(--nested-popover-overlap)));
       /* Variable --nested-popover-top is set via js in showNestedPopoverForItem() method */
-      top: var(--nested-popover-top);
+      top: calc(var(--nested-popover-top) - var(--nested-popover-overlap));
       position: absolute;
     }
   }
@@ -169,7 +170,7 @@
     .ce-popover--nested {
       .ce-popover__container {
         /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
-        top: min(var(--popover-top), var(--nested-popover-top))
+        top: min(var(--popover-top), calc(var(--nested-popover-top) - var(--nested-popover-overlap)))
       }
     }
   }

@@ -1,17 +1,18 @@
-import { Popover as PopoverBase } from './popover-abstract';
+import { PopoverAbstract } from './popover-abstract';
 import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
-import { PopoverParams } from './popover.typings';
+import { PopoverParams } from './popover.types';
 import { PopoverItem } from './components/popover-item';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
 import { css } from './popover.const';
 import Dom from '../../dom';
 
 /**
- * Class responsible for rendering popover and handling its behaviour on mobile screens
+ * Mobile Popover.
+ * On mobile devices Popover behaves like a fixed panel at the bottom of screen. Nested item appears like "pages" with the "back" button
  */
-export class PopoverMobile extends PopoverBase {
+export class PopoverMobile extends PopoverAbstract {
   /**
    * ScrollLocker instance
    */

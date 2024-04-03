@@ -7,8 +7,8 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
-import { PopoverEvent } from '../../utils/popover/popover.typings';
+import { type Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
+import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 
 /**
@@ -71,6 +71,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Popover instance. There is a util for vertical lists.
+   * Null until popover is not initialized
    */
   private popover: Popover | null = null;
 

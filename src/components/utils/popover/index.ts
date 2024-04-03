@@ -1,6 +1,6 @@
 import { PopoverDesktop } from './popover-desktop';
 import { PopoverMobile } from './popover-mobile';
-export * from './popover.typings';
+export * from './popover.types';
 
 /**
  * Union type for all popovers

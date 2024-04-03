@@ -335,7 +335,7 @@ describe('Popover', () => {
   });
 
 
-  it('should dysplay nested popover (mobile)', () => {
+  it('should correctly display children items and switch between states (mobile)', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;

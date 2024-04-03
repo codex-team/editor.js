@@ -1,7 +1,7 @@
 import Dom from '../../../../dom';
 import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
-import { SearchableItem } from './search-input.typings';
+import { SearchableItem } from './search-input.types';
 import { css } from './search-input.const';
 
 /**

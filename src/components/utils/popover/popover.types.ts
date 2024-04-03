@@ -10,7 +10,8 @@ export interface PopoverParams {
   items: PopoverItemParams[];
 
   /**
-   * Element of the page that creates 'scope' of the popover
+   * Element of the page that creates 'scope' of the popover.
+   * Depending on its size popover position will be calculated
    */
   scopeElement?: HTMLElement;
 
@@ -70,5 +71,8 @@ export enum PopoverEvent {
  * Events fired by the Popover
  */
 export interface PopoverEventMap {
+  /**
+   * Fired when popover closes
+   */
   [PopoverEvent.Close]: undefined;
 }

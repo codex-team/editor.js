@@ -7,7 +7,7 @@ import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '.
 import EventsDispatcher from '../utils/events';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
-import { PopoverEvent } from '../utils/popover/popover.typings';
+import { PopoverEvent } from '../utils/popover/popover.types';
 import Listeners from '../utils/listeners';
 import Dom from '../dom';
 import { Popover, PopoverDesktop, PopoverMobile } from '../utils/popover';

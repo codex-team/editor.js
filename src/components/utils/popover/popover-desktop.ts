@@ -1,16 +1,17 @@
 import Flipper from '../../flipper';
-import { Popover as PopoverBase } from './popover-abstract';
+import { PopoverAbstract } from './popover-abstract';
 import { PopoverItem, css as popoverItemCls } from './components/popover-item';
-import { PopoverParams } from './popover.typings';
+import { PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
 import { SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
 
 /**
- * Class responsible for rendering popover and handling its behaviour on desktop
+ * Desktop popover.
+ * On desktop devices popover behaves like a floating element. Nested popover appears at right or left side.
  */
-export class PopoverDesktop extends PopoverBase {
+export class PopoverDesktop extends PopoverAbstract {
   /**
    * Flipper - module for keyboard iteration between elements
    */
@@ -146,6 +147,7 @@ export class PopoverDesktop extends PopoverBase {
     super.destroy();
     this.flipper?.deactivate();
     this.destroyNestedPopoverIfExists();
+    this.previouslyHoveredItem = null;
   }
 
   /**
@@ -173,9 +175,10 @@ export class PopoverDesktop extends PopoverBase {
    * @param item – item to show nested popover for
    */
   protected override handleShowingNestedItems(item: PopoverItem): void {
-    if (this.nestedPopover == null || this.nestedPopover === undefined) {
-      this.showNestedPopoverForItem(item);
+    if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
+      return;
     }
+    this.showNestedPopoverForItem(item);
   }
 
   /**
@@ -323,8 +326,7 @@ export class PopoverDesktop extends PopoverBase {
     this.nodes.popover?.appendChild(nestedPopoverEl);
     const itemEl =  item.getElement();
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const topOffset = this.offsetTop + itemOffsetTop - 4;
+    const topOffset = this.offsetTop + itemOffsetTop;
 
     nestedPopoverEl.style.setProperty('--nested-popover-top', topOffset + 'px');
     nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());

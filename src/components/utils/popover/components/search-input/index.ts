@@ -1,2 +1,2 @@
 export * from './search-input';
-export * from './search-input.typings';
+export * from './search-input.types';

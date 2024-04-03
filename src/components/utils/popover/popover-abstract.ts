@@ -3,13 +3,13 @@ import Dom from '../../dom';
 import { SearchInput, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
-import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.typings';
+import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.types';
 import { css } from './popover.const';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
  */
-export abstract class Popover extends EventsDispatcher<PopoverEventMap> {
+export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> {
   /**
    * List of popover items
    */
