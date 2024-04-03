@@ -16,6 +16,7 @@ import { mobileScreenBreakpoint } from '../utils';
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
+import { WindowResize } from '../events';
 /**
  * HTML Elements used for UI
  */
@@ -427,6 +428,13 @@ export default class UI extends Module<UINodes> {
      * Detect mobile version
      */
     this.checkIsMobile();
+
+    /**
+     * Dispatch global event
+     */
+    this.eventsDispatcher.emit(WindowResize, {
+      isMobile: this.isMobile,
+    });
   }
 
   /**
