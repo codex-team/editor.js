@@ -1,15 +1,10 @@
-import { BlockAPI as BlockAPIInterface, Blocks } from "../../../../types/api";
-import {
-  BlockToolData,
-  OutputBlockData,
-  OutputData,
-  ToolConfig,
-} from "../../../../types";
-import * as _ from "./../../utils";
-import BlockAPI from "../../block/api";
-import Module from "../../__module";
-import Block from "../../block";
-import { capitalize } from "./../../utils";
+import type { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
+import type {BlockToolData, OutputBlockData, OutputData, ToolConfig} from '../../../../types';
+import * as _ from './../../utils';
+import BlockAPI from '../../block/api';
+import Module from '../../__module';
+import Block from '../../block';
+import { capitalize } from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -76,7 +71,7 @@ export default class BlocksAPI extends Module {
     const block = this.Editor.BlockManager.getBlockById(id);
 
     if (!block) {
-      _.logLabeled("There is no block with id `" + id + "`", "warn");
+      _.logLabeled('There is no block with id `' + id + '`', 'warn');
 
       return;
     }
@@ -93,7 +88,7 @@ export default class BlocksAPI extends Module {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (block === undefined) {
-      _.logLabeled("There is no block at index `" + index + "`", "warn");
+      _.logLabeled('There is no block at index `' + index + '`', 'warn');
 
       return;
     }
@@ -110,7 +105,7 @@ export default class BlocksAPI extends Module {
     const block = this.Editor.BlockManager.getBlockById(id);
 
     if (block === undefined) {
-      _.logLabeled("There is no block with id `" + id + "`", "warn");
+      _.logLabeled('There is no block with id `' + id + '`', 'warn');
 
       return null;
     }
@@ -127,9 +122,9 @@ export default class BlocksAPI extends Module {
    */
   public swap(fromIndex: number, toIndex: number): void {
     _.log(
-      "`blocks.swap()` method is deprecated and will be removed in the next major release. " +
-        "Use `block.move()` method instead",
-      "info"
+      '`blocks.swap()` method is deprecated and will be removed in the next major release. ' +
+        'Use `block.move()` method instead',
+      'info'
     );
 
     this.Editor.BlockManager.swap(fromIndex, toIndex);
@@ -158,7 +153,7 @@ export default class BlocksAPI extends Module {
 
       this.Editor.BlockManager.removeBlock(block);
     } catch (e) {
-      _.logLabeled(e, "warn");
+      _.logLabeled(e, 'warn');
 
       return;
     }
@@ -199,7 +194,7 @@ export default class BlocksAPI extends Module {
    */
   public async render(data: OutputData): Promise<void> {
     if (data === undefined || data.blocks === undefined) {
-      throw new Error("Incorrect data passed to the render() method");
+      throw new Error('Incorrect data passed to the render() method');
     }
 
     /**
@@ -234,7 +229,7 @@ export default class BlocksAPI extends Module {
    * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status = true): void {
-    _.deprecationAssert(true, "blocks.stretchBlock()", "BlockAPI");
+    _.deprecationAssert(true, 'blocks.stretchBlock()', 'BlockAPI');
 
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
@@ -307,9 +302,9 @@ export default class BlocksAPI extends Module {
    */
   public insertNewBlock(): void {
     _.log(
-      "Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. " +
-        "Use blocks.insert() instead.",
-      "warn"
+      'Method blocks.insertNewBlock() is deprecated and it will be removed in the next major release. ' +
+        'Use blocks.insert() instead.',
+      'warn'
     );
     this.insert();
   }
@@ -378,7 +373,7 @@ export default class BlocksAPI extends Module {
         !targetBlockConvertable ? capitalize(newType) : false,
       ]
         .filter(Boolean)
-        .join(" and ");
+        .join(' and ');
 
       throw new Error(
         `Conversion from "${blockToConvert.name}" to "${newType}" is not possible. ${unsupportedBlockTypes} tool(s) should provide a "conversionConfig"`
@@ -419,8 +414,8 @@ export default class BlocksAPI extends Module {
    * @param index - index to validate
    */
   private validateIndex(index: unknown): void {
-    if (typeof index !== "number") {
-      throw new Error("Index should be a number");
+    if (typeof index !== 'number') {
+      throw new Error('Index should be a number');
     }
 
     if (index < 0) {
