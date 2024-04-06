@@ -15,7 +15,7 @@ export class PopoverDesktop extends PopoverAbstract {
   /**
    * Flipper - module for keyboard iteration between elements
    */
-  public flipper: Flipper | undefined;
+  public flipper: Flipper;
 
   /**
    * List of html elements inside custom content area that should be available for keyboard navigation
@@ -58,7 +58,7 @@ export class PopoverDesktop extends PopoverAbstract {
     }
 
     if (this.nestingLevel > 0) {
-      this.nodes.popover?.classList.add(css.popoverNested);
+      this.nodes.popover.classList.add(css.popoverNested);
     }
 
     if (params.customContentFlippableItems) {
@@ -73,7 +73,18 @@ export class PopoverDesktop extends PopoverAbstract {
       this.listeners.on(this.nodes.popoverContainer, 'mouseover', (event: Event) => this.handleHover(event));
     }
 
-    this.initializeFlipper();
+    this.flipper = new Flipper({
+      items: this.flippableElements,
+      focusedItemClass: popoverItemCls.focused,
+      allowedKeys: [
+        keyCodes.TAB,
+        keyCodes.UP,
+        keyCodes.DOWN,
+        keyCodes.ENTER,
+      ],
+    });
+
+    this.flipper.onFlip(this.onFlip);
   }
 
   /**
@@ -113,18 +124,18 @@ export class PopoverDesktop extends PopoverAbstract {
    * Open popover
    */
   public show(): void {
-    this.nodes.popover?.style.setProperty('--popover-height', this.size.height + 'px');
+    this.nodes.popover.style.setProperty('--popover-height', this.size.height + 'px');
 
     if (!this.shouldOpenBottom) {
-      this.nodes.popover?.classList.add(css.popoverOpenTop);
+      this.nodes.popover.classList.add(css.popoverOpenTop);
     }
 
     if (!this.shouldOpenRight) {
-      this.nodes.popover?.classList.add(css.popoverOpenLeft);
+      this.nodes.popover.classList.add(css.popoverOpenLeft);
     }
 
     super.show();
-    this.flipper?.activate(this.flippableElements);
+    this.flipper.activate(this.flippableElements);
   }
 
   /**
@@ -133,7 +144,7 @@ export class PopoverDesktop extends PopoverAbstract {
   public hide(): void {
     super.hide();
 
-    this.flipper?.deactivate();
+    this.flipper.deactivate();
 
     this.destroyNestedPopoverIfExists();
 
@@ -145,7 +156,7 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   public destroy(): void {
     super.destroy();
-    this.flipper?.deactivate();
+    this.flipper.deactivate();
     this.destroyNestedPopoverIfExists();
     this.previouslyHoveredItem = null;
   }
@@ -162,7 +173,7 @@ export class PopoverDesktop extends PopoverAbstract {
     /** List of elements available for keyboard navigation considering search query applied */
     const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
 
-    if (this.flipper?.isActivated) {
+    if (this.flipper.isActivated) {
       /** Update flipper items with only visible */
       this.flipper.deactivate();
       this.flipper.activate(flippableElements as HTMLElement[]);
@@ -265,25 +276,7 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover.destroy();
     this.nestedPopover.getElement().remove();
     this.nestedPopover = null;
-    this.flipper?.activate(this.flippableElements);
-  }
-
-  /**
-   * Creates Flipper instance which allows to navigate between popover items via keyboard
-   */
-  private initializeFlipper(): void {
-    this.flipper = new Flipper({
-      items: this.flippableElements,
-      focusedItemClass: popoverItemCls.focused,
-      allowedKeys: [
-        keyCodes.TAB,
-        keyCodes.UP,
-        keyCodes.DOWN,
-        keyCodes.ENTER,
-      ],
-    });
-
-    this.flipper.onFlip(this.onFlip);
+    this.flipper.activate(this.flippableElements);
   }
 
   /**
@@ -323,7 +316,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const nestedPopoverEl = this.nestedPopover.getElement();
 
-    this.nodes.popover?.appendChild(nestedPopoverEl);
+    this.nodes.popover.appendChild(nestedPopoverEl);
     const itemEl =  item.getElement();
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
@@ -332,7 +325,7 @@ export class PopoverDesktop extends PopoverAbstract {
     nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
 
     this.nestedPopover.show();
-    this.flipper?.deactivate();
+    this.flipper.deactivate();
   }
 
   /**

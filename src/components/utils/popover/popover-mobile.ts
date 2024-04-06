@@ -39,6 +39,13 @@ export class PopoverMobile extends PopoverAbstract {
   constructor(params: PopoverParams) {
     super(params);
 
+    this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);
+    this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild);
+
+    this.listeners.on(this.nodes.overlay, 'click', () => {
+      this.hide();
+    });
+
     /* Save state to history for proper navigation between nested and parent popovers */
     this.history.push({ items: params.items });
   }
@@ -59,6 +66,7 @@ export class PopoverMobile extends PopoverAbstract {
    */
   public hide(): void {
     super.hide();
+    this.nodes.overlay?.classList.add(css.overlayHidden);
 
     this.scrollLocker.unlock();
   }
@@ -70,21 +78,6 @@ export class PopoverMobile extends PopoverAbstract {
     super.destroy();
 
     this.scrollLocker.unlock();
-  }
-
-  /**
-   * Constructs HTML element corresponding to popover
-   */
-  protected override make(): void {
-    super.make();
-
-    this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);
-
-    this.listeners.on(this.nodes.overlay, 'click', () => {
-      this.hide();
-    });
-
-    this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild);
   }
 
   /**
@@ -126,7 +119,7 @@ export class PopoverMobile extends PopoverAbstract {
       const headerEl = this.header.getElement();
 
       if (headerEl !== null) {
-        this.nodes.popoverContainer?.insertBefore(headerEl, this.nodes.popoverContainer.firstChild);
+        this.nodes.popoverContainer.insertBefore(headerEl, this.nodes.popoverContainer.firstChild);
       }
     }
 

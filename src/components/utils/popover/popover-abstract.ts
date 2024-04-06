@@ -3,7 +3,7 @@ import Dom from '../../dom';
 import { SearchInput, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
-import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent } from './popover.types';
+import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
 import { css } from './popover.const';
 
 /**
@@ -23,24 +23,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
   /**
    * Refs to created HTML elements
    */
-  protected nodes: {
-      popover: HTMLElement | null;
-      popoverContainer: HTMLElement | null;
-      nothingFoundMessage: HTMLElement | null;
-      customContent: HTMLElement | null;
-      items: HTMLElement | null;
-      overlay: HTMLElement | null;
-      header: HTMLElement | null;
-    } = {
-      popover: null,
-      popoverContainer: null,
-      nothingFoundMessage: null,
-      customContent: null,
-      items: null,
-      overlay: null,
-      header: null,
-    };
-
+  protected nodes: PopoverNodes;
 
   /**
    * Instance of the Search Input
@@ -72,7 +55,38 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
       };
     }
 
-    this.make();
+    /** Build html elements */
+    this.nodes = {} as PopoverNodes;
+
+    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
+
+    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
+      textContent: this.messages.nothingFound,
+    });
+
+    this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
+    this.nodes.items = Dom.make('div', [ css.items ]);
+
+    this.items.forEach(item => {
+      const itemEl = item.getElement();
+
+      if (itemEl === null) {
+        return;
+      }
+
+      this.nodes.items.appendChild(itemEl);
+    });
+
+    this.nodes.popoverContainer.appendChild(this.nodes.items);
+
+    this.listeners.on(this.nodes.popoverContainer, 'click', (event: Event) => this.handleClick(event));
+
+    this.nodes.popover = Dom.make('div', [
+      css.popover,
+      this.params.class,
+    ]);
+
+    this.nodes.popover.appendChild(this.nodes.popoverContainer);
 
     if (params.customContent) {
       this.addCustomContent(params.customContent);
@@ -94,7 +108,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
    * Open popover
    */
   public show(): void {
-    this.nodes.popover?.classList.add(css.popoverOpened);
+    this.nodes.popover.classList.add(css.popoverOpened);
 
     if (this.search !== undefined) {
       this.search?.focus();
@@ -105,9 +119,8 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
    * Closes popover
    */
   public hide(): void {
-    this.nodes.popover?.classList.remove(css.popoverOpened);
-    this.nodes.popover?.classList.remove(css.popoverOpenTop);
-    this.nodes.overlay?.classList.add(css.overlayHidden);
+    this.nodes.popover.classList.remove(css.popoverOpened);
+    this.nodes.popover.classList.remove(css.popoverOpenTop);
 
     this.items.forEach(item => item.reset());
 
@@ -159,42 +172,6 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
     });
   }
 
-
-  /**
-   * Constructs HTML element corresponding to popover
-   */
-  protected make(): void {
-    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
-
-    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
-      textContent: this.messages.nothingFound,
-    });
-
-    this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ css.items ]);
-
-    this.items.forEach(item => {
-      const itemEl = item.getElement();
-
-      if (itemEl === null) {
-        return;
-      }
-
-      this.nodes.items?.appendChild(itemEl);
-    });
-
-    this.nodes.popoverContainer.appendChild(this.nodes.items);
-
-    this.listeners.on(this.nodes.popoverContainer, 'click', (event: Event) => this.handleClick(event));
-
-    this.nodes.popover = Dom.make('div', [
-      css.popover,
-      this.params.class,
-    ]);
-
-    this.nodes.popover.appendChild(this.nodes.popoverContainer);
-  }
-
   /**
    * Adds search to the popover
    */
@@ -213,7 +190,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
 
     searchElement.classList.add(css.search);
 
-    this.nodes.popoverContainer?.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
+    this.nodes.popoverContainer.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
   }
 
   /**
@@ -224,7 +201,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
   private addCustomContent(content: HTMLElement): void {
     this.nodes.customContent = content;
     this.nodes.customContent.classList.add(css.customContent);
-    this.nodes.popoverContainer?.insertBefore(content, this.nodes.popoverContainer.firstChild);
+    this.nodes.popoverContainer.insertBefore(content, this.nodes.popoverContainer.firstChild);
   }
 
   /**
@@ -267,7 +244,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
    * @param isDisplayed - true if the message should be displayed
    */
   private toggleNothingFoundMessage(isDisplayed: boolean): void {
-    this.nodes.nothingFoundMessage?.classList.toggle(css.nothingFoundMessageDisplayed, isDisplayed);
+    this.nodes.nothingFoundMessage.classList.toggle(css.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**

@@ -76,3 +76,29 @@ export interface PopoverEventMap {
    */
   [PopoverEvent.Close]: undefined;
 }
+
+/**
+ * HTML elements required to display popover
+ */
+export interface PopoverNodes {
+  /** Root popover element */
+  popover: HTMLElement;
+
+  /** Wraps all the visible popover elements, has background and rounded corners */
+  popoverContainer: HTMLElement;
+
+  /** Message displayed when no items found while searching */
+  nothingFoundMessage: HTMLElement;
+
+  /** Popover items wrapper */
+  items: HTMLElement;
+
+  /** Popover header element */
+  header: HTMLElement;
+
+  /** Overlay, displayed under popover on mobile */
+  overlay: HTMLElement | undefined;
+
+  /** Custom html content area */
+  customContent: HTMLElement | undefined;
+}

@@ -5,6 +5,10 @@ import { css } from './popover-item.const';
 
 /**
  * Represents sigle popover item node
+ *
+ * @todo move nodes initialization to constructor
+ * @todo replace multiple make() usages with constructing separate instaces
+ * @todo split regular popover item and popover item with confirmation to separate classes
  */
 export class PopoverItem {
   /**
