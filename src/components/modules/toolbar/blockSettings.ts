@@ -10,6 +10,7 @@ import { resolveAliases } from '../../utils/resolve-aliases';
 import { type Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
+import { EditorMobileLayoutToggled } from '../../events';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -86,6 +87,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (import.meta.env.MODE === 'test') {
       this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
     }
+
+    this.eventsDispatcher.on(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -94,6 +97,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   public destroy(): void {
     this.removeAllNodes();
     this.listeners.destroy();
+    this.eventsDispatcher.off(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -155,7 +159,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Close Block Settings pane
    */
-  public close(): void {
+  public close = (): void => {
     if (!this.opened) {
       return;
     }
@@ -191,7 +195,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover.getElement().remove();
       this.popover = null;
     }
-  }
+  };
 
   /**
    * Handles popover close event

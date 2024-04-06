@@ -11,7 +11,6 @@ import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
 import { beautifyShortcut } from '../../utils';
 import { getKeyboardKeyForCode } from '../../utils/keyboard';
-import { WindowResize } from '../../events';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -104,14 +103,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * It will be created in requestIdleCallback so it can be null in some period of time
    */
   private toolboxInstance: Toolbox | null = null;
-
-  /**
-   * Handles window resize. Closes block tunes and toolbox in case they are open
-   */
-  private handleResize = _.debounce((): void => {
-    this.Editor.BlockSettings.close();
-    this.toolboxInstance.forceRemountPopover();
-  });
 
   /**
    * @class
@@ -446,8 +437,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Append toolbar to the Editor
      */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-
-    this.eventsDispatcher.on(WindowResize, this.handleResize);
   }
 
   /**

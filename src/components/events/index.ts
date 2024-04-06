@@ -3,7 +3,7 @@ import { BlockChanged, BlockChangedPayload } from './BlockChanged';
 import { BlockHovered, BlockHoveredPayload } from './BlockHovered';
 import { FakeCursorAboutToBeToggled, FakeCursorAboutToBeToggledPayload } from './FakeCursorAboutToBeToggled';
 import { FakeCursorHaveBeenSet, FakeCursorHaveBeenSetPayload } from './FakeCursorHaveBeenSet';
-import { WindowResize, WindowResizePayload } from './WindowResize';
+import { EditorMobileLayoutToggled, EditorMobileLayoutToggledPayload } from './EditorMobileLayoutToggled';
 
 /**
  * Events fired by Editor Event Dispatcher
@@ -13,7 +13,7 @@ export {
   BlockChanged,
   FakeCursorAboutToBeToggled,
   FakeCursorHaveBeenSet,
-  WindowResize
+  EditorMobileLayoutToggled
 };
 
 /**
@@ -25,5 +25,5 @@ export interface EditorEventMap {
   [BlockChanged]: BlockChangedPayload;
   [FakeCursorAboutToBeToggled]: FakeCursorAboutToBeToggledPayload;
   [FakeCursorHaveBeenSet]: FakeCursorHaveBeenSetPayload;
-  [WindowResize]: WindowResizePayload
+  [EditorMobileLayoutToggled]: EditorMobileLayoutToggledPayload
 }

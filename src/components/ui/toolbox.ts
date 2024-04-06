@@ -11,6 +11,7 @@ import { PopoverEvent } from '../utils/popover/popover.types';
 import Listeners from '../utils/listeners';
 import Dom from '../dom';
 import { Popover, PopoverDesktop, PopoverMobile } from '../utils/popover';
+import { EditorMobileLayoutToggled } from '../events';
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -137,6 +138,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.tools = tools;
     this.i18nLabels = i18nLabels;
     this.make();
+
+    this.api.events.on(EditorMobileLayoutToggled, this.handleMobileLayoutToggle);
   }
 
   /**
@@ -171,6 +174,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.removeAllShortcuts();
     this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
     this.listeners.destroy();
+    this.api.events.off(EditorMobileLayoutToggled, this.handleMobileLayoutToggle);
   }
 
   /**
@@ -218,9 +222,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
   /**
    * Destroys existing popover instance and contructs the new one.
-   * Is needed to
    */
-  public forceRemountPopover = (): void  => {
+  public handleMobileLayoutToggle = (): void  => {
     this.destroyPopover();
     this.initPopover();
   };
