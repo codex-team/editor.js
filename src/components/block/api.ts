@@ -91,6 +91,10 @@ function BlockAPI(
       return block.focusable;
     },
 
+    get selectable(): boolean {
+      return block.selectable;
+    },
+
     get inputs(): HTMLElement[] {
       return block.inputs;
     },

@@ -40,6 +40,8 @@ export interface BlockAPI {
    */
   readonly focusable: boolean;
 
+  readonly selectable: boolean;
+
   readonly inputs: HTMLElement[];
 
   /**

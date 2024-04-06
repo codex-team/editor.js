@@ -4,6 +4,7 @@ import type { API, BlockAPI } from '../../../types';
 import { areBlocksMergeable } from '../utils/blocks';
 import Dom from '../dom';
 import { SelectionChanged } from '../events';
+import { debounce } from '../utils';
 
 
 /**
@@ -15,6 +16,10 @@ import { SelectionChanged } from '../events';
  *   2. Clear selection part from that block
  *   3. Leave only selection part in the second block
  *   4. Prevent cross-input selection
+ * @todo cmd+A should select 1 block, second cmd+A should select all blocks
+ * @todo handle cross-input selection with keyboard
+ * @todo when cbs the inline-toolbar should contain intersected lists of tools for selected blocks
+ * @todo emit "selection changed" event to hide/show the Inline Toolbar
  */
 
 
@@ -126,6 +131,35 @@ function findIntersectedInputs(intersectedBlocks: BlockAPI[], range: Range): Blo
   }, []);
 }
 
+/**
+ *
+ * @param range
+ * @param api
+ */
+function useCrossInputSelection(range: Range, api: API) {
+  // const selection = window.getSelection();
+
+  // /**
+  //  * @todo handle native inputs
+  //  */
+
+  // if (selection === null || !selection.rangeCount) {
+  //   return {
+  //     blocks: [],
+  //     inputs: [],
+  //   }
+  // }
+
+  // const range = selection.getRangeAt(0);
+
+  const intersectedBlocks = findIntersectedBlocks(range, api);
+  const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
+
+  return {
+    blocks: intersectedBlocks,
+    inputs: intersectedInputs,
+  };
+}
 
 /**
  *
@@ -136,12 +170,31 @@ export default class RedactorKeydown extends Module {
    * @param {...any} params
    */
   constructor(...params) {
+    console.log('RedactorKeydown  1');
     super(...params);
+    console.log('RedactorKeydown  2');
 
-    this.eventsDispatcher.on(SelectionChanged, (data) => {
-      console.log('SelectionChanged', data);
+    /**
+     * Handle selection change to manipulate Inline Toolbar appearance
+     */
+    // const selectionChangeDebounced = debounce(() => {
+    //   this.removeSelectionFromUnselectableBlocks();
+    // }, 30);
+
+    // this.eventsDispatcher.on(SelectionChanged, selectionChangeDebounced);
+  }
+
+  /**
+   *
+   */
+  public prepare() {
+    this.listeners.on(this.Editor.UI.nodes.redactor, 'mouseup', (event: KeyboardEvent) => {
+      console.log('mouseup');
+      this.removeSelectionFromUnselectableBlocks();
     });
   }
+
+
   /**
    *
    * @param event
@@ -175,10 +228,16 @@ export default class RedactorKeydown extends Module {
 
     const range = selection.getRangeAt(0);
 
-    const intersectedBlocks = findIntersectedBlocks(range, api);
-    const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
+    // const intersectedBlocks = findIntersectedBlocks(range, api);
+    // const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
+
+    const { blocks: intersectedBlocks, inputs: intersectedInputs } = useCrossInputSelection(range, api);
 
     console.log('intersectedInputs', intersectedInputs);
+
+    if (!intersectedInputs.length) {
+      return;
+    }
 
 
     /**
@@ -316,5 +375,87 @@ export default class RedactorKeydown extends Module {
         // Toolbar.close();
         // });
       });
+  }
+
+
+  /**
+   *
+   */
+  private removeSelectionFromUnselectableBlocks(): void {
+    const api = this.Editor.API.methods;
+    const selection = window.getSelection();
+
+    /**
+     * @todo handle native inputs
+     */
+
+    if (selection === null || !selection.rangeCount) {
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+
+    const { blocks: intersectedBlocks, inputs: intersectedInputs } = useCrossInputSelection(range, api);
+
+    /**
+     * If selection is not cross-input, do nothing
+     */
+    if (intersectedBlocks.length < 2) {
+      return;
+    }
+
+
+    const startingBlockApi = intersectedBlocks[0];
+    const endingBlockApi = intersectedBlocks[intersectedBlocks.length - 1];
+
+    /**
+     * get rid of this by adding 'merge' api method
+     */
+    const startingBlock = this.Editor.BlockManager.getBlockById(startingBlockApi.id);
+    const endingBlock = this.Editor.BlockManager.getBlockById(endingBlockApi.id);
+
+    /**
+     * If selection started in a Block that is not selectable, remove range from this Block to the next selectable Block
+     */
+    if (!startingBlock?.selectable) {
+      // range.setStart(range.endContainer, range.endOffset);
+
+      const blockIndex = api.blocks.getBlockIndex(startingBlock.id);
+
+      /**
+       * @todo find next selectable block, not just the next one
+       */
+      const nextBlock = api.blocks.getBlockByIndex(blockIndex + 1);
+
+      if (!nextBlock) {
+        return;
+      }
+
+      const nextBlockElement = nextBlock.holder;
+
+      range.setStart(nextBlockElement, 0);
+    }
+
+    /**
+     * If selection ended in a Block that is not selectable, remove range from that Block to the previous selectable Block
+     */
+    if (!endingBlock?.selectable) {
+      // range.setEnd(range.startContainer, range.startOffset);
+
+      const blockIndex = api.blocks.getBlockIndex(endingBlock.id);
+
+      /**
+       * @todo find previous selectable block, not just the previous one
+       */
+      const previousBlock = api.blocks.getBlockByIndex(blockIndex - 1);
+
+      if (!previousBlock) {
+        return;
+      }
+
+      const previousBlockElement = previousBlock.holder;
+
+      range.setEnd(previousBlockElement, previousBlockElement.childNodes.length);
+    }
   }
 }

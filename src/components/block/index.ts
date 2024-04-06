@@ -398,6 +398,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return this.inputs.length !== 0;
   }
 
+  public get selectable(): boolean {
+    return this.tool.isLineBreaksEnabled !== true;
+  }
+
   /**
    * Check block for emptiness
    *

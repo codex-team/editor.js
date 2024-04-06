@@ -253,6 +253,7 @@ export default class Core {
       'RectangleSelection',
       // 'CrossBlockSelection',
       'ReadOnly',
+      'RedactorKeydown', // @todo rename
     ];
 
     await modulesToPrepare.reduce(

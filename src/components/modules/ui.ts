@@ -21,11 +21,10 @@ import { SelectionChanged } from '../events';
 
 /**
  * CBS
+ *
  * @todo disable native ENTER and use a custom one
  * @todo disable native BACKSPACE/DELETE and use a custom ones
  * @todo get rid of BlockEvents, use event listener on redactor instead
- *
- *
  */
 
 /**
@@ -370,11 +369,11 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    const selectionChangeDebounced = _.debounce(() => {
-      this.selectionChanged();
-    }, selectionChangeDebounceTimeout);
+    // const selectionChangeDebounced = _.debounce(() => {
+    //   this.selectionChanged();
+    // }, selectionChangeDebounceTimeout);
 
-    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
+    // this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
