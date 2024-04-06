@@ -221,7 +221,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
     }
 
     if (item.children.length > 0) {
-      this.handleShowingNestedItems(item);
+      this.showNestedItems(item);
 
       return;
     }
@@ -291,5 +291,5 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
    *
    * @param item – item to show nested popover for
    */
-  protected abstract handleShowingNestedItems(item: PopoverItem): void;
+  protected abstract showNestedItems(item: PopoverItem): void;
 }

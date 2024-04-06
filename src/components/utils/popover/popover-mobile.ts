@@ -85,7 +85,7 @@ export class PopoverMobile extends PopoverAbstract {
    *
    * @param item – item to show nested popover for
    */
-  protected override handleShowingNestedItems(item: PopoverItem): void {
+  protected override showNestedItems(item: PopoverItem): void {
     /** Show nested items */
     this.updateItemsAndHeader(item.children, item.title);
 

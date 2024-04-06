@@ -185,7 +185,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item – item to show nested popover for
    */
-  protected override handleShowingNestedItems(item: PopoverItem): void {
+  protected override showNestedItems(item: PopoverItem): void {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
