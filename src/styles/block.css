@@ -89,8 +89,8 @@
     font-style: italic;
   }
 
-  &--unselectable {
-    user-select: none;
+  &--unselectable [contenteditable] {
     border: 1px solid red;
+    pointer-events: none;
   }
 }
