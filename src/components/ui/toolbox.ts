@@ -91,6 +91,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
   /**
    * Popover instance. There is a util for vertical lists.
+   * Null until initialized
    */
   private popover: Popover | null = null;
 
@@ -108,10 +109,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Current module HTML Elements
    */
   private nodes: {
-    toolbox: HTMLElement | null;
-  } = {
-      toolbox: null,
-    };
+    toolbox: HTMLElement;
+  } ;
 
   /**
    * CSS styles
@@ -137,7 +136,18 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.api = api;
     this.tools = tools;
     this.i18nLabels = i18nLabels;
-    this.make();
+
+    this.enableShortcuts();
+
+    this.nodes = {
+      toolbox: Dom.make('div', Toolbox.CSS.toolbox),
+    };
+
+    this.initPopover();
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.toolbox.setAttribute('data-cy', 'toolbox');
+    }
 
     this.api.events.on(EditorMobileLayoutToggled, this.handleMobileLayoutToggle);
   }
@@ -168,7 +178,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
     if (this.nodes && this.nodes.toolbox) {
       this.nodes.toolbox.remove();
-      this.nodes.toolbox = null;
     }
 
     this.removeAllShortcuts();
@@ -229,24 +238,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   };
 
   /**
-   * Makes the Toolbox
-   */
-  private make(): void {
-    /**
-     * Enable tools shortcuts
-     */
-    this.enableShortcuts();
-
-    this.nodes.toolbox = Dom.make('div', Toolbox.CSS.toolbox);
-
-    this.initPopover();
-
-    if (import.meta.env.MODE === 'test') {
-      this.nodes.toolbox.setAttribute('data-cy', 'toolbox');
-    }
-  }
-
-  /**
    * Creates toolbox popover and appends it inside wrapper element
    */
   private initPopover(): void {
@@ -262,7 +253,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover?.on(PopoverEvent.Close, this.onPopoverClose);
+    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
     this.nodes.toolbox?.append(this.popover.getElement());
   }
 
@@ -270,10 +261,12 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Destroys popover instance and removes it from DOM
    */
   private destroyPopover(): void {
-    this.popover?.hide();
-    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
-    this.popover?.destroy();
-    this.popover = null;
+    if (this.popover !== null) {
+      this.popover.hide();
+      this.popover.off(PopoverEvent.Close, this.onPopoverClose);
+      this.popover.destroy();
+      this.popover = null;
+    }
 
     if (this.nodes.toolbox !== null) {
       this.nodes.toolbox.innerHTML = '';

@@ -61,4 +61,13 @@ export class PopoverStatesHistory {
 
     return this.history[this.history.length - 1].items;
   }
+
+  /**
+   * Returns history to initial popover state
+   */
+  public reset(): void  {
+    while (this.history.length > 1) {
+      this.pop();
+    }
+  }
 }

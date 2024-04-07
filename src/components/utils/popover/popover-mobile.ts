@@ -69,6 +69,8 @@ export class PopoverMobile extends PopoverAbstract {
     this.nodes.overlay?.classList.add(css.overlayHidden);
 
     this.scrollLocker.unlock();
+
+    this.history.reset();
   }
 
   /**

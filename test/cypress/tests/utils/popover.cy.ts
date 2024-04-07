@@ -335,7 +335,7 @@ describe('Popover', () => {
   });
 
 
-  it('should correctly display children items and switch between states (mobile)', () => {
+  it('should display children items, back button and item header and correctly switch between parent and child states (mobile)', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;

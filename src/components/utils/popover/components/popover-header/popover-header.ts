@@ -17,13 +17,9 @@ export class PopoverHeader {
    * Header html elements
    */
   private nodes: {
-      root: null | HTMLElement,
-      text: null | HTMLElement,
-      backButton: null | HTMLElement
-    } = {
-      root: null,
-      text: null,
-      backButton: null,
+      root: HTMLElement,
+      text: HTMLElement,
+      backButton: HTMLElement
     };
 
   /**
@@ -44,7 +40,18 @@ export class PopoverHeader {
   constructor({ text, onBackButtonClick }: PopoverHeaderParams) {
     this.text = text;
     this.onBackButtonClick = onBackButtonClick;
-    this.make();
+
+    this.nodes = {
+      root: Dom.make('div', [ css.root ]),
+      backButton: Dom.make('button', [ css.backButton ]),
+      text: Dom.make('div', [ css.text ]),
+    };
+    this.nodes.backButton.innerHTML = IconChevronLeft;
+    this.nodes.root.appendChild(this.nodes.backButton);
+    this.listeners.on(this.nodes.backButton, 'click', this.onBackButtonClick);
+
+    this.nodes.text.innerText = this.text;
+    this.nodes.root.appendChild(this.nodes.text);
   }
 
   /**
@@ -59,26 +66,6 @@ export class PopoverHeader {
    */
   public destroy(): void {
     this.nodes.root.remove();
-    this.nodes.root = null;
-    this.nodes.backButton = null;
-    this.nodes.text = null;
-    this.listeners.removeAll();
     this.listeners.destroy();
-  }
-
-  /**
-   * Constructs HTML elements corresponding to popover header params
-   */
-  private make(): void {
-    this.nodes.root = Dom.make('div', [ css.root ]);
-
-    this.nodes.backButton = Dom.make('button', [ css.backButton ]);
-    this.nodes.backButton.innerHTML = IconChevronLeft;
-    this.nodes.root.appendChild(this.nodes.backButton);
-    this.listeners.on(this.nodes.backButton, 'click', this.onBackButtonClick);
-
-    this.nodes.text = Dom.make('div', [ css.text ]);
-    this.nodes.text.innerText = this.text;
-    this.nodes.root.appendChild(this.nodes.text);
   }
 }
