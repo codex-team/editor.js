@@ -23,7 +23,8 @@ export class PopoverDesktop extends PopoverAbstract {
   private customContentFlippableItems: HTMLElement[] | undefined;
 
   /**
-   * Reference to nested popover if exists
+   * Reference to nested popover if exists.
+   * Undefined by default, PopoverDesktop when exists and null after destroyed.
    */
   private nestedPopover: PopoverDesktop | undefined | null;
 

@@ -11,12 +11,12 @@ export class SearchInput {
   /**
    * Input wrapper element
    */
-  private wrapper: HTMLElement | undefined;
+  private wrapper: HTMLElement;
 
   /**
    * Editable input itself
    */
-  private input: HTMLInputElement | undefined;
+  private input: HTMLInputElement;
 
   /**
    * The instance of the Listeners util
@@ -53,48 +53,7 @@ export class SearchInput {
     this.items = items;
     this.onSearch = onSearch;
 
-    this.render(placeholder);
-  }
-
-  /**
-   * Returns search field element
-   */
-  public getElement(): HTMLElement | undefined {
-    return this.wrapper;
-  }
-
-  /**
-   * Sets focus to the input
-   */
-  public focus(): void {
-    this.input?.focus();
-  }
-
-  /**
-   * Clears search query and results
-   */
-  public clear(): void {
-    if (this.input !== undefined) {
-      this.input.value = '';
-    }
-
-    this.searchQuery = '';
-    this.onSearch('', this.foundItems);
-  }
-
-  /**
-   * Clears memory
-   */
-  public destroy(): void {
-    this.listeners.removeAll();
-  }
-
-  /**
-   * Creates the search field
-   *
-   * @param placeholder - input placeholder
-   */
-  private render(placeholder?: string): void {
+    /** Build ui */
     this.wrapper = Dom.make('div', css.wrapper);
 
     const iconWrapper = Dom.make('div', css.icon, {
@@ -123,6 +82,39 @@ export class SearchInput {
 
       this.onSearch(this.searchQuery, this.foundItems);
     });
+  }
+
+  /**
+   * Returns search field element
+   */
+  public getElement(): HTMLElement {
+    return this.wrapper;
+  }
+
+  /**
+   * Sets focus to the input
+   */
+  public focus(): void {
+    this.input.focus();
+  }
+
+  /**
+   * Clears search query and results
+   */
+  public clear(): void {
+    if (this.input !== undefined) {
+      this.input.value = '';
+    }
+
+    this.searchQuery = '';
+    this.onSearch('', this.foundItems);
+  }
+
+  /**
+   * Clears memory
+   */
+  public destroy(): void {
+    this.listeners.removeAll();
   }
 
   /**

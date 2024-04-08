@@ -66,7 +66,7 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
    */
   public hide(): void {
     super.hide();
-    this.nodes.overlay?.classList.add(css.overlayHidden);
+    this.nodes.overlay.classList.add(css.overlayHidden);
 
     this.scrollLocker.unlock();
 
