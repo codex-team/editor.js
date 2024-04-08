@@ -91,6 +91,6 @@
 
   &--unselectable [contenteditable] {
     border: 1px solid red;
-    pointer-events: none;
+    /* pointer-events: none; */
   }
 }

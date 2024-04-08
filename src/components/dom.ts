@@ -2,6 +2,8 @@ import * as _ from './utils';
 
 /**
  * DOM manipulations helper
+ *
+ * @todo get rid of class, use separate functions instead
  */
 export default class Dom {
   /**
@@ -587,4 +589,24 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+}
+
+/**
+ * Returns closest Element to the passed Node
+ * For example if passed Node is text node, it will return parent Element
+ *
+ * @param node - node to start search from
+ */
+export function getClosestElement(node: Node): Element | null {
+  if (node instanceof Element) {
+    return node;
+  }
+
+  const parentElement = node.parentElement;
+
+  if (parentElement === null) {
+    return null;
+  }
+
+  return getClosestElement(parentElement);
 }

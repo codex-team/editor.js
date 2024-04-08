@@ -12,6 +12,10 @@
 
     // allows to omit export default in .json files
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@types": ["types"]
+    }
   }
 }

@@ -10,6 +10,7 @@ const VERSION = pkg.version;
 
 /**
  * Trick to use Vite server.open option on macOS
+ *
  * @see https://github.com/facebook/create-react-app/pull/1690#issuecomment-283518768
  */
 process.env.BROWSER = 'open';
@@ -49,6 +50,12 @@ export default {
           },
         }),
       ],
+    },
+  },
+
+  resolve: {
+    alias: {
+      '@types': path.resolve(__dirname, './types'), // maps @types to /types folder
     },
   },
 
