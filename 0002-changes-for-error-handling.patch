@@ -1,7 +1,7 @@
 From c5f579e7149dcdf8b9c6aed53012b2cfe1fef606 Mon Sep 17 00:00:00 2001
 From: Vishal Pradhan <vishal.pradhan@aalda.in>
 Date: Mon, 29 Jan 2024 15:02:46 +0530
-Subject: [PATCH] changes for error handling
+Subject: [PATCH 2/7] changes for error handling
 
 ---
  src/components/modules/caret.ts | 4 ++--
