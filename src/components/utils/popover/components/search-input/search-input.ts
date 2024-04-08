@@ -74,10 +74,6 @@ export class SearchInput {
     this.wrapper.appendChild(this.input);
 
     this.listeners.on(this.input, 'input', () => {
-      if (this.input === undefined) {
-        return;
-      }
-
       this.searchQuery = this.input.value;
 
       this.onSearch(this.searchQuery, this.foundItems);
@@ -102,11 +98,9 @@ export class SearchInput {
    * Clears search query and results
    */
   public clear(): void {
-    if (this.input !== undefined) {
-      this.input.value = '';
-    }
-
+    this.input.value = '';
     this.searchQuery = '';
+
     this.onSearch('', this.foundItems);
   }
 

@@ -184,10 +184,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
     const searchElement = this.search.getElement();
 
-    if (searchElement === undefined) {
-      return;
-    }
-
     searchElement.classList.add(css.search);
 
     this.nodes.popoverContainer.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
