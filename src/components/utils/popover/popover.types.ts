@@ -93,12 +93,17 @@ export interface PopoverNodes {
   /** Popover items wrapper */
   items: HTMLElement;
 
+  /** Custom html content area */
+  customContent: HTMLElement | undefined;
+}
+
+/**
+ * HTML elements required to display mobile popover
+ */
+export interface PopoverMobileNodes extends PopoverNodes {
   /** Popover header element */
   header: HTMLElement;
 
   /** Overlay, displayed under popover on mobile */
-  overlay: HTMLElement | undefined;
-
-  /** Custom html content area */
-  customContent: HTMLElement | undefined;
+  overlay: HTMLElement;
 }

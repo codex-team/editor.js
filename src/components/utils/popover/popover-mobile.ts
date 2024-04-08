@@ -2,7 +2,7 @@ import { PopoverAbstract } from './popover-abstract';
 import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
-import { PopoverParams } from './popover.types';
+import { PopoverMobileNodes, PopoverParams } from './popover.types';
 import { PopoverItem } from './components/popover-item';
 import { PopoverItem as PopoverItemParams } from '../../../../types';
 import { css } from './popover.const';
@@ -12,7 +12,7 @@ import Dom from '../../dom';
  * Mobile Popover.
  * On mobile devices Popover behaves like a fixed panel at the bottom of screen. Nested item appears like "pages" with the "back" button
  */
-export class PopoverMobile extends PopoverAbstract {
+export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
   /**
    * ScrollLocker instance
    */
@@ -54,7 +54,7 @@ export class PopoverMobile extends PopoverAbstract {
    * Open popover
    */
   public show(): void {
-    this.nodes.overlay?.classList.remove(css.overlayHidden);
+    this.nodes.overlay.classList.remove(css.overlayHidden);
 
     super.show();
 

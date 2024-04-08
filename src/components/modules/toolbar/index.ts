@@ -601,6 +601,5 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (this.toolboxInstance) {
       this.toolboxInstance.destroy();
     }
-    this.listeners.destroy();
   }
 }

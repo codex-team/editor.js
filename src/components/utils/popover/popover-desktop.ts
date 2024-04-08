@@ -155,10 +155,8 @@ export class PopoverDesktop extends PopoverAbstract {
    * Clears memory
    */
   public destroy(): void {
+    this.hide();
     super.destroy();
-    this.flipper.deactivate();
-    this.destroyNestedPopoverIfExists();
-    this.previouslyHoveredItem = null;
   }
 
   /**

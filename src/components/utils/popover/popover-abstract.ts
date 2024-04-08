@@ -9,7 +9,7 @@ import { css } from './popover.const';
 /**
  * Class responsible for rendering popover and handling its behaviour
  */
-export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> {
+export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes> extends EventsDispatcher<PopoverEventMap> {
   /**
    * List of popover items
    */
@@ -23,7 +23,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
   /**
    * Refs to created HTML elements
    */
-  protected nodes: PopoverNodes;
+  protected nodes: Nodes;
 
   /**
    * Instance of the Search Input
@@ -56,7 +56,7 @@ export abstract class PopoverAbstract extends EventsDispatcher<PopoverEventMap> 
     }
 
     /** Build html elements */
-    this.nodes = {} as PopoverNodes;
+    this.nodes = {} as Nodes;
 
     this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
 
