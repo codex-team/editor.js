@@ -106,10 +106,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
   /**
    * CSS styles
-   *
-   * @returns {Object<string, string>}
    */
-  private static get CSS(): { [name: string]: string } {
+  private static get CSS(): {
+    toolbox: string;
+    } {
     return {
       toolbox: 'ce-toolbox',
     };

@@ -50,7 +50,7 @@ export default class Caret extends Module {
     /**
      * If Block does not contain inputs, treat caret as "at start"
      */
-    if (!currentBlock.focusable) {
+    if (!currentBlock?.focusable) {
       return true;
     }
 

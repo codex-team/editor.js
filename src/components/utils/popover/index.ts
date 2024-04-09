@@ -275,9 +275,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
     this.flipper.activate(this.flippableElements);
 
     if (this.search !== undefined) {
-      requestAnimationFrame(() => {
-        this.search?.focus();
-      });
+      this.search?.focus();
     }
 
     if (isMobileScreen()) {

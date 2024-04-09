@@ -18,3 +18,5 @@ dist/
 coverage/
 .nyc_output/
 pnpm-lock.yaml
+.vscode/launch.json
+

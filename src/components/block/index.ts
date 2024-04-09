@@ -550,7 +550,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @returns {object}
    */
-  public async save(): Promise<void | SavedData> {
+  public async save(): Promise<undefined | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
     const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
 
@@ -737,6 +737,10 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
+
+    if (import.meta.env.MODE === 'test') {
+      wrapper.setAttribute('data-cy', 'block-wrapper');
+    }
 
     /**
      * Export id to the DOM three
