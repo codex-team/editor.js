@@ -1,0 +1,322 @@
+diff --git a/package.json b/package.json
+index 16a857f..817e68b 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+-  "name": "@editorjs/editorjs",
+-  "version": "2.30.0-rc.2",
++  "name": "editor-js",
++  "version": "2.29.0",
+   "description": "Editor.js — Native JS, based on API and Open Source",
+   "main": "dist/editorjs.umd.js",
+   "module": "dist/editorjs.mjs",
+@@ -45,14 +45,14 @@
+     "@editorjs/code": "^2.7.0",
+     "@editorjs/delimiter": "^1.2.0",
+     "@editorjs/header": "^2.7.0",
+-    "@editorjs/paragraph": "^2.11.4",
++    "@editorjs/paragraph": "^2.11.3",
+     "@editorjs/simple-image": "^1.4.1",
+     "@types/node": "^18.15.11",
+     "chai-subset": "^1.6.0",
+     "codex-notifier": "^1.1.2",
+     "codex-tooltip": "^1.0.5",
+     "core-js": "3.30.0",
+-    "cypress": "^13.7.1",
++    "cypress": "^12.9.0",
+     "cypress-intellij-reporter": "^0.0.7",
+     "cypress-plugin-tab": "^1.0.5",
+     "cypress-terminal-report": "^5.3.2",
+@@ -76,4 +76,4 @@
+     "type": "opencollective",
+     "url": "https://opencollective.com/editorjs"
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/src/components/modules/api/toolbar.ts b/src/components/modules/api/toolbar.ts
+index 321cbf4..1354192 100644
+--- a/src/components/modules/api/toolbar.ts
++++ b/src/components/modules/api/toolbar.ts
+@@ -1,5 +1,6 @@
+ import { Toolbar } from '../../../../types/api';
+ import Module from '../../__module';
++import Block from '../../block';
+ import * as _ from './../../utils';
+ /**
+  * @class ToolbarAPI
+@@ -16,6 +17,7 @@ export default class ToolbarAPI extends Module {
+       close: (): void => this.close(),
+       open: (): void => this.open(),
+       toggleBlockSettings: (openingState?: boolean): void => this.toggleBlockSettings(openingState),
++      toggleBlockSettingsById: (id:string): void => this.toggleBlockSettingsById(id),
+       toggleToolbox: (openingState?: boolean): void => this.toggleToolbox(openingState),
+     };
+   }
+@@ -56,6 +58,26 @@ export default class ToolbarAPI extends Module {
+       this.Editor.BlockSettings.close();
+     }
+   }
++  /**
++   * Toggles Block Setting of the current block
++   *
++   * @param {boolean} openingState —  opening state of Block Setting
++   */
++  public toggleBlockSettingsById(id: String): void {
++    const block = this.Editor.BlockManager.getBlockById(id)
++    if (!block) {
++      _.logLabeled('Block not found', 'warn');
++      return;
++    }
++      this.Editor.BlockSelection.selectBlock(block);
++      this.Editor.BlockManager.currentBlock = block;
++    if (this.Editor.BlockManager.currentBlockIndex === -1) {
++      _.logLabeled('Could\'t toggle the Toolbar because there is no block selected ', 'warn');
++      return;
++    }
++      this.Editor.Toolbar.moveAndOpen();
++      this.Editor.BlockSettings.open();
++  }
+ 
+ 
+   /**
+diff --git a/src/components/modules/caret.ts b/src/components/modules/caret.ts
+index 57d5c96..3dc51f4 100644
+--- a/src/components/modules/caret.ts
++++ b/src/components/modules/caret.ts
+@@ -50,7 +50,7 @@ export default class Caret extends Module {
+     /**
+      * If Block does not contain inputs, treat caret as "at start"
+      */
+-    if (!currentBlock?.focusable) {
++    if (!currentBlock.focusable) {
+       return true;
+     }
+ 
+@@ -60,7 +60,7 @@ export default class Caret extends Module {
+ 
+     /** In case lastNode is native input */
+     if ($.isNativeInput(firstNode)) {
+-      return (firstNode as HTMLInputElement).selectionEnd === 0;
++      return (firstNode as HTMLInputElement)?.selectionEnd === 0;
+     }
+ 
+     /** Case when selection have been cleared programmatically, for example after CBS */
+@@ -162,7 +162,7 @@ export default class Caret extends Module {
+ 
+     /** In case lastNode is native input */
+     if ($.isNativeInput(lastNode)) {
+-      return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
++      return (lastNode as HTMLInputElement)?.selectionEnd === (lastNode as HTMLInputElement).value.length;
+     }
+ 
+     /** Case when selection have been cleared programmatically, for example after CBS */
+diff --git a/src/components/utils/popover/index.ts b/src/components/utils/popover/index.ts
+index 34b483b..cc88b92 100644
+--- a/src/components/utils/popover/index.ts
++++ b/src/components/utils/popover/index.ts
+@@ -7,6 +7,8 @@ import SearchInput from './search-input';
+ import EventsDispatcher from '../events';
+ import Listeners from '../listeners';
+ import ScrollLocker from '../scroll-locker';
++import I18n from '../../i18n';
++import { I18nInternalNS } from '../../i18n/namespace-internal';
+ 
+ /**
+  * Params required to render popover
+@@ -127,7 +129,7 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
+     items: string;
+     overlay: string;
+     overlayHidden: string;
+-    } {
++  } {
+     return {
+       popover: 'ce-popover',
+       popoverOpenTop: 'ce-popover--open-top',
+@@ -178,7 +180,43 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
+   constructor(params: PopoverParams) {
+     super();
+ 
+-    this.items = params.items.map(item => new PopoverItem(item));
++    const isFirst = (params.items?.[0]?.type === 0)
++    const medicineUsed = [
++      "Key Vitals",
++      "PE/ROS",
++      "Test & Report",
++      "Internal Documents",
++      "Procedures",
++      "Vaccination",
++      "Anti-Parasitic",
++      "Medicine",
++      "Soap"
++    ];
++    const medicines = [], common = [];
++
++    if (isFirst) {
++      medicines.push(new PopoverItem({
++        name: 'Medical Section',
++        title: I18n.t(I18nInternalNS.toolNames, 'Medical Section'),
++        isActive: false,
++        onActivate: () => { },
++        icon: ''
++      }));
++      common.push(new PopoverItem({
++        name: 'Basic Block',
++        title: I18n.t(I18nInternalNS.toolNames, 'Basic Block'),
++        isActive: false,
++        onActivate: () => { },
++        icon: ''
++      }));
++    }
++    params.items.map(item => {
++      if (medicineUsed.includes(item.name))
++        medicines.push(new PopoverItem(item))
++      else
++        common.push(new PopoverItem(item))
++    });
++    this.items = medicines.concat(...common);
+ 
+     if (params.scopeElement !== undefined) {
+       this.scopeElement = params.scopeElement;
+@@ -237,7 +275,9 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
+     this.flipper.activate(this.flippableElements);
+ 
+     if (this.search !== undefined) {
+-      this.search?.focus();
++      requestAnimationFrame(() => {
++        this.search?.focus();
++      });
+     }
+ 
+     if (isMobileScreen()) {
+@@ -282,14 +322,14 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
+    * Constructs HTML element corresponding to popover
+    */
+   private make(): void {
+-    this.nodes.popover = Dom.make('div', [ Popover.CSS.popover ]);
++    this.nodes.popover = Dom.make('div', [Popover.CSS.popover]);
+ 
+-    this.nodes.nothingFoundMessage = Dom.make('div', [ Popover.CSS.nothingFoundMessage ], {
++    this.nodes.nothingFoundMessage = Dom.make('div', [Popover.CSS.nothingFoundMessage], {
+       textContent: this.messages.nothingFound,
+     });
+ 
+     this.nodes.popover.appendChild(this.nodes.nothingFoundMessage);
+-    this.nodes.items = Dom.make('div', [ Popover.CSS.items ]);
++    this.nodes.items = Dom.make('div', [Popover.CSS.items]);
+ 
+     this.items.forEach(item => {
+       this.nodes.items.appendChild(item.getElement());
+@@ -502,11 +542,11 @@ export default class Popover extends EventsDispatcher<PopoverEventMap> {
+    * @param clickedItem - popover item that was clicked
+    */
+   private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
+-    if (clickedItem.toggle === true) {
++    if (typeof clickedItem.toggle === 'function') {
++      clickedItem.toggleActive(clickedItem.toggle());
++    } else if (clickedItem.toggle === true) {
+       clickedItem.toggleActive();
+-    }
+-
+-    if (typeof clickedItem.toggle === 'string') {
++    } else if (typeof clickedItem.toggle === 'string') {
+       const itemsInToggleGroup = this.items.filter(item => item.toggle === clickedItem.toggle);
+ 
+       /** If there's only one item in toggle group, toggle it */
+diff --git a/src/components/utils/popover/popover-item.ts b/src/components/utils/popover/popover-item.ts
+index 9513a2c..f2e6ae0 100644
+--- a/src/components/utils/popover/popover-item.ts
++++ b/src/components/utils/popover/popover-item.ts
+@@ -16,7 +16,7 @@ export class PopoverItem {
+   /**
+    * Exposes popover item toggle parameter
+    */
+-  public get toggle(): boolean | string | undefined {
++  public get toggle(): boolean | (() => boolean) | string | undefined {
+     return this.params.toggle;
+   }
+ 
+@@ -85,7 +85,7 @@ export class PopoverItem {
+     noHover: string,
+     noFocus: string,
+     wobbleAnimation: string
+-    } {
++  } {
+     return {
+       container: 'ce-popover-item',
+       title: 'ce-popover-item__title',
+@@ -178,12 +178,13 @@ export class PopoverItem {
+       el.dataset.itemName = params.name;
+     }
+ 
+-    this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
+-      innerHTML: params.icon || IconDotCircle,
+-    });
+-
+-    el.appendChild(this.nodes.icon);
++    if (params?.icon) {
++      this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
++        innerHTML: params.icon || IconDotCircle,
++      });
+ 
++      el.appendChild(this.nodes.icon);
++    }
+     el.appendChild(Dom.make('div', PopoverItem.CSS.title, {
+       innerHTML: params.title || '',
+     }));
+@@ -254,7 +255,7 @@ export class PopoverItem {
+   /**
+    * Disables special focus and hover behavior
+    */
+-  private disableSpecialHoverAndFocusBehavior(): void  {
++  private disableSpecialHoverAndFocusBehavior(): void {
+     this.removeSpecialFocusBehavior();
+     this.removeSpecialHoverBehavior();
+ 
+diff --git a/types/api/toolbar.d.ts b/types/api/toolbar.d.ts
+index 8e6eefb..c822613 100644
+--- a/types/api/toolbar.d.ts
++++ b/types/api/toolbar.d.ts
+@@ -23,4 +23,6 @@ export interface Toolbar {
+    * @param {boolean} openingState —  opening state of the toolbox
+    */
+   toggleToolbox(openingState?: boolean): void;
++
++  toggleBlockSettingsById(id:string): void;
+ }
+diff --git a/types/configs/popover.d.ts b/types/configs/popover.d.ts
+index 6689fce..4c07f1c 100644
+--- a/types/configs/popover.d.ts
++++ b/types/configs/popover.d.ts
+@@ -57,6 +57,8 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
+   confirmation: PopoverItem;
+ 
+   onActivate?: never;
++
++  type?:number;
+ }
+ 
+ /**
+@@ -72,6 +74,8 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
+    * @param event - event that initiated item activation
+    */
+   onActivate: (item: PopoverItem, event?: PointerEvent) => void;
++
++  type?:number;
+ }
+ 
+ /**
+diff --git a/types/tools/block-tool.d.ts b/types/tools/block-tool.d.ts
+index 8c9bb85..a88122c 100644
+--- a/types/tools/block-tool.d.ts
++++ b/types/tools/block-tool.d.ts
+@@ -78,6 +78,8 @@ export interface BlockTool extends BaseTool {
+    * Called after block was moved
+    */
+   moved?(event: MoveEvent): void;
++
++  config?:ToolConfig;
+ }
+ 
+ /**
