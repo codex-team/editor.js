@@ -2,7 +2,7 @@
 
 ### 2.30.1
 
-– `New` – Popover now supports nesting items
+– `New` – Block Tunes now support nesting items
 
 ### 2.30.0
 
