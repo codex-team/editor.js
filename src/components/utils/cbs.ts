@@ -128,6 +128,53 @@ function findIntersectedInputs(intersectedBlocks: BlockAPI[], range: Range): Blo
   }, []);
 }
 
+/**
+ * Return a previeous block that can be selected
+ *
+ * @param block - block to start from
+ * @param api - Editor API
+ */
+export function findPreviousSelectableBlock(block: BlockAPI, api: API): BlockAPI | null {
+  const blockIndex = api.blocks.getBlockIndex(block.id);
+
+  if (blockIndex === 0) {
+    return null;
+  }
+
+  const previousBlock = api.blocks.getBlockByIndex(blockIndex - 1);
+
+  if (previousBlock === undefined) {
+    return null;
+  }
+
+  if (previousBlock.selectable) {
+    return previousBlock;
+  }
+
+  return findPreviousSelectableBlock(previousBlock, api);
+}
+
+/**
+ * Return a next block that can be selected
+ *
+ * @param block - block to start from
+ * @param api - Editor API
+ */
+export function findNextSelectableBlock(block: BlockAPI, api: API): BlockAPI | null {
+  const blockIndex = api.blocks.getBlockIndex(block.id);
+  const nextBlock = api.blocks.getBlockByIndex(blockIndex + 1);
+
+  if (nextBlock === undefined) {
+    return null;
+  }
+
+  if (nextBlock.selectable) {
+    return nextBlock;
+  }
+
+  return findNextSelectableBlock(nextBlock, api);
+}
+
 
 /**
  * Returns a list of blocks and inputs that intersect with the given range
@@ -141,7 +188,7 @@ export function useCrossInputSelection(api: API): CrossInputSelection {
    * @todo handle native inputs
    */
 
-  if (selection === null || !selection.rangeCount) {
+  if (selection === null || !selection.rangeCount || selection.isCollapsed) {
     return {
       blocks: [],
       inputs: [],

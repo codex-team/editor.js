@@ -1,10 +1,8 @@
 import Module from '../__module';
 import type Block from '../block';
-import type { API, BlockAPI } from '../../../types';
+import type { BlockAPI } from '../../../types';
 import { areBlocksMergeable } from '../utils/blocks';
-import Dom from '../dom';
-import { SelectionChanged } from '../events';
-import { useCrossInputSelection } from '../utils/cbs';
+import { findNextSelectableBlock, findPreviousSelectableBlock, useCrossInputSelection } from '../utils/cbs';
 import { ModuleConfig } from 'src/types-internal/module-config';
 
 
@@ -43,7 +41,10 @@ export default class CrossInputSelection extends Module {
    */
   public prepare(): void {
     this.listeners.on(this.Editor.UI.nodes.redactor, 'mouseup', () => {
-      console.log('mouseup');
+      this.removeSelectionFromUnselectableBlocks();
+    });
+
+    this.listeners.on(this.Editor.UI.nodes.redactor, 'keyup', () => {
       this.removeSelectionFromUnselectableBlocks();
     });
 
@@ -237,40 +238,22 @@ export default class CrossInputSelection extends Module {
      * If selection started in a Block that is not selectable, remove range from this Block to the next selectable Block
      */
     if (!startingBlock?.selectable) {
-      const blockIndex = api.blocks.getBlockIndex(startingBlock.id);
+      const nextSelectableBlock = findNextSelectableBlock(startingBlock, api);
 
-      /**
-       * @todo find next selectable block, not just the next one
-       */
-      const nextBlock = api.blocks.getBlockByIndex(blockIndex + 1);
-
-      if (!nextBlock) {
-        return;
+      if (nextSelectableBlock !== null) {
+        range.setStart(nextSelectableBlock.holder, 0);
       }
-
-      const nextBlockElement = nextBlock.holder;
-
-      range.setStart(nextBlockElement, 0);
     }
 
     /**
      * If selection ended in a Block that is not selectable, remove range from that Block to the previous selectable Block
      */
     if (!endingBlock?.selectable) {
-      const blockIndex = api.blocks.getBlockIndex(endingBlock.id);
+      const previousSelectableBlock = findPreviousSelectableBlock(endingBlock, api);
 
-      /**
-       * @todo find previous selectable block, not just the previous one
-       */
-      const previousBlock = api.blocks.getBlockByIndex(blockIndex - 1);
-
-      if (!previousBlock) {
-        return;
+      if (previousSelectableBlock !== null) {
+        range.setEnd(previousSelectableBlock.holder, previousSelectableBlock.holder.childNodes.length);
       }
-
-      const previousBlockElement = previousBlock.holder;
-
-      range.setEnd(previousBlockElement, previousBlockElement.childNodes.length);
     }
   }
 }
