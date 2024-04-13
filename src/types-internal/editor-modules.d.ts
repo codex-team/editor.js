@@ -37,7 +37,7 @@ import Renderer from '../components/modules/renderer';
 import Saver from '../components/modules/saver';
 import Tools from '../components/modules/tools';
 import UI from '../components/modules/ui';
-import RedactorKeydown from '../components/modules/redactorKeydown';
+import CrossInputSelection from '../components/modules/crossInputSelection';
 
 export interface EditorModules {
   // API Modules
@@ -79,5 +79,5 @@ export interface EditorModules {
   Saver: Saver,
   Tools: Tools,
   UI: UI,
-  RedactorKeydown: RedactorKeydown,
+  CrossInputSelection: CrossInputSelection,
 }

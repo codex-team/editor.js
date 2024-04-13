@@ -36,15 +36,6 @@ export default class CrossInputSelection extends Module {
    */
   constructor(moduleInitOptions: ModuleConfig) {
     super(moduleInitOptions);
-
-    /**
-     * Handle selection change to manipulate Inline Toolbar appearance
-     */
-    // const selectionChangeDebounced = debounce(() => {
-    //   this.removeSelectionFromUnselectableBlocks();
-    // }, 30);
-
-    // this.eventsDispatcher.on(SelectionChanged, selectionChangeDebounced);
   }
 
   /**
@@ -54,6 +45,12 @@ export default class CrossInputSelection extends Module {
     this.listeners.on(this.Editor.UI.nodes.redactor, 'mouseup', () => {
       console.log('mouseup');
       this.removeSelectionFromUnselectableBlocks();
+    });
+
+    this.readOnlyMutableListeners.on(this.Editor.UI.nodes.redactor, 'keydown', (event: KeyboardEvent) => {
+      this.keydown(event);
+    }, {
+      capture: true,
     });
   }
 

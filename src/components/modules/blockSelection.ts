@@ -15,7 +15,7 @@ import { SanitizerConfig } from '../../../types/configs';
 import { clean } from '../utils/sanitizer';
 
 /**
- *
+ * @deprecated
  */
 export default class BlockSelection extends Module {
   /**

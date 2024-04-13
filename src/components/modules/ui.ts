@@ -356,12 +356,6 @@ export default class UI extends Module<UINodes> {
       this.documentKeydown(event);
     }, true);
 
-    this.readOnlyMutableListeners.on(this.nodes.redactor, 'keydown', (event: KeyboardEvent) => {
-      this.Editor.RedactorKeydown.keydown(event);
-    }, {
-      capture: true,
-    });
-
     this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);

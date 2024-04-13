@@ -4,7 +4,7 @@ import SelectionUtils from '../selection';
 import * as _ from '../utils';
 
 /**
- *
+ * @deprecated
  */
 export default class CrossBlockSelection extends Module {
   /**

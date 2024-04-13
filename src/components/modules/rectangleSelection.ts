@@ -12,7 +12,7 @@ import Block from '../block';
 import * as _ from '../utils';
 
 /**
- *
+ * @deprecated
  */
 export default class RectangleSelection extends Module {
   /**

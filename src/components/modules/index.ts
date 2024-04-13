@@ -37,7 +37,7 @@ import Renderer from './renderer';
 import Saver from './saver';
 import Tools from './tools';
 import UI from './ui';
-import RedactorKeydown from './redactorKeydown';
+import CrossInputSelection from './crossInputSelection';
 
 export default {
   // API Modules
@@ -79,5 +79,5 @@ export default {
   Saver,
   Tools,
   UI,
-  RedactorKeydown,
+  CrossInputSelection,
 };
