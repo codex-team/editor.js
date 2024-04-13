@@ -21,6 +21,7 @@ import { ModuleConfig } from 'src/types-internal/module-config';
  * @todo handle cross-input selection with keyboard
  * @todo when cbs the inline-toolbar should contain intersected lists of tools for selected blocks
  * @todo emit "selection changed" event to hide/show the Inline Toolbar
+ * @todo select quote caption and move selection to the previous block. Do not release mouse button, and press delete. Quote should not be deleted
  */
 
 
@@ -64,6 +65,11 @@ export default class CrossInputSelection extends Module {
     switch (event.key) {
       case 'Delete':
       case 'Backspace':
+        /**
+         * Handle case when user presses DELETE or BACKSPACE while having mouse button pressed with cross-input selection
+         */
+        this.removeSelectionFromUnselectableBlocks();
+
         this.handleDelete(event, event.key === 'Backspace');
         break;
     }

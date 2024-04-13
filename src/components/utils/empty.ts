@@ -4,6 +4,13 @@
  * @param v value to check
  */
 export function notEmpty<T>(v: T | undefined | null | object): v is T {
+  /**
+   * Consider HTML elements as not empty variables
+   */
+  if (v instanceof HTMLElement || v instanceof Element) {
+    return true;
+  }
+
   return v !== undefined && v !== null && v !== '' && (typeof v !== 'object' || Object.keys(v).length > 0);
 }
 
