@@ -2,7 +2,7 @@
 
 ### 2.30.1
 
-– `New` – Block Tunes now support nesting items
+– `New` – Block Tunes now supports nesting items
 
 ### 2.30.0
 
