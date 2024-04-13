@@ -1,5 +1,8 @@
 /** 
  * Popover styles
+ *
+ * @todo split into separate files popover styles
+ * @todo make css variables work
  */
 .ce-popover {
   --border-radius: 6px;
@@ -24,6 +27,10 @@
   --popover-top: calc(100% + var(--offset-from-target));
   --popover-left: 0;
   --nested-popover-overlap: 4px;
+
+  --icon-size: 20px;
+  --item-padding: 3px;
+  --item-height: calc(var(--icon-size) + 2 * var(--item-padding));
 
   &__container {
     min-width: var(--width);
@@ -160,18 +167,17 @@
     .ce-popover__container {
       /* Variable --nesting-level is set via js in showNestedPopoverForItem() method */
       --popover-left: calc(var(--nesting-level) * (var(--width) - var(--nested-popover-overlap)));
-      /* Variable --nested-popover-top is set via js in showNestedPopoverForItem() method */
-      top: calc(var(--nested-popover-top) - var(--nested-popover-overlap));
+      /* Variable --trigger-item-top is set via js in showNestedPopoverForItem() method */
+      top: calc(var(--trigger-item-top) - var(--nested-popover-overlap));
       position: absolute;
     }
   }
 
-  &--open-top {
-    .ce-popover--nested {
-      .ce-popover__container {
-        /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
-        top: min(var(--popover-top), calc(var(--nested-popover-top) - var(--nested-popover-overlap)))
-      }
+  &--open-top.ce-popover--nested {
+    .ce-popover__container {
+      /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
+      top: calc(var(--trigger-item-top) - var(--popover-height) + var(--item-height) + var(--offset-from-target) + var(--nested-popover-overlap));
+
     }
   }
 
@@ -190,13 +196,10 @@
  */
 .ce-popover-item {
   --border-radius: 6px;
-  --icon-size: 20px;
-  --icon-size-mobile: 28px;
-
   border-radius: var(--border-radius);
   display: flex;
   align-items: center;
-  padding: 3px;
+  padding: var(--item-padding);
   color: var(--color-text-primary);
   user-select: none;
 
@@ -226,8 +229,8 @@
       border-radius: 8px;
 
       svg {
-        width: var(--icon-size-mobile);
-        height: var(--icon-size-mobile);
+        width: 28px;
+        height: 28px;
       }
     }
   }

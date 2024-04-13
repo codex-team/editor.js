@@ -199,7 +199,7 @@ export class PopoverDesktop extends PopoverAbstract {
     if (this.nodes.popover === undefined || this.nodes.popover === null) {
       return false;
     }
-    const popoverRect = this.nodes.popover.getBoundingClientRect();
+    const popoverRect = this.nodes.popoverContainer.getBoundingClientRect();
     const scopeElementRect = this.scopeElement.getBoundingClientRect();
     const popoverHeight = this.size.height;
     const popoverPotentialBottomEdge = popoverRect.top + popoverHeight;
@@ -320,7 +320,7 @@ export class PopoverDesktop extends PopoverAbstract {
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
 
-    nestedPopoverEl.style.setProperty('--nested-popover-top', topOffset + 'px');
+    nestedPopoverEl.style.setProperty('--trigger-item-top', topOffset + 'px');
     nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
 
     this.nestedPopover.show();
