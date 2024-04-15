@@ -2,7 +2,7 @@
 
 ### 2.30.1
 
-– `Fix` – Block Tunes data are return inside Block Mutations
+– `Fix` – Block Tunes data are returned inside Block Mutations
 – `New` – Block Tunes now supports nesting items
 
 ### 2.30.0
