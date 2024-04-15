@@ -60,7 +60,7 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
 }
 
 /**
- * Represents default popover item without confirmation state configuration
+ * Represents popover item without confirmation state configuration
  */
 export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
   confirmation?: never;
@@ -72,10 +72,27 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
    * @param event - event that initiated item activation
    */
   onActivate: (item: PopoverItem, event?: PointerEvent) => void;
+
+}
+
+
+/**
+ * Represents popover item with children (nested popover items)
+ */
+export interface PopoverItemWithChildren extends PopoverItemBase {
+  confirmation?: never;
+  onActivate?: never;
+
+  /**
+   * Items of nested popover that should be open on the current item hover/click (depending on platform)
+   */
+  children?: {
+    items: PopoverItem[]
+  }
 }
 
 /**
  * Represents single popover item
  */
-export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation
+export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation | PopoverItemWithChildren
 

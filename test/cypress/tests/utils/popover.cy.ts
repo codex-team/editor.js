@@ -1,5 +1,6 @@
-import Popover from '../../../../src/components/utils/popover';
+import { PopoverDesktop as Popover } from '../../../../src/components/utils/popover';
 import { PopoverItem } from '../../../../types';
+import { TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -256,5 +257,188 @@ describe('Popover', () => {
       /* Check custom content exists in the popover */
       cy.get('[data-cy-name=customContent]');
     });
+  });
+
+  it('should display nested popover (desktop)', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  {
+          icon: 'Icon',
+          title: 'Title',
+          toggle: 'key',
+          name: 'test-item',
+          children: {
+            items: [
+              {
+                icon: 'Icon',
+                title: 'Title',
+                name: 'nested-test-item',
+              },
+            ],
+          },
+        };
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check item with children has arrow icon */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .get('.ce-popover-item__icon--chevron-right')
+      .should('be.visible');
+
+    /** Click the item */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .click();
+
+    /** Check nested popover opened */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover--nested .ce-popover__container')
+      .should('be.visible');
+
+    /** Check child item displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover--nested .ce-popover__container')
+      .get('[data-item-name="nested-test-item"]')
+      .should('be.visible');
+  });
+
+
+  it('should display children items, back button and item header and correctly switch between parent and child states (mobile)', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  {
+          icon: 'Icon',
+          title: 'Tune',
+          toggle: 'key',
+          name: 'test-item',
+          children: {
+            items: [
+              {
+                icon: 'Icon',
+                title: 'Title',
+                name: 'nested-test-item',
+              },
+            ],
+          },
+        };
+      }
+    }
+
+    cy.viewport('iphone-6+');
+
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check item with children has arrow icon */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .get('.ce-popover-item__icon--chevron-right')
+      .should('be.visible');
+
+    /** Click the item */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .click();
+
+    /** Check child item displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="nested-test-item"]')
+      .should('be.visible');
+
+    /** Check header displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover-header')
+      .should('have.text', 'Tune');
+
+    /** Check back button displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-header__back-button')
+      .should('be.visible');
+
+    /** Click back button */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-header__back-button')
+      .click();
+
+    /** Check child item is not displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="nested-test-item"]')
+      .should('not.exist');
+
+    /** Check back button is not displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-header__back-button')
+      .should('not.exist');
+
+    /** Check header is not displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover-header')
+      .should('not.exist');
   });
 });

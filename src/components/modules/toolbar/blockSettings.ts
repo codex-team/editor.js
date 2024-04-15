@@ -7,7 +7,10 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import Popover, { PopoverEvent } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
+import { PopoverEvent } from '../../utils/popover/popover.types';
+import { isMobileScreen } from '../../utils';
+import { EditorMobileLayoutToggled } from '../../events';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -27,8 +30,6 @@ interface BlockSettingsNodes {
 export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Module Events
-   *
-   * @returns {{opened: string, closed: string}}
    */
   public get events(): { opened: string; closed: string } {
     return {
@@ -56,8 +57,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @todo remove once BlockSettings becomes standalone non-module class
    */
-  public get flipper(): Flipper {
-    return this.popover?.flipper;
+  public get flipper(): Flipper | undefined {
+    if (this.popover === null) {
+      return;
+    }
+
+    return 'flipper' in this.popover ? this.popover?.flipper : undefined;
   }
 
   /**
@@ -67,9 +72,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Popover instance. There is a util for vertical lists.
+   * Null until popover is not initialized
    */
-  private popover: Popover | undefined;
-
+  private popover: Popover | null = null;
 
   /**
    * Panel with block settings with 2 sections:
@@ -82,6 +87,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (import.meta.env.MODE === 'test') {
       this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
     }
+
+    this.eventsDispatcher.on(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -89,6 +96,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public destroy(): void {
     this.removeAllNodes();
+    this.listeners.destroy();
+    this.eventsDispatcher.off(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -118,7 +127,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
-    this.popover = new Popover({
+
+    const PopoverClass = isMobileScreen() ? PopoverMobile : PopoverDesktop;
+
+    this.popover = new PopoverClass({
       searchable: true,
       items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
@@ -132,7 +144,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover.on(PopoverEvent.Close, this.onPopoverClose);
 
-    this.nodes.wrapper.append(this.popover.getElement());
+    this.nodes.wrapper?.append(this.popover.getElement());
 
     this.popover.show();
   }
@@ -140,14 +152,14 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Returns root block settings element
    */
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | undefined {
     return this.nodes.wrapper;
   }
 
   /**
    * Close Block Settings pane
    */
-  public close(): void {
+  public close = (): void => {
     if (!this.opened) {
       return;
     }
@@ -183,7 +195,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover.getElement().remove();
       this.popover = null;
     }
-  }
+  };
 
   /**
    * Handles popover close event
