@@ -552,21 +552,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public async save(): Promise<undefined | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
-    const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
-
-    [
-      ...this.tunesInstances.entries(),
-      ...this.defaultTunesInstances.entries(),
-    ]
-      .forEach(([name, tune]) => {
-        if (_.isFunction(tune.save)) {
-          try {
-            tunesData[name] = tune.save();
-          } catch (e) {
-            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
-          }
-        }
-      });
+    const tunesData: { [name: string]: BlockTuneData } = this.getTunesData();
 
     /**
      * Measuring execution time
@@ -726,6 +712,30 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const blockData = await this.data;
 
     return convertBlockDataToString(blockData, this.tool.conversionConfig);
+  }
+
+
+  /**
+   * Return the data of the corresponding tunes
+   */
+  public getTunesData(): { [name: string]: BlockTuneData } {
+    const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
+
+    [
+      ...this.tunesInstances.entries(),
+      ...this.defaultTunesInstances.entries(),
+    ]
+      .forEach(([name, tune]) => {
+        if (_.isFunction(tune.save)) {
+          try {
+            tunesData[name] = tune.save();
+          } catch (e) {
+            _.log(`Tune ${tune.constructor.name} save method throws an Error %o`, 'warn', e);
+          }
+        }
+      });
+
+    return tunesData;
   }
 
   /**

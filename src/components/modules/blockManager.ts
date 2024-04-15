@@ -989,15 +989,18 @@ export default class BlockManager extends Module {
    * @param detailData - additional data to pass with change event
    */
   private blockDidMutated<Type extends BlockMutationType>(mutationType: Type, block: Block, detailData: BlockMutationEventDetailWithoutTarget<Type>): Block {
+    const tunesData = block.getTunesData();
+
     const event = new CustomEvent(mutationType, {
       detail: {
         target: new BlockAPI(block),
+        tunes: tunesData,
         ...detailData as BlockMutationEventDetailWithoutTarget<Type>,
       },
     });
 
     this.eventsDispatcher.emit(BlockChanged, {
-      event: event as BlockMutationEventMap[Type],
+      event: event as unknown as BlockMutationEventMap[Type],
     });
 
     return block;
