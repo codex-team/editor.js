@@ -61,11 +61,10 @@ export default class Core {
         UI.checkEmptiness();
         ModificationsObserver.enable();
 
-        try {
-          if ((this.configuration as EditorConfig).autofocus) {
-            Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
-          }
-        } catch {}
+        if ((this.configuration as EditorConfig).autofocus) {
+          Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
+          BlockManager.highlightCurrentNode();
+        }
 
         onReady();
       })
