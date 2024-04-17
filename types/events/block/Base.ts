@@ -10,5 +10,5 @@ export interface BlockMutationEventDetail {
    */
   target: BlockAPI;
 
-  tunesData?: { [name: string]: BlockTuneData };
+  tunes?: { [name: string]: BlockTuneData };
 }
