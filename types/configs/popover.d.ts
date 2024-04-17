@@ -1,7 +1,23 @@
+
+/**
+ * Represents popover item delimiter
+ */
+export interface PopoverItemDelimiter {
+  /**
+   * Item type
+   */
+  type: 'delimiter'
+}
+
 /**
  * Common parameters for both types of popover items: with or without confirmation
  */
 interface PopoverItemBase {
+  /**
+   * Item type
+   */
+  type: 'default';
+
   /**
    * Displayed text
    */
@@ -54,7 +70,7 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: PopoverItem;
+  confirmation: PopoverItemDefault;
 
   onActivate?: never;
 }
@@ -92,7 +108,15 @@ export interface PopoverItemWithChildren extends PopoverItemBase {
 }
 
 /**
+ * Default, non-delimiter popover item type
+ */
+export type PopoverItemDefault = 
+  PopoverItemWithConfirmation | 
+  PopoverItemWithoutConfirmation | 
+  PopoverItemWithChildren;
+
+/**
  * Represents single popover item
  */
-export type PopoverItem = PopoverItemWithConfirmation | PopoverItemWithoutConfirmation | PopoverItemWithChildren
+export type PopoverItem = PopoverItemDefault |  PopoverItemDelimiter;
 

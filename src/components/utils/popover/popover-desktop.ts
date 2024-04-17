@@ -6,6 +6,7 @@ import { keyCodes } from '../../utils';
 import { css } from './popover.const';
 import { SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
+import { PopoverItemDefault } from './components/popover-item';
 
 /**
  * Desktop popover.
@@ -184,7 +185,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item – item to show nested popover for
    */
-  protected override showNestedItems(item: PopoverItem): void {
+  protected override showNestedItems(item: PopoverItemDefault): void {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
@@ -283,7 +284,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    const popoverItemsElements = this.items.map(item => item.getElement());
+    const popoverItemsElements = this.itemsDefault.map(item => item.getElement());
     const customContentControlsElements = this.customContentFlippableItems || [];
 
     /**
@@ -296,7 +297,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    const focusedItem = this.items.find(item => item.isFocused);
+    const focusedItem = this.itemsDefault.find(item => item.isFocused);
 
     focusedItem?.onFocus();
   };
@@ -307,7 +308,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item - item to display nested popover by
    */
-  private showNestedPopoverForItem(item: PopoverItem): void {
+  private showNestedPopoverForItem(item: PopoverItemDefault): void {
     this.nestedPopover = new PopoverDesktop({
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
