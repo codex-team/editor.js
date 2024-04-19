@@ -170,14 +170,23 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param result - search results
    */
   protected onSearch = (query: string, result: SearchableItem[]): void => {
-    this.itemsInteractive
-      .forEach((item) => {
-        const isHidden = !result.includes(item);
+    const isEmptyQuery = query === '';
+    const isNothingFound = result.length === 0;
 
+    this.items
+      .forEach((item) => {
+        let isHidden = false;
+
+        if (item instanceof PopoverItemDefault) {
+          isHidden = !result.includes(item);
+        } else if (item instanceof PopoverItemDelimiter) {
+          /** Should hide delimiters if nothing found message displayed or if there is some search query applied */
+          isHidden = isNothingFound || !isEmptyQuery;
+        }
         item.toggleHidden(isHidden);
       });
-    this.toggleNothingFoundMessage(result.length === 0);
-    this.toggleCustomContent(query !== '');
+    this.toggleNothingFoundMessage(isNothingFound);
+    this.toggleCustomContent(isEmptyQuery);
   };
 
 

@@ -11,4 +11,5 @@ const className = bem('ce-popover-item-delimiter');
 export const css = {
   container: className(),
   line: className('line'),
+  hidden: className(null, 'hidden'),
 };

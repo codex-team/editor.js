@@ -199,6 +199,10 @@
  .ce-popover-item-delimiter {
    padding: 4px 3px;
 
+   &--hidden {
+    display: none;
+   }
+
    &__line {
      height: 1px;
      background: var(--color-border);
