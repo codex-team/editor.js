@@ -2,7 +2,7 @@
 /**
  * Represents popover item delimiter
  */
-export interface PopoverItemDelimiter {
+export interface PopoverItemDelimiterParams {
   /**
    * Item type
    */
@@ -12,7 +12,7 @@ export interface PopoverItemDelimiter {
 /**
  * Common parameters for both types of popover items: with or without confirmation
  */
-interface PopoverItemBase {
+interface PopoverItemBaseParams {
   /**
    * Item type
    */
@@ -55,8 +55,8 @@ interface PopoverItemBase {
   name?: string;
 
   /**
-   * Defines whether item should toggle on click. 
-   * Can be represented as boolean value or a string key. 
+   * Defines whether item should toggle on click.
+   * Can be represented as boolean value or a string key.
    * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
   toggle?: boolean | string;
@@ -65,12 +65,12 @@ interface PopoverItemBase {
 /**
  * Represents popover item with confirmation state configuration
  */
-export interface PopoverItemWithConfirmation extends PopoverItemBase {
+export interface PopoverItemWithConfirmationParams extends PopoverItemBaseParams {
   /**
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: PopoverItemDefault;
+  confirmation: PopoverItemDefaultParams;
 
   onActivate?: never;
 }
@@ -78,7 +78,7 @@ export interface PopoverItemWithConfirmation extends PopoverItemBase {
 /**
  * Represents popover item without confirmation state configuration
  */
-export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
+export interface PopoverItemWithoutConfirmationParams extends PopoverItemBaseParams {
   confirmation?: never;
 
   /**
@@ -87,7 +87,7 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
    * @param item - activated item
    * @param event - event that initiated item activation
    */
-  onActivate: (item: PopoverItem, event?: PointerEvent) => void;
+  onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
 
 }
 
@@ -95,7 +95,7 @@ export interface PopoverItemWithoutConfirmation extends PopoverItemBase {
 /**
  * Represents popover item with children (nested popover items)
  */
-export interface PopoverItemWithChildren extends PopoverItemBase {
+export interface PopoverItemWithChildrenParams extends PopoverItemBaseParams {
   confirmation?: never;
   onActivate?: never;
 
@@ -103,20 +103,20 @@ export interface PopoverItemWithChildren extends PopoverItemBase {
    * Items of nested popover that should be open on the current item hover/click (depending on platform)
    */
   children?: {
-    items: PopoverItem[]
+    items: PopoverItemParams[]
   }
 }
 
 /**
  * Default, non-delimiter popover item type
  */
-export type PopoverItemDefault = 
-  PopoverItemWithConfirmation | 
-  PopoverItemWithoutConfirmation | 
-  PopoverItemWithChildren;
+export type PopoverItemDefaultParams =
+  PopoverItemWithConfirmationParams |
+  PopoverItemWithoutConfirmationParams |
+  PopoverItemWithChildrenParams;
 
 /**
  * Represents single popover item
  */
-export type PopoverItem = PopoverItemDefault |  PopoverItemDelimiter;
+export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemDelimiterParams;
 

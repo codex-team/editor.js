@@ -5,7 +5,7 @@ import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
 import { css } from './popover.const';
-import { PopoverItem as PopoverItemParams } from '../../../../types';
+import { PopoverItemParams } from './components/popover-item';
 
 /**
  * Class responsible for rendering popover and handling its behaviour

@@ -1,6 +1,6 @@
 import { ToolConfig } from './tool-config';
 import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItem } from '../configs';
+import { PopoverItemParams } from '../configs';
 
 /**
  * Tool may specify its toolbox configuration
@@ -32,7 +32,7 @@ export interface ToolboxConfigEntry {
 /**
  * Represents single Tunes Menu item
  */
-export type TunesMenuConfigItem = PopoverItem & {
+export type TunesMenuConfigItem = PopoverItemParams & {
   /**
    * Tune displayed text.
    */

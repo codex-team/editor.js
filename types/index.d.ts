@@ -77,10 +77,15 @@ export {
   Dictionary,
   DictValue,
   I18nConfig,
-  PopoverItem,
-  PopoverItemWithConfirmation,
-  PopoverItemWithoutConfirmation
 } from './configs';
+
+export {
+  PopoverItemParams,
+  PopoverItemDefaultParams,
+  PopoverItemWithConfirmationParams,
+  PopoverItemWithoutConfirmationParams
+} from '../src/components/utils/popover/components/popover-item';
+
 export { OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockId } from './data-formats/block-id';
 export { BlockAPI } from './api'

@@ -2,6 +2,7 @@ import { PopoverItemDefault } from './popover-item-default/popover-item-default'
 import { PopoverItemDelimiter } from './popover-item-delimiter/popover-item-delimiter';
 
 export * from './popover-item-default/popover-item-default.const';
+export * from './popover-item.types';
 
 /**
  * Commoon type for popover items
