@@ -1,6 +1,6 @@
 import { ToolConfig } from './tool-config';
 import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItemParams } from '../configs';
+import { PopoverItemDefaultParams, PopoverItemDelimiterParams, PopoverItemParams } from '../configs';
 
 /**
  * Tool may specify its toolbox configuration
@@ -28,11 +28,10 @@ export interface ToolboxConfigEntry {
   data?: BlockToolData
 }
 
-
 /**
- * Represents single Tunes Menu item
+ * Represents single interactive (non-delimiter) Tunes Menu item
  */
-export type TunesMenuConfigItem = PopoverItemParams & {
+export type TunesMenuConfigDefaultItem = PopoverItemDefaultParams & {
   /**
    * Tune displayed text.
    */
@@ -50,8 +49,18 @@ export type TunesMenuConfigItem = PopoverItemParams & {
    * Menu item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing menu item activation handler.
    */
-  confirmation?: TunesMenuConfigItem;
+  confirmation?: TunesMenuConfigDefaultItem;
 }
+
+/**
+ * Represents single delimiter Tunes Menu item
+ */
+export type TunesMenuConfigDelimiterItem = PopoverItemDelimiterParams;
+
+/**
+ * Union of all Tunes Menu item types
+ */
+export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigDelimiterItem;
 
 /**
  * Tool may specify its tunes configuration

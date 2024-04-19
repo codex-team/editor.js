@@ -13,7 +13,7 @@ export interface PopoverItemDelimiterParams {
 /**
  * Common parameters for all kinds of default popover items: with or without confirmation
  */
-interface PopoverItemBaseParams {
+interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
@@ -66,7 +66,7 @@ interface PopoverItemBaseParams {
 /**
  * Represents popover item with confirmation state configuration
  */
-export interface PopoverItemWithConfirmationParams extends PopoverItemBaseParams {
+export interface PopoverItemWithConfirmationParams extends PopoverItemDefaultBaseParams {
   /**
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
@@ -79,7 +79,7 @@ export interface PopoverItemWithConfirmationParams extends PopoverItemBaseParams
 /**
  * Represents popover item without confirmation state configuration
  */
-export interface PopoverItemWithoutConfirmationParams extends PopoverItemBaseParams {
+export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefaultBaseParams {
   confirmation?: never;
 
   /**
@@ -96,7 +96,7 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemBasePar
 /**
  * Represents popover item with children (nested popover items)
  */
-export interface PopoverItemWithChildrenParams extends PopoverItemBaseParams {
+export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBaseParams {
   confirmation?: never;
   onActivate?: never;
 
