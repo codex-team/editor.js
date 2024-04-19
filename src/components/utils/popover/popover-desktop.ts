@@ -87,6 +87,8 @@ export class PopoverDesktop extends PopoverAbstract {
     });
 
     this.flipper.onFlip(this.onFlip);
+
+    this.search?.addSearchHandler(this.handleSearch);
   }
 
   /**
@@ -162,25 +164,6 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
-   * Handles input inside search field
-   *
-   * @param query - search query text
-   * @param result - search results
-   */
-  protected override onSearch = (query: string, result: SearchableItem[]): void => {
-    super.onSearch(query, result);
-
-    /** List of elements available for keyboard navigation considering search query applied */
-    const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
-
-    if (this.flipper.isActivated) {
-      /** Update flipper items with only visible */
-      this.flipper.deactivate();
-      this.flipper.activate(flippableElements as HTMLElement[]);
-    }
-  };
-
-  /**
    * Handles displaying nested items for the item.
    *
    * @param item – item to show nested popover for
@@ -191,6 +174,23 @@ export class PopoverDesktop extends PopoverAbstract {
     }
     this.showNestedPopoverForItem(item);
   }
+
+  /**
+   * Handles input inside search field
+   *
+   * @param query - search query text
+   * @param result - search results
+   */
+  private handleSearch = (query: string, result: SearchableItem[]): void => {
+    /** List of elements available for keyboard navigation considering search query applied */
+    const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
+
+    if (this.flipper.isActivated) {
+      /** Update flipper items with only visible */
+      this.flipper.deactivate();
+      this.flipper.activate(flippableElements as HTMLElement[]);
+    }
+  };
 
   /**
    * Checks if popover should be opened bottom.

@@ -37,7 +37,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   /**
    * Instance of the Search Input
    */
-  private search: SearchInput | undefined;
+  protected search: SearchInput | undefined;
 
   /**
    * Messages that will be displayed in popover
@@ -164,12 +164,29 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   }
 
   /**
+   * Retrieves popover item that is the target of the specified event
+   *
+   * @param event - event to retrieve popover item from
+   */
+  protected getTargetItem(event: Event): PopoverItemDefault | undefined {
+    return this.itemsInteractive.find(el => {
+      const itemEl = el.getElement();
+
+      if (itemEl === null) {
+        return false;
+      }
+
+      return event.composedPath().includes(itemEl);
+    });
+  }
+
+  /**
    * Handles input inside search field
    *
    * @param query - search query text
    * @param result - search results
    */
-  protected onSearch = (query: string, result: SearchableItem[]): void => {
+  private onSearch = (query: string, result: SearchableItem[]): void => {
     const isEmptyQuery = query === '';
     const isNothingFound = result.length === 0;
 
@@ -188,24 +205,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     this.toggleNothingFoundMessage(isNothingFound);
     this.toggleCustomContent(isEmptyQuery);
   };
-
-
-  /**
-   * Retrieves popover item that is the target of the specified event
-   *
-   * @param event - event to retrieve popover item from
-   */
-  protected getTargetItem(event: Event): PopoverItemDefault | undefined {
-    return this.itemsInteractive.find(el => {
-      const itemEl = el.getElement();
-
-      if (itemEl === null) {
-        return false;
-      }
-
-      return event.composedPath().includes(itemEl);
-    });
-  }
 
   /**
    * Adds search to the popover

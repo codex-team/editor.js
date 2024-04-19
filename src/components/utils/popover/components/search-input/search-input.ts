@@ -36,7 +36,7 @@ export class SearchInput {
   /**
    * Externally passed callback for the search
    */
-  private readonly onSearch: (query: string, items: SearchableItem[]) => void;
+  private readonly onSearch: Array<(query: string, items: SearchableItem[])=> void> = [];
 
   /**
    * @param options - available config
@@ -51,7 +51,7 @@ export class SearchInput {
   }) {
     this.listeners = new Listeners();
     this.items = items;
-    this.onSearch = onSearch;
+    this.onSearch.push(onSearch);
 
     /** Build ui */
     this.wrapper = Dom.make('div', css.wrapper);
@@ -76,7 +76,7 @@ export class SearchInput {
     this.listeners.on(this.input, 'input', () => {
       this.searchQuery = this.input.value;
 
-      this.onSearch(this.searchQuery, this.foundItems);
+      this.onSearch.forEach(callback => callback(this.searchQuery, this.foundItems));
     });
   }
 
@@ -101,7 +101,16 @@ export class SearchInput {
     this.input.value = '';
     this.searchQuery = '';
 
-    this.onSearch('', this.foundItems);
+    this.onSearch.forEach(callback => callback('', this.foundItems));
+  }
+
+  /**
+   * Adds search handler
+   *
+   * @param onSearch - search callback
+   */
+  public addSearchHandler(onSearch: (query: string, items: SearchableItem[]) => void): void {
+    this.onSearch.push(onSearch);
   }
 
   /**
@@ -109,6 +118,7 @@ export class SearchInput {
    */
   public destroy(): void {
     this.listeners.removeAll();
+    this.onSearch.length = 0;
   }
 
   /**
