@@ -169,12 +169,11 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param result - search results
    */
   protected onSearch = (query: string, result: SearchableItem[]): void => {
-    this.items
-      .filter(item => item instanceof PopoverItemDefault)
+    this.itemsDefault
       .forEach((item) => {
-        const isHidden = !result.includes(item as PopoverItemDefault);
+        const isHidden = !result.includes(item);
 
-        (item as PopoverItemDefault).toggleHidden(isHidden);
+        item.toggleHidden(isHidden);
       });
     this.toggleNothingFoundMessage(result.length === 0);
     this.toggleCustomContent(query !== '');

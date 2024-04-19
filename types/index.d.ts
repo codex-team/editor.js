@@ -84,7 +84,7 @@ export {
   PopoverItemDefaultParams,
   PopoverItemWithConfirmationParams,
   PopoverItemWithoutConfirmationParams
-} from '../src/components/utils/popover/components/popover-item';
+} from '../src/components/utils/popover';
 
 export { OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockId } from './data-formats/block-id';

@@ -23,5 +23,4 @@ export const css = {
   iconTool: className('icon', 'tool'),
   iconChevronRight: className('icon', 'chevron-right'),
   wobbleAnimation: bem('wobble')(),
-  line: className('line'),
 };

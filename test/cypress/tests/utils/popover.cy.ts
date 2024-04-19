@@ -1,5 +1,5 @@
 import { PopoverDesktop as Popover } from '../../../../src/components/utils/popover';
-import { PopoverItem } from '../../../../types';
+import { PopoverItemParams } from '../../../../types';
 import { TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -15,14 +15,16 @@ describe('Popover', () => {
      * Confirmation is moved to separate variable to be able to test it's callback execution.
      * (Inside popover null value is set to confirmation property, so, object becomes unavailable otherwise)
      */
-    const confirmation = {
+    const confirmation: PopoverItemParams = {
+      type: 'default',
       icon: confirmActionIcon,
       title: confirmActionTitle,
       onActivate: cy.stub(),
     };
 
-    const items: PopoverItem[] = [
+    const items: PopoverItemParams[] = [
       {
+        type: 'default',
         icon: actionIcon,
         title: actionTitle,
         name: 'testItem',
@@ -69,8 +71,9 @@ describe('Popover', () => {
   });
 
   it('should render the items with true isActive property value as active', () => {
-    const items: PopoverItem[] = [
+    const items = [
       {
+        type: 'default',
         icon: 'Icon',
         title: 'Title',
         isActive: true,
@@ -93,8 +96,9 @@ describe('Popover', () => {
   });
 
   it('should not execute item\'s onActivate callback if the item is disabled', () => {
-    const items: PopoverItem[] = [
+    const items: PopoverItemParams[] = [
       {
+        type: 'default',
         icon: 'Icon',
         title: 'Title',
         isDisabled: true,
@@ -115,6 +119,9 @@ describe('Popover', () => {
         .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
+          if (items[0].type !== 'default') {
+            return;
+          }
           // Check onActivate callback has never been called
           expect(items[0].onActivate).to.have.not.been.called;
         });
@@ -122,8 +129,9 @@ describe('Popover', () => {
   });
 
   it('should close once item with closeOnActivate property set to true is activated', () => {
-    const items: PopoverItem[] = [
+    const items = [
       {
+        type: 'default',
         icon: 'Icon',
         title: 'Title',
         closeOnActivate: true,
@@ -149,8 +157,9 @@ describe('Popover', () => {
   });
 
   it('should highlight as active the item with toggle property set to true once activated', () => {
-    const items: PopoverItem[] = [
+    const items = [
       {
+        type: 'default',
         icon: 'Icon',
         title: 'Title',
         toggle: true,
@@ -173,8 +182,9 @@ describe('Popover', () => {
   });
 
   it('should perform radiobutton-like behavior among the items that have toggle property value set to the same string value', () => {
-    const items: PopoverItem[] = [
+    const items = [
       {
+        type: 'default',
         icon: 'Icon 1',
         title: 'Title 1',
         toggle: 'group-name',
@@ -183,6 +193,7 @@ describe('Popover', () => {
         onActivate: (): void => {},
       },
       {
+        type: 'default',
         icon: 'Icon 2',
         title: 'Title 2',
         toggle: 'group-name',
@@ -218,8 +229,9 @@ describe('Popover', () => {
   });
 
   it('should toggle item if it is the only item in toggle group', () => {
-    const items: PopoverItem[] = [
+    const items = [
       {
+        type: 'default',
         icon: 'Icon',
         title: 'Title',
         toggle: 'key',
@@ -492,6 +504,12 @@ describe('Popover', () => {
     cy.get('[data-cy=editorjs]')
       .get('.ce-toolbar__settings-btn')
       .click();
+
+    /** Check item displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item"]')
+      .should('be.visible');
   });
 
   it('should display delimiter', () => {

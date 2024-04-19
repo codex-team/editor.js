@@ -8,17 +8,16 @@ export class PopoverItemDelimiter {
   /**
    * Html elements
    */
-  private nodes = {
-    root: null,
-    line: null,
-  };
+  private nodes: { root: HTMLElement; line: HTMLElement };
 
   /**
    * Constructs the instance
    */
   constructor() {
-    this.nodes.root = Dom.make('div', css.container);
-    this.nodes.line = Dom.make('div', css.line);
+    this.nodes = {
+      root: Dom.make('div', css.container),
+      line: Dom.make('div', css.line),
+    };
 
     this.nodes.root.appendChild(this.nodes.line);
   }
