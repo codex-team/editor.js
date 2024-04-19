@@ -284,7 +284,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    const popoverItemsElements = this.itemsDefault.map(item => item.getElement());
+    const popoverItemsElements = this.itemsInteractive.map(item => item.getElement());
     const customContentControlsElements = this.customContentFlippableItems || [];
 
     /**
@@ -297,7 +297,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    const focusedItem = this.itemsDefault.find(item => item.isFocused);
+    const focusedItem = this.itemsInteractive.find(item => item.isFocused);
 
     focusedItem?.onFocus();
   };

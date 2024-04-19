@@ -27,9 +27,10 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   protected nodes: Nodes;
 
   /**
-   * List of usual (non-delimiter) popover items that can be clicked, hovered, etc.
+   * List of usual interactive popover items that can be clicked, hovered, etc.
+   * (excluding delimiters)
    */
-  protected get itemsDefault(): PopoverItemDefault[] {
+  protected get itemsInteractive(): PopoverItemDefault[] {
     return this.items.filter(item => item instanceof PopoverItemDefault) as PopoverItemDefault[];
   }
 
@@ -130,7 +131,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     this.nodes.popover.classList.remove(css.popoverOpened);
     this.nodes.popover.classList.remove(css.popoverOpenTop);
 
-    this.itemsDefault.forEach(item => item.reset());
+    this.itemsInteractive.forEach(item => item.reset());
 
     if (this.search !== undefined) {
       this.search.clear();
@@ -169,7 +170,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param result - search results
    */
   protected onSearch = (query: string, result: SearchableItem[]): void => {
-    this.itemsDefault
+    this.itemsInteractive
       .forEach((item) => {
         const isHidden = !result.includes(item);
 
@@ -186,7 +187,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param event - event to retrieve popover item from
    */
   protected getTargetItem(event: Event): PopoverItemDefault | undefined {
-    return this.itemsDefault.find(el => {
+    return this.itemsInteractive.find(el => {
       const itemEl = el.getElement();
 
       if (itemEl === null) {
@@ -202,7 +203,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    */
   private addSearch(): void {
     this.search = new SearchInput({
-      items: this.itemsDefault,
+      items: this.itemsInteractive,
       placeholder: this.messages.search,
       onSearch: this.onSearch,
     });
@@ -248,7 +249,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     }
 
     /** Cleanup other items state */
-    this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
+    this.itemsInteractive.filter(x => x !== item).forEach(x => x.reset());
 
     item.handleClick();
 
@@ -291,7 +292,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     }
 
     if (typeof clickedItem.toggle === 'string') {
-      const itemsInToggleGroup = this.itemsDefault.filter(item => item.toggle === clickedItem.toggle);
+      const itemsInToggleGroup = this.itemsInteractive.filter(item => item.toggle === clickedItem.toggle);
 
       /** If there's only one item in toggle group, toggle it */
       if (itemsInToggleGroup.length === 1) {

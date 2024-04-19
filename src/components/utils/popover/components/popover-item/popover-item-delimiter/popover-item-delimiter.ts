@@ -1,10 +1,11 @@
 import Dom from '../../../../../dom';
+import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-delimiter.const';
 
 /**
  * Represents popover delimiter node
  */
-export class PopoverItemDelimiter {
+export class PopoverItemDelimiter extends PopoverItem {
   /**
    * Html elements
    */
@@ -14,6 +15,8 @@ export class PopoverItemDelimiter {
    * Constructs the instance
    */
   constructor() {
+    super();
+
     this.nodes = {
       root: Dom.make('div', css.container),
       line: Dom.make('div', css.line),

@@ -4,6 +4,7 @@ import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
   PopoverItemParams as PopoverItemParams
 } from '../popover-item.types';
+import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
 
 /**
@@ -13,7 +14,7 @@ import { css } from './popover-item-default.const';
  * @todo replace multiple make() usages with constructing separate instaces
  * @todo split regular popover item and popover item with confirmation to separate classes
  */
-export class PopoverItemDefault {
+export class PopoverItemDefault extends PopoverItem {
   /**
    * True if item is disabled and hence not clickable
    */
@@ -87,6 +88,8 @@ export class PopoverItemDefault {
    * @param params - popover item construction params
    */
   constructor(params: PopoverItemDefaultParams) {
+    super();
+
     this.params = params;
     this.nodes.root = this.make(params);
   }
