@@ -267,6 +267,7 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
+          type: 'default',
           icon: 'Icon',
           title: 'Title',
           toggle: 'key',
@@ -274,6 +275,7 @@ describe('Popover', () => {
           children: {
             items: [
               {
+                type: 'default',
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
@@ -343,6 +345,7 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
+          type: 'default',
           icon: 'Icon',
           title: 'Tune',
           toggle: 'key',
@@ -350,6 +353,7 @@ describe('Popover', () => {
           children: {
             items: [
               {
+                type: 'default',
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
@@ -440,5 +444,117 @@ describe('Popover', () => {
     cy.get('[data-cy=editorjs]')
       .get('.ce-popover-header')
       .should('not.exist');
+  });
+
+
+  it('should display default (non-delimiter) items without specifying type: default', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  {
+          // @ts-expect-error type is not specified on purpose to test the back compatibility
+          onActivate: (): void => {},
+          icon: 'Icon',
+          title: 'Tune',
+          toggle: 'key',
+          name: 'test-item',
+        };
+      }
+    }
+
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+  });
+
+  it('should display delimiter', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  [
+          {
+            type: 'default',
+            onActivate: (): void => {},
+            icon: 'Icon',
+            title: 'Tune',
+            toggle: 'key',
+            name: 'test-item',
+          },
+          {
+            type: 'delimiter',
+          },
+        ];
+      }
+    }
+
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check item displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item"]')
+      .should('be.visible');
+
+    /** Check delimiter displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-item-delimiter')
+      .should('be.visible');
   });
 });
