@@ -187,11 +187,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param data.query - search query text
    * @param data.result - search results
    */
-  private onSearch = (data?: { query: string, items: SearchableItem[] }): void => {
-    if (data === undefined) {
-      return;
-    }
-
+  private onSearch = (data: { query: string, items: SearchableItem[] }): void => {
     const isEmptyQuery = data.query === '';
     const isNothingFound = data.items.length === 0;
 

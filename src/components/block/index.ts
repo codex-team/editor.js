@@ -612,7 +612,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Returns data to render in tunes menu.
-   * Splits block tunes settings into 2 groups: popover items and custom html.
+   * Splits block tunes settings into 3 groups: popover items and custom html.
    */
   public getTunes(): [PopoverItemParams[], PopoverItemParams[], HTMLElement] {
     const customHtmlTunesContainer = document.createElement('div');
@@ -621,26 +621,28 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
 
+    /** Separate custom html from Popover items params for tool's tunes */
+    const {
+      items: toolTunesPopoverParams,
+      htmlElement: toolTunesHtmlElement,
+    } = this.getTunesDataSegregated(tunesDefinedInTool);
+
+    if (toolTunesHtmlElement !== undefined) {
+      customHtmlTunesContainer.appendChild(toolTunesHtmlElement);
+    }
+
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [
       ...this.tunesInstances.values(),
       ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
-    const {
-      items: toolTunesPopoverParams,
-      htmlElement: toolTunesHtmlElement,
-    } = this.getTunesData(tunesDefinedInTool);
-
-    if (toolTunesHtmlElement !== undefined) {
-      customHtmlTunesContainer.appendChild(toolTunesHtmlElement);
-    }
-
+    /** Separate custom html from Popover items params for common tunes */
     commonTunes.forEach(rendered => {
       const {
         items,
         htmlElement,
-      } = this.getTunesData(rendered);
+      } = this.getTunesDataSegregated(rendered);
 
       if (htmlElement !== undefined) {
         customHtmlTunesContainer.appendChild(htmlElement);
@@ -658,7 +660,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param tunes
    */
-  private getTunesData(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
+  private getTunesDataSegregated(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
     const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
 
     if ($.isElement(tunes)) {
