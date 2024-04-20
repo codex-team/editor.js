@@ -575,4 +575,197 @@ describe('Popover', () => {
       .get('.ce-popover-item-delimiter')
       .should('be.visible');
   });
+
+  it('should perform keyboard navigation between items ignoring delimiters', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  [
+          {
+            type: 'default',
+            onActivate: (): void => {},
+            icon: 'Icon',
+            title: 'Tune 1',
+            name: 'test-item-1',
+          },
+          {
+            type: 'delimiter',
+          },
+          {
+            type: 'default',
+            onActivate: (): void => {},
+            icon: 'Icon',
+            title: 'Tune 2',
+            name: 'test-item-2',
+          },
+        ];
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Press Tab */
+    cy.tab();
+
+    /** Check first item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-1"].ce-popover-item--focused')
+      .should('exist');
+
+    /** Check second item is not focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-2"].ce-popover-item--focused')
+      .should('not.exist');
+
+    /** Press Tab */
+    cy.tab();
+
+    /** Check first item is not focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-1"].ce-popover-item--focused')
+      .should('not.exist');
+
+    /** Check second item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-2"].ce-popover-item--focused')
+      .should('exist');
+  });
+
+  it('should perform keyboard navigation between items ignoring delimiters when search query is applied', () => {
+    /** Tool class to test how it is displayed inside block tunes popover */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): TunesMenuConfig {
+        return  [
+          {
+            type: 'default',
+            onActivate: (): void => {},
+            icon: 'Icon',
+            title: 'Tune 1',
+            name: 'test-item-1',
+          },
+          {
+            type: 'delimiter',
+          },
+          {
+            type: 'default',
+            onActivate: (): void => {},
+            icon: 'Icon',
+            title: 'Tune 2',
+            name: 'test-item-2',
+          },
+        ];
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check delimiter displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-item-delimiter')
+      .should('be.visible');
+
+    /** Enter search query */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=block-tunes] .cdx-search-field__input')
+      .type('Tune');
+
+    /** Check delimiter not displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('.ce-popover-item-delimiter')
+      .should('not.be.visible');
+
+    /** Press Tab */
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
+
+    /** Check first item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-1"].ce-popover-item--focused')
+      .should('exist');
+
+    /** Check second item is not focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-2"].ce-popover-item--focused')
+      .should('not.exist');
+
+    /** Press Tab */
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
+
+    /** Check first item is not focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-1"].ce-popover-item--focused')
+      .should('not.exist');
+
+    /** Check second item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover__container')
+      .get('[data-item-name="test-item-2"].ce-popover-item--focused')
+      .should('exist');
+  });
 });

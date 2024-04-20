@@ -28,7 +28,7 @@ export class PopoverItemDelimiter extends PopoverItem {
   /**
    * Returns popover delimiter root element
    */
-  public override getElement(): HTMLElement {
+  public getElement(): HTMLElement {
     return this.nodes.root;
   }
 
@@ -37,7 +37,7 @@ export class PopoverItemDelimiter extends PopoverItem {
    *
    * @param isHidden - true if item should be hidden
    */
-  public override toggleHidden(isHidden: boolean): void {
+  public toggleHidden(isHidden: boolean): void {
     this.nodes.root?.classList.toggle(css.hidden, isHidden);
   }
 }
