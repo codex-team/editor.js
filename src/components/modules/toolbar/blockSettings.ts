@@ -7,10 +7,12 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemDefaultParams } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
+import * as _ from '../../utils';
+import { IconReplace } from '@codexteam/icons';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -108,6 +110,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
     this.opened = true;
 
+    // console.log(this.getConvertToItems());
     /**
      * If block settings contains any inputs, focus will be set there,
      * so we need to save current selection to restore it after block settings is closed
@@ -123,7 +126,21 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Fill Tool's settings
      */
-    const [tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
+    const [toolTunesItems, tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
+    const items = [
+      ...toolTunesItems.map(tune => this.resolveTuneAliases(tune)),
+      {
+        type: 'default',
+        icon: IconReplace,
+        title: 'Convert to',
+        children: {
+          items: this.getConvertToItems(),
+        },
+      },
+      {
+        type: 'delimiter',
+      },
+    ].concat(tunesItems.map(tune => this.resolveTuneAliases(tune)));
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -132,7 +149,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover = new PopoverClass({
       searchable: true,
-      items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
+      items: items,
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
@@ -196,6 +213,59 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       this.popover = null;
     }
   };
+
+  /**
+   *
+   */
+  private getConvertToItems(): TunesMenuConfigItem[] {
+    const conversionEntries = Array.from(this.Editor.Tools.blockTools.entries());
+
+    const resultItems: TunesMenuConfigItem[] = [];
+
+    conversionEntries.forEach(([toolName, tool]) => {
+      const conversionConfig = tool.conversionConfig;
+
+      /**
+       * Skip tools without «import» rule specified
+       */
+      if (!conversionConfig || !conversionConfig.import) {
+        return;
+      }
+
+      tool.toolbox?.forEach((toolboxItem) => {
+        /**
+         * Skip tools that don't pass 'toolbox' property
+         */
+        if (_.isEmpty(toolboxItem) || !toolboxItem.icon) {
+          return;
+        }
+
+        resultItems.push({
+          type: 'default',
+          icon: toolboxItem.icon,
+          title: toolboxItem.title,
+          name: toolName,
+          closeOnActivate: true,
+          onActivate: (item: TunesMenuConfigItem) => {
+            const { BlockManager, BlockSelection, InlineToolbar, Caret } = this.Editor;
+
+            BlockManager.convert(this.Editor.BlockManager.currentBlock, toolName, toolboxItem.data);
+
+            BlockSelection.clearSelection();
+
+            this.close();
+            InlineToolbar.close();
+
+            window.requestAnimationFrame(() => {
+              Caret.setToBlock(this.Editor.BlockManager.currentBlock, Caret.positions.END);
+            });
+          },
+        });
+      });
+    });
+
+    return resultItems;
+  }
 
   /**
    * Handles popover close event

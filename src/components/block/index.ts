@@ -21,7 +21,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import { TunesMenuConfigItem } from '../../../types/tools';
+import { TunesMenuConfig, TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
@@ -614,9 +614,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Returns data to render in tunes menu.
    * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public getTunes(): [PopoverItemParams[], HTMLElement] {
+  public getTunes(): [PopoverItemParams[], PopoverItemParams[], HTMLElement] {
     const customHtmlTunesContainer = document.createElement('div');
-    const tunesItems: TunesMenuConfigItem[] = [];
+    const commonTunesPopoverParams: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
@@ -627,17 +627,49 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
-    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
-      if ($.isElement(rendered)) {
-        customHtmlTunesContainer.appendChild(rendered);
-      } else if (Array.isArray(rendered)) {
-        tunesItems.push(...rendered);
-      } else {
-        tunesItems.push(rendered);
+    const {
+      items: toolTunesPopoverParams,
+      htmlElement: toolTunesHtmlElement,
+    } = this.getTunesData(tunesDefinedInTool);
+
+    if (toolTunesHtmlElement !== undefined) {
+      customHtmlTunesContainer.appendChild(toolTunesHtmlElement);
+    }
+
+    commonTunes.forEach(rendered => {
+      const {
+        items,
+        htmlElement,
+      } = this.getTunesData(rendered);
+
+      if (htmlElement !== undefined) {
+        customHtmlTunesContainer.appendChild(htmlElement);
+      }
+
+      if (items !== undefined) {
+        commonTunesPopoverParams.push(...items);
       }
     });
 
-    return [tunesItems, customHtmlTunesContainer];
+    return [toolTunesPopoverParams, commonTunesPopoverParams, customHtmlTunesContainer];
+  }
+
+  /**
+   *
+   * @param tunes
+   */
+  private getTunesData(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
+    const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
+
+    if ($.isElement(tunes)) {
+      result.htmlElement = tunes as HTMLElement;
+    } else if (Array.isArray(tunes)) {
+      result.items = tunes as PopoverItemParams[];
+    } else {
+      result.items = [ tunes ];
+    }
+
+    return result;
   }
 
   /**
