@@ -183,11 +183,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * @param data.query - search query text
    * @param data.result - search results
    */
-  private handleSearch = (data?: { query: string, items: SearchableItem[] }): void => {
-    if (data === undefined) {
-      return;
-    }
-
+  private handleSearch = (data: { query: string, items: SearchableItem[] }): void => {
     /** List of elements available for keyboard navigation considering search query applied */
     const flippableElements = data.query === '' ? this.flippableElements : data.items.map(item => (item as PopoverItem).getElement());
 
