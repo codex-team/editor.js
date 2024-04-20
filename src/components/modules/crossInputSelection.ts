@@ -153,40 +153,79 @@ export default class CrossInputSelection extends Module {
     }
 
     if (isPrintableKey(event.keyCode) && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
-      /**
-       * If selection is not cross-input, do nothing
-      */
-      if (!isCrossInputSelection) {
-        console.log('no CIS, default Printable Key behavior');
+      // /**
+      //  * If selection is not cross-input, do nothing
+      // */
+      // if (!isCrossInputSelection) {
+      //   console.log('no CIS, default Printable Key behavior');
 
-        return;
-      }
+      //   return;
+      // }
 
-      event.preventDefault();
+      // event.preventDefault();
       this.handlePrintableKey(event);
     }
   }
 
   private handlePrintableKey(event: KeyboardEvent): void {
-    const selection = window.getSelection();
-    const range = selection?.getRangeAt(0);
 
-    this.handleDelete(event);
+    const api = this.Editor.API.methods;
+    const { BlockManager, Caret } = this.Editor;
 
-    /**
-     * Insert a char to the caret position
-     */
-    /**
-     * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
-     * So we use empty string
-     *
-     * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
-     * @todo fix insertContentAtCaretPosition and use it instead
-     */
-    // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
-    range?.insertNode(document.createTextNode(event.key.length > 1 ? '' : event.key));
+    useCrossInputSelection(api, {
+      onSingleFullySelectedInput: ({ input }, { clear, insertChar } ) => {
+        console.info('Printable Key / onSingleFullySelectedInput: clear input');
 
-    return;
+        event.preventDefault();
+
+        clear();
+        insertChar(event.key.length > 1 ? '' : event.key);
+      },
+      onSinglePartiallySelectedInput: () => {
+        console.info('Printable Key / onSinglePartiallySelectedInput: default behaviour');
+      },
+      onCrossInputSelection: ({ blocks, clear, insertChar }) => {
+        console.info('Printable Key / onCrossInputSelection: remove selected content and merge blocks if possible');
+
+        event.preventDefault();
+
+        /**
+         * Now we need:
+         * 1. Clear content under the selection
+         * 2. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
+        */
+        clear();
+
+        const startingBlockApi = blocks[0];
+        const endingBlockApi = blocks[blocks.length - 1];
+
+        /**
+         * @todo get rid of this by adding 'merge' api method
+         */
+        const startingBlock = BlockManager.getBlockById(startingBlockApi.id);
+        const endingBlock = BlockManager.getBlockById(endingBlockApi.id);
+
+        const bothBlocksMergeable = areBlocksMergeable(startingBlock!, endingBlock!);
+
+        /**
+         * If Blocks could be merged, do it
+         * Otherwise, just navigate to the first block
+         */
+        if (bothBlocksMergeable) {
+          this.mergeBlocks(startingBlock!, endingBlock!);
+        } else {
+          Caret.setToBlock(startingBlock!, this.Editor.Caret.positions.START);
+        }
+
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+
+        /**
+         * Insert a char to the caret position
+         */
+        insertChar(event.key.length > 1 ? '' : event.key);
+      }
+    });
   }
 
   private handleTab(event: KeyboardEvent): void {
@@ -205,43 +244,30 @@ export default class CrossInputSelection extends Module {
     const api = this.Editor.API.methods;
 
     useCrossInputSelection(api, {
-      onSingleFullySelectedInput: () => {
-        console.warn('Enter / onSingleFullySelectedInput. @todo: clear input and add the new block below');
+      onSingleFullySelectedInput: (input, { clear }) => {
+        console.info('Enter / onSingleFullySelectedInput: clear input and add the new block below');
         event.preventDefault();
+        clear();
+
+        const blockAdded = api.blocks.insert();
+
+        api.caret.setToBlock(blockAdded, 'start');
       },
       onSinglePartiallySelectedInput: () => {
         console.warn('Enter / onSinglePartiallySelectedInput: @todo: clear selection and split block');
         event.preventDefault();
       },
-      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, inputs }) => {
+      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, clear }) => {
         console.info('Enter / onCrossInputSelection: remove selected content and set caret to the start of the next block');
 
         event.preventDefault();
 
         /**
          * Now we need:
-         * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
-         * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
-         * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
-         * 4. Set caret to the start of the last input
+         * 1. Clear content under the selection
+         * 2. Set caret to the start of the last input
          */
-        removeRangePartFromInput(range, firstInput.input, { fromRangeStartToInputEnd: true });
-        removeRangePartFromInput(range, lastInput.input, { fromInputStartToRangeEnd: true });
-
-        const removedInputs: BlockInput[] = [];
-        middleInputs.forEach(({ input }: BlockInputIntersected) => {
-          removedInputs.push(input);
-          input.remove();
-        });
-
-        /**
-         * Remove blocks if they are empty
-         */
-        blocks.forEach((block: BlockAPI) => {
-          if (block.inputs.every(input => removedInputs.includes(input))) {
-            api.blocks.delete(block.id);
-          }
-        });
+        clear();
 
         window.getSelection()?.collapseToEnd();
       }
@@ -259,57 +285,27 @@ export default class CrossInputSelection extends Module {
     const { BlockManager, Caret } = this.Editor;
 
     useCrossInputSelection(api, {
-      onSingleFullySelectedInput: ({ input }) => {
+      onSingleFullySelectedInput: ({ input }, { clear }) => {
         console.info('Delete / onSingleFullySelectedInput: clear input');
 
         event.preventDefault();
 
-        const selection = window.getSelection();
-        const range = selection?.getRangeAt(0);
-
-        if (!range) {
-          return;
-        }
-
-        range.selectNodeContents(input);
-        range.deleteContents();
+        clear();
       },
       onSinglePartiallySelectedInput: () => {
         console.info('Delete / onSinglePartiallySelectedInput: default behaviour');
       },
-      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, inputs }) => {
+      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, clear }) => {
         console.info('Delete / onCrossInputSelection: remove selected content and merge blocks if possible');
 
         event.preventDefault();
 
         /**
-         * @todo handle case when first block === last block
-         */
-
-        /**
          * Now we need:
-         * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
-         * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
-         * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
-         * 4. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
-         */
-        removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
-        removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
-
-        const removedInputs: BlockInput[] = [];
-        middleInputs.forEach(({ input }: BlockInputIntersected) => {
-          removedInputs.push(input);
-          input.remove();
-        });
-
-        /**
-         * Remove blocks if they are empty
-         */
-        blocks.forEach((block: BlockAPI) => {
-          if (block.inputs.every(input => removedInputs.includes(input))) {
-            api.blocks.delete(block.id);
-          }
-        });
+         * 1. Clear content under the selection
+         * 2. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
+        */
+        clear();
 
         const startingBlockApi = blocks[0];
         const endingBlockApi = blocks[blocks.length - 1];

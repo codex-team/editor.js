@@ -1,3 +1,5 @@
+import { BlockAPI } from './block';
+
 /**
  * Describes Editor`s caret API
  */
@@ -44,15 +46,15 @@ export interface Caret {
   setToNextBlock(position?: 'end'|'start'|'default', offset?: number): boolean;
 
   /**
-   * Sets caret to the Block by passed index
+   * Sets caret to the Block
    *
-   * @param {number} index - index of Block where to set caret
-   * @param {string} position - position where to set caret
-   * @param {number} offset - caret offset
+   * @param blockOrIndex - either Block API object or Block index
+   * @param position - position where to set caret
+   * @param offset - caret offset
    *
    * @return {boolean}
    */
-  setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;
+  setToBlock(index: BlockAPI | number, position?: 'end'|'start'|'default', offset?: number): boolean;
 
   /**
    * Sets caret to the Editor

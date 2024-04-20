@@ -39,6 +39,7 @@ export type CrossInputSelection = MaybeCrossInputSelection & {
   lastInput: BlockInputIntersected;
   middleInputs: BlockInputIntersected[];
   range: Range;
+  clear: () => void;
 }
 
 /**
@@ -222,13 +223,34 @@ export function removeRangePartFromInput(range: Range, input: HTMLElement, optio
 }
 
 interface CBSOptions {
-  onSingleFullySelectedInput?: (input: BlockInputIntersected) => void;
+  onSingleFullySelectedInput?: (input: BlockInputIntersected, helpers: {clear: () => void, insertChar: (char: string) => void}) => void;
   onSinglePartiallySelectedInput?: (input: BlockInputIntersected) => void;
   onCrossInputSelection?: (selection: CrossInputSelection) => void;
   /**
    * @todo onAtStart, onAtEnd
    */
 }
+
+function insertChar(char: string): void {
+  const selection = window.getSelection();
+  const range = selection?.getRangeAt(0);
+
+  if (!range) {
+    return;
+  }
+
+  /**
+   * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
+   * So we use empty string
+   *
+   * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+   * @todo fix insertContentAtCaretPosition and use it instead
+   */
+  // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
+  range?.insertNode(document.createTextNode(char));
+  range?.collapse(false);
+}
+
 
 /**
  * Returns a list of blocks and inputs that intersect with the given range
@@ -267,16 +289,62 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
   const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
   const middleInputs = intersectedInputs.slice(1, -1);
 
+  /**
+   * @todo handle case when first block === last block (one block with several inputs)
+   */
+
   if (intersectedInputs.length === 1) {
     const { input, block } = firstInput;
     const isWholeInputSelected = range.toString() === input.textContent;
 
     if (isWholeInputSelected) {
-      options?.onSingleFullySelectedInput?.(firstInput);
+
+      /**
+       * Utility function to clear the content under the selection:
+       */
+      const clear = function clear(): void {
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+
+        if (!range) {
+          return;
+        }
+
+        range.selectNodeContents(input);
+        range.deleteContents();
+      }
+
+      options?.onSingleFullySelectedInput?.(firstInput, { clear, insertChar });
     } else {
       options?.onSinglePartiallySelectedInput?.(firstInput);
     }
   } else {
+    /**
+     * Utility function to clear the content under the selection:
+     * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
+     * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
+     * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
+     */
+    const clear = function clear() {
+      removeRangePartFromInput(range, firstInput.input, { fromRangeStartToInputEnd: true });
+      removeRangePartFromInput(range, lastInput.input, { fromInputStartToRangeEnd: true });
+
+      const removedInputs: BlockInput[] = [];
+      middleInputs.forEach(({ input }: BlockInputIntersected) => {
+        removedInputs.push(input);
+        input.remove();
+      });
+
+      /**
+       * Remove blocks if they are empty
+       */
+      intersectedBlocks.forEach((block: BlockAPI) => {
+        if (block.inputs.every(input => removedInputs.includes(input))) {
+          api.blocks.delete(block.id);
+        }
+      });
+    }
+
     options?.onCrossInputSelection?.({
       isCrossBlockSelection,
       isCrossInputSelection: true,
@@ -286,6 +354,8 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
       firstInput,
       lastInput,
       middleInputs,
+      clear,
+      insertChar,
     });
   }
 
