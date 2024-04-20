@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemDelimiter } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemSeparator } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -28,7 +28,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
   /**
    * List of usual interactive popover items that can be clicked, hovered, etc.
-   * (excluding delimiters)
+   * (excluding separators)
    */
   protected get itemsInteractive(): PopoverItemDefault[] {
     return this.items.filter(item => item instanceof PopoverItemDefault) as PopoverItemDefault[];
@@ -155,8 +155,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   protected buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
     return items.map(item => {
       switch (item.type) {
-        case 'delimiter':
-          return new PopoverItemDelimiter();
+        case 'separator':
+          return new PopoverItemSeparator();
         default:
           return new PopoverItemDefault(item);
       }
@@ -197,8 +197,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
         if (item instanceof PopoverItemDefault) {
           isHidden = !data.items.includes(item);
-        } else if (item instanceof PopoverItemDelimiter) {
-          /** Should hide delimiters if nothing found message displayed or if there is some search query applied */
+        } else if (item instanceof PopoverItemSeparator) {
+          /** Should hide separators if nothing found message displayed or if there is some search query applied */
           isHidden = isNothingFound || !isEmptyQuery;
         }
         item.toggleHidden(isHidden);

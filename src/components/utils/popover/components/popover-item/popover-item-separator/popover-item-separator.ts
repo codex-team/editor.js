@@ -1,11 +1,11 @@
 import Dom from '../../../../../dom';
 import { PopoverItem } from '../popover-item';
-import { css } from './popover-item-delimiter.const';
+import { css } from './popover-item-separator.const';
 
 /**
- * Represents popover delimiter node
+ * Represents popover separator node
  */
-export class PopoverItemDelimiter extends PopoverItem {
+export class PopoverItemSeparator extends PopoverItem {
   /**
    * Html elements
    */
@@ -26,7 +26,7 @@ export class PopoverItemDelimiter extends PopoverItem {
   }
 
   /**
-   * Returns popover delimiter root element
+   * Returns popover separator root element
    */
   public getElement(): HTMLElement {
     return this.nodes.root;

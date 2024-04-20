@@ -459,7 +459,7 @@ describe('Popover', () => {
   });
 
 
-  it('should display default (non-delimiter) items without specifying type: default', () => {
+  it('should display default (non-separator) items without specifying type: default', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;
@@ -512,7 +512,7 @@ describe('Popover', () => {
       .should('be.visible');
   });
 
-  it('should display delimiter', () => {
+  it('should display separator', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;
@@ -529,7 +529,7 @@ describe('Popover', () => {
             name: 'test-item',
           },
           {
-            type: 'delimiter',
+            type: 'separator',
           },
         ];
       }
@@ -569,14 +569,14 @@ describe('Popover', () => {
       .get('[data-item-name="test-item"]')
       .should('be.visible');
 
-    /** Check delimiter displayed */
+    /** Check separator displayed */
     cy.get('[data-cy=editorjs]')
       .get('.ce-popover__container')
-      .get('.ce-popover-item-delimiter')
+      .get('.ce-popover-item-separator')
       .should('be.visible');
   });
 
-  it('should perform keyboard navigation between items ignoring delimiters', () => {
+  it('should perform keyboard navigation between items ignoring separators', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;
@@ -592,7 +592,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'delimiter',
+            type: 'separator',
           },
           {
             type: 'default',
@@ -663,7 +663,7 @@ describe('Popover', () => {
       .should('exist');
   });
 
-  it('should perform keyboard navigation between items ignoring delimiters when search query is applied', () => {
+  it('should perform keyboard navigation between items ignoring separators when search query is applied', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
       public static isTune = true;
@@ -679,7 +679,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'delimiter',
+            type: 'separator',
           },
           {
             type: 'default',
@@ -719,10 +719,10 @@ describe('Popover', () => {
       .get('.ce-toolbar__settings-btn')
       .click();
 
-    /** Check delimiter displayed */
+    /** Check separator displayed */
     cy.get('[data-cy=editorjs]')
       .get('.ce-popover__container')
-      .get('.ce-popover-item-delimiter')
+      .get('.ce-popover-item-separator')
       .should('be.visible');
 
     /** Enter search query */
@@ -730,10 +730,10 @@ describe('Popover', () => {
       .get('[data-cy=block-tunes] .cdx-search-field__input')
       .type('Tune');
 
-    /** Check delimiter not displayed */
+    /** Check separator not displayed */
     cy.get('[data-cy=editorjs]')
       .get('.ce-popover__container')
-      .get('.ce-popover-item-delimiter')
+      .get('.ce-popover-item-separator')
       .should('not.be.visible');
 
     /** Press Tab */
