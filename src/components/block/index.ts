@@ -6,7 +6,7 @@ import {
   SanitizerConfig,
   ToolConfig,
   ToolboxConfigEntry,
-  PopoverItem
+  PopoverItemParams
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -614,7 +614,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Returns data to render in tunes menu.
    * Splits block tunes settings into 2 groups: popover items and custom html.
    */
-  public getTunes(): [PopoverItem[], HTMLElement] {
+  public getTunes(): [PopoverItemParams[], HTMLElement] {
     const customHtmlTunesContainer = document.createElement('div');
     const tunesItems: TunesMenuConfigItem[] = [];
 
