@@ -1,13 +1,14 @@
 import Dom from '../../../../dom';
 import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
-import { SearchableItem } from './search-input.types';
+import { SearchInputEvent, SearchInputEventMap, SearchableItem } from './search-input.types';
 import { css } from './search-input.const';
+import EventsDispatcher from '../../../events';
 
 /**
  * Provides search input element and search logic
  */
-export class SearchInput {
+export class SearchInput extends EventsDispatcher<SearchInputEventMap> {
   /**
    * Input wrapper element
    */
@@ -34,24 +35,18 @@ export class SearchInput {
   private searchQuery: string | undefined;
 
   /**
-   * Externally passed callback for the search
-   */
-  private readonly onSearch: Array<(query: string, items: SearchableItem[])=> void> = [];
-
-  /**
    * @param options - available config
    * @param options.items - searchable items list
-   * @param options.onSearch - search callback
    * @param options.placeholder - input placeholder
    */
-  constructor({ items, onSearch, placeholder }: {
+  constructor({ items, placeholder }: {
     items: SearchableItem[];
-    onSearch: (query: string, items: SearchableItem[]) => void;
     placeholder?: string;
   }) {
+    super();
+
     this.listeners = new Listeners();
     this.items = items;
-    this.onSearch.push(onSearch);
 
     /** Build ui */
     this.wrapper = Dom.make('div', css.wrapper);
@@ -76,7 +71,10 @@ export class SearchInput {
     this.listeners.on(this.input, 'input', () => {
       this.searchQuery = this.input.value;
 
-      this.onSearch.forEach(callback => callback(this.searchQuery, this.foundItems));
+      this.emit(SearchInputEvent.Search, {
+        query: this.searchQuery,
+        items: this.foundItems,
+      });
     });
   }
 
@@ -101,16 +99,10 @@ export class SearchInput {
     this.input.value = '';
     this.searchQuery = '';
 
-    this.onSearch.forEach(callback => callback('', this.foundItems));
-  }
-
-  /**
-   * Adds search handler
-   *
-   * @param onSearch - search callback
-   */
-  public addSearchHandler(onSearch: (query: string, items: SearchableItem[]) => void): void {
-    this.onSearch.push(onSearch);
+    this.emit(SearchInputEvent.Search, {
+      query: '',
+      items: this.foundItems,
+    });
   }
 
   /**
@@ -118,7 +110,6 @@ export class SearchInput {
    */
   public destroy(): void {
     this.listeners.removeAll();
-    this.onSearch.length = 0;
   }
 
   /**

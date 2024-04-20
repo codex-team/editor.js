@@ -4,7 +4,7 @@ import { PopoverItem, css as popoverItemCls } from './components/popover-item';
 import { PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
-import { SearchableItem } from './components/search-input';
+import { SearchInputEvent, SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
 import { PopoverItemDefault } from './components/popover-item';
 
@@ -88,7 +88,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.flipper.onFlip(this.onFlip);
 
-    this.search?.addSearchHandler(this.handleSearch);
+    this.search?.on(SearchInputEvent.Search, this.handleSearch);
   }
 
   /**
@@ -179,12 +179,17 @@ export class PopoverDesktop extends PopoverAbstract {
    * Additionaly handles input inside search field.
    * Updates flipper items considering search query applied.
    *
-   * @param query - search query text
-   * @param result - search results
+   * @param data - search event data
+   * @param data.query - search query text
+   * @param data.result - search results
    */
-  private handleSearch = (query: string, result: SearchableItem[]): void => {
+  private handleSearch = (data?: { query: string, items: SearchableItem[] }): void => {
+    if (data === undefined) {
+      return;
+    }
+
     /** List of elements available for keyboard navigation considering search query applied */
-    const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
+    const flippableElements = data.query === '' ? this.flippableElements : data.items.map(item => (item as PopoverItem).getElement());
 
     if (this.flipper.isActivated) {
       /** Update flipper items with only visible */
