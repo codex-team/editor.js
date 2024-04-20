@@ -1,6 +1,6 @@
 import { PopoverItem, PopoverItemDefault, PopoverItemDelimiter } from './components/popover-item';
 import Dom from '../../dom';
-import { SearchInput, SearchableItem } from './components/search-input';
+import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
@@ -183,19 +183,24 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   /**
    * Handles input inside search field
    *
-   * @param query - search query text
-   * @param result - search results
+   * @param data - search input event data
+   * @param data.query - search query text
+   * @param data.result - search results
    */
-  private onSearch = (query: string, result: SearchableItem[]): void => {
-    const isEmptyQuery = query === '';
-    const isNothingFound = result.length === 0;
+  private onSearch = (data?: { query: string, items: SearchableItem[] }): void => {
+    if (data === undefined) {
+      return;
+    }
+
+    const isEmptyQuery = data.query === '';
+    const isNothingFound = data.items.length === 0;
 
     this.items
       .forEach((item) => {
         let isHidden = false;
 
         if (item instanceof PopoverItemDefault) {
-          isHidden = !result.includes(item);
+          isHidden = !data.items.includes(item);
         } else if (item instanceof PopoverItemDelimiter) {
           /** Should hide delimiters if nothing found message displayed or if there is some search query applied */
           isHidden = isNothingFound || !isEmptyQuery;
@@ -213,8 +218,9 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     this.search = new SearchInput({
       items: this.itemsInteractive,
       placeholder: this.messages.search,
-      onSearch: this.onSearch,
     });
+
+    this.search.on(SearchInputEvent.Search, this.onSearch);
 
     const searchElement = this.search.getElement();
 
