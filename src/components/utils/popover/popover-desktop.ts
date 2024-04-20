@@ -176,7 +176,8 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
-   * Handles input inside search field
+   * Additionaly handles input inside search field.
+   * Updates flipper items considering search query applied.
    *
    * @param query - search query text
    * @param result - search results
