@@ -12,20 +12,24 @@ import { isEmpty } from './empty';
 /**
  * Blocks input can be a native input or a contenteditable element
  */
-type BlockInput = HTMLElement;
+export type BlockInput = HTMLElement;
 
 /**
  * Describes an intersected input inside a block
  */
-type BlockInputIntersected = {
+export type BlockInputIntersected = {
   input: BlockInput,
   block: BlockAPI,
 };
 
 export interface CrossInputSelection {
+  isCrossBlockSelection: boolean;
   blocks: BlockAPI[];
   inputs: BlockInputIntersected[];
   range: Range | null;
+  firstInput: BlockInputIntersected | null;
+  lastInput: BlockInputIntersected | null;
+  middleInputs: BlockInputIntersected[];
 }
 
 /**
@@ -175,6 +179,39 @@ export function findNextSelectableBlock(block: BlockAPI, api: API): BlockAPI | n
   return findNextSelectableBlock(nextBlock, api);
 }
 
+type RemoveRangePartFromInputOptionsEnding = {
+  fromRangeStartToInputEnd: true;
+}
+
+type RemoveRangePartFromInputOptionsStarting = {
+  fromInputStartToRangeEnd: true;
+}
+
+type RemoveRangePartFromInputOptions = RemoveRangePartFromInputOptionsEnding | RemoveRangePartFromInputOptionsStarting;
+
+/**
+ * Removes a part of the range from the input:
+ *  - from the range start to the end of the input
+ *  - from the start of the input to the range end
+ *
+ * @param range
+ * @param input
+ * @param options
+ */
+export function removeRangePartFromInput(range: Range, input: HTMLElement, options: RemoveRangePartFromInputOptions): void {
+  const rangeClone = range.cloneRange();
+
+  rangeClone.selectNodeContents(input);
+
+  if ('fromRangeStartToInputEnd' in options) {
+    rangeClone.setStart(range.startContainer, range.startOffset);
+  } else {
+    rangeClone.setEnd(range.endContainer, range.endOffset);
+  }
+
+  rangeClone.extractContents();
+}
+
 
 /**
  * Returns a list of blocks and inputs that intersect with the given range
@@ -201,10 +238,20 @@ export function useCrossInputSelection(api: API): CrossInputSelection {
   const intersectedBlocks = findIntersectedBlocks(range, api);
   const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
 
+  const isCrossBlockSelection = intersectedBlocks.length > 1;
+
+  const firstInput = intersectedInputs[0] ?? null;
+  const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
+  const middleInputs = intersectedInputs.slice(1, -1);
+
   return {
+    isCrossBlockSelection,
     blocks: intersectedBlocks,
     inputs: intersectedInputs,
     range,
+    firstInput,
+    lastInput,
+    middleInputs,
   };
 }
 

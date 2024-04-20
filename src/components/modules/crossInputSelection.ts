@@ -2,7 +2,7 @@ import Module from '../__module';
 import type Block from '../block';
 import type { BlockAPI } from '../../../types';
 import { areBlocksMergeable } from '../utils/blocks';
-import { findNextSelectableBlock, findPreviousSelectableBlock, useCrossInputSelection } from '../utils/cbs';
+import { BlockInput, BlockInputIntersected, findNextSelectableBlock, findPreviousSelectableBlock, removeRangePartFromInput, useCrossInputSelection } from '../utils/cbs';
 import { ModuleConfig } from 'src/types-internal/module-config';
 import { isPrintableKey } from '../utils';
 
@@ -72,20 +72,29 @@ export default class CrossInputSelection extends Module {
     const { blocks: intersectedBlocks, inputs: intersectedInputs, range } = useCrossInputSelection(api);
 
     /**
-     * We should prevent default behavior for all keys except a few cases:
-     * 1. arrows navigation
-     */
-
-
-
-    /**
      * If selection is not cross-input, do nothing
+     *
+     * @todo handle Delete/Backspace at the start
+     * @todo handle Enter at the end
      */
     if (intersectedInputs.length < 2) {
       console.log('no intersected blocks');
 
       return;
     }
+
+    /**
+     * We should prevent default behavior for all keys except a few cases:
+     * 1. arrows navigation
+     */
+    if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.key) === false) {
+      console.log('default keydown handler prevented')
+      event.preventDefault();
+    }
+
+
+
+
 
     switch (event.key) {
       case 'Delete':
@@ -96,6 +105,20 @@ export default class CrossInputSelection extends Module {
         this.removeSelectionFromUnselectableBlocks();
 
         this.handleDelete(event, event.key === 'Backspace');
+        return;
+      case 'Enter':
+        this.handleEnter(event);
+        return;
+      case 'ArrowRight':
+      case 'ArrowDown':
+        this.handleArrowRightOrDown(event);
+        return;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        this.handleArrowLeftOrUp(event);
+        return;
+      case 'Tab':
+        this.handleTab(event);
         return;
     }
 
@@ -110,22 +133,36 @@ export default class CrossInputSelection extends Module {
       this.handleDelete(event);
 
       /**
+       * Insert a char to the caret position
+       */
+      /**
        * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
        * So we use empty string
        *
        * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+       * @todo fix insertContentAtCaretPosition and use it instead
        */
       // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
-
-      /**
-       * Insert a char to the caret position
-       */
-
-
-      range?.insertNode(document.createTextNode(event.key));
+      range?.insertNode(document.createTextNode(event.key.length > 1 ? '' : event.key));
 
       return;
     }
+  }
+
+  private handleTab(event: KeyboardEvent): void {
+    console.log('handle tab (not implemented)');
+  }
+
+  private handleArrowLeftOrUp(event: KeyboardEvent): void {
+    console.log('handle arrow left or up (not implemented)');
+  }
+
+  private handleArrowRightOrDown(event: KeyboardEvent): void {
+    console.log('handle arrow right or down (not implemented)');
+  }
+
+  private handleEnter(event: KeyboardEvent): void {
+    console.log('handle enter (not implemented)');
   }
 
   /**
@@ -137,7 +174,15 @@ export default class CrossInputSelection extends Module {
   private handleDelete(event: KeyboardEvent, isBackspace = false): void {
     const api = this.Editor.API.methods;
 
-    const { blocks: intersectedBlocks, inputs: intersectedInputs, range } = useCrossInputSelection(api);
+    const {
+      blocks: intersectedBlocks,
+      inputs: intersectedInputs,
+      range,
+      firstInput,
+      lastInput,
+      middleInputs,
+      isCrossBlockSelection,
+    } = useCrossInputSelection(api);
 
     if (!intersectedBlocks.length && !intersectedInputs.length || !range) {
       return;
@@ -165,17 +210,12 @@ export default class CrossInputSelection extends Module {
       }
     }
 
-
-    const isCrossBlockSelection = intersectedBlocks.length > 1;
-
-
     if (!isCrossBlockSelection) {
       return;
     }
 
     event.preventDefault();
 
-    const removedInputs: BlockInput[] = [];
 
     /**
      * @todo handle case when first block === last block
@@ -187,25 +227,13 @@ export default class CrossInputSelection extends Module {
      * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
      * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
      */
-    intersectedInputs.forEach(({ input, block }: BlockInputIntersected, index: number) => {
-      const rangeClone = range.cloneRange();
+    removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
+    removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
 
-
-      if (index === 0 || index === intersectedInputs.length - 1) {
-        if (index === 0) {
-          rangeClone.selectNodeContents(input);
-          rangeClone.setStart(range.startContainer, range.startOffset);
-        } else if (index === intersectedInputs.length - 1) {
-          rangeClone.selectNodeContents(input);
-          rangeClone.setEnd(range.endContainer, range.endOffset);
-        }
-
-        rangeClone.extractContents();
-      } else {
-        removedInputs.push(input);
-
-        input.remove();
-      }
+    const removedInputs: BlockInput[] = [];
+    middleInputs.forEach(({ input }: BlockInputIntersected) => {
+      removedInputs.push(input);
+      input.remove();
     });
 
     /**
@@ -226,7 +254,6 @@ export default class CrossInputSelection extends Module {
     const startingBlock = this.Editor.BlockManager.getBlockById(startingBlockApi.id);
     const endingBlock = this.Editor.BlockManager.getBlockById(endingBlockApi.id);
 
-    // this.Editor.Caret.setToBlock(startingBlock!, 'end');
     const bothBlocksMergeable = areBlocksMergeable(startingBlock!, endingBlock!);
 
     /**
