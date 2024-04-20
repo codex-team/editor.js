@@ -22,7 +22,7 @@ export type BlockInputIntersected = {
   block: BlockAPI,
 };
 
-export interface CrossInputSelection {
+export interface MaybeCrossInputSelection {
   isCrossBlockSelection: boolean;
   isCrossInputSelection: boolean;
   blocks: BlockAPI[];
@@ -31,6 +31,14 @@ export interface CrossInputSelection {
   firstInput: BlockInputIntersected | null;
   lastInput: BlockInputIntersected | null;
   middleInputs: BlockInputIntersected[];
+}
+
+export type CrossInputSelection = MaybeCrossInputSelection & {
+  isCrossInputSelection: true;
+  firstInput: BlockInputIntersected;
+  lastInput: BlockInputIntersected;
+  middleInputs: BlockInputIntersected[];
+  range: Range;
 }
 
 /**
@@ -214,8 +222,9 @@ export function removeRangePartFromInput(range: Range, input: HTMLElement, optio
 }
 
 interface CBSOptions {
-  onSingleFullySelectedInput: (input: BlockInputIntersected) => void;
-  onSinglePartiallySelectedInput: (input: BlockInputIntersected) => void;
+  onSingleFullySelectedInput?: (input: BlockInputIntersected) => void;
+  onSinglePartiallySelectedInput?: (input: BlockInputIntersected) => void;
+  onCrossInputSelection?: (selection: CrossInputSelection) => void;
 }
 
 /**
@@ -223,14 +232,15 @@ interface CBSOptions {
  *
  * @param api - Editor API
  */
-export function useCrossInputSelection(api: API, options?: CBSOptions): CrossInputSelection {
+export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCrossInputSelection {
   const selection = window.getSelection();
 
   /**
    * @todo handle native inputs
    */
 
-  if (selection === null || !selection.rangeCount || selection.isCollapsed) {
+  if (selection === null || !selection.rangeCount) {
+    console.log('No selection');
     return {
       blocks: [],
       inputs: [],
@@ -249,7 +259,6 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): CrossInp
   const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
 
   const isCrossBlockSelection = intersectedBlocks.length > 1;
-  const isCrossInputSelection = intersectedInputs.length > 1;
 
   const firstInput = intersectedInputs[0] ?? null;
   const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
@@ -259,16 +268,27 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): CrossInp
     const { input, block } = firstInput;
     const isWholeInputSelected = range.toString() === input.textContent;
 
-    if (isWholeInputSelected) {;
-      options?.onSingleFullySelectedInput(firstInput);
+    if (isWholeInputSelected) {
+      options?.onSingleFullySelectedInput?.(firstInput);
     } else {
-      options?.onSinglePartiallySelectedInput(firstInput);
+      options?.onSinglePartiallySelectedInput?.(firstInput);
     }
+  } else {
+    options?.onCrossInputSelection?.({
+      isCrossBlockSelection,
+      isCrossInputSelection: true,
+      blocks: intersectedBlocks,
+      inputs: intersectedInputs,
+      range,
+      firstInput,
+      lastInput,
+      middleInputs,
+    });
   }
 
   return {
     isCrossBlockSelection,
-    isCrossInputSelection,
+    isCrossInputSelection: intersectedInputs.length > 1,
     blocks: intersectedBlocks,
     inputs: intersectedInputs,
     range,

@@ -28,6 +28,8 @@ import { isPrintableKey } from '../utils';
  *
  * What is done:
  * - Backspace handling
+ * - Manual tripple click selection of the whole input
+ * - Enter handling
  */
 
 
@@ -61,6 +63,43 @@ export default class CrossInputSelection extends Module {
     }, {
       capture: true,
     });
+
+    this.listeners.on(this.Editor.UI.nodes.redactor, 'click', (event: MouseEvent) => { // @todo implement generics in Listeners
+      /**
+       * Handle tripple click on a block.
+       * 4 or more clicks behaves the same
+       */
+      if (event.detail > 3) {
+        this.handleTripleClick(event);
+      }
+    });
+  }
+
+  /**
+   * When user makes a tripple click to select the whole block, range.endContainer will be a next block container.
+   * To workaround this browser behavior, we should manually select the whole input
+   * @param event
+   */
+  private handleTripleClick(event: MouseEvent): void {
+    const currentClickedElement = event.target as HTMLElement;
+
+    /**
+     * @todo support native inputs
+     */
+    const currentInput = currentClickedElement.closest('[contenteditable=true]');
+
+    if (!currentInput) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+
+    if (!range) {
+      return;
+    }
+
+    range.selectNodeContents(currentInput);
   }
 
   /**
@@ -173,81 +212,45 @@ export default class CrossInputSelection extends Module {
   }
 
   private handleEnter(): void {
-    console.log('handle enter (wip)');
-
     const api = this.Editor.API.methods;
 
-    const {
-      blocks: intersectedBlocks,
-      inputs: intersectedInputs,
-      range,
-      firstInput,
-      lastInput,
-      middleInputs,
-      isCrossBlockSelection,
-    } = useCrossInputSelection(api, {
-      onSingleFullySelectedInput: ({ input, block }) => {
-        console.log('OPAAA');
-        api.blocks.delete(block.id);
+    useCrossInputSelection(api, {
+      onSingleFullySelectedInput: () => {
+        console.warn('Enter / onSingleFullySelectedInput. @todo: clear input and add the new block below');
       },
-      onSinglePartiallySelectedInput: ({ input, block }) => {
-        console.log('default behavior');
+      onSinglePartiallySelectedInput: () => {
+        console.warn('Enter / onSinglePartiallySelectedInput: @todo: clear selection and split block');
       },
-    });
+      onCrossInputSelection({ range, firstInput, lastInput, middleInputs, blocks, inputs }){
+        console.info('Enter / onCrossInputSelection: remove selected content and set caret to the start of the next block');
+        /**
+         * Now we need:
+         * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
+         * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
+         * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
+         * 4. Set caret to the start of the last input
+         */
+        removeRangePartFromInput(range, firstInput.input, { fromRangeStartToInputEnd: true });
+        removeRangePartFromInput(range, lastInput.input, { fromInputStartToRangeEnd: true });
 
-    if (!intersectedBlocks.length && !intersectedInputs.length || !range) {
-      return;
-    }
+        const removedInputs: BlockInput[] = [];
+        middleInputs.forEach(({ input }: BlockInputIntersected) => {
+          removedInputs.push(input);
+          input.remove();
+        });
 
-    // if (intersectedInputs.length === 1) {
-    //   const { input, block } = intersectedInputs[0];
-    //   const isWholeInputSelected = range.toString() === input.textContent;
+        /**
+         * Remove blocks if they are empty
+         */
+        blocks.forEach((block: BlockAPI) => {
+          if (block.inputs.every(input => removedInputs.includes(input))) {
+            api.blocks.delete(block.id);
+          }
+        });
 
-    //   if (isWholeInputSelected) {
-    //     console.log('OPA');
-
-
-    //   } else {
-    //     console.log('default behavior');
-
-    //     return;
-    //   }
-    // }
-
-    if (!isCrossBlockSelection) {
-      /** @todo Split block */
-      return;
-    }
-
-    /**
-     * Now we need:
-     * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
-     * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
-     * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
-     * 4. Set caret to the start of the last input
-     */
-    removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
-    removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
-
-
-    const removedInputs: BlockInput[] = [];
-    middleInputs.forEach(({ input }: BlockInputIntersected) => {
-      removedInputs.push(input);
-      input.remove();
-    });
-
-    /**
-     * Remove blocks if they are empty
-     */
-    intersectedBlocks.forEach((block: BlockAPI) => {
-      if (block.inputs.every(input => removedInputs.includes(input))) {
-        api.blocks.delete(block.id);
+        window.getSelection()?.collapseToEnd();
       }
     });
-
-    window.getSelection()?.collapseToEnd();
-
-
   }
 
   /**
