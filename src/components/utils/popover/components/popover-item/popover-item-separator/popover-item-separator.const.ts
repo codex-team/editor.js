@@ -1,12 +1,12 @@
 import { bem } from '../../../../bem';
 
 /**
- * Popover delimiter block CSS class constructor
+ * Popover separator block CSS class constructor
  */
-const className = bem('ce-popover-item-delimiter');
+const className = bem('ce-popover-item-separator');
 
 /**
- * CSS class names to be used in popover delimiter class
+ * CSS class names to be used in popover separator class
  */
 export const css = {
   container: className(),

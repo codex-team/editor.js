@@ -1,13 +1,13 @@
 
 /**
- * Represents popover item delimiter.
+ * Represents popover item separator.
  * Special item type that is used to separate items in the popover.
  */
-export interface PopoverItemDelimiterParams {
+export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: 'delimiter'
+  type: 'separator'
 }
 
 /**
@@ -109,7 +109,7 @@ export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBasePar
 }
 
 /**
- * Default, non-delimiter popover item type
+ * Default, non-separator popover item type
  */
 export type PopoverItemDefaultParams =
   PopoverItemWithConfirmationParams |
@@ -119,5 +119,5 @@ export type PopoverItemDefaultParams =
 /**
  * Represents single popover item
  */
-export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemDelimiterParams;
+export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemSeparatorParams;
 

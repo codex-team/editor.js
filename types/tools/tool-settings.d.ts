@@ -1,6 +1,6 @@
 import { ToolConfig } from './tool-config';
 import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItemDefaultParams, PopoverItemDelimiterParams, PopoverItemParams } from '../configs';
+import { PopoverItemDefaultParams, PopoverItemSeparatorParams, PopoverItemParams } from '../configs';
 
 /**
  * Tool may specify its toolbox configuration
@@ -29,7 +29,7 @@ export interface ToolboxConfigEntry {
 }
 
 /**
- * Represents single interactive (non-delimiter) Tunes Menu item
+ * Represents single interactive (non-separator) Tunes Menu item
  */
 export type TunesMenuConfigDefaultItem = PopoverItemDefaultParams & {
   /**
@@ -53,14 +53,14 @@ export type TunesMenuConfigDefaultItem = PopoverItemDefaultParams & {
 }
 
 /**
- * Represents single delimiter Tunes Menu item
+ * Represents single separator Tunes Menu item
  */
-export type TunesMenuConfigDelimiterItem = PopoverItemDelimiterParams;
+export type TunesMenuConfigSeparatorItem = PopoverItemSeparatorParams;
 
 /**
  * Union of all Tunes Menu item types
  */
-export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigDelimiterItem;
+export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigSeparatorItem;
 
 /**
  * Tool may specify its tunes configuration
