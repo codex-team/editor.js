@@ -24,6 +24,7 @@ import { isPrintableKey } from '../utils';
  * @todo enter in image caption should not creare the new caption
 *
  * @todo select few blocks, do not release mouse button, type something. Layout should not be broken
+ * @todo select part of parargrapt and the whole next header, press Enter, then press Enter again. New block should be created, now just hard line break is added
  *
  * What is done:
  * - Backspace handling
@@ -69,27 +70,17 @@ export default class CrossInputSelection extends Module {
   private keydown(event: KeyboardEvent): void {
     const api = this.Editor.API.methods;
 
-    const { blocks: intersectedBlocks, inputs: intersectedInputs, range } = useCrossInputSelection(api);
+    const { isCrossInputSelection } = useCrossInputSelection(api);
 
-    /**
-     * If selection is not cross-input, do nothing
-     *
-     * @todo handle Delete/Backspace at the start
-     * @todo handle Enter at the end
-     */
-    if (intersectedInputs.length < 2) {
-      console.log('no intersected blocks');
 
-      return;
-    }
 
     /**
      * We should prevent default behavior for all keys except a few cases:
      * 1. arrows navigation
      */
-    if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.key) === false) {
-      console.log('default keydown handler prevented')
-      event.preventDefault();
+    if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
+      console.log('Arrow keydown handler — native behavior')
+      return;
     }
 
 
@@ -100,6 +91,15 @@ export default class CrossInputSelection extends Module {
       case 'Delete':
       case 'Backspace':
         /**
+         * If selection is not cross-input, do nothing
+         */
+        if (!isCrossInputSelection) {
+          console.log('no CIS, default Delete/Backspace Key behavior');
+
+          return;
+        }
+
+        /**
          * Handle case when user presses DELETE or BACKSPACE while having mouse button pressed with cross-input selection
          */
         this.removeSelectionFromUnselectableBlocks();
@@ -107,7 +107,8 @@ export default class CrossInputSelection extends Module {
         this.handleDelete(event, event.key === 'Backspace');
         return;
       case 'Enter':
-        this.handleEnter(event);
+        event.preventDefault();
+        this.handleEnter();
         return;
       case 'ArrowRight':
       case 'ArrowDown':
@@ -123,30 +124,40 @@ export default class CrossInputSelection extends Module {
     }
 
     if (isPrintableKey(event.keyCode) && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+      /**
+       * If selection is not cross-input, do nothing
+      */
+      if (!isCrossInputSelection) {
+        console.log('no CIS, default Printable Key behavior');
+
+        return;
+      }
+
       event.preventDefault();
-
-      const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-
-
-
-      this.handleDelete(event);
-
-      /**
-       * Insert a char to the caret position
-       */
-      /**
-       * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
-       * So we use empty string
-       *
-       * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
-       * @todo fix insertContentAtCaretPosition and use it instead
-       */
-      // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
-      range?.insertNode(document.createTextNode(event.key.length > 1 ? '' : event.key));
-
-      return;
+      this.handlePrintableKey(event);
     }
+  }
+
+  private handlePrintableKey(event: KeyboardEvent): void {
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+
+    this.handleDelete(event);
+
+    /**
+     * Insert a char to the caret position
+     */
+    /**
+     * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
+     * So we use empty string
+     *
+     * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+     * @todo fix insertContentAtCaretPosition and use it instead
+     */
+    // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
+    range?.insertNode(document.createTextNode(event.key.length > 1 ? '' : event.key));
+
+    return;
   }
 
   private handleTab(event: KeyboardEvent): void {
@@ -161,8 +172,82 @@ export default class CrossInputSelection extends Module {
     console.log('handle arrow right or down (not implemented)');
   }
 
-  private handleEnter(event: KeyboardEvent): void {
-    console.log('handle enter (not implemented)');
+  private handleEnter(): void {
+    console.log('handle enter (wip)');
+
+    const api = this.Editor.API.methods;
+
+    const {
+      blocks: intersectedBlocks,
+      inputs: intersectedInputs,
+      range,
+      firstInput,
+      lastInput,
+      middleInputs,
+      isCrossBlockSelection,
+    } = useCrossInputSelection(api, {
+      onSingleFullySelectedInput: ({ input, block }) => {
+        console.log('OPAAA');
+        api.blocks.delete(block.id);
+      },
+      onSinglePartiallySelectedInput: ({ input, block }) => {
+        console.log('default behavior');
+      },
+    });
+
+    if (!intersectedBlocks.length && !intersectedInputs.length || !range) {
+      return;
+    }
+
+    // if (intersectedInputs.length === 1) {
+    //   const { input, block } = intersectedInputs[0];
+    //   const isWholeInputSelected = range.toString() === input.textContent;
+
+    //   if (isWholeInputSelected) {
+    //     console.log('OPA');
+
+
+    //   } else {
+    //     console.log('default behavior');
+
+    //     return;
+    //   }
+    // }
+
+    if (!isCrossBlockSelection) {
+      /** @todo Split block */
+      return;
+    }
+
+    /**
+     * Now we need:
+     * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
+     * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
+     * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
+     * 4. Set caret to the start of the last input
+     */
+    removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
+    removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
+
+
+    const removedInputs: BlockInput[] = [];
+    middleInputs.forEach(({ input }: BlockInputIntersected) => {
+      removedInputs.push(input);
+      input.remove();
+    });
+
+    /**
+     * Remove blocks if they are empty
+     */
+    intersectedBlocks.forEach((block: BlockAPI) => {
+      if (block.inputs.every(input => removedInputs.includes(input))) {
+        api.blocks.delete(block.id);
+      }
+    });
+
+    window.getSelection()?.collapseToEnd();
+
+
   }
 
   /**
@@ -226,6 +311,7 @@ export default class CrossInputSelection extends Module {
      * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
      * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
      * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
+     * 4. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
      */
     removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
     removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
@@ -258,7 +344,7 @@ export default class CrossInputSelection extends Module {
 
     /**
      * If Blocks could be merged, do it
-     * Otherwise, just navigate to the next block
+     * Otherwise, just navigate to the first block
      */
     if (bothBlocksMergeable) {
       console.log('merge');

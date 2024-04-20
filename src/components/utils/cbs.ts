@@ -24,6 +24,7 @@ export type BlockInputIntersected = {
 
 export interface CrossInputSelection {
   isCrossBlockSelection: boolean;
+  isCrossInputSelection: boolean;
   blocks: BlockAPI[];
   inputs: BlockInputIntersected[];
   range: Range | null;
@@ -212,13 +213,17 @@ export function removeRangePartFromInput(range: Range, input: HTMLElement, optio
   rangeClone.extractContents();
 }
 
+interface CBSOptions {
+  onSingleFullySelectedInput: (input: BlockInputIntersected) => void;
+  onSinglePartiallySelectedInput: (input: BlockInputIntersected) => void;
+}
 
 /**
  * Returns a list of blocks and inputs that intersect with the given range
  *
  * @param api - Editor API
  */
-export function useCrossInputSelection(api: API): CrossInputSelection {
+export function useCrossInputSelection(api: API, options?: CBSOptions): CrossInputSelection {
   const selection = window.getSelection();
 
   /**
@@ -230,6 +235,11 @@ export function useCrossInputSelection(api: API): CrossInputSelection {
       blocks: [],
       inputs: [],
       range: null,
+      isCrossBlockSelection: false,
+      isCrossInputSelection: false,
+      firstInput: null,
+      lastInput: null,
+      middleInputs: [],
     };
   }
 
@@ -239,13 +249,26 @@ export function useCrossInputSelection(api: API): CrossInputSelection {
   const intersectedInputs = findIntersectedInputs(intersectedBlocks, range);
 
   const isCrossBlockSelection = intersectedBlocks.length > 1;
+  const isCrossInputSelection = intersectedInputs.length > 1;
 
   const firstInput = intersectedInputs[0] ?? null;
   const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
   const middleInputs = intersectedInputs.slice(1, -1);
 
+  if (intersectedInputs.length === 1) {
+    const { input, block } = firstInput;
+    const isWholeInputSelected = range.toString() === input.textContent;
+
+    if (isWholeInputSelected) {;
+      options?.onSingleFullySelectedInput(firstInput);
+    } else {
+      options?.onSinglePartiallySelectedInput(firstInput);
+    }
+  }
+
   return {
     isCrossBlockSelection,
+    isCrossInputSelection,
     blocks: intersectedBlocks,
     inputs: intersectedInputs,
     range,
