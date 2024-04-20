@@ -20,6 +20,8 @@ export default class BlockEvents extends Module {
    */
   public keydown(event: KeyboardEvent): void {
     console.warn('BlockEvents::keydown');
+
+    return;
     /**
      * Run common method for all keydown events
      */

@@ -4,6 +4,7 @@ import type { BlockAPI } from '../../../types';
 import { areBlocksMergeable } from '../utils/blocks';
 import { findNextSelectableBlock, findPreviousSelectableBlock, useCrossInputSelection } from '../utils/cbs';
 import { ModuleConfig } from 'src/types-internal/module-config';
+import { isPrintableKey } from '../utils';
 
 
 /**
@@ -20,6 +21,12 @@ import { ModuleConfig } from 'src/types-internal/module-config';
  * @todo when cbs the inline-toolbar should contain intersected lists of tools for selected blocks
  * @todo emit "selection changed" event to hide/show the Inline Toolbar
  * @todo select quote caption and move selection to the previous block. Do not release mouse button, and press delete. Quote should not be deleted
+ * @todo enter in image caption should not creare the new caption
+*
+ * @todo select few blocks, do not release mouse button, type something. Layout should not be broken
+ *
+ * What is done:
+ * - Backspace handling
  */
 
 
@@ -59,7 +66,27 @@ export default class CrossInputSelection extends Module {
    *
    * @param event
    */
-  public keydown(event: KeyboardEvent): void {
+  private keydown(event: KeyboardEvent): void {
+    const api = this.Editor.API.methods;
+
+    const { blocks: intersectedBlocks, inputs: intersectedInputs, range } = useCrossInputSelection(api);
+
+    /**
+     * We should prevent default behavior for all keys except a few cases:
+     * 1. arrows navigation
+     */
+
+
+
+    /**
+     * If selection is not cross-input, do nothing
+     */
+    if (intersectedInputs.length < 2) {
+      console.log('no intersected blocks');
+
+      return;
+    }
+
     switch (event.key) {
       case 'Delete':
       case 'Backspace':
@@ -69,7 +96,35 @@ export default class CrossInputSelection extends Module {
         this.removeSelectionFromUnselectableBlocks();
 
         this.handleDelete(event, event.key === 'Backspace');
-        break;
+        return;
+    }
+
+    if (isPrintableKey(event.keyCode) && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+      event.preventDefault();
+
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0);
+
+
+
+      this.handleDelete(event);
+
+      /**
+       * If event.key length >1 that means key is special (e.g. Enter or Dead or Unidentified).
+       * So we use empty string
+       *
+       * @see https://developer.mozilla.org/ru/docs/Web/API/KeyboardEvent/key
+       */
+      // this.Editor.Caret.insertContentAtCaretPosition(event.key.length > 1 ? '' : event.key);
+
+      /**
+       * Insert a char to the caret position
+       */
+
+
+      range?.insertNode(document.createTextNode(event.key));
+
+      return;
     }
   }
 
@@ -77,7 +132,7 @@ export default class CrossInputSelection extends Module {
    *
    * @param event
    * @param api
-   * @param isBackspace
+   * @param isBackspace @todo suppport
    */
   private handleDelete(event: KeyboardEvent, isBackspace = false): void {
     const api = this.Editor.API.methods;
@@ -87,7 +142,6 @@ export default class CrossInputSelection extends Module {
     if (!intersectedBlocks.length && !intersectedInputs.length || !range) {
       return;
     }
-
 
     /**
      * Handle case when user select the whole block.
