@@ -69,7 +69,7 @@ export default class CrossInputSelection extends Module {
        * Handle tripple click on a block.
        * 4 or more clicks behaves the same
        */
-      if (event.detail > 3) {
+      if (event.detail > 2) {
         this.handleTripleClick(event);
       }
     });
@@ -130,24 +130,14 @@ export default class CrossInputSelection extends Module {
       case 'Delete':
       case 'Backspace':
         /**
-         * If selection is not cross-input, do nothing
-         */
-        if (!isCrossInputSelection) {
-          console.log('no CIS, default Delete/Backspace Key behavior');
-
-          return;
-        }
-
-        /**
          * Handle case when user presses DELETE or BACKSPACE while having mouse button pressed with cross-input selection
          */
-        this.removeSelectionFromUnselectableBlocks();
+        this.removeSelectionFromUnselectableBlocks(); // @todo think about making it a part of the composable
 
         this.handleDelete(event, event.key === 'Backspace');
         return;
       case 'Enter':
-        event.preventDefault();
-        this.handleEnter();
+        this.handleEnter(event);
         return;
       case 'ArrowRight':
       case 'ArrowDown':
@@ -211,18 +201,23 @@ export default class CrossInputSelection extends Module {
     console.log('handle arrow right or down (not implemented)');
   }
 
-  private handleEnter(): void {
+  private handleEnter(event: KeyboardEvent): void {
     const api = this.Editor.API.methods;
 
     useCrossInputSelection(api, {
       onSingleFullySelectedInput: () => {
         console.warn('Enter / onSingleFullySelectedInput. @todo: clear input and add the new block below');
+        event.preventDefault();
       },
       onSinglePartiallySelectedInput: () => {
         console.warn('Enter / onSinglePartiallySelectedInput: @todo: clear selection and split block');
+        event.preventDefault();
       },
-      onCrossInputSelection({ range, firstInput, lastInput, middleInputs, blocks, inputs }){
+      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, inputs }) => {
         console.info('Enter / onCrossInputSelection: remove selected content and set caret to the start of the next block');
+
+        event.preventDefault();
+
         /**
          * Now we need:
          * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
@@ -260,6 +255,93 @@ export default class CrossInputSelection extends Module {
    * @param isBackspace @todo suppport
    */
   private handleDelete(event: KeyboardEvent, isBackspace = false): void {
+    const api = this.Editor.API.methods;
+    const { BlockManager, Caret } = this.Editor;
+
+    useCrossInputSelection(api, {
+      onSingleFullySelectedInput: ({ input }) => {
+        console.info('Delete / onSingleFullySelectedInput: clear input');
+
+        event.preventDefault();
+
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+
+        if (!range) {
+          return;
+        }
+
+        range.selectNodeContents(input);
+        range.deleteContents();
+      },
+      onSinglePartiallySelectedInput: () => {
+        console.info('Delete / onSinglePartiallySelectedInput: default behaviour');
+      },
+      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, inputs }) => {
+        console.info('Delete / onCrossInputSelection: remove selected content and merge blocks if possible');
+
+        event.preventDefault();
+
+        /**
+         * @todo handle case when first block === last block
+         */
+
+        /**
+         * Now we need:
+         * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
+         * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
+         * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
+         * 4. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
+         */
+        removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
+        removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
+
+        const removedInputs: BlockInput[] = [];
+        middleInputs.forEach(({ input }: BlockInputIntersected) => {
+          removedInputs.push(input);
+          input.remove();
+        });
+
+        /**
+         * Remove blocks if they are empty
+         */
+        blocks.forEach((block: BlockAPI) => {
+          if (block.inputs.every(input => removedInputs.includes(input))) {
+            api.blocks.delete(block.id);
+          }
+        });
+
+        const startingBlockApi = blocks[0];
+        const endingBlockApi = blocks[blocks.length - 1];
+
+        /**
+         * @todo get rid of this by adding 'merge' api method
+         */
+        const startingBlock = BlockManager.getBlockById(startingBlockApi.id);
+        const endingBlock = BlockManager.getBlockById(endingBlockApi.id);
+
+        const bothBlocksMergeable = areBlocksMergeable(startingBlock!, endingBlock!);
+
+        /**
+         * If Blocks could be merged, do it
+         * Otherwise, just navigate to the first block
+         */
+        if (bothBlocksMergeable) {
+          this.mergeBlocks(startingBlock!, endingBlock!);
+        } else {
+          Caret.setToBlock(startingBlock!, this.Editor.Caret.positions.START);
+        }
+      }
+    });
+  }
+
+  /**
+   *
+   * @param event
+   * @param api
+   * @param isBackspace @todo suppport
+   */
+  private _handleDelete(event: KeyboardEvent, isBackspace = false): void {
     const api = this.Editor.API.methods;
 
     const {

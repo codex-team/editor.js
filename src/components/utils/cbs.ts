@@ -225,6 +225,9 @@ interface CBSOptions {
   onSingleFullySelectedInput?: (input: BlockInputIntersected) => void;
   onSinglePartiallySelectedInput?: (input: BlockInputIntersected) => void;
   onCrossInputSelection?: (selection: CrossInputSelection) => void;
+  /**
+   * @todo onAtStart, onAtEnd
+   */
 }
 
 /**
