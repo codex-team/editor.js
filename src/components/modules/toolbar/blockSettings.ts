@@ -7,7 +7,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
@@ -215,7 +215,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    const convertToItems = this.getConvertToItems(toolName);
+    /**
+     * Exclude current tool from "convert to" items list
+     */
+    const convertToItems = this.allConvertToItems.filter(item => item.name !== toolName);
 
     if (convertToItems.length > 0) {
       items.push({
@@ -237,21 +240,16 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * Returns list of conversion menu items available for the current block
-   *
-   * @param currentToolName - current block tool name
+   * List of all available conversion menu items
    */
-  private getConvertToItems(currentToolName: string): TunesMenuConfigItem[] {
+  @_.cacheable
+  private get allConvertToItems(): PopoverItemDefaultParams[] {
     const conversionEntries = Array.from(this.Editor.Tools.blockTools.entries());
 
-    const resultItems: TunesMenuConfigItem[] = [];
+    const resultItems: PopoverItemDefaultParams[] = [];
 
     conversionEntries.forEach(([toolName, tool]) => {
       const conversionConfig = tool.conversionConfig;
-
-      if (toolName === currentToolName) {
-        return;
-      }
 
       /**
        * Skip tools without «import» rule specified
