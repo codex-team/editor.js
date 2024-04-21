@@ -5,6 +5,7 @@ import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
 import { capitalize } from './../../utils';
+import { areBlocksMergeable } from '../../utils/blocks';
 
 /**
  * @class BlocksAPI
@@ -27,7 +28,7 @@ export default class BlocksAPI extends Module {
       getBlockByIndex: (index: number): BlockAPIInterface | undefined => this.getBlockByIndex(index),
       getById: (id: string): BlockAPIInterface | null => this.getById(id),
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
-      getBlockIndex: (id: string): number => this.getBlockIndex(id),
+      getBlockIndex: (id: string): number | null => this.getBlockIndex(id),
       getBlocksCount: (): number => this.getBlocksCount(),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
@@ -36,6 +37,8 @@ export default class BlocksAPI extends Module {
       update: this.update,
       composeBlockData: this.composeBlockData,
       convert: this.convert,
+      areBlocksMergeable: this.areBlocksMergeable,
+      merge: this.merge,
     };
   }
 
@@ -59,16 +62,17 @@ export default class BlocksAPI extends Module {
 
   /**
    * Returns the index of Block by id;
+   * Returns null if Block wasn't found
    *
    * @param id - block id
    */
-  public getBlockIndex(id: string): number | undefined {
+  public getBlockIndex(id: string): number | null {
     const block = this.Editor.BlockManager.getBlockById(id);
 
     if (!block) {
       _.logLabeled('There is no block with id `' + id + '`', 'warn');
 
-      return;
+      return null;
     }
 
     return this.Editor.BlockManager.getBlockIndex(block);
@@ -419,5 +423,57 @@ export default class BlocksAPI extends Module {
     if (index === null) {
       throw new Error(`Index should be greater than or equal to 0`);
     }
+  }
+
+  /**
+   * Check if passed blocks are mergeable
+   *
+   * @param targetBlock - block to merge to
+   * @param blockToMerge - block to merge from
+   */
+  private areBlocksMergeable = (targetBlock: BlockAPIInterface, blockToMerge: BlockAPIInterface): boolean => {
+    const { BlockManager } = this.Editor;
+    const targetBlockInstance = BlockManager.getBlockById(targetBlock.id);
+    const blockToMergeInstance = BlockManager.getBlockById(blockToMerge.id);
+
+    if (!targetBlockInstance || !blockToMergeInstance) {
+      throw new Error('Block to merge or target block not found');
+    }
+
+    return areBlocksMergeable(targetBlockInstance, blockToMergeInstance);
+  }
+
+  /**
+   * Merge two blocks
+   *
+   * @param targetBlock - block to merge to
+   * @param blockToMerge - block to merge from
+   * @param options - merge options
+   * @param options.restoreCaret - flag to restore caret position in place of glue
+   */
+  private merge = async (targetBlock: BlockAPIInterface, blockToMerge: BlockAPIInterface, options?: { restoreCaret?: boolean }): Promise<void> => {
+    const { BlockManager, Caret } = this.Editor;
+    const targetBlockInstance = BlockManager.getBlockById(targetBlock.id);
+    const blockToMergeInstance = BlockManager.getBlockById(blockToMerge.id);
+
+    if (!targetBlockInstance || !blockToMergeInstance) {
+      throw new Error('Block to merge or target block not found');
+    }
+
+    if (!areBlocksMergeable(targetBlockInstance, blockToMergeInstance)) {
+      throw new Error('Blocks are not mergeable');
+    }
+
+    if (options?.restoreCaret === true) {
+      Caret.createShadow(targetBlockInstance.pluginsContent);
+    }
+
+    await BlockManager
+      .mergeBlocks(targetBlockInstance, blockToMergeInstance)
+      .then(() => {
+        if (options?.restoreCaret === true) {
+          Caret.restoreCaret(targetBlockInstance.pluginsContent as HTMLElement);
+        }
+      });
   }
 }

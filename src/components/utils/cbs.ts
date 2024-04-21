@@ -7,6 +7,7 @@
 import type { API, BlockAPI } from '@types';
 import { getClosestElement } from '../dom';
 import { isEmpty } from './empty';
+import { isAtStart } from './selection'
 
 
 /**
@@ -40,6 +41,8 @@ export type CrossInputSelection = MaybeCrossInputSelection & {
   middleInputs: BlockInputIntersected[];
   range: Range;
   clear: () => void;
+  insertChar: (char: string) => void;
+  mergeOrNavigatePrevious: () => Promise<void>;
 }
 
 /**
@@ -222,13 +225,17 @@ export function removeRangePartFromInput(range: Range, input: HTMLElement, optio
   rangeClone.extractContents();
 }
 
+interface CBSHelpers {
+  clear: () => void;
+  insertChar: (char: string) => void;
+  mergeOrNavigatePrevious: () => Promise<void>;
+}
 interface CBSOptions {
-  onSingleFullySelectedInput?: (input: BlockInputIntersected, helpers: {clear: () => void, insertChar: (char: string) => void}) => void;
+  onSingleFullySelectedInput?: (input: BlockInputIntersected, helpers: CBSHelpers) => void;
   onSinglePartiallySelectedInput?: (input: BlockInputIntersected) => void;
   onCrossInputSelection?: (selection: CrossInputSelection) => void;
-  /**
-   * @todo onAtStart, onAtEnd
-   */
+  atStartOfFirstInput?: (input: BlockInputIntersected) => void;
+  atEndOfLastInput?: () => void;
 }
 
 function insertChar(char: string): void {
@@ -251,6 +258,19 @@ function insertChar(char: string): void {
   range?.collapse(false);
 }
 
+/**
+ * If Blocks could be merged, do it
+ * Otherwise, just navigate to the target block
+ */
+async function mergeOrNavigate(api: API, targetBlock: BlockAPI, blockToMerge: BlockAPI) {
+  const bothBlocksMergeable = api.blocks.areBlocksMergeable(targetBlock, blockToMerge);
+
+  if (bothBlocksMergeable) {
+    await api.blocks.merge(targetBlock, blockToMerge, { restoreCaret: true });
+  } else {
+    api.caret.setToBlock(targetBlock, 'end');
+  }
+}
 
 /**
  * Returns a list of blocks and inputs that intersect with the given range
@@ -285,9 +305,17 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
 
   const isCrossBlockSelection = intersectedBlocks.length > 1;
 
+  const firstBlock = intersectedBlocks[0];
+  const lastBlock = intersectedBlocks[intersectedBlocks.length - 1];
   const firstInput = intersectedInputs[0] ?? null;
   const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
   const middleInputs = intersectedInputs.slice(1, -1);
+
+  /**
+   * @todo handle case when fisrtInput or lastInput is null
+   * and remove ? below
+   */
+
 
   /**
    * @todo handle case when first block === last block (one block with several inputs)
@@ -296,6 +324,7 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
   if (intersectedInputs.length === 1) {
     const { input, block } = firstInput;
     const isWholeInputSelected = range.toString() === input.textContent;
+    const atStart = isAtStart(firstInput?.input);
 
     if (isWholeInputSelected) {
 
@@ -315,6 +344,27 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
       }
 
       options?.onSingleFullySelectedInput?.(firstInput, { clear, insertChar });
+    } else if (atStart) {
+      const mergeOrNavigatePrevious = async function mergeOrNavigatePrevious() {
+        /**
+         * In this case first and last block are the same, so we need find previous one
+         */
+        const lastBlockIndex = api.blocks.getBlockIndex(lastBlock.id);
+
+        if (lastBlockIndex === null || lastBlockIndex === 0) {
+          return;
+        }
+
+        const previousBlock = api.blocks.getBlockByIndex(lastBlockIndex - 1);
+
+        if (previousBlock === undefined) {
+          return;
+        }
+
+        await mergeOrNavigate(api, previousBlock, lastBlock);
+      }
+
+      options?.atStartOfFirstInput?.(firstInput, { mergeOrNavigatePrevious });
     } else {
       options?.onSinglePartiallySelectedInput?.(firstInput);
     }
@@ -345,6 +395,10 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
       });
     }
 
+    const mergeOrNavigatePrevious = async function mergeOrNavigatePrevious() {
+      await mergeOrNavigate(api, firstBlock, lastBlock);
+    }
+
     options?.onCrossInputSelection?.({
       isCrossBlockSelection,
       isCrossInputSelection: true,
@@ -356,6 +410,7 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
       middleInputs,
       clear,
       insertChar,
+      mergeOrNavigatePrevious,
     });
   }
 

@@ -504,8 +504,9 @@ export default class BlockManager extends Module {
       return;
     }
 
+
     await targetBlock.mergeWith(blockToMergeData);
-    this.removeBlock(blockToMerge);
+    await this.removeBlock(blockToMerge);
     this.currentBlockIndex = this._blocks.indexOf(targetBlock);
   }
 

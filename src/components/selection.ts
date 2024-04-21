@@ -32,6 +32,8 @@ interface Document {
  * Working with selection
  *
  * @typedef {SelectionUtils} SelectionUtils
+ *
+ * @deprecated - use separate utility helpers in ${@link ./utils/selection.ts}
  */
 export default class SelectionUtils {
   /**

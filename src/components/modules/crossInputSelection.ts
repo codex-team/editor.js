@@ -107,26 +107,14 @@ export default class CrossInputSelection extends Module {
    * @param event
    */
   private keydown(event: KeyboardEvent): void {
-    const api = this.Editor.API.methods;
-
-    const { isCrossInputSelection } = useCrossInputSelection(api);
-
-
-
-    /**
-     * We should prevent default behavior for all keys except a few cases:
-     * 1. arrows navigation
-     */
-    if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
-      console.log('Arrow keydown handler — native behavior')
-      return;
-    }
-
-
-
-
-
     switch (event.key) {
+      case 'ArrowLeft':
+      case 'ArrowUp':
+      case 'ArrowRight':
+      case 'ArrowDown':
+        console.log('Arrow keydown handler — native behavior')
+        return;
+
       case 'Delete':
       case 'Backspace':
         /**
@@ -153,16 +141,6 @@ export default class CrossInputSelection extends Module {
     }
 
     if (isPrintableKey(event.keyCode) && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
-      // /**
-      //  * If selection is not cross-input, do nothing
-      // */
-      // if (!isCrossInputSelection) {
-      //   console.log('no CIS, default Printable Key behavior');
-
-      //   return;
-      // }
-
-      // event.preventDefault();
       this.handlePrintableKey(event);
     }
   }
@@ -196,6 +174,7 @@ export default class CrossInputSelection extends Module {
         */
         clear();
 
+        /** @todo make merge() helper */
         const startingBlockApi = blocks[0];
         const endingBlockApi = blocks[blocks.length - 1];
 
@@ -282,9 +261,15 @@ export default class CrossInputSelection extends Module {
    */
   private handleDelete(event: KeyboardEvent, isBackspace = false): void {
     const api = this.Editor.API.methods;
-    const { BlockManager, Caret } = this.Editor;
 
     useCrossInputSelection(api, {
+      atStartOfFirstInput: ({ input, block }, { mergeOrNavigatePrevious }) => {
+        console.log('Delete / atStartOfFirstInput: merge or navigate to the previous block');
+
+        event.preventDefault();
+
+        mergeOrNavigatePrevious();
+      },
       onSingleFullySelectedInput: ({ input }, { clear }) => {
         console.info('Delete / onSingleFullySelectedInput: clear input');
 
@@ -295,7 +280,7 @@ export default class CrossInputSelection extends Module {
       onSinglePartiallySelectedInput: () => {
         console.info('Delete / onSinglePartiallySelectedInput: default behaviour');
       },
-      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, clear }) => {
+      onCrossInputSelection: ({ range, firstInput, lastInput, middleInputs, blocks, clear, mergeOrNavigatePrevious }) => {
         console.info('Delete / onCrossInputSelection: remove selected content and merge blocks if possible');
 
         event.preventDefault();
@@ -306,159 +291,10 @@ export default class CrossInputSelection extends Module {
          * 2. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
         */
         clear();
-
-        const startingBlockApi = blocks[0];
-        const endingBlockApi = blocks[blocks.length - 1];
-
-        /**
-         * @todo get rid of this by adding 'merge' api method
-         */
-        const startingBlock = BlockManager.getBlockById(startingBlockApi.id);
-        const endingBlock = BlockManager.getBlockById(endingBlockApi.id);
-
-        const bothBlocksMergeable = areBlocksMergeable(startingBlock!, endingBlock!);
-
-        /**
-         * If Blocks could be merged, do it
-         * Otherwise, just navigate to the first block
-         */
-        if (bothBlocksMergeable) {
-          this.mergeBlocks(startingBlock!, endingBlock!);
-        } else {
-          Caret.setToBlock(startingBlock!, this.Editor.Caret.positions.START);
-        }
+        mergeOrNavigatePrevious();
       }
     });
   }
-
-  /**
-   *
-   * @param event
-   * @param api
-   * @param isBackspace @todo suppport
-   */
-  private _handleDelete(event: KeyboardEvent, isBackspace = false): void {
-    const api = this.Editor.API.methods;
-
-    const {
-      blocks: intersectedBlocks,
-      inputs: intersectedInputs,
-      range,
-      firstInput,
-      lastInput,
-      middleInputs,
-      isCrossBlockSelection,
-    } = useCrossInputSelection(api);
-
-    if (!intersectedBlocks.length && !intersectedInputs.length || !range) {
-      return;
-    }
-
-    /**
-     * Handle case when user select the whole block.
-     * We should not allow to delete it along with tool and .ce-block__content.
-     * We should delete a Block via api instead
-     */
-    if (intersectedInputs.length === 1) {
-      const { input, block } = intersectedInputs[0];
-      const isWholeInputSelected = range.toString() === input.textContent;
-
-      if (isWholeInputSelected) {
-        console.log('OPA');
-
-        api.blocks.delete(block.id);
-
-        event.preventDefault();
-      } else {
-        console.log('default behavior');
-
-        return;
-      }
-    }
-
-    if (!isCrossBlockSelection) {
-      return;
-    }
-
-    event.preventDefault();
-
-
-    /**
-     * @todo handle case when first block === last block
-     */
-
-    /**
-     * Now we need:
-     * 1. Get first input and remove selected content starting from the beginning of the selection to the end of the input
-     * 2. Get last input and remove selected content starting from the beginning of the input to the end of the selection
-     * 3. Get all inputs between first and last and remove them (and blocks if they are empty after removing inputs)
-     * 4. Merge first and last blocks if they are mergeable. Otherwise, navigate to the previous block
-     */
-    removeRangePartFromInput(range, firstInput!.input, { fromRangeStartToInputEnd: true });
-    removeRangePartFromInput(range, lastInput!.input, { fromInputStartToRangeEnd: true });
-
-    const removedInputs: BlockInput[] = [];
-    middleInputs.forEach(({ input }: BlockInputIntersected) => {
-      removedInputs.push(input);
-      input.remove();
-    });
-
-    /**
-     * Remove blocks if they are empty
-     */
-    intersectedBlocks.forEach((block: BlockAPI) => {
-      if (block.inputs.every(input => removedInputs.includes(input))) {
-        api.blocks.delete(block.id);
-      }
-    });
-
-    const startingBlockApi = intersectedBlocks[0];
-    const endingBlockApi = intersectedBlocks[intersectedBlocks.length - 1];
-
-    /**
-     * get rid of this by adding 'merge' api method
-     */
-    const startingBlock = this.Editor.BlockManager.getBlockById(startingBlockApi.id);
-    const endingBlock = this.Editor.BlockManager.getBlockById(endingBlockApi.id);
-
-    const bothBlocksMergeable = areBlocksMergeable(startingBlock!, endingBlock!);
-
-    /**
-     * If Blocks could be merged, do it
-     * Otherwise, just navigate to the first block
-     */
-    if (bothBlocksMergeable) {
-      console.log('merge');
-      this.mergeBlocks(startingBlock!, endingBlock!);
-    } else {
-      console.log('navigate');
-      this.Editor.Caret.setToBlock(startingBlock!, this.Editor.Caret.positions.START);
-    }
-  }
-
-  /**
-   * Merge passed Blocks
-   *
-   * @param targetBlock - to which Block we want to merge
-   * @param blockToMerge - what Block we want to merge
-   */
-  private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
-    const { BlockManager, Caret, Toolbar } = this.Editor;
-
-    Caret.createShadow(targetBlock.pluginsContent);
-
-    BlockManager
-      .mergeBlocks(targetBlock, blockToMerge)
-      .then(() => {
-        // window.requestAnimationFrame(() => {
-        /** Restore caret position after merge */
-        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
-        // targetBlock.pluginsContent.normalize();s
-        // Toolbar.close();
-        // });
-      });
-  }
-
 
   /**
    * Prevents selection of unselectable Blocks (like, Code, Table, etc)

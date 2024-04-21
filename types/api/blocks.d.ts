@@ -62,14 +62,16 @@ export interface Blocks {
 
   /**
    * Returns current Block index
-   * @returns {number}
    */
   getCurrentBlockIndex(): number;
 
   /**
    * Returns the index of Block by id;
+   * Returns null if Block was not found
+   *
+   * @param blockId - Block id
    */
-  getBlockIndex(blockId: string): number;
+  getBlockIndex(blockId: string): number | null;
 
   /**
    * Mark Block as stretched
@@ -82,7 +84,6 @@ export interface Blocks {
 
   /**
    * Returns Blocks count
-   * @return {number}
    */
   getBlocksCount(): number;
 
@@ -148,4 +149,8 @@ export interface Blocks {
    * @throws Error if conversion is not possible
    */
   convert(id: string, newType: string, dataOverrides?: BlockToolData): void;
+
+  areBlocksMergeable(targetBlock: BlockAPI, blockToMerge: BlockAPI): boolean;
+
+  merge(targetBlock: BlockAPI, blockToMerge: BlockAPI, options?: { restoreCaret?: boolean }): Promise<void>;
 }
