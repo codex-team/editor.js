@@ -263,12 +263,18 @@ export default class CrossInputSelection extends Module {
     const api = this.Editor.API.methods;
 
     useCrossInputSelection(api, {
-      atStartOfFirstInput: ({ input, block }, { mergeOrNavigatePrevious }) => {
+      atStartOfInput: ({ input, block }, { mergeOrNavigatePrevious }) => {
         console.log('Delete / atStartOfFirstInput: merge or navigate to the previous block');
 
         event.preventDefault();
 
-        mergeOrNavigatePrevious();
+        const isFirstInputInBlock = input === block.inputs[0];
+
+        if (isFirstInputInBlock) {
+          mergeOrNavigatePrevious();
+        } else {
+          this.Editor.Caret.navigatePrevious();
+        }
       },
       onSingleFullySelectedInput: ({ input }, { clear }) => {
         console.info('Delete / onSingleFullySelectedInput: clear input');

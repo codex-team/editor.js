@@ -5,7 +5,7 @@
  */
 
 import type { API, BlockAPI } from '@types';
-import { getClosestElement } from '../dom';
+import Dom, { getClosestElement } from '../dom';
 import { isEmpty } from './empty';
 import { isAtStart } from './selection'
 
@@ -234,8 +234,8 @@ interface CBSOptions {
   onSingleFullySelectedInput?: (input: BlockInputIntersected, helpers: CBSHelpers) => void;
   onSinglePartiallySelectedInput?: (input: BlockInputIntersected) => void;
   onCrossInputSelection?: (selection: CrossInputSelection) => void;
-  atStartOfFirstInput?: (input: BlockInputIntersected) => void;
-  atEndOfLastInput?: () => void;
+  atStartOfInput?: (input: BlockInputIntersected) => void;
+  atEndOfInput?: (input: BlockInputIntersected) => void;
 }
 
 function insertChar(char: string): void {
@@ -305,7 +305,7 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
 
   const isCrossBlockSelection = intersectedBlocks.length > 1;
 
-  const firstBlock = intersectedBlocks[0];
+  const firstBlock = intersectedBlocks[0]; // startingBlock?
   const lastBlock = intersectedBlocks[intersectedBlocks.length - 1];
   const firstInput = intersectedInputs[0] ?? null;
   const lastInput = intersectedInputs[intersectedInputs.length - 1] ?? null;
@@ -323,7 +323,8 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
 
   if (intersectedInputs.length === 1) {
     const { input, block } = firstInput;
-    const isWholeInputSelected = range.toString() === input.textContent;
+    const isInputEmpty = Dom.isEmpty(input);
+    const isWholeInputSelected = !isInputEmpty && range.toString() === input.textContent;
     const atStart = isAtStart(firstInput?.input);
 
     if (isWholeInputSelected) {
@@ -347,7 +348,7 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
     } else if (atStart) {
       const mergeOrNavigatePrevious = async function mergeOrNavigatePrevious() {
         /**
-         * In this case first and last block are the same, so we need find previous one
+         * In this a case when the first and the last block are the same we need to find a previous one
          */
         const lastBlockIndex = api.blocks.getBlockIndex(lastBlock.id);
 
@@ -364,7 +365,7 @@ export function useCrossInputSelection(api: API, options?: CBSOptions): MaybeCro
         await mergeOrNavigate(api, previousBlock, lastBlock);
       }
 
-      options?.atStartOfFirstInput?.(firstInput, { mergeOrNavigatePrevious });
+      options?.atStartOfInput?.(firstInput, { mergeOrNavigatePrevious });
     } else {
       options?.onSinglePartiallySelectedInput?.(firstInput);
     }
