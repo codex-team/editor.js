@@ -71,15 +71,16 @@ describe('Flipper', () => {
     cy.get('[data-cy=editorjs]')
       .get('.cdx-some-plugin')
       // Open tunes menu
-      .trigger('keydown', { code: 'Slash', ctrlKey: true })
+      .trigger('keydown', { code: 'Slash',
+        ctrlKey: true })
       // Navigate to delete button (the second button)
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE })
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE });
 
     /**
-     * Check whether we focus the Delete Tune or not
+     * Check whether we focus the Move Up Tune or not
      */
-    cy.get('[data-item-name="delete"]')
+    cy.get('[data-item-name="move-up"]')
       .should('have.class', 'ce-popover-item--focused');
 
     cy.get('[data-cy=editorjs]')
