@@ -133,7 +133,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover = new PopoverClass({
       searchable: true,
-      items: this.getTunesItems(toolTunes, commonTunes, targetBlock.name),
+      items: this.getTunesItems(targetBlock.name, commonTunes, toolTunes),
       customContent: customHtmlTunes,
       customContentFlippableItems: this.getControls(customHtmlTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
@@ -202,14 +202,14 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Returns list of items to be displayed in block tunes menu.
    * Merges tool specific tunes, conversion menu and common tunes in one list in predefined order
    *
-   * @param toolTunes - tool specific tunes
-   * @param commonTunes – common tunes
    * @param toolName - current block tool name
+   * @param commonTunes – common tunes
+   * @param toolTunes - tool specific tunes
    */
-  private getTunesItems(toolTunes: TunesMenuConfigItem[], commonTunes: TunesMenuConfigItem[], toolName: string): PopoverItemParams[] {
+  private getTunesItems(toolName: string, commonTunes: TunesMenuConfigItem[], toolTunes?: TunesMenuConfigItem[]): PopoverItemParams[] {
     const items = [] as TunesMenuConfigItem[];
 
-    if (toolTunes.length > 0) {
+    if (toolTunes !== undefined && toolTunes.length > 0) {
       items.push(...toolTunes);
       items.push({
         type: 'separator',
