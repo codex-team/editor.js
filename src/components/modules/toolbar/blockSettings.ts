@@ -222,7 +222,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       items.push({
         type: 'default',
         icon: IconReplace,
-        title: 'Convert to',
+        title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
         children: {
           items: convertToItems,
         },

@@ -18,7 +18,8 @@
     },
     "popover": {
       "Filter": "",
-      "Nothing found": ""
+      "Nothing found": "",
+      "Convert to": ""
     }
   },
   "toolNames": {
