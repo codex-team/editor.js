@@ -110,7 +110,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
     this.opened = true;
 
-    // console.log(this.getConvertToItems());
     /**
      * If block settings contains any inputs, focus will be set there,
      * so we need to save current selection to restore it after block settings is closed

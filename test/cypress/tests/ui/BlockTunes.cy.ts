@@ -1,4 +1,6 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
+import Header from '@editorjs/header';
+
 
 describe('BlockTunes', function () {
   describe('Search', () => {
@@ -102,6 +104,83 @@ describe('BlockTunes', function () {
       cy.get('[data-cy="block-wrapper"')
         .first()
         .should('have.class', 'ce-block--selected');
+    });
+  });
+
+  describe('Convert to', () => {
+    it('should display Convert to inside Block Tunes', () => {
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.cdx-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Check "Convert to" option is present  */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .should('exist');
+
+      /** Click "Convert to" option*/
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .click();
+
+      /** Check nected popover with "Heading" option is present */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested [data-item-name=header]')
+        .should('exist');
+    });
+
+    it('should not display Convert to inside Block Tunes if there is nothing to convert to', () => {
+      /** Editor instance with single default tool */
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.cdx-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Check "Convert to" option is not present  */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .should('not.exist');
     });
   });
 });
