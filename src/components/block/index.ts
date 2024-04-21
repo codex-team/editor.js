@@ -229,7 +229,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
-
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
@@ -612,9 +611,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Returns data to render in tunes menu.
-   * Splits block tunes settings into 3 groups: popover items and custom html.
+   * Splits block tunes into 3 groups: block specific tunes, common tunes
+   * and custom html that is produced by combining tunes html from both previous groups
    */
-  public getTunes(): [PopoverItemParams[], PopoverItemParams[], HTMLElement] {
+  public getTunes(): {
+    toolTunes: PopoverItemParams[];
+    commonTunes: PopoverItemParams[];
+    customHtmlTunes: HTMLElement
+    } {
     const customHtmlTunesContainer = document.createElement('div');
     const commonTunesPopoverParams: TunesMenuConfigItem[] = [];
 
@@ -653,26 +657,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       }
     });
 
-    return [toolTunesPopoverParams, commonTunesPopoverParams, customHtmlTunesContainer];
+    return {
+      toolTunes: toolTunesPopoverParams,
+      commonTunes: commonTunesPopoverParams,
+      customHtmlTunes: customHtmlTunesContainer,
+    };
   }
 
-  /**
-   *
-   * @param tunes
-   */
-  private getTunesDataSegregated(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
-    const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
-
-    if ($.isElement(tunes)) {
-      result.htmlElement = tunes as HTMLElement;
-    } else if (Array.isArray(tunes)) {
-      result.items = tunes as PopoverItemParams[];
-    } else {
-      result.items = [ tunes ];
-    }
-
-    return result;
-  }
 
   /**
    * Update current input index with selection anchor node
@@ -760,6 +751,25 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const blockData = await this.data;
 
     return convertBlockDataToString(blockData, this.tool.conversionConfig);
+  }
+
+  /**
+   * Determines if tool's tunes settings are custom html or popover params and separates one from another by putting to different object fields
+   *
+   * @param tunes - tool's tunes config
+   */
+  private getTunesDataSegregated(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
+    const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
+
+    if ($.isElement(tunes)) {
+      result.htmlElement = tunes as HTMLElement;
+    } else if (Array.isArray(tunes)) {
+      result.items = tunes as PopoverItemParams[];
+    } else {
+      result.items = [ tunes ];
+    }
+
+    return result;
   }
 
   /**

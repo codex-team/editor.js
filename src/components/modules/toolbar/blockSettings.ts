@@ -7,7 +7,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemDefaultParams } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemDefaultParams, PopoverItemParams } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
@@ -123,24 +123,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.Editor.BlockSelection.selectBlock(targetBlock);
     this.Editor.BlockSelection.clearCache();
 
-    /**
-     * Fill Tool's settings
-     */
-    const [toolTunesItems, tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
-    const items = [
-      ...toolTunesItems.map(tune => this.resolveTuneAliases(tune)),
-      {
-        type: 'default',
-        icon: IconReplace,
-        title: 'Convert to',
-        children: {
-          items: this.getConvertToItems(),
-        },
-      },
-      {
-        type: 'delimiter',
-      },
-    ].concat(tunesItems.map(tune => this.resolveTuneAliases(tune)));
+    /** Get tool's settings data */
+    const { toolTunes, commonTunes, customHtmlTunes } = targetBlock.getTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -149,9 +133,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover = new PopoverClass({
       searchable: true,
-      items: items,
-      customContent: customHtmlTunesContainer,
-      customContentFlippableItems: this.getControls(customHtmlTunesContainer),
+      items: this.getTunesItems(toolTunes, commonTunes, targetBlock.name),
+      customContent: customHtmlTunes,
+      customContentFlippableItems: this.getControls(customHtmlTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
@@ -215,15 +199,60 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   };
 
   /**
+   * Returns list of items to be displayed in block tunes menu.
+   * Merges tool specific tunes, conversion menu and common tunes in one list in predefined order
    *
+   * @param toolTunes - tool specific tunes
+   * @param commonTunes – common tunes
+   * @param toolName - current block tool name
    */
-  private getConvertToItems(): TunesMenuConfigItem[] {
+  private getTunesItems(toolTunes: TunesMenuConfigItem[], commonTunes: TunesMenuConfigItem[], toolName: string): PopoverItemParams[] {
+    const items = [] as TunesMenuConfigItem[];
+
+    if (toolTunes.length > 0) {
+      items.push(...toolTunes);
+      items.push({
+        type: 'separator',
+      });
+    }
+
+    const convertToItems = this.getConvertToItems(toolName);
+
+    if (convertToItems.length > 0) {
+      items.push({
+        type: 'default',
+        icon: IconReplace,
+        title: 'Convert to',
+        children: {
+          items: convertToItems,
+        },
+      });
+      items.push({
+        type: 'separator',
+      });
+    }
+
+    items.push(...commonTunes);
+
+    return items.map(tune => this.resolveTuneAliases(tune));
+  }
+
+  /**
+   * Returns list of conversion menu items available for the current block
+   *
+   * @param currentToolName - current block tool name
+   */
+  private getConvertToItems(currentToolName: string): TunesMenuConfigItem[] {
     const conversionEntries = Array.from(this.Editor.Tools.blockTools.entries());
 
     const resultItems: TunesMenuConfigItem[] = [];
 
     conversionEntries.forEach(([toolName, tool]) => {
       const conversionConfig = tool.conversionConfig;
+
+      if (toolName === currentToolName) {
+        return;
+      }
 
       /**
        * Skip tools without «import» rule specified
@@ -245,16 +274,14 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
           icon: toolboxItem.icon,
           title: toolboxItem.title,
           name: toolName,
-          closeOnActivate: true,
-          onActivate: (item: TunesMenuConfigItem) => {
-            const { BlockManager, BlockSelection, InlineToolbar, Caret } = this.Editor;
+          onActivate: () => {
+            const { BlockManager, BlockSelection, Caret } = this.Editor;
 
             BlockManager.convert(this.Editor.BlockManager.currentBlock, toolName, toolboxItem.data);
 
             BlockSelection.clearSelection();
 
             this.close();
-            InlineToolbar.close();
 
             window.requestAnimationFrame(() => {
               Caret.setToBlock(this.Editor.BlockManager.currentBlock, Caret.positions.END);
@@ -294,7 +321,10 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @param item - item with resolved aliases
    */
-  private resolveTuneAliases(item: TunesMenuConfigItem): TunesMenuConfigItem {
+  private resolveTuneAliases(item: TunesMenuConfigItem): PopoverItemParams {
+    if (item.type === 'separator') {
+      return item;
+    }
     const result = resolveAliases(item, { label: 'title' });
 
     if (item.confirmation) {
