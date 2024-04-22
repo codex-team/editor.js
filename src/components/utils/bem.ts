@@ -13,7 +13,7 @@ const MODIFIER_DELIMITER = '--';
  * @param modifier - modifier to be appended
  */
 export function bem(blockName: string) {
-  return (elementName?: string, modifier?: string) => {
+  return (elementName?: string | null, modifier?: string) => {
     const className = [blockName, elementName]
       .filter(x => !!x)
       .join(ELEMENT_DELIMITER);

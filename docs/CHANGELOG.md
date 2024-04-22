@@ -3,6 +3,7 @@
 ### 2.30.1
 
 – `New` – Block Tunes now supports nesting items
+– `New` – Block Tunes now supports separator items
 
 ### 2.30.0
 

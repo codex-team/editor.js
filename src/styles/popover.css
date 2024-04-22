@@ -194,7 +194,23 @@
 /** 
  * Popover item styles
  */
-.ce-popover-item {
+
+
+ .ce-popover-item-separator {
+   padding: 4px 3px;
+
+   &--hidden {
+    display: none;
+   }
+
+   &__line {
+     height: 1px;
+     background: var(--color-border);
+     width: 100%;
+   }
+ }
+
+ .ce-popover-item {
   --border-radius: 6px;
   border-radius: var(--border-radius);
   display: flex;

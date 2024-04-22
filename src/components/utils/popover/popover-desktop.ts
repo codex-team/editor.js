@@ -4,8 +4,9 @@ import { PopoverItem, css as popoverItemCls } from './components/popover-item';
 import { PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
-import { SearchableItem } from './components/search-input';
+import { SearchInputEvent, SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
+import { PopoverItemDefault } from './components/popover-item';
 
 /**
  * Desktop popover.
@@ -86,6 +87,8 @@ export class PopoverDesktop extends PopoverAbstract {
     });
 
     this.flipper.onFlip(this.onFlip);
+
+    this.search?.on(SearchInputEvent.Search, this.handleSearch);
   }
 
   /**
@@ -161,16 +164,28 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
-   * Handles input inside search field
+   * Handles displaying nested items for the item.
    *
-   * @param query - search query text
-   * @param result - search results
+   * @param item – item to show nested popover for
    */
-  protected override onSearch = (query: string, result: SearchableItem[]): void => {
-    super.onSearch(query, result);
+  protected override showNestedItems(item: PopoverItemDefault): void {
+    if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
+      return;
+    }
+    this.showNestedPopoverForItem(item);
+  }
 
+  /**
+   * Additionaly handles input inside search field.
+   * Updates flipper items considering search query applied.
+   *
+   * @param data - search event data
+   * @param data.query - search query text
+   * @param data.result - search results
+   */
+  private handleSearch = (data: { query: string, items: SearchableItem[] }): void => {
     /** List of elements available for keyboard navigation considering search query applied */
-    const flippableElements = query === '' ? this.flippableElements : result.map(item => (item as PopoverItem).getElement());
+    const flippableElements = data.query === '' ? this.flippableElements : data.items.map(item => (item as PopoverItem).getElement());
 
     if (this.flipper.isActivated) {
       /** Update flipper items with only visible */
@@ -178,18 +193,6 @@ export class PopoverDesktop extends PopoverAbstract {
       this.flipper.activate(flippableElements as HTMLElement[]);
     }
   };
-
-  /**
-   * Handles displaying nested items for the item.
-   *
-   * @param item – item to show nested popover for
-   */
-  protected override showNestedItems(item: PopoverItem): void {
-    if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
-      return;
-    }
-    this.showNestedPopoverForItem(item);
-  }
 
   /**
    * Checks if popover should be opened bottom.
@@ -283,7 +286,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    const popoverItemsElements = this.items.map(item => item.getElement());
+    const popoverItemsElements = this.itemsInteractive.map(item => item.getElement());
     const customContentControlsElements = this.customContentFlippableItems || [];
 
     /**
@@ -296,7 +299,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    const focusedItem = this.items.find(item => item.isFocused);
+    const focusedItem = this.itemsInteractive.find(item => item.isFocused);
 
     focusedItem?.onFocus();
   };
@@ -307,7 +310,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item - item to display nested popover by
    */
-  private showNestedPopoverForItem(item: PopoverItem): void {
+  private showNestedPopoverForItem(item: PopoverItemDefault): void {
     this.nestedPopover = new PopoverDesktop({
       items: item.children,
       nestingLevel: this.nestingLevel + 1,

@@ -3,8 +3,7 @@ import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
 import { PopoverMobileNodes, PopoverParams } from './popover.types';
-import { PopoverItem } from './components/popover-item';
-import { PopoverItem as PopoverItemParams } from '../../../../types';
+import { PopoverItemDefault, PopoverItemParams } from './components/popover-item';
 import { css } from './popover.const';
 import Dom from '../../dom';
 
@@ -87,7 +86,7 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
    *
    * @param item – item to show nested popover for
    */
-  protected override showNestedItems(item: PopoverItem): void {
+  protected override showNestedItems(item: PopoverItemDefault): void {
     /** Show nested items */
     this.updateItemsAndHeader(item.children, item.title);
 
@@ -128,7 +127,7 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
     /** Re-render items */
     this.items.forEach(item => item.getElement()?.remove());
 
-    this.items = items.map(params => new PopoverItem(params));
+    this.items = this.buildItems(items);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
