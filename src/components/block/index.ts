@@ -642,11 +642,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     ].map(tuneInstance => tuneInstance.render());
 
     /** Separate custom html from Popover items params for common tunes */
-    commonTunes.forEach(rendered => {
+    commonTunes.forEach(tuneConfig => {
       const {
         items,
         htmlElement,
-      } = this.getTunesDataSegregated(rendered);
+      } = this.getTunesDataSegregated(tuneConfig);
 
       if (htmlElement !== undefined) {
         customHtmlTunesContainer.appendChild(htmlElement);
