@@ -107,7 +107,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @param targetBlock - near which Block we should open BlockSettings
    */
-  public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
+  public async open(targetBlock: Block = this.Editor.BlockManager.currentBlock): Promise<void> {
     this.opened = true;
 
     /**
@@ -132,7 +132,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     this.popover = new PopoverClass({
       searchable: true,
-      items: this.getTunesItems(targetBlock.name, commonTunes, toolTunes),
+      items: await this.getTunesItems(targetBlock, commonTunes, toolTunes),
       customContent: customHtmlTunes,
       customContentFlippableItems: this.getControls(customHtmlTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
@@ -201,11 +201,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Returns list of items to be displayed in block tunes menu.
    * Merges tool specific tunes, conversion menu and common tunes in one list in predefined order
    *
-   * @param toolName - current block tool name
+   * @param currentBlock –  block we are about to open block tunes for
    * @param commonTunes – common tunes
    * @param toolTunes - tool specific tunes
    */
-  private getTunesItems(toolName: string, commonTunes: TunesMenuConfigItem[], toolTunes?: TunesMenuConfigItem[]): PopoverItemParams[] {
+  private async getTunesItems(currentBlock: Block, commonTunes: TunesMenuConfigItem[], toolTunes?: TunesMenuConfigItem[]): Promise<PopoverItemParams[]> {
     const items = [] as TunesMenuConfigItem[];
 
     if (toolTunes !== undefined && toolTunes.length > 0) {
@@ -215,10 +215,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    /**
-     * Exclude current tool from "convert to" items list
-     */
-    const convertToItems = this.allConvertToItems.filter(item => item.name !== toolName);
+    const convertToItems = await this.getConvertToItems(currentBlock);
 
     if (convertToItems.length > 0) {
       items.push({
@@ -240,13 +237,16 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   }
 
   /**
-   * List of all available conversion menu items
+   * Returns list of all available conversion menu items
+   *
+   * @param currentBlock - block we are about to open block tunes for
    */
-  @_.cacheable
-  private get allConvertToItems(): PopoverItemDefaultParams[] {
+  private async getConvertToItems(currentBlock: Block): Promise<PopoverItemDefaultParams[]> {
     const conversionEntries = Array.from(this.Editor.Tools.blockTools.entries());
 
     const resultItems: PopoverItemDefaultParams[] = [];
+
+    const blockData = await currentBlock.data;
 
     conversionEntries.forEach(([toolName, tool]) => {
       const conversionConfig = tool.conversionConfig;
@@ -263,6 +263,27 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
          * Skip tools that don't pass 'toolbox' property
          */
         if (_.isEmpty(toolboxItem) || !toolboxItem.icon) {
+          return;
+        }
+
+        let shouldSkip = false;
+
+        if (toolboxItem.data !== undefined) {
+          /**
+           * When a tool has several toolbox entries, we need to make sure we do not add
+           * toolbox item with the same data to the resulting array. This helps exclude duplicates
+           */
+          const hasSameData = Object.entries(toolboxItem.data).some((([propName, propValue]) => {
+            return blockData[propName] && _.equals(blockData[propName], propValue);
+          }));
+
+          shouldSkip = hasSameData;
+        } else {
+          shouldSkip = toolName === currentBlock.name;
+        }
+
+
+        if (shouldSkip) {
           return;
         }
 
