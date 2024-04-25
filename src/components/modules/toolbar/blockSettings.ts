@@ -13,6 +13,7 @@ import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
 import * as _ from '../../utils';
 import { IconReplace } from '@codexteam/icons';
+import { isSameBlockData } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -272,9 +273,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
            * When a tool has several toolbox entries, we need to make sure we do not add
            * toolbox item with the same data to the resulting array. This helps exclude duplicates
            */
-          const hasSameData = Object.entries(toolboxItem.data).some((([propName, propValue]) => {
-            return blockData[propName] && _.equals(blockData[propName], propValue);
-          }));
+          const hasSameData = isSameBlockData(toolboxItem.data, blockData);
 
           shouldSkip = hasSameData;
         } else {
