@@ -1,4 +1,4 @@
-import { PopoverItem } from '../../../../types/index.js';
+import { PopoverItemParams } from '../../../../types/index.js';
 
 /**
  * Mock of some Block Tool
@@ -26,12 +26,22 @@ class SomePlugin {
   /**
    * Used to display our tool in the Toolbox
    */
-  public static get toolbox(): PopoverItem {
+  public static get toolbox(): PopoverItemParams {
     return {
+      type: 'default',
       icon: '₷',
       title: 'Some tool',
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onActivate: (): void => {},
+    };
+  }
+
+  /**
+   * Extracts data from the plugin's UI
+   */
+  public save(): {data: string} {
+    return {
+      data: '123',
     };
   }
 }
