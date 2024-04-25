@@ -16,7 +16,6 @@ describe('Popover', () => {
      * (Inside popover null value is set to confirmation property, so, object becomes unavailable otherwise)
      */
     const confirmation: PopoverItemParams = {
-      type: 'default',
       icon: confirmActionIcon,
       title: confirmActionTitle,
       onActivate: cy.stub(),
@@ -24,7 +23,6 @@ describe('Popover', () => {
 
     const items: PopoverItemParams[] = [
       {
-        type: 'default',
         icon: actionIcon,
         title: actionTitle,
         name: 'testItem',
@@ -73,7 +71,6 @@ describe('Popover', () => {
   it('should render the items with true isActive property value as active', () => {
     const items = [
       {
-        type: 'default',
         icon: 'Icon',
         title: 'Title',
         isActive: true,
@@ -98,7 +95,6 @@ describe('Popover', () => {
   it('should not execute item\'s onActivate callback if the item is disabled', () => {
     const items: PopoverItemParams[] = [
       {
-        type: 'default',
         icon: 'Icon',
         title: 'Title',
         isDisabled: true,
@@ -131,7 +127,6 @@ describe('Popover', () => {
   it('should close once item with closeOnActivate property set to true is activated', () => {
     const items = [
       {
-        type: 'default',
         icon: 'Icon',
         title: 'Title',
         closeOnActivate: true,
@@ -159,7 +154,6 @@ describe('Popover', () => {
   it('should highlight as active the item with toggle property set to true once activated', () => {
     const items = [
       {
-        type: 'default',
         icon: 'Icon',
         title: 'Title',
         toggle: true,
@@ -184,7 +178,6 @@ describe('Popover', () => {
   it('should perform radiobutton-like behavior among the items that have toggle property value set to the same string value', () => {
     const items = [
       {
-        type: 'default',
         icon: 'Icon 1',
         title: 'Title 1',
         toggle: 'group-name',
@@ -193,7 +186,6 @@ describe('Popover', () => {
         onActivate: (): void => {},
       },
       {
-        type: 'default',
         icon: 'Icon 2',
         title: 'Title 2',
         toggle: 'group-name',
@@ -231,7 +223,6 @@ describe('Popover', () => {
   it('should toggle item if it is the only item in toggle group', () => {
     const items = [
       {
-        type: 'default',
         icon: 'Icon',
         title: 'Title',
         toggle: 'key',
@@ -279,7 +270,6 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
-          type: 'default',
           icon: 'Icon',
           title: 'Title',
           toggle: 'key',
@@ -287,7 +277,6 @@ describe('Popover', () => {
           children: {
             items: [
               {
-                type: 'default',
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
@@ -357,7 +346,6 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
-          type: 'default',
           icon: 'Icon',
           title: 'Tune',
           toggle: 'key',
@@ -365,7 +353,6 @@ describe('Popover', () => {
           children: {
             items: [
               {
-                type: 'default',
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
@@ -521,7 +508,6 @@ describe('Popover', () => {
       public render(): TunesMenuConfig {
         return  [
           {
-            type: 'default',
             onActivate: (): void => {},
             icon: 'Icon',
             title: 'Tune',
@@ -585,7 +571,6 @@ describe('Popover', () => {
       public render(): TunesMenuConfig {
         return  [
           {
-            type: 'default',
             onActivate: (): void => {},
             icon: 'Icon',
             title: 'Tune 1',
@@ -595,7 +580,6 @@ describe('Popover', () => {
             type: 'separator',
           },
           {
-            type: 'default',
             onActivate: (): void => {},
             icon: 'Icon',
             title: 'Tune 2',
@@ -674,7 +658,6 @@ describe('Popover', () => {
       public render(): TunesMenuConfig {
         return  [
           {
-            type: 'default',
             onActivate: (): void => {},
             icon: 'Icon',
             title: 'Tune 1',
@@ -684,7 +667,6 @@ describe('Popover', () => {
             type: 'separator',
           },
           {
-            type: 'default',
             onActivate: (): void => {},
             icon: 'Icon',
             title: 'Tune 2',

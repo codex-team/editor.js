@@ -28,7 +28,6 @@ class SomePlugin {
    */
   public static get toolbox(): PopoverItemParams {
     return {
-      type: 'default',
       icon: '₷',
       title: 'Some tool',
       // eslint-disable-next-line @typescript-eslint/no-empty-function

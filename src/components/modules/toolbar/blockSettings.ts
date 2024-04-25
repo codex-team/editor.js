@@ -219,7 +219,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
     if (convertToItems.length > 0) {
       items.push({
-        type: 'default',
         icon: IconReplace,
         title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
         children: {
@@ -288,7 +287,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
         }
 
         resultItems.push({
-          type: 'default',
           icon: toolboxItem.icon,
           title: toolboxItem.title,
           name: toolName,
