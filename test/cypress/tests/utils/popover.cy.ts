@@ -649,7 +649,8 @@ describe('Popover', () => {
       .should('not.exist');
 
     /** Press Tab */
-    cy.tab();
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
 
     /** Check first item is not focused */
     cy.get('[data-cy=editorjs]')
