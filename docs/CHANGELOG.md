@@ -12,6 +12,8 @@
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
+- `Fix` - Render the placeholder only if defined.
+- `Fix` - Do not add empty block in readonly mode.
 
 ### 2.29.1
 

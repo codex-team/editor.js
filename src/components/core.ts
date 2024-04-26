@@ -170,7 +170,7 @@ export default class Core {
      * Initialize default Block to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data) || !this.config.data.blocks || this.config.data.blocks.length === 0) {
-      this.config.data = { blocks: [ defaultBlockData ] };
+      this.config.data = { blocks: this.config.placeholder ? [ defaultBlockData ] : [] };
     }
 
     this.config.readOnly = this.config.readOnly as boolean || false;

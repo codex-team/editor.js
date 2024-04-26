@@ -18,8 +18,8 @@ export default class Renderer extends Module {
     return new Promise((resolve) => {
       const { Tools, BlockManager } = this.Editor;
 
-      if (blocksData.length === 0) {
-        BlockManager.insert();
+      if (blocksData.length === 0 && this.config.readOnly === false) {
+          BlockManager.insert();
       } else {
         /**
          * Create Blocks instances
