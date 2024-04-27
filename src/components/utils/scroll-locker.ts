@@ -15,7 +15,7 @@ export default class ScrollLocker {
   /**
    * Stores scroll position, used for hard scroll lock
    */
-  private scrollPosition: null|number;
+  private scrollPosition: null | number = null;
 
   /**
    * Locks body element scroll
