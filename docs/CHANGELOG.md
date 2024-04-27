@@ -13,6 +13,7 @@
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
+- `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
 
 ### 2.29.1
 
