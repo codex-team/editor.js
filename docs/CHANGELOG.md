@@ -5,6 +5,7 @@
 – `New` – Block Tunes now supports nesting items
 – `New` – Block Tunes now supports separator items
 – `New` – "Convert to" control is now also available in Block Tunes
+– `Fix` – Unwanted scroll on first typing on iOS devices
 
 ### 2.30.0
 
