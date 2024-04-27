@@ -356,7 +356,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     Shortcuts.add({
       name: shortcut,
       on: this.api.ui.nodes.redactor,
-      handler: (event: KeyboardEvent) => {
+      handler: async (event: KeyboardEvent) => {
         event.preventDefault();
 
         const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
@@ -368,11 +368,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
          */
         if (currentBlock) {
           try {
-            this.api.blocks.convert(currentBlock.id, toolName);
+            const newBlock = await this.api.blocks.convert(currentBlock.id, toolName);
+            const newBlockIndex = this.api.blocks.getBlockIndex(newBlock.id);
 
-            window.requestAnimationFrame(() => {
-              this.api.caret.setToBlock(currentBlockIndex, 'end');
-            });
+            this.api.caret.setToBlock(newBlockIndex, 'end');
 
             return;
           } catch (error) {}

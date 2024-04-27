@@ -183,16 +183,14 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
   public async replaceWithBlock(replacingToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
     const { BlockManager, BlockSelection, InlineToolbar, Caret } = this.Editor;
 
-    BlockManager.convert(this.Editor.BlockManager.currentBlock, replacingToolName, blockDataOverrides);
+    const newBlock = await BlockManager.convert(this.Editor.BlockManager.currentBlock, replacingToolName, blockDataOverrides);
 
     BlockSelection.clearSelection();
 
     this.close();
     InlineToolbar.close();
 
-    window.requestAnimationFrame(() => {
-      Caret.setToBlock(this.Editor.BlockManager.currentBlock, Caret.positions.END);
-    });
+    Caret.setToBlock(newBlock, Caret.positions.END);
   }
 
   /**
