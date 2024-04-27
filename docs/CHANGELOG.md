@@ -12,6 +12,7 @@
 - `Fix` - Block removing while Enter press on Block Tunes
 – `Fix` – Unwanted scroll on first typing on iOS devices
 - `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
+- `Fix` - Caret lost after block conversion on mobile devices.
 
 ### 2.29.1
 
