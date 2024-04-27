@@ -1,4 +1,4 @@
-import { bem } from '../../../bem';
+import { bem } from '../../../../bem';
 
 /**
  * Popover item block CSS class constructor

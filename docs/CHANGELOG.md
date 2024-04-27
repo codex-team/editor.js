@@ -3,6 +3,8 @@
 ### 2.30.1
 
 – `New` – Block Tunes now supports nesting items
+– `New` – Block Tunes now supports separator items
+– `New` – "Convert to" control is now also available in Block Tunes
 
 ### 2.30.0
 

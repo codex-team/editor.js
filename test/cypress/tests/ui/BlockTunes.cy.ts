@@ -1,4 +1,7 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
+import Header from '@editorjs/header';
+import { ToolboxConfig } from '../../../../types';
+
 
 describe('BlockTunes', function () {
   describe('Search', () => {
@@ -102,6 +105,187 @@ describe('BlockTunes', function () {
       cy.get('[data-cy="block-wrapper"')
         .first()
         .should('have.class', 'ce-block--selected');
+    });
+  });
+
+  describe('Convert to', () => {
+    it('should display Convert to inside Block Tunes', () => {
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.cdx-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Check "Convert to" option is present  */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .should('exist');
+
+      /** Click "Convert to" option*/
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .click();
+
+      /** Check nected popover with "Heading" option is present */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested [data-item-name=header]')
+        .should('exist');
+    });
+
+    it('should not display Convert to inside Block Tunes if there is nothing to convert to', () => {
+      /** Editor instance with single default tool */
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.cdx-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Check "Convert to" option is not present  */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .should('not.exist');
+    });
+
+    it('should not display tool with the same data in "Convert to" menu', () => {
+      /**
+       * Tool with several toolbox entries configured
+       */
+      class TestTool {
+        /**
+         * Tool is convertable
+         */
+        public static get conversionConfig(): { import: string } {
+          return {
+            import: 'text',
+          };
+        }
+
+        /**
+         * TestTool contains several toolbox options
+         */
+        public static get toolbox(): ToolboxConfig {
+          return [
+            {
+              title: 'Title 1',
+              icon: 'Icon1',
+              data: {
+                level: 1,
+              },
+            },
+            {
+              title: 'Title 2',
+              icon: 'Icon2',
+              data: {
+                level: 2,
+              },
+            },
+          ];
+        }
+
+        /**
+         * Tool can render itself
+         */
+        public render(): HTMLDivElement {
+          const div = document.createElement('div');
+
+          div.innerText = 'Some text';
+
+          return div;
+        }
+
+        /**
+         * Tool can save it's data
+         */
+        public save(): { text: string; level: number } {
+          return {
+            text: 'Some text',
+            level: 1,
+          };
+        }
+      }
+
+      /** Editor instance with TestTool installed and one block of TestTool type */
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'testTool',
+              data: {
+                text: 'Some text',
+                level: 1,
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Open "Convert to" menu  */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .click();
+
+      /** Check TestTool option with SAME data is NOT present */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested [data-item-name=testTool]')
+        .contains('Title 1')
+        .should('not.exist');
+
+      /** Check TestTool option with DIFFERENT data IS present */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested [data-item-name=testTool]')
+        .contains('Title 2')
+        .should('exist');
     });
   });
 });

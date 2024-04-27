@@ -3,7 +3,7 @@ import { isEmpty } from '../utils';
 /**
  * Event Dispatcher event listener
  */
-type Listener<Data> = (data?: Data) => void;
+type Listener<Data> = (data: Data) => void;
 
 /**
  * Mapped type with subscriptions list
