@@ -13,6 +13,7 @@
 – `Fix` – Unwanted scroll on first typing on iOS devices
 - `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
 - `Fix` - Caret lost after block conversion on mobile devices.
+- `Improvement` - The API blocks.convert() now returns the new block AP
 
 ### 2.29.1
 
