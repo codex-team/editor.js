@@ -1,18 +1,16 @@
 # Changelog
 
-### 2.30.1
+### 2.30.0
 
 – `New` – Block Tunes now supports nesting items
 – `New` – Block Tunes now supports separator items
 – `New` – "Convert to" control is now also available in Block Tunes
-
-### 2.30.0
-
 - `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
+– `Fix` – Unwanted scroll on first typing on iOS devices
 
 ### 2.29.1
 
