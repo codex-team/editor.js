@@ -31,6 +31,11 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
   private history = new PopoverStatesHistory();
 
   /**
+   * Flag that indicates if popover is hidden
+   */
+  private isHidden = true;
+
+  /**
    * Construct the instance
    *
    * @param params - popover params
@@ -58,15 +63,15 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
     super.show();
 
     this.scrollLocker.lock();
+
+    this.isHidden = false;
   }
 
   /**
    * Closes popover
    */
   public hide(): void {
-    const isAlreadyHidden = this.nodes.overlay.classList.contains(css.overlayHidden);
-
-    if (isAlreadyHidden) {
+    if (this.isHidden) {
       return;
     }
 
@@ -76,6 +81,8 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
     this.scrollLocker.unlock();
 
     this.history.reset();
+
+    this.isHidden = true;
   }
 
   /**
