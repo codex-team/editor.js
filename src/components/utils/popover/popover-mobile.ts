@@ -65,6 +65,12 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
    * Closes popover
    */
   public hide(): void {
+    const isAlreadyHidden = this.nodes.overlay.classList.contains(css.overlayHidden);
+
+    if (isAlreadyHidden) {
+      return;
+    }
+
     super.hide();
     this.nodes.overlay.classList.add(css.overlayHidden);
 
