@@ -17,7 +17,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
-  type: 'default';
+  type?: 'default';
 
   /**
    * Displayed text
