@@ -13,6 +13,7 @@
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
+- `Fix` - Caret lost after block conversion on mobile devices.
 
 ### 2.29.1
 
