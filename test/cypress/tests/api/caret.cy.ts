@@ -2,7 +2,7 @@ import EditorJS from '../../../../types';
 import { BlockChangedMutationType } from '../../../../types/events/block/BlockChanged';
 
 /**
- * There will be described test cases of BlockAPI
+ * Test cases for Caret API
  */
 describe('Caret API', () => {
   const paragraphDataMock = {
