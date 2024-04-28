@@ -345,6 +345,6 @@ describe('BlockTunes', function () {
               expect($block[0].contains(range.startContainer)).to.be.true;
             });
         });
-    })
+    });
   });
 });

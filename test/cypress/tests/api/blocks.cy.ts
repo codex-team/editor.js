@@ -256,7 +256,8 @@ describe('api.blocks', () => {
           /**
            * Check that block was converted
            */
-          const { blocks } = await editor.save()
+          const { blocks } = await editor.save();
+
           expect(blocks.length).to.eq(1);
           expect(blocks[0].type).to.eq('convertableTool');
           expect(blocks[0].data.text).to.eq(existingBlock.data.text);
@@ -284,7 +285,7 @@ describe('api.blocks', () => {
           return convert(fakeId, 'convertableTool')
             .catch((error) => {
               expect(error.message).to.be.eq(`Block with id "${fakeId}" not found`);
-            })
+            });
         });
     });
 
