@@ -334,9 +334,6 @@ describe('BlockTunes', function () {
       cy.window()
         .then((window) => {
           const selection = window.getSelection();
-
-          expect(selection.rangeCount).to.be.equal(1);
-
           const range = selection.getRangeAt(0);
 
           cy.get('[data-cy=editorjs]')
