@@ -105,7 +105,7 @@ describe('Inline Toolbar', () => {
 
       cy.get('[data-cy=editorjs]')
         .find('.ce-conversion-tool[data-tool=header]')
-        .click()
+        .click();
 
       cy.get('[data-cy=editorjs]')
         .find('.ce-header')
@@ -125,6 +125,6 @@ describe('Inline Toolbar', () => {
               expect($block[0].contains(range.startContainer)).to.be.true;
             });
         });
-    })
-  })
+    });
+  });
 });
