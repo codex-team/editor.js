@@ -97,9 +97,9 @@ export default class CaretAPI extends Module {
   /**
    * Sets caret to the Block by passed index
    *
-   * @param {number} index - index of Block where to set caret
-   * @param {string} position - position where to set caret
-   * @param {number} offset - caret offset
+   * @param blockOrIdOrIndex - either BlockAPI or Block id or Block index
+   * @param position - position where to set caret
+   * @param offset - caret offset
    * @returns {boolean}
    */
   private setToBlock = (
