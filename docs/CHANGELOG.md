@@ -13,7 +13,8 @@
 – `Fix` – Unwanted scroll on first typing on iOS devices
 - `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
 - `Fix` - Caret lost after block conversion on mobile devices.
-- `Improvement` - The API blocks.convert() now returns the new block AP
+- `Improvement` - The API `blocks.convert()` now returns the new block API
+- `Improvement` - The API `caret.setToBlock(`)` now can accept either BlockAPI or block index or block id
 
 ### 2.29.1
 

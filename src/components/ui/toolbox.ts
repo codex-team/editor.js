@@ -369,9 +369,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
         if (currentBlock) {
           try {
             const newBlock = await this.api.blocks.convert(currentBlock.id, toolName);
-            const newBlockIndex = this.api.blocks.getBlockIndex(newBlock.id);
 
-            this.api.caret.setToBlock(newBlockIndex, 'end');
+            this.api.caret.setToBlock(newBlock, 'end');
 
             return;
           } catch (error) {}
