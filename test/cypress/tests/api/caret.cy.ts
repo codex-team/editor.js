@@ -1,5 +1,4 @@
 import EditorJS from '../../../../types';
-import { BlockChangedMutationType } from '../../../../types/events/block/BlockChanged';
 
 /**
  * Test cases for Caret API
@@ -57,7 +56,7 @@ describe('Caret API', () => {
               });
 
           expect(returnedValue).to.be.true;
-        });
+      });
     });
 
     it('should set caret to a block (and return true) if block id is passed as argument', () => {
