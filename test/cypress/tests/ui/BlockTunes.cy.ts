@@ -287,5 +287,61 @@ describe('BlockTunes', function () {
         .contains('Title 2')
         .should('exist');
     });
+
+    it('should convert block to another type and set caret to the new block', () => {
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.cdx-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Click "Convert to" option*/
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .contains('Convert to')
+        .click();
+
+      /** Click "Heading" option */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested [data-item-name=header]')
+        .click();
+
+      /** Check the block was converted to the second option */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-header')
+        .should('have.text', 'Some text');
+
+      /** Check that caret set to the end of the new block */
+      cy.window()
+        .then((window) => {
+          const selection = window.getSelection();
+          const range = selection.getRangeAt(0);
+
+          cy.get('[data-cy=editorjs]')
+            .find('.ce-header')
+            .should(($block) => {
+              expect($block[0].contains(range.startContainer)).to.be.true;
+            });
+        });
+    });
   });
 });
