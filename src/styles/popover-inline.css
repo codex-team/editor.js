@@ -55,12 +55,15 @@
   .ce-popover--nested-level-1 {
 
     .ce-popover__container {
-      right: 0;
+      left: min(var(--trigger-item-left), calc(var(--inline-popover-width) - var(--width)));
       top: var(--height);
     }
   }
 
   .ce-popover--nested {
-    
+    .ce-popover__container {
+      min-width: var(--width);
+      width: var(--width);
+    }
   }
 }

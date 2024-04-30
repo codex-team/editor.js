@@ -22,6 +22,11 @@ export class PopoverDesktop extends PopoverAbstract {
   public flipper: Flipper;
 
   /**
+   * Popover nesting level. 0 value means that it is a root popover
+   */
+  protected nestingLevel = 0;
+
+  /**
    * Reference to nested popover if exists.
    * Undefined by default, PopoverDesktop when exists and null after destroyed.
    */
@@ -33,11 +38,6 @@ export class PopoverDesktop extends PopoverAbstract {
    * Helps prevent reopening nested popover while cursor is moving inside one item area.
    */
   private previouslyHoveredItem: PopoverItem | null = null;
-
-  /**
-   * Popover nesting level. 0 value means that it is a root popover
-   */
-  private nestingLevel = 0;
 
   /**
    * Element of the page that creates 'scope' of the popover.
@@ -199,6 +199,21 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
+   * Sets CSS variable with position of item near which nested popover should be displayed.
+   * Is used for correct positioning of the nested popover
+   *
+   * @param nestedPopoverEl - nested popover element
+   * @param item – item near which nested popover should be displayed
+   */
+  protected setTriggerItemPositionProperty(nestedPopoverEl: HTMLElement, item: PopoverItemDefault): void {
+    const itemEl =  item.getElement();
+    const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
+    const topOffset = this.offsetTop + itemOffsetTop;
+
+    nestedPopoverEl.style.setProperty('--trigger-item-top', topOffset + 'px');
+  }
+
+  /**
    * Additionaly handles input inside search field.
    * Updates flipper items considering search query applied.
    *
@@ -259,7 +274,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Renders invisible clone of popover to get actual size.
    */
   @cacheable
-  private get size(): {height: number; width: number} {
+  protected get size(): {height: number; width: number} {
     const size = {
       height: 0,
       width: 0,
@@ -348,11 +363,9 @@ export class PopoverDesktop extends PopoverAbstract {
     const nestedPopoverEl = this.nestedPopover.getElement();
 
     this.nodes.popover.appendChild(nestedPopoverEl);
-    const itemEl =  item.getElement();
-    const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
-    const topOffset = this.offsetTop + itemOffsetTop;
 
-    nestedPopoverEl.style.setProperty('--trigger-item-top', topOffset + 'px');
+    this.setTriggerItemPositionProperty(nestedPopoverEl, item);
+
     nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
     nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
 
