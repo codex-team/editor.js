@@ -1,0 +1,66 @@
+/**
+* Styles overrides for inline popover
+*/
+.ce-popover--inline {
+  --height: 32px;
+
+  position: relative;
+
+  .ce-popover__custom-content {
+    margin-bottom: 0;
+  }
+
+  .ce-popover__items {
+    display: flex;
+  }
+  
+  .ce-popover__container {
+    flex-direction: row;
+    padding: 0;
+    padding: 0 6px;
+    height: var(--height);
+    top: 0;
+
+    min-width: max-content;
+    width: max-content;
+    animation: none;
+  }
+
+  /** 
+   * Popover item styles
+   */
+  .ce-popover-item-separator {
+    padding: 4px 3px;
+
+    &__line {
+      height: 100%;
+      width: 1px;
+    }
+  }
+
+  .ce-popover-item {
+    border-radius: 0;
+
+    &__icon--tool {
+      box-shadow: none;
+      background: transparent;
+      margin-right: 0;
+    }
+  }
+
+  .ce-popover-item__icon--chevron-right {
+    transform: rotate(90deg);
+  }
+
+  .ce-popover--nested-level-1 {
+
+    .ce-popover__container {
+      right: 0;
+      top: var(--height);
+    }
+  }
+
+  .ce-popover--nested {
+    
+  }
+}

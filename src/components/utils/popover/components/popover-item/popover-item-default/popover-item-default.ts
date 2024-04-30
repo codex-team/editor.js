@@ -152,7 +152,29 @@ export class PopoverItemDefault extends PopoverItem {
    * Returns list of item children
    */
   public get children(): PopoverItemParams[] {
+    // if (!('children' in this.params)) {
+    //   return [];
+    // }
+
     return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
+  }
+
+  /**
+   * Returns list of item children
+   */
+  public get childrenHTML(): HTMLElement | undefined {
+    if (!('children' in this.params)) {
+      return undefined;
+    }
+
+    return this.params.children?.customHtml;
+  }
+
+  /**
+   *
+   */
+  public get hasChildren(): boolean {
+    return this.children.length > 0 || this.childrenHTML !== undefined;
   }
 
   /**
@@ -184,7 +206,7 @@ export class PopoverItemDefault extends PopoverItem {
       }));
     }
 
-    if (this.children.length > 0) {
+    if (this.hasChildren) {
       el.appendChild(Dom.make('div', [css.icon, css.iconChevronRight], {
         innerHTML: IconChevronRight,
       }));

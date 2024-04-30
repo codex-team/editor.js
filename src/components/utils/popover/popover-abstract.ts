@@ -146,6 +146,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * Clears memory
    */
   public destroy(): void {
+    this.nodes.popover.remove();
     this.listeners.removeAll();
   }
 
@@ -244,7 +245,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       return;
     }
 
-    if (item.children.length > 0) {
+    if (item.hasChildren) {
       this.showNestedItems(item);
 
       return;

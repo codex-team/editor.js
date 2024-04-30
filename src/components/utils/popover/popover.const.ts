@@ -21,5 +21,7 @@ export const css = {
   overlay: className('overlay'),
   overlayHidden: className('overlay', 'hidden'),
   popoverNested: className(null, 'nested'),
+  getPopoverNestedClass: (level: number) => className(null, `nested-level-${level.toString()}` ),
+  popoverInline: className(null, 'inline'),
   popoverHeader: className('header'),
 };

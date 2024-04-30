@@ -1,7 +1,7 @@
 import Flipper from '../../flipper';
 import { PopoverAbstract } from './popover-abstract';
 import { PopoverItem, css as popoverItemCls } from './components/popover-item';
-import { PopoverParams } from './popover.types';
+import { PopoverEvent, PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
 import { SearchInputEvent, SearchableItem } from './components/search-input';
@@ -163,9 +163,38 @@ export class PopoverDesktop extends PopoverAbstract {
    * @param item – item to show nested popover for
    */
   protected override showNestedItems(item: PopoverItemDefault): void {
+    this.emit(PopoverEvent.OpenNestedPopover);
+
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
+    this.showNestedPopoverForItem(item);
+  }
+
+  /**
+   * Handles hover events inside popover items container
+   *
+   * @param event - hover event data
+   */
+  protected handleHover(event: Event): void {
+    const item = this.getTargetItem(event);
+
+    if (item === undefined) {
+      return;
+    }
+
+    if (this.previouslyHoveredItem === item) {
+      return;
+    }
+
+    this.destroyNestedPopoverIfExists();
+
+    this.previouslyHoveredItem = item;
+
+    if (!item.hasChildren) {
+      return;
+    }
+
     this.showNestedPopoverForItem(item);
   }
 
@@ -311,6 +340,7 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   private showNestedPopoverForItem(item: PopoverItemDefault): void {
     this.nestedPopover = new PopoverDesktop({
+      customContent: item.childrenHTML,
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
     });
@@ -324,35 +354,9 @@ export class PopoverDesktop extends PopoverAbstract {
 
     nestedPopoverEl.style.setProperty('--trigger-item-top', topOffset + 'px');
     nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
+    nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
 
     this.nestedPopover.show();
     this.flipper.deactivate();
-  }
-
-  /**
-   * Handles hover events inside popover items container
-   *
-   * @param event - hover event data
-   */
-  private handleHover(event: Event): void {
-    const item = this.getTargetItem(event);
-
-    if (item === undefined) {
-      return;
-    }
-
-    if (this.previouslyHoveredItem === item) {
-      return;
-    }
-
-    this.destroyNestedPopoverIfExists();
-
-    this.previouslyHoveredItem = item;
-
-    if (item.children.length === 0) {
-      return;
-    }
-
-    this.showNestedPopoverForItem(item);
   }
 }
