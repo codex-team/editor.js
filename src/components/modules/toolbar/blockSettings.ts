@@ -13,7 +13,7 @@ import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
 import * as _ from '../../utils';
 import { IconReplace } from '@codexteam/icons';
-import { isSameBlockData } from '../../utils/blocks';
+import { getConvertToItems, isSameBlockData } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -214,7 +214,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    const convertToItems = await this.getConvertToItems(currentBlock);
+    const convertToItems = await getConvertToItems(currentBlock, this.Editor);
 
     if (convertToItems.length > 0) {
       items.push({

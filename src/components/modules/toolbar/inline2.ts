@@ -13,6 +13,8 @@ import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
 import { Popover, PopoverEvent, PopoverItemParams } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
+import { getConvertToItems } from '../../utils/blocks';
+import { IconReplace } from '@codexteam/icons';
 
 /**
  * Inline Toolbar elements
@@ -152,7 +154,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.move();
-    this.open(needToShowConversionToolbar);
+    await this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
   }
 
@@ -290,7 +292,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Shows Inline Toolbar
    */
-  private open(): void {
+  private async open(): Promise<void> {
     if (this.opened) {
       return;
     }
@@ -309,7 +311,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.toolsInstances = new Map();
 
-    const { htmlElements, popoverItems } = this.getInlineTools();
+    const { htmlElements, popoverItems } = await this.getInlineTools();
     const container = document.createElement('div');
 
     htmlElements.forEach((element) => container.appendChild(element));
@@ -484,7 +486,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    *
    */
-  private getInlineTools() {
+  private async getInlineTools() {
     const currentSelection = SelectionUtils.get();
     const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
@@ -492,6 +494,22 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     const popoverItems = [] as PopoverItemParams[];
     const htmlElements = [] as HTMLElement[];
+
+    /** Add "Convert to" */
+    const convertToItems = await getConvertToItems(currentBlock, this.Editor);
+
+    if (convertToItems.length > 0) {
+      popoverItems.push({
+        icon: IconReplace,
+        title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
+        children: {
+          items: convertToItems,
+        },
+      });
+      popoverItems.push({
+        type: 'separator',
+      });
+    }
 
     inlineTools.forEach(tool => {
       const instance = tool.create();

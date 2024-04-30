@@ -20,7 +20,7 @@
     padding: 0 6px;
     height: var(--height);
     top: 0;
-
+    
     min-width: max-content;
     width: max-content;
     animation: none;
@@ -60,10 +60,30 @@
     }
   }
 
+  /**
+   * Nested popovers should look like regular desktop popovers, hence these overrides
+   */
   .ce-popover--nested {
     .ce-popover__container {
       min-width: var(--width);
       width: var(--width);
+      height: unset;
+      padding: 6px;
+    }
+
+    .ce-popover__items {
+      display: block;
+      width: 100%;
+    }
+
+    .ce-popover-item {
+      border-radius: 6px;
+
+      &__icon--tool {
+        box-shadow: 0 0 0 1px var(--color-border-icon);
+        background: #fff;
+        margin-right: 10px;
+      }
     }
   }
 }
