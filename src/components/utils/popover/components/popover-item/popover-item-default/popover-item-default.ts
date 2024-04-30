@@ -149,18 +149,14 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
-   * Returns list of item children
+   * Returns item children that are represented as popover items
    */
   public get children(): PopoverItemParams[] {
-    // if (!('children' in this.params)) {
-    //   return [];
-    // }
-
     return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
   }
 
   /**
-   * Returns list of item children
+   * Returns item children that are represented as custom HTML
    */
   public get childrenHTML(): HTMLElement | undefined {
     if (!('children' in this.params)) {
@@ -171,10 +167,17 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
-   *
+   * Returns true if item has any type of children
    */
   public get hasChildren(): boolean {
     return this.children.length > 0 || this.childrenHTML !== undefined;
+  }
+
+  /**
+   * Returns true if item has children that should be searchable
+   */
+  public get isChildrenSearchable(): boolean {
+    return 'children' in this.params && this.params.children?.searchable === true;
   }
 
   /**

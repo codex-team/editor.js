@@ -69,6 +69,7 @@
       width: var(--width);
       height: unset;
       padding: 6px;
+      flex-direction: column;
     }
 
     .ce-popover__items {

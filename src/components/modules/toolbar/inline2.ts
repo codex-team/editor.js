@@ -503,6 +503,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         icon: IconReplace,
         title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
         children: {
+          searchable: true,
           items: convertToItems,
         },
       });

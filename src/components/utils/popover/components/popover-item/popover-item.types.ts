@@ -143,7 +143,14 @@ export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBasePar
    * Items of nested popover that should be open on the current item hover/click (depending on platform)
    */
   children?: {
-    items: PopoverItemParams[]
+    /**
+     * True if children items should be searchable
+     */
+    searchable?: boolean;
+
+    items?: PopoverItemParams[];
+
+    customHtml?: HTMLElement;
   }
 }
 

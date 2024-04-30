@@ -355,6 +355,7 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   private showNestedPopoverForItem(item: PopoverItemDefault): void {
     this.nestedPopover = new PopoverDesktop({
+      searchable: item.isChildrenSearchable,
       customContent: item.childrenHTML,
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
