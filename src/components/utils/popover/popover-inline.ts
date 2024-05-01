@@ -24,7 +24,6 @@ export class PopoverInline extends PopoverDesktop {
     });
   }
 
-
   /**
    * Returns visible element offset top
    */

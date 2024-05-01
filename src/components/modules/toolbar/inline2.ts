@@ -3,15 +3,13 @@ import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
 import { InlineTool as IInlineTool } from '../../../../types';
-import Flipper from '../../flipper';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import * as tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
-import InlineTool from '../../tools/inline';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverEvent, PopoverItemParams } from '../../utils/popover';
+import { Popover, PopoverEvent, PopoverItemDefaultParams, PopoverItemParams, PopoverItemWithChildrenParams } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { getConvertToItems } from '../../utils/blocks';
 import { IconReplace } from '@codexteam/icons';
@@ -21,15 +19,6 @@ import { IconReplace } from '@codexteam/icons';
  */
 interface InlineToolbarNodes {
   wrapper: HTMLElement | undefined;
-  togglerAndButtonsWrapper: HTMLElement | undefined;
-  buttons: HTMLElement | undefined;
-  conversionToggler: HTMLElement | undefined;
-  conversionTogglerContent: HTMLElement | undefined;
-  /**
-   * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
-   * For example, input for the 'link' tool or textarea for the 'comment' tool
-   */
-  actions: HTMLElement | undefined;
 }
 
 /**
@@ -49,16 +38,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
     inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
     inlineToolbarShortcut: 'ce-inline-toolbar__shortcut',
-    buttonsWrapper: 'ce-inline-toolbar__buttons',
-    actionsWrapper: 'ce-inline-toolbar__actions',
-    inlineToolButton: 'ce-inline-tool',
-    inputField: 'cdx-input',
-    focusedButton: 'ce-inline-tool--focused',
-    conversionToggler: 'ce-inline-toolbar__dropdown',
-    conversionTogglerArrow: 'ce-inline-toolbar__dropdown-arrow',
-    conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
-    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
-    togglerAndButtonsWrapper: 'ce-inline-toolbar__toggler-and-button-wrapper',
   };
 
   /**
@@ -68,6 +47,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public opened = false;
 
+  /**
+   * Popover instance reference
+   */
   private popover: Popover | null = null;
 
   /**
@@ -77,11 +59,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private readonly toolbarVerticalMargin: number = _.isMobileScreen() ? 20 : 6;
 
   /**
-   * TODO: Get rid of this
-   *
    * Currently visible tools instances
    */
-  private toolsInstances: Map<string, IInlineTool>;
+  private toolsInstances: Map<string, IInlineTool> = new Map();
 
   /**
    * Cache for Inline Toolbar width
@@ -93,12 +73,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private selection = new SelectionUtils();
 
   private actionsOpen = false;
-
-
-  /**
-   * Instance of class that responses for leafing buttons by arrows/tab
-   */
-  // private flipper: Flipper = null;
 
   /**
    * @class
@@ -162,7 +136,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Hides Inline Toolbar
    */
   public close(): void {
-    debugger;
     if (!this.opened || this.doNotClose) {
       return;
     }
@@ -172,6 +145,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+
     Array.from(this.toolsInstances.entries()).forEach(([name, toolInstance]) => {
       const shortcut = this.getToolShortcut(name);
 
@@ -222,14 +196,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Removes UI and its components
    */
   public destroy(): void {
-    /**
-     * Sometimes (in read-only mode) there is no Flipper
-     */
-    // if (this.flipper) {
-    //   this.flipper.deactivate();
-    //   this.flipper = null;
-    // }
-
     this.removeAllNodes();
     this.popover?.destroy();
   }
@@ -247,28 +213,17 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.nodes.wrapper.setAttribute('data-cy', 'inline-toolbar');
     }
 
-    // /**
-    //  * Creates a different wrapper for toggler and buttons.
-    //  */
-    // this.nodes.togglerAndButtonsWrapper = $.make('div', this.CSS.togglerAndButtonsWrapper);
-    // this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
-    // this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
-
     // To prevent reset of a selection when click on the wrapper
     this.listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
-      const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
+      // const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
 
-      // If click is on actions wrapper,
-      // do not prevent default behavior because actions might include interactive elements
-      if (!isClickedOnActionsWrapper) {
-        event.preventDefault();
-      }
+      // // If click is on actions wrapper,
+      // // do not prevent default behavior because actions might include interactive elements
+      // if (!isClickedOnActionsWrapper) {
+      //   event.preventDefault();
+      // }
     });
 
-    /**
-     * Append the intermediary wrapper which contains toggler and buttons and button actions.
-     */
-    // $.append(this.nodes.wrapper, [this.nodes.togglerAndButtonsWrapper, this.nodes.actions]);
     /**
      * Append the inline toolbar to the editor.
      */
@@ -281,12 +236,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     window.requestAnimationFrame(() => {
       this.recalculateWidth();
     });
-
-    /**
-     * Allow to leaf buttons by arrows / tab
-     * Buttons will be filled on opening
-     */
-    // this.enableFlipper();
   }
 
   /**
@@ -309,8 +258,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.popover.destroy();
     }
 
-    this.toolsInstances = new Map();
-
     const { htmlElements, popoverItems } = await this.getInlineTools();
     const container = document.createElement('div');
 
@@ -319,7 +266,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     this.popover = new PopoverInline({
       items: popoverItems,
       customContent: container,
-      // customContentFlippableItems: this.getControls(customHtmlTunes),
+      customContentFlippableItems: $.getControls(container, this.Editor.StylesAPI),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
@@ -482,11 +429,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
 
-
   /**
-   *
+   * Returns Inline Tools segregated by their appearance type: popover items and custom html elements.
+   * Sets this.toolsInstances map
    */
-  private async getInlineTools() {
+  private async getInlineTools(): Promise<{ popoverItems: PopoverItemParams[], htmlElements: HTMLElement[] }> {
     const currentSelection = SelectionUtils.get();
     const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
@@ -539,7 +486,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
           this.prepareInlineToolHtml(controlData, instance, toolTitle, shortcutBeautified)
         );
       } else if (Array.isArray(controlData)) {
-        popoverItems.push(...controlData.map(item => this.prepareInlineToolItem(item, instance, toolTitle, shortcutBeautified)));
+        const items = (controlData as PopoverItemParams[]).map(item => this.prepareInlineToolItem(item, instance, toolTitle, shortcutBeautified));
+
+        popoverItems.push(...items);
       } else {
         popoverItems.push(this.prepareInlineToolItem(controlData, instance, toolTitle, shortcutBeautified));
       }
@@ -558,16 +507,17 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
+   * Prepare inline tool item for being displayed in popover – set on click handler, hint, etc.
    *
-   * @param item
-   * @param toolInstance
-   * @param shortcut
-   * @param toolTitle
+   * @param item – item to prepare
+   * @param toolInstance – tool instance
+   * @param toolTitle – tool title
+   * @param shortcut – tool shortcut
    */
-  private prepareInlineToolItem(item: PopoverItemParams, toolInstance: IInlineTool, toolTitle: string, shortcut: string | undefined): PopoverItemParams {
+  private prepareInlineToolItem(item: PopoverItemParams, toolInstance: IInlineTool, toolTitle: string, shortcut: string | undefined): PopoverItemDefaultParams {
     const result =  {
       ...item,
-      onActivate: (activatedItem: PopoverItemParams, event?: PointerEvent) => {
+      onActivate: (activatedItem: PopoverItemParams) => {
         // @todo proper check
         if ('children' in activatedItem) {
           return;
@@ -579,12 +529,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         description: shortcut,
       },
       isActive: toolInstance.checkState(SelectionUtils.get()),
-    };
+    } as PopoverItemDefaultParams;
 
     if (_.isFunction(toolInstance.renderActions)) {
       const actions = toolInstance.renderActions();
 
-      result.children = {
+      (result as PopoverItemWithChildrenParams).children = {
         customHtml: actions,
       };
     }
@@ -593,13 +543,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   }
 
   /**
+   * Prepare inline tool html element for being displayed in popover – attach on click handler, tooltip, etc.
    *
-   * @param html
-   * @param htmlElement
-   * @param toolInstance
-   * @param toolData
-   * @param toolTitle
-   * @param shortcut
+   * @param htmlElement – tool control html element
+   * @param toolInstance – tool instance
+   * @param toolTitle – tool title
+   * @param shortcut – tool shortcut
    */
   private prepareInlineToolHtml(htmlElement: HTMLElement, toolInstance: IInlineTool, toolTitle: string, shortcut: string | undefined): HTMLElement {
     /** Set click handler */
@@ -743,19 +692,5 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
 
     return result;
-  }
-
-  /**
-   * Allow to leaf buttons by arrows / tab
-   * Buttons will be filled on opening
-   */
-  private enableFlipper(): void {
-    // this.flipper = new Flipper({
-    //   focusedItemClass: this.CSS.focusedButton,
-    //   allowedKeys: [
-    //     _.keyCodes.ENTER,
-    //     _.keyCodes.TAB,
-    //   ],
-    // });
   }
 }

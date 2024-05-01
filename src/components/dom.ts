@@ -1,3 +1,4 @@
+import StylesAPI from './modules/api/styles';
 import * as _ from './utils';
 
 /**
@@ -588,5 +589,20 @@ export default class Dom {
       bottom: top + rect.height,
       right: left + rect.width,
     };
+  }
+
+  /**
+   * Returns list of buttons and inputs inside specified container
+   *
+   * @param container - container to query controls inside of
+   * @param stylesAPI – styles API instance
+   */
+  public static getControls(container: HTMLElement, stylesAPI: StylesAPI): HTMLElement[] {
+    /** Query buttons and inputs inside html element */
+    const controls = container.querySelectorAll<HTMLElement>(
+      `.${stylesAPI.classes.settingsButton}, .${stylesAPI.classes.inlineToolButton}, ${Dom.allInputsSelector}`
+    );
+
+    return Array.from(controls);
   }
 }
