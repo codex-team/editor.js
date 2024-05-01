@@ -1,6 +1,6 @@
 describe('Slash keydown', function () {
   describe('pressed in empty block', function () {
-    it('should open Toolbox', () => {
+    it('should add "/" in a block and open Toolbox', () => {
       cy.createEditor({
         data: {
           blocks: [
@@ -18,6 +18,14 @@ describe('Slash keydown', function () {
         .find('.ce-paragraph')
         .click()
         .type('/');
+
+      /**
+       * Block content should contain slash
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .invoke('text')
+        .should('eq', '/');
 
       cy.get('[data-cy="toolbox"] .ce-popover__container')
         .should('be.visible');

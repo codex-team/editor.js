@@ -249,6 +249,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * The Toolbox will be opened with immediate focus on the Search input,
+     * and '/' will be added in the search input by default — we need to prevent it and add '/' manually
+     */
+    event.preventDefault();
+    this.Editor.Caret.insertContentAtCaretPosition('/');
+
     this.activateToolbox();
   }
 
