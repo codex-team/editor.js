@@ -261,7 +261,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Cleanup other items state */
     this.itemsInteractive.filter(x => x !== item).forEach(x => x.reset());
 
-    item.handleClick();
+    item.handleClick(event);
 
     this.toggleItemActivenessIfNeeded(item);
 

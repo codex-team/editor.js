@@ -103,15 +103,16 @@ export class PopoverItemDefault extends PopoverItem {
 
   /**
    * Called on popover item click
+   * @param event - click event
    */
-  public handleClick(): void {
+  public handleClick(event: Event): void {
     if (this.isConfirmationStateEnabled && this.confirmationState !== null) {
-      this.activateOrEnableConfirmationMode(this.confirmationState);
+      this.activateOrEnableConfirmationMode(this.confirmationState, event);
 
       return;
     }
 
-    this.activateOrEnableConfirmationMode(this.params);
+    this.activateOrEnableConfirmationMode(this.params, event);
   }
 
   /**
@@ -281,11 +282,12 @@ export class PopoverItemDefault extends PopoverItem {
    * Executes item's onActivate callback if the item has no confirmation configured
    *
    * @param item - item to activate or bring to confirmation mode
+   * @param event - pointer event that triggered item activation
    */
-  private activateOrEnableConfirmationMode(item: PopoverItemDefaultParams): void {
+  private activateOrEnableConfirmationMode(item: PopoverItemDefaultParams, event?: PointerEvent): void {
     if (item.confirmation === undefined) {
       try {
-        item.onActivate?.(item);
+        item.onActivate?.(item, event);
         this.disableConfirmationMode();
       } catch {
         this.animateError();
