@@ -57,7 +57,7 @@
   }
 
   &--opened {
-    .ce-popover__container {
+    & > .ce-popover__container {
       opacity: 1;
       padding: var(--padding);
       max-height: var(--max-height);
@@ -69,7 +69,6 @@
         animation: panelShowingMobile 250ms ease;
       }
     }
-
   }
 
   &--open-top {

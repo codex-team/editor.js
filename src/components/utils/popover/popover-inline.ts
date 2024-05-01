@@ -8,6 +8,11 @@ import { PopoverParams } from './popover.types';
  */
 export class PopoverInline extends PopoverDesktop {
   /**
+   * Item nested popover is displayed for
+   */
+  private nestedPopoverTriggerItem: PopoverItemDefault | null = null;
+
+  /**
    * Constructs the instance
    *
    * @param params - instance parameters
@@ -64,5 +69,25 @@ export class PopoverInline extends PopoverDesktop {
     const totalLeftOffset = this.offsetLeft + itemOffsetLeft;
 
     nestedPopoverEl.style.setProperty('--trigger-item-left', totalLeftOffset + 'px');
+  }
+
+  /**
+   * Handles displaying nested items for the item.
+   * Overriding in order to add toggling behaviour
+   *
+   * @param item – item to toggle nested popover for
+   */
+  protected override showNestedItems(item: PopoverItemDefault): void {
+    if (this.nestedPopoverTriggerItem === item) {
+      this.nestedPopover?.hide();
+      this.nestedPopover?.destroy();
+      this.nestedPopover = null;
+      this.nestedPopoverTriggerItem = null;
+
+      return;
+    }
+
+    this.nestedPopoverTriggerItem = item;
+    super.showNestedItems(item);
   }
 }
