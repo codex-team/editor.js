@@ -1,4 +1,4 @@
-import { BlockAPI } from '../../api';
+import type { BlockAPI } from '../../api';
 
 /**
  * Details of CustomEvent fired on block mutation

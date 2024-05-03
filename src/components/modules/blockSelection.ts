@@ -321,26 +321,28 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * select Block
+   * Select Block by its index
    *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
-  public selectBlockByIndex(index?): void {
+  public selectBlockByIndex(index: number): void {
     const { BlockManager } = this.Editor;
 
-    /**
-     * Remove previous focused Block's state
-     */
-    BlockManager.clearFocused();
+    const block = BlockManager.getBlockByIndex(index);
 
-    let block;
-
-    if (isNaN(index)) {
-      block = BlockManager.currentBlock;
-    } else {
-      block = BlockManager.getBlockByIndex(index);
+    if (block === undefined) {
+      return;
     }
 
+    this.selectBlock(block);
+  }
+
+  /**
+   * Select passed Block
+   *
+   * @param {Block} block - Block to select
+   */
+  public selectBlock(block: Block): void {
     /** Save selection */
     this.selection.save();
     SelectionUtils.get()
@@ -352,6 +354,17 @@ export default class BlockSelection extends Module {
 
     /** close InlineToolbar when we selected any Block */
     this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * Remove selection from passed Block
+   *
+   * @param {Block} block - Block to unselect
+   */
+  public unselectBlock(block: Block): void {
+    block.selected = false;
+
+    this.clearCache();
   }
 
   /**
@@ -432,7 +445,7 @@ export default class BlockSelection extends Module {
       /**
        * select working Block
        */
-      this.selectBlockByIndex();
+      this.selectBlock(workingBlock);
 
       /**
        * Enable all Blocks selection if current Block is selected

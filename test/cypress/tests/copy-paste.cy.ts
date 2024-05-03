@@ -1,51 +1,46 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import EditorJS, { BlockTool, BlockToolData } from '../../../types';
+import { BlockTool, BlockToolData, OutputData } from '../../../types';
 import $ from '../../../src/components/dom';
+import type EditorJS from '../../../types/index';
+
 
 describe('Copy pasting from Editor', function () {
-  beforeEach(function () {
-    cy.createEditor({
-      tools: {
-        header: Header,
-        image: Image,
-      },
-    }).as('editorInstance');
-  });
-
-  afterEach(function () {
-    if (this.editorInstance && this.editorInstance.destroy) {
-      this.editorInstance.destroy();
-    }
-  });
-
   context('pasting', function () {
     it('should paste plain text', function () {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
+        .as('block')
         .click()
         .paste({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/plain': 'Some plain text',
-        })
-        .wait(0)
-        .should('contain', 'Some plain text');
+        });
+
+      cy.get('@block').should('contain', 'Some plain text');
     });
 
     it('should paste inline html data', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
+        .as('block')
         .click()
         .paste({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'text/html': '<p><b>Some text</b></p>',
-        })
-        .should('contain.html', '<b>Some text</b>');
+        });
+
+      cy.get('@block').should('contain.html', '<b>Some text</b>');
     });
 
     it('should paste several blocks if plain text contains new lines', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -63,6 +58,8 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should paste several blocks if html contains several paragraphs', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -80,6 +77,8 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should paste using custom data type', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -110,6 +109,12 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should parse block tags', function () {
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+      }).as('editorInstance');
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -118,6 +123,9 @@ describe('Copy pasting from Editor', function () {
           'text/html': '<h2>First block</h2><p>Second block</p>',
         });
 
+      /**
+       * Check inserted blocks
+       */
       cy.get('[data-cy=editorjs]')
         .get('h2.ce-header')
         .should('contain', 'First block');
@@ -125,9 +133,37 @@ describe('Copy pasting from Editor', function () {
       cy.get('[data-cy=editorjs]')
         .get('div.ce-paragraph')
         .should('contain', 'Second block');
+
+      /**
+       * Check saved data as well
+       */
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          cy.wrap<OutputData>(await editor.save())
+            .then((data) => {
+              /**
+               * <h2> has been correctly saved
+               */
+              expect(data.blocks[0].type).to.eq('header');
+              expect(data.blocks[0].data.text).to.eq('First block');
+              expect(data.blocks[0].data.level).to.eq(2);
+
+              /**
+               * <p> has been correctly saved
+               */
+              expect(data.blocks[1].type).to.eq('paragraph');
+              expect(data.blocks[1].data.text).to.eq('Second block');
+            });
+        });
     });
 
     it('should parse pattern', function () {
+      cy.createEditor({
+        tools: {
+          image: Image,
+        },
+      });
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -143,12 +179,6 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should not prevent default behaviour if block\'s paste config equals false', function () {
-      /**
-       * Destroy default Editor to render custom one with different tools
-       */
-      cy.get('@editorInstance')
-        .then((editorInstance: unknown) => (editorInstance as EditorJS).destroy());
-
       const onPasteStub = cy.stub().as('onPaste');
 
       /**
@@ -182,7 +212,8 @@ describe('Copy pasting from Editor', function () {
         tools: {
           blockToolWithPasteHandler: BlockToolWithPasteHandler,
         },
-      }).as('editorInstanceWithBlockToolWithPasteHandler');
+      })
+        .as('editorInstanceWithBlockToolWithPasteHandler');
 
       cy.get('@editorInstanceWithBlockToolWithPasteHandler')
         .render({
@@ -192,7 +223,8 @@ describe('Copy pasting from Editor', function () {
               data: {},
             },
           ],
-        });
+        })
+        .wait(100);
 
       cy.get('@editorInstanceWithBlockToolWithPasteHandler')
         .get('div.ce-block-with-disabled-prevent-default')
@@ -211,6 +243,8 @@ describe('Copy pasting from Editor', function () {
 
   context('copying', function () {
     it('should copy inline fragment', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -225,6 +259,8 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should copy several blocks', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -247,7 +283,6 @@ describe('Copy pasting from Editor', function () {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(function () {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
@@ -264,6 +299,8 @@ describe('Copy pasting from Editor', function () {
 
   context('cutting', function () {
     it('should cut inline fragment', function () {
+      cy.createEditor({});
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -278,15 +315,25 @@ describe('Copy pasting from Editor', function () {
     });
 
     it('should cut several blocks', function () {
-      cy.get('[data-cy=editorjs]')
-        .get('div.ce-block')
-        .click()
-        .type('First block{enter}');
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: { text: 'First block' },
+            },
+            {
+              type: 'paragraph',
+              data: { text: 'Second block' },
+            },
+          ],
+        },
+      });
 
       cy.get('[data-cy=editorjs')
         .get('div.ce-block')
-        .next()
-        .type('Second block')
+        .last()
+        .click()
         .type('{movetostart}')
         .trigger('keydown', {
           shiftKey: true,
@@ -300,7 +347,6 @@ describe('Copy pasting from Editor', function () {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(function () {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
@@ -320,14 +366,22 @@ describe('Copy pasting from Editor', function () {
 
     it('should cut lots of blocks', function () {
       const numberOfBlocks = 50;
+      const blocks = [];
 
       for (let i = 0; i < numberOfBlocks; i++) {
-        cy.get('[data-cy=editorjs]')
-          .get('div.ce-block')
-          .last()
-          .click()
-          .type(`Block ${i}{enter}`);
+        blocks.push({
+          type: 'paragraph',
+          data: {
+            text: `Block ${i}`,
+          },
+        });
       }
+
+      cy.createEditor({
+        data: {
+          blocks,
+        },
+      });
 
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
@@ -340,13 +394,12 @@ describe('Copy pasting from Editor', function () {
           /**
            * Need to wait for custom data as it is set asynchronously
            */
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0).then(function () {
             expect(clipboardData['application/x-editor-js']).not.to.be.undefined;
 
             const data = JSON.parse(clipboardData['application/x-editor-js']);
 
-            expect(data.length).to.eq(numberOfBlocks + 1);
+            expect(data.length).to.eq(numberOfBlocks);
           });
         });
     });

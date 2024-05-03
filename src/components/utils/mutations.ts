@@ -8,19 +8,28 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   const { type, target, addedNodes, removedNodes } = mutationRecord;
 
   /**
-   * Check typing and attributes changes
+   * Covers all types of mutations happened to the element or it's descendants with the only one exception - removing/adding the element itself;
    */
-  if (['characterData', 'attributes'].includes(type)) {
-    const targetElement = target.nodeType === Node.TEXT_NODE ? target.parentNode : target;
-
-    return element.contains(targetElement);
+  if (element.contains(target)) {
+    return true;
   }
 
   /**
-   * Check new/removed nodes
+   * In case of removing/adding the element itself, mutation type will be 'childList' and 'removedNodes'/'addedNodes' will contain the element.
    */
-  const addedNodesBelongsToBlock = Array.from(addedNodes).some(node => element.contains(node));
-  const removedNodesBelongsToBlock = Array.from(removedNodes).some(node => element.contains(node));
+  if (type === 'childList') {
+    const elementAddedItself = Array.from(addedNodes).some(node => node === element);
 
-  return addedNodesBelongsToBlock || removedNodesBelongsToBlock;
+    if (elementAddedItself) {
+      return true;
+    }
+
+    const elementRemovedItself = Array.from(removedNodes).some(node => node === element);
+
+    if (elementRemovedItself) {
+      return true;
+    }
+  }
+
+  return false;
 }

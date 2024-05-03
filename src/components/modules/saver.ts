@@ -70,26 +70,11 @@ export default class Saver extends Module {
    * @returns {OutputData}
    */
   private makeOutput(allExtractedData): OutputData {
-    let totalTime = 0;
     const blocks = [];
 
-    _.log('[Editor.js saving]:', 'groupCollapsed');
-
-    allExtractedData.forEach(({ id, tool, data, tunes, time, isValid }) => {
-      totalTime += time;
-
-      /**
-       * Capitalize Tool name
-       */
-      _.log(`${tool.charAt(0).toUpperCase() + tool.slice(1)}`, 'group');
-
-      if (isValid) {
-        /** Group process info */
-        _.log(data);
-        _.log(undefined, 'groupEnd');
-      } else {
+    allExtractedData.forEach(({ id, tool, data, tunes, isValid }) => {
+      if (!isValid) {
         _.log(`Block «${tool}» skipped because saved data is invalid`);
-        _.log(undefined, 'groupEnd');
 
         return;
       }
@@ -112,9 +97,6 @@ export default class Saver extends Module {
 
       blocks.push(output);
     });
-
-    _.log('Total', 'log', totalTime);
-    _.log(undefined, 'groupEnd');
 
     return {
       time: +new Date(),

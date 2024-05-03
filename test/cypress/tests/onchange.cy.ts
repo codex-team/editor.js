@@ -1,36 +1,17 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
+import ToolMock from '../fixtures/tools/ToolMock';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
-
+import type EditorJS from '../../../types/index';
 
 /**
  * EditorJS API is passed as the first parameter of the onChange callback
  */
 const EditorJSApiMock = Cypress.sinon.match.any;
-
-/**
- * Check if passed onChange method is called with an array of passed events
- *
- * @param $onChange - editor onChange spy
- * @param expectedEvents - batched events to check
- */
-function beCalledWithBatchedEvents($onChange, expectedEvents): void {
-  expect($onChange).to.be.calledOnce;
-  expect($onChange).to.be.calledWithMatch(
-    EditorJSApiMock,
-    Cypress.sinon.match((events) => {
-      return events.every((event, index) => {
-        const eventToCheck = expectedEvents[index];
-
-        return expect(event).to.containSubset(eventToCheck);
-      });
-    })
-  );
-}
 
 /**
  * @todo Add checks that correct block API object is passed to onChange
@@ -104,22 +85,20 @@ describe('onChange callback', () => {
       .type('change')
       .type('{enter}');
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockChangedMutationType,
-          detail: {
-            index: 0,
-          },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockChangedMutationType,
+        detail: {
+          index: 0,
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 1,
-          },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should filter out similar events on batching', () => {
@@ -132,7 +111,6 @@ describe('onChange callback', () => {
       },
     ]);
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy=editorjs]')
       .get('div.ce-block')
       .click()
@@ -243,37 +221,35 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=delimiter]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'paragraph',
-            },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'paragraph',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'delimiter',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'delimiter',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 1,
-            target: {
-              name: 'paragraph',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
+          target: {
+            name: 'paragraph',
           },
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired on block replacement for both of blocks', () => {
@@ -291,28 +267,26 @@ describe('onChange callback', () => {
       .get('div.ce-popover-item[data-item-name=header]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'paragraph',
-            },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'paragraph',
           },
         },
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-            target: {
-              name: 'header',
-            },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
+          target: {
+            name: 'header',
           },
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired on tune modifying', () => {
@@ -375,28 +349,26 @@ describe('onChange callback', () => {
       .get('div[data-item-name=delete]')
       .click();
 
-    cy.get('@onChange').should(($callback) => {
-      return beCalledWithBatchedEvents($callback, [
-        /**
-         * "block-removed" fired since we have deleted a block
-         */
-        {
-          type: BlockRemovedMutationType,
-          detail: {
-            index: 0,
-          },
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      /**
+       * "block-removed" fired since we have deleted a block
+       */
+      {
+        type: BlockRemovedMutationType,
+        detail: {
+          index: 0,
         },
-        /**
-         * "block-added" fired since we have deleted the last block, so the new one is created
-         */
-        {
-          type: BlockAddedMutationType,
-          detail: {
-            index: 0,
-          },
+      },
+      /**
+       * "block-added" fired since we have deleted the last block, so the new one is created
+       */
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 0,
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   it('should be fired when block is moved', () => {
@@ -483,9 +455,394 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting, @typescript-eslint/no-magic-numbers
     cy.wait(500).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
+  });
+
+  it('should be fired when the whole text inside block is removed', () => {
+    createEditor([ {
+      type: 'paragraph',
+      data: {
+        text: 'a',
+      },
+    } ]);
+
+    cy.get('[data-cy=editorjs')
+      .get('div.ce-block')
+      .click()
+      .type('{backspace}');
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
+  });
+
+  it('should not be fired when element with the "data-mutation-free" mark changes some attribute', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+
+    /**
+     * Mark it as mutation-free
+     */
+    toolWrapper.dataset.mutationFree = 'true';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's internal attribute mutation
+     */
+    cy.wait(100).then(() => {
+      toolWrapper.setAttribute('some-changed-attr', 'some-new-value');
+    });
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should not be fired when mutation happened in a child of element with the "data-mutation-free" mark', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+    const toolChild = document.createElement('div');
+
+    toolWrapper.appendChild(toolChild);
+
+    /**
+     * Mark it as mutation-free
+     */
+    toolWrapper.dataset.mutationFree = 'true';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's internal attribute mutation
+     */
+    cy.wait(100).then(() => {
+      toolChild.setAttribute('some-changed-attr', 'some-new-value');
+    });
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should not be fired when "characterData" mutation happened in a child of element with the "data-mutation-free" mark', () => {
+    /**
+     * Mock for tool wrapper which we will mutate in a test
+     */
+    const toolWrapper = document.createElement('div');
+    const toolChild = document.createElement('div');
+
+    toolChild.setAttribute('data-cy', 'tool-child');
+    toolChild.setAttribute('contenteditable', 'true');
+
+    toolWrapper.appendChild(toolChild);
+
+    /**
+     * Mark it as mutation-free
+     */
+    toolWrapper.dataset.mutationFree = 'true';
+
+    /**
+     * Mock of tool with data-mutation-free attribute
+     */
+    class ToolWithMutationFreeAttribute {
+      /**
+       * Simply return mocked element
+       */
+      public render(): HTMLElement {
+        return toolWrapper;
+      }
+
+      /**
+       * Saving logic is not necessary for this test
+       */
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public save(): void {}
+    }
+
+    const editorConfig = {
+      tools: {
+        testTool: ToolWithMutationFreeAttribute,
+      },
+      onChange: function (api, event) {
+        console.log('something changed!!!!!!!!', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: {},
+          },
+        ],
+      },
+    };
+
+    cy.spy(editorConfig, 'onChange').as('onChange');
+    cy.createEditor(editorConfig).as('editorInstance');
+
+    /**
+     * Emulate tool's child-element text typing
+     */
+    cy.get('[data-cy=editorjs')
+      .get('[data-cy=tool-child]')
+      .click()
+      .type('some text');
+
+    /**
+     * Check that onChange callback was not called
+     */
+    cy.wait(500).then(() => {
+      cy.get('@onChange').should('have.callCount', 0);
+    });
+  });
+
+  it('should be called on blocks.clear() with removed and added blocks', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.clear());
+      });
+
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockRemovedMutationType,
+      },
+      {
+        type: BlockRemovedMutationType,
+      },
+      {
+        type: BlockAddedMutationType,
+      },
+    ]);
+  });
+
+  it('should not be called on blocks.render() on non-empty editor', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The second paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        cy.wrap(editor.blocks.render({
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'The new paragraph',
+              },
+            },
+          ],
+        }));
+      });
+
+    cy.get('@onChange').should('have.callCount', 0);
+  });
+
+  it('should be called on blocks.update() with "block-changed" event', () => {
+    const block = {
+      id: 'bwnFX5LoX7',
+      type: 'paragraph',
+      data: {
+        text: 'The first block mock.',
+      },
+    };
+    const config = {
+      data: {
+        blocks: [
+          block,
+        ],
+      },
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+
+    cy.createEditor(config)
+      .then((editor) => {
+        editor.blocks.update(block.id, {
+          text: 'Updated text',
+        });
+
+        cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+          type: BlockChangedMutationType,
+          detail: {
+            index: 0,
+            target: {
+              id: block.id,
+            },
+          },
+        }));
+      });
+  });
+
+  it('should be fired when the whole text inside some descendant of the block is removed', () => {
+    /**
+     * Mock of Tool with nested contenteditable element
+     */
+    class ToolWithContentEditableDescendant extends ToolMock {
+      /**
+       * Creates element with nested contenteditable element
+       */
+      public render(): HTMLElement {
+        const contenteditable = document.createElement('div');
+
+        contenteditable.contentEditable = 'true';
+        contenteditable.innerText = 'a';
+        contenteditable.setAttribute('data-cy', 'nested-contenteditable');
+
+        const wrapper = document.createElement('div');
+
+        wrapper.appendChild(contenteditable);
+
+        return wrapper;
+      }
+    }
+
+    const config = {
+      tools: {
+        testTool: {
+          class: ToolWithContentEditableDescendant,
+        },
+      },
+      data: {
+        blocks: [
+          {
+            type: 'testTool',
+            data: 'a',
+          },
+        ],
+      },
+      onChange: (): void => {
+        console.log('something changed');
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+    cy.createEditor(config).as('editorInstance');
+
+    cy.get('[data-cy=nested-contenteditable]')
+      .click()
+      .clear();
+
+    cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+      type: BlockChangedMutationType,
+      detail: {
+        index: 0,
+      },
+    }));
   });
 });

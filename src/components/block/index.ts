@@ -6,7 +6,7 @@ import {
   SanitizerConfig,
   ToolConfig,
   ToolboxConfigEntry,
-  PopoverItem
+  PopoverItemParams
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
@@ -21,10 +21,11 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import { TunesMenuConfigItem } from '../../../types/tools';
+import { TunesMenuConfig, TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
+import { convertBlockDataToString, isSameBlockData } from '../utils/blocks';
 
 /**
  * Interface describes Block class constructor argument
@@ -110,7 +111,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
-      focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
     };
@@ -229,7 +229,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
-
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
@@ -251,15 +250,20 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.holder = this.compose();
 
     /**
-     * Start watching block mutations
+     * Bind block events in RIC for optimizing of constructing process time
      */
-    this.watchBlockMutations();
+    window.requestIdleCallback(() => {
+      /**
+       * Start watching block mutations
+       */
+      this.watchBlockMutations();
 
-    /**
-     * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-     * so we need to track focus events to update current input and clear cache.
-     */
-    this.addInputEvents();
+      /**
+       * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+       * so we need to track focus events to update current input and clear cache.
+       */
+      this.addInputEvents();
+    });
   }
 
   /**
@@ -387,12 +391,19 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
+   * If Block contains inputs, it is focusable
+   */
+  public get focusable(): boolean {
+    return this.inputs.length !== 0;
+  }
+
+  /**
    * Check block for emptiness
    *
    * @returns {boolean}
    */
   public get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyText = $.isEmpty(this.pluginsContent, '/');
     const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
@@ -421,22 +432,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     ];
 
     return !!this.holder.querySelector(mediaTags.join(','));
-  }
-
-  /**
-   * Set focused state
-   *
-   * @param {boolean} state - 'true' to select, 'false' to remove selection
-   */
-  public set focused(state: boolean) {
-    this.holder.classList.toggle(Block.CSS.focused, state);
-  }
-
-  /**
-   * Get Block's focused state
-   */
-  public get focused(): boolean {
-    return this.holder.classList.contains(Block.CSS.focused);
   }
 
   /**
@@ -554,7 +549,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @returns {object}
    */
-  public async save(): Promise<void | SavedData> {
+  public async save(): Promise<undefined | SavedData> {
     const extractedBlock = await this.toolInstance.save(this.pluginsContent as HTMLElement);
     const tunesData: { [name: string]: BlockTuneData } = this.unavailableTunesData;
 
@@ -616,14 +611,29 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Returns data to render in tunes menu.
-   * Splits block tunes settings into 2 groups: popover items and custom html.
+   * Splits block tunes into 3 groups: block specific tunes, common tunes
+   * and custom html that is produced by combining tunes html from both previous groups
    */
-  public getTunes(): [PopoverItem[], HTMLElement] {
+  public getTunes(): {
+    toolTunes: PopoverItemParams[];
+    commonTunes: PopoverItemParams[];
+    customHtmlTunes: HTMLElement
+    } {
     const customHtmlTunesContainer = document.createElement('div');
-    const tunesItems: TunesMenuConfigItem[] = [];
+    const commonTunesPopoverParams: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
+
+    /** Separate custom html from Popover items params for tool's tunes */
+    const {
+      items: toolTunesPopoverParams,
+      htmlElement: toolTunesHtmlElement,
+    } = this.getTunesDataSegregated(tunesDefinedInTool);
+
+    if (toolTunesHtmlElement !== undefined) {
+      customHtmlTunesContainer.appendChild(toolTunesHtmlElement);
+    }
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [
@@ -631,18 +641,29 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
-    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
-      if ($.isElement(rendered)) {
-        customHtmlTunesContainer.appendChild(rendered);
-      } else if (Array.isArray(rendered)) {
-        tunesItems.push(...rendered);
-      } else {
-        tunesItems.push(rendered);
+    /** Separate custom html from Popover items params for common tunes */
+    commonTunes.forEach(tuneConfig => {
+      const {
+        items,
+        htmlElement,
+      } = this.getTunesDataSegregated(tuneConfig);
+
+      if (htmlElement !== undefined) {
+        customHtmlTunesContainer.appendChild(htmlElement);
+      }
+
+      if (items !== undefined) {
+        commonTunesPopoverParams.push(...items);
       }
     });
 
-    return [tunesItems, customHtmlTunesContainer];
+    return {
+      toolTunes: toolTunesPopoverParams,
+      commonTunes: commonTunesPopoverParams,
+      customHtmlTunes: customHtmlTunesContainer,
+    };
   }
+
 
   /**
    * Update current input index with selection anchor node
@@ -715,12 +736,37 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const blockData = await this.data;
     const toolboxItems = toolboxSettings;
 
-    return toolboxItems.find((item) => {
-      return Object.entries(item.data)
-        .some(([propName, propValue]) => {
-          return blockData[propName] && _.equals(blockData[propName], propValue);
-        });
+    return toolboxItems?.find((item) => {
+      return isSameBlockData(item.data, blockData);
     });
+  }
+
+  /**
+   * Exports Block data as string using conversion config
+   */
+  public async exportDataAsString(): Promise<string> {
+    const blockData = await this.data;
+
+    return convertBlockDataToString(blockData, this.tool.conversionConfig);
+  }
+
+  /**
+   * Determines if tool's tunes settings are custom html or popover params and separates one from another by putting to different object fields
+   *
+   * @param tunes - tool's tunes config
+   */
+  private getTunesDataSegregated(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
+    const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
+
+    if ($.isElement(tunes)) {
+      result.htmlElement = tunes as HTMLElement;
+    } else if (Array.isArray(tunes)) {
+      result.items = tunes as PopoverItemParams[];
+    } else {
+      result.items = [ tunes ];
+    }
+
+    return result;
   }
 
   /**
@@ -732,6 +778,16 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.toolInstance.render();
+
+    if (import.meta.env.MODE === 'test') {
+      wrapper.setAttribute('data-cy', 'block-wrapper');
+    }
+
+    /**
+     * Export id to the DOM three
+     * Useful for standalone modules development. For example, allows to identify Block by some child node. Or scroll to a particular Block by id.
+     */
+    wrapper.dataset.id = this.id;
 
     /**
      * Saving a reference to plugin's content element for guaranteed accessing it later
@@ -878,18 +934,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        *    — we should fire 'didMutated' event in that case
        */
       const everyRecordIsMutationFree = mutationsOrInputEvent.length > 0 && mutationsOrInputEvent.every((record) => {
-        const { addedNodes, removedNodes } = record;
+        const { addedNodes, removedNodes, target } = record;
         const changedNodes = [
           ...Array.from(addedNodes),
           ...Array.from(removedNodes),
+          target,
         ];
 
         return changedNodes.some((node) => {
           if (!$.isElement(node)) {
-            return false;
+            /**
+             * "characterData" mutation record has Text node as a target, so we need to get parent element to check it for mutation-free attribute
+             */
+            node = node.parentElement;
           }
 
-          return (node as HTMLElement).dataset.mutationFree === 'true';
+          return node && (node as HTMLElement).closest('[data-mutation-free="true"]') !== null;
         });
       });
 

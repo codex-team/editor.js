@@ -1,15 +1,9 @@
+import type EditorJS from '../../../types/index';
+import { OutputData } from '../../../types/index';
+
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-describe('Output sanitization', () => {
-  beforeEach(function () {
-    cy.createEditor({}).as('editorInstance');
-  });
-
-  afterEach(function () {
-    if (this.editorInstance) {
-      this.editorInstance.destroy();
-    }
-  });
-
+describe('Sanitizing', () => {
   context('Output should save inline formatting', () => {
     it('should save initial formatting for paragraph', () => {
       cy.createEditor({
@@ -19,16 +13,21 @@ describe('Output sanitization', () => {
             data: { text: '<b>Bold text</b>' },
           } ],
         },
-      }).then(async editor => {
-        const output = await (editor as any).save();
+      })
+        .then(async editor => {
+          cy.wrap<OutputData>(await editor.save())
+            .then((output) => {
+              const boldText = output.blocks[0].data.text;
 
-        const boldText = output.blocks[0].data.text;
-
-        expect(boldText).to.eq('<b>Bold text</b>');
-      });
+              expect(boldText).to.eq('<b>Bold text</b>');
+            });
+        });
     });
 
     it('should save formatting for paragraph', () => {
+      cy.createEditor({})
+        .as('editorInstance');
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .click()
@@ -42,16 +41,21 @@ describe('Output sanitization', () => {
         .get('div.ce-block')
         .click();
 
-      cy.get('@editorInstance').then(async editorInstance => {
-        const output = await (editorInstance as any).save();
+      cy.get<EditorJS>('@editorInstance')
+        .then(async editorInstance => {
+          cy.wrap(await editorInstance.save())
+            .then((output) => {
+              const text = output.blocks[0].data.text;
 
-        const text = output.blocks[0].data.text;
-
-        expect(text).to.match(/<b>This text should be bold\.(<br>)?<\/b>/);
-      });
+              expect(text).to.match(/<b>This text should be bold\.(<br>)?<\/b>/);
+            });
+        });
     });
 
     it('should save formatting for paragraph on paste', () => {
+      cy.createEditor({})
+        .as('editorInstance');
+
       cy.get('[data-cy=editorjs]')
         .get('div.ce-block')
         .paste({
@@ -59,13 +63,56 @@ describe('Output sanitization', () => {
           'text/html': '<p>Text</p><p><b>Bold text</b></p>',
         });
 
-      cy.get('@editorInstance').then(async editorInstance => {
-        const output = await (editorInstance as any).save();
+      cy.get<EditorJS>('@editorInstance')
+        .then(async editorInstance => {
+          cy.wrap<OutputData>(await editorInstance.save())
+            .then((output) => {
+              const boldText = output.blocks[1].data.text;
 
-        const boldText = output.blocks[1].data.text;
-
-        expect(boldText).to.eq('<b>Bold text</b>');
-      });
+              expect(boldText).to.eq('<b>Bold text</b>');
+            });
+        });
     });
   });
+
+  it('should sanitize unwanted html on blocks merging', function () {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            id: 'block1',
+            type: 'paragraph',
+            data: {
+              text: 'First block',
+            },
+          },
+          {
+            id: 'paragraph',
+            type: 'paragraph',
+            data: {
+              /**
+               * Tool does not support spans in its sanitization config
+               */
+              text: 'Second <span id="taint-html">XSS<span> block',
+            },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .last()
+      .click()
+      .type('{home}')
+      .type('{backspace}');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks[0].data.text).to.eq('First blockSecond XSS block'); // text has been merged, span has been removed
+      });
+  });
 });
+

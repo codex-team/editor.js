@@ -1,5 +1,6 @@
-import { Caret } from '../../../../types/api';
+import { BlockAPI, Caret } from '../../../../types/api';
 import Module from '../../__module';
+import { resolveBlock } from '../../utils/api';
 
 /**
  * @class CaretAPI
@@ -96,21 +97,23 @@ export default class CaretAPI extends Module {
   /**
    * Sets caret to the Block by passed index
    *
-   * @param {number} index - index of Block where to set caret
-   * @param {string} position - position where to set caret
-   * @param {number} offset - caret offset
+   * @param blockOrIdOrIndex - either BlockAPI or Block id or Block index
+   * @param position - position where to set caret
+   * @param offset - caret offset
    * @returns {boolean}
    */
   private setToBlock = (
-    index: number,
+    blockOrIdOrIndex: BlockAPI | BlockAPI['id'] | number,
     position: string = this.Editor.Caret.positions.DEFAULT,
     offset = 0
   ): boolean => {
-    if (!this.Editor.BlockManager.blocks[index]) {
+    const block = resolveBlock(blockOrIdOrIndex, this.Editor);
+
+    if (block === undefined) {
       return false;
     }
 
-    this.Editor.Caret.setToBlock(this.Editor.BlockManager.blocks[index], position, offset);
+    this.Editor.Caret.setToBlock(block, position, offset);
 
     return true;
   };
