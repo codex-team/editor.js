@@ -124,7 +124,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.Editor.BlockSelection.clearCache();
 
     /** Get tool's settings data */
-    const { toolTunes, commonTunes, customHtmlTunes } = targetBlock.getTunes();
+    const { toolTunes, commonTunes } = targetBlock.getTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -134,8 +134,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.popover = new PopoverClass({
       searchable: true,
       items: await this.getTunesItems(targetBlock, commonTunes, toolTunes),
-      customContent: customHtmlTunes,
-      customContentFlippableItems: this.getControls(customHtmlTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),

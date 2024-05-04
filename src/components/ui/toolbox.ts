@@ -3,7 +3,7 @@ import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import BlockTool from '../tools/block';
 import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
+import { API, BlockToolData, ToolboxConfigEntry, PopoverItemParams, BlockAPI } from '../../../types';
 import EventsDispatcher from '../utils/events';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
@@ -303,11 +303,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Returns list of items that will be displayed in toolbox
    */
   @_.cacheable
-  private get toolboxItemsToBeDisplayed(): PopoverItem[] {
+  private get toolboxItemsToBeDisplayed(): PopoverItemParams[] {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
+    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItemParams => {
       return {
         icon: toolboxItem.icon,
         title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
@@ -320,7 +320,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     };
 
     return this.toolsToBeDisplayed
-      .reduce<PopoverItem[]>((result, tool) => {
+      .reduce<PopoverItemParams[]>((result, tool) => {
         if (Array.isArray(tool.toolbox)) {
           tool.toolbox.forEach(item => {
             result.push(toPopoverItem(item, tool));

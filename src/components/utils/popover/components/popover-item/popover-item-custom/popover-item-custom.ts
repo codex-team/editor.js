@@ -1,6 +1,7 @@
 import { PopoverItem } from '../popover-item';
 import { PopoverItemCustomParams } from '../popover-item.types';
 import { css } from './popover-item-custom.const';
+import Dom from '../../../../../dom';
 
 /**
  * Represents popover item with custom html content
@@ -20,8 +21,10 @@ export class PopoverItemCustom extends PopoverItem {
     super();
 
     this.nodes = {
-      root: params.element,
+      root: Dom.make('div', css.root),
     };
+
+    this.nodes.root.appendChild(params.element);
   }
 
   /**
@@ -38,5 +41,17 @@ export class PopoverItemCustom extends PopoverItem {
    */
   public toggleHidden(isHidden: boolean): void {
     this.nodes.root?.classList.toggle(css.hidden, isHidden);
+  }
+
+  /**
+   * Returns list of buttons and inputs inside custom content
+   */
+  public getControls(): HTMLElement[] {
+    /** Query buttons and inputs inside custom html */
+    const controls = this.nodes.root.querySelectorAll<HTMLElement>(
+      `button, ${Dom.allInputsSelector}`
+    );
+
+    return Array.from(controls);
   }
 }

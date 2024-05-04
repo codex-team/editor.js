@@ -617,22 +617,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   public getTunes(): {
     toolTunes: PopoverItemParams[];
     commonTunes: PopoverItemParams[];
-    customHtmlTunes: HTMLElement
     } {
-    const customHtmlTunesContainer = document.createElement('div');
+    const toolTunesPopoverParams: TunesMenuConfigItem[] = [];
     const commonTunesPopoverParams: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
 
-    /** Separate custom html from Popover items params for tool's tunes */
-    const {
-      items: toolTunesPopoverParams,
-      htmlElement: toolTunesHtmlElement,
-    } = this.getTunesDataSegregated(tunesDefinedInTool);
-
-    if (toolTunesHtmlElement !== undefined) {
-      customHtmlTunesContainer.appendChild(toolTunesHtmlElement);
+    if ($.isElement(tunesDefinedInTool)) {
+      toolTunesPopoverParams.push({
+        type: 'custom',
+        element: tunesDefinedInTool,
+      });
+    } else if (Array.isArray(tunesDefinedInTool)) {
+      toolTunesPopoverParams.push(...tunesDefinedInTool);
+    } else {
+      toolTunesPopoverParams.push(tunesDefinedInTool);
     }
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
@@ -643,24 +643,21 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     /** Separate custom html from Popover items params for common tunes */
     commonTunes.forEach(tuneConfig => {
-      const {
-        items,
-        htmlElement,
-      } = this.getTunesDataSegregated(tuneConfig);
-
-      if (htmlElement !== undefined) {
-        customHtmlTunesContainer.appendChild(htmlElement);
-      }
-
-      if (items !== undefined) {
-        commonTunesPopoverParams.push(...items);
+      if ($.isElement(tuneConfig)) {
+        commonTunesPopoverParams.push({
+          type: 'custom',
+          element: tuneConfig,
+        });
+      } else if (Array.isArray(tuneConfig)) {
+        commonTunesPopoverParams.push(...tuneConfig);
+      } else {
+        commonTunesPopoverParams.push(tuneConfig);
       }
     });
 
     return {
       toolTunes: toolTunesPopoverParams,
       commonTunes: commonTunesPopoverParams,
-      customHtmlTunes: customHtmlTunesContainer,
     };
   }
 
