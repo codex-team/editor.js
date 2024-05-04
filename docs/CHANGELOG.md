@@ -15,7 +15,7 @@
 - `Fix` - Caret lost after block conversion on mobile devices.
 - `Improvement` - The API `blocks.convert()` now returns the new block API
 - `Improvement` - The API `caret.setToBlock()` now can accept either BlockAPI or block index or block id
-- `Improvement` – Popover's custom html section becomes full-valued popover item
+- `New` – *Menu Config* – New item type – HTML
 
 ### 2.29.1
 
