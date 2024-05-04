@@ -1,3 +1,5 @@
+import { HintPosition } from '../hint';
+
 /**
  * Popover item types
  */
@@ -181,10 +183,6 @@ export type PopoverItemParams =
   PopoverItemSeparatorParams |
   PopoverItemHtmlParams;
 
-/**
- * Possible popover item hint positions
- */
-export type HintPosition = 'top' | 'bottom' | 'left' | 'right';
 
 /**
  * Popover item render params.

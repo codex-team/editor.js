@@ -12,3 +12,8 @@ export interface HintParams {
    */
   description?: string;
 }
+
+/**
+ * Possible hint positions
+ */
+export type HintPosition = 'top' | 'bottom' | 'left' | 'right';

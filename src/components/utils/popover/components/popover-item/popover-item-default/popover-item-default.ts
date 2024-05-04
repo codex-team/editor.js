@@ -1,13 +1,13 @@
 import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
-  HintPosition,
   PopoverItemDefaultParams as PopoverItemDefaultParams,
   PopoverItemParams as PopoverItemParams,
   PopoverItemRenderParams
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
+import { HintPosition } from '../../hint';
 
 /**
  * Represents sigle popover item node
