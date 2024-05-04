@@ -11,6 +11,21 @@ export interface PopoverItemSeparatorParams {
 }
 
 /**
+ * Represents popover item with custom html content
+ */
+export interface PopoverItemCustomParams {
+  /**
+   * Item type
+   */
+  type: 'custom';
+
+  /**
+   * Custom html content to be displayed in the popover
+   */
+  element: HTMLElement
+}
+
+/**
  * Common parameters for all kinds of default popover items: with or without confirmation
  */
 interface PopoverItemDefaultBaseParams {
@@ -119,5 +134,8 @@ export type PopoverItemDefaultParams =
 /**
  * Represents single popover item
  */
-export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemSeparatorParams;
+export type PopoverItemParams =
+  PopoverItemDefaultParams |
+  PopoverItemSeparatorParams |
+  PopoverItemCustomParams;
 

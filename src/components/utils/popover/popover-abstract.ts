@@ -6,6 +6,7 @@ import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
 import { css } from './popover.const';
 import { PopoverItemParams } from './components/popover-item';
+import { PopoverItemCustom } from './components/popover-item/popover-item-custom/popover-item-custom';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -157,6 +158,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       switch (item.type) {
         case 'separator':
           return new PopoverItemSeparator();
+        case 'custom':
+          return new PopoverItemCustom(item);
         default:
           return new PopoverItemDefault(item);
       }
