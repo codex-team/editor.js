@@ -12,6 +12,8 @@ export default defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
+      on('file:preprocessor', require('cypress-vite')(config));
+
       /**
        * Plugin for cypress that adds better terminal output for easier debugging.
        * Prints cy commands, browser console logs, cy.request and cy.intercept data. Great for your pipelines.
