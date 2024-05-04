@@ -291,7 +291,7 @@ describe('Popover', () => {
 
     /** Check item with custom html content is displayed */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-popover .ce-popover-item-custom')
+      .get('.ce-popover .ce-popover-item-html')
       .contains('Tune')
       .should('be.visible');
   });
@@ -365,7 +365,7 @@ describe('Popover', () => {
 
     /** Check the first custom html item is focused */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-popover .ce-popover-item-custom .ce-settings__button')
+      .get('.ce-popover .ce-popover-item-html .ce-settings__button')
       .contains('Tune1')
       .should('have.class', 'ce-popover-item--focused');
 
@@ -375,7 +375,7 @@ describe('Popover', () => {
 
     /** Check the second custom html item is focused */
     cy.get('[data-cy=editorjs]')
-      .get('.ce-popover .ce-popover-item-custom .ce-settings__button')
+      .get('.ce-popover .ce-popover-item-html .ce-settings__button')
       .contains('Tune2')
       .should('have.class', 'ce-popover-item--focused');
 
