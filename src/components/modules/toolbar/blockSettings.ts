@@ -313,27 +313,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   };
 
   /**
-   * Returns list of buttons and inputs inside specified container
-   *
-   * @param container - container to query controls inside of
-   */
-  private getControls(container: HTMLElement): HTMLElement[] {
-    const { StylesAPI } = this.Editor;
-    /** Query buttons and inputs inside tunes html */
-    const controls = container.querySelectorAll<HTMLElement>(
-      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
-    );
-
-    return Array.from(controls);
-  }
-
-  /**
    * Resolves aliases in tunes menu items
    *
    * @param item - item with resolved aliases
    */
   private resolveTuneAliases(item: TunesMenuConfigItem): PopoverItemParams {
-    if (item.type === 'separator') {
+    if (item.type === 'separator' || item.type === 'custom') {
       return item;
     }
     const result = resolveAliases(item, { label: 'title' });

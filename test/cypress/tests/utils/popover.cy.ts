@@ -244,7 +244,7 @@ describe('Popover', () => {
     });
   });
 
-  it('should display custom content item', () => {
+  it('should display item with custom html', () => {
     /**
      * Block Tune with html as return type of render() method
      */

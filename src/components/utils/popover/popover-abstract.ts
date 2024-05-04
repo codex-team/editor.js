@@ -28,7 +28,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   protected nodes: Nodes;
 
   /**
-   * List of default popover items that can are searchable and may have confirmation state
+   * List of default popover items that are searchable and may have confirmation state
    */
   protected get itemsDefault(): PopoverItemDefault[] {
     return this.items.filter(item => item instanceof PopoverItemDefault) as PopoverItemDefault[];
