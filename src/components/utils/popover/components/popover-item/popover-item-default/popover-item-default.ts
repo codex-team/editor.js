@@ -15,6 +15,7 @@ import { HintPosition } from '../../hint';
  * @todo move nodes initialization to constructor
  * @todo replace multiple make() usages with constructing separate instances
  * @todo split regular popover item and popover item with confirmation to separate classes
+ * @todo display icon on the right side of the item for rtl languages
  */
 export class PopoverItemDefault extends PopoverItem {
   /**
