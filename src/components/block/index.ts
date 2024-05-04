@@ -610,9 +610,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns data to render in tunes menu.
-   * Splits block tunes into 3 groups: block specific tunes, common tunes
-   * and custom html that is produced by combining tunes html from both previous groups
+   * Returns data to render in Block Tunes menu.
+   * Splits block tunes into 2 groups: block specific tunes and common tunes
    */
   public getTunes(): {
     toolTunes: PopoverItemParams[];
@@ -660,7 +659,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       commonTunes: commonTunesPopoverParams,
     };
   }
-
 
   /**
    * Update current input index with selection anchor node
@@ -745,25 +743,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const blockData = await this.data;
 
     return convertBlockDataToString(blockData, this.tool.conversionConfig);
-  }
-
-  /**
-   * Determines if tool's tunes settings are custom html or popover params and separates one from another by putting to different object fields
-   *
-   * @param tunes - tool's tunes config
-   */
-  private getTunesDataSegregated(tunes: HTMLElement | TunesMenuConfig): { htmlElement?: HTMLElement; items: PopoverItemParams[] } {
-    const result = { } as { htmlElement?: HTMLElement; items: PopoverItemParams[] };
-
-    if ($.isElement(tunes)) {
-      result.htmlElement = tunes as HTMLElement;
-    } else if (Array.isArray(tunes)) {
-      result.items = tunes as PopoverItemParams[];
-    } else {
-      result.items = [ tunes ];
-    }
-
-    return result;
   }
 
   /**
