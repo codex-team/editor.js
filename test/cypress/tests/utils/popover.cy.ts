@@ -296,7 +296,7 @@ describe('Popover', () => {
       .should('be.visible');
   });
 
-  it.only('should support flipping between custom content items', () => {
+  it('should support flipping between custom content items', () => {
     /**
      * Block Tune with html as return type of render() method
      */

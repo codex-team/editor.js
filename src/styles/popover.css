@@ -130,7 +130,7 @@
     }
   }
 
-  &__search, &__custom-content:not(:empty) {
+  &__search {
     margin-bottom: 5px;
   }
 
@@ -149,18 +149,6 @@
     &--displayed {
       display: block;
     }
-  }
-
-  &__custom-content:not(:empty) {
-    padding: 4px;
-
-    @media (--not-mobile) {
-      padding: 0;
-    }
-  }
-
-  &__custom-content--hidden {
-    display: none;
   }
 
   &--nested {
@@ -209,6 +197,12 @@
      width: 100%;
    }
  }
+
+ .ce-popover-item-custom {
+  &--hidden {
+    display: none;
+  }
+}
 
  .ce-popover-item {
   --border-radius: 6px;

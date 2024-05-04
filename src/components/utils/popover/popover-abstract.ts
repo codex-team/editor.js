@@ -195,7 +195,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
         if (item instanceof PopoverItemDefault) {
           isHidden = !data.items.includes(item);
-        } else if (item instanceof PopoverItemSeparator) {
+        } else if (item instanceof PopoverItemSeparator || item instanceof PopoverItemCustom) {
           /** Should hide separators if nothing found message displayed or if there is some search query applied */
           isHidden = isNothingFound || !isEmptyQuery;
         }
