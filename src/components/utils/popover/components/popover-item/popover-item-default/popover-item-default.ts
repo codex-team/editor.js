@@ -6,6 +6,7 @@ import {
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
+import * as tooltip from '../../../../../utils/tooltip';
 
 /**
  * Represents sigle popover item node
@@ -195,6 +196,13 @@ export class PopoverItemDefault extends PopoverItem {
 
     if (params.isDisabled) {
       el.classList.add(css.disabled);
+    }
+
+    if (params.hint !== undefined) {
+      tooltip.onHover(el, params.hint.title, {
+        placement: 'right',
+        hidingDelay: 100,
+      });
     }
 
     return el;
