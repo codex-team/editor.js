@@ -1,6 +1,6 @@
 import { ToolConfig } from './tool-config';
 import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItemDefaultParams, PopoverItemSeparatorParams, PopoverItemParams, PopoverItemCustomParams } from '../configs';
+import { PopoverItemDefaultParams, PopoverItemSeparatorParams, PopoverItemHtmlParams } from '../configs';
 
 /**
  * Tool may specify its toolbox configuration
@@ -60,12 +60,12 @@ export type TunesMenuConfigSeparatorItem = PopoverItemSeparatorParams;
 /**
  * Represents single Tunes Menu item with custom HTML contect
  */
-export type TunesMenuConfigCustomItem = PopoverItemCustomParams;
+export type TunesMenuConfigHtmlItem = PopoverItemHtmlParams;
 
 /**
  * Union of all Tunes Menu item types
  */
-export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigSeparatorItem | TunesMenuConfigCustomItem;
+export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigSeparatorItem | TunesMenuConfigHtmlItem;
 
 /**
  * Tool may specify its tunes configuration

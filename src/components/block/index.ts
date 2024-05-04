@@ -26,6 +26,7 @@ import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 import { convertBlockDataToString, isSameBlockData } from '../utils/blocks';
+import { PopoverItemType } from '../utils/popover';
 
 /**
  * Interface describes Block class constructor argument
@@ -625,7 +626,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
     if ($.isElement(tunesDefinedInTool)) {
       toolTunesPopoverParams.push({
-        type: 'custom',
+        type: PopoverItemType.Html,
         element: tunesDefinedInTool,
       });
     } else if (Array.isArray(tunesDefinedInTool)) {
@@ -644,7 +645,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     commonTunes.forEach(tuneConfig => {
       if ($.isElement(tuneConfig)) {
         commonTunesPopoverParams.push({
-          type: 'custom',
+          type: PopoverItemType.Html,
           element: tuneConfig,
         });
       } else if (Array.isArray(tuneConfig)) {

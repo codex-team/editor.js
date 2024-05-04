@@ -1,12 +1,12 @@
 import { PopoverItem } from '../popover-item';
-import { PopoverItemCustomParams } from '../popover-item.types';
-import { css } from './popover-item-custom.const';
+import { PopoverItemHtmlParams } from '../popover-item.types';
+import { css } from './popover-item-html.const';
 import Dom from '../../../../../dom';
 
 /**
  * Represents popover item with custom html content
  */
-export class PopoverItemCustom extends PopoverItem {
+export class PopoverItemHtml extends PopoverItem {
   /**
    * Item html elements
    */
@@ -17,7 +17,7 @@ export class PopoverItemCustom extends PopoverItem {
    *
    * @param params – instance parameters
    */
-  constructor(params: PopoverItemCustomParams) {
+  constructor(params: PopoverItemHtmlParams) {
     super();
 
     this.nodes = {

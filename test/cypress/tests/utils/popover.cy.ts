@@ -1,4 +1,4 @@
-import { PopoverDesktop as Popover } from '../../../../src/components/utils/popover';
+import { PopoverDesktop as Popover, PopoverItemType } from '../../../../src/components/utils/popover';
 import { PopoverItemParams } from '../../../../types';
 import { TunesMenuConfig } from '../../../../types/tools';
 
@@ -115,7 +115,7 @@ describe('Popover', () => {
         .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
-          if (items[0].type !== 'default') {
+          if (items[0].type !== PopoverItemType.Default) {
             return;
           }
           // Check onActivate callback has never been called
@@ -642,7 +642,7 @@ describe('Popover', () => {
             name: 'test-item',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
         ];
       }
@@ -704,7 +704,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
           {
             onActivate: (): void => {},
@@ -791,7 +791,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
           {
             onActivate: (): void => {},

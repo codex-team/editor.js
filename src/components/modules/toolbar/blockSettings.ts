@@ -7,7 +7,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams, PopoverItemType } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
@@ -210,7 +210,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (toolTunes !== undefined && toolTunes.length > 0) {
       items.push(...toolTunes);
       items.push({
-        type: 'separator',
+        type: PopoverItemType.Separator,
       });
     }
 
@@ -225,7 +225,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
         },
       });
       items.push({
-        type: 'separator',
+        type: PopoverItemType.Separator,
       });
     }
 
@@ -318,7 +318,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @param item - item with resolved aliases
    */
   private resolveTuneAliases(item: TunesMenuConfigItem): PopoverItemParams {
-    if (item.type === 'separator' || item.type === 'custom') {
+    if (item.type === PopoverItemType.Separator || item.type === PopoverItemType.Html) {
       return item;
     }
     const result = resolveAliases(item, { label: 'title' });

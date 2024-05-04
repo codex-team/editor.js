@@ -1,3 +1,16 @@
+/**
+ * Popover item types
+ */
+export enum PopoverItemType {
+  /** Default popover item */
+  Default = 'default',
+
+  /** Separator item*/
+  Separator = 'separator',
+
+  /** Item with custom html content */
+  Html = 'html'
+}
 
 /**
  * Represents popover item separator.
@@ -7,17 +20,17 @@ export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: 'separator'
+  type: PopoverItemType.Separator
 }
 
 /**
  * Represents popover item with custom html content
  */
-export interface PopoverItemCustomParams {
+export interface PopoverItemHtmlParams {
   /**
    * Item type
    */
-  type: 'custom';
+  type: PopoverItemType.Html;
 
   /**
    * Custom html content to be displayed in the popover
@@ -32,7 +45,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
-  type?: 'default';
+  type?: PopoverItemType.Default;
 
   /**
    * Displayed text
@@ -137,5 +150,5 @@ export type PopoverItemDefaultParams =
 export type PopoverItemParams =
   PopoverItemDefaultParams |
   PopoverItemSeparatorParams |
-  PopoverItemCustomParams;
+  PopoverItemHtmlParams;
 

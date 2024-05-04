@@ -7,7 +7,7 @@ import { css } from './popover.const';
 import { SearchInputEvent, SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
 import { PopoverItemDefault } from './components/popover-item';
-import { PopoverItemCustom } from './components/popover-item/popover-item-custom/popover-item-custom';
+import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 
 /**
  * Desktop popover.
@@ -282,7 +282,7 @@ export class PopoverDesktop extends PopoverAbstract {
         if (item instanceof PopoverItemDefault) {
           return item.getElement();
         }
-        if (item instanceof PopoverItemCustom) {
+        if (item instanceof PopoverItemHtml) {
           return item.getControls();
         }
       })

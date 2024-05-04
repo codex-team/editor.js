@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemSeparator } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -6,7 +6,7 @@ import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
 import { css } from './popover.const';
 import { PopoverItemParams } from './components/popover-item';
-import { PopoverItemCustom } from './components/popover-item/popover-item-custom/popover-item-custom';
+import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 
 /**
  * Class responsible for rendering popover and handling its behaviour
@@ -151,10 +151,10 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   protected buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
     return items.map(item => {
       switch (item.type) {
-        case 'separator':
+        case PopoverItemType.Separator:
           return new PopoverItemSeparator();
-        case 'custom':
-          return new PopoverItemCustom(item);
+        case PopoverItemType.Html:
+          return new PopoverItemHtml(item);
         default:
           return new PopoverItemDefault(item);
       }
@@ -195,7 +195,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
         if (item instanceof PopoverItemDefault) {
           isHidden = !data.items.includes(item);
-        } else if (item instanceof PopoverItemSeparator || item instanceof PopoverItemCustom) {
+        } else if (item instanceof PopoverItemSeparator || item instanceof PopoverItemHtml) {
           /** Should hide separators if nothing found message displayed or if there is some search query applied */
           isHidden = isNothingFound || !isEmptyQuery;
         }
