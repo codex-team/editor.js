@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemRenderParams, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -147,16 +147,17 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * Factory method for creating popover items
    *
    * @param items - list of items params
+   * @param params - popover item render params
    */
-  protected buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
+  protected buildItems(items: PopoverItemParams[], params?: PopoverItemRenderParams): Array<PopoverItem> {
     return items.map(item => {
       switch (item.type) {
         case PopoverItemType.Separator:
           return new PopoverItemSeparator();
         case PopoverItemType.Html:
-          return new PopoverItemHtml(item);
+          return new PopoverItemHtml(item, params);
         default:
-          return new PopoverItemDefault(item);
+          return new PopoverItemDefault(item, params);
       }
     });
   }

@@ -196,6 +196,12 @@ export interface PopoverItemRenderParams {
     /**
      * Hint position relative to the item
      */
-    position: HintPosition;
+    position?: HintPosition;
+
+    /**
+     * If false, hint will not be rendered.
+     * True by default
+     */
+    enabled: boolean;
   }
 }

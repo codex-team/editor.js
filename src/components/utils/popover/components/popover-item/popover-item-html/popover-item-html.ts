@@ -28,7 +28,7 @@ export class PopoverItemHtml extends PopoverItem {
 
     this.nodes.root.appendChild(params.element);
 
-    if (params.hint !== undefined) {
+    if (params.hint !== undefined && renderParams?.hint?.enabled !== false) {
       this.addHint(this.nodes.root, {
         ...params.hint,
         position: renderParams?.hint?.position || 'right',

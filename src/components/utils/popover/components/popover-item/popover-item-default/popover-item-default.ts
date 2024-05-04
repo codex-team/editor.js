@@ -7,7 +7,6 @@ import {
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
-import { HintPosition } from '../../hint';
 
 /**
  * Represents sigle popover item node
@@ -75,15 +74,6 @@ export class PopoverItemDefault extends PopoverItem {
       icon: null,
     };
 
-  /**
-   * Popover item params
-   */
-  private params: PopoverItemDefaultParams;
-
-  /**
-   * Position of the hint relative to the item if exists
-   */
-  private hintPosition: HintPosition;
 
   /**
    * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
@@ -97,12 +87,10 @@ export class PopoverItemDefault extends PopoverItem {
    * @param renderParams - popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams) {
+  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams) {
     super();
 
-    this.params = params;
-    this.hintPosition = renderParams?.hint?.position || 'right';
-    this.nodes.root = this.make(params);
+    this.nodes.root = this.make(params, renderParams);
   }
 
   /**
@@ -170,8 +158,9 @@ export class PopoverItemDefault extends PopoverItem {
    * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
+   * @param renderParams - popover item render params
    */
-  private make(params: PopoverItemDefaultParams): HTMLElement {
+  private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams): HTMLElement {
     const el = Dom.make('div', css.container);
 
     if (params.name) {
@@ -208,10 +197,10 @@ export class PopoverItemDefault extends PopoverItem {
       el.classList.add(css.disabled);
     }
 
-    if (params.hint !== undefined) {
+    if (params.hint !== undefined && renderParams?.hint?.enabled !== false) {
       this.addHint(el, {
         ...params.hint,
-        position: this.hintPosition,
+        position: renderParams?.hint?.position || 'right',
       });
     }
 

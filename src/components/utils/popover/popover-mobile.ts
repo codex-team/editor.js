@@ -111,18 +111,16 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
 
   /**
    * Overrides the method to build items.
-   * Removes hint from items, as hint is not supported in mobile popover
+   * Hides items hints, as hint is not supported in mobile popover
    *
    * @param items - list of items params
    */
   protected override buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
-    items.forEach(item => {
-      if ('hint' in item) {
-        delete item.hint;
-      }
+    return super.buildItems(items, {
+      hint: {
+        enabled: false,
+      },
     });
-
-    return super.buildItems(items);
   }
 
   /**
