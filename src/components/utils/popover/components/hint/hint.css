@@ -1,7 +1,6 @@
 .ce-hint-content {
   &__description {
     opacity: 0.6;
-    word-spacing: -3px;
     margin-top: 3px;
   }
 }

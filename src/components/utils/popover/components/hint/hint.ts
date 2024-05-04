@@ -1,13 +1,13 @@
 import Dom from '../../../../dom';
-import { css } from './hint-content.const';
-import { HintContentParams } from './hint-content.types';
+import { css } from './hint.const';
+import { HintParams } from './hint.types';
 
-import './hint-content.css';
+import './hint.css';
 
 /**
  * Represents the hint content component
  */
-export class HintContent {
+export class Hint {
   /**
    * Html element used to display hint content on screen
    */
@@ -22,7 +22,7 @@ export class HintContent {
    *
    * @param params - hint content parameters
    */
-  constructor(params: HintContentParams) {
+  constructor(params: HintParams) {
     this.nodes = {
       root: Dom.make('div', css.root),
       title: Dom.make('div', css.title, { textContent: params.title }),

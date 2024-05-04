@@ -1,9 +1,9 @@
 /**
- * Hint content parameters
+ * Hint parameters
  */
-export interface HintContentParams {
+export interface HintParams {
   /**
-   * Title of the hint content
+   * Title of the hint
    */
   title: string;
 

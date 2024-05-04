@@ -1,4 +1,4 @@
-import { HintContent } from '../hint-content/hint-content';
+import { Hint } from '../hint/hint';
 import * as tooltip from '../../../../utils/tooltip';
 import { HintPosition } from './popover-item.types';
 
@@ -13,7 +13,7 @@ export abstract class PopoverItem {
    * @param hintData - hint data
    */
   protected addHint(itemElement: HTMLElement, hintData: { title: string, description?: string; position: HintPosition }): void {
-    const content = new HintContent(hintData);
+    const content = new Hint(hintData);
 
     tooltip.onHover(itemElement, content.getElement(), {
       placement: hintData.position,
