@@ -3,7 +3,7 @@ import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
 import { PopoverMobileNodes, PopoverParams } from './popover.types';
-import { PopoverItemDefault, PopoverItemParams } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemParams } from './components/popover-item';
 import { css } from './popover.const';
 import Dom from '../../dom';
 
@@ -110,10 +110,26 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
   }
 
   /**
+   * Overrides the method to build items.
+   * Removes hint from items, as hint is not supported in mobile popover
+   *
+   * @param items - list of items params
+   */
+  protected override buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
+    items.forEach(item => {
+      if ('hint' in item) {
+        delete item.hint;
+      }
+    });
+
+    return super.buildItems(items);
+  }
+
+  /**
    * Removes rendered popover items and header and displays new ones
    *
-   * @param title - new popover header text
    * @param items - new popover items
+   * @param title - new popover header text
    */
   private updateItemsAndHeader(items: PopoverItemParams[], title?: string ): void {
     /** Re-render header */

@@ -1,5 +1,5 @@
 import { PopoverItem } from '../popover-item';
-import { PopoverItemHtmlParams } from '../popover-item.types';
+import { PopoverItemHtmlParams, PopoverItemRenderParams } from '../popover-item.types';
 import { css } from './popover-item-html.const';
 import Dom from '../../../../../dom';
 
@@ -16,8 +16,10 @@ export class PopoverItemHtml extends PopoverItem {
    * Constructs the instance
    *
    * @param params – instance parameters
+   * @param renderParams – popover item render params.
+   * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(params: PopoverItemHtmlParams) {
+  constructor(params: PopoverItemHtmlParams, renderParams?: PopoverItemRenderParams) {
     super();
 
     this.nodes = {
@@ -25,6 +27,13 @@ export class PopoverItemHtml extends PopoverItem {
     };
 
     this.nodes.root.appendChild(params.element);
+
+    if (params.hint !== undefined) {
+      this.addHint(this.nodes.root, {
+        ...params.hint,
+        position: renderParams?.hint?.position || 'right',
+      });
+    }
   }
 
   /**

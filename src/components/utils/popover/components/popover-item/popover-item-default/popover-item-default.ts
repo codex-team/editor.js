@@ -1,18 +1,19 @@
 import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
+  HintPosition,
   PopoverItemDefaultParams as PopoverItemDefaultParams,
-  PopoverItemParams as PopoverItemParams
+  PopoverItemParams as PopoverItemParams,
+  PopoverItemRenderParams
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
-import * as tooltip from '../../../../../utils/tooltip';
 
 /**
  * Represents sigle popover item node
  *
  * @todo move nodes initialization to constructor
- * @todo replace multiple make() usages with constructing separate instaces
+ * @todo replace multiple make() usages with constructing separate instances
  * @todo split regular popover item and popover item with confirmation to separate classes
  */
 export class PopoverItemDefault extends PopoverItem {
@@ -79,6 +80,11 @@ export class PopoverItemDefault extends PopoverItem {
   private params: PopoverItemDefaultParams;
 
   /**
+   * Position of the hint relative to the item if exists
+   */
+  private hintPosition: HintPosition;
+
+  /**
    * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
    */
   private confirmationState: PopoverItemDefaultParams | null = null;
@@ -87,11 +93,14 @@ export class PopoverItemDefault extends PopoverItem {
    * Constructs popover item instance
    *
    * @param params - popover item construction params
+   * @param renderParams - popover item render params.
+   * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(params: PopoverItemDefaultParams) {
+  constructor(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams) {
     super();
 
     this.params = params;
+    this.hintPosition = renderParams?.hint?.position || 'right';
     this.nodes.root = this.make(params);
   }
 
@@ -199,9 +208,9 @@ export class PopoverItemDefault extends PopoverItem {
     }
 
     if (params.hint !== undefined) {
-      tooltip.onHover(el, params.hint.title, {
-        placement: 'right',
-        hidingDelay: 100,
+      this.addHint(el, {
+        ...params.hint,
+        position: this.hintPosition,
       });
     }
 

@@ -581,7 +581,6 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
-          // @ts-expect-error type is not specified on purpose to test the back compatibility
           onActivate: (): void => {},
           icon: 'Icon',
           title: 'Tune',
@@ -590,7 +589,6 @@ describe('Popover', () => {
         };
       }
     }
-
 
     /** Create editor instance */
     cy.createEditor({

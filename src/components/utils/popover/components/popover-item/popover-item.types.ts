@@ -2,10 +2,10 @@
  * Popover item types
  */
 export enum PopoverItemType {
-  /** Default popover item */
+  /** Regular item with icon, title and other properties */
   Default = 'default',
 
-  /** Separator item*/
+  /** Gray line used to separate items from each other */
   Separator = 'separator',
 
   /** Item with custom html content */
@@ -35,7 +35,22 @@ export interface PopoverItemHtmlParams {
   /**
    * Custom html content to be displayed in the popover
    */
-  element: HTMLElement
+  element: HTMLElement;
+
+  /**
+   * Hint data to be displayed on item hover
+   */
+  hint?: {
+    /**
+     * Hint title
+     */
+    title: string;
+
+    /**
+     * Secondary text to be displayed below the title
+     */
+    description?: string;
+  }
 }
 
 /**
@@ -90,8 +105,18 @@ interface PopoverItemDefaultBaseParams {
    */
   toggle?: boolean | string;
 
+  /**
+   * Hint data to be displayed on item hover
+   */
   hint?: {
+    /**
+     * Hint title
+     */
     title: string;
+
+    /**
+     * Secondary text to be displayed below the title
+     */
     description?: string;
   }
 }
@@ -122,7 +147,6 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
    * @param event - event that initiated item activation
    */
   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
-
 }
 
 
@@ -157,3 +181,23 @@ export type PopoverItemParams =
   PopoverItemSeparatorParams |
   PopoverItemHtmlParams;
 
+/**
+ * Possible popover item hint positions
+ */
+export type HintPosition = 'top' | 'bottom' | 'left' | 'right';
+
+/**
+ * Popover item render params.
+ * The parameters that are not set by user via popover api but rather depend on technical implementation
+ */
+export interface PopoverItemRenderParams {
+  /**
+   * Hint render params
+   */
+  hint?: {
+    /**
+     * Hint position relative to the item
+     */
+    position: HintPosition;
+  }
+}
