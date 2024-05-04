@@ -198,7 +198,7 @@
    }
  }
 
- .ce-popover-item-custom {
+ .ce-popover-item-html {
   &--hidden {
     display: none;
   }
