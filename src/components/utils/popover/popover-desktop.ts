@@ -7,6 +7,7 @@ import { css } from './popover.const';
 import { SearchInputEvent, SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
 import { PopoverItemDefault } from './components/popover-item';
+import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 
 /**
  * Desktop popover.
@@ -17,11 +18,6 @@ export class PopoverDesktop extends PopoverAbstract {
    * Flipper - module for keyboard iteration between elements
    */
   public flipper: Flipper;
-
-  /**
-   * List of html elements inside custom content area that should be available for keyboard navigation
-   */
-  private customContentFlippableItems: HTMLElement[] | undefined;
 
   /**
    * Reference to nested popover if exists.
@@ -61,10 +57,6 @@ export class PopoverDesktop extends PopoverAbstract {
 
     if (this.nestingLevel > 0) {
       this.nodes.popover.classList.add(css.popoverNested);
-    }
-
-    if (params.customContentFlippableItems) {
-      this.customContentFlippableItems = params.customContentFlippableItems;
     }
 
     if (params.scopeElement !== undefined) {
@@ -148,9 +140,9 @@ export class PopoverDesktop extends PopoverAbstract {
   public hide(): void {
     super.hide();
 
-    this.flipper.deactivate();
-
     this.destroyNestedPopoverIfExists();
+
+    this.flipper.deactivate();
 
     this.previouslyHoveredItem = null;
   }
@@ -283,23 +275,28 @@ export class PopoverDesktop extends PopoverAbstract {
 
   /**
    * Returns list of elements available for keyboard navigation.
-   * Contains both usual popover items elements and custom html content.
    */
   private get flippableElements(): HTMLElement[] {
-    const popoverItemsElements = this.itemsInteractive.map(item => item.getElement());
-    const customContentControlsElements = this.customContentFlippableItems || [];
+    const result =  this.items
+      .map(item => {
+        if (item instanceof PopoverItemDefault) {
+          return item.getElement();
+        }
+        if (item instanceof PopoverItemHtml) {
+          return item.getControls();
+        }
+      })
+      .flat()
+      .filter(item => item !== undefined && item !== null);
 
-    /**
-     * Combine elements inside custom content area with popover items elements
-     */
-    return customContentControlsElements.concat(popoverItemsElements as HTMLElement[]);
+    return result as HTMLElement[];
   }
 
   /**
    * Called on flipper navigation
    */
   private onFlip = (): void => {
-    const focusedItem = this.itemsInteractive.find(item => item.isFocused);
+    const focusedItem = this.itemsDefault.find(item => item.isFocused);
 
     focusedItem?.onFocus();
   };

@@ -1,3 +1,16 @@
+/**
+ * Popover item types
+ */
+export enum PopoverItemType {
+  /** Regular item with icon, title and other properties */
+  Default = 'default',
+
+  /** Gray line used to separate items from each other */
+  Separator = 'separator',
+
+  /** Item with custom html content */
+  Html = 'html'
+}
 
 /**
  * Represents popover item separator.
@@ -7,7 +20,22 @@ export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: 'separator'
+  type: PopoverItemType.Separator
+}
+
+/**
+ * Represents popover item with custom html content
+ */
+export interface PopoverItemHtmlParams {
+  /**
+   * Item type
+   */
+  type: PopoverItemType.Html;
+
+  /**
+   * Custom html content to be displayed in the popover
+   */
+  element: HTMLElement
 }
 
 /**
@@ -17,7 +45,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
-  type?: 'default';
+  type?: PopoverItemType.Default;
 
   /**
    * Displayed text
@@ -119,5 +147,8 @@ export type PopoverItemDefaultParams =
 /**
  * Represents single popover item
  */
-export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemSeparatorParams;
+export type PopoverItemParams =
+  PopoverItemDefaultParams |
+  PopoverItemSeparatorParams |
+  PopoverItemHtmlParams;
 
