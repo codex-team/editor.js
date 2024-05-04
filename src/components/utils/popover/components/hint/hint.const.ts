@@ -1,12 +1,12 @@
 import { bem } from '../../../bem';
 
 /**
- * Hint content block CSS class constructor
+ * Hint block CSS class constructor
  */
-const className = bem('ce-hint-content');
+const className = bem('ce-hint');
 
 /**
- * CSS class names to be used in hint content class
+ * CSS class names to be used in hint class
  */
 export const css = {
   root: className(),
