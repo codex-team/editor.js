@@ -140,9 +140,9 @@ export class PopoverDesktop extends PopoverAbstract {
   public hide(): void {
     super.hide();
 
-    this.flipper.deactivate();
-
     this.destroyNestedPopoverIfExists();
+
+    this.flipper.deactivate();
 
     this.previouslyHoveredItem = null;
   }
