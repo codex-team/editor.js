@@ -89,6 +89,11 @@ interface PopoverItemDefaultBaseParams {
    * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
   toggle?: boolean | string;
+
+  hint?: {
+    title: string;
+    description?: string;
+  }
 }
 
 /**
