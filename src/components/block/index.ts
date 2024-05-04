@@ -21,7 +21,7 @@ import BlockTune from '../tools/tune';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import { TunesMenuConfig, TunesMenuConfigItem } from '../../../types/tools';
+import { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
 import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
