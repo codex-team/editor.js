@@ -10,6 +10,7 @@ const className = bem('ce-hint-content');
  */
 export const css = {
   root: className(),
+  alignedLeft: className(null, 'align-left'),
   title: className('title'),
   description: className('description'),
 };
