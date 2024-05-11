@@ -106,18 +106,6 @@ export default class UI extends Module<UINodes> {
    */
   public isMobile = false;
 
-  private _ignoreSelectionChangeEvents = false;
-
-  /**
-   *
-   * @param value
-   */
-  public ignoreSelectionChangeEvents(value: boolean): void {
-    console.log('ignoreSelectionChangeEvents', value);
-    // debugger;
-    this._ignoreSelectionChangeEvents = value;
-    // debugger;
-  }
 
   /**
    * Cache for center column rectangle info
@@ -600,8 +588,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
-    } else if (this.Editor.ConversionToolbar.opened) {
-      this.Editor.ConversionToolbar.close();
     } else if (this.Editor.InlineToolbar.opened) {
       this.Editor.InlineToolbar.close();
     } else {

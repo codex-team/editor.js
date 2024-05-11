@@ -2,7 +2,6 @@ import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
-  // PopoverItemParams as PopoverItemParams,
   PopoverItemRenderParamsMap,
   PopoverItemType
 } from '../popover-item.types';
@@ -146,31 +145,6 @@ export class PopoverItemDefault extends PopoverItem {
   public onFocus(): void {
     this.disableSpecialHoverAndFocusBehavior();
   }
-
-  // /**
-  //  * Returns item children that are represented as popover items
-  //  */
-  // public get children(): PopoverItemParams[] {
-  //   return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
-  // }
-
-  // /**
-  //  * Returns item children that are represented as custom HTML
-  //  */
-  // public get childrenHTML(): HTMLElement | undefined {
-  //   if (!('children' in this.params)) {
-  //     return undefined;
-  //   }
-
-  //   return this.params.children?.customHtml;
-  // }
-
-  // /**
-  //  * Returns true if item has any type of children
-  //  */
-  // public get hasChildren(): boolean {
-  //   return this.children.length > 0; // || this.childrenHTML !== undefined;
-  // }
 
   /**
    * Returns true if item has children that should be searchable

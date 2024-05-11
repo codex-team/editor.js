@@ -202,9 +202,9 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private tabPressed(event: KeyboardEvent): void {
-    const { InlineToolbar, ConversionToolbar, Caret } = this.Editor;
+    const { InlineToolbar, Caret } = this.Editor;
 
-    const isFlipperActivated = ConversionToolbar.opened || InlineToolbar.opened;
+    const isFlipperActivated = InlineToolbar.opened;
 
     if (isFlipperActivated) {
       return;

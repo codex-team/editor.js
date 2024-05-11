@@ -7,13 +7,12 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams, PopoverItemType } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemType } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
-import * as _ from '../../utils';
 import { IconReplace } from '@codexteam/icons';
-import { getConvertToItems, isSameBlockData } from '../../utils/blocks';
+import { getConvertToItems } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -232,77 +231,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     items.push(...commonTunes);
 
     return items.map(tune => this.resolveTuneAliases(tune));
-  }
-
-  /**
-   * Returns list of all available conversion menu items
-   *
-   * @param currentBlock - block we are about to open block tunes for
-   */
-  private async getConvertToItems(currentBlock: Block): Promise<PopoverItemDefaultParams[]> {
-    const conversionEntries = Array.from(this.Editor.Tools.blockTools.entries());
-
-    const resultItems: PopoverItemDefaultParams[] = [];
-
-    const blockData = await currentBlock.data;
-
-    conversionEntries.forEach(([toolName, tool]) => {
-      const conversionConfig = tool.conversionConfig;
-
-      /**
-       * Skip tools without «import» rule specified
-       */
-      if (!conversionConfig || !conversionConfig.import) {
-        return;
-      }
-
-      tool.toolbox?.forEach((toolboxItem) => {
-        /**
-         * Skip tools that don't pass 'toolbox' property
-         */
-        if (_.isEmpty(toolboxItem) || !toolboxItem.icon) {
-          return;
-        }
-
-        let shouldSkip = false;
-
-        if (toolboxItem.data !== undefined) {
-          /**
-           * When a tool has several toolbox entries, we need to make sure we do not add
-           * toolbox item with the same data to the resulting array. This helps exclude duplicates
-           */
-          const hasSameData = isSameBlockData(toolboxItem.data, blockData);
-
-          shouldSkip = hasSameData;
-        } else {
-          shouldSkip = toolName === currentBlock.name;
-        }
-
-
-        if (shouldSkip) {
-          return;
-        }
-
-        resultItems.push({
-          icon: toolboxItem.icon,
-          title: toolboxItem.title,
-          name: toolName,
-          onActivate: async () => {
-            const { BlockManager, BlockSelection, Caret } = this.Editor;
-
-            const newBlock = await BlockManager.convert(this.Editor.BlockManager.currentBlock, toolName, toolboxItem.data);
-
-            BlockSelection.clearSelection();
-
-            this.close();
-
-            Caret.setToBlock(newBlock, Caret.positions.END);
-          },
-        });
-      });
-    });
-
-    return resultItems;
   }
 
   /**

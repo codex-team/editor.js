@@ -56,11 +56,6 @@ export enum PopoverEvent {
    * When popover closes
    */
   Close = 'close',
-
-  /**
-   * When nested popover opens
-   */
-  OpenNestedPopover = 'open-nested-popover'
 }
 
 /**
@@ -71,11 +66,6 @@ export interface PopoverEventMap {
    * Fired when popover closes
    */
   [PopoverEvent.Close]: undefined;
-
-  /**
-   * Fired when nested popover opens
-   */
-  [PopoverEvent.OpenNestedPopover]: undefined;
 }
 
 /**

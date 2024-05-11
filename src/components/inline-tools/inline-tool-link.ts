@@ -128,19 +128,6 @@ export default class LinkInlineTool implements InlineTool {
     return this.nodes.button;
   }
 
-  // /**
-  //  * Create button for Inline Toolbar
-  //  */
-  // public render(): any {
-  //   return {
-  //     icon: IconLink,
-  //     title: 'Link',
-  //     onActivate: () => {
-  //       // this.surround(this.selection.get());
-  //     },
-  //   };
-  // }
-
   /**
    * Input for the link
    */
@@ -148,16 +135,11 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.input = document.createElement('input') as HTMLInputElement;
     this.nodes.input.placeholder = this.i18n.t('Add a link');
     this.nodes.input.classList.add(this.CSS.input);
-    // this.nodes.input.classList.add(this.CSS.inputShowed);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY) {
         this.enterPressed(event);
       }
     });
-
-    // setTimeout(() => {
-    //   this.nodes.input.focus();
-    // }, 1000);
 
     return this.nodes.input;
   }
@@ -168,8 +150,6 @@ export default class LinkInlineTool implements InlineTool {
    * @param {Range} range - range to wrap with link
    */
   public surround(range: Range): void {
-    debugger;
-    console.log('surround');
     /**
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
@@ -251,7 +231,6 @@ export default class LinkInlineTool implements InlineTool {
    * Show/close link input
    */
   private toggleActions(): void {
-    debugger;
     if (!this.inputOpened) {
       this.openActions(true);
     } else {

@@ -183,8 +183,6 @@ export async function getConvertToItems(currentBlock: Block, editorModules: Edit
 
           BlockSelection.clearSelection();
 
-          // this.close();
-
           window.requestAnimationFrame(() => {
             Caret.setToBlock(currentBlock, Caret.positions.END);
           });
