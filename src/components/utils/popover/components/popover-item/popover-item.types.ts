@@ -1,4 +1,4 @@
-import { HintPosition } from '../hint';
+import { HintParams, HintPosition } from '../hint';
 
 /**
  * Popover item types
@@ -42,17 +42,7 @@ export interface PopoverItemHtmlParams {
   /**
    * Hint data to be displayed on item hover
    */
-  hint?: {
-    /**
-     * Hint title
-     */
-    title: string;
-
-    /**
-     * Secondary text to be displayed below the title
-     */
-    description?: string;
-  }
+  hint?: HintParams;
 }
 
 /**
@@ -110,17 +100,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * Hint data to be displayed on item hover
    */
-  hint?: {
-    /**
-     * Hint title
-     */
-    title: string;
-
-    /**
-     * Secondary text to be displayed below the title
-     */
-    description?: string;
-  }
+  hint?: HintParams;
 }
 
 /**
@@ -188,20 +168,22 @@ export type PopoverItemParams =
  * Popover item render params.
  * The parameters that are not set by user via popover api but rather depend on technical implementation
  */
-export interface PopoverItemRenderParams {
-  /**
-   * Hint render params
-   */
-  hint?: {
+export type PopoverItemRenderParamsMap = {
+  [key in PopoverItemType.Default | PopoverItemType.Html]?: {
     /**
-     * Hint position relative to the item
+     * Hint render params
      */
-    position?: HintPosition;
+    hint?: {
+      /**
+       * Hint position relative to the item
+       */
+      position?: HintPosition;
 
-    /**
-     * If false, hint will not be rendered.
-     * True by default
-     */
-    enabled: boolean;
-  }
-}
+      /**
+       * If false, hint will not be rendered.
+       * True by default
+       */
+      enabled: boolean;
+    }
+  };
+};

@@ -3,9 +3,10 @@ import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
 import { PopoverMobileNodes, PopoverParams } from './popover.types';
-import { PopoverItem, PopoverItemDefault, PopoverItemParams } from './components/popover-item';
+import { PopoverItemDefault, PopoverItemParams, PopoverItemType } from './components/popover-item';
 import { css } from './popover.const';
 import Dom from '../../dom';
+
 
 /**
  * Mobile Popover.
@@ -41,7 +42,13 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
    * @param params - popover params
    */
   constructor(params: PopoverParams) {
-    super(params);
+    super(params, {
+      [PopoverItemType.Default]: {
+        hint: {
+          enabled: false,
+        },
+      },
+    });
 
     this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);
     this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild);
@@ -106,20 +113,6 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
     this.history.push({
       title: item.title,
       items: item.children,
-    });
-  }
-
-  /**
-   * Overrides the method to build items.
-   * Hides items hints, as hint is not supported in mobile popover
-   *
-   * @param items - list of items params
-   */
-  protected override buildItems(items: PopoverItemParams[]): Array<PopoverItem> {
-    return super.buildItems(items, {
-      hint: {
-        enabled: false,
-      },
     });
   }
 

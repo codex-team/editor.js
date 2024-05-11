@@ -3,7 +3,8 @@ import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
   PopoverItemParams as PopoverItemParams,
-  PopoverItemRenderParams
+  PopoverItemRenderParamsMap,
+  PopoverItemType
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
@@ -87,7 +88,7 @@ export class PopoverItemDefault extends PopoverItem {
    * @param renderParams - popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams) {
+  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
     super();
 
     this.nodes.root = this.make(params, renderParams);
@@ -160,7 +161,7 @@ export class PopoverItemDefault extends PopoverItem {
    * @param params - item construction params
    * @param renderParams - popover item render params
    */
-  private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParams): HTMLElement {
+  private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]): HTMLElement {
     const el = Dom.make('div', css.container);
 
     if (params.name) {
