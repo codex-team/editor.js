@@ -1,7 +1,7 @@
 import Flipper from '../../flipper';
 import { PopoverAbstract } from './popover-abstract';
-import { PopoverItem, css as popoverItemCls } from './components/popover-item';
-import { PopoverEvent, PopoverParams } from './popover.types';
+import { PopoverItem, WithChildren, css as popoverItemCls } from './components/popover-item';
+import { PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
 import { SearchInputEvent, SearchableItem } from './components/search-input';
@@ -52,7 +52,6 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   constructor(params: PopoverParams) {
     super(params);
-    console.log(params.items);
 
     if (params.nestingLevel !== undefined) {
       this.nestingLevel = params.nestingLevel;
@@ -163,7 +162,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item – item to show nested popover for
    */
-  protected override showNestedItems(item: PopoverItemDefault): void {
+  protected override showNestedItems(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
@@ -204,7 +203,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
    */
-  protected setTriggerItemPositionProperty(nestedPopoverEl: HTMLElement, item: PopoverItemDefault): void {
+  protected setTriggerItemPositionProperty(nestedPopoverEl: HTMLElement, item:  WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
     const itemEl =  item.getElement();
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
@@ -352,10 +351,9 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item - item to display nested popover by
    */
-  private showNestedPopoverForItem(item: PopoverItemDefault): void {
+  private showNestedPopoverForItem(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
     this.nestedPopover = new PopoverDesktop({
       searchable: item.isChildrenSearchable,
-      customContent: item.childrenHTML,
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
     });

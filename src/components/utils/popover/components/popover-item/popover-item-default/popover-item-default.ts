@@ -39,13 +39,6 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
-   * True if popover should close once item is activated
-   */
-  public get closeOnActivate(): boolean | undefined {
-    return this.params.closeOnActivate;
-  }
-
-  /**
    * True if confirmation state is enabled for popover item
    */
   public get isConfirmationStateEnabled(): boolean {
@@ -144,13 +137,6 @@ export class PopoverItemDefault extends PopoverItem {
    */
   public onFocus(): void {
     this.disableSpecialHoverAndFocusBehavior();
-  }
-
-  /**
-   * Returns true if item has children that should be searchable
-   */
-  public get isChildrenSearchable(): boolean {
-    return 'children' in this.params && this.params.children?.searchable === true;
   }
 
   /**

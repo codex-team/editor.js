@@ -44,15 +44,6 @@ interface UINodes {
  */
 export default class UI extends Module<UINodes> {
   /**
-   *
-   * @param params
-   */
-  constructor(params) {
-    super(params);
-    // debugger;
-  }
-
-  /**
    * Editor.js UI CSS class names
    *
    * @returns {{editorWrapper: string, editorZone: string}}
@@ -114,7 +105,6 @@ export default class UI extends Module<UINodes> {
    * @type {DOMRect}
    */
   private contentRectCache: DOMRect = undefined;
-
 
   /**
    * Handle window resize only when it finished
@@ -246,22 +236,6 @@ export default class UI extends Module<UINodes> {
     Toolbar.toolbox.close();
   }
 
-
-  /**
-   *
-   */
-  public enableSelectionChangeEvents(): void {
-    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced, true);
-  }
-
-  /**
-   *
-   */
-  public disableSelectionChangeEvents(): void {
-    // this.listeners.removeAll();
-    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced, true);
-  }
-
   /**
    * Check for mobile mode and save the result
    */
@@ -359,13 +333,6 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Handle selection change to manipulate Inline Toolbar appearance
-   */
-  private selectionChangeDebounced = _.debounce(() => {
-    this.selectionChanged();
-  }, selectionChangeDebounceTimeout);
-
-  /**
    * Bind events on the Editor.js interface
    */
   private enableModuleBindings(): void {
@@ -398,11 +365,11 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    // const selectionChangeDebounced = _.debounce(() => {
-    //   this.selectionChanged();
-    // }, selectionChangeDebounceTimeout);
+    const selectionChangeDebounced = _.debounce(() => {
+      this.selectionChanged();
+    }, selectionChangeDebounceTimeout);
 
-    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced, true);
+    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();

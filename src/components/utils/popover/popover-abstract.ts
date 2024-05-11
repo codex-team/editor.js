@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType, WithChildren } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -173,16 +173,18 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param event - event to retrieve popover item from
    */
-  protected getTargetItem(event: Event): PopoverItemDefault | undefined {
-    return this.items.find(el => {
-      const itemEl = el.getElement();
+  protected getTargetItem(event: Event): PopoverItemDefault | PopoverItemHtml |undefined {
+    return this.items
+      .filter(item => item instanceof PopoverItemDefault || item instanceof PopoverItemHtml)
+      .find(item => {
+        const itemEl = item.getElement();
 
-      if (itemEl === null) {
-        return false;
-      }
+        if (itemEl === null) {
+          return false;
+        }
 
-      return event.composedPath().includes(itemEl);
-    });
+        return event.composedPath().includes(itemEl);
+      }) as PopoverItemDefault | PopoverItemHtml | undefined;
   }
 
   /**
@@ -241,7 +243,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       return;
     }
 
-    if (item.isDisabled) {
+    if ('isDisabled' in item && item.isDisabled) {
       return;
     }
 
@@ -282,7 +284,11 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param clickedItem - popover item that was clicked
    */
-  private toggleItemActivenessIfNeeded(clickedItem: PopoverItemDefault): void {
+  private toggleItemActivenessIfNeeded(clickedItem: PopoverItemDefault | PopoverItemHtml): void {
+    if (!(clickedItem instanceof PopoverItemDefault)) {
+      return;
+    }
+
     if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
     }
@@ -309,5 +315,5 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param item – item to show nested popover for
    */
-  protected abstract showNestedItems(item: PopoverItemDefault): void;
+  protected abstract showNestedItems(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void;
 }

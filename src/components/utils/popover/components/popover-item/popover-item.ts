@@ -53,4 +53,18 @@ export abstract class PopoverItem {
   public get hasChildren(): boolean {
     return this.children.length > 0;
   }
+
+  /**
+   * Returns true if item has children that should be searchable
+   */
+  public get isChildrenSearchable(): boolean {
+    return 'children' in this.params && this.params.children?.searchable === true;
+  }
+
+  /**
+   * True if popover should close once item is activated
+   */
+  public get closeOnActivate(): boolean | undefined {
+    return this.params.closeOnActivate;
+  }
 }

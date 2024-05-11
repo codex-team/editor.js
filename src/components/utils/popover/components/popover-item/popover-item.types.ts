@@ -30,6 +30,32 @@ export interface PopoverItemChildren {
 }
 
 /**
+ * Adds children property to the item
+ */
+export type WithChildren<T> = T & {
+  /**
+   * Popover item children configuration
+   */
+  children?: PopoverItemChildren
+};
+
+/**
+ * Adds confirmation property to the item
+ */
+export type WithConfirmation<T> = T & {
+  /**
+   * Popover item parameters that should be applied on item activation.
+   * May be used to ask user for confirmation before executing popover item activation handler.
+   */
+  confirmation: PopoverItemDefaultParams;
+
+  /**
+   * Items with confirmation should not have onActivate handler
+   */
+  onActivate?: never;
+};
+
+/**
  * Represents popover item separator.
  * Special item type that is used to separate items in the popover.
  */
@@ -58,10 +84,11 @@ export interface PopoverItemHtmlParams {
    * Hint data to be displayed on item hover
    */
   hint?: HintParams;
-}
 
-export interface PopoverItemHtmlWithChildrenParams extends PopoverItemHtmlParams{
-  children?: PopoverItemChildren;
+  /**
+   * True if popover should close once item is activated
+   */
+  closeOnActivate?: boolean;
 }
 
 /**
@@ -120,26 +147,6 @@ interface PopoverItemDefaultBaseParams {
    * Hint data to be displayed on item hover
    */
   hint?: HintParams;
-}
-
-/**
- * Represents popover item with confirmation state configuration
- */
-export interface PopoverItemWithConfirmationParams extends PopoverItemDefaultBaseParams {
-  /**
-   * Popover item parameters that should be applied on item activation.
-   * May be used to ask user for confirmation before executing popover item activation handler.
-   */
-  confirmation: PopoverItemDefaultParams;
-
-  onActivate?: never;
-}
-
-/**
- * Represents popover item without confirmation state configuration
- */
-export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefaultBaseParams {
-  confirmation?: never;
 
   /**
    * Popover item activation handler
@@ -151,25 +158,13 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
 }
 
 /**
- * Represents popover item with children (nested popover items)
- */
-export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBaseParams {
-  confirmation?: never;
-  onActivate?: never;
-
-  /**
-   * Items of nested popover that should be open on the current item hover/click (depending on platform)
-   */
-  children?: PopoverItemChildren
-}
-
-/**
  * Default, non-separator popover item type
  */
+// @ts-expect-error - circular type reference is expected
 export type PopoverItemDefaultParams =
-  PopoverItemWithConfirmationParams |
-  PopoverItemWithoutConfirmationParams |
-  PopoverItemWithChildrenParams;
+  PopoverItemDefaultBaseParams |
+  WithConfirmation<PopoverItemDefaultBaseParams> |
+  WithChildren<PopoverItemDefaultBaseParams>;
 
 /**
  * Represents single popover item
@@ -178,7 +173,7 @@ export type PopoverItemParams =
   PopoverItemDefaultParams |
   PopoverItemSeparatorParams |
   PopoverItemHtmlParams |
-  PopoverItemHtmlWithChildrenParams;
+  WithChildren<PopoverItemHtmlParams>;
 
 
 /**
