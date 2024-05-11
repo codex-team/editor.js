@@ -154,8 +154,8 @@ export default class ConversionToolbar extends Module<ConversionToolbarNodes> {
    */
   public close(): void {
     this.opened = false;
-    this.flipper.deactivate();
-    this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
+    this.flipper?.deactivate();
+    this.nodes.wrapper?.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
     if (_.isFunction(this.togglingCallback)) {
       this.togglingCallback(false);

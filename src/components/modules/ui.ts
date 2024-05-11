@@ -44,6 +44,15 @@ interface UINodes {
  */
 export default class UI extends Module<UINodes> {
   /**
+   *
+   * @param params
+   */
+  constructor(params) {
+    super(params);
+    // debugger;
+  }
+
+  /**
    * Editor.js UI CSS class names
    *
    * @returns {{editorWrapper: string, editorZone: string}}
@@ -97,6 +106,19 @@ export default class UI extends Module<UINodes> {
    */
   public isMobile = false;
 
+  private _ignoreSelectionChangeEvents = false;
+
+  /**
+   *
+   * @param value
+   */
+  public ignoreSelectionChangeEvents(value: boolean): void {
+    console.log('ignoreSelectionChangeEvents', value);
+    // debugger;
+    this._ignoreSelectionChangeEvents = value;
+    // debugger;
+  }
+
   /**
    * Cache for center column rectangle info
    * Invalidates on window resize
@@ -104,6 +126,7 @@ export default class UI extends Module<UINodes> {
    * @type {DOMRect}
    */
   private contentRectCache: DOMRect = undefined;
+
 
   /**
    * Handle window resize only when it finished
@@ -134,6 +157,7 @@ export default class UI extends Module<UINodes> {
      */
     this.loadStyles();
   }
+
 
   /**
    * Toggle read-only state
@@ -234,6 +258,22 @@ export default class UI extends Module<UINodes> {
     Toolbar.toolbox.close();
   }
 
+
+  /**
+   *
+   */
+  public enableSelectionChangeEvents(): void {
+    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced, true);
+  }
+
+  /**
+   *
+   */
+  public disableSelectionChangeEvents(): void {
+    // this.listeners.removeAll();
+    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced, true);
+  }
+
   /**
    * Check for mobile mode and save the result
    */
@@ -331,6 +371,13 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
+   * Handle selection change to manipulate Inline Toolbar appearance
+   */
+  private selectionChangeDebounced = _.debounce(() => {
+    this.selectionChanged();
+  }, selectionChangeDebounceTimeout);
+
+  /**
    * Bind events on the Editor.js interface
    */
   private enableModuleBindings(): void {
@@ -363,11 +410,11 @@ export default class UI extends Module<UINodes> {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    const selectionChangeDebounced = _.debounce(() => {
-      this.selectionChanged();
-    }, selectionChangeDebounceTimeout);
+    // const selectionChangeDebounced = _.debounce(() => {
+    //   this.selectionChanged();
+    // }, selectionChangeDebounceTimeout);
 
-    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
+    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced, true);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -380,6 +427,7 @@ export default class UI extends Module<UINodes> {
      */
     this.watchBlockHoveredEvents();
   }
+
 
   /**
    * Listen redactor mousemove to emit 'block-hovered' event

@@ -52,6 +52,7 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   constructor(params: PopoverParams) {
     super(params);
+    console.log(params.items);
 
     if (params.nestingLevel !== undefined) {
       this.nestingLevel = params.nestingLevel;

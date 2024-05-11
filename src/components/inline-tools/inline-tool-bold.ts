@@ -54,16 +54,31 @@ export default class BoldInlineTool implements InlineTool {
     button: undefined,
   };
 
+  // /**
+  //  * Create button for Inline Toolbar
+  //  */
+  // public render(): HTMLElement {
+  //   this.nodes.button = document.createElement('button') as HTMLButtonElement;
+  //   this.nodes.button.type = 'button';
+  //   this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+  //   this.nodes.button.innerHTML = IconBold;
+
+  //   return this.nodes.button;
+  // }
+
+
   /**
    * Create button for Inline Toolbar
    */
-  public render(): HTMLElement {
-    this.nodes.button = document.createElement('button') as HTMLButtonElement;
-    this.nodes.button.type = 'button';
-    this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.innerHTML = IconBold;
-
-    return this.nodes.button;
+  public render(): any {
+    return {
+      icon: IconBold,
+      title: 'Bold',
+      onActivate: () => {
+        // console.log('clicked, need range');
+        document.execCommand(this.commandName);
+      },
+    };
   }
 
   /**
@@ -81,7 +96,7 @@ export default class BoldInlineTool implements InlineTool {
   public checkState(): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
-    this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
+    this.nodes.button?.classList.toggle(this.CSS.buttonActive, isActive);
 
     return isActive;
   }

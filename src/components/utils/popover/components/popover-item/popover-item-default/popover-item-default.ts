@@ -2,7 +2,7 @@ import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
-  PopoverItemParams as PopoverItemParams,
+  // PopoverItemParams as PopoverItemParams,
   PopoverItemRenderParamsMap,
   PopoverItemType
 } from '../popover-item.types';
@@ -75,7 +75,6 @@ export class PopoverItemDefault extends PopoverItem {
       icon: null,
     };
 
-
   /**
    * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
    */
@@ -88,8 +87,8 @@ export class PopoverItemDefault extends PopoverItem {
    * @param renderParams - popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
-    super();
+  constructor(protected readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
+    super(params);
 
     this.nodes.root = this.make(params, renderParams);
   }
@@ -148,30 +147,30 @@ export class PopoverItemDefault extends PopoverItem {
     this.disableSpecialHoverAndFocusBehavior();
   }
 
-  /**
-   * Returns item children that are represented as popover items
-   */
-  public get children(): PopoverItemParams[] {
-    return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
-  }
+  // /**
+  //  * Returns item children that are represented as popover items
+  //  */
+  // public get children(): PopoverItemParams[] {
+  //   return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
+  // }
 
-  /**
-   * Returns item children that are represented as custom HTML
-   */
-  public get childrenHTML(): HTMLElement | undefined {
-    if (!('children' in this.params)) {
-      return undefined;
-    }
+  // /**
+  //  * Returns item children that are represented as custom HTML
+  //  */
+  // public get childrenHTML(): HTMLElement | undefined {
+  //   if (!('children' in this.params)) {
+  //     return undefined;
+  //   }
 
-    return this.params.children?.customHtml;
-  }
+  //   return this.params.children?.customHtml;
+  // }
 
-  /**
-   * Returns true if item has any type of children
-   */
-  public get hasChildren(): boolean {
-    return this.children.length > 0 || this.childrenHTML !== undefined;
-  }
+  // /**
+  //  * Returns true if item has any type of children
+  //  */
+  // public get hasChildren(): boolean {
+  //   return this.children.length > 0; // || this.childrenHTML !== undefined;
+  // }
 
   /**
    * Returns true if item has children that should be searchable

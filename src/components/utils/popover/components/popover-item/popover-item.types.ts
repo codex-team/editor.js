@@ -15,6 +15,21 @@ export enum PopoverItemType {
 }
 
 /**
+ * Represents popover item children configuration
+ */
+export interface PopoverItemChildren {
+  /**
+   * True if children items should be searchable
+   */
+ searchable?: boolean;
+
+ /**
+  * Items of nested popover that should be open on the current item hover/click (depending on platform)
+  */
+  items?: PopoverItemParams[];
+}
+
+/**
  * Represents popover item separator.
  * Special item type that is used to separate items in the popover.
  */
@@ -43,6 +58,10 @@ export interface PopoverItemHtmlParams {
    * Hint data to be displayed on item hover
    */
   hint?: HintParams;
+}
+
+export interface PopoverItemHtmlWithChildrenParams extends PopoverItemHtmlParams{
+  children?: PopoverItemChildren;
 }
 
 /**
@@ -131,7 +150,6 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
 }
 
-
 /**
  * Represents popover item with children (nested popover items)
  */
@@ -142,16 +160,7 @@ export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBasePar
   /**
    * Items of nested popover that should be open on the current item hover/click (depending on platform)
    */
-  children?: {
-    /**
-     * True if children items should be searchable
-     */
-    searchable?: boolean;
-
-    items?: PopoverItemParams[];
-
-    customHtml?: HTMLElement;
-  }
+  children?: PopoverItemChildren
 }
 
 /**
@@ -168,7 +177,8 @@ export type PopoverItemDefaultParams =
 export type PopoverItemParams =
   PopoverItemDefaultParams |
   PopoverItemSeparatorParams |
-  PopoverItemHtmlParams;
+  PopoverItemHtmlParams |
+  PopoverItemHtmlWithChildrenParams;
 
 
 /**

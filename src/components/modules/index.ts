@@ -20,7 +20,8 @@ import UiAPI from './api/ui';
 import BlockSettings from './toolbar/blockSettings';
 import ConversionToolbar from './toolbar/conversion';
 import Toolbar from './toolbar/index';
-import InlineToolbar from './toolbar/inline';
+// import InlineToolbar from './toolbar/inline';
+import InlineToolbar from './toolbar/inline2';
 
 /** . */
 import BlockEvents from './blockEvents';

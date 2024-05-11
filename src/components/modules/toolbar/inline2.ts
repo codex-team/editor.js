@@ -9,7 +9,7 @@ import Shortcuts from '../../utils/shortcuts';
 import * as tooltip from '../../utils/tooltip';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverEvent, PopoverItemDefaultParams, PopoverItemParams, PopoverItemWithChildrenParams } from '../../utils/popover';
+import { Popover, PopoverEvent, PopoverItemDefaultParams, PopoverItemParams, PopoverItemType, PopoverItemWithChildrenParams } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { getConvertToItems } from '../../utils/blocks';
 import { IconReplace } from '@codexteam/icons';
@@ -455,7 +455,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         },
       });
       popoverItems.push({
-        type: 'separator',
+        type: PopoverItemType.Separator,
       });
     }
 
@@ -481,23 +481,47 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         tool.title || _.capitalize(tool.name)
       );
 
-      if ($.isElement(controlData)) {
-        htmlElements.push(
-          this.prepareInlineToolHtml(controlData, instance, toolTitle, shortcutBeautified)
-        );
-      } else if (Array.isArray(controlData)) {
-        const items = (controlData as PopoverItemParams[]).map(item => this.prepareInlineToolItem(item, instance, toolTitle, shortcutBeautified));
+      [ controlData ].flat().forEach((item) => {
+        let popoverItem = {
+          onActivate: (activatedItem: PopoverItemParams) => {
+            debugger;
+            this.toolClicked(instance);
+          },
+          hint: {
+            title: toolTitle,
+            description: shortcutBeautified,
+          },
+          isActive: instance.checkState(SelectionUtils.get()),
+        } as PopoverItemParams;
 
-        popoverItems.push(...items);
-      } else {
-        popoverItems.push(this.prepareInlineToolItem(controlData, instance, toolTitle, shortcutBeautified));
-      }
+        if ($.isElement(item)) {
+          popoverItem = {
+            ...popoverItem,
+            type: PopoverItemType.Html,
+            element: item,
+          };
+        } else {
+          popoverItem = {
+            ...popoverItem,
+            ...(item as PopoverItemParams),
+          };
+        }
 
-      // if (_.isFunction(instance.renderActions)) {
-      //   const actions = instance.renderActions();
+        if (_.isFunction(instance.renderActions)) {
+          const actions = instance.renderActions();
 
-      //   // this.nodes.actions.appendChild(actions);
-      // }
+          popoverItem.children = {
+            items: [
+              {
+                type: PopoverItemType.Html,
+                element: actions,
+              },
+            ],
+          };
+        }
+
+        popoverItems.push(popoverItem);
+      });
     });
 
     return {
@@ -517,7 +541,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private prepareInlineToolItem(item: PopoverItemParams, toolInstance: IInlineTool, toolTitle: string, shortcut: string | undefined): PopoverItemDefaultParams {
     const result =  {
       ...item,
-      onActivate: (activatedItem: PopoverItemParams) => {
+      onActivate: (activatedItem: PopoverItemParams, event) => {
         // @todo proper check
         if ('children' in activatedItem) {
           return;

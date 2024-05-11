@@ -174,7 +174,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * @param event - event to retrieve popover item from
    */
   protected getTargetItem(event: Event): PopoverItemDefault | undefined {
-    return this.itemsDefault.find(el => {
+    return this.items.find(el => {
       const itemEl = el.getElement();
 
       if (itemEl === null) {
@@ -247,6 +247,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
     if (item.hasChildren) {
       this.showNestedItems(item);
+
+      item.handleClick();
 
       return;
     }
