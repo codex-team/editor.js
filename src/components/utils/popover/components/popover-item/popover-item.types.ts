@@ -181,7 +181,8 @@ export type PopoverItemRenderParamsMap = {
 
       /**
        * If false, hint will not be rendered.
-       * True by default
+       * True by default.
+       * Used to disable hints on mobile popover
        */
       enabled: boolean;
     }
