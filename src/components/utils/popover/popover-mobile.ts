@@ -3,9 +3,10 @@ import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
 import { PopoverMobileNodes, PopoverParams } from './popover.types';
-import { PopoverItemDefault, PopoverItemParams } from './components/popover-item';
+import { PopoverItemDefault, PopoverItemParams, PopoverItemType } from './components/popover-item';
 import { css } from './popover.const';
 import Dom from '../../dom';
+
 
 /**
  * Mobile Popover.
@@ -41,7 +42,13 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
    * @param params - popover params
    */
   constructor(params: PopoverParams) {
-    super(params);
+    super(params, {
+      [PopoverItemType.Default]: {
+        hint: {
+          enabled: false,
+        },
+      },
+    });
 
     this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);
     this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild);
@@ -112,8 +119,8 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
   /**
    * Removes rendered popover items and header and displays new ones
    *
-   * @param title - new popover header text
    * @param items - new popover items
+   * @param title - new popover header text
    */
   private updateItemsAndHeader(items: PopoverItemParams[], title?: string ): void {
     /** Re-render header */

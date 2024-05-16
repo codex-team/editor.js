@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -39,6 +39,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    */
   protected search: SearchInput | undefined;
 
+
   /**
    * Messages that will be displayed in popover
    */
@@ -51,8 +52,13 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * Constructs the instance
    *
    * @param params - popover construction params
+   * @param itemsRenderParams - popover item render params.
+   * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(protected readonly params: PopoverParams) {
+  constructor(
+    protected readonly params: PopoverParams,
+    protected readonly itemsRenderParams: PopoverItemRenderParamsMap = {}
+  ) {
     super();
 
     this.items = this.buildItems(params.items);
@@ -154,9 +160,9 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
         case PopoverItemType.Separator:
           return new PopoverItemSeparator();
         case PopoverItemType.Html:
-          return new PopoverItemHtml(item);
+          return new PopoverItemHtml(item, this.itemsRenderParams[PopoverItemType.Html]);
         default:
-          return new PopoverItemDefault(item);
+          return new PopoverItemDefault(item,  this.itemsRenderParams[PopoverItemType.Default]);
       }
     });
   }

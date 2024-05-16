@@ -1,3 +1,5 @@
+import { HintParams, HintPosition } from '../hint';
+
 /**
  * Popover item types
  */
@@ -35,7 +37,12 @@ export interface PopoverItemHtmlParams {
   /**
    * Custom html content to be displayed in the popover
    */
-  element: HTMLElement
+  element: HTMLElement;
+
+  /**
+   * Hint data to be displayed on item hover
+   */
+  hint?: HintParams;
 }
 
 /**
@@ -89,6 +96,11 @@ interface PopoverItemDefaultBaseParams {
    * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
   toggle?: boolean | string;
+
+  /**
+   * Hint data to be displayed on item hover
+   */
+  hint?: HintParams;
 }
 
 /**
@@ -117,7 +129,6 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
    * @param event - event that initiated item activation
    */
   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
-
 }
 
 
@@ -152,3 +163,28 @@ export type PopoverItemParams =
   PopoverItemSeparatorParams |
   PopoverItemHtmlParams;
 
+
+/**
+ * Popover item render params.
+ * The parameters that are not set by user via popover api but rather depend on technical implementation
+ */
+export type PopoverItemRenderParamsMap = {
+  [key in PopoverItemType.Default | PopoverItemType.Html]?: {
+    /**
+     * Hint render params
+     */
+    hint?: {
+      /**
+       * Hint position relative to the item
+       */
+      position?: HintPosition;
+
+      /**
+       * If false, hint will not be rendered.
+       * True by default.
+       * Used to disable hints on mobile popover
+       */
+      enabled: boolean;
+    }
+  };
+};
