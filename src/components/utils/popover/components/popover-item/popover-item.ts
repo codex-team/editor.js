@@ -14,6 +14,13 @@ export abstract class PopoverItem {
   constructor(protected readonly params?: PopoverItemParams) {}
 
   /**
+   * Destroys the instance
+   */
+  public destroy(): void {
+    tooltip.hide();
+  }
+
+  /**
    * Adds hint to the item element if hint data is provided
    *
    * @param itemElement - popover item root element to add hint to
