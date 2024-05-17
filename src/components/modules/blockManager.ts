@@ -341,15 +341,16 @@ export default class BlockManager extends Module {
    *
    * @param block - block to update
    * @param data - new data
+   * @param tunes
    */
-  public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
+  public async update(block: Block, data: Partial<BlockToolData>, tunes: object = null): Promise<Block> {
     const existingData = await block.data;
 
     const newBlock = this.composeBlock({
       id: block.id,
       tool: block.name,
       data: Object.assign({}, existingData, data),
-      tunes: data.tunes ?? block.tunes,
+      tunes: tunes ?? block.tunes,
     });
 
     const blockIndex = this.getBlockIndex(block);
