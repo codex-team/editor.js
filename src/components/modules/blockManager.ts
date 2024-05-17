@@ -341,9 +341,9 @@ export default class BlockManager extends Module {
    *
    * @param block - block to update
    * @param data - new data
-   * @param tunes
+   * @param tunes - (optional) tune data
    */
-  public async update(block: Block, data: Partial<BlockToolData>, tunes: object = null): Promise<Block> {
+  public async update(block: Block, data: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<Block> {
     const existingData = await block.data;
 
     const newBlock = this.composeBlock({
