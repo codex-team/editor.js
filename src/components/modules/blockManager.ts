@@ -349,7 +349,7 @@ export default class BlockManager extends Module {
       id: block.id,
       tool: block.name,
       data: Object.assign({}, existingData, data),
-      tunes: block.tunes,
+      tunes: data.tunes ?? block.tunes,
     });
 
     const blockIndex = this.getBlockIndex(block);
