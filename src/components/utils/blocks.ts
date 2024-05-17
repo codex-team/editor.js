@@ -1,7 +1,8 @@
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
-import { isFunction, isString, log } from '../utils';
+import { isFunction, isString, log, equals } from '../utils';
+
 
 /**
  * Check if block has valid conversion config for export or import.
@@ -17,6 +18,18 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
   const conversionProp = block.tool.conversionConfig[direction];
 
   return isFunction(conversionProp) || isString(conversionProp);
+}
+
+/**
+ * Checks that all the properties of the first block data exist in second block data with the same values.
+ *
+ * @param data1 – first block data
+ * @param data2 – second block data
+ */
+export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boolean {
+  return Object.entries(data1).some((([propName, propValue]) => {
+    return data2[propName] && equals(data2[propName], propValue);
+  }));
 }
 
 /**

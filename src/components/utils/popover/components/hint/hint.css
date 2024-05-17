@@ -1,0 +1,10 @@
+.ce-hint {
+  &--align-left {
+    text-align: left;
+  }
+
+  &__description {
+    opacity: 0.6;
+    margin-top: 3px;
+  }
+}

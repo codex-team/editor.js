@@ -249,6 +249,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * The Toolbox will be opened with immediate focus on the Search input,
+     * and '/' will be added in the search input by default — we need to prevent it and add '/' manually
+     */
+    event.preventDefault();
+    this.Editor.Caret.insertContentAtCaretPosition('/');
+
     this.activateToolbox();
   }
 
@@ -279,8 +286,12 @@ export default class BlockEvents extends Module {
 
     /**
      * Allow to create line breaks by Shift+Enter
+     *
+     * Note. On iOS devices, Safari automatically treats enter after a period+space (". |") as Shift+Enter
+     * (it used for capitalizing of the first letter of the next sentence)
+     * We don't need to lead soft line break in this case — new block should be created
      */
-    if (event.shiftKey) {
+    if (event.shiftKey && !_.isIosDevice) {
       return;
     }
 

@@ -147,5 +147,5 @@ export interface Blocks {
    *
    * @throws Error if conversion is not possible
    */
-  convert(id: string, newType: string, dataOverrides?: BlockToolData): void;
+  convert(id: string, newType: string, dataOverrides?: BlockToolData): Promise<BlockAPI>;
 }

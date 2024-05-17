@@ -220,6 +220,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     };
   }
 
+
   /**
    * Toggles read-only mode
    *
@@ -479,8 +480,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       }
     });
 
-    return this.toolboxInstance.make();
+    return this.toolboxInstance.getElement();
   }
+
 
   /**
    * Handler for Plus Button
