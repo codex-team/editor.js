@@ -1,4 +1,4 @@
-import { PopoverItemDefault } from './components/popover-item';
+import { PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverDesktop } from './popover-desktop';
 import { css } from './popover.const';
 import { PopoverParams } from './popover.types';
@@ -18,10 +18,26 @@ export class PopoverInline extends PopoverDesktop {
    * @param params - instance parameters
    */
   constructor(params: PopoverParams) {
-    super({
-      ...params,
-      class: css.popoverInline,
-    });
+    super(
+      {
+        ...params,
+        class: css.popoverInline,
+      },
+      {
+        [PopoverItemType.Default]: {
+          hint: {
+            position: 'top',
+            alignment: 'center',
+          },
+        },
+        [PopoverItemType.Html]: {
+          hint: {
+            position: 'top',
+            alignment: 'center',
+          },
+        },
+      }
+    );
   }
 
   /**

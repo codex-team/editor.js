@@ -1,4 +1,4 @@
-import { HintParams, HintPosition } from '../hint';
+import { HintTextAlignment, HintParams, HintPosition } from '../hint';
 
 /**
  * Popover item types
@@ -192,11 +192,17 @@ export type PopoverItemRenderParamsMap = {
       position?: HintPosition;
 
       /**
+       * Horizontal alignment of the hint content.
+       * 'start' by default.
+       */
+      alignment?: HintTextAlignment;
+
+      /**
        * If false, hint will not be rendered.
        * True by default.
        * Used to disable hints on mobile popover
        */
-      enabled: boolean;
+      enabled?: boolean;
     }
   };
 };

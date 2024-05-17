@@ -48,6 +48,11 @@ export class PopoverMobile extends PopoverAbstract<PopoverMobileNodes> {
           enabled: false,
         },
       },
+      [PopoverItemType.Html]: {
+        hint: {
+          enabled: false,
+        },
+      },
     });
 
     this.nodes.overlay = Dom.make('div', [css.overlay, css.overlayHidden]);

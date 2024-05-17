@@ -1,6 +1,6 @@
 import Flipper from '../../flipper';
 import { PopoverAbstract } from './popover-abstract';
-import { PopoverItem, WithChildren, css as popoverItemCls } from './components/popover-item';
+import { PopoverItem, PopoverItemRenderParamsMap, WithChildren, css as popoverItemCls } from './components/popover-item';
 import { PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
@@ -30,7 +30,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Reference to nested popover if exists.
    * Undefined by default, PopoverDesktop when exists and null after destroyed.
    */
-  private nestedPopover: PopoverDesktop | undefined | null;
+  protected nestedPopover: PopoverDesktop | undefined | null;
 
   /**
    * Last hovered item inside popover.
@@ -49,9 +49,11 @@ export class PopoverDesktop extends PopoverAbstract {
    * Construct the instance
    *
    * @param params - popover params
+   * @param itemsRenderParams – popover item render params.
+   * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(params: PopoverParams) {
-    super(params);
+  constructor(params: PopoverParams, itemsRenderParams?: PopoverItemRenderParamsMap) {
+    super(params, itemsRenderParams);
 
     if (params.nestingLevel !== undefined) {
       this.nestingLevel = params.nestingLevel;
