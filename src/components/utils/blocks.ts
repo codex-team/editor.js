@@ -25,6 +25,22 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
 /**
  * Checks that all the properties of the first block data exist in second block data with the same values.
  *
+ * If we have several entries with their own data overrides,
+ * find those who matches some current data property
+ *
+ * Example:
+ *  Tools' toolbox: [
+ *    {title: "Heading 1", data: {level: 1} },
+ *    {title: "Heading 2", data: {level: 2} }
+ *  ]
+ *
+ *  the Block data: {
+ *    text: "Heading text",
+ *    level: 2
+ *  }
+ *
+ *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+ *
  * @param data1 – first block data
  * @param data2 – second block data
  */
@@ -193,4 +209,26 @@ export async function getConvertToItems(currentBlock: Block, editorModules: Edit
   });
 
   return resultItems;
+}
+
+/**
+ * Returns active item within toolbox config of the specified block
+ *
+ * @param block - block to get active toolbox item for
+ */
+export async function getBlockActiveToolboxEntry(block: Block): Promise<PopoverItemDefaultParams> {
+  const toolboxItems = block.tool.toolbox;
+
+  /**
+   * If Tool specifies just the single entry, treat it like an active
+   */
+  if (toolboxItems?.length === 1) {
+    return Promise.resolve(toolboxItems[0]);
+  }
+
+  const blockData = await block.data;
+
+  return toolboxItems?.find((item) => {
+    return isSameBlockData(item.data, blockData);
+  });
 }

@@ -11,8 +11,7 @@ import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
 import { Popover, PopoverItemParams, PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
-import { getConvertToItems } from '../../utils/blocks';
-import { IconReplace } from '@codexteam/icons';
+import { getBlockActiveToolboxEntry, getConvertToItems } from '../../utils/blocks';
 
 /**
  * Inline Toolbar elements
@@ -333,10 +332,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /** Add "Convert to" */
     const convertToItems = await getConvertToItems(currentBlock, this.Editor);
 
+    const currentBlockToolboxItem = await getBlockActiveToolboxEntry(currentBlock);
+
     if (convertToItems.length > 0) {
       popoverItems.push({
-        icon: IconReplace,
-        title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
+        icon: currentBlockToolboxItem.icon,
         children: {
           searchable: true,
           items: convertToItems,
