@@ -274,7 +274,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Renders invisible clone of popover to get actual size.
    */
   @cacheable
-  protected get size(): {height: number; width: number} {
+  public get size(): { height: number; width: number } {
     const size = {
       height: 0,
       width: 0,

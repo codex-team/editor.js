@@ -28,6 +28,7 @@
 
     @media (--mobile) {
       height: var(--height-mobile);
+      position: absolute;
     }
   }
 

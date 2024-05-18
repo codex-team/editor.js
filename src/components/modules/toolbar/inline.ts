@@ -63,11 +63,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private toolsInstances: Map<string, IInlineTool> = new Map();
 
   /**
-   * Cache for Inline Toolbar width
-   */
-  private width = 0;
-
-  /**
    * @class
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
@@ -117,7 +112,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    this.move();
     await this.open(needToShowConversionToolbar);
     this.Editor.Toolbar.close();
   }
@@ -197,14 +191,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Append the inline toolbar to the editor.
      */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-
-    /**
-     * Recalculate initial width with all buttons
-     * We use RIC to prevent forced layout during editor initialization to make it faster
-     */
-    window.requestAnimationFrame(() => {
-      this.recalculateWidth();
-    });
   }
 
   /**
@@ -238,6 +224,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       },
     });
 
+    this.move(this.popover.size.width);
+
     this.nodes.wrapper?.append(this.popover.getElement());
 
     this.popover.show();
@@ -245,8 +233,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Move Toolbar to the selected text
+   *
+   * @param popoverWidth - width of the toolbar popover
    */
-  private move(): void {
+  private move(popoverWidth: number): void {
     const selectionRect = SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
@@ -258,13 +248,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         this.toolbarVerticalMargin,
     };
 
-    const realRightCoord = newCoords.x + this.width + wrapperOffset.x;
+    const realRightCoord = newCoords.x + popoverWidth + wrapperOffset.x;
 
     /**
      * Prevent InlineToolbar from overflowing the content zone on the right side
      */
     if (realRightCoord > this.Editor.UI.contentRect.right) {
-      newCoords.x = this.Editor.UI.contentRect.right - this.width - wrapperOffset.x;
+      newCoords.x = this.Editor.UI.contentRect.right -popoverWidth - wrapperOffset.x;
     }
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
@@ -330,14 +320,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     return currentBlock.tool.inlineTools.size !== 0;
   }
-
-  /**
-   * Recalculate inline toolbar width
-   */
-  private recalculateWidth(): void {
-    this.width = this.nodes.wrapper.offsetWidth;
-  }
-
 
   /**
    *  Working with Tools
