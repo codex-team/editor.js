@@ -63,7 +63,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private toolsInstances: Map<string, IInlineTool> = new Map();
 
   /**
-   * @class
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
    * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
@@ -87,7 +86,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }, { timeout: 2000 });
     } else {
       this.destroy();
-      this.Editor.ConversionToolbar.destroy();
     }
   }
 
@@ -101,9 +99,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *
    * @param [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
-   * @param [needToShowConversionToolbar] - pass false to not to show Conversion Toolbar
    */
-  public async tryToShow(needToClose = false, needToShowConversionToolbar = true): Promise<void> {
+  public async tryToShow(needToClose = false): Promise<void> {
     if (needToClose) {
       this.close();
     }
@@ -112,7 +109,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    await this.open(needToShowConversionToolbar);
+    await this.open();
     this.Editor.Toolbar.close();
   }
 

@@ -228,11 +228,10 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
     BlockSettings.close();
     InlineToolbar.close();
-    ConversionToolbar.close();
     Toolbar.toolbox.close();
   }
 

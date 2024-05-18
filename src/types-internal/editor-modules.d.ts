@@ -18,7 +18,6 @@ import UiAPI from '../components/modules/api/ui';
 
 /** ./toolbar */
 import BlockSettings from '../components/modules/toolbar/blockSettings';
-import ConversionToolbar from '../components/modules/toolbar/conversion';
 import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
 
@@ -59,7 +58,6 @@ export interface EditorModules {
 
   // Toolbar Modules
   BlockSettings: BlockSettings,
-  ConversionToolbar: ConversionToolbar,
   Toolbar: Toolbar,
   InlineToolbar: InlineToolbar,
 
