@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
@@ -125,7 +126,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+    this.nodes.wrapper!.classList.remove(this.CSS.inlineToolbarShowed);
 
     Array.from(this.toolsInstances.entries()).forEach(([name, toolInstance]) => {
       const shortcut = this.getToolShortcut(name);
@@ -169,6 +170,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   public destroy(): void {
     this.removeAllNodes();
     this.popover?.destroy();
+    this.popover = null;
   }
 
   /**
@@ -201,7 +203,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Show Inline Toolbar
      */
-    this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+    this.nodes.wrapper!.classList.add(this.CSS.inlineToolbarShowed);
 
     this.opened = true;
 
@@ -254,21 +256,21 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       newCoords.x = this.Editor.UI.contentRect.right -popoverWidth - wrapperOffset.x;
     }
 
-    this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-    this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+    this.nodes.wrapper!.style.left = Math.floor(newCoords.x) + 'px';
+    this.nodes.wrapper!.style.top = Math.floor(newCoords.y) + 'px';
   }
 
   /**
    * Clear orientation classes and reset position
    */
   private reset(): void {
-    this.nodes.wrapper.classList.remove(
+    this.nodes.wrapper!.classList.remove(
       this.CSS.inlineToolbarLeftOriented,
       this.CSS.inlineToolbarRightOriented
     );
 
-    this.nodes.wrapper.style.left = '0';
-    this.nodes.wrapper.style.top = '0';
+    this.nodes.wrapper!.style.left = '0';
+    this.nodes.wrapper!.style.top = '0';
   }
 
   /**
@@ -296,6 +298,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const target = !$.isElement(currentSelection.anchorNode)
       ? currentSelection.anchorNode.parentElement
       : currentSelection.anchorNode;
+
+    if (target === null) {
+      return false;
+    }
 
     if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
       return false;
@@ -487,10 +493,14 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Inline Tool button clicks
    *
-   * @param {InlineTool} tool - Tool's instance
+   * @param tool - Tool's instance
    */
   private toolClicked(tool: IInlineTool): void {
     const range = SelectionUtils.range;
+
+    if (range === null) {
+      return;
+    }
 
     tool.surround(range);
     this.checkToolsState();
@@ -510,7 +520,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Tools that has isInline is true
    */
   private get inlineTools(): { [name: string]: IInlineTool } {
-    const result = {};
+    const result = {} as  { [name: string]: IInlineTool } ;
 
     Array
       .from(this.Editor.Tools.inlineTools.entries())
