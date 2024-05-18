@@ -56,7 +56,13 @@ export enum PopoverEvent {
    * When popover closes
    */
   Close = 'close',
+
+   /**
+    * When it closes because item with 'activateOnClose' property set was clicked
+    */
+   CloseOnActivate = 'close-on-activate',
 }
+
 
 /**
  * Events fired by the Popover
@@ -66,6 +72,11 @@ export interface PopoverEventMap {
    * Fired when popover closes
    */
   [PopoverEvent.Close]: undefined;
+
+  /**
+   * Fired when popover closes because item with 'activateOnClose' property set was clicked
+   */
+  [PopoverEvent.CloseOnActivate]: PopoverItemParams;
 }
 
 /**

@@ -80,7 +80,6 @@
   }
 
   .ce-popover--nested-level-1 {
-
     .ce-popover__container {
       left: min(var(--trigger-item-left), calc(var(--inline-popover-width) - var(--width)));
       top: var(--height);
@@ -106,11 +105,21 @@
 
     .ce-popover-item {
       border-radius: 6px;
+      padding: 3px;
 
+      @media (--mobile) {
+        padding: 4px;
+      }
+    
       &__icon--tool {
         box-shadow: 0 0 0 1px var(--color-border-icon);
         background: #fff;
         margin-right: 10px;
+      }
+
+      &__icon {
+        width: 26px;
+        height: 26px;
       }
     }
   }

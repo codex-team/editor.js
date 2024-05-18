@@ -265,6 +265,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
     if (item.closeOnActivate) {
       this.hide();
+
+      this.emit(PopoverEvent.CloseOnActivate, item);
     }
   }
 

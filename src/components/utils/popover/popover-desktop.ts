@@ -1,7 +1,7 @@
 import Flipper from '../../flipper';
 import { PopoverAbstract } from './popover-abstract';
 import { PopoverItem, PopoverItemRenderParamsMap, WithChildren, css as popoverItemCls } from './components/popover-item';
-import { PopoverParams } from './popover.types';
+import { PopoverEvent, PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { css } from './popover.const';
 import { SearchInputEvent, SearchableItem } from './components/search-input';
@@ -141,7 +141,7 @@ export class PopoverDesktop extends PopoverAbstract {
   /**
    * Closes popover
    */
-  public hide(): void {
+  public hide = (): void => {
     super.hide();
 
     this.destroyNestedPopoverIfExists();
@@ -149,7 +149,7 @@ export class PopoverDesktop extends PopoverAbstract {
     this.flipper.deactivate();
 
     this.previouslyHoveredItem = null;
-  }
+  };
 
   /**
    * Clears memory
@@ -312,6 +312,7 @@ export class PopoverDesktop extends PopoverAbstract {
       return;
     }
 
+    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
     this.nestedPopover.hide();
     this.nestedPopover.destroy();
     this.nestedPopover.getElement().remove();
@@ -359,6 +360,12 @@ export class PopoverDesktop extends PopoverAbstract {
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
     });
+
+    /**
+     * Close nested popover when item with 'activateOnClose' property set was clicked
+     * parent popover should also be closed
+     */
+    this.nestedPopover.on(PopoverEvent.CloseOnActivate, this.hide);
 
     const nestedPopoverEl = this.nestedPopover.getElement();
 

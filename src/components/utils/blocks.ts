@@ -176,6 +176,7 @@ export async function getConvertToItems(currentBlock: Block, editorModules: Edit
         icon: toolboxItem.icon,
         title: toolboxItem.title,
         name: toolName,
+        closeOnActivate: true,
         onActivate: () => {
           const { BlockManager, BlockSelection, Caret } = editorModules;
 
