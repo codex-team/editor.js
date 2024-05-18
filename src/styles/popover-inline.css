@@ -3,6 +3,7 @@
 */
 .ce-popover--inline {
   --height: 32px;
+  --height-mobile: 42px;
 
   position: relative;
 
@@ -24,6 +25,10 @@
     min-width: max-content;
     width: max-content;
     animation: none;
+
+    @media (--mobile) {
+      height: var(--height-mobile);
+    }
   }
 
   /** 
@@ -40,11 +45,32 @@
 
   .ce-popover-item {
     border-radius: 0;
+    padding-left: 1px;
+    padding-right: 1px;
 
     &__icon--tool {
       box-shadow: none;
       background: transparent;
       margin-right: 0;
+    }
+    
+    &__icon {
+      width: unset;
+      height: unset;
+
+      svg {
+        width: var(--icon-size);
+        height: var(--icon-size);
+
+        @media (--mobile) {
+          width: var(--icon-size--mobile);
+          height: var(--icon-size--mobile);
+        }
+      }
+    }
+
+    &:not(:last-of-type) {
+      margin-bottom: unset;
     }
   }
 

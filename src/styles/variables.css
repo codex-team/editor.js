@@ -150,7 +150,7 @@
     align-items: center;
     justify-content: center;
 
-    padding: 6px 1px;
+    /* padding: 6px 1px; */
     border-radius: 3px;
     cursor: pointer;
     border: 0;
