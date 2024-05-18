@@ -34,9 +34,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public CSS = {
     inlineToolbar: 'ce-inline-toolbar',
-    inlineToolbarShowed: 'ce-inline-toolbar--showed',
-    inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
-    inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
     inlineToolbarShortcut: 'ce-inline-toolbar__shortcut',
   };
 
@@ -126,8 +123,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    this.nodes.wrapper!.classList.remove(this.CSS.inlineToolbarShowed);
-
     Array.from(this.toolsInstances.entries()).forEach(([name, toolInstance]) => {
       const shortcut = this.getToolShortcut(name);
 
@@ -203,7 +198,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /**
      * Show Inline Toolbar
      */
-    this.nodes.wrapper!.classList.add(this.CSS.inlineToolbarShowed);
 
     this.opened = true;
 
@@ -264,11 +258,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Clear orientation classes and reset position
    */
   private reset(): void {
-    this.nodes.wrapper!.classList.remove(
-      this.CSS.inlineToolbarLeftOriented,
-      this.CSS.inlineToolbarRightOriented
-    );
-
     this.nodes.wrapper!.style.left = '0';
     this.nodes.wrapper!.style.top = '0';
   }

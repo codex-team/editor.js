@@ -2,18 +2,14 @@
   --y-offset: 8px;
 
   @apply --overlay-pane;
-  opacity: 0;
   visibility: hidden;
   transition: opacity 250ms ease;
   will-change: opacity, left, top;
   top: 0;
   left: 0;
   z-index: 3;
-
-  &--showed {
-    opacity: 1;
-    visibility: visible;
-  }
+  opacity: 1;
+  visibility: visible;
 
   [hidden] {
     display: none !important;
