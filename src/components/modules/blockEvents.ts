@@ -395,7 +395,8 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const bothBlocksMergeable = areBlocksMergeable(currentBlock, previousBlock);
+
+    const bothBlocksMergeable = areBlocksMergeable(previousBlock, currentBlock);
 
     /**
      * If Blocks could be merged, do it
