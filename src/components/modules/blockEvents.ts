@@ -500,7 +500,7 @@ export default class BlockEvents extends Module {
   private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
     const { BlockManager, Caret, Toolbar } = this.Editor;
 
-    Caret.createShadow(targetBlock.pluginsContent);
+    Caret.createShadow(targetBlock.lastInput);
 
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)
