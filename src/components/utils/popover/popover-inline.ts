@@ -1,4 +1,4 @@
-import { PopoverItemDefault, PopoverItemType } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverDesktop } from './popover-desktop';
 import { css } from './popover.const';
 import { PopoverParams } from './popover.types';
@@ -104,5 +104,28 @@ export class PopoverInline extends PopoverDesktop {
 
     this.nestedPopoverTriggerItem = item;
     super.showNestedItems(item);
+  }
+
+  /**
+   * Override handling item click to make nested popover close on other (non its trigger) item click
+   * @param event – click event
+   */
+  protected override handleClick(event: Event): PopoverItem | undefined {
+    const clickedItem = super.handleClick(event);
+
+    if (clickedItem !== this.nestedPopoverTriggerItem) {
+      /** 
+       * In case tool had special handling for toggling button (like link tool which modifies selection) 
+       * we need to call handleClick on nested popover trigger item 
+       */
+      this.nestedPopoverTriggerItem?.handleClick();
+
+      /**
+       * Then close the nested popover
+       */
+      super.destroyNestedPopoverIfExists();
+    }
+
+    return undefined;
   }
 }

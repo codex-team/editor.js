@@ -305,22 +305,6 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
-   * Destroys existing nested popover
-   */
-  private destroyNestedPopoverIfExists(): void {
-    if (this.nestedPopover === undefined || this.nestedPopover === null) {
-      return;
-    }
-
-    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
-    this.nestedPopover.hide();
-    this.nestedPopover.destroy();
-    this.nestedPopover.getElement().remove();
-    this.nestedPopover = null;
-    this.flipper.activate(this.flippableElements);
-  }
-
-  /**
    * Returns list of elements available for keyboard navigation.
    */
   private get flippableElements(): HTMLElement[] {
@@ -378,5 +362,21 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.nestedPopover.show();
     this.flipper.deactivate();
+  }
+
+  /**
+   * Destroys existing nested popover
+   */
+  protected destroyNestedPopoverIfExists(): void {
+    if (this.nestedPopover === undefined || this.nestedPopover === null) {
+      return;
+    }
+
+    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
+    this.nestedPopover.hide();
+    this.nestedPopover.destroy();
+    this.nestedPopover.getElement().remove();
+    this.nestedPopover = null;
+    this.flipper.activate(this.flippableElements);
   }
 }

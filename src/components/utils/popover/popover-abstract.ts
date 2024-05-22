@@ -237,15 +237,15 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param event - item to handle click of
    */
-  private handleClick(event: Event): void {
+  protected handleClick(event: Event): PopoverItem | undefined {
     const item = this.getTargetItem(event);
 
     if (item === undefined) {
-      return;
+      return item;
     }
 
     if ('isDisabled' in item && item.isDisabled) {
-      return;
+      return item;
     }
 
     if (item.hasChildren) {
@@ -253,7 +253,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
       item.handleClick();
 
-      return;
+      return item;
     }
 
     /** Cleanup other items state */
@@ -268,6 +268,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
       this.emit(PopoverEvent.CloseOnActivate, item);
     }
+
+    return item;
   }
 
   /**
