@@ -60,7 +60,7 @@ export default class BlockEvents extends Module {
      * @todo probably using "beforeInput" event would be better here
      */
     if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
-      this.slashPressed();
+      this.slashPressed(event);
     }
 
     /**
@@ -233,8 +233,10 @@ export default class BlockEvents extends Module {
 
   /**
    * '/' keydown inside a Block
+   *
+   * @param event - keydown
    */
-  private slashPressed(): void {
+  private slashPressed(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock;
     const canOpenToolbox = currentBlock.isEmpty;
 

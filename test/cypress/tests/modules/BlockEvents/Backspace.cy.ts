@@ -519,13 +519,13 @@ describe('Backspace keydown', function () {
       public save(): { key: string } {
         return {
           key: 'value',
-        }
+        };
       }
 
       /**
        * Mock of the conversionConfig
        */
-      static get conversionConfig() {
+      public static get conversionConfig(): { export: string | Function; import: string | Function } {
         return {
           export: 'key',
           import: 'key',
