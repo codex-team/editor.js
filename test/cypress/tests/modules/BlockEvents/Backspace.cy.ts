@@ -1,6 +1,7 @@
 import type EditorJS from '../../../../../types/index';
 import Chainable = Cypress.Chainable;
 import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
+import type { ConversionConfig } from '../../../../../types/index';
 
 
 /**
@@ -525,7 +526,7 @@ describe('Backspace keydown', function () {
       /**
        * Mock of the conversionConfig
        */
-      public static get conversionConfig(): { export: string | Function; import: string | Function } {
+      public static get conversionConfig(): ConversionConfig {
         return {
           export: 'key',
           import: 'key',
