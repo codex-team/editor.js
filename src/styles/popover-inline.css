@@ -96,8 +96,14 @@
 
   .ce-popover--nested-level-1 {
     .ce-popover__container {
+      --offset: 3px;
+
       left: min(var(--trigger-item-left), calc(var(--inline-popover-width) - var(--width)));
-      top: calc(var(--height) + 3px);
+      top: calc(var(--height) + var(--offset));
+
+      @media (--mobile) {
+        top: calc(var(--height-mobile) + var(--offset));
+      }
     }
   }
 
@@ -108,7 +114,7 @@
     .ce-popover__container {
       min-width: var(--width);
       width: var(--width);
-      height: unset;
+      height: fit-content;
       padding: 6px;
       flex-direction: column;
     }
