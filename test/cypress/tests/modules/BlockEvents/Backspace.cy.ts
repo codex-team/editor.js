@@ -60,6 +60,31 @@ describe('Backspace keydown', function () {
       .should('have.text', 'The second bloc'); // last char is removed
   });
 
+  it('should just delete preceding white spaces (native behaviour) on click of backspace when Caret is not at the start of the Block', function () {
+    createEditorWithTextBlocks([
+      'The first block',
+      'The second block',
+    ]);
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .last()
+      .click()
+      .type('{home}')
+      .type(' ') // adding space at the start of the block
+      .type('{backspace}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .last()
+      .should('have.text', `The second block`);
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .first()
+      .should('have.text', `The first block`);
+  });
+
   it('should navigate previous input when Caret is not at the first input', function () {
     /**
      * Mock of tool with several inputs

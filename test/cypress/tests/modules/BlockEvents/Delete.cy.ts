@@ -57,6 +57,32 @@ describe('Delete keydown', function () {
       .should('have.text', 'The first bloc'); // last char is removed
   });
 
+  it('should just delete preceding white space (native behaviour) when Caret is not at the end of the Block', function () {
+    createEditorWithTextBlocks([
+      'The first block',
+      'The second block',
+    ]);
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .last()
+      .click()
+      .type('{home}')
+      .type(' ') // adding space at the start of the block
+      .type('{leftarrow}') // now caret is at the start of the block
+      .type('{del}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .last()
+      .should('have.text', `The second block`);
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .first()
+      .should('have.text', `The first block`);
+  });
+
   it('should navigate next input when Caret is not at the last input', function () {
     /**
      * Mock of tool with several inputs
