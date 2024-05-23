@@ -214,6 +214,22 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
+   * Destroys existing nested popover
+   */
+  protected destroyNestedPopoverIfExists(): void {
+    if (this.nestedPopover === undefined || this.nestedPopover === null) {
+      return;
+    }
+
+    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
+    this.nestedPopover.hide();
+    this.nestedPopover.destroy();
+    this.nestedPopover.getElement().remove();
+    this.nestedPopover = null;
+    this.flipper.activate(this.flippableElements);
+  }
+
+  /**
    * Additionaly handles input inside search field.
    * Updates flipper items considering search query applied.
    *
@@ -364,19 +380,4 @@ export class PopoverDesktop extends PopoverAbstract {
     this.flipper.deactivate();
   }
 
-  /**
-   * Destroys existing nested popover
-   */
-  protected destroyNestedPopoverIfExists(): void {
-    if (this.nestedPopover === undefined || this.nestedPopover === null) {
-      return;
-    }
-
-    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
-    this.nestedPopover.hide();
-    this.nestedPopover.destroy();
-    this.nestedPopover.getElement().remove();
-    this.nestedPopover = null;
-    this.flipper.activate(this.flippableElements);
-  }
 }

@@ -59,7 +59,10 @@ export class PopoverInline extends PopoverDesktop {
      * If this is not a nested popover, set CSS variable with width of the popover
      */
     if (this.nestingLevel === 0) {
-      this.nodes.popover.style.setProperty('--inline-popover-width', this.size.width + 'px');
+      this.nodes.popover.style.setProperty(
+        '--inline-popover-width',
+        this.size.width + 'px'
+      );
     }
     super.show();
   }
@@ -78,12 +81,18 @@ export class PopoverInline extends PopoverDesktop {
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
    */
-  protected override setTriggerItemPositionProperty(nestedPopoverEl: HTMLElement, item: PopoverItemDefault): void {
-    const itemEl =  item.getElement();
+  protected override setTriggerItemPositionProperty(
+    nestedPopoverEl: HTMLElement,
+    item: PopoverItemDefault
+  ): void {
+    const itemEl = item.getElement();
     const itemOffsetLeft = itemEl ? itemEl.offsetLeft : 0;
     const totalLeftOffset = this.offsetLeft + itemOffsetLeft;
 
-    nestedPopoverEl.style.setProperty('--trigger-item-left', totalLeftOffset + 'px');
+    nestedPopoverEl.style.setProperty(
+      '--trigger-item-left',
+      totalLeftOffset + 'px'
+    );
   }
 
   /**
@@ -107,16 +116,14 @@ export class PopoverInline extends PopoverDesktop {
   }
 
   /**
-   * Override handling item click to make nested popover close on other (non its trigger) item click
-   * @param event – click event
+   * Overrides default item click handling to handle nested popover closing correctly
+   * @param item - clicked item
    */
-  protected override handleClick(event: Event): PopoverItem | undefined {
-    const clickedItem = super.handleClick(event);
-
-    if (clickedItem !== this.nestedPopoverTriggerItem) {
-      /** 
-       * In case tool had special handling for toggling button (like link tool which modifies selection) 
-       * we need to call handleClick on nested popover trigger item 
+  protected override handleItemClick(item: PopoverItem): void {
+    if (item !== this.nestedPopoverTriggerItem) {
+      /**
+       * In case tool had special handling for toggling button (like link tool which modifies selection)
+       * we need to call handleClick on nested popover trigger item
        */
       this.nestedPopoverTriggerItem?.handleClick();
 
@@ -126,6 +133,6 @@ export class PopoverInline extends PopoverDesktop {
       super.destroyNestedPopoverIfExists();
     }
 
-    return undefined;
+    super.handleItemClick(item);
   }
 }

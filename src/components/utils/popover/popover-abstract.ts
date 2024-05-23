@@ -189,6 +189,38 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   }
 
   /**
+   * Handles popover item click
+   * @param item - item to handle click of
+   */
+  protected handleItemClick(item: PopoverItemParams): void {
+    if ('isDisabled' in item && item.isDisabled) {
+      return;
+    }
+
+    if (item.hasChildren) {
+      this.showNestedItems(item);
+
+      item.handleClick();
+
+      return;
+    }
+
+    /** Cleanup other items state */
+    this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
+
+    item.handleClick();
+
+    this.toggleItemActivenessIfNeeded(item);
+
+    if (item.closeOnActivate) {
+      this.hide();
+
+      this.emit(PopoverEvent.CloseOnActivate, item);
+    }
+
+  }
+
+  /**
    * Handles input inside search field
    *
    * @param data - search input event data
@@ -237,39 +269,14 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param event - item to handle click of
    */
-  protected handleClick(event: Event): PopoverItem | undefined {
+  private handleClick(event: Event): void {
     const item = this.getTargetItem(event);
 
     if (item === undefined) {
-      return item;
+      return;
     }
 
-    if ('isDisabled' in item && item.isDisabled) {
-      return item;
-    }
-
-    if (item.hasChildren) {
-      this.showNestedItems(item);
-
-      item.handleClick();
-
-      return item;
-    }
-
-    /** Cleanup other items state */
-    this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
-
-    item.handleClick();
-
-    this.toggleItemActivenessIfNeeded(item);
-
-    if (item.closeOnActivate) {
-      this.hide();
-
-      this.emit(PopoverEvent.CloseOnActivate, item);
-    }
-
-    return item;
+    this.handleItemClick(item);
   }
 
   /**
