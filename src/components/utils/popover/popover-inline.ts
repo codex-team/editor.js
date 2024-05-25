@@ -4,7 +4,7 @@ import { css } from './popover.const';
 import { PopoverParams } from './popover.types';
 
 /**
- *
+ * Horizontal popover that is displayed inline with the content
  */
 export class PopoverInline extends PopoverDesktop {
   /**
