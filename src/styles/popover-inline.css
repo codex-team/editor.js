@@ -45,8 +45,8 @@
 
   .ce-popover-item {
     border-radius: 0;
-    padding-left: 1px;
-    padding-right: 1px;
+    height: 100%;
+    padding: 0 1px;
 
     &__icon--tool {
       box-shadow: none;
@@ -74,10 +74,6 @@
     }
   }
 
-  .ce-popover-item-html {
-    padding: 0 1px;
-  }
-  
   .ce-popover-item,
   .ce-popover-item-html {
     &:first-of-type {

@@ -69,11 +69,8 @@
 
   border-radius: 0;
   line-height: normal;
-  padding: 5px 0;
-
-  @media (--mobile){
-    padding: 6px 0;
-  }
+  height: 100%;
+  padding: 0 1px;
 
 
   &--link {

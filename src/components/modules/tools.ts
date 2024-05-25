@@ -176,16 +176,16 @@ export default class Tools extends Module {
    */
   private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
     return {
+      link: {
+        class: LinkInlineTool,
+        isInternal: true,
+      },
       bold: {
         class: BoldInlineTool,
         isInternal: true,
       },
       italic: {
         class: ItalicInlineTool,
-        isInternal: true,
-      },
-      link: {
-        class: LinkInlineTool,
         isInternal: true,
       },
       paragraph: {

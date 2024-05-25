@@ -73,7 +73,6 @@ export default class BoldInlineTool implements InlineTool {
   public render(): any {
     return {
       icon: IconBold,
-      title: 'Bold',
       onActivate: () => {
         // console.log('clicked, need range');
         document.execCommand(this.commandName);

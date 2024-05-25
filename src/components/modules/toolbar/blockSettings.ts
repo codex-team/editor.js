@@ -220,6 +220,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
         icon: IconReplace,
         title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
         children: {
+          searchable: true,
           items: convertToItems,
         },
       });
