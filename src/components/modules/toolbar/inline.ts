@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverItemParams, PopoverItemType } from '../../utils/popover';
+import { Popover, PopoverEvent, PopoverItemParams, PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { getBlockActiveToolboxEntry, getConvertToItems } from '../../utils/blocks';
 
@@ -58,6 +58,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Currently visible tools instances
    */
   private toolsInstances: Map<string, IInlineTool> = new Map();
+
+  /**
+   * SelectionUtils instance
+   */
+  private selection = new SelectionUtils();
 
   /**
    * @param moduleConfiguration - Module Configuration
@@ -142,6 +147,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.popover?.hide();
     this.popover?.destroy();
+    this.popover?.off(PopoverEvent.OpenNestedPopover, this.nestedPopoverOpened);
+    this.popover?.off(PopoverEvent.CloseNestedPopover, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -164,6 +171,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   public destroy(): void {
     this.removeAllNodes();
     this.popover?.destroy();
+    this.popover?.off(PopoverEvent.OpenNestedPopover, this.nestedPopoverOpened);
+    this.popover?.off(PopoverEvent.CloseNestedPopover, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -200,7 +209,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.opened = true;
 
-
     if (this.popover !== null) {
       this.popover.destroy();
     }
@@ -220,7 +228,28 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
+    this.popover.on(PopoverEvent.OpenNestedPopover, this.nestedPopoverOpened);
+    this.popover.on(PopoverEvent.CloseNestedPopover, this.nestedPopoverClosed);
+
     this.popover.show();
+  }
+
+  /**
+   * Handles opening nested popover.
+   * Saves selection and sets fake background
+   */
+  private nestedPopoverOpened = (): void => {
+    this.selection.setFakeBackground();
+    this.selection.save();
+  }
+
+  /**
+   * Handles closing nested popover.
+   * Restores selection and removes fake background
+   */
+  private nestedPopoverClosed = (): void => {
+    this.selection.restore();
+    this.selection.removeFakeBackground();
   }
 
   /**

@@ -57,10 +57,20 @@ export enum PopoverEvent {
    */
   Close = 'close',
 
-   /**
-    * When it closes because item with 'activateOnClose' property set was clicked
-    */
-   CloseOnActivate = 'close-on-activate',
+  /**
+   * When it closes because item with 'activateOnClose' property set was clicked
+   */
+  CloseOnActivate = 'close-on-activate',
+
+  /**
+   * When nested popover should opens
+   */
+  OpenNestedPopover = 'open-nested-popover',
+
+  /**
+   * When nested popover closes
+   */
+  CloseNestedPopover = 'close-nested-popover'
 }
 
 
@@ -75,8 +85,19 @@ export interface PopoverEventMap {
 
   /**
    * Fired when popover closes because item with 'activateOnClose' property set was clicked
+   * Value is the item that was clicked
    */
   [PopoverEvent.CloseOnActivate]: PopoverItemParams;
+
+  /**
+   * Fired when nested popover opens
+   */
+  [PopoverEvent.OpenNestedPopover]: undefined;
+
+  /**
+   * Fired when nested popover closes
+   */
+  [PopoverEvent.CloseNestedPopover]: undefined;
 }
 
 /**

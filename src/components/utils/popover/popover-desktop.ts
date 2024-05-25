@@ -168,6 +168,7 @@ export class PopoverDesktop extends PopoverAbstract {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
+    this.emit(PopoverEvent.OpenNestedPopover);
     this.showNestedPopoverForItem(item);
   }
 
@@ -227,6 +228,8 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover.getElement().remove();
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
+
+    this.emit(PopoverEvent.CloseNestedPopover);
   }
 
   /**
