@@ -224,7 +224,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       },
     });
 
-    this.move(this.popover.size.width);
+    this.move(this.popover.renderParams.size.width);
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
@@ -238,7 +238,15 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Handles opening nested popover.
    * Saves selection and sets fake background
    */
-  private nestedPopoverOpened = (): void => {
+  private nestedPopoverOpened = (data: {
+    /** True if nested popover has and input that will be autofocused on open */
+    hasAutoFocusableElements?: boolean
+  }): void => {
+    /** If no elements will be focused on nested popover open, then no need to set fake selection */
+    if (!data.hasAutoFocusableElements) {
+      return;
+    }
+
     this.selection.setFakeBackground();
     this.selection.save();
   }
@@ -248,6 +256,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Restores selection and removes fake background
    */
   private nestedPopoverClosed = (): void => {
+    if (!this.selection.isFakeBackgroundEnabled) {
+      return
+    }
+
     this.selection.restore();
     this.selection.removeFakeBackground();
   }
@@ -367,7 +379,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       popoverItems.push({
         icon: currentBlockToolboxItem.icon,
         children: {
-          searchable: true,
+          searchable: !_.isMobileScreen(),
           items: convertToItems,
         },
       });

@@ -123,10 +123,6 @@
       top: auto;
       border-radius: 10px;
     }
-
-    .ce-popover__search {
-      display: none;
-    }
   }
 
   &__search {

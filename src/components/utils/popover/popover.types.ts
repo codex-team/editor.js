@@ -92,7 +92,12 @@ export interface PopoverEventMap {
   /**
    * Fired when nested popover opens
    */
-  [PopoverEvent.OpenNestedPopover]: undefined;
+  [PopoverEvent.OpenNestedPopover]: {
+    /**
+     * True if nested popover has and input that will be autofocused on open
+     */
+    hasAutoFocusableElements: boolean;
+  };
 
   /**
    * Fired when nested popover closes

@@ -43,7 +43,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   /**
    * Messages that will be displayed in popover
    */
-  private messages: PopoverMessages = {
+  protected messages: PopoverMessages = {
     nothingFound: 'Nothing found',
     search: 'Search',
   };
@@ -73,14 +73,14 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Build html elements */
     this.nodes = {} as Nodes;
 
-    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
+    this.nodes.popoverContainer = Dom.make('div', [css.popoverContainer]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [css.nothingFoundMessage], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ css.items ]);
+    this.nodes.items = Dom.make('div', [css.items]);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
@@ -102,10 +102,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     ]);
 
     this.nodes.popover.appendChild(this.nodes.popoverContainer);
-
-    if (params.searchable) {
-      this.addSearch();
-    }
   }
 
   /**
@@ -164,7 +160,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
         case PopoverItemType.Html:
           return new PopoverItemHtml(item, this.itemsRenderParams[PopoverItemType.Html]);
         default:
-          return new PopoverItemDefault(item,  this.itemsRenderParams[PopoverItemType.Default]);
+          return new PopoverItemDefault(item, this.itemsRenderParams[PopoverItemType.Default]);
       }
     });
   }
@@ -174,7 +170,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param event - event to retrieve popover item from
    */
-  protected getTargetItem(event: Event): PopoverItemDefault | PopoverItemHtml |undefined {
+  protected getTargetItem(event: Event): PopoverItemDefault | PopoverItemHtml | undefined {
     return this.items
       .filter(item => item instanceof PopoverItemDefault || item instanceof PopoverItemHtml)
       .find(item => {
@@ -221,50 +217,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   }
 
   /**
-   * Handles input inside search field
-   *
-   * @param data - search input event data
-   * @param data.query - search query text
-   * @param data.result - search results
-   */
-  private onSearch = (data: { query: string, items: SearchableItem[] }): void => {
-    const isEmptyQuery = data.query === '';
-    const isNothingFound = data.items.length === 0;
-
-    this.items
-      .forEach((item) => {
-        let isHidden = false;
-
-        if (item instanceof PopoverItemDefault) {
-          isHidden = !data.items.includes(item);
-        } else if (item instanceof PopoverItemSeparator || item instanceof PopoverItemHtml) {
-          /** Should hide separators if nothing found message displayed or if there is some search query applied */
-          isHidden = isNothingFound || !isEmptyQuery;
-        }
-        item.toggleHidden(isHidden);
-      });
-    this.toggleNothingFoundMessage(isNothingFound);
-  };
-
-  /**
-   * Adds search to the popover
-   */
-  private addSearch(): void {
-    this.search = new SearchInput({
-      items: this.itemsDefault,
-      placeholder: this.messages.search,
-    });
-
-    this.search.on(SearchInputEvent.Search, this.onSearch);
-
-    const searchElement = this.search.getElement();
-
-    searchElement.classList.add(css.search);
-
-    this.nodes.popoverContainer.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
-  }
-
-  /**
    * Handles clicks inside popover
    *
    * @param event - item to handle click of
@@ -277,15 +229,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     }
 
     this.handleItemClick(item);
-  }
-
-  /**
-   * Toggles nothing found message visibility
-   *
-   * @param isDisplayed - true if the message should be displayed
-   */
-  private toggleNothingFoundMessage(isDisplayed: boolean): void {
-    this.nodes.nothingFoundMessage.classList.toggle(css.nothingFoundMessageDisplayed, isDisplayed);
   }
 
   /**
