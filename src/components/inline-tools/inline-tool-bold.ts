@@ -39,42 +39,12 @@ export default class BoldInlineTool implements InlineTool {
   private readonly commandName: string = 'bold';
 
   /**
-   * Styles
-   */
-  private readonly CSS = {
-    button: 'ce-inline-tool',
-    buttonActive: 'ce-inline-tool--active',
-    buttonModifier: 'ce-inline-tool--bold',
-  };
-
-  /**
-   * Elements
-   */
-  private nodes: {button: HTMLButtonElement} = {
-    button: undefined,
-  };
-
-  // /**
-  //  * Create button for Inline Toolbar
-  //  */
-  // public render(): HTMLElement {
-  //   this.nodes.button = document.createElement('button') as HTMLButtonElement;
-  //   this.nodes.button.type = 'button';
-  //   this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-  //   this.nodes.button.innerHTML = IconBold;
-
-  //   return this.nodes.button;
-  // }
-
-
-  /**
    * Create button for Inline Toolbar
    */
   public render(): any {
     return {
       icon: IconBold,
       onActivate: () => {
-        // console.log('clicked, need range');
         document.execCommand(this.commandName);
       },
     };
@@ -94,8 +64,6 @@ export default class BoldInlineTool implements InlineTool {
    */
   public checkState(): boolean {
     const isActive = document.queryCommandState(this.commandName);
-
-    this.nodes.button?.classList.toggle(this.CSS.buttonActive, isActive);
 
     return isActive;
   }
