@@ -1,6 +1,6 @@
 import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType, WithChildren } from './components/popover-item';
 import Dom from '../../dom';
-import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
+import { SearchInput } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
@@ -73,14 +73,14 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Build html elements */
     this.nodes = {} as Nodes;
 
-    this.nodes.popoverContainer = Dom.make('div', [css.popoverContainer]);
+    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [css.nothingFoundMessage], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [css.items]);
+    this.nodes.items = Dom.make('div', [ css.items ]);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
@@ -186,6 +186,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
   /**
    * Handles popover item click
+   *
    * @param item - item to handle click of
    */
   protected handleItemClick(item: PopoverItemParams): void {
@@ -213,7 +214,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
       this.emit(PopoverEvent.CloseOnActivate, item);
     }
-
   }
 
   /**

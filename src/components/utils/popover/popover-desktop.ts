@@ -279,7 +279,7 @@ export class PopoverDesktop extends PopoverAbstract {
   public get renderParams(): {
     size: { height: number; width: number },
     containsInputs: boolean
-  } {
+    } {
     const renderParams = {
       size: {
         height: 0,
@@ -306,7 +306,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     renderParams.size.height = container.offsetHeight;
     renderParams.size.width = container.offsetWidth;
-    renderParams.containsInputs = Boolean(container.querySelector(Dom.allInputsSelector))
+    renderParams.containsInputs = Boolean(container.querySelector(Dom.allInputsSelector));
     popoverClone.remove();
 
     return renderParams;
@@ -355,7 +355,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.emit(PopoverEvent.OpenNestedPopover, {
       /** Inputs potentially can be auto focused */
-      hasAutoFocusableElements: this.nestedPopover.renderParams.containsInputs
+      hasAutoFocusableElements: this.nestedPopover.renderParams.containsInputs,
     });
 
     /**

@@ -115,6 +115,7 @@ export class PopoverInline extends PopoverDesktop {
 
   /**
    * Overrides default item click handling to handle nested popover closing correctly
+   *
    * @param item - clicked item
    */
   protected override handleItemClick(item: PopoverItem): void {

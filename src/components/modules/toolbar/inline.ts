@@ -237,6 +237,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Handles opening nested popover.
    * Saves selection and sets fake background
+   *
+   * @param data - event data
    */
   private nestedPopoverOpened = (data: {
     /** True if nested popover has and input that will be autofocused on open */
@@ -249,7 +251,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.selection.setFakeBackground();
     this.selection.save();
-  }
+  };
 
   /**
    * Handles closing nested popover.
@@ -257,12 +259,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private nestedPopoverClosed = (): void => {
     if (!this.selection.isFakeBackgroundEnabled) {
-      return
+      return;
     }
 
     this.selection.restore();
     this.selection.removeFakeBackground();
-  }
+  };
 
   /**
    * Move Toolbar to the selected text
