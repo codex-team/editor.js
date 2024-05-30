@@ -60,7 +60,7 @@ export default class BlockEvents extends Module {
      * @todo probably using "beforeInput" event would be better here
      */
     if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
-      this.slashPressed();
+      this.slashPressed(event);
     }
 
     /**
@@ -232,8 +232,10 @@ export default class BlockEvents extends Module {
 
   /**
    * '/' keydown inside a Block
+   *
+   * @param event - keydown
    */
-  private slashPressed(): void {
+  private slashPressed(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock;
     const canOpenToolbox = currentBlock.isEmpty;
 
@@ -394,7 +396,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const bothBlocksMergeable = areBlocksMergeable(currentBlock, previousBlock);
+    const bothBlocksMergeable = areBlocksMergeable(previousBlock, currentBlock);
 
     /**
      * If Blocks could be merged, do it
@@ -498,7 +500,7 @@ export default class BlockEvents extends Module {
   private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
     const { BlockManager, Caret, Toolbar } = this.Editor;
 
-    Caret.createShadow(targetBlock.pluginsContent);
+    Caret.createShadow(targetBlock.lastInput);
 
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)
