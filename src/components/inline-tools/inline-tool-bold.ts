@@ -44,6 +44,7 @@ export default class BoldInlineTool implements InlineTool {
   public render(): any {
     return {
       icon: IconBold,
+      name: 'bold',
       onActivate: () => {
         document.execCommand(this.commandName);
       },
