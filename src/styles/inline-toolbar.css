@@ -65,13 +65,33 @@
 }
 
 .ce-inline-tool {
-  @apply --toolbar-button;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  border-radius: 0;
+  border: 0;
+  border-radius: 4px;
   line-height: normal;
   height: 100%;
-  padding: 0 1px;
+  padding: 0;
+  width: 28px;
+  background-color: transparent;
+  cursor: pointer;
 
+  @media (--mobile) {
+    width: var(--icon-size--mobile);
+    height: var(--icon-size--mobile);
+  }
+
+  @media (--can-hover) {
+    &:hover {
+      background-color: #F8F8F8; /* @todo replace with 'var(--color-background-item-hover)' */
+    }
+  }
+
+  svg {
+    display: block;
+  }
 
   &--link {
     .icon--unlink {
@@ -95,12 +115,10 @@
     border-radius: 0 0 4px 4px;
     margin: 0;
     font-size: 13px;
-    /* padding: 10px; */
     width: 100%;
     box-sizing: border-box;
     display: none;
     font-weight: 500;
-    /* border-top: 1px solid rgba(201,201,204,.48); */
     -webkit-appearance: none;
     font-family: inherit;
 
@@ -116,5 +134,9 @@
     &--showed {
       display: block;
     }
+  }
+
+  &--active {
+    color: var(--color-active-icon);
   }
 }

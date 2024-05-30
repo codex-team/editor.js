@@ -2,7 +2,7 @@
  * Styles overrides for inline popover
  */
 .ce-popover--inline {
-  --height: 32px;
+  --height: 38px;
   --height-mobile: 42px;
 
   position: relative;
@@ -17,7 +17,7 @@
   
   .ce-popover__container {
     flex-direction: row;
-    padding: 0;
+    padding: 4px;
     height: var(--height);
     top: 0;
     
@@ -35,7 +35,7 @@
    * Popover item styles
    */
   .ce-popover-item-separator {
-    padding: 0;
+    padding: 0 4px;
 
     &__line {
       height: 100%;
@@ -44,9 +44,8 @@
   }
 
   .ce-popover-item {
-    border-radius: 0;
-    height: 100%;
-    padding: 0 1px;
+    border-radius: 4px;
+    padding: 4px;
 
     &__icon--tool {
       box-shadow: none;
@@ -74,20 +73,13 @@
     }
   }
 
-  .ce-popover-item,
   .ce-popover-item-html {
-    &:first-of-type {
-      padding-inline-start: 6px;
-    }
-  
-    &:last-of-type {
-      padding-inline-end: 6px;
-    }
+    display: flex;
+    align-items: center;
   }
 
   .ce-popover-item__icon--chevron-right {
     transform: rotate(90deg);
-    margin-right: 5px;
   }
 
   .ce-popover--nested-level-1 {
@@ -129,9 +121,7 @@
       }
     
       &__icon--tool {
-        box-shadow: 0 0 0 1px var(--color-border-icon);
-        background: #fff;
-        margin-right: 10px;
+        margin-right: 4px;
       }
 
       &__icon {
