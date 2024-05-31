@@ -523,7 +523,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
          */
         const toolButton = document.querySelector(`[data-item-name="${toolName}"]`);
 
-        (toolButton as HTMLElement).click()
+        (toolButton as HTMLElement).click();
       },
       on: this.Editor.UI.nodes.redactor,
     });
