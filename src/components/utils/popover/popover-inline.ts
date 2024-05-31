@@ -1,4 +1,5 @@
 import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
+import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
 import { css } from './popover.const';
 import { PopoverParams } from './popover.types';
@@ -10,7 +11,7 @@ export class PopoverInline extends PopoverDesktop {
   /**
    * Item nested popover is displayed for
    */
-  private nestedPopoverTriggerItem: PopoverItemDefault | null = null;
+  private nestedPopoverTriggerItem: PopoverItemDefault | PopoverItemHtml | null = null;
 
   /**
    * Constructs the instance
@@ -38,6 +39,22 @@ export class PopoverInline extends PopoverDesktop {
         },
       }
     );
+
+    /**
+     * If active popover item has children, show them.
+     * This is needed to display link url text (which is displayed as a nested popover content)
+     * once you select <a> tag content in text
+     */
+    this.items
+      .forEach((item) => {
+        if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
+          return;
+        }
+
+        if (item.hasChildren && item.isActive) {
+          this.showNestedItems(item);
+        }
+      });
   }
 
   /**
@@ -101,7 +118,7 @@ export class PopoverInline extends PopoverDesktop {
    *
    * @param item – item to toggle nested popover for
    */
-  protected override showNestedItems(item: PopoverItemDefault): void {
+  protected override showNestedItems(item: PopoverItemDefault | PopoverItemHtml): void {
     if (this.nestedPopoverTriggerItem === item) {
       this.nestedPopoverTriggerItem = null;
       this.destroyNestedPopoverIfExists();

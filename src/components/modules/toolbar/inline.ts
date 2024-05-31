@@ -33,13 +33,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public CSS = {
     inlineToolbar: 'ce-inline-toolbar',
-    inlineToolbarShortcut: 'ce-inline-toolbar__shortcut',
   };
 
   /**
    * State of inline toolbar
-   *
-   * @type {boolean}
    */
   public opened = false;
 
@@ -112,6 +109,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     await this.open();
+
     this.Editor.Toolbar.close();
   }
 
@@ -422,7 +420,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             title: toolTitle,
             description: shortcutBeautified,
           },
-          isActive: instance.checkState(SelectionUtils.get()),
         } as PopoverItemParams;
 
         if ($.isElement(item)) {
@@ -450,6 +447,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             ],
           };
         }
+
+        /** Set isActive after renderAtions is called */
+        popoverItem.isActive = instance.checkState(SelectionUtils.get());
 
         popoverItems.push(popoverItem);
       });

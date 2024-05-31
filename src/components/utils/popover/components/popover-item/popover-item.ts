@@ -74,4 +74,11 @@ export abstract class PopoverItem {
   public get closeOnActivate(): boolean | undefined {
     return this.params.closeOnActivate;
   }
+
+  /**
+   * True if item is active
+   */
+  public get isActive(): boolean {
+    return this.params.isActive;
+  }
 }
