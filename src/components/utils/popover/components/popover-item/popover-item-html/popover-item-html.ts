@@ -28,6 +28,10 @@ export class PopoverItemHtml extends PopoverItem {
 
     this.nodes.root.appendChild(params.element);
 
+    if (params.name) {
+      this.nodes.root.dataset.itemName = params.name;
+    }
+
     if (params.hint !== undefined && renderParams?.hint?.enabled !== false) {
       this.addHint(this.nodes.root, {
         ...params.hint,

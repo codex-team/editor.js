@@ -89,6 +89,12 @@ export interface PopoverItemHtmlParams {
    * True if popover should close once item is activated
    */
   closeOnActivate?: boolean;
+
+  /**
+   * Item name
+   * Used in data attributes needed for cypress tests
+   */
+  name?: string;
 }
 
 /**
@@ -132,7 +138,7 @@ interface PopoverItemDefaultBaseParams {
 
   /**
    * Item name
-   * Used in data attributes needed for cypress tests
+   * Used in data attributes needed for shortcuts work and for cypress tests
    */
   name?: string;
 

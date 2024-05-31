@@ -401,7 +401,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
       if (shortcut) {
         try {
-          this.enableShortcuts(instance, shortcut);
+          this.enableShortcuts(tool.name, shortcut);
         } catch (e) {}
       }
 
@@ -414,6 +414,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
       [ controlData ].flat().forEach((item) => {
         let popoverItem = {
+          name: tool.name,
           onActivate: () => {
             this.toolClicked(instance);
           },
@@ -488,10 +489,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
    *
-   * @param {InlineTool} tool - Tool instance
-   * @param {string} shortcut - shortcut according to the ShortcutData Module format
+   * @param toolName - tool name
+   * @param shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcuts(tool: IInlineTool, shortcut: string): void {
+  private enableShortcuts(toolName: string, shortcut: string): void {
     Shortcuts.add({
       name: shortcut,
       handler: (event) => {
@@ -516,7 +517,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         }
 
         event.preventDefault();
-        this.toolClicked(tool);
+
+        /**
+         * Click popover item corresponding to the tool to trigger the tool activation
+         */
+        const toolButton = document.querySelector(`[data-item-name="${toolName}"]`);
+
+        (toolButton as HTMLElement).click()
       },
       on: this.Editor.UI.nodes.redactor,
     });
