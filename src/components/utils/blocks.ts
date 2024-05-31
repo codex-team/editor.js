@@ -193,16 +193,14 @@ export async function getConvertToItems(currentBlock: Block, editorModules: Edit
         title: toolboxItem.title,
         name: toolName,
         closeOnActivate: true,
-        onActivate: () => {
+        onActivate: async () => {
           const { BlockManager, BlockSelection, Caret } = editorModules;
 
-          BlockManager.convert(currentBlock, toolName, toolboxItem.data);
+          const newBlock = await BlockManager.convert(currentBlock, toolName, toolboxItem.data);
 
           BlockSelection.clearSelection();
 
-          window.requestAnimationFrame(() => {
-            Caret.setToBlock(currentBlock, Caret.positions.END);
-          });
+          Caret.setToBlock(newBlock, Caret.positions.END);
         },
       });
     });
