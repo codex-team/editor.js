@@ -73,14 +73,14 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Build html elements */
     this.nodes = {} as Nodes;
 
-    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
+    this.nodes.popoverContainer = Dom.make('div', [css.popoverContainer]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [css.nothingFoundMessage], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [ css.items ]);
+    this.nodes.items = Dom.make('div', [css.items]);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
@@ -94,10 +94,8 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
     this.nodes.popoverContainer.appendChild(this.nodes.items);
 
-    /**
-     * Handle 'mousedown' instead of 'click' event to prevent unwanted focus loss in safari
-     */
-    this.listeners.on(this.nodes.popoverContainer, 'mousedown', (event: Event) => this.handleClick(event));
+    this.listeners.on(this.nodes.popoverContainer, 'click', (event: Event) => this.handleClick(event));
+    this.listeners.on(this.nodes.popoverContainer, 'mousedown', (event: Event) => this.handleMousedown(event));
 
     this.nodes.popover = Dom.make('div', [
       css.popover,
@@ -226,17 +224,24 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    */
   private handleClick(event: Event): void {
     const item = this.getTargetItem(event);
-    
+
     if (item === undefined) {
       return;
     }
 
+    this.handleItemClick(item);
+  }
+
+  /**
+   * Calls .preventDefault() on 'mousedown' event to prevent unwanted focus loss in safari
+   * 
+   * @param event - mousedown event
+   */
+  private handleMousedown(event: Event): void {
     /**
      * preventDefault() is needed to prevent unwanted focus loss in safari
      */
     event.preventDefault();
-
-    this.handleItemClick(item);
   }
 
   /**
