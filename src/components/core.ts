@@ -7,7 +7,6 @@ import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
 import Modules from './modules';
 import { EditorEventMap } from './events';
-import { CaretPosition } from './modules/caret';
 
 /**
  * Editor.js core class. Bootstraps modules.
@@ -63,7 +62,7 @@ export default class Core {
         ModificationsObserver.enable();
 
         if ((this.configuration as EditorConfig).autofocus) {
-          Caret.setToBlock(BlockManager.blocks[0], CaretPosition.START);
+          Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
         }
 
         onReady();

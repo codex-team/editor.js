@@ -17,7 +17,6 @@ import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
 import { EditorMobileLayoutToggled } from '../events';
-import { CaretPosition } from './caret';
 /**
  * HTML Elements used for UI
  */
@@ -522,7 +521,7 @@ export default class UI extends Module<UINodes> {
 
       const newBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
 
-      Caret.setToBlock(newBlock, CaretPosition.START);
+      Caret.setToBlock(newBlock, Caret.positions.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
@@ -552,7 +551,7 @@ export default class UI extends Module<UINodes> {
 
     if (this.Editor.Toolbar.toolbox.opened) {
       this.Editor.Toolbar.toolbox.close();
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, CaretPosition.END);
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.InlineToolbar.opened) {

@@ -5,7 +5,6 @@ import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
 import { capitalize } from './../../utils';
-import { CaretPosition } from '../caret';
 
 /**
  * @class BlocksAPI
@@ -164,7 +163,7 @@ export default class BlocksAPI extends Module {
      * After Block deletion currentBlock is updated
      */
     if (this.Editor.BlockManager.currentBlock) {
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, CaretPosition.END);
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     }
 
     this.Editor.Toolbar.close();

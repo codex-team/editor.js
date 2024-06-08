@@ -2,7 +2,6 @@ import Module from '../__module';
 import Block from '../block';
 import SelectionUtils from '../selection';
 import * as _ from '../utils';
-import { CaretPosition } from './caret';
 
 /**
  *
@@ -121,15 +120,15 @@ export default class CrossBlockSelection extends Module {
         switch (reason.keyCode) {
           case _.keyCodes.DOWN:
           case _.keyCodes.RIGHT:
-            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], CaretPosition.END);
+            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
             break;
 
           case _.keyCodes.UP:
           case _.keyCodes.LEFT:
-            Caret.setToBlock(BlockManager.blocks[Math.min(fIndex, lIndex)], CaretPosition.START);
+            Caret.setToBlock(BlockManager.blocks[Math.min(fIndex, lIndex)], Caret.positions.START);
             break;
           default:
-            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], CaretPosition.END);
+            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
         }
       }
     }
