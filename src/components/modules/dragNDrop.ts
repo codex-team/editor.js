@@ -70,7 +70,6 @@ export default class DragNDrop extends Module {
   private async processDrop(dropEvent: DragEvent): Promise<void> {
     const {
       BlockManager,
-      Caret,
       Paste,
     } = this.Editor;
 
