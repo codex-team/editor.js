@@ -16,7 +16,7 @@ import { mobileScreenBreakpoint } from '../utils';
 import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
-import { SelectionChanged } from '../events';
+import { EditorMobileLayoutToggled, SelectionChanged } from '../events';
 
 
 /**
@@ -27,7 +27,6 @@ import { SelectionChanged } from '../events';
  * @todo get rid of BlockEvents, use event listener on redactor instead
  */
 
-import { EditorMobileLayoutToggled } from '../events';
 /**
  * HTML Elements used for UI
  */
