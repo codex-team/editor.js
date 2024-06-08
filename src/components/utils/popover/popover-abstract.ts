@@ -73,14 +73,14 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Build html elements */
     this.nodes = {} as Nodes;
 
-    this.nodes.popoverContainer = Dom.make('div', [css.popoverContainer]);
+    this.nodes.popoverContainer = Dom.make('div', [ css.popoverContainer ]);
 
-    this.nodes.nothingFoundMessage = Dom.make('div', [css.nothingFoundMessage], {
+    this.nodes.nothingFoundMessage = Dom.make('div', [ css.nothingFoundMessage ], {
       textContent: this.messages.nothingFound,
     });
 
     this.nodes.popoverContainer.appendChild(this.nodes.nothingFoundMessage);
-    this.nodes.items = Dom.make('div', [css.items]);
+    this.nodes.items = Dom.make('div', [ css.items ]);
 
     this.items.forEach(item => {
       const itemEl = item.getElement();
@@ -234,7 +234,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
 
   /**
    * Calls .preventDefault() on 'mousedown' event to prevent unwanted focus loss in safari
-   * 
+   *
    * @param event - mousedown event
    */
   private handleMousedown(event: Event): void {

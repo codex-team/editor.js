@@ -16,6 +16,7 @@ export default class SelectionAPI extends Module {
     return {
       findParentTag: (tagName: string, className?: string): HTMLElement | null => this.findParentTag(tagName, className),
       expandToTag: (node: HTMLElement): void => this.expandToTag(node),
+      clearSelection: (): void => this.Editor.BlockSelection.clearSelection(),
     };
   }
 

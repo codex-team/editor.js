@@ -13,23 +13,18 @@ import Block from '../block';
 import $ from '../dom';
 
 /**
+ * Allowed caret positions in input
+ */
+export enum CaretPosition {
+  START = 'start',
+  END = 'end',
+  DEFAULT = 'default',
+}
+
+/**
  * @typedef {Caret} Caret
  */
 export default class Caret extends Module {
-  /**
-   * Allowed caret positions in input
-   *
-   * @static
-   * @returns {{START: string, END: string, DEFAULT: string}}
-   */
-  public get positions(): {START: string; END: string; DEFAULT: string} {
-    return {
-      START: 'start',
-      END: 'end',
-      DEFAULT: 'default',
-    };
-  }
-
   /**
    * Elements styles that can be useful for Caret Module
    */
@@ -240,7 +235,7 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
+  public setToBlock(block: Block, position: string = CaretPosition.DEFAULT, offset = 0): void {
     const { BlockManager, BlockSelection } = this.Editor;
 
     /**
@@ -269,10 +264,10 @@ export default class Caret extends Module {
     let element;
 
     switch (position) {
-      case this.positions.START:
+      case CaretPosition.START:
         element = block.firstInput;
         break;
-      case this.positions.END:
+      case CaretPosition.END:
         element = block.lastInput;
         break;
       default:
@@ -283,14 +278,14 @@ export default class Caret extends Module {
       return;
     }
 
-    const nodeToSet = $.getDeepestNode(element, position === this.positions.END);
+    const nodeToSet = $.getDeepestNode(element, position === CaretPosition.END);
     const contentLength = $.getContentLength(nodeToSet);
 
     switch (true) {
-      case position === this.positions.START:
+      case position === CaretPosition.START:
         offset = 0;
         break;
-      case position === this.positions.END:
+      case position === CaretPosition.END:
       case offset > contentLength:
         offset = contentLength;
         break;
@@ -310,16 +305,16 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset = 0): void {
+  public setToInput(input: HTMLElement, position: string = CaretPosition.DEFAULT, offset = 0): void {
     const { currentBlock } = this.Editor.BlockManager;
     const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
-      case this.positions.START:
+      case CaretPosition.START:
         this.set(nodeToSet as HTMLElement, 0);
         break;
 
-      case this.positions.END:
+      case CaretPosition.END:
         this.set(nodeToSet as HTMLElement, $.getContentLength(nodeToSet));
         break;
 
@@ -436,7 +431,7 @@ export default class Caret extends Module {
 
     /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
     if (nextInput && navigationAllowed) {
-      this.setToInput(nextInput, this.positions.START);
+      this.setToInput(nextInput, CaretPosition.START);
 
       return true;
     }
@@ -464,7 +459,7 @@ export default class Caret extends Module {
     }
 
     if (navigationAllowed) {
-      this.setToBlock(blockToNavigate, this.positions.START);
+      this.setToBlock(blockToNavigate, CaretPosition.START);
 
       return true;
     }
@@ -491,13 +486,13 @@ export default class Caret extends Module {
 
     /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
     if (previousInput && navigationAllowed) {
-      this.setToInput(previousInput, this.positions.END);
+      this.setToInput(previousInput, CaretPosition.END);
 
       return true;
     }
 
     if (previousBlock !== null && navigationAllowed) {
-      this.setToBlock(previousBlock as Block, this.positions.END);
+      this.setToBlock(previousBlock as Block, CaretPosition.END);
 
       return true;
     }

@@ -1,6 +1,7 @@
 import { BlockAPI, Caret } from '../../../../types/api';
 import Module from '../../__module';
 import { resolveBlock } from '../../utils/api';
+import { CaretPosition } from '../caret';
 
 /**
  * @class CaretAPI
@@ -30,7 +31,7 @@ export default class CaretAPI extends Module {
    * @param {number} offset - caret offset
    * @returns {boolean}
    */
-  private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
+  private setToFirstBlock = (position: string = CaretPosition.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.firstBlock) {
       return false;
     }
@@ -47,7 +48,7 @@ export default class CaretAPI extends Module {
    * @param {number} offset - caret offset
    * @returns {boolean}
    */
-  private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
+  private setToLastBlock = (position: string = CaretPosition.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.lastBlock) {
       return false;
     }
@@ -65,7 +66,7 @@ export default class CaretAPI extends Module {
    * @returns {boolean}
    */
   private setToPreviousBlock = (
-    position: string = this.Editor.Caret.positions.DEFAULT,
+    position: string = CaretPosition.DEFAULT,
     offset = 0
   ): boolean => {
     if (!this.Editor.BlockManager.previousBlock) {
@@ -84,7 +85,7 @@ export default class CaretAPI extends Module {
    * @param {number} offset - caret offset
    * @returns {boolean}
    */
-  private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
+  private setToNextBlock = (position: string = CaretPosition.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.nextBlock) {
       return false;
     }
@@ -104,7 +105,7 @@ export default class CaretAPI extends Module {
    */
   private setToBlock = (
     blockOrIdOrIndex: BlockAPI | BlockAPI['id'] | number,
-    position: string = this.Editor.Caret.positions.DEFAULT,
+    position: string = CaretPosition.DEFAULT,
     offset = 0
   ): boolean => {
     const block = resolveBlock(blockOrIdOrIndex, this.Editor);
@@ -126,9 +127,9 @@ export default class CaretAPI extends Module {
    */
   private focus = (atEnd = false): boolean => {
     if (atEnd) {
-      return this.setToLastBlock(this.Editor.Caret.positions.END);
+      return this.setToLastBlock(CaretPosition.END);
     }
 
-    return this.setToFirstBlock(this.Editor.Caret.positions.START);
+    return this.setToFirstBlock(CaretPosition.START);
   };
 }

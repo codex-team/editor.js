@@ -1,7 +1,8 @@
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
-import { EditorModules } from '../../types-internal/editor-modules';
 import type Block from '../block';
+import API from '../modules/api';
+import { CaretPosition } from '../modules/caret';
 import { isFunction, isString, log, equals, isEmpty } from '../utils';
 import { PopoverItemDefaultParams } from './popover';
 
@@ -142,10 +143,10 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
  * Returns list of all available conversion menu items
  *
  * @param currentBlock - current block we need to get convetion data for
- * @param editorModules - access to editor modules
+ * @param api - editor API
  */
-export async function getConvertToItems(currentBlock: Block, editorModules: EditorModules): Promise<PopoverItemDefaultParams[]> {
-  const conversionEntries = Array.from(editorModules.Tools.blockTools.entries());
+export async function getConvertToItems(currentBlock: Block, api: API): Promise<PopoverItemDefaultParams[]> {
+  const conversionEntries = Array.from(api.methods.tools.blockTools.entries());
 
   const resultItems: PopoverItemDefaultParams[] = [];
 
@@ -194,13 +195,10 @@ export async function getConvertToItems(currentBlock: Block, editorModules: Edit
         name: toolName,
         closeOnActivate: true,
         onActivate: async () => {
-          const { BlockManager, BlockSelection, Caret } = editorModules;
+          const newBlock = await api.methods.blocks.convert(currentBlock.id, toolName, toolboxItem.data);
 
-          const newBlock = await BlockManager.convert(currentBlock, toolName, toolboxItem.data);
-
-          BlockSelection.clearSelection();
-
-          Caret.setToBlock(newBlock, Caret.positions.END);
+          api.methods.selection.clearSelection();
+          api.methods.caret.setToBlock(newBlock, CaretPosition.END);
         },
       });
     });

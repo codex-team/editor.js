@@ -33,6 +33,7 @@ export default class API extends Module {
       i18n: this.Editor.I18nAPI.methods,
       readOnly: this.Editor.ReadOnlyAPI.methods,
       ui: this.Editor.UiAPI.methods,
+      tools: this.Editor.ToolsAPI.methods,
     };
   }
 

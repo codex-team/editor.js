@@ -371,7 +371,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const popoverItems = [] as PopoverItemParams[];
 
     /** Add "Convert to" */
-    const convertToItems = await getConvertToItems(currentBlock, this.Editor);
+    const convertToItems = await getConvertToItems(currentBlock, this.Editor.API);
 
     const currentBlockToolboxItem = await getBlockActiveToolboxEntry(currentBlock);
 
@@ -380,7 +380,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         icon: currentBlockToolboxItem.icon,
         name: 'convert-to',
         hint: {
-          title: I18n.t(I18nInternalNS.toolNames, 'Convert to')
+          title: I18n.t(I18nInternalNS.toolNames, 'Convert to'),
         },
         children: {
           searchable: !_.isMobileScreen(),

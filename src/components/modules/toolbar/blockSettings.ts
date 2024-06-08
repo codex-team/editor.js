@@ -213,7 +213,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    const convertToItems = await getConvertToItems(currentBlock, this.Editor);
+    const convertToItems = await getConvertToItems(currentBlock, this.Editor.API);
 
     if (convertToItems.length > 0) {
       items.push({
