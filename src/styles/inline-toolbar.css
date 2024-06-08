@@ -4,6 +4,7 @@
   /** These variables duplicate the ones defined in popover. @todo move them to single place */
   --color-background-icon-active: rgba(56, 138, 229, 0.1);
   --color-text-icon-active: #388AE5;
+  --color-text-primary: black;
 
   @apply --overlay-pane;
   visibility: hidden;
@@ -69,6 +70,7 @@
 }
 
 .ce-inline-tool {
+  color: var(--color-text-primary);
   display: flex;
   justify-content: center;
   align-items: center;
