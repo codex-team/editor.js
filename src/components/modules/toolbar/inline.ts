@@ -379,6 +379,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       popoverItems.push({
         icon: currentBlockToolboxItem.icon,
         name: 'convert-to',
+        hint: {
+          title: I18n.t(I18nInternalNS.toolNames, 'Convert to')
+        },
         children: {
           searchable: !_.isMobileScreen(),
           items: convertToItems,
