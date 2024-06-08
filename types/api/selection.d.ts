@@ -15,9 +15,4 @@ export interface Selection {
    * @param {HTMLElement} node - tag that should contain selection
    */
   expandToTag(node: HTMLElement): void;
-
-  /**
-   * Clear block selection
-   */
-  clearSelection(): void;
 }

@@ -1,10 +1,10 @@
-import { CaretPosition } from "../../src/components/modules/caret";
 import { BlockAPI } from "./block";
 
 /**
  * Describes Editor`s caret API
  */
 export interface Caret {
+
   /**
    * Sets caret to the first Block
    *
@@ -54,7 +54,7 @@ export interface Caret {
    *
    * @return {boolean}
    */
-  setToBlock(blockOrIdOrIndex: BlockAPI | BlockAPI['id'] | number, position?: CaretPosition, offset?: number): boolean;
+  setToBlock(blockOrIdOrIndex: BlockAPI | BlockAPI['id'] | number, position?: 'end'|'start'|'default', offset?: number): boolean;
 
   /**
    * Sets caret to the Editor

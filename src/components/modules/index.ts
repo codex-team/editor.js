@@ -15,7 +15,6 @@ import StylesAPI from './api/styles';
 import ToolbarAPI from './api/toolbar';
 import TooltipAPI from './api/tooltip';
 import UiAPI from './api/ui';
-import ToolsAPI from './api/tools';
 
 /** ./toolbar */
 import BlockSettings from './toolbar/blockSettings';
@@ -56,7 +55,6 @@ export default {
   ToolbarAPI,
   TooltipAPI,
   UiAPI,
-  ToolsAPI,
 
   // Toolbar Modules
   BlockSettings,

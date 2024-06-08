@@ -36,7 +36,6 @@ import Renderer from '../components/modules/renderer';
 import Saver from '../components/modules/saver';
 import Tools from '../components/modules/tools';
 import UI from '../components/modules/ui';
-import ToolsAPI from '../components/modules/api/tools';
 
 export interface EditorModules {
   // API Modules
@@ -56,7 +55,6 @@ export interface EditorModules {
   ToolbarAPI: ToolbarAPI,
   TooltipAPI: TooltipAPI,
   UiAPI: UiAPI,
-  ToolsAPI: ToolsAPI,
 
   // Toolbar Modules
   BlockSettings: BlockSettings,
