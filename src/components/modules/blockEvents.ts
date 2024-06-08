@@ -7,6 +7,7 @@ import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 import type Block from '../block';
 import { areBlocksMergeable } from '../utils/blocks';
+import { CaretPosition } from './caret';
 
 /**
  *
@@ -188,7 +189,7 @@ export default class BlockEvents extends Module {
        */
       const insertedBlock = BlockManager.insertDefaultBlockAtIndex(selectionPositionIndex, true);
 
-      Caret.setToBlock(insertedBlock, Caret.positions.START);
+      Caret.setToBlock(insertedBlock, CaretPosition.START);
 
       /** Clear selection */
       BlockSelection.clearSelection(event);
@@ -391,7 +392,7 @@ export default class BlockEvents extends Module {
 
       const newCurrentBlock = BlockManager.currentBlock;
 
-      Caret.setToBlock(newCurrentBlock, Caret.positions.END);
+      Caret.setToBlock(newCurrentBlock, CaretPosition.END);
 
       return;
     }
@@ -405,7 +406,7 @@ export default class BlockEvents extends Module {
     if (bothBlocksMergeable) {
       this.mergeBlocks(previousBlock, currentBlock);
     } else {
-      Caret.setToBlock(previousBlock, Caret.positions.END);
+      Caret.setToBlock(previousBlock, CaretPosition.END);
     }
   }
 
@@ -473,7 +474,7 @@ export default class BlockEvents extends Module {
     if (currentBlock.isEmpty) {
       BlockManager.removeBlock(currentBlock);
 
-      Caret.setToBlock(nextBlock, Caret.positions.START);
+      Caret.setToBlock(nextBlock, CaretPosition.START);
 
       return;
     }
@@ -487,7 +488,7 @@ export default class BlockEvents extends Module {
     if (bothBlocksMergeable) {
       this.mergeBlocks(currentBlock, nextBlock);
     } else {
-      Caret.setToBlock(nextBlock, Caret.positions.START);
+      Caret.setToBlock(nextBlock, CaretPosition.START);
     }
   }
 

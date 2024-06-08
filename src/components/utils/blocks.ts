@@ -212,7 +212,7 @@ export async function getConvertToItems(currentBlock: Block, api: API): Promise<
  *
  * @param block - block to get active toolbox item for
  */
-export async function getBlockActiveToolboxEntry(block: Block): Promise<PopoverItemDefaultParams> {
+export async function getActiveToolboxEntryOfBlock(block: Block): Promise<PopoverItemDefaultParams> {
   const toolboxItems = block.tool.toolbox;
 
   /**

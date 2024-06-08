@@ -1,6 +1,7 @@
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
+import { CaretPosition } from './caret';
 /**
  *
  */
@@ -92,11 +93,11 @@ export default class DragNDrop extends Module {
     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
+      this.Editor.Caret.setToBlock(targetBlock, CaretPosition.END);
     } else {
       const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
 
-      this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
+      this.Editor.Caret.setToBlock(lastBlock, CaretPosition.END);
     }
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);

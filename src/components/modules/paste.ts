@@ -12,6 +12,7 @@ import Block from '../block';
 import { SavedData } from '../../../types/data-formats';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import BlockTool from '../tools/block';
+import { CaretPosition } from './caret';
 
 /**
  * Tag substitute object.
@@ -256,7 +257,7 @@ export default class Paste extends Module {
     );
 
     if (BlockManager.currentBlock) {
-      Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+      Caret.setToBlock(BlockManager.currentBlock, CaretPosition.END);
     }
   }
 
@@ -785,7 +786,7 @@ export default class Paste extends Module {
 
         const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
-        Caret.setToBlock(insertedBlock, Caret.positions.END);
+        Caret.setToBlock(insertedBlock, CaretPosition.END);
 
         return;
       }
@@ -851,14 +852,14 @@ export default class Paste extends Module {
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
       block = BlockManager.paste(data.tool, data.event, true);
-      Caret.setToBlock(block, Caret.positions.END);
+      Caret.setToBlock(block, CaretPosition.END);
 
       return;
     }
 
     block = BlockManager.paste(data.tool, data.event);
 
-    Caret.setToBlock(block, Caret.positions.END);
+    Caret.setToBlock(block, CaretPosition.END);
   }
 
   /**
@@ -888,7 +889,7 @@ export default class Paste extends Module {
         replace: needToReplaceCurrentBlock,
       });
 
-      Caret.setToBlock(block, Caret.positions.END);
+      Caret.setToBlock(block, CaretPosition.END);
     });
   }
 

@@ -11,7 +11,7 @@ import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
 import { Popover, PopoverEvent, PopoverItemParams, PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
-import { getBlockActiveToolboxEntry, getConvertToItems } from '../../utils/blocks';
+import { getActiveToolboxEntryOfBlock, getConvertToItems } from '../../utils/blocks';
 
 /**
  * Inline Toolbar elements
@@ -373,7 +373,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     /** Add "Convert to" */
     const convertToItems = await getConvertToItems(currentBlock, this.Editor.API);
 
-    const currentBlockToolboxItem = await getBlockActiveToolboxEntry(currentBlock);
+    const currentBlockToolboxItem = await getActiveToolboxEntryOfBlock(currentBlock);
 
     if (convertToItems.length > 0) {
       popoverItems.push({
