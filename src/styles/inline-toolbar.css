@@ -79,8 +79,8 @@
   cursor: pointer;
 
   @media (--mobile) {
-    width: var(--icon-size--mobile);
-    height: var(--icon-size--mobile);
+    width: 36px;
+    height: 36px;
   }
 
   @media (--can-hover) {
@@ -91,6 +91,13 @@
 
   svg {
     display: block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+
+    @media (--mobile) {
+      width: var(--icon-size--mobile);
+      height: var(--icon-size--mobile);
+    }
   }
 
   &--link {
