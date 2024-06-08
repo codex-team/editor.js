@@ -1,6 +1,10 @@
 .ce-inline-toolbar {
   --y-offset: 8px;
 
+  /** These variables duplicate the ones defined in popover. @todo move them to single place */
+  --color-background-icon-active: rgba(56, 138, 229, 0.1);
+  --color-text-icon-active: #388AE5;
+
   @apply --overlay-pane;
   visibility: hidden;
   transition: opacity 250ms ease;
@@ -144,6 +148,7 @@
   }
 
   &--active {
-    color: var(--color-active-icon);
+    background: var(--color-background-icon-active);
+    color: var(--color-text-icon-active);
   }
 }
