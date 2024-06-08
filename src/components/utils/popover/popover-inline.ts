@@ -1,3 +1,4 @@
+import { isMobileScreen } from '../../utils';
 import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
@@ -19,6 +20,8 @@ export class PopoverInline extends PopoverDesktop {
    * @param params - instance parameters
    */
   constructor(params: PopoverParams) {
+    const isHintEnabled = !isMobileScreen();
+
     super(
       {
         ...params,
@@ -29,12 +32,14 @@ export class PopoverInline extends PopoverDesktop {
           hint: {
             position: 'top',
             alignment: 'center',
+            enabled: isHintEnabled,
           },
         },
         [PopoverItemType.Html]: {
           hint: {
             position: 'top',
             alignment: 'center',
+            enabled: isHintEnabled,
           },
         },
       }
