@@ -24,21 +24,16 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
 /**
  * Checks that all the properties of the first block data exist in second block data with the same values.
  *
- * If we have several entries with their own data overrides,
- * find those who matches some current data property
- *
  * Example:
- *  Tools' toolbox: [
- *    {title: "Heading 1", data: {level: 1} },
- *    {title: "Heading 2", data: {level: 2} }
- *  ]
+ * 
+ * data1 = { level: 1 }
  *
- *  the Block data: {
+ * data2 = {
  *    text: "Heading text",
- *    level: 2
+ *    level: 1
  *  }
  *
- *  that means that for the current block, the second toolbox item (matched by "{level: 2}") is active
+ * isSameBlockData(data1, data2) => true
  *
  * @param data1 – first block data
  * @param data2 – second block data
