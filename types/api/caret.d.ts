@@ -48,13 +48,13 @@ export interface Caret {
   /**
    * Sets caret to the Block
    *
-   * @param blockOrIndex - either Block API object or Block index
+   * @param blockOrIdOrIndex - BlockAPI or Block id or Block index
    * @param position - position where to set caret
    * @param offset - caret offset
    *
    * @return {boolean}
    */
-  setToBlock(index: BlockAPI | number, position?: 'end'|'start'|'default', offset?: number): boolean;
+  setToBlock(blockOrIdOrIndex: BlockAPI | BlockAPI['id'] | number, position?: 'end'|'start'|'default', offset?: number): boolean;
 
   /**
    * Sets caret to the Editor

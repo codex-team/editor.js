@@ -427,6 +427,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.togglerAndButtonsWrapper.appendChild(this.nodes.conversionToggler);
 
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.conversionToggler.setAttribute('data-cy', 'conversion-toggler');
+    }
+
     this.listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
         /**

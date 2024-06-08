@@ -49,15 +49,11 @@ export default class Flipper {
 
   /**
    * Instance of flipper iterator
-   *
-   * @type {DomIterator|null}
    */
-  private readonly iterator: DomIterator = null;
+  private readonly iterator: DomIterator | null = null;
 
   /**
    * Flag that defines activation status
-   *
-   * @type {boolean}
    */
   private activated = false;
 
@@ -77,7 +73,7 @@ export default class Flipper {
   private flipCallbacks: Array<() => void> = [];
 
   /**
-   * @param {FlipperOptions} options - different constructing settings
+   * @param options - different constructing settings
    */
   constructor(options: FlipperOptions) {
     this.iterator = new DomIterator(options.items, options.focusedItemClass);
@@ -110,7 +106,6 @@ export default class Flipper {
    */
   public activate(items?: HTMLElement[], cursorPosition?: number): void {
     this.activated = true;
-
     if (items) {
       this.iterator.setItems(items);
     }

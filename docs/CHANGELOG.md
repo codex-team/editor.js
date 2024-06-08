@@ -2,13 +2,25 @@
 
 ### 2.30.0
 
+- `New` – Block Tunes now supports nesting items
+- `New` – Block Tunes now supports separator items
+- `New` – "Convert to" control is now also available in Block Tunes
 - `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
 - `Fix` - Block removing while Enter press on Block Tunes
-- `New` - API blocks.delete() not works by id instead of index.
-- `Deprecated` - API blocks.delete(index) is deprecated. Use blocks.delete(id) instead
+- `Fix` – Unwanted scroll on first typing on iOS devices
+- `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
+- `Fix` - Caret lost after block conversion on mobile devices.
+- `Fix` - Caret lost after Backspace at the start of block when previoius block is not convertable
+- `Improvement` - The API `blocks.convert()` now returns the new block API
+- `Improvement` - The API `caret.setToBlock()` now can accept either BlockAPI or block index or block id
+- `New` – *Menu Config* – New item type – HTML
+– `Refactoring` – Switched to Vite as Cypress bundler
+– `New` – *Menu Config* – Default and HTML items now support hints
+- `New` - API `blocks.delete()` now works by id instead of index.
+- `Deprecated` - API `blocks.delete(index)` is deprecated. Use `blocks.delete(id)` instead
 
 ### 2.29.1
 

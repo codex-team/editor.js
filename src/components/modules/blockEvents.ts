@@ -64,7 +64,7 @@ export default class BlockEvents extends Module {
      * @todo probably using "beforeInput" event would be better here
      */
     if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
-      this.slashPressed();
+      this.slashPressed(event);
     }
 
     /**
@@ -237,8 +237,10 @@ export default class BlockEvents extends Module {
 
   /**
    * '/' keydown inside a Block
+   *
+   * @param event - keydown
    */
-  private slashPressed(): void {
+  private slashPressed(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock;
     const canOpenToolbox = currentBlock.isEmpty;
 
@@ -252,6 +254,13 @@ export default class BlockEvents extends Module {
     if (!canOpenToolbox) {
       return;
     }
+
+    /**
+     * The Toolbox will be opened with immediate focus on the Search input,
+     * and '/' will be added in the search input by default — we need to prevent it and add '/' manually
+     */
+    event.preventDefault();
+    this.Editor.Caret.insertContentAtCaretPosition('/');
 
     this.activateToolbox();
   }
@@ -283,8 +292,12 @@ export default class BlockEvents extends Module {
 
     /**
      * Allow to create line breaks by Shift+Enter
+     *
+     * Note. On iOS devices, Safari automatically treats enter after a period+space (". |") as Shift+Enter
+     * (it used for capitalizing of the first letter of the next sentence)
+     * We don't need to lead soft line break in this case — new block should be created
      */
-    if (event.shiftKey) {
+    if (event.shiftKey && !_.isIosDevice) {
       return;
     }
 
@@ -388,7 +401,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const bothBlocksMergeable = areBlocksMergeable(currentBlock, previousBlock);
+    const bothBlocksMergeable = areBlocksMergeable(previousBlock, currentBlock);
 
     /**
      * If Blocks could be merged, do it
@@ -492,7 +505,7 @@ export default class BlockEvents extends Module {
   private mergeBlocks(targetBlock: Block, blockToMerge: Block): void {
     const { BlockManager, Caret, Toolbar } = this.Editor;
 
-    Caret.createShadow(targetBlock.pluginsContent);
+    Caret.createShadow(targetBlock.lastInput);
 
     BlockManager
       .mergeBlocks(targetBlock, blockToMerge)

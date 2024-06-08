@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.30.0-rc.2",
+  "version": "2.30.0-rc.10",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -56,6 +56,7 @@
     "cypress-intellij-reporter": "^0.0.7",
     "cypress-plugin-tab": "^1.0.5",
     "cypress-terminal-report": "^5.3.2",
+    "cypress-vite": "^1.5.0",
     "eslint": "^8.37.0",
     "eslint-config-codex": "^1.7.1",
     "eslint-plugin-chai-friendly": "^0.7.2",

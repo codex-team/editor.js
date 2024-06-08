@@ -4,6 +4,7 @@ import { BlockHovered, BlockHoveredPayload } from './BlockHovered';
 import { FakeCursorAboutToBeToggled, FakeCursorAboutToBeToggledPayload } from './FakeCursorAboutToBeToggled';
 import { FakeCursorHaveBeenSet, FakeCursorHaveBeenSetPayload } from './FakeCursorHaveBeenSet';
 import { SelectionChanged, SelectionChangedPayload } from './SelectionChanged';
+import { EditorMobileLayoutToggled, EditorMobileLayoutToggledPayload } from './EditorMobileLayoutToggled';
 
 /**
  * Events fired by Editor Event Dispatcher
@@ -13,7 +14,8 @@ export {
   BlockChanged,
   FakeCursorAboutToBeToggled,
   FakeCursorHaveBeenSet,
-  SelectionChanged
+  SelectionChanged,
+  EditorMobileLayoutToggled
 };
 
 /**
@@ -26,4 +28,5 @@ export interface EditorEventMap {
   [FakeCursorAboutToBeToggled]: FakeCursorAboutToBeToggledPayload;
   [FakeCursorHaveBeenSet]: FakeCursorHaveBeenSetPayload;
   [SelectionChanged]: SelectionChangedPayload;
+  [EditorMobileLayoutToggled]: EditorMobileLayoutToggledPayload
 }
