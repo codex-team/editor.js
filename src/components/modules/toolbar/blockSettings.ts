@@ -12,7 +12,6 @@ import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
 import { IconReplace } from '@codexteam/icons';
-import { getConvertToItems } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -213,7 +212,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    const convertToItems = await getConvertToItems(currentBlock, this.Editor);
+    const convertToItems = await this.Editor.Conversion.getItemsForBlock(currentBlock);
 
     if (convertToItems.length > 0) {
       items.push({

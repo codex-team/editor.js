@@ -1,8 +1,7 @@
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
-import { EditorModules } from '../../types-internal/editor-modules';
 import type Block from '../block';
-import { isFunction, isString, log, equals, isEmpty } from '../utils';
+import { isFunction, isString, log, equals } from '../utils';
 import { PopoverItemDefaultParams } from './popover';
 
 
@@ -139,82 +138,11 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
 }
 
 /**
- * Returns list of all available conversion menu items
- *
- * @param currentBlock - current block we need to get convetion data for
- * @param editorModules - access to editor modules
- */
-export async function getConvertToItems(currentBlock: Block, editorModules: EditorModules): Promise<PopoverItemDefaultParams[]> {
-  const conversionEntries = Array.from(editorModules.Tools.blockTools.entries());
-
-  const resultItems: PopoverItemDefaultParams[] = [];
-
-  const blockData = await currentBlock.data;
-
-  conversionEntries.forEach(([toolName, tool]) => {
-    const conversionConfig = tool.conversionConfig;
-
-    /**
-     * Skip tools without «import» rule specified
-     */
-    if (!conversionConfig || !conversionConfig.import) {
-      return;
-    }
-
-    tool.toolbox?.forEach((toolboxItem) => {
-      /**
-       * Skip tools that don't pass 'toolbox' property
-       */
-      if (isEmpty(toolboxItem) || !toolboxItem.icon) {
-        return;
-      }
-
-      let shouldSkip = false;
-
-      if (toolboxItem.data !== undefined) {
-        /**
-         * When a tool has several toolbox entries, we need to make sure we do not add
-         * toolbox item with the same data to the resulting array. This helps exclude duplicates
-         */
-        const hasSameData = isSameBlockData(toolboxItem.data, blockData);
-
-        shouldSkip = hasSameData;
-      } else {
-        shouldSkip = toolName === currentBlock.name;
-      }
-
-
-      if (shouldSkip) {
-        return;
-      }
-
-      resultItems.push({
-        icon: toolboxItem.icon,
-        title: toolboxItem.title,
-        name: toolName,
-        closeOnActivate: true,
-        onActivate: async () => {
-          const { BlockManager, BlockSelection, Caret } = editorModules;
-
-          const newBlock = await BlockManager.convert(currentBlock, toolName, toolboxItem.data);
-
-          BlockSelection.clearSelection();
-
-          Caret.setToBlock(newBlock, Caret.positions.END);
-        },
-      });
-    });
-  });
-
-  return resultItems;
-}
-
-/**
  * Returns active item within toolbox config of the specified block
  *
  * @param block - block to get active toolbox item for
  */
-export async function getBlockActiveToolboxEntry(block: Block): Promise<PopoverItemDefaultParams> {
+export async function getActiveToolboxEntryOfBlock(block: Block): Promise<PopoverItemDefaultParams> {
   const toolboxItems = block.tool.toolbox;
 
   /**
