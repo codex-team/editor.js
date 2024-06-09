@@ -1,6 +1,7 @@
 import { PopoverDesktop as Popover, PopoverItemType } from '../../../../src/components/utils/popover';
 import { PopoverItemParams } from '../../../../types';
 import { TunesMenuConfig } from '../../../../types/tools';
+import Header from '@editorjs/header';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -464,7 +465,6 @@ describe('Popover', () => {
       .should('be.visible');
   });
 
-
   it('should display children items, back button and item header and correctly switch between parent and child states (mobile)', () => {
     /** Tool class to test how it is displayed inside block tunes popover */
     class TestTune {
@@ -876,5 +876,170 @@ describe('Popover', () => {
       .get('.ce-popover__container')
       .get('[data-item-name="test-item-2"].ce-popover-item--focused')
       .should('exist');
+  });
+
+  describe('Inline Popover', () => {
+    it('should open nested popover on click instead of hover', () => {
+      cy.createEditor({
+        tools: {
+          header: {
+            class: Header,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open Inline Toolbar */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('block');
+
+      /** Hover Convert To item which has nested popover */
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .trigger('mouseover');
+
+      /** Check nested popover didn't open */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested .ce-popover__container')
+        .should('not.exist');
+
+      /** Click Convert To item which has nested popover */
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .click();
+
+      /** Check nested popover opened */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested .ce-popover__container')
+        .should('exist');
+    });
+
+    it('should support keyboard nevigation between items', () => {
+      cy.createEditor({
+        tools: {
+          header: {
+            class: Header,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open Inline Toolbar */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('block');
+
+      /** Check Inline Popover opened */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .should('be.visible');
+
+      /** Check first item is NOT focused */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .get('[data-item-name="convert-to"].ce-popover-item--focused')
+        .should('not.exist');
+
+      /** Press Tab */
+      cy.tab();
+
+      /** Check first item became focused after tab */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .get('[data-item-name="convert-to"].ce-popover-item--focused')
+        .should('exist');
+
+      /** Check second item is NOT focused */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .get('[data-item-name="link"] .ce-popover-item--focused')
+        .should('not.exist');
+
+      /** Press Tab */
+      cy.tab();
+
+      /** Check second item became focused after tab */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .get('[data-item-name="link"] .ce-popover-item--focused')
+        .should('exist');
+    });
+
+    it.only('should allow to reach nested popover via keyboard', () => {
+      cy.createEditor({
+        tools: {
+          header: {
+            class: Header,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block text',
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open Inline Toolbar */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('block');
+
+      /** Check Inline Popover opened */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover__container')
+        .should('be.visible');
+
+      /** Press Tab */
+      cy.tab();
+
+      /** Press Tab */
+      cy.get('[data-item-name="convert-to"]')
+        .type('{enter}');
+
+      /** Check Inline Popover opened */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-inline-toolbar .ce-popover--nested .ce-popover__container')
+        .should('be.visible');
+
+      /** Check first item is NOT focused */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover__container')
+        .get('[data-item-name="header"].ce-popover-item--focused')
+        .should('not.exist');
+
+      /** Press Tab */
+      // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+      cy.get('body').tab();
+
+      /** Check first item is focused */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover__container')
+        .get('[data-item-name="header"].ce-popover-item--focused')
+        .should('exist');
+    });
   });
 });

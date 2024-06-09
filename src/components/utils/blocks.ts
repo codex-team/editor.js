@@ -25,7 +25,7 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
  * Checks that all the properties of the first block data exist in second block data with the same values.
  *
  * Example:
- * 
+ *
  * data1 = { level: 1 }
  *
  * data2 = {
