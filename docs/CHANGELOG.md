@@ -19,6 +19,8 @@
 - `New` – *Menu Config* – New item type – HTML
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
+- `New` – Inline Toolbar has new look 💅
+- `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
 
 ### 2.29.1
 
