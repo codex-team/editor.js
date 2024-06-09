@@ -3,7 +3,7 @@ import { PopoverAbstract } from './popover-abstract';
 import { PopoverItem, PopoverItemRenderParamsMap, PopoverItemSeparator, WithChildren, css as popoverItemCls } from './components/popover-item';
 import { PopoverEvent, PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
-import { css } from './popover.const';
+import { CSSVariables, css } from './popover.const';
 import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
 import { cacheable } from '../../utils';
 import { PopoverItemDefault } from './components/popover-item';
@@ -127,7 +127,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Open popover
    */
   public show(): void {
-    this.nodes.popover.style.setProperty('--popover-height', this.renderParams.size.height + 'px');
+    this.nodes.popover.style.setProperty(CSSVariables.PopoverHeight, this.renderParams.size.height + 'px');
 
     if (!this.shouldOpenBottom) {
       this.nodes.popover.classList.add(css.popoverOpenTop);
@@ -213,7 +213,7 @@ export class PopoverDesktop extends PopoverAbstract {
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
 
-    nestedPopoverEl.style.setProperty('--trigger-item-top', topOffset + 'px');
+    nestedPopoverEl.style.setProperty(CSSVariables.TriggerItemTop, topOffset + 'px');
   }
 
   /**
@@ -370,7 +370,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.setTriggerItemPositionProperty(nestedPopoverEl, item);
 
-    nestedPopoverEl.style.setProperty('--nesting-level', this.nestedPopover.nestingLevel.toString());
+    nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
     nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
 
     this.nestedPopover.show();

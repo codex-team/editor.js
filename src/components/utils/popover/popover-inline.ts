@@ -2,7 +2,7 @@ import { isMobileScreen } from '../../utils';
 import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
-import { css } from './popover.const';
+import { CSSVariables, css } from './popover.const';
 import { PopoverParams } from './popover.types';
 
 /**
@@ -82,7 +82,7 @@ export class PopoverInline extends PopoverDesktop {
      */
     if (this.nestingLevel === 0) {
       this.nodes.popover.style.setProperty(
-        '--inline-popover-width',
+        CSSVariables.InlinePopoverWidth,
         this.renderParams.size.width + 'px'
       );
     }
@@ -112,7 +112,7 @@ export class PopoverInline extends PopoverDesktop {
     const totalLeftOffset = this.offsetLeft + itemOffsetLeft;
 
     nestedPopoverEl.style.setProperty(
-      '--trigger-item-left',
+      CSSVariables.TriggerItemLeft,
       totalLeftOffset + 'px'
     );
   }
