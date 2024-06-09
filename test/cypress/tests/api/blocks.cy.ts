@@ -179,7 +179,7 @@ describe('api.blocks', () => {
       // Check if it is updated
       cy.get<EditorJS>('@editorInstance')
         .then(async (editor) => {
-          await editor.blocks.update(editor.blocks.getBlockByIndex(0).id, {}, {
+          await editor.blocks.update(editor.blocks.getBlockByIndex(0).id, null, {
             exampleTune: 'test',
           });
           const data = await editor.save();

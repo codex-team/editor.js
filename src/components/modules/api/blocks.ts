@@ -4,8 +4,8 @@ import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
-import { capitalize } from './../../utils';
-import {BlockTuneData} from "../../../../types/block-tunes/block-tune-data";
+import { capitalize } from '../../utils';
+import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 
 /**
  * @class BlocksAPI
@@ -303,10 +303,10 @@ export default class BlocksAPI extends Module {
    * Updates block data by id
    *
    * @param id - id of the block to update
-   * @param data - the new data
+   * @param data - (optional) the new data
    * @param tunes - (optional) tune data
    */
-  public update = async (id: string, data: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<BlockAPIInterface> => {
+  public update = async (id: string, data?: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<BlockAPIInterface> => {
     const { BlockManager } = this.Editor;
     const block = BlockManager.getBlockById(id);
 
