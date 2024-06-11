@@ -4,6 +4,7 @@
 
 - `New` – Block Tunes now supports nesting items
 - `New` – Block Tunes now supports separator items
+- `Improvment` - The API `blocks.update` now accepts `tunes` data as optional third argument and makes `data` - block data as optional.
 - `New` – "Convert to" control is now also available in Block Tunes
 - `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
