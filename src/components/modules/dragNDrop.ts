@@ -70,6 +70,7 @@ export default class DragNDrop extends Module {
     const {
       BlockManager,
       Paste,
+      Caret,
     } = this.Editor;
 
     dropEvent.preventDefault();
