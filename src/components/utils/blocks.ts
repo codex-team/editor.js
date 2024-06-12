@@ -3,6 +3,7 @@ import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
 import { isFunction, isString, log, equals } from '../utils';
 import { PopoverItemDefaultParams } from './popover';
+import { isToolConvertable } from './tools';
 
 
 /**
@@ -12,13 +13,7 @@ import { PopoverItemDefaultParams } from './popover';
  * @param direction - export for block to merge from, import for block to merge to
  */
 export function isBlockConvertable(block: Block, direction: 'export' | 'import'): boolean {
-  if (!block.tool.conversionConfig) {
-    return false;
-  }
-
-  const conversionProp = block.tool.conversionConfig[direction];
-
-  return isFunction(conversionProp) || isString(conversionProp);
+  return isToolConvertable(block.tool, direction);
 }
 
 /**

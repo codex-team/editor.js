@@ -3,11 +3,12 @@ import Block from '../../block';
 import { isEmpty } from '../../utils';
 import { isSameBlockData } from '../../utils/blocks';
 import { PopoverItemDefaultParams } from '../../utils/popover';
+import { isToolConvertable } from '../../utils/tools';
 
 /**
  * Block Converter
  *
- * @todo Make the Conversion Toolbar no-module but a standalone class, like Toolbox
+ * @todo figure out how to get rid of this module
  */
 export default class Conversion extends Module {
   /**
@@ -23,18 +24,16 @@ export default class Conversion extends Module {
     const blockData = await block.data;
 
     conversionEntries.forEach(([toolName, tool]) => {
-      const conversionConfig = tool.conversionConfig;
-
       /**
        * Skip tools without «import» rule specified
        */
-      if (!conversionConfig || !conversionConfig.import) {
+      if (!isToolConvertable(tool, 'import')) {
         return;
       }
 
       tool.toolbox?.forEach((toolboxItem) => {
         /**
-         * Skip tools that don't pass 'toolbox' property
+         * Skip items that don't pass 'toolbox' property or do not have an icon
          */
         if (isEmpty(toolboxItem) || !toolboxItem.icon) {
           return;
@@ -53,7 +52,6 @@ export default class Conversion extends Module {
         } else {
           shouldSkip = toolName === block.name;
         }
-
 
         if (shouldSkip) {
           return;
