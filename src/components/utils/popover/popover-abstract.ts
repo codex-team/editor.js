@@ -95,7 +95,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     this.nodes.popoverContainer.appendChild(this.nodes.items);
 
     this.listeners.on(this.nodes.popoverContainer, 'click', (event: Event) => this.handleClick(event));
-    this.listeners.on(this.nodes.popoverContainer, 'mousedown', (event: Event) => this.handleMousedown(event));
 
     this.nodes.popover = Dom.make('div', [
       css.popover,
@@ -230,18 +229,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     }
 
     this.handleItemClick(item);
-  }
-
-  /**
-   * Calls .preventDefault() on 'mousedown' event to prevent unwanted focus loss in safari
-   *
-   * @param event - mousedown event
-   */
-  private handleMousedown(event: Event): void {
-    /**
-     * preventDefault() is needed to prevent unwanted focus loss in safari
-     */
-    event.preventDefault();
   }
 
   /**

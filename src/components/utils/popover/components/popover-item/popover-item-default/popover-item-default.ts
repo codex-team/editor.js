@@ -146,7 +146,11 @@ export class PopoverItemDefault extends PopoverItem {
    * @param renderParams - popover item render params
    */
   private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]): HTMLElement {
-    const el = Dom.make('div', css.container);
+    /** 
+     * We use button instead of div here to fix bug associated with focus loss (which leads to selection change) on click in safari 
+     * @todo figure out better way to solve the issue
+     */
+    const el = Dom.make('button', css.container);
 
     if (params.name) {
       el.dataset.itemName = params.name;

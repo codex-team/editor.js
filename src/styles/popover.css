@@ -205,6 +205,8 @@
   padding: var(--item-padding);
   color: var(--color-text-primary);
   user-select: none;
+  border: none;
+  background: transparent;
 
   @media (--mobile) {
     padding: 4px;
