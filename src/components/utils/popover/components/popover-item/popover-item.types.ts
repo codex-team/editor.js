@@ -202,7 +202,7 @@ type PopoverItemHintRenderParams = {
    * Used to disable hints on mobile popover
    */
   enabled?: boolean;
-}
+};
 
 
 /**

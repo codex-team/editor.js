@@ -1,5 +1,5 @@
-import BlockTool from "../tools/block";
-import { isFunction, isString } from "../utils";
+import BlockTool from '../tools/block';
+import { isFunction, isString } from '../utils';
 
 /**
  * Check if tool has valid conversion config for export or import.

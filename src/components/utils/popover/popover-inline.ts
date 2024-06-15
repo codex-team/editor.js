@@ -29,8 +29,9 @@ export class PopoverInline extends PopoverDesktop {
       },
       {
         [PopoverItemType.Default]: {
-           /** 
-           * We use button instead of div here to fix bug associated with focus loss (which leads to selection change) on click in safari 
+          /**
+           * We use button instead of div here to fix bug associated with focus loss (which leads to selection change) on click in safari
+           *
            * @todo figure out better way to solve the issue
            */
           wrapperTag: 'button',
