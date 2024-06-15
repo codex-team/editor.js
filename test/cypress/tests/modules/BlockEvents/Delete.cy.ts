@@ -19,6 +19,125 @@ function createEditorWithTextBlocks(textBlocks: string[]): void {
 }
 
 describe('Delete keydown', function () {
+  describe('isAtEndOfInput whitespaces handling', function () {
+    it('|&nbsp; — should delete visible space', function () {
+      createEditorWithTextBlocks([
+        '1&nbsp;',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}') // delete visible space
+        .type('{del}') // merge with next block
+
+        .should('have.text', '12');
+    });
+    it('"| " — should ignore invisible space after caret and handle it like regular delete case (merge with next)', function () {
+      createEditorWithTextBlocks([
+        '1 ',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '1 2');
+    });
+    it('|<b></b> — should ignore empty tags after caret and handle it like regular delete case (merge)', function () {
+      createEditorWithTextBlocks([
+        '1<b></b>',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+    it('|&nbsp;<b></b> — should remove visible space and ignore empty tag', function () {
+      createEditorWithTextBlocks([
+        '1&nbsp;<b></b>',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}') // remove nbsp
+        .type('{del}'); // ignore empty tag and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+
+    it('|<b></b>&nbsp; — should remove visible space and ignore empty tag', function () {
+      createEditorWithTextBlocks([
+        '1<b></b>&nbsp;',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}') // remove nbsp
+        .type('{del}'); // ignore empty tag and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+
+    it('"|&nbsp; " — should remove visible space and ignore space', function () {
+      createEditorWithTextBlocks([
+        '1&nbsp; ',
+        '2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .click()
+        .type('{moveToStart}')
+        .type('{rightArrow}') // set caret after "1";
+        .type('{del}') // remove nbsp
+        .type('{del}'); // ignore regular space and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+  });
   it('should just delete chars (native behaviour) when some fragment is selected', function () {
     createEditorWithTextBlocks([
       'The first block',

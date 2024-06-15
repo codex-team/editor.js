@@ -23,6 +23,122 @@ function createEditorWithTextBlocks(textBlocks: string[]): Chainable<EditorJS> {
 }
 
 describe('Backspace keydown', function () {
+  describe.only('isAtStartOfInput whitespaces handling', function () {
+    it('&nbsp;| — should delete visible space', function () {
+      createEditorWithTextBlocks([
+        '1',
+        '&nbsp;2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '2');
+    });
+    it(' | — should ignore invisible space before caret and handle it like regular backspace case (merge with previous)', function () {
+      createEditorWithTextBlocks([
+        '1',
+        ' 2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+    it('<b></b>| — should ignore empty tags before caret and handle it like regular backspace case (merge with previous)', function () {
+      createEditorWithTextBlocks([
+        '1',
+        '<b></b>2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+    it('<b></b>&nbsp;| — should remove visible space and ignore empty tag', function () {
+      createEditorWithTextBlocks([
+        '1',
+        '<b></b>&nbsp;2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}') // remove nbsp
+        .type('{backspace}'); // ignore empty tag and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+
+    it('&nbsp;<b></b>| — should remove visible space and ignore empty tag', function () {
+      createEditorWithTextBlocks([
+        '1',
+        '<b></b>&nbsp;2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}') // remove nbsp
+        .type('{backspace}') // ignore empty tag and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+
+    it(' &nbsp;| — should remove visible space and ignore space', function () {
+      createEditorWithTextBlocks([
+        '1',
+        ' &nbsp;2',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{leftArrow}') // set caret before "2"
+        .type('{backspace}') // remove nbsp
+        .type('{backspace}'); // ignore regular space and merge
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '12');
+    });
+  });
+
   it('should just delete chars (native behaviour) when some fragment is selected', function () {
     createEditorWithTextBlocks([
       'The first block',

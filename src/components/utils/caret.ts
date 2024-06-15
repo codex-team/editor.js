@@ -25,7 +25,7 @@ export function isAtStartOfInput(input: HTMLElement): boolean {
 
   const firstNode = $.getDeepestNode(input);
 
-  if (firstNode === null) {
+  if (firstNode === null || $.isEmpty(input)) {
     return true;
   }
 
@@ -34,6 +34,10 @@ export function isAtStartOfInput(input: HTMLElement): boolean {
    */
   if ($.isNativeInput(firstNode)) {
     return (firstNode as HTMLInputElement).selectionEnd === 0;
+  }
+
+  if ($.isEmpty(input)) {
+    return true;
   }
 
   const [ caretNode, caretOffset ] = getCaretNodeAndOffset();
@@ -118,9 +122,11 @@ export function getCaretNodeAndOffset(): [ Node, number ] {
    * We need to return child with focusOffset index as a new focusNode.
    *
    * <div>|hello</div> <---- Selection references to <div> instead of text node
+   *
+   *
    */
-  if (focusNode.nodeType !== Node.TEXT_NODE) {
-    focusNode = focusNode.childNodes[focusOffset];
+  if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length > 0) {
+    focusNode = focusNode.childNodes[focusOffset] ?? null;
     focusOffset = 0;
   }
 
