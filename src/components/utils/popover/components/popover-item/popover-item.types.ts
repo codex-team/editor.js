@@ -21,7 +21,14 @@ export interface PopoverItemChildren {
   /**
    * True if children items should be searchable
    */
- searchable?: boolean;
+  searchable?: boolean;
+
+  /**
+   * True if popover with children should be displayed instantly and not after item click/hover.
+   * False by default.
+   * Now is used only in the inline popover.
+   */
+  isExpanded?: boolean;
 
  /**
   * Items of nested popover that should be open on the current item hover/click (depending on platform)
@@ -68,7 +75,7 @@ export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: PopoverItemType.Separator
+  type: PopoverItemType.Separator;
 }
 
 /**

@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverEvent, PopoverItemParams, PopoverItemType } from '../../utils/popover';
+import { Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { getActiveToolboxEntryOfBlock } from '../../utils/blocks';
 
@@ -427,33 +427,60 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         } as PopoverItemParams;
 
         if ($.isElement(item)) {
+          /**
+           * Deprecated way to add custom html elements to the Inline Toolbar
+           */
           popoverItem = {
             ...popoverItem,
-            type: PopoverItemType.Html,
             element: item,
+            type: PopoverItemType.Html,
+          };
+
+          /**
+           * If tool specifies actions in deprecated manner, append them as children
+           */
+          if (_.isFunction(instance.renderActions)) {
+            const actions = instance.renderActions();
+
+            (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
+              isExpanded: instance.checkState(SelectionUtils.get()),
+              items: [
+                {
+                  type: PopoverItemType.Html,
+                  element: actions,
+                },
+              ],
+            };
+          } else {
+            instance.checkState(SelectionUtils.get());
+          }
+        } else if (item.type === PopoverItemType.Html) {
+          /**
+           * Actual way to add custom html elements to the Inline Toolbar
+           */
+          popoverItem = {
+            ...popoverItem,
+            ...item,
+            type: PopoverItemType.Html,
+          };
+        } else if (item.type === PopoverItemType.Separator) {
+          /**
+           * Separator item
+           */
+          popoverItem = {
+            type: PopoverItemType.Separator,
           };
         } else {
+          /**
+           * Default item
+           */
           popoverItem = {
             ...popoverItem,
-            ...(item as PopoverItemParams),
+            ...item,
+            type: PopoverItemType.Default,
+            isActive: instance.checkState(SelectionUtils.get()),
           };
         }
-
-        if (_.isFunction(instance.renderActions)) {
-          const actions = instance.renderActions();
-
-          popoverItem.children = {
-            items: [
-              {
-                type: PopoverItemType.Html,
-                element: actions,
-              },
-            ],
-          };
-        }
-
-        /** Set isActive after renderAtions is called */
-        popoverItem.isActive = instance.checkState(SelectionUtils.get());
 
         popoverItems.push(popoverItem);
       });

@@ -51,7 +51,7 @@ export abstract class PopoverItem {
    * Returns item children that are represented as popover items
    */
   public get children(): PopoverItemParams[] {
-    return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
+    return this.params !== undefined && 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
   }
 
   /**
@@ -62,23 +62,30 @@ export abstract class PopoverItem {
   }
 
   /**
+   * Returns true if item children should be expanded instantly after popover is opened and not on item click/hover
+   */
+  public get isChildrenExpanded(): boolean {
+    return this.params !== undefined && 'children' in this.params && this.params.children?.isExpanded === true;
+  }
+
+  /**
    * Returns true if item has children that should be searchable
    */
   public get isChildrenSearchable(): boolean {
-    return 'children' in this.params && this.params.children?.searchable === true;
+    return this.params !== undefined && 'children' in this.params && this.params.children?.searchable === true;
   }
 
   /**
    * True if popover should close once item is activated
    */
   public get closeOnActivate(): boolean | undefined {
-    return this.params.closeOnActivate;
+    return this.params !== undefined && 'closeOnActivate' in this.params && this.params.closeOnActivate;
   }
 
   /**
    * True if item is active
    */
   public get isActive(): boolean {
-    return this.params.isActive;
+    return this.params !== undefined && 'isActive' in this.params && this.params.isActive === true;
   }
 }
