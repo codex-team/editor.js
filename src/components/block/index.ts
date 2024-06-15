@@ -96,12 +96,6 @@ interface BlockEvents {
 }
 
 /**
- * Block can contain one or more inputs.
- * Inputs can be native inputs or contenteditable elements.
- */
-export type BlockInput = HTMLElement;
-
-/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
@@ -161,7 +155,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Cached inputs
    */
-  private cachedInputs: BlockInput[] = [];
+  private cachedInputs: HTMLElement[] = [];
 
   /**
    * We'll store a reference to the tool's rendered element to access it later
@@ -274,7 +268,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
    */
-  public get inputs(): BlockInput[] {
+  public get inputs(): HTMLElement[] {
     /**
      * Return from cache if existed
      */
@@ -302,7 +296,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Return current Tool`s input
    */
-  public get currentInput(): BlockInput {
+  public get currentInput(): HTMLElement {
     return this.inputs[this.inputIndex];
   }
 
@@ -311,7 +305,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param element - HTML Element to set as current input
    */
-  public set currentInput(element: BlockInput) {
+  public set currentInput(element: HTMLElement) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -322,14 +316,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Return first Tool`s input
    */
-  public get firstInput(): BlockInput {
+  public get firstInput(): HTMLElement {
     return this.inputs[0];
   }
 
   /**
    * Return first Tool`s input
    */
-  public get lastInput(): BlockInput {
+  public get lastInput(): HTMLElement {
     const inputs = this.inputs;
 
     return inputs[inputs.length - 1];
@@ -338,14 +332,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Return next Tool`s input or undefined if it doesn't exist
    */
-  public get nextInput(): BlockInput {
+  public get nextInput(): HTMLElement {
     return this.inputs[this.inputIndex + 1];
   }
 
   /**
    * Return previous Tool`s input or undefined if it doesn't exist
    */
-  public get previousInput(): BlockInput {
+  public get previousInput(): HTMLElement {
     return this.inputs[this.inputIndex - 1];
   }
 

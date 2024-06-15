@@ -7,6 +7,7 @@ import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 import type Block from '../block';
 import { areBlocksMergeable } from '../utils/blocks';
+import * as caretUtils from '../utils/caret';
 
 /**
  *
@@ -302,14 +303,14 @@ export default class BlockEvents extends Module {
     /**
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    if (this.Editor.Caret.isAtStart(newCurrent.currentInput) && !this.Editor.BlockManager.currentBlock.hasMedia) {
+    if (caretUtils.isAtStartOfInput(newCurrent.currentInput) && !this.Editor.BlockManager.currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
 
     /**
      * If caret is at very end of the block, just append the new block without splitting
      * to prevent unnecessary dom mutation observing
      */
-    } else if (this.Editor.Caret.isAtEnd) {
+    } else if (caretUtils.isAtEndOfInput(newCurrent.currentInput)) {
       newCurrent = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
       /**
@@ -348,7 +349,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the start, leave native behaviour
      */
-    if (!Caret.isAtStart(currentBlock.currentInput)) {
+    if (!caretUtils.isAtStartOfInput(currentBlock.currentInput)) {
       return;
     }
     /**
@@ -431,7 +432,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the end, leave native behaviour
      */
-    if (!Caret.isAtEnd) {
+    if (!caretUtils.isAtEndOfInput(currentBlock.currentInput)) {
       return;
     }
 
@@ -594,13 +595,13 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    const shouldEnableCBS = this.Editor.Caret.isAtStart(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
+    // const shouldEnableCBS = caretUtils.isAtStartOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
 
-    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
-      this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
+    // if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+    //   this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
 
-      return;
-    }
+    //   return;
+    // }
 
     const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
     const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();

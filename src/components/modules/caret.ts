@@ -1,7 +1,8 @@
 import Selection from '../selection';
 import Module from '../__module';
-import Block, { type BlockInput } from '../block';
-import $, { isCollapsedWhitespaces } from '../dom';
+import Block from '../block';
+import * as caretUtils from '../utils/caret';
+import $  from '../dom';
 
 /**
  * Caret
@@ -31,230 +32,6 @@ export default class Caret extends Module {
     return {
       shadowCaret: 'cdx-shadow-caret',
     };
-  }
-
-  /**
-   * Checks if caret is at the start of the passed Block's current input
-   *
-   * Cases:
-   *  Native input:
-   *   - if offset is 0, caret is at the start
-   *  Contenteditable:
-   *   - caret at the first text node and offset is 0 — caret is at the start
-   *   - caret not at the first text node — we need to check left siblings for emptiness
-   *   - caret offset > 0, but all left part is visible (nbsp) — caret is not at the start
-   *   - caret offset > 0, but all left part is invisible (whitespaces) — caret is at the start
-   *
-   * @param input - Block instance to check caret position. If block contains several inputs, it will check the current input
-   */
-  public isAtStart(input: BlockInput): boolean {
-    /** @tood test and move out */
-    // /**
-    //  * If Block does not contain inputs, treat caret as "at start"
-    //  */
-    // if (!block.focusable) {
-    //   return true;
-    // }
-
-    const firstNode = $.getDeepestNode(input);
-
-    if (firstNode === null) {
-      return true;
-    }
-
-    /**
-     * In case of native input, we simply check if offset is 0
-     */
-    if ($.isNativeInput(firstNode)) {
-      return (firstNode as HTMLInputElement).selectionEnd === 0;
-    }
-
-    const selection = Selection.get();
-
-    /**
-     * Case when selection have been cleared programmatically, for example after CBS
-     */
-    if (!selection.anchorNode) {
-      return false;
-    }
-
-    let focusNode = selection.focusNode;
-
-    /**
-     * If caret was set by external code, it might be set to text node wrapper.
-     * <div>|hello</div> <---- Selection references to <div> instead of text node
-     *
-     * In this case, anchor node has ELEMENT_NODE node type.
-     * Anchor offset shows amount of children between start of the element and caret position.
-     *
-     * So we use child with focusOffset index as new anchorNode.
-     */
-    let focusOffset = selection.focusOffset;
-
-    if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
-      if (focusNode.childNodes[focusOffset]) {
-        focusNode = focusNode.childNodes[focusOffset];
-        focusOffset = 0;
-      } else {
-        focusNode = focusNode.childNodes[focusOffset - 1];
-        focusOffset = focusNode.textContent.length;
-      }
-    }
-
-    /**
-     * A fragment of text before the caret position
-     * Will be checked for visual-emptiness
-     */
-    const textBeforeCaret = focusNode.textContent.substring(0, focusOffset);
-
-    /**
-     * In case of
-     * <div contenteditable>
-     *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
-     *     |adaddad         <-- focus node
-     * </div>
-     *
-     * We need to check:
-     * - all left siblings are empty
-     * - there is not visible chars before the caret
-     */
-    if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'left');
-      const allSiblingsAreInvisible = leftSiblings.every((node) => {
-        /**
-         * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
-         *
-         * @see https://github.com/codex-team/editor.js/issues/726
-         * We need to allow to delete such line breaks, so in this case caret IS NOT AT START
-         */
-        const regularLineBreak = $.isLineBreakTag(node);
-        /**
-         * Workaround SHIFT+ENTER in Safari, that creates <div><br></div> instead of <br>
-         */
-        const lineBreakInSafari = node.children.length === 1 && $.isLineBreakTag(node.children[0] as HTMLElement);
-        const isLineBreak = regularLineBreak || lineBreakInSafari;
-
-        return $.isEmpty(node) && !isLineBreak;
-      });
-
-      const noVisibleTextBeforeCaret = isCollapsedWhitespaces(textBeforeCaret);
-
-      return allSiblingsAreInvisible && noVisibleTextBeforeCaret;
-
-    /**
-     * If first note is not empty and it is not a focused node, then caret is not at the start
-     */
-    } else if (focusNode !== firstNode) {
-      return false;
-    }
-
-    /**
-     * The simplest case: caret at the 0 position
-     */
-    if (textBeforeCaret.length === 0) {
-      return true;
-    }
-
-    /**
-     * Corner cases: there are whitespaces before the caret  " |Hello"
-     *
-     * There are two types of whitespaces in HTML:
-     *
-     * - Visible (&nbsp;) — if exists, caret is not at the start
-     * - Invisible (regular trailing spaces, tabs, etc) - if exist, caret is at the start
-     */
-    const noVisibleTextBeforeCaret = isCollapsedWhitespaces(textBeforeCaret);
-
-    return noVisibleTextBeforeCaret;
-  }
-
-  /**
-   * Get's deepest last node and checks if offset is last node text length
-   *
-   * @returns {boolean}
-   */
-  public get isAtEnd(): boolean {
-    const { currentBlock } = this.Editor.BlockManager;
-
-    /**
-     * If Block does not contain inputs, treat caret as "at end"
-     */
-    if (!currentBlock.focusable) {
-      return true;
-    }
-
-    const selection = Selection.get();
-    let focusNode = selection.focusNode;
-
-    const lastNode = $.getDeepestNode(currentBlock.currentInput, true);
-
-    /** In case lastNode is native input */
-    if ($.isNativeInput(lastNode)) {
-      return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
-    }
-
-    /** Case when selection have been cleared programmatically, for example after CBS */
-    if (!selection.focusNode) {
-      return false;
-    }
-
-    /**
-     * If caret was set by external code, it might be set to text node wrapper.
-     * <div>hello|</div> <---- Selection references to <div> instead of text node
-     *
-     * In this case, anchor node has ELEMENT_NODE node type.
-     * Anchor offset shows amount of children between start of the element and caret position.
-     *
-     * So we use child with focusOffset - 1 as new focusNode.
-     */
-    let focusOffset = selection.focusOffset;
-
-    if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
-      if (focusNode.childNodes[focusOffset - 1]) {
-        focusNode = focusNode.childNodes[focusOffset - 1];
-        focusOffset = focusNode.textContent.length;
-      } else {
-        focusNode = focusNode.childNodes[0];
-        focusOffset = 0;
-      }
-    }
-
-    /**
-     * In case of
-     * <div contenteditable>
-     *     adaddad|         <-- anchor node
-     *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
-     * </div>
-     */
-    if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
-      const rightSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'right');
-      const nothingAtRight = rightSiblings.every((node, i) => {
-        /**
-         * If last right sibling is BR isEmpty returns false, but there actually nothing at right
-         */
-        const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
-
-        return isLastBR || ($.isEmpty(node) && !$.isLineBreakTag(node));
-      });
-
-      if (nothingAtRight && focusOffset === focusNode.textContent.length) {
-        return true;
-      }
-    }
-
-    /**
-     * Workaround case:
-     * hello |     <--- anchorOffset will be 5, but textContent.length will be 6.
-     * Why not regular .trim():
-     *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
-     */
-    const rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
-
-    /**
-     * We use >= comparison for case:
-     * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
-     */
-    return focusNode === lastNode && focusOffset >= rightTrimmedText.length;
   }
 
   /**
@@ -456,8 +233,8 @@ export default class Caret extends Module {
   public navigateNext(force = false): boolean {
     const { BlockManager } = this.Editor;
     const { currentBlock, nextBlock } = BlockManager;
-    const { nextInput } = currentBlock;
-    const isAtEnd = this.isAtEnd;
+    const { nextInput, currentInput } = currentBlock;
+    const isAtEnd = caretUtils.isAtEndOfInput(currentInput);
     let blockToNavigate = nextBlock;
 
     const navigationAllowed = force || isAtEnd;
@@ -515,11 +292,7 @@ export default class Caret extends Module {
     }
 
     const { previousInput, currentInput } = currentBlock;
-    const isAtStart = this.isAtStart(currentInput);
-
-    console.log('isAtStart', isAtStart);
-
-    const navigationAllowed = force || isAtStart;
+    const navigationAllowed = force || caretUtils.isAtStartOfInput(currentInput);
 
     /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
     if (previousInput && navigationAllowed) {
@@ -617,61 +390,5 @@ export default class Caret extends Module {
 
     selection.removeAllRanges();
     selection.addRange(newRange);
-  }
-
-  /**
-   * Get all first-level (first child of [contenteditable]) siblings from passed node
-   * Then you can check it for emptiness
-   *
-   * @example
-   * <div contenteditable>
-   * <p></p>                            |
-   * <p></p>                            | left first-level siblings
-   * <p></p>                            |
-   * <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
-   * <p></p>                            |
-   * <p></p>                            | right first-level siblings
-   * <p></p>                            |
-   * </div>
-   * @param {HTMLElement} from - element from which siblings should be searched
-   * @param {'left' | 'right'} direction - direction of search
-   * @returns {HTMLElement[]}
-   */
-  private getHigherLevelSiblings(from: HTMLElement, direction?: 'left' | 'right'): HTMLElement[] {
-    let current = from;
-    const siblings = [];
-    const sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
-
-    if (from.nodeType === Node.TEXT_NODE) {
-      /**
-       * Find all left/right siblings
-       */
-      while (current[sibling]) {
-        current = current[sibling] as HTMLElement;
-        siblings.push(current);
-      }
-
-      return siblings;
-    }
-
-    /**
-     * Find passed node's firs-level parent (in example - blockquote)
-     */
-    while (current.parentNode && (current.parentNode as HTMLElement).contentEditable !== 'true') {
-      current = current.parentNode as HTMLElement;
-    }
-
-
-
-
-    /**
-     * Find all left/right siblings
-     */
-    while (current[sibling]) {
-      current = current[sibling] as HTMLElement;
-      siblings.push(current);
-    }
-
-    return siblings;
   }
 }
