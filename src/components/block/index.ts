@@ -96,6 +96,12 @@ interface BlockEvents {
 }
 
 /**
+ * Block can contain one or more inputs.
+ * Inputs can be native inputs or contenteditable elements.
+ */
+export type BlockInput = HTMLElement;
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  * @property {BlockTool} tool - Tool instance
  * @property {HTMLElement} holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
@@ -154,10 +160,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Cached inputs
-   *
-   * @type {HTMLElement[]}
    */
-  private cachedInputs: HTMLElement[] = [];
+  private cachedInputs: BlockInput[] = [];
 
   /**
    * We'll store a reference to the tool's rendered element to access it later
@@ -269,10 +273,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
-   *
-   * @returns {HTMLElement[]}
    */
-  public get inputs(): HTMLElement[] {
+  public get inputs(): BlockInput[] {
     /**
      * Return from cache if existed
      */
@@ -299,19 +301,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return current Tool`s input
-   *
-   * @returns {HTMLElement}
    */
-  public get currentInput(): HTMLElement | Node {
+  public get currentInput(): BlockInput {
     return this.inputs[this.inputIndex];
   }
 
   /**
    * Set input index to the passed element
    *
-   * @param {HTMLElement | Node} element - HTML Element to set as current input
+   * @param element - HTML Element to set as current input
    */
-  public set currentInput(element: HTMLElement | Node) {
+  public set currentInput(element: BlockInput) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -321,19 +321,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
    */
-  public get firstInput(): HTMLElement {
+  public get firstInput(): BlockInput {
     return this.inputs[0];
   }
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
    */
-  public get lastInput(): HTMLElement {
+  public get lastInput(): BlockInput {
     const inputs = this.inputs;
 
     return inputs[inputs.length - 1];
@@ -341,19 +337,15 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return next Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
    */
-  public get nextInput(): HTMLElement {
+  public get nextInput(): BlockInput {
     return this.inputs[this.inputIndex + 1];
   }
 
   /**
    * Return previous Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
    */
-  public get previousInput(): HTMLElement {
+  public get previousInput(): BlockInput {
     return this.inputs[this.inputIndex - 1];
   }
 

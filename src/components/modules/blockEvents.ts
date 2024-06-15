@@ -302,7 +302,7 @@ export default class BlockEvents extends Module {
     /**
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
+    if (this.Editor.Caret.isAtStart(newCurrent.currentInput) && !this.Editor.BlockManager.currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
 
     /**
@@ -348,7 +348,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the start, leave native behaviour
      */
-    if (!Caret.isAtStart) {
+    if (!Caret.isAtStart(currentBlock.currentInput)) {
       return;
     }
     /**
@@ -594,7 +594,7 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
+    const shouldEnableCBS = this.Editor.Caret.isAtStart(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);

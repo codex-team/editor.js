@@ -1,19 +1,13 @@
-/**
- * @class Caret
- * @classdesc Contains methods for working Caret
- *
- * Uses Range methods to manipulate with caret
- * @module Caret
- * @version 2.0.0
- */
-
 import Selection from '../selection';
 import Module from '../__module';
-import Block from '../block';
-import $ from '../dom';
+import Block, { type BlockInput } from '../block';
+import $, { isCollapsedWhitespaces } from '../dom';
 
 /**
- * @typedef {Caret} Caret
+ * Caret
+ * Contains methods for working Caret
+ *
+ * @todo get rid of this module and separate it for utility functions
  */
 export default class Caret extends Module {
   /**
@@ -40,46 +34,51 @@ export default class Caret extends Module {
   }
 
   /**
-   * Get's deepest first node and checks if offset is zero
+   * Checks if caret is at the start of the passed Block's current input
    *
-   * @returns {boolean}
+   * Cases:
+   *  Native input:
+   *   - if offset is 0, caret is at the start
+   *  Contenteditable:
+   *   - caret at the first text node and offset is 0 — caret is at the start
+   *   - caret not at the first text node — we need to check left siblings for emptiness
+   *   - caret offset > 0, but all left part is visible (nbsp) — caret is not at the start
+   *   - caret offset > 0, but all left part is invisible (whitespaces) — caret is at the start
+   *
+   * @param input - Block instance to check caret position. If block contains several inputs, it will check the current input
    */
-  public get isAtStart(): boolean {
-    const { currentBlock } = this.Editor.BlockManager;
+  public isAtStart(input: BlockInput): boolean {
+    /** @tood test and move out */
+    // /**
+    //  * If Block does not contain inputs, treat caret as "at start"
+    //  */
+    // if (!block.focusable) {
+    //   return true;
+    // }
 
-    /**
-     * If Block does not contain inputs, treat caret as "at start"
-     */
-    if (!currentBlock?.focusable) {
+    const firstNode = $.getDeepestNode(input);
+
+    if (firstNode === null) {
       return true;
     }
 
-    const selection = Selection.get();
-    const firstNode = $.getDeepestNode(currentBlock.currentInput);
-    let focusNode = selection.focusNode;
-
-    /** In case lastNode is native input */
+    /**
+     * In case of native input, we simply check if offset is 0
+     */
     if ($.isNativeInput(firstNode)) {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
-    /** Case when selection have been cleared programmatically, for example after CBS */
+    const selection = Selection.get();
+
+    /**
+     * Case when selection have been cleared programmatically, for example after CBS
+     */
     if (!selection.anchorNode) {
       return false;
     }
 
-    /**
-     * Workaround case when caret in the text like " |Hello!"
-     * selection.anchorOffset is 1, but real caret visible position is 0
-     *
-     * @type {number}
-     */
-
-    let firstLetterPosition = focusNode.textContent.search(/\S/);
-
-    if (firstLetterPosition === -1) { // empty text
-      firstLetterPosition = 0;
-    }
+    let focusNode = selection.focusNode;
 
     /**
      * If caret was set by external code, it might be set to text node wrapper.
@@ -103,15 +102,25 @@ export default class Caret extends Module {
     }
 
     /**
+     * A fragment of text before the caret position
+     * Will be checked for visual-emptiness
+     */
+    const textBeforeCaret = focusNode.textContent.substring(0, focusOffset);
+
+    /**
      * In case of
      * <div contenteditable>
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      *     |adaddad         <-- focus node
      * </div>
+     *
+     * We need to check:
+     * - all left siblings are empty
+     * - there is not visible chars before the caret
      */
     if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
       const leftSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'left');
-      const nothingAtLeft = leftSiblings.every((node) => {
+      const allSiblingsAreInvisible = leftSiblings.every((node) => {
         /**
          * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
          *
@@ -128,16 +137,35 @@ export default class Caret extends Module {
         return $.isEmpty(node) && !isLineBreak;
       });
 
-      if (nothingAtLeft && focusOffset === firstLetterPosition) {
-        return true;
-      }
+      const noVisibleTextBeforeCaret = isCollapsedWhitespaces(textBeforeCaret);
+
+      return allSiblingsAreInvisible && noVisibleTextBeforeCaret;
+
+    /**
+     * If first note is not empty and it is not a focused node, then caret is not at the start
+     */
+    } else if (focusNode !== firstNode) {
+      return false;
     }
 
     /**
-     * We use <= comparison for case:
-     * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
+     * The simplest case: caret at the 0 position
      */
-    return firstNode === null || (focusNode === firstNode && focusOffset <= firstLetterPosition);
+    if (textBeforeCaret.length === 0) {
+      return true;
+    }
+
+    /**
+     * Corner cases: there are whitespaces before the caret  " |Hello"
+     *
+     * There are two types of whitespaces in HTML:
+     *
+     * - Visible (&nbsp;) — if exists, caret is not at the start
+     * - Invisible (regular trailing spaces, tabs, etc) - if exist, caret is at the start
+     */
+    const noVisibleTextBeforeCaret = isCollapsedWhitespaces(textBeforeCaret);
+
+    return noVisibleTextBeforeCaret;
   }
 
   /**
@@ -486,8 +514,12 @@ export default class Caret extends Module {
       return false;
     }
 
-    const { previousInput } = currentBlock;
-    const navigationAllowed = force || this.isAtStart;
+    const { previousInput, currentInput } = currentBlock;
+    const isAtStart = this.isAtStart(currentInput);
+
+    console.log('isAtStart', isAtStart);
+
+    const navigationAllowed = force || isAtStart;
 
     /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
     if (previousInput && navigationAllowed) {
@@ -608,6 +640,19 @@ export default class Caret extends Module {
   private getHigherLevelSiblings(from: HTMLElement, direction?: 'left' | 'right'): HTMLElement[] {
     let current = from;
     const siblings = [];
+    const sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+    if (from.nodeType === Node.TEXT_NODE) {
+      /**
+       * Find all left/right siblings
+       */
+      while (current[sibling]) {
+        current = current[sibling] as HTMLElement;
+        siblings.push(current);
+      }
+
+      return siblings;
+    }
 
     /**
      * Find passed node's firs-level parent (in example - blockquote)
@@ -616,7 +661,8 @@ export default class Caret extends Module {
       current = current.parentNode as HTMLElement;
     }
 
-    const sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+
 
     /**
      * Find all left/right siblings
