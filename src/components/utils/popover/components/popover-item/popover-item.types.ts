@@ -181,34 +181,52 @@ export type PopoverItemParams =
   PopoverItemHtmlParams |
   WithChildren<PopoverItemHtmlParams>;
 
+/**
+ * Parameters of how to render hint for the popover item
+ */
+type PopoverItemHintRenderParams = {
+  /**
+   * Hint position relative to the item
+   */
+  position?: HintPosition;
+
+  /**
+   * Horizontal alignment of the hint content.
+   * 'start' by default.
+   */
+  alignment?: HintTextAlignment;
+
+  /**
+   * If false, hint will not be rendered.
+   * True by default.
+   * Used to disable hints on mobile popover
+   */
+  enabled?: boolean;
+}
+
 
 /**
  * Popover item render params.
  * The parameters that are not set by user via popover api but rather depend on technical implementation
  */
 export type PopoverItemRenderParamsMap = {
-  [key in PopoverItemType.Default | PopoverItemType.Html]?: {
+  [PopoverItemType.Default]?: {
+    /**
+     * Wrapper tag for the item.
+     * Div by default
+     */
+    wrapperTag?: 'div' | 'button';
+
     /**
      * Hint render params
      */
-    hint?: {
-      /**
-       * Hint position relative to the item
-       */
-      position?: HintPosition;
+    hint?: PopoverItemHintRenderParams
+  };
 
-      /**
-       * Horizontal alignment of the hint content.
-       * 'start' by default.
-       */
-      alignment?: HintTextAlignment;
-
-      /**
-       * If false, hint will not be rendered.
-       * True by default.
-       * Used to disable hints on mobile popover
-       */
-      enabled?: boolean;
-    }
+  [PopoverItemType.Html]?: {
+    /**
+     * Hint render params
+     */
+    hint?: PopoverItemHintRenderParams
   };
 };
