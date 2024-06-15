@@ -5,13 +5,14 @@ import {SanitizerConfig} from '../configs';
 /**
  * Abstract interface of all Tools
  */
-export interface BaseTool {
+export interface BaseTool<RenderReturnType = HTMLElement> {
   /**
    * Tool`s render method
-   * For inline Tools returns inline toolbar button
-   * For block Tools returns tool`s wrapper
+   * 
+   * For Inline Tools may return either HTMLElement (@deprecated) or MenuConfig (@see https://editorjs.io/menu-config/)
+   * For Block Tools returns tool`s wrapper html element
    */
-  render(): HTMLElement;
+  render(): RenderReturnType;
 }
 
 export interface BaseToolConstructable {

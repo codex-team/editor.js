@@ -394,7 +394,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     inlineTools.forEach(tool => {
       const instance = tool.create();
-      const controlData = instance.render();
+      const renderedTool = instance.render();
 
       this.toolsInstances.set(tool.name, instance);
 
@@ -414,7 +414,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         tool.title || _.capitalize(tool.name)
       );
 
-      [ controlData ].flat().forEach((item) => {
+      [ renderedTool ].flat().forEach((item) => {
         let popoverItem = {
           name: tool.name,
           onActivate: () => {

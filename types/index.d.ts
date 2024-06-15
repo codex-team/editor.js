@@ -82,8 +82,6 @@ export {
 export {
   PopoverItemParams,
   PopoverItemDefaultParams,
-  PopoverItemWithConfirmationParams,
-  PopoverItemWithoutConfirmationParams
 } from '../src/components/utils/popover';
 
 export { OutputData, OutputBlockData} from './data-formats/output-data';

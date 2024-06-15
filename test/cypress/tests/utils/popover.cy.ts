@@ -1,6 +1,6 @@
 import { PopoverDesktop as Popover, PopoverItemType } from '../../../../src/components/utils/popover';
 import { PopoverItemParams } from '../../../../types';
-import { TunesMenuConfig } from '../../../../types/tools';
+import { MenuConfig } from '../../../../types/tools';
 import Header from '@editorjs/header';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -119,6 +119,7 @@ describe('Popover', () => {
           if (items[0].type !== PopoverItemType.Default) {
             return;
           }
+
           // Check onActivate callback has never been called
           expect(items[0].onActivate).to.have.not.been.called;
         });
@@ -396,7 +397,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  {
           icon: 'Icon',
           title: 'Title',
@@ -408,6 +409,7 @@ describe('Popover', () => {
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
+                onActivate: (): void => {},
               },
             ],
           },
@@ -471,7 +473,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  {
           icon: 'Icon',
           title: 'Tune',
@@ -483,6 +485,7 @@ describe('Popover', () => {
                 icon: 'Icon',
                 title: 'Title',
                 name: 'nested-test-item',
+                onActivate: (): void => {},
               },
             ],
           },
@@ -579,7 +582,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  {
           onActivate: (): void => {},
           icon: 'Icon',
@@ -630,7 +633,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  [
           {
             onActivate: (): void => {},
@@ -693,7 +696,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  [
           {
             onActivate: (): void => {},
@@ -780,7 +783,7 @@ describe('Popover', () => {
       public static isTune = true;
 
       /** Tool data displayed in block tunes popover */
-      public render(): TunesMenuConfig {
+      public render(): MenuConfig {
         return  [
           {
             onActivate: (): void => {},

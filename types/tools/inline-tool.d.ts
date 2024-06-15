@@ -1,9 +1,10 @@
 import {BaseTool, BaseToolConstructable} from './tool';
 import {API, ToolConfig} from '../index';
+import { MenuConfig } from './menu-config';
 /**
  * Base structure for the Inline Toolbar Tool
  */
-export interface InlineTool extends BaseTool {
+export interface InlineTool extends BaseTool<HTMLElement | MenuConfig> {
   /**
    * Shortcut for Tool
    * @type {string}

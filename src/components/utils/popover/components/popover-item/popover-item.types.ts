@@ -32,22 +32,27 @@ export interface PopoverItemChildren {
 /**
  * Adds children property to the item
  */
-export type WithChildren<T> = T & {
+export type WithChildren<T> = Omit<T, 'onActivate'> & {
   /**
    * Popover item children configuration
    */
-  children?: PopoverItemChildren
+  children: PopoverItemChildren;
+
+  /**
+   * Items with children should not have onActivate handler
+   */
+  onActivate?: never;
 };
 
 /**
- * Adds confirmation property to the item
+ * Represents popover item with confirmation.
  */
-export type WithConfirmation<T> = T & {
+export type PopoverItemDefaultWithConfirmationParams = Omit<PopoverItemDefaultBaseParams, 'onActivate'> & {
   /**
    * Popover item parameters that should be applied on item activation.
    * May be used to ask user for confirmation before executing popover item activation handler.
    */
-  confirmation: PopoverItemDefaultParams;
+  confirmation: PopoverItemDefaultBaseParams;
 
   /**
    * Items with confirmation should not have onActivate handler
@@ -100,7 +105,7 @@ export interface PopoverItemHtmlParams {
 /**
  * Common parameters for all kinds of default popover items: with or without confirmation
  */
-interface PopoverItemDefaultBaseParams {
+export interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
@@ -164,12 +169,11 @@ interface PopoverItemDefaultBaseParams {
 }
 
 /**
- * Default, non-separator popover item type
+ * Default, non-separator and non-html popover items type
  */
-// @ts-expect-error - circular type reference is expected
 export type PopoverItemDefaultParams =
   PopoverItemDefaultBaseParams |
-  WithConfirmation<PopoverItemDefaultBaseParams> |
+  PopoverItemDefaultWithConfirmationParams |
   WithChildren<PopoverItemDefaultBaseParams>;
 
 /**
