@@ -87,7 +87,7 @@ export interface PopoverEventMap {
    * Fired when popover closes because item with 'activateOnClose' property set was clicked
    * Value is the item that was clicked
    */
-  [PopoverEvent.CloseOnActivate]: PopoverItemParams;
+  [PopoverEvent.CloseOnActivate]: undefined;
 
   /**
    * Fired when nested popover opens

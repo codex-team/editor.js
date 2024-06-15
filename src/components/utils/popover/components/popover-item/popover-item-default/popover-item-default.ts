@@ -206,7 +206,7 @@ export class PopoverItemDefault extends PopoverItem {
     const params = {
       ...this.params,
       ...newState,
-      confirmation: newState.confirmation,
+      confirmation: 'confirmation' in newState ? newState.confirmation : undefined,
     } as PopoverItemDefaultParams;
     const confirmationEl = this.make(params);
 
@@ -276,7 +276,7 @@ export class PopoverItemDefault extends PopoverItem {
    * @param item - item to activate or bring to confirmation mode
    */
   private activateOrEnableConfirmationMode(item: PopoverItemDefaultParams): void {
-    if (item.confirmation === undefined) {
+    if (!('confirmation' in item) || item.confirmation === undefined) {
       try {
         item.onActivate?.(item);
         this.disableConfirmationMode();

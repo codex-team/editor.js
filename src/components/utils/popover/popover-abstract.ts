@@ -1,4 +1,4 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType, WithChildren } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
 import { SearchInput } from './components/search-input';
 import EventsDispatcher from '../events';
@@ -189,15 +189,17 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param item - item to handle click of
    */
-  protected handleItemClick(item: PopoverItemParams): void {
+  protected handleItemClick(item: PopoverItem): void {
     if ('isDisabled' in item && item.isDisabled) {
       return;
     }
 
     if (item.hasChildren) {
-      this.showNestedItems(item);
+      this.showNestedItems(item as PopoverItemDefault | PopoverItemHtml);
 
-      item.handleClick();
+      if ('handleClick' in item && typeof item.handleClick === 'function') {
+        item.handleClick();
+      }
 
       return;
     }
@@ -205,14 +207,16 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     /** Cleanup other items state */
     this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
 
-    item.handleClick();
+    if ('handleClick' in item && typeof item.handleClick === 'function') {
+      item.handleClick();
+    }
 
     this.toggleItemActivenessIfNeeded(item);
 
     if (item.closeOnActivate) {
       this.hide();
 
-      this.emit(PopoverEvent.CloseOnActivate, item);
+      this.emit(PopoverEvent.CloseOnActivate);
     }
   }
 
@@ -239,7 +243,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param clickedItem - popover item that was clicked
    */
-  private toggleItemActivenessIfNeeded(clickedItem: PopoverItemDefault | PopoverItemHtml): void {
+  private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
     if (!(clickedItem instanceof PopoverItemDefault)) {
       return;
     }
@@ -270,5 +274,5 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param item – item to show nested popover for
    */
-  protected abstract showNestedItems(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void;
+  protected abstract showNestedItems(item: PopoverItemDefault | PopoverItemHtml): void;
 }
