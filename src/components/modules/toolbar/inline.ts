@@ -553,7 +553,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         /**
          * Click popover item corresponding to the tool to trigger the tool activation
          */
-        const toolButton = document.querySelector(`[data-item-name="${toolName}"]`);
+        const popoverEl = this.popover?.getElement();
+
+        if (popoverEl === undefined) {
+          return;
+        }
+
+        const toolButton = popoverEl.querySelector(`[data-item-name="${toolName}"]`);
 
         (toolButton as HTMLElement).click();
       },
