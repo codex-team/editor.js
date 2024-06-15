@@ -2,7 +2,6 @@ import type { ConversionConfig } from '../../../types/configs/conversion-config'
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
 import { isFunction, isString, log, equals } from '../utils';
-import { PopoverItemDefaultParams } from './popover';
 import { isToolConvertable } from './tools';
 
 
@@ -127,24 +126,3 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
   }
 }
 
-/**
- * Returns active item within toolbox config of the specified block
- *
- * @param block - block to get active toolbox item for
- */
-export async function getActiveToolboxEntryOfBlock(block: Block): Promise<PopoverItemDefaultParams> {
-  const toolboxItems = block.tool.toolbox;
-
-  /**
-   * If Tool specifies just the single entry, treat it like an active
-   */
-  if (toolboxItems?.length === 1) {
-    return Promise.resolve(toolboxItems[0]);
-  }
-
-  const blockData = await block.data;
-
-  return toolboxItems?.find((item) => {
-    return isSameBlockData(item.data, blockData);
-  });
-}
