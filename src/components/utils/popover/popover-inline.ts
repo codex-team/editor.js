@@ -1,5 +1,5 @@
 import { isMobileScreen } from '../../utils';
-import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
+import { PopoverItem, PopoverItemDefault, PopoverItemType, WithChildren } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
 import { CSSVariables, css } from './popover.const';
@@ -139,6 +139,25 @@ export class PopoverInline extends PopoverDesktop {
 
     this.nestedPopoverTriggerItem = item;
     super.showNestedItems(item);
+  }
+
+  /**
+   * Creates and displays nested popover for specified item.
+   * Is used only on desktop
+   *
+   * @param item - item to display nested popover by
+   */
+  protected showNestedPopoverForItem(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): PopoverDesktop {
+    const nestedPopover = super.showNestedPopoverForItem(item);
+    const nestedPopoverEl = nestedPopover.getElement();
+
+    /**
+     * We need to add class with nesting level, shich will help position nested popover.
+     * Currently only '.ce-popover--nested-level-1' class is used
+     */
+    nestedPopoverEl.classList.add(css.getPopoverNestedClass(nestedPopover.nestingLevel));
+
+    return nestedPopover;
   }
 
   /**

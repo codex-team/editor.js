@@ -25,7 +25,7 @@ export class PopoverDesktop extends PopoverAbstract {
   /**
    * Popover nesting level. 0 value means that it is a root popover
    */
-  protected nestingLevel = 0;
+  public nestingLevel = 0;
 
   /**
    * Reference to nested popover if exists.
@@ -235,6 +235,46 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
+   * Creates and displays nested popover for specified item.
+   * Is used only on desktop
+   *
+   * @param item - item to display nested popover by
+   */
+  protected showNestedPopoverForItem(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): PopoverDesktop {
+    this.nestedPopover = new PopoverDesktop({
+      searchable: item.isChildrenSearchable,
+      items: item.children,
+      nestingLevel: this.nestingLevel + 1,
+    });
+
+    const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
+
+    this.emit(PopoverEvent.OpenNestedPopover, {
+      containsInputs,
+    });
+
+    /**
+     * Close nested popover when item with 'activateOnClose' property set was clicked
+     * parent popover should also be closed
+     */
+    this.nestedPopover.on(PopoverEvent.CloseOnActivate, this.hide);
+
+    const nestedPopoverEl = this.nestedPopover.getElement();
+
+    this.nodes.popover.appendChild(nestedPopoverEl);
+
+    this.setTriggerItemPosition(nestedPopoverEl, item);
+
+    /* We need nesting level value in CSS to calculate offset left for nested popover */
+    nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
+
+    this.nestedPopover.show();
+    this.flipper.deactivate();
+
+    return this.nestedPopover;
+  }
+
+  /**
    * Checks if popover should be opened bottom.
    * It should happen when there is enough space below or not enough space above
    */
@@ -332,45 +372,6 @@ export class PopoverDesktop extends PopoverAbstract {
 
     focusedItem?.onFocus();
   };
-
-  /**
-   * Creates and displays nested popover for specified item.
-   * Is used only on desktop
-   *
-   * @param item - item to display nested popover by
-   */
-  private showNestedPopoverForItem(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
-    this.nestedPopover = new PopoverDesktop({
-      searchable: item.isChildrenSearchable,
-      items: item.children,
-      nestingLevel: this.nestingLevel + 1,
-    });
-
-    const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
-
-    this.emit(PopoverEvent.OpenNestedPopover, {
-      containsInputs,
-    });
-
-    /**
-     * Close nested popover when item with 'activateOnClose' property set was clicked
-     * parent popover should also be closed
-     */
-    this.nestedPopover.on(PopoverEvent.CloseOnActivate, this.hide);
-
-    const nestedPopoverEl = this.nestedPopover.getElement();
-
-    this.nodes.popover.appendChild(nestedPopoverEl);
-
-    this.setTriggerItemPosition(nestedPopoverEl, item);
-
-    /* We need nesting level value in CSS to calculate offset left for nested popover */
-    nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
-    nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
-
-    this.nestedPopover.show();
-    this.flipper.deactivate();
-  }
 
   /**
    * Adds search to the popover
