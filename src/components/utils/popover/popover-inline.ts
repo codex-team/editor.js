@@ -109,7 +109,7 @@ export class PopoverInline extends PopoverDesktop {
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
    */
-  protected override setTriggerItemPositionProperty(
+  protected override setTriggerItemPosition(
     nestedPopoverEl: HTMLElement,
     item: PopoverItemDefault
   ): void {

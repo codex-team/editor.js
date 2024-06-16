@@ -208,7 +208,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
    */
-  protected setTriggerItemPositionProperty(nestedPopoverEl: HTMLElement, item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
+  protected setTriggerItemPosition(nestedPopoverEl: HTMLElement, item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
     const itemEl = item.getElement();
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
@@ -362,7 +362,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.nodes.popover.appendChild(nestedPopoverEl);
 
-    this.setTriggerItemPositionProperty(nestedPopoverEl, item);
+    this.setTriggerItemPosition(nestedPopoverEl, item);
 
     nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
     nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
