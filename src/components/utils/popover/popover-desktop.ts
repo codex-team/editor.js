@@ -364,6 +364,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.setTriggerItemPosition(nestedPopoverEl, item);
 
+    /* We need nesting level value in CSS to calculate offset left for nested popover */
     nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
     nestedPopoverEl.classList.add(css.getPopoverNestedClass(this.nestedPopover.nestingLevel));
 
