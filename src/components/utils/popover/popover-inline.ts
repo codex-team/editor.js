@@ -104,7 +104,7 @@ export class PopoverInline extends PopoverDesktop {
 
   /**
    * Sets CSS variable with position of item near which nested popover should be displayed.
-   * Is used for correct positioning of the nested popover
+   * Is used to position nested popover right below clicked item
    *
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
@@ -161,7 +161,8 @@ export class PopoverInline extends PopoverDesktop {
   }
 
   /**
-   * Overrides default item click handling to handle nested popover closing correctly
+   * Overrides default item click handling.
+   * Helps to close nested popover once other item is clicked.
    *
    * @param item - clicked item
    */
