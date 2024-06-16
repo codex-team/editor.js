@@ -139,7 +139,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       },
     });
 
-    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
+    this.popover.on(PopoverEvent.Closed, this.onPopoverClose);
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
@@ -187,7 +187,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
-      this.popover.off(PopoverEvent.Close, this.onPopoverClose);
+      this.popover.off(PopoverEvent.Closed, this.onPopoverClose);
       this.popover.destroy();
       this.popover.getElement().remove();
       this.popover = null;

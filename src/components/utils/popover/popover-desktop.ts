@@ -224,14 +224,14 @@ export class PopoverDesktop extends PopoverAbstract {
       return;
     }
 
-    this.nestedPopover.off(PopoverEvent.CloseOnActivate, this.hide);
+    this.nestedPopover.off(PopoverEvent.ClosedOnActivate, this.hide);
     this.nestedPopover.hide();
     this.nestedPopover.destroy();
     this.nestedPopover.getElement().remove();
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
 
-    this.emit(PopoverEvent.CloseNestedPopover);
+    this.emit(PopoverEvent.ClosedNestedPopover);
   }
 
   /**
@@ -249,7 +249,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
 
-    this.emit(PopoverEvent.OpenNestedPopover, {
+    this.emit(PopoverEvent.OpenedNestedPopover, {
       containsInputs,
     });
 
@@ -257,7 +257,7 @@ export class PopoverDesktop extends PopoverAbstract {
      * Close nested popover when item with 'activateOnClose' property set was clicked
      * parent popover should also be closed
      */
-    this.nestedPopover.on(PopoverEvent.CloseOnActivate, this.hide);
+    this.nestedPopover.on(PopoverEvent.ClosedOnActivate, this.hide);
 
     const nestedPopoverEl = this.nestedPopover.getElement();
 

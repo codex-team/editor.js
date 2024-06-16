@@ -134,7 +134,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       this.search.clear();
     }
 
-    this.emit(PopoverEvent.Close);
+    this.emit(PopoverEvent.Closed);
   }
 
   /**
@@ -216,7 +216,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     if (item.closeOnActivate) {
       this.hide();
 
-      this.emit(PopoverEvent.CloseOnActivate);
+      this.emit(PopoverEvent.ClosedOnActivate);
     }
   }
 
