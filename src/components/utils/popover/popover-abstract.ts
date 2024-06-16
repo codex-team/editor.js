@@ -144,6 +144,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     this.items.forEach(item => item.destroy());
     this.nodes.popover.remove();
     this.listeners.removeAll();
+    this.search?.destroy();
   }
 
   /**
