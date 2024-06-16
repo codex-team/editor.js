@@ -159,9 +159,11 @@ export class PopoverItemDefault extends PopoverItem {
 
     el.appendChild(this.nodes.icon);
 
-    el.appendChild(Dom.make('div', css.title, {
-      innerHTML: params.title || '',
-    }));
+    if (params.title !== undefined) {
+      el.appendChild(Dom.make('div', css.title, {
+        innerHTML: params.title || '',
+      }));
+    }
 
     if (params.secondaryLabel) {
       el.appendChild(Dom.make('div', css.secondaryTitle, {

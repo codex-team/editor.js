@@ -39,7 +39,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    */
   protected search: SearchInput | undefined;
 
-
   /**
    * Messages that will be displayed in popover
    */

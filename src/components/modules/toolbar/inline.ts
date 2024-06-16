@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
+import { OpenNestedPopoverEventPayload, Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { IconReplace } from '@codexteam/icons';
 
@@ -222,7 +222,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       },
     });
 
-    this.move(this.popover.renderParams.size.width);
+    this.move(this.popover.size.width);
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
@@ -236,19 +236,17 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Handles opening nested popover.
    * Saves selection and sets fake background
    *
-   * @param data - event data
+   * @param data - event payload
    */
-  private nestedPopoverOpened = (data: {
-    /** True if nested popover has and input that will be autofocused on open */
-    hasAutoFocusableElements?: boolean
-  }): void => {
-    /** If no elements will be focused on nested popover open, then no need to set fake selection */
-    if (!data.hasAutoFocusableElements) {
-      return;
+  private nestedPopoverOpened = ({ containsInputs }: OpenNestedPopoverEventPayload): void => {
+    /**
+     * If nested popover contains inputs,
+     * we need to set fake background to prevent selection loss once the input focuses
+     */
+    if (containsInputs) {
+      this.selection.setFakeBackground();
+      this.selection.save();
     }
-
-    this.selection.setFakeBackground();
-    this.selection.save();
   };
 
   /**

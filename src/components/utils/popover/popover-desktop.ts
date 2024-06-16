@@ -127,7 +127,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * Open popover
    */
   public show(): void {
-    this.nodes.popover.style.setProperty(CSSVariables.PopoverHeight, this.renderParams.size.height + 'px');
+    this.nodes.popover.style.setProperty(CSSVariables.PopoverHeight, this.size.height + 'px');
 
     if (!this.shouldOpenBottom) {
       this.nodes.popover.classList.add(css.popoverOpenTop);
@@ -244,7 +244,7 @@ export class PopoverDesktop extends PopoverAbstract {
     }
     const popoverRect = this.nodes.popoverContainer.getBoundingClientRect();
     const scopeElementRect = this.scopeElement.getBoundingClientRect();
-    const popoverHeight = this.renderParams.size.height;
+    const popoverHeight = this.size.height;
     const popoverPotentialBottomEdge = popoverRect.top + popoverHeight;
     const popoverPotentialTopEdge = popoverRect.top - popoverHeight;
     const bottomEdgeForComparison = Math.min(window.innerHeight, scopeElementRect.bottom);
@@ -263,7 +263,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const popoverRect = this.nodes.popover.getBoundingClientRect();
     const scopeElementRect = this.scopeElement.getBoundingClientRect();
-    const popoverWidth = this.renderParams.size.width;
+    const popoverWidth = this.size.width;
     const popoverPotentialRightEdge = popoverRect.right + popoverWidth;
     const popoverPotentialLeftEdge = popoverRect.left - popoverWidth;
     const rightEdgeForComparison = Math.min(window.innerWidth, scopeElementRect.right);
@@ -272,24 +272,18 @@ export class PopoverDesktop extends PopoverAbstract {
   }
 
   /**
-   * Helps to calculate parameters of popover that are only resolved when popover is displayed on screen.
+   * Helps to calculate size of popover that is only resolved when popover is displayed on screen.
    * Renders invisible clone of popover to get actual values.
    */
   @cacheable
-  public get renderParams(): {
-    size: { height: number; width: number },
-    containsInputs: boolean
-    } {
-    const renderParams = {
-      size: {
-        height: 0,
-        width: 0,
-      },
-      containsInputs: false,
+  public get size(): { height: number; width: number } {
+    const size = {
+      height: 0,
+      width: 0,
     };
 
     if (this.nodes.popover === null) {
-      return renderParams;
+      return size;
     }
 
     const popoverClone = this.nodes.popover.cloneNode(true) as HTMLElement;
@@ -304,12 +298,11 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const container = popoverClone.querySelector('.' + css.popoverContainer) as HTMLElement;
 
-    renderParams.size.height = container.offsetHeight;
-    renderParams.size.width = container.offsetWidth;
-    renderParams.containsInputs = Boolean(container.querySelector(Dom.allInputsSelector));
+    size.height = container.offsetHeight;
+    size.width = container.offsetWidth;
     popoverClone.remove();
 
-    return renderParams;
+    return size;
   }
 
   /**
@@ -353,9 +346,10 @@ export class PopoverDesktop extends PopoverAbstract {
       nestingLevel: this.nestingLevel + 1,
     });
 
+    const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
+
     this.emit(PopoverEvent.OpenNestedPopover, {
-      /** Inputs potentially can be auto focused */
-      hasAutoFocusableElements: this.nestedPopover.renderParams.containsInputs,
+      containsInputs,
     });
 
     /**

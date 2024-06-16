@@ -73,6 +73,17 @@ export enum PopoverEvent {
   CloseNestedPopover = 'close-nested-popover'
 }
 
+/**
+ * Payload of the OpenNestedPopover event
+ */
+export interface OpenNestedPopoverEventPayload {
+  /**
+   * True if nested popover contains inputs.
+   * Might be used by popover host to set fake selection while user interacts with inputs of nested popover.
+   * This will help prevent unwanted selection loss.
+   */
+  containsInputs: boolean;
+}
 
 /**
  * Events fired by the Popover
@@ -92,12 +103,7 @@ export interface PopoverEventMap {
   /**
    * Fired when nested popover opens
    */
-  [PopoverEvent.OpenNestedPopover]: {
-    /**
-     * True if nested popover has and input that will be autofocused on open
-     */
-    hasAutoFocusableElements: boolean;
-  };
+  [PopoverEvent.OpenNestedPopover]: OpenNestedPopoverEventPayload;
 
   /**
    * Fired when nested popover closes

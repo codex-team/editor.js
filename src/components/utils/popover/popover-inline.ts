@@ -89,7 +89,7 @@ export class PopoverInline extends PopoverDesktop {
     if (this.nestingLevel === 0) {
       this.nodes.popover.style.setProperty(
         CSSVariables.InlinePopoverWidth,
-        this.renderParams.size.width + 'px'
+        this.size.width + 'px'
       );
     }
     super.show();
