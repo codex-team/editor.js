@@ -233,11 +233,23 @@ export default class Caret extends Module {
   public navigateNext(force = false): boolean {
     const { BlockManager } = this.Editor;
     const { currentBlock, nextBlock } = BlockManager;
+
+    if (currentBlock === undefined) {
+      return false;
+    }
+
     const { nextInput, currentInput } = currentBlock;
-    const isAtEnd = caretUtils.isAtEndOfInput(currentInput);
+    const isAtEnd = currentInput !== undefined ? caretUtils.isAtEndOfInput(currentInput) : undefined;
+
     let blockToNavigate = nextBlock;
 
-    const navigationAllowed = force || isAtEnd;
+     /**
+     * We should jump to the next block if:
+     * - 'force' is true (Tab-navigation)
+     * - caret is at the end of the current block
+     * - block does not contain any inputs (e.g. to allow go next when Delimiter is focused)
+     */
+    const navigationAllowed = force || isAtEnd || !currentBlock.focusable;
 
     /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
     if (nextInput && navigationAllowed) {
@@ -292,7 +304,15 @@ export default class Caret extends Module {
     }
 
     const { previousInput, currentInput } = currentBlock;
-    const navigationAllowed = force || caretUtils.isAtStartOfInput(currentInput);
+
+    /**
+     * We should jump to the previous block if:
+     * - 'force' is true (Tab-navigation)
+     * - caret is at the start of the current block
+     * - block does not contain any inputs (e.g. to allow go back when Delimiter is focused)
+     */
+    const caretAtStart = currentInput !== undefined ? caretUtils.isAtStartOfInput(currentInput) : undefined;
+    const navigationAllowed = force || caretAtStart || !currentBlock.focusable;
 
     /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
     if (previousInput && navigationAllowed) {

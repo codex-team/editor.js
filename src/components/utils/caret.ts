@@ -7,7 +7,7 @@ import $, { isCollapsedWhitespaces } from '../dom';
  * Handles a case when focusNode is an ElementNode and focusOffset is a child index,
  * returns child node with focusOffset index as a new focusNode
  */
-export function getCaretNodeAndOffset(): [ Node, number ] {
+export function getCaretNodeAndOffset(): [ Node | null, number ] {
   const selection = window.getSelection();
 
   if (selection === null) {
@@ -101,14 +101,6 @@ export function checkContenteditableSliceForEmptiness(contenteditable: HTMLEleme
  * @param input - input where caret should be checked
  */
 export function isAtStartOfInput(input: HTMLElement): boolean {
-  /** @todo test and move out */
-  // /**
-  //  * If Block does not contain inputs, treat caret as "at start"
-  //  */
-  // if (!block.focusable) {
-  //   return true;
-  // }
-
   const firstNode = $.getDeepestNode(input);
 
   if (firstNode === null || $.isEmpty(input)) {

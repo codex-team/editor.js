@@ -535,7 +535,9 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    const shouldEnableCBS = caretUtils.isAtEndOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
+    const { currentBlock } = this.Editor.BlockManager;
+    const caretAtEnd = currentBlock?.currentInput !== undefined ? caretUtils.isAtEndOfInput(currentBlock.currentInput) : undefined;
+    const shouldEnableCBS = caretAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState();
@@ -595,7 +597,9 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    const shouldEnableCBS = caretUtils.isAtStartOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
+    const { currentBlock } = this.Editor.BlockManager;
+    const caretAtStart = currentBlock?.currentInput !== undefined ? caretUtils.isAtStartOfInput(currentBlock.currentInput) : undefined;
+    const shouldEnableCBS = caretAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
