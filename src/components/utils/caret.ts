@@ -1,6 +1,92 @@
 import $, { isCollapsedWhitespaces } from '../dom';
 
 /**
+ * Returns TextNode containing a caret and a caret offset in it
+ * Returns null if there is no caret set
+ *
+ * Handles a case when focusNode is an ElementNode and focusOffset is a child index,
+ * returns child node with focusOffset index as a new focusNode
+ */
+export function getCaretNodeAndOffset(): [ Node, number ] {
+  const selection = window.getSelection();
+
+  if (selection === null) {
+    return [null, 0];
+  }
+
+  let focusNode = selection.focusNode;
+  let focusOffset = selection.focusOffset;
+
+  if (focusNode === null) {
+    return [null, 0];
+  }
+
+  /**
+   * Case when focusNode is an Element (or Document). In this case, focusOffset is a child index.
+   * We need to return child with focusOffset index as a new focusNode.
+   *
+   * <div>|hello</div> <---- Selection references to <div> instead of text node
+   *
+   *
+   */
+  if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length > 0) {
+    focusNode = focusNode.childNodes[focusOffset] ?? null;
+    focusOffset = 0;
+  }
+
+  return [focusNode, focusOffset];
+}
+
+/**
+ * Checks content at left or right of the passed node for emptiness.
+ *
+ * @param contenteditable - The contenteditable element containing the nodes.
+ * @param fromNode - The starting node to check from.
+ * @param offsetInsideNode - The offset inside the starting node.
+ * @param direction - The direction to check ('left' or 'right').
+ * @returns true if adjacent content is empty, false otherwise.
+ */
+export function checkContenteditableSliceForEmptiness(contenteditable: HTMLElement, fromNode: Node, offsetInsideNode: number, direction: 'left' | 'right'): boolean {
+  const range = document.createRange();
+
+  /**
+   * In case of "left":
+   * Set range from the start of the contenteditable to the passed offset
+   */
+  if (direction === 'left') {
+    range.setStart(contenteditable, 0);
+    range.setEnd(fromNode, offsetInsideNode);
+
+  /**
+   * In case of "right":
+   * Set range from the passed offset to the end of the contenteditable
+   */
+  } else {
+    range.setStart(fromNode, offsetInsideNode);
+    range.setEnd(contenteditable, contenteditable.childNodes.length);
+  }
+
+  /**
+   * Clone the range's content and check its text content
+   */
+  const clonedContent = range.cloneContents();
+  const tempDiv = document.createElement('div');
+
+  tempDiv.appendChild(clonedContent);
+
+  const textContent = tempDiv.textContent || '';
+
+  /**
+   * In HTML there are two types of whitespaces:
+   * - visible (&nbsp;)
+   * - invisible (trailing spaces, tabs, etc.)
+   *
+   * If text contains only invisible whitespaces, it is considered to be empty
+   */
+  return isCollapsedWhitespaces(textContent);
+}
+
+/**
  * Checks if caret is at the start of the passed input
  *
  * Cases:
@@ -15,7 +101,7 @@ import $, { isCollapsedWhitespaces } from '../dom';
  * @param input - input where caret should be checked
  */
 export function isAtStartOfInput(input: HTMLElement): boolean {
-  /** @tood test and move out */
+  /** @todo test and move out */
   // /**
   //  * If Block does not contain inputs, treat caret as "at start"
   //  */
@@ -97,96 +183,3 @@ export function isAtEndOfInput(input: HTMLElement): boolean {
    */
   return checkContenteditableSliceForEmptiness(input, caretNode, caretOffset, 'right');
 }
-
-/**
- * Returns TextNode containing a caret and a caret offset in it
- * Returns null if there is no caret set
- *
- * Handles a case when focusNode is an ElementNode and focusOffset is a child index,
- * returns child node with focusOffset index as a new focusNode
- */
-export function getCaretNodeAndOffset(): [ Node, number ] {
-  const selection = window.getSelection();
-
-  if (selection === null) {
-    return [null, 0];
-  }
-
-  let focusNode = selection.focusNode;
-  let focusOffset = selection.focusOffset;
-
-  if (focusNode === null) {
-    return [null, 0];
-  }
-
-  /**
-   * Case when focusNode is an Element (or Document). In this case, focusOffset is a child index.
-   * We need to return child with focusOffset index as a new focusNode.
-   *
-   * <div>|hello</div> <---- Selection references to <div> instead of text node
-   *
-   *
-   */
-  if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length > 0) {
-    focusNode = focusNode.childNodes[focusOffset] ?? null;
-    focusOffset = 0;
-  }
-
-  return [focusNode, focusOffset];
-}
-
-/**
- * Checks content at left or right of the passed node for emptiness.
- *
- * @param contenteditable - The contenteditable element containing the nodes.
- * @param fromNode - The starting node to check from.
- * @param offsetInsideNode - The offset inside the starting node.
- * @param direction - The direction to check ('left' or 'right').
- * @returns true if adjacent content is empty, false otherwise.
- */
-export function checkContenteditableSliceForEmptiness(contenteditable: HTMLElement, fromNode: Node, offsetInsideNode: number, direction: 'left' | 'right'): boolean {
-  const range = document.createRange();
-  let startNode: Node | null = null;
-  let endNode: Node | null = null;
-
-  /**
-   * In case of "left":
-   * Set range from the start of the contenteditable to the passed offset
-   */
-  if (direction === 'left') {
-    range.setStart(contenteditable, 0);
-    range.setEnd(fromNode, offsetInsideNode);
-    startNode = contenteditable;
-    endNode = fromNode;
-
-  /**
-   * In case of "right":
-   * Set range from the passed offset to the end of the contenteditable
-   */
-  } else {
-    range.setStart(fromNode, offsetInsideNode);
-    range.setEnd(contenteditable, contenteditable.childNodes.length);
-    startNode = fromNode;
-    endNode = contenteditable;
-  }
-
-  /**
-   * Clone the range's content and check its text content
-   */
-  const clonedContent = range.cloneContents();
-  const tempDiv = document.createElement('div');
-
-  tempDiv.appendChild(clonedContent);
-
-  const textContent = tempDiv.textContent || '';
-
-  /**
-   * In HTML there are two types of whitespaces:
-   * - visible (&nbsp;)
-   * - invisible (trailing spaces, tabs, etc.)
-   *
-   * If text contains only invisible whitespaces, it is considered to be empty
-   */
-  return isCollapsedWhitespaces(textContent);
-}
-

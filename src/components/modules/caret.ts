@@ -3,7 +3,6 @@ import Module from '../__module';
 import Block from '../block';
 import * as caretUtils from '../utils/caret';
 import $  from '../dom';
-import EmbedTool from '../../../example/tools/embed';
 
 /**
  * Caret

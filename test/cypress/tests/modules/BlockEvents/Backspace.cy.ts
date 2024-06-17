@@ -110,7 +110,7 @@ describe('Backspace keydown', function () {
         .click()
         .type('{leftArrow}') // set caret before "2"
         .type('{backspace}') // remove nbsp
-        .type('{backspace}') // ignore empty tag and merge
+        .type('{backspace}'); // ignore empty tag and merge
 
       cy.get('[data-cy=editorjs]')
         .find('div.ce-block')
