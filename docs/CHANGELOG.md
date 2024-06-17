@@ -19,6 +19,7 @@
 - `New` – *Menu Config* – New item type – HTML
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
+– `Fix` — Deleting whitespaces at the start/end of the block
 
 ### 2.29.1
 

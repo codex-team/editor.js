@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.30.0-rc.10",
+  "version": "2.30.0-rc.11",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
