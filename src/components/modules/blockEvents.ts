@@ -535,7 +535,7 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
+    const shouldEnableCBS = caretUtils.isAtEndOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState();
@@ -595,13 +595,13 @@ export default class BlockEvents extends Module {
      */
     this.Editor.Toolbar.close();
 
-    // const shouldEnableCBS = caretUtils.isAtStartOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
+    const shouldEnableCBS = caretUtils.isAtStartOfInput(this.Editor.BlockManager.currentBlock.currentInput) || this.Editor.BlockSelection.anyBlockSelected;
 
-    // if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
-    //   this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
+    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
 
-    //   return;
-    // }
+      return;
+    }
 
     const navigatePrevious = event.keyCode === _.keyCodes.UP || (event.keyCode === _.keyCodes.LEFT && !this.isRtl);
     const isNavigated = navigatePrevious ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext();
