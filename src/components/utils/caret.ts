@@ -40,7 +40,7 @@ export function isAtStartOfInput(input: HTMLElement): boolean {
     return true;
   }
 
-  const [ caretNode, caretOffset ] = getCaretNodeAndOffset();
+  const [caretNode, caretOffset] = getCaretNodeAndOffset();
 
   /**
    * If there is no selection, caret is not at the start
@@ -56,17 +56,19 @@ export function isAtStartOfInput(input: HTMLElement): boolean {
 }
 
 /**
-   * Checks if caret is at the end of the passed input
-   *
-   * Cases:
-   * Native input:
-   * - if offset is equal to value length, caret is at the end
-   * Contenteditable:
-   * - caret at the last text node and offset is equal to text length — caret is at the end
-   * - caret not at the last text node — we need to check right siblings for emptiness
-   * - caret offset < text length, but all right part is visible (nbsp) — caret is at the end
-   * - caret offset < text length, but all right part is invisible (whitespaces) — caret is at the end
-   */
+ * Checks if caret is at the end of the passed input
+ *
+ * Cases:
+ * Native input:
+ * - if offset is equal to value length, caret is at the end
+ * Contenteditable:
+ * - caret at the last text node and offset is equal to text length — caret is at the end
+ * - caret not at the last text node — we need to check right siblings for emptiness
+ * - caret offset < text length, but all right part is visible (nbsp) — caret is at the end
+ * - caret offset < text length, but all right part is invisible (whitespaces) — caret is at the end
+ *
+ * @param input - input where caret should be checked
+ */
 export function isAtEndOfInput(input: HTMLElement): boolean {
   const lastNode = $.getDeepestNode(input, true);
 
@@ -81,7 +83,7 @@ export function isAtEndOfInput(input: HTMLElement): boolean {
     return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
   }
 
-  const [ caretNode, caretOffset ] = getCaretNodeAndOffset();
+  const [caretNode, caretOffset] = getCaretNodeAndOffset();
 
   /**
    * If there is no selection, caret is not at the end
@@ -130,7 +132,7 @@ export function getCaretNodeAndOffset(): [ Node, number ] {
     focusOffset = 0;
   }
 
-  return [ focusNode, focusOffset ];
+  return [focusNode, focusOffset];
 }
 
 /**
@@ -143,7 +145,7 @@ export function getCaretNodeAndOffset(): [ Node, number ] {
  * @returns true if adjacent content is empty, false otherwise.
  */
 export function checkContenteditableSliceForEmptiness(contenteditable: HTMLElement, fromNode: Node, offsetInsideNode: number, direction: 'left' | 'right'): boolean {
-  let range = document.createRange();
+  const range = document.createRange();
   let startNode: Node | null = null;
   let endNode: Node | null = null;
 
@@ -171,11 +173,12 @@ export function checkContenteditableSliceForEmptiness(contenteditable: HTMLEleme
   /**
    * Clone the range's content and check its text content
    */
-  let clonedContent = range.cloneContents();
-  let tempDiv = document.createElement('div');
+  const clonedContent = range.cloneContents();
+  const tempDiv = document.createElement('div');
+
   tempDiv.appendChild(clonedContent);
 
-  let textContent = tempDiv.textContent || '';
+  const textContent = tempDiv.textContent || '';
 
   /**
    * In HTML there are two types of whitespaces:
