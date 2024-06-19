@@ -30,8 +30,19 @@ export function getCaretNodeAndOffset(): [ Node | null, number ] {
    *
    */
   if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length > 0) {
-    focusNode = focusNode.childNodes[focusOffset] ?? null;
-    focusOffset = 0;
+    /**
+     * In normal cases, focusOffset is a child index.
+     */
+    if (focusNode.childNodes[focusOffset]) {
+      focusNode = focusNode.childNodes[focusOffset];
+      focusOffset = 0;
+    /**
+     * But in Firefox, focusOffset can be 1 with the single child.
+     */
+    } else {
+      focusNode = focusNode.childNodes[focusOffset - 1];
+      focusOffset = focusNode.textContent.length;
+    }
   }
 
   return [focusNode, focusOffset];
