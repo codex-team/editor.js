@@ -1,29 +1,10 @@
 import type EditorJS from '../../../../../types/index';
-import Chainable = Cypress.Chainable;
 import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
 import type { ConversionConfig } from '../../../../../types/index';
-
-
-/**
- * Creates Editor instance with list of Paragraph blocks of passed texts
- *
- * @param textBlocks - list of texts for Paragraph blocks
- */
-function createEditorWithTextBlocks(textBlocks: string[]): Chainable<EditorJS> {
-  return cy.createEditor({
-    data: {
-      blocks: textBlocks.map((text) => ({
-        type: 'paragraph',
-        data: {
-          text,
-        },
-      })),
-    },
-  });
-}
+import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
 
 describe('Backspace keydown', function () {
-  describe.only('isAtStartOfInput whitespaces handling', function () {
+  describe('starting whitespaces handling', function () {
     it('&nbsp;| — should delete visible space', function () {
       createEditorWithTextBlocks([
         '1',

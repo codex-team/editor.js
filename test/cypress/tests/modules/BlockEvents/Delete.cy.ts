@@ -1,25 +1,8 @@
 import type EditorJS from '../../../../../types/index';
-
-/**
- * Creates Editor instance with list of Paragraph blocks of passed texts
- *
- * @param textBlocks - list of texts for Paragraph blocks
- */
-function createEditorWithTextBlocks(textBlocks: string[]): void {
-  cy.createEditor({
-    data: {
-      blocks: textBlocks.map((text) => ({
-        type: 'paragraph',
-        data: {
-          text,
-        },
-      })),
-    },
-  });
-}
+import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
 
 describe('Delete keydown', function () {
-  describe('isAtEndOfInput whitespaces handling', function () {
+  describe('ending whitespaces handling', function () {
     it('|&nbsp; — should delete visible space', function () {
       createEditorWithTextBlocks([
         '1&nbsp;',
