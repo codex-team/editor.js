@@ -243,7 +243,7 @@ export default class Caret extends Module {
 
     let blockToNavigate = nextBlock;
 
-     /**
+    /**
      * We should jump to the next block if:
      * - 'force' is true (Tab-navigation)
      * - caret is at the end of the current block
