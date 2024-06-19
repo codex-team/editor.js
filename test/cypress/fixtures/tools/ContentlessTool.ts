@@ -1,4 +1,4 @@
-import { BlockTool, BlockToolConstructorOptions } from '../../../../types';
+import { BlockTool } from "../../../../types";
 
 /**
  * In the simplest Contentless Tool (eg. Delimiter) there is no data to save
@@ -32,7 +32,7 @@ export default class ContentlessToolMock implements BlockTool {
   /**
    * Allow Tool to have no content
    */
-  static get contentless(): boolean {
+  public static get contentless(): boolean {
     return true;
   }
 }

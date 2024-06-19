@@ -124,10 +124,12 @@ describe('Delete keydown', function () {
          * - Firefox merge blocks and with whitespace - "1 2"
          *
          * So, we have to check both variants.
+         *
          * @todo remove this check after fixing the Firefox merge behaviour
          */
         .should(($block) => {
           const text = $block.text();
+
           expect(text).to.match(/12|1 2/);
         });
     });

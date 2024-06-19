@@ -1,5 +1,5 @@
-import { createEditorWithTextBlocks } from "../../../support/utils/createEditorWithTextBlocks";
-import ContentlessToolMock from "../../../fixtures/tools/ContentlessTool";
+import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
+import ContentlessToolMock from '../../../fixtures/tools/ContentlessTool';
 
 describe('Arrow Right', function () {
   describe('starting whitespaces handling', function () {
@@ -252,42 +252,42 @@ describe('Arrow Right', function () {
       .click() // caret at the end
       .type('{rightArrow}'); // navigate to the Delimiter
 
-      /**
-       * We navigated to the Delimiter and it is highlighted
-       */
-      cy.get('[data-cy=editorjs]')
-        .find('div[data-cy-type=contentless-tool]')
-        .parents('.ce-block')
-        .as('delimiterBlock')
-        .should('have.class', 'ce-block--selected');
+    /**
+     * We navigated to the Delimiter and it is highlighted
+     */
+    cy.get('[data-cy=editorjs]')
+      .find('div[data-cy-type=contentless-tool]')
+      .parents('.ce-block')
+      .as('delimiterBlock')
+      .should('have.class', 'ce-block--selected');
 
-      /**
-       * Now press Right again and we should be navigated to the start of the next block
-       */
-      cy.get('@firstBlock')
-        .type('{rightArrow}')
+    /**
+     * Now press Right again and we should be navigated to the start of the next block
+     */
+    cy.get('@firstBlock')
+      .type('{rightArrow}');
 
-      /**
-       * Delimiter is not selected anymore
-       */
-      cy.get('@delimiterBlock')
-        .should('not.have.class', 'ce-block--selected');
+    /**
+     * Delimiter is not selected anymore
+     */
+    cy.get('@delimiterBlock')
+      .should('not.have.class', 'ce-block--selected');
 
-      /**
-       * Caret is set to the start of the next block
-       */
-      cy.window()
-        .then((window) => {
-          const selection = window.getSelection();
-          const range = selection.getRangeAt(0);
+    /**
+     * Caret is set to the start of the next block
+     */
+    cy.window()
+      .then((window) => {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
 
-          cy.get('[data-cy=editorjs]')
-            .find('.ce-paragraph')
-            .last()
-            .should(($block) => {
-              expect($block[0].contains(range.startContainer)).to.be.true;
-              expect(range.startOffset).to.eq(0);
-            });
-        });
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .last()
+          .should(($block) => {
+            expect($block[0].contains(range.startContainer)).to.be.true;
+            expect(range.startOffset).to.eq(0);
+          });
+      });
   });
-})
+});
