@@ -271,6 +271,10 @@ export default class BlockEvents extends Module {
     const { BlockManager, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
+    if (currentBlock === undefined) {
+      return;
+    }
+
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -298,34 +302,34 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    let newCurrent = this.Editor.BlockManager.currentBlock;
+    let blockToFocus = currentBlock;
 
     /**
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    if (caretUtils.isAtStartOfInput(newCurrent.currentInput) && !this.Editor.BlockManager.currentBlock.hasMedia) {
+    if (currentBlock.currentInput !== undefined && caretUtils.isAtStartOfInput(currentBlock.currentInput) && !currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
 
     /**
      * If caret is at very end of the block, just append the new block without splitting
      * to prevent unnecessary dom mutation observing
      */
-    } else if (caretUtils.isAtEndOfInput(newCurrent.currentInput)) {
-      newCurrent = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
+    } else if (currentBlock.currentInput && caretUtils.isAtEndOfInput(currentBlock.currentInput)) {
+      blockToFocus = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
       /**
        * Split the Current Block into two blocks
        * Renew local current node after split
        */
-      newCurrent = this.Editor.BlockManager.split();
+      blockToFocus = this.Editor.BlockManager.split();
     }
 
-    this.Editor.Caret.setToBlock(newCurrent);
+    this.Editor.Caret.setToBlock(blockToFocus);
 
     /**
      * Show Toolbar
      */
-    this.Editor.Toolbar.moveAndOpen(newCurrent);
+    this.Editor.Toolbar.moveAndOpen(blockToFocus);
 
     event.preventDefault();
   }
@@ -339,6 +343,10 @@ export default class BlockEvents extends Module {
     const { BlockManager, Caret } = this.Editor;
     const { currentBlock, previousBlock } = BlockManager;
 
+    if (currentBlock === undefined) {
+      return;
+    }
+
     /**
      * If some fragment is selected, leave native behaviour
      */
@@ -349,7 +357,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the start, leave native behaviour
      */
-    if (!caretUtils.isAtStartOfInput(currentBlock.currentInput)) {
+    if (!currentBlock.currentInput || !caretUtils.isAtStartOfInput(currentBlock.currentInput)) {
       return;
     }
     /**
