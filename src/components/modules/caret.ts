@@ -239,7 +239,7 @@ export default class Caret extends Module {
     }
 
     const { nextInput, currentInput } = currentBlock;
-    const isAtEnd = currentInput !== undefined ? caretUtils.isAtEndOfInput(currentInput) : undefined;
+    const isAtEnd = currentInput !== undefined ? caretUtils.isCaretAtEndOfInput(currentInput) : undefined;
 
     let blockToNavigate = nextBlock;
 
@@ -311,7 +311,7 @@ export default class Caret extends Module {
      * - caret is at the start of the current block
      * - block does not contain any inputs (e.g. to allow go back when Delimiter is focused)
      */
-    const caretAtStart = currentInput !== undefined ? caretUtils.isAtStartOfInput(currentInput) : undefined;
+    const caretAtStart = currentInput !== undefined ? caretUtils.isCaretAtStartOfInput(currentInput) : undefined;
     const navigationAllowed = force || caretAtStart || !currentBlock.focusable;
 
     /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */

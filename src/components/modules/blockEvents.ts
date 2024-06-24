@@ -307,14 +307,14 @@ export default class BlockEvents extends Module {
     /**
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    if (currentBlock.currentInput !== undefined && caretUtils.isAtStartOfInput(currentBlock.currentInput) && !currentBlock.hasMedia) {
+    if (currentBlock.currentInput !== undefined && caretUtils.isCaretAtStartOfInput(currentBlock.currentInput) && !currentBlock.hasMedia) {
       this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
 
     /**
      * If caret is at very end of the block, just append the new block without splitting
      * to prevent unnecessary dom mutation observing
      */
-    } else if (currentBlock.currentInput && caretUtils.isAtEndOfInput(currentBlock.currentInput)) {
+    } else if (currentBlock.currentInput && caretUtils.isCaretAtEndOfInput(currentBlock.currentInput)) {
       blockToFocus = this.Editor.BlockManager.insertDefaultBlockAtIndex(this.Editor.BlockManager.currentBlockIndex + 1);
     } else {
       /**
@@ -357,7 +357,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the start, leave native behaviour
      */
-    if (!currentBlock.currentInput || !caretUtils.isAtStartOfInput(currentBlock.currentInput)) {
+    if (!currentBlock.currentInput || !caretUtils.isCaretAtStartOfInput(currentBlock.currentInput)) {
       return;
     }
     /**
@@ -440,7 +440,7 @@ export default class BlockEvents extends Module {
     /**
      * If caret is not at the end, leave native behaviour
      */
-    if (!caretUtils.isAtEndOfInput(currentBlock.currentInput)) {
+    if (!caretUtils.isCaretAtEndOfInput(currentBlock.currentInput)) {
       return;
     }
 
@@ -544,7 +544,7 @@ export default class BlockEvents extends Module {
     this.Editor.Toolbar.close();
 
     const { currentBlock } = this.Editor.BlockManager;
-    const caretAtEnd = currentBlock?.currentInput !== undefined ? caretUtils.isAtEndOfInput(currentBlock.currentInput) : undefined;
+    const caretAtEnd = currentBlock?.currentInput !== undefined ? caretUtils.isCaretAtEndOfInput(currentBlock.currentInput) : undefined;
     const shouldEnableCBS = caretAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
@@ -606,7 +606,7 @@ export default class BlockEvents extends Module {
     this.Editor.Toolbar.close();
 
     const { currentBlock } = this.Editor.BlockManager;
-    const caretAtStart = currentBlock?.currentInput !== undefined ? caretUtils.isAtStartOfInput(currentBlock.currentInput) : undefined;
+    const caretAtStart = currentBlock?.currentInput !== undefined ? caretUtils.isCaretAtStartOfInput(currentBlock.currentInput) : undefined;
     const shouldEnableCBS = caretAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
