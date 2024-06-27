@@ -65,18 +65,18 @@ export enum PopoverEvent {
   /**
    * When nested popover should opens
    */
-  OpenedNestedPopover = 'opened-nested-popover',
+  NestedPopoverOpened = 'nested-popover-opened',
 
   /**
    * When nested popover closes
    */
-  ClosedNestedPopover = 'closed-nested-popover'
+  NestedPopoverClosed = 'nested-popover-closed'
 }
 
 /**
  * Payload of the OpenNestedPopover event
  */
-export interface OpenedNestedPopoverEventPayload {
+export interface NestedPopoverOpenedEventPayload {
   /**
    * True if nested popover contains inputs.
    * Might be used by popover host to set fake selection while user interacts with inputs of nested popover.
@@ -103,12 +103,12 @@ export interface PopoverEventMap {
   /**
    * Fired when nested popover opens
    */
-  [PopoverEvent.OpenedNestedPopover]: OpenedNestedPopoverEventPayload;
+  [PopoverEvent.NestedPopoverOpened]: NestedPopoverOpenedEventPayload;
 
   /**
    * Fired when nested popover closes
    */
-  [PopoverEvent.ClosedNestedPopover]: undefined;
+  [PopoverEvent.NestedPopoverClosed]: undefined;
 }
 
 /**

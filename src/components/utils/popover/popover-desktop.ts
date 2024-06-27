@@ -231,7 +231,7 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
 
-    this.emit(PopoverEvent.ClosedNestedPopover);
+    this.emit(PopoverEvent.NestedPopoverClosed);
   }
 
   /**
@@ -249,7 +249,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
 
-    this.emit(PopoverEvent.OpenedNestedPopover, {
+    this.emit(PopoverEvent.NestedPopoverOpened, {
       containsInputs,
     });
 

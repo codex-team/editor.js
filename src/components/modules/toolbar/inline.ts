@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { OpenedNestedPopoverEventPayload, Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
+import { NestedPopoverOpenedEventPayload, Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { IconReplace } from '@codexteam/icons';
 
@@ -145,8 +145,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.popover?.hide();
     this.popover?.destroy();
-    this.popover?.off(PopoverEvent.OpenedNestedPopover, this.nestedPopoverOpened);
-    this.popover?.off(PopoverEvent.ClosedNestedPopover, this.nestedPopoverClosed);
+    this.popover?.off(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
+    this.popover?.off(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -169,8 +169,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   public destroy(): void {
     this.removeAllNodes();
     this.popover?.destroy();
-    this.popover?.off(PopoverEvent.OpenedNestedPopover, this.nestedPopoverOpened);
-    this.popover?.off(PopoverEvent.ClosedNestedPopover, this.nestedPopoverClosed);
+    this.popover?.off(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
+    this.popover?.off(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -226,8 +226,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
-    this.popover.on(PopoverEvent.OpenedNestedPopover, this.nestedPopoverOpened);
-    this.popover.on(PopoverEvent.ClosedNestedPopover, this.nestedPopoverClosed);
+    this.popover.on(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
+    this.popover.on(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
 
     this.popover.show();
   }
@@ -238,7 +238,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *
    * @param data - event payload
    */
-  private nestedPopoverOpened = ({ containsInputs }: OpenedNestedPopoverEventPayload): void => {
+  private nestedPopoverOpened = ({ containsInputs }: NestedPopoverOpenedEventPayload): void => {
     /**
      * If nested popover contains inputs,
      * we need to set fake background to prevent selection loss once the input focuses
