@@ -1,5 +1,5 @@
 import { ToolConfig } from './tool-config';
-import { ToolConstructable, BlockToolData } from './index';
+import { ToolConstructable, BlockToolData, MenuConfig } from './index';
 
 /**
  * Tool may specify its toolbox configuration
@@ -67,6 +67,12 @@ export interface ExternalToolSettings<Config extends object = any> {
    */
   toolbox?: ToolboxConfig | false;
 }
+
+/**
+ * Tool's tunes configuration.
+ * @deprecated use {@link MenuConfig} type instead
+ */
+export type TunesMenuConfig = MenuConfig;
 
 /**
  * For internal Tools 'class' property is optional
