@@ -28,7 +28,7 @@ export interface PopoverItemChildren {
    * False by default.
    * Now is used only in the inline popover.
    */
-  isExpanded?: boolean;
+  isOpen?: boolean;
 
  /**
   * Items of nested popover that should be open on the current item hover/click (depending on platform)

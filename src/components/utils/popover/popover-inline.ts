@@ -62,7 +62,7 @@ export class PopoverInline extends PopoverDesktop {
           return;
         }
 
-        if (item.hasChildren && item.isChildrenExpanded) {
+        if (item.hasChildren && item.isChildrenOpen) {
           this.showNestedItems(item);
         }
       });

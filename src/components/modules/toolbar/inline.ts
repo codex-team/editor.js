@@ -442,7 +442,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             const actions = instance.renderActions();
 
             (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
-              isExpanded: instance.checkState(SelectionUtils.get()),
+              isOpen: instance.checkState(SelectionUtils.get()),
               items: [
                 {
                   type: PopoverItemType.Html,

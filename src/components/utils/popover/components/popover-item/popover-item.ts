@@ -62,10 +62,10 @@ export abstract class PopoverItem {
   }
 
   /**
-   * Returns true if item children should be expanded instantly after popover is opened and not on item click/hover
+   * Returns true if item children should be open instantly after popover is opened and not on item click/hover
    */
-  public get isChildrenExpanded(): boolean {
-    return this.params !== undefined && 'children' in this.params && this.params.children?.isExpanded === true;
+  public get isChildrenOpen(): boolean {
+    return this.params !== undefined && 'children' in this.params && this.params.children?.isOpen === true;
   }
 
   /**
