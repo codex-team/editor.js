@@ -254,7 +254,7 @@ export class PopoverDesktop extends PopoverAbstract {
     });
 
     /**
-     * Close nested popover when item with 'activateOnClose' property set was clicked
+     * Close nested popover when item with 'closeOnActivate' property set was clicked
      * parent popover should also be closed
      */
     this.nestedPopover.on(PopoverEvent.ClosedOnActivate, this.hide);
