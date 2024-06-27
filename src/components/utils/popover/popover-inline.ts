@@ -96,10 +96,11 @@ export class PopoverInline extends PopoverDesktop {
   }
 
   /**
-   * Disable hover event handling
+   * Disable hover event handling.
+   * Overrides parent's class behavior
    */
   protected override handleHover(): void {
-    // Do nothing
+    return;
   }
 
   /**
