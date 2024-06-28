@@ -20,6 +20,7 @@
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
 – `Fix` — Deleting whitespaces at the start/end of the block
+- `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
 
 ### 2.29.1
 

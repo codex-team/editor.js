@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import $ from '../../dom';
+import $ , { calculateBaselineByStyle } from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -280,6 +280,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
     const renderedContentStyle = window.getComputedStyle(renderedContent);
     const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
     const blockHeight = targetBlockHolder.offsetHeight;
+    const baseline = calculateBaselineByStyle(renderedContentStyle);
+    const toolbarActionsHeight = this.nodes.actions.offsetHeight;
 
     let toolbarY;
 
@@ -291,7 +293,14 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (isMobile) {
       toolbarY = targetBlockHolder.offsetTop + blockHeight;
     } else {
-      toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
+      /**
+       * For large texts like H1, Y is based on the baseline and toolbar height
+       * For small texts like paragraph, Y is based on the top of the block and padding-top of the plugin content
+       */
+      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight;
+      const paddingTopBasedY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
+
+      toolbarY = Math.max(baselineBasedY, paddingTopBasedY);
     }
 
     /**
