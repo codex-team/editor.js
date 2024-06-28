@@ -2,6 +2,8 @@ import * as _ from './utils';
 
 /**
  * DOM manipulations helper
+ *
+ * @todo get rid of class and make separate utility functions
  */
 export default class Dom {
   /**
@@ -211,9 +213,10 @@ export default class Dom {
    * @param {Node} node - root Node. From this vertex we start Deep-first search
    *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
    * @param {boolean} [atLast] - find last text node
-   * @returns {Node} - it can be text Node or Element Node, so that caret will able to work with it
+   * @returns - it can be text Node or Element Node, so that caret will able to work with it
+   *            Can return null if node is Document or DocumentFragment, or node is not attached to the DOM
    */
-  public static getDeepestNode(node: Node, atLast = false): Node {
+  public static getDeepestNode(node: Node, atLast = false): Node | null {
     /**
      * Current function have two directions:
      *  - starts from first child and every time gets first or nextSibling in special cases
@@ -589,4 +592,28 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+}
+
+/**
+ * Determine whether a passed text content is a collapsed whitespace.
+ *
+ * In HTML, whitespaces at the start and end of elements and outside elements are ignored.
+ * There are two types of whitespaces in HTML:
+ * - Visible (&nbsp;)
+ * - Invisible (regular trailing spaces, tabs, etc)
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
+ * @see https://www.w3.org/TR/css-text-3/#white-space-processing
+ * @param textContent — any string, for ex a textContent of a node
+ * @returns True if passed text content is whitespace which is collapsed (invisible) in browser
+ */
+export function isCollapsedWhitespaces(textContent: string): boolean {
+  /**
+   *  Throughout, whitespace is defined as one of the characters
+   *  "\t" TAB \u0009
+   *  "\n" LF  \u000A
+   *  "\r" CR  \u000D
+   *  " "  SPC \u0020
+   */
+  return !/[^\t\n\r ]/.test(textContent);
 }
