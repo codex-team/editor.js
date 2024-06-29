@@ -328,7 +328,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const popoverItems = [] as PopoverItemParams[];
 
     if (this.toolsInstances === null) {
-      this.toolsInstances = new Map()
+      this.toolsInstances = new Map();
     }
 
     for (let i = 0; i < inlineTools.length; i++) {
@@ -506,18 +506,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
         event.preventDefault();
 
-        /**
-         * Click popover item corresponding to the tool to trigger the tool activation
-         */
-        const popoverEl = this.popover?.getElement();
-
-        if (popoverEl === undefined) {
-          return;
-        }
-
-        const toolButton = popoverEl.querySelector(`[data-item-name="${toolName}"]`);
-
-        (toolButton as HTMLElement).click();
+        this.popover?.activateItemByName(toolName);
       },
       on: this.Editor.UI.nodes.redactor,
     });

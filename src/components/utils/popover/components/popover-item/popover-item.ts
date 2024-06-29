@@ -14,6 +14,18 @@ export abstract class PopoverItem {
   constructor(protected readonly params?: PopoverItemParams) {}
 
   /**
+   * Item name if exists
+   */
+  public get name(): string | undefined {
+    if (this.params === undefined) {
+      return;
+    }
+    if ('name' in this.params) {
+      return this.params.name;
+    }
+  }
+
+  /**
    * Destroys the instance
    */
   public destroy(): void {

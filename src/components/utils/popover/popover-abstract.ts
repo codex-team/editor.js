@@ -148,6 +148,17 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
   }
 
   /**
+   * Looks for the item by name and imitates click on it
+   *
+   * @param name - name of the item to activate
+   */
+  public activateItemByName(name: string): void {
+    const foundItem = this.items.find(item => item.name === name);
+
+    this.handleItemClick(foundItem);
+  }
+
+  /**
    * Factory method for creating popover items
    *
    * @param items - list of items params
