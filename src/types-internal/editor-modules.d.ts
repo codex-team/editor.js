@@ -37,11 +37,13 @@ import Renderer from '../components/modules/renderer';
 import Saver from '../components/modules/saver';
 import Tools from '../components/modules/tools';
 import UI from '../components/modules/ui';
+import ConversionAPI from '../components/modules/api/conversion';
 
 export interface EditorModules {
   // API Modules
   BlocksAPI: BlocksAPI,
   CaretAPI: CaretAPI,
+  ConversionAPI: ConversionAPI,
   EventsAPI: EventsAPI,
   I18nAPI: I18nAPI,
   API: API,

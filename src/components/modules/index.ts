@@ -11,6 +11,7 @@ import ReadOnlyAPI from './api/readonly';
 import SanitizerAPI from './api/sanitizer';
 import SaverAPI from './api/saver';
 import SelectionAPI from './api/selection';
+import ConversionAPI from './api/conversion';
 import StylesAPI from './api/styles';
 import ToolbarAPI from './api/toolbar';
 import TooltipAPI from './api/tooltip';
@@ -52,6 +53,7 @@ export default {
   SanitizerAPI,
   SaverAPI,
   SelectionAPI,
+  ConversionAPI,
   StylesAPI,
   ToolbarAPI,
   TooltipAPI,

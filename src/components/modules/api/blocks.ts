@@ -29,6 +29,7 @@ export default class BlocksAPI extends Module {
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlockIndex: (id: string): number => this.getBlockIndex(id),
       getBlocksCount: (): number => this.getBlocksCount(),
+      getBlockByElement: (element: HTMLElement) => this.Editor.BlockManager.getBlock(element),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,

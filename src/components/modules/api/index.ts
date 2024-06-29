@@ -20,6 +20,7 @@ export default class API extends Module {
     return {
       blocks: this.Editor.BlocksAPI.methods,
       caret: this.Editor.CaretAPI.methods,
+      conversion: this.Editor.ConversionAPI.methods,
       events: this.Editor.EventsAPI.methods,
       listeners: this.Editor.ListenersAPI.methods,
       notifier: this.Editor.NotifierAPI.methods,

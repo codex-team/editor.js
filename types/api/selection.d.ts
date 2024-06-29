@@ -15,4 +15,9 @@ export interface Selection {
    * @param {HTMLElement} node - tag that should contain selection
    */
   expandToTag(node: HTMLElement): void;
+
+  /**
+   * Returns current selection;
+   */
+  getCurrentSelection(): Selection;
 }

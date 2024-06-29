@@ -391,9 +391,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       });
     }
 
-    inlineTools.forEach(tool => {
+    for (const tool of inlineTools) {
       const instance = tool.create();
-      const renderedTool = instance.render();
+      const renderedTool = await instance.render();
 
       this.toolsInstances.set(tool.name, instance);
 
@@ -483,7 +483,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
         popoverItems.push(popoverItem);
       });
-    });
+    }
 
     return popoverItems;
   }

@@ -5,6 +5,7 @@ import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '..
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import ConvertInlineTool from '../inline-tools/inline-tool-convert';
 import Stub from '../../tools/stub';
 import ToolsFactory from '../tools/factory';
 import InlineTool from '../tools/inline';
@@ -176,6 +177,10 @@ export default class Tools extends Module {
    */
   private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
     return {
+      convertTo: {
+        class: ConvertInlineTool,
+        isInternal: true,
+      },
       link: {
         class: LinkInlineTool,
         isInternal: true,
