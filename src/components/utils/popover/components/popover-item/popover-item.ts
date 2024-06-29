@@ -129,7 +129,7 @@ export abstract class PopoverItem {
       return false;
     }
     if (!('isActive' in this.params)) {
-      return
+      return;
     }
 
     if (typeof this.params.isActive === 'function') {

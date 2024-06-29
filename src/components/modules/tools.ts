@@ -229,7 +229,7 @@ export default class Tools extends Module {
       /**
        * Some Tools validation
        */
-      const inlineToolRequiredMethods = ['render'];
+      const inlineToolRequiredMethods = [ 'render' ];
       const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !tool.create()[method]);
 
       if (notImplementedMethods.length) {

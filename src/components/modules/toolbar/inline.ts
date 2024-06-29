@@ -425,7 +425,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             ...item,
             type: PopoverItemType.Default,
           } as PopoverItemParams;
-          
+
           /** Prepend with separator if item has children and not the first one */
           if ('children' in popoverItem && i !== 0) {
             popoverItems.push({
