@@ -57,6 +57,7 @@ export default class ConvertInlineTool implements InlineTool {
 
     const currentBlockToolboxItem = await currentBlock.getActiveToolboxEntry();
     const icon = currentBlockToolboxItem !== undefined ? currentBlockToolboxItem.icon : IconReplace;
+    const isDesktop =  !_.isMobileScreen();
 
     return {
       icon,
@@ -65,15 +66,19 @@ export default class ConvertInlineTool implements InlineTool {
         title: this.i18n.t('Convert to'),
       },
       children: {
-        searchable: !_.isMobileScreen(),
+        searchable: isDesktop,
         items: convertToItems,
         onOpen: () => {
-          this.selectionAPI.setFakeBackground();
-          this.selectionAPI.save();
+          if (isDesktop) {
+            this.selectionAPI.setFakeBackground();
+            this.selectionAPI.save();
+          }
         },
         onClose: () => {
-          this.selectionAPI.restore();
-          this.selectionAPI.removeFakeBackground();
+          if (isDesktop) {
+            this.selectionAPI.restore();
+            this.selectionAPI.removeFakeBackground();
+          }
         },
       },
     };
