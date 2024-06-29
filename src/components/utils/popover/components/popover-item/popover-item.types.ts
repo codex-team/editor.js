@@ -1,3 +1,18 @@
+import { HintParams, HintPosition } from '../hint';
+
+/**
+ * Popover item types
+ */
+export enum PopoverItemType {
+  /** Regular item with icon, title and other properties */
+  Default = 'default',
+
+  /** Gray line used to separate items from each other */
+  Separator = 'separator',
+
+  /** Item with custom html content */
+  Html = 'html'
+}
 
 /**
  * Represents popover item separator.
@@ -7,7 +22,27 @@ export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: 'separator'
+  type: PopoverItemType.Separator
+}
+
+/**
+ * Represents popover item with custom html content
+ */
+export interface PopoverItemHtmlParams {
+  /**
+   * Item type
+   */
+  type: PopoverItemType.Html;
+
+  /**
+   * Custom html content to be displayed in the popover
+   */
+  element: HTMLElement;
+
+  /**
+   * Hint data to be displayed on item hover
+   */
+  hint?: HintParams;
 }
 
 /**
@@ -17,7 +52,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
-  type?: 'default';
+  type?: PopoverItemType.Default;
 
   /**
    * Displayed text
@@ -61,6 +96,11 @@ interface PopoverItemDefaultBaseParams {
    * In case of string, works like radio buttons group and highlights as inactive any other item that has same toggle key value.
    */
   toggle?: boolean | string;
+
+  /**
+   * Hint data to be displayed on item hover
+   */
+  hint?: HintParams;
 }
 
 /**
@@ -89,7 +129,6 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
    * @param event - event that initiated item activation
    */
   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
-
 }
 
 
@@ -119,5 +158,33 @@ export type PopoverItemDefaultParams =
 /**
  * Represents single popover item
  */
-export type PopoverItemParams = PopoverItemDefaultParams |  PopoverItemSeparatorParams;
+export type PopoverItemParams =
+  PopoverItemDefaultParams |
+  PopoverItemSeparatorParams |
+  PopoverItemHtmlParams;
 
+
+/**
+ * Popover item render params.
+ * The parameters that are not set by user via popover api but rather depend on technical implementation
+ */
+export type PopoverItemRenderParamsMap = {
+  [key in PopoverItemType.Default | PopoverItemType.Html]?: {
+    /**
+     * Hint render params
+     */
+    hint?: {
+      /**
+       * Hint position relative to the item
+       */
+      position?: HintPosition;
+
+      /**
+       * If false, hint will not be rendered.
+       * True by default.
+       * Used to disable hints on mobile popover
+       */
+      enabled: boolean;
+    }
+  };
+};

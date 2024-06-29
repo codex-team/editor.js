@@ -1,6 +1,7 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
 import Header from '@editorjs/header';
 import { ToolboxConfig } from '../../../../types';
+import { TunesMenuConfig } from '../../../../types/tools';
 
 
 describe('BlockTunes', function () {
@@ -342,6 +343,99 @@ describe('BlockTunes', function () {
               expect($block[0].contains(range.startContainer)).to.be.true;
             });
         });
+    });
+  });
+
+  describe('Tunes order', () => {
+    it('should display block specific tunes before common tunes', () => {
+      /**
+       * Tool with several toolbox entries configured
+       */
+      class TestTool {
+        /**
+         * TestTool contains several toolbox options
+         */
+        public static get toolbox(): ToolboxConfig {
+          return [
+            {
+              title: 'Title 1',
+              icon: 'Icon1',
+              data: {
+                level: 1,
+              },
+            },
+          ];
+        }
+
+        /**
+         * Tool can render itself
+         */
+        public render(): HTMLDivElement {
+          const div = document.createElement('div');
+
+          div.innerText = 'Some text';
+
+          return div;
+        }
+
+        /**
+         *
+         */
+        public renderSettings(): TunesMenuConfig {
+          return {
+            icon: 'Icon',
+            title: 'Tune',
+          };
+        }
+
+        /**
+         * Tool can save it's data
+         */
+        public save(): { text: string; level: number } {
+          return {
+            text: 'Some text',
+            level: 1,
+          };
+        }
+      }
+
+      /** Editor instance with TestTool installed and one block of TestTool type */
+      cy.createEditor({
+        tools: {
+          testTool: TestTool,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'testTool',
+              data: {
+                text: 'Some text',
+                level: 1,
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Check there are more than 1 tune */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item')
+        .should('have.length.above', 1);
+
+      /** Check the first tune is tool specific tune */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover-item:first-child')
+        .contains('Tune')
+        .should('exist');
     });
   });
 });

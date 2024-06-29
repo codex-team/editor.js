@@ -17,8 +17,6 @@ export const css = {
   search: className('search'),
   nothingFoundMessage: className('nothing-found-message'),
   nothingFoundMessageDisplayed: className('nothing-found-message', 'displayed'),
-  customContent: className('custom-content'),
-  customContentHidden: className('custom-content', 'hidden'),
   items: className('items'),
   overlay: className('overlay'),
   overlayHidden: className('overlay', 'hidden'),

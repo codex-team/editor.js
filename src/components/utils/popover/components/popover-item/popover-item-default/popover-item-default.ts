@@ -2,7 +2,9 @@ import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
-  PopoverItemParams as PopoverItemParams
+  PopoverItemParams as PopoverItemParams,
+  PopoverItemRenderParamsMap,
+  PopoverItemType
 } from '../popover-item.types';
 import { PopoverItem } from '../popover-item';
 import { css } from './popover-item-default.const';
@@ -11,8 +13,9 @@ import { css } from './popover-item-default.const';
  * Represents sigle popover item node
  *
  * @todo move nodes initialization to constructor
- * @todo replace multiple make() usages with constructing separate instaces
+ * @todo replace multiple make() usages with constructing separate instances
  * @todo split regular popover item and popover item with confirmation to separate classes
+ * @todo display icon on the right side of the item for rtl languages
  */
 export class PopoverItemDefault extends PopoverItem {
   /**
@@ -72,10 +75,6 @@ export class PopoverItemDefault extends PopoverItem {
       icon: null,
     };
 
-  /**
-   * Popover item params
-   */
-  private params: PopoverItemDefaultParams;
 
   /**
    * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
@@ -86,12 +85,13 @@ export class PopoverItemDefault extends PopoverItem {
    * Constructs popover item instance
    *
    * @param params - popover item construction params
+   * @param renderParams - popover item render params.
+   * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(params: PopoverItemDefaultParams) {
+  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
     super();
 
-    this.params = params;
-    this.nodes.root = this.make(params);
+    this.nodes.root = this.make(params, renderParams);
   }
 
   /**
@@ -160,8 +160,9 @@ export class PopoverItemDefault extends PopoverItem {
    * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
+   * @param renderParams - popover item render params
    */
-  private make(params: PopoverItemDefaultParams): HTMLElement {
+  private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]): HTMLElement {
     const el = Dom.make('div', css.container);
 
     if (params.name) {
@@ -196,6 +197,13 @@ export class PopoverItemDefault extends PopoverItem {
 
     if (params.isDisabled) {
       el.classList.add(css.disabled);
+    }
+
+    if (params.hint !== undefined && renderParams?.hint?.enabled !== false) {
+      this.addHint(el, {
+        ...params.hint,
+        position: renderParams?.hint?.position || 'right',
+      });
     }
 
     return el;

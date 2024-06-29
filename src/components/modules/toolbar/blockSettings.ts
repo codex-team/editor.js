@@ -7,7 +7,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
 import { TunesMenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
-import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams } from '../../utils/popover';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemDefaultParams, PopoverItemType } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
@@ -124,7 +124,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.Editor.BlockSelection.clearCache();
 
     /** Get tool's settings data */
-    const { toolTunes, commonTunes, customHtmlTunes } = targetBlock.getTunes();
+    const { toolTunes, commonTunes } = targetBlock.getTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
@@ -134,8 +134,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.popover = new PopoverClass({
       searchable: true,
       items: await this.getTunesItems(targetBlock, commonTunes, toolTunes),
-      customContent: customHtmlTunes,
-      customContentFlippableItems: this.getControls(customHtmlTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
@@ -212,7 +210,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (toolTunes !== undefined && toolTunes.length > 0) {
       items.push(...toolTunes);
       items.push({
-        type: 'separator',
+        type: PopoverItemType.Separator,
       });
     }
 
@@ -227,7 +225,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
         },
       });
       items.push({
-        type: 'separator',
+        type: PopoverItemType.Separator,
       });
     }
 
@@ -315,27 +313,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   };
 
   /**
-   * Returns list of buttons and inputs inside specified container
-   *
-   * @param container - container to query controls inside of
-   */
-  private getControls(container: HTMLElement): HTMLElement[] {
-    const { StylesAPI } = this.Editor;
-    /** Query buttons and inputs inside tunes html */
-    const controls = container.querySelectorAll<HTMLElement>(
-      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
-    );
-
-    return Array.from(controls);
-  }
-
-  /**
    * Resolves aliases in tunes menu items
    *
    * @param item - item with resolved aliases
    */
   private resolveTuneAliases(item: TunesMenuConfigItem): PopoverItemParams {
-    if (item.type === 'separator') {
+    if (item.type === PopoverItemType.Separator || item.type === PopoverItemType.Html) {
       return item;
     }
     const result = resolveAliases(item, { label: 'title' });

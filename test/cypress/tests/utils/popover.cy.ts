@@ -1,4 +1,4 @@
-import { PopoverDesktop as Popover } from '../../../../src/components/utils/popover';
+import { PopoverDesktop as Popover, PopoverItemType } from '../../../../src/components/utils/popover';
 import { PopoverItemParams } from '../../../../types';
 import { TunesMenuConfig } from '../../../../types/tools';
 
@@ -115,7 +115,7 @@ describe('Popover', () => {
         .should('have.class', 'ce-popover-item--disabled')
         .click()
         .then(() => {
-          if (items[0].type !== 'default') {
+          if (items[0].type !== PopoverItemType.Default) {
             return;
           }
           // Check onActivate callback has never been called
@@ -244,22 +244,149 @@ describe('Popover', () => {
     });
   });
 
-  it('should render custom html content', () => {
-    const customHtml = document.createElement('div');
+  it('should display item with custom html', () => {
+    /**
+     * Block Tune with html as return type of render() method
+     */
+    class TestTune {
+      public static isTune = true;
 
-    customHtml.setAttribute('data-cy-name', 'customContent');
-    customHtml.innerText = 'custom html content';
-    const popover = new Popover({
-      customContent: customHtml,
-      items: [],
+      /** Tune control displayed in block tunes popover */
+      public render(): HTMLElement {
+        const button = document.createElement('button');
+
+        button.classList.add('ce-settings__button');
+        button.innerText = 'Tune';
+
+        return button;
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
     });
 
-    cy.document().then(doc => {
-      doc.body.append(popover.getElement());
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
 
-      /* Check custom content exists in the popover */
-      cy.get('[data-cy-name=customContent]');
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Check item with custom html content is displayed */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover .ce-popover-item-html')
+      .contains('Tune')
+      .should('be.visible');
+  });
+
+  it('should support flipping between custom content items', () => {
+    /**
+     * Block Tune with html as return type of render() method
+     */
+    class TestTune1 {
+      public static isTune = true;
+
+      /** Tune control displayed in block tunes popover */
+      public render(): HTMLElement {
+        const button = document.createElement('button');
+
+        button.classList.add('ce-settings__button');
+        button.innerText = 'Tune1';
+
+        return button;
+      }
+    }
+
+    /**
+     * Block Tune with html as return type of render() method
+     */
+    class TestTune2 {
+      public static isTune = true;
+
+      /** Tune control displayed in block tunes popover */
+      public render(): HTMLElement {
+        const button = document.createElement('button');
+
+        button.classList.add('ce-settings__button');
+        button.innerText = 'Tune2';
+
+        return button;
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool1: TestTune1,
+        testTool2: TestTune2,
+      },
+      tunes: ['testTool1', 'testTool2'],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
     });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Press Tab */
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
+
+    /** Check the first custom html item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover .ce-popover-item-html .ce-settings__button')
+      .contains('Tune1')
+      .should('have.class', 'ce-popover-item--focused');
+
+    /** Press Tab */
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
+
+    /** Check the second custom html item is focused */
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-popover .ce-popover-item-html .ce-settings__button')
+      .contains('Tune2')
+      .should('have.class', 'ce-popover-item--focused');
+
+    /** Press Tab */
+    // eslint-disable-next-line cypress/require-data-selectors -- cy.tab() not working here
+    cy.get('body').tab();
+
+    /** Check that default popover item got focused */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name=move-up]')
+      .should('have.class', 'ce-popover-item--focused');
   });
 
   it('should display nested popover (desktop)', () => {
@@ -454,7 +581,6 @@ describe('Popover', () => {
       /** Tool data displayed in block tunes popover */
       public render(): TunesMenuConfig {
         return  {
-          // @ts-expect-error type is not specified on purpose to test the back compatibility
           onActivate: (): void => {},
           icon: 'Icon',
           title: 'Tune',
@@ -463,7 +589,6 @@ describe('Popover', () => {
         };
       }
     }
-
 
     /** Create editor instance */
     cy.createEditor({
@@ -515,7 +640,7 @@ describe('Popover', () => {
             name: 'test-item',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
         ];
       }
@@ -577,7 +702,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
           {
             onActivate: (): void => {},
@@ -664,7 +789,7 @@ describe('Popover', () => {
             name: 'test-item-1',
           },
           {
-            type: 'separator',
+            type: PopoverItemType.Separator,
           },
           {
             onActivate: (): void => {},
