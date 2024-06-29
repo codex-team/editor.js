@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { NestedPopoverOpenedEventPayload, Popover, PopoverEvent, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
+import { Popover, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import { IconReplace } from '@codexteam/icons';
 
@@ -55,11 +55,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Currently visible tools instances
    */
   private toolsInstances: Map<string, IInlineTool> = new Map();
-
-  /**
-   * SelectionUtils instance
-   */
-  private selection = new SelectionUtils();
 
   /**
    * @param moduleConfiguration - Module Configuration
@@ -145,8 +140,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.popover?.hide();
     this.popover?.destroy();
-    this.popover?.off(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
-    this.popover?.off(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -169,8 +162,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   public destroy(): void {
     this.removeAllNodes();
     this.popover?.destroy();
-    this.popover?.off(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
-    this.popover?.off(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
     this.popover = null;
   }
 
@@ -226,41 +217,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.nodes.wrapper?.append(this.popover.getElement());
 
-    this.popover.on(PopoverEvent.NestedPopoverOpened, this.nestedPopoverOpened);
-    this.popover.on(PopoverEvent.NestedPopoverClosed, this.nestedPopoverClosed);
-
     this.popover.show();
   }
-
-  /**
-   * Handles opening nested popover.
-   * Saves selection and sets fake background
-   *
-   * @param data - event payload
-   */
-  private nestedPopoverOpened = ({ containsInputs }: NestedPopoverOpenedEventPayload): void => {
-    /**
-     * If nested popover contains inputs,
-     * we need to set fake background to prevent selection loss once the input focuses
-     */
-    if (containsInputs) {
-      this.selection.setFakeBackground();
-      this.selection.save();
-    }
-  };
-
-  /**
-   * Handles closing nested popover.
-   * Restores selection and removes fake background
-   */
-  private nestedPopoverClosed = (): void => {
-    if (!this.selection.isFakeBackgroundEnabled) {
-      return;
-    }
-
-    this.selection.restore();
-    this.selection.removeFakeBackground();
-  };
 
   /**
    * Move Toolbar to the selected text

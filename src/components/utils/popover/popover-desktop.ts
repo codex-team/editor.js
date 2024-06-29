@@ -8,7 +8,6 @@ import { SearchInput, SearchInputEvent, SearchableItem } from './components/sear
 import { cacheable } from '../../utils';
 import { PopoverItemDefault } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
-import Dom from '../../dom';
 
 /**
  * Desktop popover.
@@ -231,8 +230,6 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
 
-    this.emit(PopoverEvent.NestedPopoverClosed);
-    
     this.items.forEach(item => item.onChildrenClose());
   }
 
@@ -250,12 +247,6 @@ export class PopoverDesktop extends PopoverAbstract {
     });
 
     item.onChildrenOpen();
-
-    const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
-
-    this.emit(PopoverEvent.NestedPopoverOpened, {
-      containsInputs,
-    });
 
     /**
      * Close nested popover when item with 'closeOnActivate' property set was clicked

@@ -46,7 +46,7 @@ export default class ConvertInlineTool implements InlineTool {
   /**
    * Returns tool's UI config
    */
-  async render(): Promise<MenuConfig> {
+  public async render(): Promise<MenuConfig> {
     const currentSelection = this.selectionAPI.getCurrentSelection();
     const currentBlock = this.blocksAPI.getBlockByElement(currentSelection.anchorNode as HTMLElement);
     const convertToItems = await this.conversionAPI.getItemsForBlock(currentBlock);
@@ -81,10 +81,8 @@ export default class ConvertInlineTool implements InlineTool {
 
   /**
    * Required InlineTool's method
-   *
-   * @param range
    */
-  public surround(range: Range): void {
+  public surround(): void {
     return;
   }
 

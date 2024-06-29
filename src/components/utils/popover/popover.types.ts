@@ -61,28 +61,6 @@ export enum PopoverEvent {
    * When it closes because item with 'closeOnActivate' property set was clicked
    */
   ClosedOnActivate = 'closed-on-activate',
-
-  /**
-   * When nested popover should opens
-   */
-  NestedPopoverOpened = 'nested-popover-opened',
-
-  /**
-   * When nested popover closes
-   */
-  NestedPopoverClosed = 'nested-popover-closed'
-}
-
-/**
- * Payload of the OpenNestedPopover event
- */
-export interface NestedPopoverOpenedEventPayload {
-  /**
-   * True if nested popover contains inputs.
-   * Might be used by popover host to set fake selection while user interacts with inputs of nested popover.
-   * This will help prevent unwanted selection loss.
-   */
-  containsInputs: boolean;
 }
 
 /**
@@ -99,16 +77,6 @@ export interface PopoverEventMap {
    * Value is the item that was clicked
    */
   [PopoverEvent.ClosedOnActivate]: undefined;
-
-  /**
-   * Fired when nested popover opens
-   */
-  [PopoverEvent.NestedPopoverOpened]: NestedPopoverOpenedEventPayload;
-
-  /**
-   * Fired when nested popover closes
-   */
-  [PopoverEvent.NestedPopoverClosed]: undefined;
 }
 
 /**
