@@ -638,6 +638,7 @@ export function isCollapsedWhitespaces(textContent: string): boolean {
  */
 export function calculateBaselineByStyle(style: CSSStyleDeclaration): number {
   const fontSize = parseFloat(style.fontSize);
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // default line-height if not set
   const paddingTop = parseFloat(style.paddingTop);
   const borderTopWidth = parseFloat(style.borderTopWidth);
@@ -646,6 +647,7 @@ export function calculateBaselineByStyle(style: CSSStyleDeclaration): number {
   /**
    * Typically, the baseline is about 80% of the `fontSize` from the top of the text, as this is a common average for many fonts.
    */
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const baselineOffset = fontSize * 0.8;
 
   /**
