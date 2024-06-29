@@ -34,5 +34,8 @@
     "unknown": true,
     "requestAnimationFrame": true,
     "navigator": true
+  },
+  "rules": {
+    "jsdoc/require-returns-type": "off"
   }
 }

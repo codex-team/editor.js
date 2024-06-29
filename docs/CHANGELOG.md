@@ -21,6 +21,8 @@
 – `New` – *Menu Config* – Default and HTML items now support hints
 - `New` – Inline Toolbar has new look 💅
 - `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
+– `Fix` — Deleting whitespaces at the start/end of the block
+– `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 
 ### 2.29.1
 
