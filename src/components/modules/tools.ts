@@ -334,7 +334,8 @@ export default class Tools extends Module {
      */
     if (Array.isArray(tool.enabledInlineTools)) {
       tool.inlineTools = new ToolsCollection<InlineTool>(
-        tool.enabledInlineTools.map(name => [name, this.inlineTools.get(name)])
+        /** Prepend ConvertTo Inline Tool */
+        ['convertTo', ...tool.enabledInlineTools].map(name => [name, this.inlineTools.get(name)])
       );
     }
   }
