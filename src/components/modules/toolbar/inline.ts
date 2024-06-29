@@ -11,7 +11,6 @@ import { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
 import { Popover, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
-import { IconReplace } from '@codexteam/icons';
 
 /**
  * Inline Toolbar elements
@@ -326,30 +325,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     const popoverItems = [] as PopoverItemParams[];
 
-    /** Add "Convert to" */
-    const convertToItems = await this.Editor.Conversion.getItemsForBlock(currentBlock);
-
-    if (convertToItems.length > 0) {
-      const currentBlockToolboxItem = await currentBlock.getActiveToolboxEntry();
-      const icon = currentBlockToolboxItem !== undefined ? currentBlockToolboxItem.icon : IconReplace;
-
-      popoverItems.push({
-        icon,
-        name: 'convert-to',
-        hint: {
-          title: I18n.t(I18nInternalNS.toolNames, 'Convert to'),
-        },
-        children: {
-          searchable: !_.isMobileScreen(),
-          items: convertToItems,
-        },
-      });
-      popoverItems.push({
-        type: PopoverItemType.Separator,
-      });
-    }
-
-    for (const tool of inlineTools) {
+    for (let i = 0; i < inlineTools.length; i++) {
+      const tool = inlineTools[i];
       const instance = tool.create();
       const renderedTool = await instance.render();
 
@@ -372,7 +349,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       );
 
       [ renderedTool ].flat().forEach((item) => {
-        let popoverItem = {
+        const commonPopoverItemParams = {
           name: tool.name,
           onActivate: () => {
             this.toolClicked(instance);
@@ -387,11 +364,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
           /**
            * Deprecated way to add custom html elements to the Inline Toolbar
            */
-          popoverItem = {
-            ...popoverItem,
+
+          const popoverItem = {
+            ...commonPopoverItemParams,
             element: item,
             type: PopoverItemType.Html,
-          };
+          } as PopoverItemParams;
 
           /**
            * If tool specifies actions in deprecated manner, append them as children
@@ -411,35 +389,51 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
           } else {
             instance.checkState(SelectionUtils.get());
           }
+
+          popoverItems.push(popoverItem);
         } else if (item.type === PopoverItemType.Html) {
           /**
            * Actual way to add custom html elements to the Inline Toolbar
            */
-          popoverItem = {
-            ...popoverItem,
+          popoverItems.push({
+            ...commonPopoverItemParams,
             ...item,
             type: PopoverItemType.Html,
-          };
+          });
         } else if (item.type === PopoverItemType.Separator) {
           /**
            * Separator item
            */
-          popoverItem = {
+          popoverItems.push({
             type: PopoverItemType.Separator,
-          };
+          });
         } else {
           /**
            * Default item
            */
-          popoverItem = {
-            ...popoverItem,
+          const popoverItem = {
+            ...commonPopoverItemParams,
             ...item,
             type: PopoverItemType.Default,
             isActive: instance.checkState(SelectionUtils.get()),
-          };
-        }
+          } as PopoverItemParams;
 
-        popoverItems.push(popoverItem);
+          /** Prepend with separator if item has children and not the first one */
+          if ('children' in popoverItem && i !== 0) {
+            popoverItems.push({
+              type: PopoverItemType.Separator,
+            });
+          }
+
+          popoverItems.push(popoverItem);
+
+          /** Append separator after the item is it has children and not the last one */
+          if ('children' in popoverItem && i < inlineTools.length - 1) {
+            popoverItems.push({
+              type: PopoverItemType.Separator,
+            });
+          }
+        }
       });
     }
 
