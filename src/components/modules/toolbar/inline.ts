@@ -134,6 +134,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       }
     });
 
+    this.toolsInstances = null;
+
     this.reset();
     this.opened = false;
 
@@ -324,6 +326,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const inlineTools = Array.from(currentBlock.tool.inlineTools.values());
 
     const popoverItems = [] as PopoverItemParams[];
+
+    if (this.toolsInstances === null) {
+      this.toolsInstances = new Map()
+    }
 
     for (let i = 0; i < inlineTools.length; i++) {
       const tool = inlineTools[i];
