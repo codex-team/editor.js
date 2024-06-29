@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import $ , { calculateBaselineByStyle } from '../../dom';
+import $, { calculateBaselineByStyle } from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
