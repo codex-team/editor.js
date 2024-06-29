@@ -872,8 +872,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
 
-    const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
-
-    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
+    this.Editor.InlineToolbar.tryToShow(true);
   }
 }

@@ -27,7 +27,7 @@ export interface InlineTool extends BaseTool<HTMLElement | MenuConfig> {
   /**
    * Make additional element with actions
    * For example, input for the 'link' tool or textarea for the 'comment' tool
-   * @deprecated – use MenuConfig item children to set item actions instead
+   * @deprecated use {@link MenuConfig} item children to set item actions instead
    */
   renderActions?(): HTMLElement;
 
