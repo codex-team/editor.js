@@ -146,7 +146,7 @@ export interface PopoverItemDefaultBaseParams {
   /**
    * True if item should be highlighted as active
    */
-  isActive?: boolean;
+  isActive?: boolean | (() => boolean);
 
   /**
    * True if item should be disabled

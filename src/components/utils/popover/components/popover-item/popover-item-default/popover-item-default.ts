@@ -177,7 +177,7 @@ export class PopoverItemDefault extends PopoverItem {
       }));
     }
 
-    if (params.isActive) {
+    if (this.isActive) {
       el.classList.add(css.active);
     }
 

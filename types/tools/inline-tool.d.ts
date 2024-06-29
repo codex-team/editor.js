@@ -14,15 +14,17 @@ export interface InlineTool extends BaseTool<HTMLElement | MenuConfig> {
   /**
    * Method that accepts selected range and wrap it somehow
    * @param {Range} range - selection's range
+   * @deprecated use {@link MenuConfig} item onActivate property instead
    */
-  surround(range: Range): void;
+  surround?(range: Range): void;
 
   /**
    * Get SelectionUtils and detect if Tool was applied
    * For example, after that Tool can highlight button or show some details
    * @param {Selection} selection - current Selection
+   * @deprecated use {@link MenuConfig} item isActive property instead
    */
-  checkState(selection: Selection): boolean;
+  checkState?(selection: Selection): boolean;
 
   /**
    * Make additional element with actions

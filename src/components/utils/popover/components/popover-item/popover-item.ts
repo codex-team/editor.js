@@ -125,6 +125,17 @@ export abstract class PopoverItem {
    * True if item is active
    */
   public get isActive(): boolean {
-    return this.params !== undefined && 'isActive' in this.params && this.params.isActive === true;
+    if (this.params === undefined) {
+      return false;
+    }
+    if (!('isActive' in this.params)) {
+      return
+    }
+
+    if (typeof this.params.isActive === 'function') {
+      return this.params.isActive();
+    }
+
+    return this.params.isActive === true;
   }
 }

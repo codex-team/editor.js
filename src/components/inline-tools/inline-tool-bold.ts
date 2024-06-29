@@ -1,5 +1,6 @@
 import { InlineTool, SanitizerConfig } from '../../../types';
 import { IconBold } from '@codexteam/icons';
+import { MenuConfig } from '../../../types/tools';
 
 /**
  * Bold Tool
@@ -41,32 +42,15 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Create button for Inline Toolbar
    */
-  public render(): any {
+  public render(): MenuConfig {
     return {
       icon: IconBold,
       name: 'bold',
       onActivate: () => {
         document.execCommand(this.commandName);
       },
+      isActive: () => document.queryCommandState(this.commandName),
     };
-  }
-
-  /**
-   * Wrap range with <b> tag
-   */
-  public surround(): void {
-    document.execCommand(this.commandName);
-  }
-
-  /**
-   * Check selection and set activated state to button if there are <b> tag
-   *
-   * @returns {boolean}
-   */
-  public checkState(): boolean {
-    const isActive = document.queryCommandState(this.commandName);
-
-    return isActive;
   }
 
   /**

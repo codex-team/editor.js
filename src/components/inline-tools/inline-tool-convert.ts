@@ -83,18 +83,4 @@ export default class ConvertInlineTool implements InlineTool {
       },
     };
   }
-
-  /**
-   * Required InlineTool's method
-   */
-  public surround(): void {
-    return;
-  }
-
-  /**
-   * Returns true if the tool is active
-   */
-  public checkState(): boolean {
-    return false;
-  }
 }

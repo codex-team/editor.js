@@ -393,6 +393,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
               ],
             };
           } else {
+            /**
+             * Legacy inline tools might perform some UI mutating logic in checkState method, so, call it just in case
+             */
             instance.checkState(SelectionUtils.get());
           }
 
@@ -421,9 +424,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             ...commonPopoverItemParams,
             ...item,
             type: PopoverItemType.Default,
-            isActive: instance.checkState(SelectionUtils.get()),
           } as PopoverItemParams;
-
+          
           /** Prepend with separator if item has children and not the first one */
           if ('children' in popoverItem && i !== 0) {
             popoverItems.push({
@@ -533,7 +535,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private checkToolsState(): void {
     this.toolsInstances.forEach((toolInstance) => {
-      toolInstance.checkState(SelectionUtils.get());
+      toolInstance.checkState?.(SelectionUtils.get());
     });
   }
 
