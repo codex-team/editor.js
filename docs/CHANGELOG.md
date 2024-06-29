@@ -33,6 +33,7 @@
 - `New` — Toolbox now will be opened by '/' in empty Block instead of Tab
 - `New` — Block Tunes now will be opened by 'CMD+/' instead of Tab in non-empty block
 - `New` — Tab now will navigate through Blocks. In last block Tab will navigate to the next input on page.
+- `New` - Adds `editor.tools` API, which can be used to update the tools' config without having to destroy & re-initialize the editor.
 - `Fix` — Passing an empty array via initial data or `blocks.render()` won't break the editor
 - `Fix` — Layout did not shrink when a large document cleared in Chrome
 - `Fix` — Multiple Tooltip elements creation fixed
