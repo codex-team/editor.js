@@ -34,6 +34,16 @@ export interface PopoverItemChildren {
   * Items of nested popover that should be open on the current item hover/click (depending on platform)
   */
   items?: PopoverItemParams[];
+
+  /**
+   * Called once children popover is opened
+   */
+  onOpen?: () => void;
+
+  /**
+   * Called once children popover is closed
+   */
+  onClose?: () => void;
 }
 
 /**

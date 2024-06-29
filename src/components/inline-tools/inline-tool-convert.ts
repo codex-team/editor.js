@@ -67,6 +67,14 @@ export default class ConvertInlineTool implements InlineTool {
       children: {
         searchable: !_.isMobileScreen(),
         items: convertToItems,
+        onOpen: () => {
+          this.selectionAPI.setFakeBackground();
+          this.selectionAPI.save();
+        },
+        onClose: () => {
+          this.selectionAPI.restore();
+          this.selectionAPI.removeFakeBackground();
+        },
       },
     };
   }

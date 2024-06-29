@@ -20,4 +20,24 @@ export interface Selection {
    * Returns current selection;
    */
   getCurrentSelection(): Selection;
+
+  /**
+   * Sets fake background
+  */
+  setFakeBackground(): void;
+
+  /**
+   * Save SelectionUtils's range
+   */
+  save(): void;
+
+  /**
+   * Restore saved SelectionUtils's range
+   */
+  restore(): void;
+
+  /**
+   * Removes fake background
+   */
+  removeFakeBackground(): void;
 }

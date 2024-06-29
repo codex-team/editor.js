@@ -48,6 +48,32 @@ export abstract class PopoverItem {
   public abstract toggleHidden(isHidden: boolean): void;
 
   /**
+   * Called when children popover is opened (if exists)
+   */
+  public onChildrenOpen(): void {
+    if (this.params === undefined) {
+      return;
+    }
+
+    if ('children' in this.params && typeof this.params.children?.onOpen === 'function') {
+      this.params.children.onOpen();
+    }
+  }
+
+  /**
+   * Called when children popover is closed (if exists)
+   */
+  public onChildrenClose(): void {
+    if (this.params === undefined) {
+      return;
+    }
+
+    if ('children' in this.params && typeof this.params.children?.onClose === 'function') {
+      this.params.children.onClose();
+    }
+  }
+
+  /**
    * Returns item children that are represented as popover items
    */
   public get children(): PopoverItemParams[] {

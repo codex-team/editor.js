@@ -232,6 +232,8 @@ export class PopoverDesktop extends PopoverAbstract {
     this.flipper.activate(this.flippableElements);
 
     this.emit(PopoverEvent.NestedPopoverClosed);
+    
+    this.items.forEach(item => item.onChildrenClose());
   }
 
   /**
@@ -246,6 +248,8 @@ export class PopoverDesktop extends PopoverAbstract {
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
     });
+
+    item.onChildrenOpen();
 
     const containsInputs = Boolean(this.nestedPopover.getElement().querySelector(Dom.allInputsSelector));
 
