@@ -20,6 +20,7 @@
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
 – `Fix` — Deleting whitespaces at the start/end of the block
+– `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 
 ### 2.29.1
 
