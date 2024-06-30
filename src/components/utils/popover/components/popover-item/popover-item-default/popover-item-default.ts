@@ -2,7 +2,6 @@ import Dom from '../../../../../dom';
 import { IconDotCircle, IconChevronRight } from '@codexteam/icons';
 import {
   PopoverItemDefaultParams as PopoverItemDefaultParams,
-  PopoverItemParams as PopoverItemParams,
   PopoverItemRenderParamsMap,
   PopoverItemType
 } from '../popover-item.types';
@@ -40,13 +39,6 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
-   * True if popover should close once item is activated
-   */
-  public get closeOnActivate(): boolean | undefined {
-    return this.params.closeOnActivate;
-  }
-
-  /**
    * True if confirmation state is enabled for popover item
    */
   public get isConfirmationStateEnabled(): boolean {
@@ -75,7 +67,6 @@ export class PopoverItemDefault extends PopoverItem {
       icon: null,
     };
 
-
   /**
    * If item is in confirmation state, stores confirmation params such as icon, label, onActivate callback and so on
    */
@@ -88,8 +79,8 @@ export class PopoverItemDefault extends PopoverItem {
    * @param renderParams - popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
-  constructor(private readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
-    super();
+  constructor(protected readonly params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]) {
+    super(params);
 
     this.nodes.root = this.make(params, renderParams);
   }
@@ -149,20 +140,14 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
-   * Returns list of item children
-   */
-  public get children(): PopoverItemParams[] {
-    return 'children' in this.params && this.params.children?.items !== undefined ? this.params.children.items : [];
-  }
-
-  /**
    * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
    * @param renderParams - popover item render params
    */
   private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]): HTMLElement {
-    const el = Dom.make('div', css.container);
+    const tag = renderParams?.wrapperTag || 'div';
+    const el = Dom.make(tag, css.container);
 
     if (params.name) {
       el.dataset.itemName = params.name;
@@ -174,9 +159,11 @@ export class PopoverItemDefault extends PopoverItem {
 
     el.appendChild(this.nodes.icon);
 
-    el.appendChild(Dom.make('div', css.title, {
-      innerHTML: params.title || '',
-    }));
+    if (params.title !== undefined) {
+      el.appendChild(Dom.make('div', css.title, {
+        innerHTML: params.title || '',
+      }));
+    }
 
     if (params.secondaryLabel) {
       el.appendChild(Dom.make('div', css.secondaryTitle, {
@@ -184,13 +171,13 @@ export class PopoverItemDefault extends PopoverItem {
       }));
     }
 
-    if (this.children.length > 0) {
+    if (this.hasChildren) {
       el.appendChild(Dom.make('div', [css.icon, css.iconChevronRight], {
         innerHTML: IconChevronRight,
       }));
     }
 
-    if (params.isActive) {
+    if (this.isActive) {
       el.classList.add(css.active);
     }
 
@@ -221,7 +208,7 @@ export class PopoverItemDefault extends PopoverItem {
     const params = {
       ...this.params,
       ...newState,
-      confirmation: newState.confirmation,
+      confirmation: 'confirmation' in newState ? newState.confirmation : undefined,
     } as PopoverItemDefaultParams;
     const confirmationEl = this.make(params);
 
@@ -291,7 +278,7 @@ export class PopoverItemDefault extends PopoverItem {
    * @param item - item to activate or bring to confirmation mode
    */
   private activateOrEnableConfirmationMode(item: PopoverItemDefaultParams): void {
-    if (item.confirmation === undefined) {
+    if (!('confirmation' in item) || item.confirmation === undefined) {
       try {
         item.onActivate?.(item);
         this.disableConfirmationMode();

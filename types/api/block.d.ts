@@ -1,4 +1,4 @@
-import {BlockToolData, ToolConfig} from '../tools';
+import {BlockToolData, ToolConfig, ToolboxConfigEntry} from '../tools';
 import {SavedData} from '../data-formats';
 
 /**
@@ -78,4 +78,10 @@ export interface BlockAPI {
    * Can be useful for block changes invisible for editor core.
    */
   dispatchChange(): void;
+
+  /**
+   * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+   * This method returns the entry that is related to the Block (depended on the Block data)
+   */
+  getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined>
 }
