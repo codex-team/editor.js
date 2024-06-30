@@ -24,7 +24,7 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
  * @param allBlockTools - all block tools available in the editor
  */
 export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockTool[]): Promise<BlockTool[]> {
-  const blockData = await block.data;
+  const blockData = await block.save();
 
   return allBlockTools.reduce((result, tool) => {
     /**

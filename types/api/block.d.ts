@@ -21,11 +21,6 @@ export interface BlockAPI {
   readonly config: ToolConfig;
 
   /**
-   * Tool's data
-   */
-  readonly data: Promise<BlockToolData>;
-
-  /**
    * Wrapper of Tool's HTML element
    */
   readonly holder: HTMLElement;

@@ -40,13 +40,6 @@ function BlockAPI(
     },
 
     /**
-     * Tool's data
-     */
-    get data(): Promise<BlockToolData> {
-      return block.data;
-    },
-
-    /**
      * .ce-block element, that wraps plugin contents
      *
      * @returns {HTMLElement}
