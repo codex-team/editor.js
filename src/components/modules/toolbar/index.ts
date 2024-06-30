@@ -337,6 +337,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       const baseline = calculateBaseline(firstInput);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton!).height, 10);
+      /**
+       * Visual padding inside the SVG icon
+       */
       const toolbarActionsPaddingBottom = 8;
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
