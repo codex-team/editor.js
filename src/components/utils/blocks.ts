@@ -1,7 +1,9 @@
+import { BlockAPI } from '../../../types';
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
-import { isFunction, isString, log, equals } from '../utils';
+import BlockTool from '../tools/block';
+import { isFunction, isString, log, equals, isEmpty } from '../utils';
 import { isToolConvertable } from './tools';
 
 
@@ -13,6 +15,56 @@ import { isToolConvertable } from './tools';
  */
 export function isBlockConvertable(block: Block, direction: 'export' | 'import'): boolean {
   return isToolConvertable(block.tool, direction);
+}
+
+/**
+ * Returns list of tools you can convert specified block to
+ *
+ * @param block - block to get conversion items for
+ * @param allBlockTools - all block tools available in the editor
+ */
+export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockTool[]): Promise<BlockTool[]> {
+  const blockData = await block.data;
+
+  return allBlockTools.reduce((result, tool) => {
+    /**
+     * Skip tools without «import» rule specified
+     */
+    if (!isToolConvertable(tool, 'import')) {
+      return result;
+    }
+
+    /** Filter out invalid toolbox entries */
+    const actualToolboxItems = tool.toolbox.filter((toolboxItem) => {
+      /**
+       * Skip items that don't pass 'toolbox' property or do not have an icon
+       */
+      if (isEmpty(toolboxItem) || !toolboxItem.icon) {
+        return false;
+      }
+
+      if (toolboxItem.data !== undefined) {
+        /**
+         * When a tool has several toolbox entries, we need to make sure we do not add
+         * toolbox item with the same data to the resulting array. This helps exclude duplicates
+         */
+        if (isSameBlockData(toolboxItem.data, blockData)) {
+          return false;
+        }
+      } else if (tool.name === block.name) {
+        return false;
+      }
+
+      return true;
+    });
+
+    result.push({
+      ...tool,
+      toolbox: actualToolboxItems,
+    });
+
+    return result;
+  }, []);
 }
 
 /**

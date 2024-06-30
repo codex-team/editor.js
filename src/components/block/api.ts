@@ -1,5 +1,5 @@
 import Block from './index';
-import { BlockToolData, ToolConfig } from '../../../types/tools';
+import { BlockToolData, ToolConfig, ToolboxConfigEntry } from '../../../types/tools';
 import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
@@ -37,6 +37,13 @@ function BlockAPI(
      */
     get config(): ToolConfig {
       return block.config;
+    },
+
+    /**
+     * Tool's data
+     */
+    get data(): Promise<BlockToolData> {
+      return block.data;
     },
 
     /**
@@ -127,6 +134,14 @@ function BlockAPI(
      */
     dispatchChange(): void {
       block.dispatchChange();
+    },
+
+    /**
+     * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+     * This method returns the entry that is related to the Block (depended on the Block data)
+     */
+    getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+      return block.getActiveToolboxEntry();
     },
   };
 

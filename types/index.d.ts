@@ -28,7 +28,7 @@ import {
   Tooltip,
   I18n,
   Ui,
-  Conversion,
+  Tools,
 } from './api';
 
 import { OutputData } from './data-formats';
@@ -109,7 +109,7 @@ export {
 export interface API {
   blocks: Blocks;
   caret: Caret;
-  conversion: Conversion;
+  tools: Tools;
   events: Events;
   listeners: Listeners;
   notifier: Notifier;

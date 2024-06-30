@@ -29,7 +29,7 @@ export default class BlocksAPI extends Module {
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlockIndex: (id: string): number => this.getBlockIndex(id),
       getBlocksCount: (): number => this.getBlocksCount(),
-      getBlockByElement: (element: HTMLElement) => this.Editor.BlockManager.getBlock(element),
+      getBlockByElement: (element: HTMLElement) => this.getBlockByElement(element),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
@@ -104,6 +104,23 @@ export default class BlocksAPI extends Module {
       _.logLabeled('There is no block with id `' + id + '`', 'warn');
 
       return null;
+    }
+
+    return new BlockAPI(block);
+  }
+
+  /**
+   * Get Block API object by html element
+   *
+   * @param element - html element to get Block by
+   */
+  public getBlockByElement(element: HTMLElement): BlockAPIInterface | undefined {
+    const block = this.Editor.BlockManager.getBlock(element);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block corresponding to element `' + element + '`', 'warn');
+
+      return;
     }
 
     return new BlockAPI(block);

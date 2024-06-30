@@ -73,11 +73,11 @@ export interface Blocks {
   getBlockIndex(blockId: string): number;
 
   /**
-   * Get Block instance by html element
+   * Get Block API object by html element
    *
    * @param element - html element to get Block by
    */
-  getBlockByElement(element: HTMLElement): Block | undefined;
+  getBlockByElement(element: HTMLElement): BlockAPI | undefined;
 
   /**
    * Mark Block as stretched
