@@ -110,7 +110,7 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Get Block API object by html element
+   * Get Block API object by any child html element
    *
    * @param element - html element to get Block by
    */
