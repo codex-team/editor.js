@@ -1,5 +1,6 @@
 
 import Header from '@editorjs/header';
+import { MenuConfig } from '../../../../types/tools';
 
 describe('Inline Toolbar', () => {
   describe('Separators', () => {
@@ -27,13 +28,18 @@ describe('Inline Toolbar', () => {
         .find('.ce-paragraph')
         .selectText('block');
 
-      const items = cy.get('[data-cy=editorjs]')
-        .get('[data-cy=inline-toolbar] .ce-popover__items')
-        .children();
-
       /** Check that first item (which is convert-to and has children) has a separator after it */
-      items.first().should('have.attr', 'data-item-name', 'convert-to');
-      items.first().next().should('have.class', 'ce-popover-item-separator');
+      cy.get('[data-cy=editorjs]')
+        .get('[data-cy=inline-toolbar] .ce-popover__items')
+        .children()
+        .first()
+        .should('have.attr', 'data-item-name', 'convert-to');
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-cy=inline-toolbar] .ce-popover__items')
+        .children()
+        .eq(1)
+        .should('have.class', 'ce-popover-item-separator');
     });
 
     it('should have separators from both sides of item if it is in the middle and has children', () => {
@@ -47,7 +53,7 @@ describe('Inline Toolbar', () => {
           testTool: {
             class: class {
               public static isInline = true;
-              render() {
+              public render(): MenuConfig {
                 return {
                   icon: 'n',
                   title: 'Test Tool',
@@ -57,10 +63,12 @@ describe('Inline Toolbar', () => {
                       {
                         icon: 'm',
                         title: 'Test Tool Item',
+                        // eslint-disable-next-line  @typescript-eslint/no-empty-function
+                        onActivate: () => {}
                       }
                     ]
                   }
-                }
+                };
               }
             }
           }
@@ -113,7 +121,7 @@ describe('Inline Toolbar', () => {
           testTool: {
             class: class {
               public static isInline = true;
-              render() {
+              public render(): MenuConfig {
                 return {
                   icon: 'n',
                   title: 'Test Tool',
@@ -123,10 +131,12 @@ describe('Inline Toolbar', () => {
                       {
                         icon: 'm',
                         title: 'Test Tool Item',
+                        // eslint-disable-next-line  @typescript-eslint/no-empty-function
+                        onActivate: () => {}
                       }
                     ]
                   }
-                }
+                };
               }
             }
           }
