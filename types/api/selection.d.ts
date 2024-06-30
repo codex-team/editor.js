@@ -17,22 +17,25 @@ export interface Selection {
   expandToTag(node: HTMLElement): void;
 
   /**
-   * Sets fake background
+   * Sets fake background.
+   * Allows to immitate selection while focus moved away
   */
   setFakeBackground(): void;
-
-  /**
-   * Save SelectionUtils's range
-   */
-  save(): void;
-
-  /**
-   * Restore saved SelectionUtils's range
-   */
-  restore(): void;
-
+  
   /**
    * Removes fake background
    */
   removeFakeBackground(): void;
+
+  /**
+   * Save selection range.
+   * Allows to save selection to be able to temporally move focus away.
+   * Might be usefull for inline tools
+   */
+  save(): void;
+
+  /**
+   * Restore saved selection range
+   */
+  restore(): void;
 }
