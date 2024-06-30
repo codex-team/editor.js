@@ -239,20 +239,6 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }
   }
 
-  private drawLine(y: number, color: string) {
-    const line = document.createElement('div');
-
-    line.style.position = 'absolute';
-    line.style.left = '0';
-    line.style.right = '0';
-    line.style.top = `${y}px`;
-    line.style.height = '1px';
-    line.style.backgroundColor = color;
-    line.style.zIndex = '10000';
-
-    this.Editor.UI.nodes.wrapper.appendChild(line);
-  }
-
   /**
    * Move Toolbar to the passed (or current) Block
    *
@@ -293,65 +279,79 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
 
     /**
+     * 1. Mobile:
+     *  - Toolbar at the bottom of the block
      *
+     * 2. Desktop:
+     *   There are two cases of a toolbar position:
+     *      2.1 Toolbar is moved to the top of the block (+ padding top of the block)
+     *       - when the first input is far from the top of the block, for example in Image tool
+     *       - when block has no inputs
+     *      2.2 Toolbar is moved to the baseline of the first input
+     *       - when the first input is close to the top of the block
      */
-
-    const firstInput = block.firstInput;
-    const renderedContentStyle = window.getComputedStyle(firstInput);
-
-
-    const targetBlockHolderRect = targetBlockHolder.getBoundingClientRect();
-    const firstInputRect = firstInput.getBoundingClientRect();
-    const firstInputOffset = firstInputRect.top - targetBlockHolderRect.top;
-
-    const pluginContentRect = block.pluginsContent.getBoundingClientRect();
-    const pluginContentOffset = pluginContentRect.top - targetBlockHolderRect.top;
-
-
-    const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
-    const blockHeight = targetBlockHolder.offsetHeight;
-    const baseline = calculateBaselineByStyle(renderedContentStyle);
-    const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton).height, 10);
-    const toolbarActionsPaddingBottom = 8;
-
-    // console.log('toolbarActionsPaddingTop', toolbarActionsPaddingTop);
-
-
-    // this.drawLine(targetBlockHolder.offsetTop + baseline - toolbarActionsHeight, 'red');
-    // this.drawLine(targetBlockHolder.offsetTop + baseline + firstInputOffset, 'blue');
-
     let toolbarY;
+    const MAX_OFFSET = 20;
 
     /**
+     * Compute first input position
+     */
+    const firstInput = block.firstInput;
+    const targetBlockHolderRect = targetBlockHolder.getBoundingClientRect();
+    const firstInputRect = firstInput !== undefined ? firstInput.getBoundingClientRect() : null;
+
+    /**
+     * Compute the offset of the first input from the top of the block
+     */
+    const firstInputOffset = firstInputRect !== null ? firstInputRect.top - targetBlockHolderRect.top : null;
+
+    /**
+     * Check if the first input is far from the top of the block
+     */
+    const isFirstInputFarFromTop = firstInputOffset !== null ? firstInputOffset > MAX_OFFSET : undefined;
+
+    /**
+     * Case 1.
      * On mobile — Toolbar at the bottom of Block
-     * On Desktop — Toolbar should be moved to the first line of block text
-     *              To do that, we compute the block offset and the padding-top of the plugin content
      */
     if (isMobile) {
-      toolbarY = targetBlockHolder.offsetTop + blockHeight;
-    } else {
-      /**
-       * For large texts like H1, Y is based on the baseline and toolbar height
-       * For small texts like paragraph, Y is based on the top of the block and padding-top of the plugin content
-       */
-      // const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom;
-      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom + firstInputOffset;
+      toolbarY = targetBlockHolder.offsetTop + targetBlockHolder.offsetHeight;
+
+    /**
+     * Case 2.1
+     * On Desktop — without inputs or with the first input far from the top of the block
+     *            Toolbar should be moved to the top of the block
+     */
+    } else if (firstInput === undefined || isFirstInputFarFromTop) {
+      const pluginContentRect = block.pluginsContent.getBoundingClientRect();
+      const pluginContentOffset = pluginContentRect.top - targetBlockHolderRect.top;
+
       const paddingTopBasedY = targetBlockHolder.offsetTop + pluginContentOffset;
 
-      // toolbarY = Math.max(baselineBasedY, paddingTopBasedY);
+      toolbarY = paddingTopBasedY;
 
-      if (firstInputOffset > 20) {
-        toolbarY = paddingTopBasedY;
-      } else {
-        toolbarY = baselineBasedY;
-      }
+    /**
+     * Case 2.2
+     * On Desktop — Toolbar should be moved to the baseline of the first input
+     */
+    } else {
+      const firstInputStyle = window.getComputedStyle(firstInput);
+      const baseline = calculateBaselineByStyle(firstInputStyle);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton!).height, 10);
+      const toolbarActionsPaddingBottom = 8;
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom + firstInputOffset!;
+
+      toolbarY = baselineBasedY;
     }
 
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.nodes.wrapper!.style.top = `${Math.floor(toolbarY)}px`;
 
     /**
      * Do not show Block Tunes Toggler near single and empty block
@@ -656,45 +656,4 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.toolboxInstance.destroy();
     }
   }
-}
-
-
-function hasMediaElementsBefore(
-  startNode: Node,
-  endNode: Node
-): boolean {
-  // Define the media elements we're looking for
-  const mediaTags = new Set(['IMG', 'IFRAME', 'VIDEO', 'AUDIO', 'PICTURE', 'SOURCE']);
-
-  // Helper function to check if a node is a media element
-  function isMediaElement(node: Node): boolean {
-    return mediaTags.has((node as HTMLElement).tagName);
-  }
-
-  // Create a TreeWalker to traverse the DOM
-  const treeWalker = document.createTreeWalker(
-    endNode,
-    NodeFilter.SHOW_ELEMENT,
-    {
-      acceptNode: (node: Node) => {
-        // Accept all elements to allow traversal
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    }
-  );
-
-  // Traverse the DOM from endNode to startNode
-  let currentNode: Node | null = treeWalker.currentNode;
-  while (currentNode) {
-    if (isMediaElement(currentNode)) {
-      return true;
-    }
-    if (currentNode === startNode) {
-      break;
-    }
-    currentNode = treeWalker.nextNode();
-  }
-
-  // If no media elements are found
-  return false;
 }
