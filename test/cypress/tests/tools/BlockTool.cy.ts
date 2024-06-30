@@ -71,12 +71,8 @@ describe('BlockTool', () => {
       },
     },
     api: {
-      getMethodsForTool(): object {
-        return {
-          prop1: 'prop1',
-          prop2: 'prop2',
-        };
-      },
+      prop1: 'prop1',
+      prop2: 'prop2',
     },
     isDefault: false,
     isInternal: false,
@@ -580,7 +576,7 @@ describe('BlockTool', () => {
     it('should return Tool instance with passed API object', () => {
       const instance = tool.create(data, blockAPI as any, false) as any;
 
-      expect(instance.api).to.be.deep.eq(options.api.getMethodsForTool());
+      expect(instance.api).to.be.deep.eq(options.api);
     });
 
     it('should return Tool instance with passed config', () => {

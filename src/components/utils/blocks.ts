@@ -1,5 +1,6 @@
 import { BlockAPI } from '../../../types';
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
+import { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
 import BlockTool from '../tools/block';
@@ -47,7 +48,8 @@ export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boo
  * @param allBlockTools - all block tools available in the editor
  */
 export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockTool[]): Promise<BlockTool[]> {
-  const blockData = await block.save();
+  const savedData = await block.save() as SavedData;
+  const blockData = savedData.data;
 
   return allBlockTools.reduce((result, tool) => {
     /**
