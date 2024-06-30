@@ -17,11 +17,6 @@ export interface Selection {
   expandToTag(node: HTMLElement): void;
 
   /**
-   * Returns current selection;
-   */
-  getCurrentSelection(): Selection;
-
-  /**
    * Sets fake background
   */
   setFakeBackground(): void;

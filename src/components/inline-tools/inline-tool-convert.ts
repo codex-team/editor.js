@@ -3,6 +3,7 @@ import { InlineTool, API } from '../../../types';
 import { MenuConfig } from '../../../types/tools';
 import * as _ from '../utils';
 import { Blocks, Selection, Conversion, I18n } from '../../../types/api';
+import SelectionUtils from '../selection';
 
 /**
  * Inline tools for converting blocks
@@ -47,7 +48,7 @@ export default class ConvertInlineTool implements InlineTool {
    * Returns tool's UI config
    */
   public async render(): Promise<MenuConfig> {
-    const currentSelection = this.selectionAPI.getCurrentSelection();
+    const currentSelection = SelectionUtils.get();
     const currentBlock = this.blocksAPI.getBlockByElement(currentSelection.anchorNode as HTMLElement);
     const convertToItems = await this.conversionAPI.getItemsForBlock(currentBlock);
 

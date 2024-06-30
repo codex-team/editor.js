@@ -526,7 +526,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    tool.surround(range);
+    tool.surround?.(range);
     this.checkToolsState();
   }
 
