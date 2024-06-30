@@ -90,7 +90,6 @@ export default class BlockEvents extends Module {
     /**
      * When user type something:
      *  - close Toolbar
-     *  - close Conversion Toolbar
      *  - clear block highlighting
      */
     if (_.isPrintableKey(event.keyCode)) {

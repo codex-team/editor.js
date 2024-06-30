@@ -21,7 +21,6 @@ import UiAPI from './api/ui';
 import BlockSettings from './toolbar/blockSettings';
 import Toolbar from './toolbar/index';
 import InlineToolbar from './toolbar/inline';
-import Conversion from './toolbar/conversion';
 
 /** . */
 import BlockEvents from './blockEvents';
@@ -63,7 +62,6 @@ export default {
   BlockSettings,
   Toolbar,
   InlineToolbar,
-  Conversion,
 
   // Modules
   BlockEvents,
