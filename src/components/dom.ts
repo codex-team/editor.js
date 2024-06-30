@@ -620,7 +620,6 @@ export function isCollapsedWhitespaces(textContent: string): boolean {
 
 /**
  * Calculates the Y coordinate of the text baseline from the top of the element's margin box,
- * based on the computed CSS styles of the element.
  *
  * The calculation formula is as follows:
  *
@@ -633,10 +632,11 @@ export function isCollapsedWhitespaces(textContent: string): boolean {
  * 3. Calculate the total baseline Y coordinate:
  *    - Sum of `marginTop`, `borderTopWidth`, `paddingTop`, the extra space due to `lineHeight`, and the baseline offset.
  *
- * @param style - The computed styles of the element.
+ * @param element - The element to calculate the baseline for.
  * @returns {number} - The Y coordinate of the text baseline from the top of the element's margin box.
  */
-export function calculateBaselineByStyle(style: CSSStyleDeclaration): number {
+export function calculateBaseline(element: Element): number {
+  const style = window.getComputedStyle(element);
   const fontSize = parseFloat(style.fontSize);
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // default line-height if not set

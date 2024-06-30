@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import $, { calculateBaselineByStyle } from '../../dom';
+import $, { calculateBaseline } from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
@@ -334,8 +334,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * On Desktop — Toolbar should be moved to the baseline of the first input
      */
     } else {
-      const firstInputStyle = window.getComputedStyle(firstInput);
-      const baseline = calculateBaselineByStyle(firstInputStyle);
+      const baseline = calculateBaseline(firstInput);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton!).height, 10);
       const toolbarActionsPaddingBottom = 8;
