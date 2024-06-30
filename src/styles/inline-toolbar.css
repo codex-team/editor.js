@@ -123,11 +123,16 @@
   }
 
   &-input {
+    background: #F8F8F8;
+    border: 1px solid rgba(226,226,229,0.20);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 22px;
+
+
     outline: none;
-    border: 0;
-    border-radius: 0 0 4px 4px;
     margin: 0;
-    font-size: 13px;
     width: 100%;
     box-sizing: border-box;
     display: none;
