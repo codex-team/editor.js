@@ -323,8 +323,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *            Toolbar should be moved to the top of the block
      */
     } else if (firstInput === undefined || isFirstInputFarFromTop) {
-      const pluginContentRect = block.pluginsContent.getBoundingClientRect();
-      const pluginContentOffset = pluginContentRect.top - targetBlockHolderRect.top;
+      const pluginContentOffset = parseInt(window.getComputedStyle(block.pluginsContent).paddingTop);
 
       const paddingTopBasedY = targetBlockHolder.offsetTop + pluginContentOffset;
 
