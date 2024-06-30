@@ -223,9 +223,11 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
           name: tool.name,
           closeOnActivate: true,
           onActivate: async () => {
-            const { BlockManager, Caret } = this.Editor;
+            const { BlockManager, Caret, Toolbar } = this.Editor;
 
             const newBlock = await BlockManager.convert(currentBlock, tool.name, toolboxItem.data);
+
+            Toolbar.close();
 
             Caret.setToBlock(newBlock, Caret.positions.END);
           },
