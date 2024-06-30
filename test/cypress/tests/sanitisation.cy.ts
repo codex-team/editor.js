@@ -34,7 +34,7 @@ describe('Sanitizing', () => {
         .type('This text should be bold.{selectall}');
 
       cy.get('[data-cy=editorjs]')
-        .get('button.ce-inline-tool--bold')
+        .get('[data-item-name="bold"]')
         .click();
 
       cy.get('[data-cy=editorjs]')

@@ -50,7 +50,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       data,
       block,
       readOnly,
-      api: this.api.getMethodsForTool(this),
+      api: this.api,
       config: this.settings,
     }) as IBlockTool;
   }

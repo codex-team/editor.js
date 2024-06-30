@@ -36,6 +36,7 @@ export interface PopoverParams {
   nestingLevel?: number;
 }
 
+
 /**
  * Texts used inside popover
  */
@@ -54,7 +55,12 @@ export enum PopoverEvent {
   /**
    * When popover closes
    */
-  Close = 'close'
+  Closed = 'closed',
+
+  /**
+   * When it closes because item with 'closeOnActivate' property set was clicked
+   */
+  ClosedOnActivate = 'closed-on-activate',
 }
 
 /**
@@ -64,7 +70,13 @@ export interface PopoverEventMap {
   /**
    * Fired when popover closes
    */
-  [PopoverEvent.Close]: undefined;
+  [PopoverEvent.Closed]: undefined;
+
+  /**
+   * Fired when popover closes because item with 'closeOnActivate' property set was clicked
+   * Value is the item that was clicked
+   */
+  [PopoverEvent.ClosedOnActivate]: undefined;
 }
 
 /**

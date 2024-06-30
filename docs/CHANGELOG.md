@@ -19,6 +19,12 @@
 - `New` – *Menu Config* – New item type – HTML
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
+- `New` – Inline Toolbar has new look 💅
+- `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
+- `New` – *ToolsAPI* – All installed block tools now accessible via ToolsAPI `getBlockTools()` method
+- `New` – *SelectionAPI* – Exposed methods `save()` and `restore()` that allow to save selection to be able to temporally move focus away, methods `setFakeBackground()` and `removeFakeBackground()` that allow to immitate selection while focus moved away
+- `Impovement` – *MenuConfig* – TunesMenuConfig deprecated, use MenuConfig type instead
+- `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
 – `Fix` — Deleting whitespaces at the start/end of the block
 – `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 - `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings

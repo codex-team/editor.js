@@ -1,6 +1,6 @@
 import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
-import { SearchInput, SearchInputEvent, SearchableItem } from './components/search-input';
+import { SearchInput } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
 import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
@@ -39,11 +39,10 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    */
   protected search: SearchInput | undefined;
 
-
   /**
    * Messages that will be displayed in popover
    */
-  private messages: PopoverMessages = {
+  protected messages: PopoverMessages = {
     nothingFound: 'Nothing found',
     search: 'Search',
   };
@@ -102,10 +101,6 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
     ]);
 
     this.nodes.popover.appendChild(this.nodes.popoverContainer);
-
-    if (params.searchable) {
-      this.addSearch();
-    }
   }
 
   /**
@@ -139,14 +134,28 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       this.search.clear();
     }
 
-    this.emit(PopoverEvent.Close);
+    this.emit(PopoverEvent.Closed);
   }
 
   /**
    * Clears memory
    */
   public destroy(): void {
+    this.items.forEach(item => item.destroy());
+    this.nodes.popover.remove();
     this.listeners.removeAll();
+    this.search?.destroy();
+  }
+
+  /**
+   * Looks for the item by name and imitates click on it
+   *
+   * @param name - name of the item to activate
+   */
+  public activateItemByName(name: string): void {
+    const foundItem = this.items.find(item => item.name === name);
+
+    this.handleItemClick(foundItem);
   }
 
   /**
@@ -162,7 +171,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
         case PopoverItemType.Html:
           return new PopoverItemHtml(item, this.itemsRenderParams[PopoverItemType.Html]);
         default:
-          return new PopoverItemDefault(item,  this.itemsRenderParams[PopoverItemType.Default]);
+          return new PopoverItemDefault(item, this.itemsRenderParams[PopoverItemType.Default]);
       }
     });
   }
@@ -172,60 +181,54 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param event - event to retrieve popover item from
    */
-  protected getTargetItem(event: Event): PopoverItemDefault | undefined {
-    return this.itemsDefault.find(el => {
-      const itemEl = el.getElement();
+  protected getTargetItem(event: Event): PopoverItemDefault | PopoverItemHtml | undefined {
+    return this.items
+      .filter(item => item instanceof PopoverItemDefault || item instanceof PopoverItemHtml)
+      .find(item => {
+        const itemEl = item.getElement();
 
-      if (itemEl === null) {
-        return false;
-      }
+        if (itemEl === null) {
+          return false;
+        }
 
-      return event.composedPath().includes(itemEl);
-    });
+        return event.composedPath().includes(itemEl);
+      }) as PopoverItemDefault | PopoverItemHtml | undefined;
   }
 
   /**
-   * Handles input inside search field
+   * Handles popover item click
    *
-   * @param data - search input event data
-   * @param data.query - search query text
-   * @param data.result - search results
+   * @param item - item to handle click of
    */
-  private onSearch = (data: { query: string, items: SearchableItem[] }): void => {
-    const isEmptyQuery = data.query === '';
-    const isNothingFound = data.items.length === 0;
+  protected handleItemClick(item: PopoverItem): void {
+    if ('isDisabled' in item && item.isDisabled) {
+      return;
+    }
 
-    this.items
-      .forEach((item) => {
-        let isHidden = false;
+    if (item.hasChildren) {
+      this.showNestedItems(item as PopoverItemDefault | PopoverItemHtml);
 
-        if (item instanceof PopoverItemDefault) {
-          isHidden = !data.items.includes(item);
-        } else if (item instanceof PopoverItemSeparator || item instanceof PopoverItemHtml) {
-          /** Should hide separators if nothing found message displayed or if there is some search query applied */
-          isHidden = isNothingFound || !isEmptyQuery;
-        }
-        item.toggleHidden(isHidden);
-      });
-    this.toggleNothingFoundMessage(isNothingFound);
-  };
+      if ('handleClick' in item && typeof item.handleClick === 'function') {
+        item.handleClick();
+      }
 
-  /**
-   * Adds search to the popover
-   */
-  private addSearch(): void {
-    this.search = new SearchInput({
-      items: this.itemsDefault,
-      placeholder: this.messages.search,
-    });
+      return;
+    }
 
-    this.search.on(SearchInputEvent.Search, this.onSearch);
+    /** Cleanup other items state */
+    this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
 
-    const searchElement = this.search.getElement();
+    if ('handleClick' in item && typeof item.handleClick === 'function') {
+      item.handleClick();
+    }
 
-    searchElement.classList.add(css.search);
+    this.toggleItemActivenessIfNeeded(item);
 
-    this.nodes.popoverContainer.insertBefore(searchElement, this.nodes.popoverContainer.firstChild);
+    if (item.closeOnActivate) {
+      this.hide();
+
+      this.emit(PopoverEvent.ClosedOnActivate);
+    }
   }
 
   /**
@@ -240,35 +243,7 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
       return;
     }
 
-    if (item.isDisabled) {
-      return;
-    }
-
-    if (item.children.length > 0) {
-      this.showNestedItems(item);
-
-      return;
-    }
-
-    /** Cleanup other items state */
-    this.itemsDefault.filter(x => x !== item).forEach(x => x.reset());
-
-    item.handleClick();
-
-    this.toggleItemActivenessIfNeeded(item);
-
-    if (item.closeOnActivate) {
-      this.hide();
-    }
-  }
-
-  /**
-   * Toggles nothing found message visibility
-   *
-   * @param isDisplayed - true if the message should be displayed
-   */
-  private toggleNothingFoundMessage(isDisplayed: boolean): void {
-    this.nodes.nothingFoundMessage.classList.toggle(css.nothingFoundMessageDisplayed, isDisplayed);
+    this.handleItemClick(item);
   }
 
   /**
@@ -279,7 +254,11 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param clickedItem - popover item that was clicked
    */
-  private toggleItemActivenessIfNeeded(clickedItem: PopoverItemDefault): void {
+  private toggleItemActivenessIfNeeded(clickedItem: PopoverItem): void {
+    if (!(clickedItem instanceof PopoverItemDefault)) {
+      return;
+    }
+
     if (clickedItem.toggle === true) {
       clickedItem.toggleActive();
     }
@@ -306,5 +285,5 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    *
    * @param item – item to show nested popover for
    */
-  protected abstract showNestedItems(item: PopoverItemDefault): void;
+  protected abstract showNestedItems(item: PopoverItemDefault | PopoverItemHtml): void;
 }

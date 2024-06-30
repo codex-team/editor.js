@@ -10,6 +10,7 @@ export * from './tool-config';
 export * from './tool-settings';
 export * from './paste-events';
 export * from './hook-events';
+export * from './menu-config';
 
 export type Tool = BlockTool | InlineTool | BlockTune;
 export type ToolConstructable = BlockToolConstructable | InlineToolConstructable | BlockTuneConstructable;

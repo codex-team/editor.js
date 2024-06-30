@@ -28,6 +28,7 @@ import {
   Tooltip,
   I18n,
   Ui,
+  Tools,
 } from './api';
 
 import { OutputData } from './data-formats';
@@ -82,8 +83,6 @@ export {
 export {
   PopoverItemParams,
   PopoverItemDefaultParams,
-  PopoverItemWithConfirmationParams,
-  PopoverItemWithoutConfirmationParams
 } from '../src/components/utils/popover';
 
 export { OutputData, OutputBlockData} from './data-formats/output-data';
@@ -110,6 +109,7 @@ export {
 export interface API {
   blocks: Blocks;
   caret: Caret;
+  tools: Tools;
   events: Events;
   listeners: Listeners;
   notifier: Notifier;

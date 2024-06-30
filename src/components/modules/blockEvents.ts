@@ -90,12 +90,10 @@ export default class BlockEvents extends Module {
     /**
      * When user type something:
      *  - close Toolbar
-     *  - close Conversion Toolbar
      *  - clear block highlighting
      */
     if (_.isPrintableKey(event.keyCode)) {
       this.Editor.Toolbar.close();
-      this.Editor.ConversionToolbar.close();
 
       /**
        * Allow to use shortcuts with selected blocks
@@ -203,9 +201,9 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private tabPressed(event: KeyboardEvent): void {
-    const { InlineToolbar, ConversionToolbar, Caret } = this.Editor;
+    const { InlineToolbar, Caret } = this.Editor;
 
-    const isFlipperActivated = ConversionToolbar.opened || InlineToolbar.opened;
+    const isFlipperActivated = InlineToolbar.opened;
 
     if (isFlipperActivated) {
       return;
@@ -653,7 +651,6 @@ export default class BlockEvents extends Module {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbar.toolbox.opened),
         blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
         inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
-        conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
         flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
     /**
@@ -666,8 +663,7 @@ export default class BlockEvents extends Module {
       flippingToolbarItems ||
       toolboxItemSelected ||
       blockSettingsItemSelected ||
-      inlineToolbarItemSelected ||
-      conversionToolbarItemSelected
+      inlineToolbarItemSelected
     );
   }
 

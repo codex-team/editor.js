@@ -24,7 +24,7 @@ export class Hint {
    */
   constructor(params: HintParams) {
     this.nodes = {
-      root: Dom.make('div', [css.root, css.alignedLeft]),
+      root: Dom.make('div', [css.root, params.alignment === 'center' ? css.alignedCenter : css.alignedStart]),
       title: Dom.make('div', css.title, { textContent: params.title }),
     };
 

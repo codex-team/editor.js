@@ -143,54 +143,6 @@
   };
 
   /**
-   * Styles for Settings Button in Toolbar
-   */
-  --toolbar-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 6px 1px;
-    border-radius: 3px;
-    cursor: pointer;
-    border: 0;
-    outline: none;
-    background-color: transparent;
-    vertical-align: bottom;
-    color: inherit;
-    margin: 0;
-
-    svg {
-      width: var(--icon-size);
-      height: var(--icon-size);
-
-      @media (--mobile) {
-        width: var(--icon-size--mobile);
-        height: var(--icon-size--mobile);
-      }
-    }
-
-    @media (--can-hover) {
-      &:hover {
-        background-color: var(--bg-light);
-      }
-    }
-
-    &--active {
-      color: var(--color-active-icon);
-    }
-
-    &--focused {
-      @apply --button-focused;
-
-      &-animated {
-        animation-name: buttonClicked;
-        animation-duration: 250ms;
-      }
-    }
-  };
-
-  /**
    * Tool icon with border
    */
   --tool-icon {
