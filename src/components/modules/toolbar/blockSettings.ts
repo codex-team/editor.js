@@ -5,13 +5,14 @@ import Block from '../../block';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
-import { TunesMenuConfigItem } from '../../../../types/tools';
+import { MenuConfigItem } from '../../../../types/tools';
 import { resolveAliases } from '../../utils/resolve-aliases';
 import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemType } from '../../utils/popover';
 import { PopoverEvent } from '../../utils/popover/popover.types';
 import { isMobileScreen } from '../../utils';
 import { EditorMobileLayoutToggled } from '../../events';
 import { IconReplace } from '@codexteam/icons';
+import { getConvertibleToolsForBlock } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
@@ -202,8 +203,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @param commonTunes – common tunes
    * @param toolTunes - tool specific tunes
    */
-  private async getTunesItems(currentBlock: Block, commonTunes: TunesMenuConfigItem[], toolTunes?: TunesMenuConfigItem[]): Promise<PopoverItemParams[]> {
-    const items = [] as TunesMenuConfigItem[];
+  private async getTunesItems(currentBlock: Block, commonTunes: MenuConfigItem[], toolTunes?: MenuConfigItem[]): Promise<PopoverItemParams[]> {
+    const items = [] as MenuConfigItem[];
 
     if (toolTunes !== undefined && toolTunes.length > 0) {
       items.push(...toolTunes);
@@ -212,7 +213,27 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       });
     }
 
-    const convertToItems = await this.Editor.Conversion.getItemsForBlock(currentBlock);
+    const allBlockTools = Array.from(this.Editor.Tools.blockTools.values());
+    const convertibleTools = await getConvertibleToolsForBlock(currentBlock, allBlockTools);
+    const convertToItems = convertibleTools.reduce((result, tool) => {
+      tool.toolbox.forEach((toolboxItem) => {
+        result.push({
+          icon: toolboxItem.icon,
+          title: toolboxItem.title,
+          name: tool.name,
+          closeOnActivate: true,
+          onActivate: async () => {
+            const { BlockManager, Caret } = this.Editor;
+
+            const newBlock = await BlockManager.convert(currentBlock, tool.name, toolboxItem.data);
+
+            Caret.setToBlock(newBlock, Caret.positions.END);
+          },
+        });
+      });
+
+      return result;
+    }, []);
 
     if (convertToItems.length > 0) {
       items.push({
@@ -245,7 +266,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @param item - item with resolved aliases
    */
-  private resolveTuneAliases(item: TunesMenuConfigItem): PopoverItemParams {
+  private resolveTuneAliases(item: MenuConfigItem): PopoverItemParams {
     if (item.type === PopoverItemType.Separator || item.type === PopoverItemType.Html) {
       return item;
     }
