@@ -7,7 +7,6 @@
  */
 import Module from '../../__module';
 import { API as APIInterfaces } from '../../../../types';
-import { ToolClass } from '../../tools/collection';
 
 /**
  * @class API
@@ -39,14 +38,14 @@ export default class API extends Module {
 
   /**
    * Returns Editor.js Core API methods for passed tool
-   *
-   * @param tool - tool object
+   * @param toolName - tool name
+   * @param isTune - is tool a block tune
    */
-  public getMethodsForTool(tool: ToolClass): APIInterfaces {
+  public getMethodsForTool(toolName: string, isTune: boolean): APIInterfaces {
     return Object.assign(
       this.methods,
       {
-        i18n: this.Editor.I18nAPI.getMethodsForTool(tool),
+        i18n: this.Editor.I18nAPI.getMethodsForTool(toolName, isTune),
       }
     ) as APIInterfaces;
   }

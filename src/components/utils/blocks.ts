@@ -18,6 +18,29 @@ export function isBlockConvertable(block: Block, direction: 'export' | 'import')
 }
 
 /**
+ * Checks that all the properties of the first block data exist in second block data with the same values.
+ *
+ * Example:
+ *
+ * data1 = { level: 1 }
+ *
+ * data2 = {
+ *    text: "Heading text",
+ *    level: 1
+ *  }
+ *
+ * isSameBlockData(data1, data2) => true
+ *
+ * @param data1 – first block data
+ * @param data2 – second block data
+ */
+export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boolean {
+  return Object.entries(data1).some((([propName, propValue]) => {
+    return data2[propName] && equals(data2[propName], propValue);
+  }));
+}
+
+/**
  * Returns list of tools you can convert specified block to
  *
  * @param block - block to get conversion items for
@@ -67,28 +90,6 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
   }, []);
 }
 
-/**
- * Checks that all the properties of the first block data exist in second block data with the same values.
- *
- * Example:
- *
- * data1 = { level: 1 }
- *
- * data2 = {
- *    text: "Heading text",
- *    level: 1
- *  }
- *
- * isSameBlockData(data1, data2) => true
- *
- * @param data1 – first block data
- * @param data2 – second block data
- */
-export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boolean {
-  return Object.entries(data1).some((([propName, propValue]) => {
-    return data2[propName] && equals(data2[propName], propValue);
-  }));
-}
 
 /**
  * Check if two blocks could be merged.
