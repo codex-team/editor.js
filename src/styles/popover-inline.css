@@ -87,7 +87,7 @@
     .ce-popover__container {
       --offset: 3px;
 
-      left: min(calc(var(--trigger-item-left) - var(--container-padding)), calc(var(--inline-popover-width) - var(--width)));
+      left: 0px;
       top: calc(var(--height) + var(--offset));
 
       @media (--mobile) {
