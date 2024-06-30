@@ -239,6 +239,20 @@ export default class Toolbar extends Module<ToolbarNodes> {
     }
   }
 
+  private drawLine(y: number, color: string) {
+    const line = document.createElement('div');
+
+    line.style.position = 'absolute';
+    line.style.left = '0';
+    line.style.right = '0';
+    line.style.top = `${y}px`;
+    line.style.height = '1px';
+    line.style.backgroundColor = color;
+    line.style.zIndex = '10000';
+
+    this.Editor.UI.nodes.wrapper.appendChild(line);
+  }
+
   /**
    * Move Toolbar to the passed (or current) Block
    *
@@ -276,12 +290,35 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     const targetBlockHolder = block.holder;
     const { isMobile } = this.Editor.UI;
-    const renderedContent = block.pluginsContent;
-    const renderedContentStyle = window.getComputedStyle(renderedContent);
+
+
+    /**
+     *
+     */
+
+    const firstInput = block.firstInput;
+    const renderedContentStyle = window.getComputedStyle(firstInput);
+
+
+    const targetBlockHolderRect = targetBlockHolder.getBoundingClientRect();
+    const firstInputRect = firstInput.getBoundingClientRect();
+    const firstInputOffset = firstInputRect.top - targetBlockHolderRect.top;
+
+    const pluginContentRect = block.pluginsContent.getBoundingClientRect();
+    const pluginContentOffset = pluginContentRect.top - targetBlockHolderRect.top;
+
+
     const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
     const blockHeight = targetBlockHolder.offsetHeight;
     const baseline = calculateBaselineByStyle(renderedContentStyle);
-    const toolbarActionsHeight = this.nodes.actions.offsetHeight;
+    const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton).height, 10);
+    const toolbarActionsPaddingBottom = 8;
+
+    // console.log('toolbarActionsPaddingTop', toolbarActionsPaddingTop);
+
+
+    // this.drawLine(targetBlockHolder.offsetTop + baseline - toolbarActionsHeight, 'red');
+    // this.drawLine(targetBlockHolder.offsetTop + baseline + firstInputOffset, 'blue');
 
     let toolbarY;
 
@@ -297,10 +334,18 @@ export default class Toolbar extends Module<ToolbarNodes> {
        * For large texts like H1, Y is based on the baseline and toolbar height
        * For small texts like paragraph, Y is based on the top of the block and padding-top of the plugin content
        */
-      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight;
-      const paddingTopBasedY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
+      // const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom;
+      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom + firstInputOffset;
+      const paddingTopBasedY = targetBlockHolder.offsetTop + pluginContentOffset;
 
-      toolbarY = Math.max(baselineBasedY, paddingTopBasedY);
+      // toolbarY = Math.max(baselineBasedY, paddingTopBasedY);
+
+      if (firstInputOffset > 20) {
+        toolbarY = paddingTopBasedY;
+      } else {
+        toolbarY = baselineBasedY;
+      }
+
     }
 
     /**
@@ -611,4 +656,45 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.toolboxInstance.destroy();
     }
   }
+}
+
+
+function hasMediaElementsBefore(
+  startNode: Node,
+  endNode: Node
+): boolean {
+  // Define the media elements we're looking for
+  const mediaTags = new Set(['IMG', 'IFRAME', 'VIDEO', 'AUDIO', 'PICTURE', 'SOURCE']);
+
+  // Helper function to check if a node is a media element
+  function isMediaElement(node: Node): boolean {
+    return mediaTags.has((node as HTMLElement).tagName);
+  }
+
+  // Create a TreeWalker to traverse the DOM
+  const treeWalker = document.createTreeWalker(
+    endNode,
+    NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode: (node: Node) => {
+        // Accept all elements to allow traversal
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }
+  );
+
+  // Traverse the DOM from endNode to startNode
+  let currentNode: Node | null = treeWalker.currentNode;
+  while (currentNode) {
+    if (isMediaElement(currentNode)) {
+      return true;
+    }
+    if (currentNode === startNode) {
+      break;
+    }
+    currentNode = treeWalker.nextNode();
+  }
+
+  // If no media elements are found
+  return false;
 }

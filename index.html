@@ -93,6 +93,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/nft@1.0.2/dist/NftTool.umd.min.js"></script>
 
   <!-- Initialization -->
   <script type="module">
@@ -127,6 +128,12 @@
        * Tools list
        */
       tools: {
+        nft: {
+          class: NftTool,
+          config: {
+            endpoint: 'http://localhost:3000/alchemy',
+          }
+        },
         /**
          * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
          */
