@@ -27,6 +27,7 @@
 - `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
 – `Fix` — Deleting whitespaces at the start/end of the block
 – `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
+- `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
 
 ### 2.29.1
 
