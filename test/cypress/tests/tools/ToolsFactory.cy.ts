@@ -28,7 +28,14 @@ describe('ToolsFactory', (): void => {
         placeholder: 'Placeholder',
         defaultBlock: 'paragraph',
       } as any,
-      {} as any
+      {
+        getMethodsForTool(): object {
+          return {
+            prop1: 'prop1',
+            prop2: 'prop2',
+          };
+        }
+      } as any
     );
   });
 

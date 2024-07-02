@@ -1,6 +1,5 @@
 import { ToolConfig } from './tool-config';
-import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItemDefaultParams, PopoverItemSeparatorParams, PopoverItemHtmlParams } from '../configs';
+import { ToolConstructable, BlockToolData, MenuConfig, MenuConfigItem } from './index';
 
 /**
  * Tool may specify its toolbox configuration
@@ -27,51 +26,6 @@ export interface ToolboxConfigEntry {
    */
   data?: BlockToolData
 }
-
-/**
- * Represents single interactive (non-separator) Tunes Menu item
- */
-export type TunesMenuConfigDefaultItem = PopoverItemDefaultParams & {
-  /**
-   * Tune displayed text.
-   */
-  title?: string;
-
-  /**
-   * Tune displayed text.
-   * Alias for title property
-   * 
-   * @deprecated - use title property instead
-   */
-  label?: string
-
-  /**
-   * Menu item parameters that should be applied on item activation.
-   * May be used to ask user for confirmation before executing menu item activation handler.
-   */
-  confirmation?: TunesMenuConfigDefaultItem;
-}
-
-/**
- * Represents single separator Tunes Menu item
- */
-export type TunesMenuConfigSeparatorItem = PopoverItemSeparatorParams;
-
-/**
- * Represents single Tunes Menu item with custom HTML contect
- */
-export type TunesMenuConfigHtmlItem = PopoverItemHtmlParams;
-
-/**
- * Union of all Tunes Menu item types
- */
-export type TunesMenuConfigItem = TunesMenuConfigDefaultItem | TunesMenuConfigSeparatorItem | TunesMenuConfigHtmlItem;
-
-/**
- * Tool may specify its tunes configuration
- * that can contain either one or multiple entries
- */
-export type TunesMenuConfig = TunesMenuConfigItem | TunesMenuConfigItem[];
 
 /**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}
@@ -113,6 +67,18 @@ export interface ExternalToolSettings<Config extends object = any> {
    */
   toolbox?: ToolboxConfig | false;
 }
+
+/**
+ * Tool's tunes configuration.
+ * @deprecated use {@link MenuConfig} type instead
+ */
+export type TunesMenuConfig = MenuConfig;
+
+/**
+ * Single Tunes Menu Config item
+ * @deprecated use {@link MenuConfigItem} type instead
+ */
+export type TunesMenuConfigItem = MenuConfigItem;
 
 /**
  * For internal Tools 'class' property is optional

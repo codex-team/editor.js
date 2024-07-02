@@ -1,6 +1,10 @@
 .ce-hint {
-  &--align-left {
-    text-align: left;
+  &--align-start {
+    text-align: start;
+  }
+
+  &--align-center {
+    text-align: center;
   }
 
   &__description {

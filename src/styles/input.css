@@ -1,7 +1,7 @@
 .cdx-search-field {
   --icon-margin-right: 10px;
 
-  background: rgba(232,232,235,0.49);
+  background: #F8F8F8;
   border: 1px solid rgba(226,226,229,0.20);
   border-radius: 6px;
   padding: 2px;
@@ -23,7 +23,6 @@
       color: var(--grayText);
     }
   }
-
 
   &__input {
     font-size: 14px;

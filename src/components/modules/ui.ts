@@ -97,6 +97,7 @@ export default class UI extends Module<UINodes> {
    */
   public isMobile = false;
 
+
   /**
    * Cache for center column rectangle info
    * Invalidates on window resize
@@ -134,6 +135,7 @@ export default class UI extends Module<UINodes> {
      */
     this.loadStyles();
   }
+
 
   /**
    * Toggle read-only state
@@ -187,9 +189,9 @@ export default class UI extends Module<UINodes> {
    * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
-    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbar.toolbox.opened;
+    return Boolean(BlockSettings.opened || InlineToolbar.opened || Toolbar.toolbox.opened);
   }
 
   /**
@@ -226,11 +228,10 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
     BlockSettings.close();
     InlineToolbar.close();
-    ConversionToolbar.close();
     Toolbar.toolbox.close();
   }
 
@@ -380,6 +381,7 @@ export default class UI extends Module<UINodes> {
      */
     this.watchBlockHoveredEvents();
   }
+
 
   /**
    * Listen redactor mousemove to emit 'block-hovered' event
@@ -552,8 +554,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
-    } else if (this.Editor.ConversionToolbar.opened) {
-      this.Editor.ConversionToolbar.close();
     } else if (this.Editor.InlineToolbar.opened) {
       this.Editor.InlineToolbar.close();
     } else {
@@ -872,8 +872,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
 
-    const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
-
-    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
+    this.Editor.InlineToolbar.tryToShow(true);
   }
 }

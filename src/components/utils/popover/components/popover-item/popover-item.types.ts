@@ -1,4 +1,4 @@
-import { HintParams, HintPosition } from '../hint';
+import { HintTextAlignment, HintParams, HintPosition } from '../hint';
 
 /**
  * Popover item types
@@ -15,6 +15,69 @@ export enum PopoverItemType {
 }
 
 /**
+ * Represents popover item children configuration
+ */
+export interface PopoverItemChildren {
+  /**
+   * True if children items should be searchable
+   */
+  searchable?: boolean;
+
+  /**
+   * True if popover with children should be displayed instantly and not after item click/hover.
+   * False by default.
+   * Now is used only in the inline popover.
+   */
+  isOpen?: boolean;
+
+ /**
+  * Items of nested popover that should be open on the current item hover/click (depending on platform)
+  */
+  items?: PopoverItemParams[];
+
+  /**
+   * Called once children popover is opened
+   */
+  onOpen?: () => void;
+
+  /**
+   * Called once children popover is closed
+   */
+  onClose?: () => void;
+}
+
+/**
+ * Adds children property to the item
+ */
+export type WithChildren<T> = Omit<T, 'onActivate'> & {
+  /**
+   * Popover item children configuration
+   */
+  children: PopoverItemChildren;
+
+  /**
+   * Items with children should not have onActivate handler
+   */
+  onActivate?: never;
+};
+
+/**
+ * Represents popover item with confirmation.
+ */
+export type PopoverItemDefaultWithConfirmationParams = Omit<PopoverItemDefaultBaseParams, 'onActivate'> & {
+  /**
+   * Popover item parameters that should be applied on item activation.
+   * May be used to ask user for confirmation before executing popover item activation handler.
+   */
+  confirmation: PopoverItemDefaultBaseParams;
+
+  /**
+   * Items with confirmation should not have onActivate handler
+   */
+  onActivate?: never;
+};
+
+/**
  * Represents popover item separator.
  * Special item type that is used to separate items in the popover.
  */
@@ -22,7 +85,7 @@ export interface PopoverItemSeparatorParams {
   /**
    * Item type
    */
-  type: PopoverItemType.Separator
+  type: PopoverItemType.Separator;
 }
 
 /**
@@ -43,12 +106,23 @@ export interface PopoverItemHtmlParams {
    * Hint data to be displayed on item hover
    */
   hint?: HintParams;
+
+  /**
+   * True if popover should close once item is activated
+   */
+  closeOnActivate?: boolean;
+
+  /**
+   * Item name
+   * Used in data attributes needed for cypress tests
+   */
+  name?: string;
 }
 
 /**
  * Common parameters for all kinds of default popover items: with or without confirmation
  */
-interface PopoverItemDefaultBaseParams {
+export interface PopoverItemDefaultBaseParams {
   /**
    * Item type
    */
@@ -72,7 +146,7 @@ interface PopoverItemDefaultBaseParams {
   /**
    * True if item should be highlighted as active
    */
-  isActive?: boolean;
+  isActive?: boolean | (() => boolean);
 
   /**
    * True if item should be disabled
@@ -86,7 +160,7 @@ interface PopoverItemDefaultBaseParams {
 
   /**
    * Item name
-   * Used in data attributes needed for cypress tests
+   * Used in data attributes needed for shortcuts work and for cypress tests
    */
   name?: string;
 
@@ -101,26 +175,6 @@ interface PopoverItemDefaultBaseParams {
    * Hint data to be displayed on item hover
    */
   hint?: HintParams;
-}
-
-/**
- * Represents popover item with confirmation state configuration
- */
-export interface PopoverItemWithConfirmationParams extends PopoverItemDefaultBaseParams {
-  /**
-   * Popover item parameters that should be applied on item activation.
-   * May be used to ask user for confirmation before executing popover item activation handler.
-   */
-  confirmation: PopoverItemDefaultParams;
-
-  onActivate?: never;
-}
-
-/**
- * Represents popover item without confirmation state configuration
- */
-export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefaultBaseParams {
-  confirmation?: never;
 
   /**
    * Popover item activation handler
@@ -131,29 +185,13 @@ export interface PopoverItemWithoutConfirmationParams extends PopoverItemDefault
   onActivate: (item: PopoverItemParams, event?: PointerEvent) => void;
 }
 
-
 /**
- * Represents popover item with children (nested popover items)
- */
-export interface PopoverItemWithChildrenParams extends PopoverItemDefaultBaseParams {
-  confirmation?: never;
-  onActivate?: never;
-
-  /**
-   * Items of nested popover that should be open on the current item hover/click (depending on platform)
-   */
-  children?: {
-    items: PopoverItemParams[]
-  }
-}
-
-/**
- * Default, non-separator popover item type
+ * Default, non-separator and non-html popover items type
  */
 export type PopoverItemDefaultParams =
-  PopoverItemWithConfirmationParams |
-  PopoverItemWithoutConfirmationParams |
-  PopoverItemWithChildrenParams;
+  PopoverItemDefaultBaseParams |
+  PopoverItemDefaultWithConfirmationParams |
+  WithChildren<PopoverItemDefaultBaseParams>;
 
 /**
  * Represents single popover item
@@ -161,7 +199,31 @@ export type PopoverItemDefaultParams =
 export type PopoverItemParams =
   PopoverItemDefaultParams |
   PopoverItemSeparatorParams |
-  PopoverItemHtmlParams;
+  PopoverItemHtmlParams |
+  WithChildren<PopoverItemHtmlParams>;
+
+/**
+ * Parameters of how to render hint for the popover item
+ */
+type PopoverItemHintRenderParams = {
+  /**
+   * Hint position relative to the item
+   */
+  position?: HintPosition;
+
+  /**
+   * Horizontal alignment of the hint content.
+   * 'start' by default.
+   */
+  alignment?: HintTextAlignment;
+
+  /**
+   * If false, hint will not be rendered.
+   * True by default.
+   * Used to disable hints on mobile popover
+   */
+  enabled?: boolean;
+};
 
 
 /**
@@ -169,22 +231,23 @@ export type PopoverItemParams =
  * The parameters that are not set by user via popover api but rather depend on technical implementation
  */
 export type PopoverItemRenderParamsMap = {
-  [key in PopoverItemType.Default | PopoverItemType.Html]?: {
+  [PopoverItemType.Default]?: {
+    /**
+     * Wrapper tag for the item.
+     * Div by default
+     */
+    wrapperTag?: 'div' | 'button';
+
     /**
      * Hint render params
      */
-    hint?: {
-      /**
-       * Hint position relative to the item
-       */
-      position?: HintPosition;
+    hint?: PopoverItemHintRenderParams
+  };
 
-      /**
-       * If false, hint will not be rendered.
-       * True by default.
-       * Used to disable hints on mobile popover
-       */
-      enabled: boolean;
-    }
+  [PopoverItemType.Html]?: {
+    /**
+     * Hint render params
+     */
+    hint?: PopoverItemHintRenderParams
   };
 };
