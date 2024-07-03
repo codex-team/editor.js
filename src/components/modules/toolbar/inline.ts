@@ -524,10 +524,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private toolClicked(tool: IInlineTool): void {
     const range = SelectionUtils.range;
 
-    if (range === null) {
-      return;
-    }
-
     tool.surround?.(range);
     this.checkToolsState();
   }
