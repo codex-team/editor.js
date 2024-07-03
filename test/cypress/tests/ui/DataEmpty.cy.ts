@@ -1,7 +1,7 @@
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('inputs [data-empty] mark', function () {
-  it('should be added to the editor on initialization', function () {
+  it('should be added to inputs of editor on initialization', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
       '', // empty block
@@ -18,7 +18,7 @@ describe('inputs [data-empty] mark', function () {
       .should('have.attr', 'data-empty', 'true');
   });
 
-  it('should be added to the block on input', function () {
+  it('should be added as "false" to the input on typing', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
       '', // empty block
@@ -35,16 +35,16 @@ describe('inputs [data-empty] mark', function () {
       .should('have.attr', 'data-empty', 'false');
   });
 
-  it('should be added to the block on focus', function () {
+  it('should be added as "true" to the input on chars removal', function () {
     createEditorWithTextBlocks([
-      'First', // not empty block
       '', // empty block
+      'Some text', // not empty block
     ]);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
       .last()
-      .click();
+      .type('{selectall}{backspace}');
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
