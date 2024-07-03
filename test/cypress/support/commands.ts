@@ -261,3 +261,18 @@ Cypress.Commands.add('keydown', {
 
   return cy.wrap(subject);
 });
+
+/**
+ * Extract content of pseudo element
+ *
+ * @example cy.get('element').getPseudoElementContent('::before').should('eq', 'my-test-string')
+ */
+Cypress.Commands.add('getPseudoElementContent', {
+  prevSubject: true
+}, (subject, pseudoElement: 'string') => {
+  const win = subject[0].ownerDocument.defaultView;
+  const computedStyle = win.getComputedStyle(subject[0], pseudoElement);
+  const content = computedStyle.getPropertyValue('content');
+
+  return content.replace(/['"]/g, ''); // Remove quotes around the content
+});

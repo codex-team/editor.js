@@ -10,7 +10,7 @@ import {
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
-import $ from '../dom';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
@@ -255,6 +255,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * so we need to track focus events to update current input and clear cache.
        */
       this.addInputEvents();
+
+      /**
+       * We mark inputs with [data-empty] attribute
+       * It can be useful for developers, for example for correct placeholder behavior and
+       */
+      this.toggleInputsEmptyMark();
     });
   }
 
@@ -931,6 +937,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.updateCurrentInput();
 
+    /**
+     * We mark inputs with 'data-empty' attribute, so new inputs should be marked as well
+     */
+    this.toggleInputsEmptyMark();
+
     this.call(BlockToolAPI.UPDATED);
 
     /**
@@ -992,5 +1003,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
+  }
+
+  private toggleInputsEmptyMark(): void {
+    this.inputs.forEach(toggleEmptyMark);
   }
 }

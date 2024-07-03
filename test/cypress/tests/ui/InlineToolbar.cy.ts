@@ -47,12 +47,13 @@ describe('Inline Toolbar', () => {
         tools: {
           header: {
             class: Header,
-            inlineToolbar: ['bold', 'testTool', 'link']
+            inlineToolbar: ['bold', 'testTool', 'link'],
 
           },
           testTool: {
             class: class {
               public static isInline = true;
+              // eslint-disable-next-line jsdoc/require-jsdoc
               public render(): MenuConfig {
                 return {
                   icon: 'n',
@@ -64,14 +65,14 @@ describe('Inline Toolbar', () => {
                         icon: 'm',
                         title: 'Test Tool Item',
                         // eslint-disable-next-line  @typescript-eslint/no-empty-function
-                        onActivate: () => {}
-                      }
-                    ]
-                  }
+                        onActivate: () => {},
+                      },
+                    ],
+                  },
                 };
               }
-            }
-          }
+            },
+          },
         },
         data: {
           blocks: [
@@ -115,12 +116,13 @@ describe('Inline Toolbar', () => {
         tools: {
           header: {
             class: Header,
-            inlineToolbar: ['bold', 'testTool']
+            inlineToolbar: ['bold', 'testTool'],
 
           },
           testTool: {
             class: class {
               public static isInline = true;
+              // eslint-disable-next-line jsdoc/require-jsdoc
               public render(): MenuConfig {
                 return {
                   icon: 'n',
@@ -132,14 +134,14 @@ describe('Inline Toolbar', () => {
                         icon: 'm',
                         title: 'Test Tool Item',
                         // eslint-disable-next-line  @typescript-eslint/no-empty-function
-                        onActivate: () => {}
-                      }
-                    ]
-                  }
+                        onActivate: () => {},
+                      },
+                    ],
+                  },
                 };
               }
-            }
-          }
+            },
+          },
         },
         data: {
           blocks: [

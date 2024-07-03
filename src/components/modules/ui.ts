@@ -5,7 +5,7 @@
  * @type {UI}
  */
 import Module from '../__module';
-import $ from '../dom';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
 
 import Selection from '../selection';
@@ -891,15 +891,12 @@ export default class UI extends Module<UINodes> {
   private enableInputsEmptyMark(): void {
     /**
      * Toggle data-empty attribute on input depending on its emptiness
-     *
-     * @param event - input or focus event
+     * @param event
      */
     function handleInputOrFocusChange(event: Event): void {
       const input = event.target as HTMLElement;
 
-      const isInputEmpty = $.isEmpty(input);
-
-      input.dataset.empty = isInputEmpty ? 'true' : 'false';
+      toggleEmptyMark(input);
     }
 
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'input', handleInputOrFocusChange);

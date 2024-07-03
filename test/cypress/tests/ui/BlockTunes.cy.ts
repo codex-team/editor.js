@@ -386,7 +386,7 @@ describe('BlockTunes', function () {
             icon: 'Icon',
             title: 'Tune',
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onActivate: () => {}
+            onActivate: () => {},
           };
         }
 
