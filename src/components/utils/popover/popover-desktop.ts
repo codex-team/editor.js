@@ -1,6 +1,6 @@
 import Flipper from '../../flipper';
 import { PopoverAbstract } from './popover-abstract';
-import { PopoverItem, PopoverItemRenderParamsMap, PopoverItemSeparator, WithChildren, css as popoverItemCls } from './components/popover-item';
+import { PopoverItem, PopoverItemRenderParamsMap, PopoverItemSeparator, css as popoverItemCls } from './components/popover-item';
 import { PopoverEvent, PopoverParams } from './popover.types';
 import { keyCodes } from '../../utils';
 import { CSSVariables, css } from './popover.const';
@@ -31,6 +31,11 @@ export class PopoverDesktop extends PopoverAbstract {
    * Undefined by default, PopoverDesktop when exists and null after destroyed.
    */
   protected nestedPopover: PopoverDesktop | undefined | null;
+
+  /**
+   * Item nested popover is displayed for
+   */
+  protected nestedPopoverTriggerItem: PopoverItem | null = null;
 
   /**
    * Last hovered item inside popover.
@@ -166,10 +171,13 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item – item to show nested popover for
    */
-  protected override showNestedItems(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
+  protected override showNestedItems(item: PopoverItem): void {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
       return;
     }
+
+    this.nestedPopoverTriggerItem = item;
+
     this.showNestedPopoverForItem(item);
   }
 
@@ -207,7 +215,7 @@ export class PopoverDesktop extends PopoverAbstract {
    * @param nestedPopoverEl - nested popover element
    * @param item – item near which nested popover should be displayed
    */
-  protected setTriggerItemPosition(nestedPopoverEl: HTMLElement, item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): void {
+  protected setTriggerItemPosition(nestedPopoverEl: HTMLElement, item: PopoverItem): void {
     const itemEl = item.getElement();
     const itemOffsetTop = (itemEl ? itemEl.offsetTop : 0) - this.scrollTop;
     const topOffset = this.offsetTop + itemOffsetTop;
@@ -230,7 +238,7 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover = null;
     this.flipper.activate(this.flippableElements);
 
-    this.items.forEach(item => item.onChildrenClose());
+    this.nestedPopoverTriggerItem?.onChildrenClose();
   }
 
   /**
@@ -239,7 +247,7 @@ export class PopoverDesktop extends PopoverAbstract {
    *
    * @param item - item to display nested popover by
    */
-  protected showNestedPopoverForItem(item: WithChildren<PopoverItemDefault> | WithChildren<PopoverItemHtml>): PopoverDesktop {
+  protected showNestedPopoverForItem(item: PopoverItem): PopoverDesktop {
     this.nestedPopover = new PopoverDesktop({
       searchable: item.isChildrenSearchable,
       items: item.children,

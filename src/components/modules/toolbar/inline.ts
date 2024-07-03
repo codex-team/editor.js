@@ -384,7 +384,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             const actions = instance.renderActions();
 
             (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
-              isOpen: instance.checkState(SelectionUtils.get()),
+              isOpen: instance.checkState?.(SelectionUtils.get()),
               items: [
                 {
                   type: PopoverItemType.Html,
@@ -396,7 +396,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             /**
              * Legacy inline tools might perform some UI mutating logic in checkState method, so, call it just in case
              */
-            instance.checkState(SelectionUtils.get());
+            instance.checkState?.(SelectionUtils.get());
           }
 
           popoverItems.push(popoverItem);
@@ -521,10 +521,6 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private toolClicked(tool: IInlineTool): void {
     const range = SelectionUtils.range;
-
-    if (range === null) {
-      return;
-    }
 
     tool.surround?.(range);
     this.checkToolsState();
