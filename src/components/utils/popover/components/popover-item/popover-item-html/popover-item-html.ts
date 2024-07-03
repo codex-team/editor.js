@@ -67,11 +67,4 @@ export class PopoverItemHtml extends PopoverItem {
 
     return Array.from(controls);
   }
-
-  /**
-   * Called on popover item click
-   */
-  public handleClick(): void {
-    this.params.onActivate?.(this.params);
-  }
 }
