@@ -53,7 +53,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Currently visible tools instances
    */
-  private toolsInstances: Map<string, IInlineTool> = new Map();
+  private toolsInstances: Map<string, IInlineTool> | null = new Map();
 
   /**
    * @param moduleConfiguration - Module Configuration
@@ -384,7 +384,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             const actions = instance.renderActions();
 
             (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
-              isOpen: instance.checkState(SelectionUtils.get()),
+              isOpen: instance.checkState?.(SelectionUtils.get()),
+              /** Disable keyboard navigation in actions, as it might conflict with enter press handling */
+              isFlippable: false,
               items: [
                 {
                   type: PopoverItemType.Html,
@@ -396,7 +398,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             /**
              * Legacy inline tools might perform some UI mutating logic in checkState method, so, call it just in case
              */
-            instance.checkState(SelectionUtils.get());
+            instance.checkState?.(SelectionUtils.get());
           }
 
           popoverItems.push(popoverItem);
@@ -534,7 +536,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.toolsInstances.forEach((toolInstance) => {
+    this.toolsInstances?.forEach((toolInstance) => {
       toolInstance.checkState?.(SelectionUtils.get());
     });
   }
