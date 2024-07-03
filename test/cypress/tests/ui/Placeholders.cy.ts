@@ -1,5 +1,3 @@
-import { createEditorWithTextBlocks } from "../../support/utils/createEditorWithTextBlocks";
-
 /**
  * Text will be passed as a placeholder to the editor
  */
