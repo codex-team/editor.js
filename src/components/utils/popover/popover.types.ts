@@ -21,6 +21,12 @@ export interface PopoverParams {
   searchable?: boolean;
 
   /**
+   * False if keyboard navigation should be disabled.
+   * True by default
+   */
+  flippable?: boolean;
+
+  /**
    * Popover texts overrides
    */
   messages?: PopoverMessages

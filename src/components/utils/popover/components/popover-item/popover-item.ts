@@ -108,6 +108,25 @@ export abstract class PopoverItem {
   }
 
   /**
+   * True if item children items should be navigatable via keyboard
+   */
+  public get isChildrenFlippable(): boolean {
+    if (this.params === undefined) {
+      return false;
+    }
+
+    if (!('children' in this.params)) {
+      return false;
+    }
+
+    if (this.params.children?.isFlippable === false) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Returns true if item has children that should be searchable
    */
   public get isChildrenSearchable(): boolean {
