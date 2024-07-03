@@ -40,7 +40,8 @@ describe('Placeholders', function () {
       .should('eq', PLACEHOLDER_TEXT);
 
     cy.get('@firstBlock')
-      .type('{enter}');
+      .type('{enter}')
+      .type('a');
 
     cy.get('@firstBlock')
       .getPseudoElementContent('::before')
