@@ -1005,6 +1005,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.cachedInputs = [];
   }
 
+  /**
+   * Mark inputs with 'data-empty' attribute with the empty state
+   */
   private toggleInputsEmptyMark(): void {
     this.inputs.forEach(toggleEmptyMark);
   }

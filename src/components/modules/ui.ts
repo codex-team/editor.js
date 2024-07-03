@@ -891,7 +891,8 @@ export default class UI extends Module<UINodes> {
   private enableInputsEmptyMark(): void {
     /**
      * Toggle data-empty attribute on input depending on its emptiness
-     * @param event
+     *
+     * @param event - input or focus event
      */
     function handleInputOrFocusChange(event: Event): void {
       const input = event.target as HTMLElement;

@@ -18,6 +18,6 @@ export function createEditorWithTextBlocks(textBlocks: string[], editorConfig?: 
           text,
         },
       })),
-    }
+    },
   }));
 }

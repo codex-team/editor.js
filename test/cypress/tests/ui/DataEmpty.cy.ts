@@ -1,11 +1,11 @@
-import { createEditorWithTextBlocks } from "../../support/utils/createEditorWithTextBlocks";
+import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('inputs [data-empty] mark', function () {
   it('should be added to the editor on initialization', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
-      '' // empty block
-    ])
+      '', // empty block
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
@@ -21,8 +21,8 @@ describe('inputs [data-empty] mark', function () {
   it('should be added to the block on input', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
-      '' // empty block
-    ])
+      '', // empty block
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
@@ -38,8 +38,8 @@ describe('inputs [data-empty] mark', function () {
   it('should be added to the block on focus', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
-      '' // empty block
-    ])
+      '', // empty block
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')
@@ -55,8 +55,8 @@ describe('inputs [data-empty] mark', function () {
   it('should be added to the new block inputs', function () {
     createEditorWithTextBlocks([
       'First', // not empty block
-      '' // empty block
-    ])
+      '', // empty block
+    ]);
 
     cy.get('[data-cy=editorjs]')
       .find('.ce-paragraph')

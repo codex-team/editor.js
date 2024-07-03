@@ -10,7 +10,7 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   /**
    * Skip own technical mutations, for example, data-empty attribute changes
    */
-  if (mutationRecord.type === 'attributes' && mutationRecord.attributeName === 'data-empty'){
+  if (mutationRecord.type === 'attributes' && mutationRecord.attributeName === 'data-empty') {
     return false;
   }
 

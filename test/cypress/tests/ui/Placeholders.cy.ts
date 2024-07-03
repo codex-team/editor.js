@@ -65,7 +65,7 @@ describe('Placeholders', function () {
       .as('firstBlock')
       .getPseudoElementContent('::before')
       .should('eq', PLACEHOLDER_TEXT);
-  })
+  });
 
   it('should be hidden when user starts typing', function () {
     cy.createEditor({
@@ -82,5 +82,5 @@ describe('Placeholders', function () {
       .type('a')
       .getPseudoElementContent('::before')
       .should('eq', 'none');
-  })
+  });
 });

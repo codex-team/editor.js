@@ -268,7 +268,7 @@ Cypress.Commands.add('keydown', {
  * @example cy.get('element').getPseudoElementContent('::before').should('eq', 'my-test-string')
  */
 Cypress.Commands.add('getPseudoElementContent', {
-  prevSubject: true
+  prevSubject: true,
 }, (subject, pseudoElement: 'string') => {
   const win = subject[0].ownerDocument.defaultView;
   const computedStyle = win.getComputedStyle(subject[0], pseudoElement);
