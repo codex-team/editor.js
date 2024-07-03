@@ -218,7 +218,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     id = _.generateBlockId(),
     data,
     tool,
-    api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {

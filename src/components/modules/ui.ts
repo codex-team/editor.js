@@ -17,7 +17,6 @@ import styles from '../../styles/main.css?inline';
 import { BlockHovered } from '../events/BlockHovered';
 import { selectionChangeDebounceTimeout } from '../constants';
 import { EditorMobileLayoutToggled } from '../events';
-import { notEmpty } from '../utils/empty';
 /**
  * HTML Elements used for UI
  */
@@ -386,7 +385,7 @@ export default class UI extends Module<UINodes> {
      * We have custom logic for providing placeholders for contenteditable elements.
      * To make it work, we need to have data-empty mark on empty inputs.
      */
-    this.enableInputsEmptyMark();;
+    this.enableInputsEmptyMark();
   }
 
 
@@ -890,16 +889,17 @@ export default class UI extends Module<UINodes> {
    * Then, CSS could rely on this attribute to show placeholders
    */
   private enableInputsEmptyMark(): void {
-    function toggleEmptyMark(input: HTMLElement): void {
-      const isInputEmpty = $.isEmpty(input);
-
-      input.dataset.empty = isInputEmpty ? 'true' : 'false';
-    }
-
+    /**
+     * Toggle data-empty attribute on input depending on its emptiness
+     *
+     * @param event - input or focus event
+     */
     function handleInputOrFocusChange(event: Event): void {
       const input = event.target as HTMLElement;
 
-      toggleEmptyMark(input);
+      const isInputEmpty = $.isEmpty(input);
+
+      input.dataset.empty = isInputEmpty ? 'true' : 'false';
     }
 
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'input', handleInputOrFocusChange);
