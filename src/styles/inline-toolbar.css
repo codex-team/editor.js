@@ -6,7 +6,7 @@
   --color-text-icon-active: #388AE5;
   --color-text-primary: black;
 
-  @apply --overlay-pane;
+  position: absolute;
   visibility: hidden;
   transition: opacity 250ms ease;
   will-change: opacity, left, top;

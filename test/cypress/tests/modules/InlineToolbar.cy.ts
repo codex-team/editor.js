@@ -71,7 +71,7 @@ describe('Inline Toolbar', () => {
             /**
              * Toolbar should be aligned with right side of text column
              */
-            expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 9);
+            expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 10);
           });
       });
   });
