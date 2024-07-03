@@ -53,7 +53,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Currently visible tools instances
    */
-  private toolsInstances: Map<string, IInlineTool> = new Map();
+  private toolsInstances: Map<string, IInlineTool> | null = new Map();
 
   /**
    * @param moduleConfiguration - Module Configuration
@@ -385,6 +385,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
             (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
               isOpen: instance.checkState?.(SelectionUtils.get()),
+              /** Disable keyboard navigation in actions, as it might conflict with enter press handling */
+              isFlippable: false,
               items: [
                 {
                   type: PopoverItemType.Html,
@@ -530,7 +532,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.toolsInstances.forEach((toolInstance) => {
+    this.toolsInstances?.forEach((toolInstance) => {
       toolInstance.checkState?.(SelectionUtils.get());
     });
   }

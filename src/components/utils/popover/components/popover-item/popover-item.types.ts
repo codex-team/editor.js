@@ -30,6 +30,12 @@ export interface PopoverItemChildren {
    */
   isOpen?: boolean;
 
+  /**
+   * False if keyboard navigation should be disabled in the children popover.
+   * True by default
+   */
+  isFlippable?: boolean;
+
  /**
   * Items of nested popover that should be open on the current item hover/click (depending on platform)
   */

@@ -19,7 +19,7 @@ export class PopoverDesktop extends PopoverAbstract {
   /**
    * Flipper - module for keyboard iteration between elements
    */
-  public flipper: Flipper;
+  public flipper: Flipper | undefined;
 
   /**
    * Popover nesting level. 0 value means that it is a root popover
@@ -80,18 +80,20 @@ export class PopoverDesktop extends PopoverAbstract {
       this.addSearch();
     }
 
-    this.flipper = new Flipper({
-      items: this.flippableElements,
-      focusedItemClass: popoverItemCls.focused,
-      allowedKeys: [
-        keyCodes.TAB,
-        keyCodes.UP,
-        keyCodes.DOWN,
-        keyCodes.ENTER,
-      ],
-    });
+    if (params.flippable !== false) {
+      this.flipper = new Flipper({
+        items: this.flippableElements,
+        focusedItemClass: popoverItemCls.focused,
+        allowedKeys: [
+          keyCodes.TAB,
+          keyCodes.UP,
+          keyCodes.DOWN,
+          keyCodes.ENTER,
+        ],
+      });
 
-    this.flipper.onFlip(this.onFlip);
+      this.flipper.onFlip(this.onFlip);
+    }
   }
 
   /**
@@ -142,7 +144,7 @@ export class PopoverDesktop extends PopoverAbstract {
     }
 
     super.show();
-    this.flipper.activate(this.flippableElements);
+    this.flipper?.activate(this.flippableElements);
   }
 
   /**
@@ -153,7 +155,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     this.destroyNestedPopoverIfExists();
 
-    this.flipper.deactivate();
+    this.flipper?.deactivate();
 
     this.previouslyHoveredItem = null;
   };
@@ -236,7 +238,7 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover.destroy();
     this.nestedPopover.getElement().remove();
     this.nestedPopover = null;
-    this.flipper.activate(this.flippableElements);
+    this.flipper?.activate(this.flippableElements);
 
     this.nestedPopoverTriggerItem?.onChildrenClose();
   }
@@ -252,6 +254,7 @@ export class PopoverDesktop extends PopoverAbstract {
       searchable: item.isChildrenSearchable,
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
+      flippable: item.isChildrenFlippable,
     });
 
     item.onChildrenOpen();
@@ -272,7 +275,7 @@ export class PopoverDesktop extends PopoverAbstract {
     nestedPopoverEl.style.setProperty(CSSVariables.NestingLevel, this.nestedPopover.nestingLevel.toString());
 
     this.nestedPopover.show();
-    this.flipper.deactivate();
+    this.flipper?.deactivate();
 
     return this.nestedPopover;
   }
@@ -422,7 +425,7 @@ export class PopoverDesktop extends PopoverAbstract {
     /** List of elements available for keyboard navigation considering search query applied */
     const flippableElements = data.query === '' ? this.flippableElements : data.items.map(item => (item as PopoverItem).getElement());
 
-    if (this.flipper.isActivated) {
+    if (this.flipper?.isActivated) {
       /** Update flipper items with only visible */
       this.flipper.deactivate();
       this.flipper.activate(flippableElements as HTMLElement[]);
