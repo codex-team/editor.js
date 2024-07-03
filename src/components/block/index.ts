@@ -184,11 +184,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private unavailableTunesData: { [name: string]: BlockTuneData } = {};
 
   /**
-   * Editor`s API module
-   */
-  private readonly api: ApiModules;
-
-  /**
    * Focused input index
    *
    * @type {number}
@@ -232,7 +227,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
-    this.api = api;
     this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
 
