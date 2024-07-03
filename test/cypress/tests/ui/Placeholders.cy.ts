@@ -45,13 +45,6 @@ describe('Placeholders', function () {
     cy.get('@firstBlock')
       .getPseudoElementContent('::before')
       .should('eq', 'none');
-
-    cy.get('[data-cy=editorjs]')
-      .find('.ce-paragraph')
-      .last()
-      .click()
-      .getPseudoElementContent('::before')
-      .should('eq', PLACEHOLDER_TEXT);
   });
 
   it('should be shown event if input is focused', function () {
@@ -63,6 +56,19 @@ describe('Placeholders', function () {
       .find('.ce-paragraph')
       .click()
       .as('firstBlock')
+      .getPseudoElementContent('::before')
+      .should('eq', PLACEHOLDER_TEXT);
+  });
+
+  it('should be shown event when user removes all text by cmd+a and delete', function () {
+    cy.createEditor({
+      placeholder: PLACEHOLDER_TEXT,
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .type('aaa')
+      .type('{selectall}{backspace}')
       .getPseudoElementContent('::before')
       .should('eq', PLACEHOLDER_TEXT);
   });

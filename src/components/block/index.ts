@@ -258,7 +258,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
       /**
        * We mark inputs with [data-empty] attribute
-       * It can be useful for developers, for example for correct placeholder behavior and
+       * It can be useful for developers, for example for correct placeholder behavior
        */
       this.toggleInputsEmptyMark();
     });
