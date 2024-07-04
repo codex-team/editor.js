@@ -4,6 +4,14 @@
 const PLACEHOLDER_TEXT = 'Write something or press / to select a tool';
 
 describe('Placeholders', function () {
+  /**
+   * There is no ability to get pseudo elements content in Firefox
+   * It will return CSS-bases value (attr(data-placeholder) instead of DOM-based
+   */
+  if (Cypress.browser.family === 'firefox') {
+    return;
+  }
+
   it('should be shown near first block if passed via editor config', function () {
     cy.createEditor({
       placeholder: PLACEHOLDER_TEXT,
