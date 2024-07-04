@@ -34,7 +34,7 @@ describe('ToolsFactory', (): void => {
             prop1: 'prop1',
             prop2: 'prop2',
           };
-        }
+        },
       } as any
     );
   });

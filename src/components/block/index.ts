@@ -10,7 +10,7 @@ import {
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
-import $ from '../dom';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
@@ -184,11 +184,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private unavailableTunesData: { [name: string]: BlockTuneData } = {};
 
   /**
-   * Editor`s API module
-   */
-  private readonly api: ApiModules;
-
-  /**
    * Focused input index
    *
    * @type {number}
@@ -223,7 +218,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     id = _.generateBlockId(),
     data,
     tool,
-    api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
@@ -232,7 +226,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
-    this.api = api;
     this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
 
@@ -262,6 +255,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * so we need to track focus events to update current input and clear cache.
        */
       this.addInputEvents();
+
+      /**
+       * We mark inputs with [data-empty] attribute
+       * It can be useful for developers, for example for correct placeholder behavior
+       */
+      this.toggleInputsEmptyMark();
     });
   }
 
@@ -938,6 +937,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.updateCurrentInput();
 
+    /**
+     * We mark inputs with 'data-empty' attribute, so new inputs should be marked as well
+     */
+    this.toggleInputsEmptyMark();
+
     this.call(BlockToolAPI.UPDATED);
 
     /**
@@ -999,5 +1003,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
+  }
+
+  /**
+   * Mark inputs with 'data-empty' attribute with the empty state
+   */
+  private toggleInputsEmptyMark(): void {
+    this.inputs.forEach(toggleEmptyMark);
   }
 }

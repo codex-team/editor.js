@@ -8,6 +8,13 @@ export function isMutationBelongsToElement(mutationRecord: MutationRecord, eleme
   const { type, target, addedNodes, removedNodes } = mutationRecord;
 
   /**
+   * Skip own technical mutations, for example, data-empty attribute changes
+   */
+  if (mutationRecord.type === 'attributes' && mutationRecord.attributeName === 'data-empty') {
+    return false;
+  }
+
+  /**
    * Covers all types of mutations happened to the element or it's descendants with the only one exception - removing/adding the element itself;
    */
   if (element.contains(target)) {

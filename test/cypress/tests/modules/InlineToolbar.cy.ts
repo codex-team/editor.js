@@ -27,7 +27,7 @@ describe('Inline Toolbar', () => {
 
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
-        
+
         expect($toolbar.offset().left).to.be.closeTo(rect.left, 1);
       });
   });
@@ -67,7 +67,7 @@ describe('Inline Toolbar', () => {
         cy.get('@blockWrapper')
           .then(($blockWrapper) => {
             const blockWrapperRect = $blockWrapper.get(0).getBoundingClientRect();
-            
+
             /**
              * Toolbar should be aligned with right side of text column
              */
