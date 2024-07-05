@@ -1,5 +1,5 @@
 import Block from './index';
-import { BlockToolData, ToolConfig } from '../../../types/tools';
+import { BlockToolData, ToolConfig, ToolboxConfigEntry } from '../../../types/tools';
 import { SavedData } from '../../../types/data-formats';
 import { BlockAPI as BlockAPIInterface } from '../../../types/api';
 
@@ -85,6 +85,13 @@ function BlockAPI(
     },
 
     /**
+     * True if Block has inputs to be focused
+     */
+    get focusable(): boolean {
+      return block.focusable;
+    },
+
+    /**
      * Call Tool method with errors handler under-the-hood
      *
      * @param {string} methodName - method to call
@@ -120,6 +127,14 @@ function BlockAPI(
      */
     dispatchChange(): void {
       block.dispatchChange();
+    },
+
+    /**
+     * Tool could specify several entries to be displayed at the Toolbox (for example, "Heading 1", "Heading 2", "Heading 3")
+     * This method returns the entry that is related to the Block (depended on the Block data)
+     */
+    getActiveToolboxEntry(): Promise<ToolboxConfigEntry | undefined> {
+      return block.getActiveToolboxEntry();
     },
   };
 

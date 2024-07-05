@@ -1,38 +1,20 @@
 .ce-inline-toolbar {
   --y-offset: 8px;
 
-  @apply --overlay-pane;
-  transform: translateX(-50%) translateY(8px) scale(0.94);
-  opacity: 0;
+  /** These variables duplicate the ones defined in popover. @todo move them to single place */
+  --color-background-icon-active: rgba(56, 138, 229, 0.1);
+  --color-text-icon-active: #388AE5;
+  --color-text-primary: black;
+
+  position: absolute;
   visibility: hidden;
-  transition: transform 150ms ease, opacity 250ms ease;
-  will-change: transform, opacity;
+  transition: opacity 250ms ease;
+  will-change: opacity, left, top;
   top: 0;
   left: 0;
   z-index: 3;
-
-  &--showed {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%)
-  }
-
-  &--left-oriented {
-    transform: translateX(-23px) translateY(8px) scale(0.94);
-  }
-
-  &--left-oriented&--showed {
-    transform: translateX(-23px);
-  }
-
-  &--right-oriented {
-    transform: translateX(-100%) translateY(8px) scale(0.94);
-    margin-left: 23px;
-  }
-
-  &--right-oriented&--showed {
-    transform: translateX(-100%);
-  }
+  opacity: 1;
+  visibility: visible;
 
   [hidden] {
     display: none !important;
@@ -88,11 +70,41 @@
 }
 
 .ce-inline-tool {
-  @apply --toolbar-button;
+  color: var(--color-text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  border-radius: 0;
+  border: 0;
+  border-radius: 4px;
   line-height: normal;
+  height: 100%;
+  padding: 0;
+  width: 28px;
+  background-color: transparent;
+  cursor: pointer;
 
+  @media (--mobile) {
+    width: 36px;
+    height: 36px;
+  }
+
+  @media (--can-hover) {
+    &:hover {
+      background-color: #F8F8F8; /* @todo replace with 'var(--color-background-item-hover)' */
+    }
+  }
+
+  svg {
+    display: block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+
+    @media (--mobile) {
+      width: var(--icon-size--mobile);
+      height: var(--icon-size--mobile);
+    }
+  }
 
   &--link {
     .icon--unlink {
@@ -111,17 +123,20 @@
   }
 
   &-input {
+    background: #F8F8F8;
+    border: 1px solid rgba(226,226,229,0.20);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 22px;
+
+
     outline: none;
-    border: 0;
-    border-radius: 0 0 4px 4px;
     margin: 0;
-    font-size: 13px;
-    padding: 10px;
     width: 100%;
     box-sizing: border-box;
     display: none;
     font-weight: 500;
-    border-top: 1px solid rgba(201,201,204,.48);
     -webkit-appearance: none;
     font-family: inherit;
 
@@ -137,5 +152,10 @@
     &--showed {
       display: block;
     }
+  }
+
+  &--active {
+    background: var(--color-background-icon-active);
+    color: var(--color-text-icon-active);
   }
 }

@@ -2,6 +2,8 @@ import * as _ from './utils';
 
 /**
  * DOM manipulations helper
+ *
+ * @todo get rid of class and make separate utility functions
  */
 export default class Dom {
   /**
@@ -52,11 +54,13 @@ export default class Dom {
    * @param  {object} [attributes] - any attributes
    * @returns {HTMLElement}
    */
-  public static make(tagName: string, classNames: string | string[] = null, attributes: object = {}): HTMLElement {
+  public static make(tagName: string, classNames: string | (string | undefined)[] | null = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if (Array.isArray(classNames)) {
-      el.classList.add(...classNames);
+      const validClassnames = classNames.filter(className => className !== undefined) as string[];
+
+      el.classList.add(...validClassnames);
     } else if (classNames) {
       el.classList.add(classNames);
     }
@@ -145,7 +149,7 @@ export default class Dom {
    * @param {string} selector - searching string
    * @returns {Element}
    */
-  public static find(el: Element | Document = document, selector: string): Element {
+  public static find(el: Element | Document = document, selector: string): Element | null {
     return el.querySelector(selector);
   }
 
@@ -209,9 +213,10 @@ export default class Dom {
    * @param {Node} node - root Node. From this vertex we start Deep-first search
    *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
    * @param {boolean} [atLast] - find last text node
-   * @returns {Node} - it can be text Node or Element Node, so that caret will able to work with it
+   * @returns - it can be text Node or Element Node, so that caret will able to work with it
+   *            Can return null if node is Document or DocumentFragment, or node is not attached to the DOM
    */
-  public static getDeepestNode(node: Node, atLast = false): Node {
+  public static getDeepestNode(node: Node, atLast = false): Node | null {
     /**
      * Current function have two directions:
      *  - starts from first child and every time gets first or nextSibling in special cases
@@ -348,9 +353,10 @@ export default class Dom {
    * @description Method checks simple Node without any childs for emptiness
    * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
    * @param {Node} node - node to check
+   * @param {string} [ignoreChars] - char or substring to treat as empty
    * @returns {boolean} true if it is empty
    */
-  public static isNodeEmpty(node: Node): boolean {
+  public static isNodeEmpty(node: Node, ignoreChars?: string): boolean {
     let nodeText;
 
     if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
@@ -361,6 +367,10 @@ export default class Dom {
       nodeText = (node as HTMLInputElement).value;
     } else {
       nodeText = node.textContent.replace('\u200B', '');
+    }
+
+    if (ignoreChars) {
+      nodeText = nodeText.replace(new RegExp(ignoreChars, 'g'), '');
     }
 
     return nodeText.trim().length === 0;
@@ -386,9 +396,10 @@ export default class Dom {
    *
    * @description Pushes to stack all DOM leafs and checks for emptiness
    * @param {Node} node - node to check
+   * @param {string} [ignoreChars] - char or substring to treat as empty
    * @returns {boolean}
    */
-  public static isEmpty(node: Node): boolean {
+  public static isEmpty(node: Node, ignoreChars?: string): boolean {
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
@@ -403,7 +414,7 @@ export default class Dom {
         continue;
       }
 
-      if (this.isLeaf(node) && !this.isNodeEmpty(node)) {
+      if (this.isLeaf(node) && !this.isNodeEmpty(node, ignoreChars)) {
         return false;
       }
 
@@ -551,20 +562,6 @@ export default class Dom {
   }
 
   /**
-   * Method checks passed Node if it is some extension Node
-   *
-   * @param {Node} node - any node
-   * @returns {boolean}
-   */
-  public static isExtensionNode(node: Node): boolean {
-    const extensions = [
-      'GRAMMARLY-EXTENSION',
-    ];
-
-    return node && extensions.includes(node.nodeName);
-  }
-
-  /**
    * Returns true if element is anchor (is A tag)
    *
    * @param {Element} element - element to check
@@ -595,4 +592,83 @@ export default class Dom {
       right: left + rect.width,
     };
   }
+}
+
+/**
+ * Determine whether a passed text content is a collapsed whitespace.
+ *
+ * In HTML, whitespaces at the start and end of elements and outside elements are ignored.
+ * There are two types of whitespaces in HTML:
+ * - Visible (&nbsp;)
+ * - Invisible (regular trailing spaces, tabs, etc)
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
+ * @see https://www.w3.org/TR/css-text-3/#white-space-processing
+ * @param textContent — any string, for ex a textContent of a node
+ * @returns True if passed text content is whitespace which is collapsed (invisible) in browser
+ */
+export function isCollapsedWhitespaces(textContent: string): boolean {
+  /**
+   *  Throughout, whitespace is defined as one of the characters
+   *  "\t" TAB \u0009
+   *  "\n" LF  \u000A
+   *  "\r" CR  \u000D
+   *  " "  SPC \u0020
+   */
+  return !/[^\t\n\r ]/.test(textContent);
+}
+
+/**
+ * Calculates the Y coordinate of the text baseline from the top of the element's margin box,
+ *
+ * The calculation formula is as follows:
+ *
+ * 1. Calculate the baseline offset:
+ *    - Typically, the baseline is about 80% of the `fontSize` from the top of the text, as this is a common average for many fonts.
+ *
+ * 2. Calculate the additional space due to `lineHeight`:
+ *    - If the `lineHeight` is greater than the `fontSize`, the extra space is evenly distributed above and below the text. This extra space is `(lineHeight - fontSize) / 2`.
+ *
+ * 3. Calculate the total baseline Y coordinate:
+ *    - Sum of `marginTop`, `borderTopWidth`, `paddingTop`, the extra space due to `lineHeight`, and the baseline offset.
+ *
+ * @param element - The element to calculate the baseline for.
+ * @returns {number} - The Y coordinate of the text baseline from the top of the element's margin box.
+ */
+export function calculateBaseline(element: Element): number {
+  const style = window.getComputedStyle(element);
+  const fontSize = parseFloat(style.fontSize);
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // default line-height if not set
+  const paddingTop = parseFloat(style.paddingTop);
+  const borderTopWidth = parseFloat(style.borderTopWidth);
+  const marginTop = parseFloat(style.marginTop);
+
+  /**
+   * Typically, the baseline is about 80% of the `fontSize` from the top of the text, as this is a common average for many fonts.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  const baselineOffset = fontSize * 0.8;
+
+  /**
+   * If the `lineHeight` is greater than the `fontSize`, the extra space is evenly distributed above and below the text. This extra space is `(lineHeight - fontSize) / 2`.
+   */
+  const extraLineHeight = (lineHeight - fontSize) / 2;
+
+  /**
+   * Calculate the total baseline Y coordinate from the top of the margin box
+   */
+  const baselineY = marginTop + borderTopWidth + paddingTop + extraLineHeight + baselineOffset;
+
+  return baselineY;
+}
+
+/**
+ * Toggles the [data-empty] attribute on element depending on its emptiness
+ * Used to mark empty inputs with a special attribute for placeholders feature
+ *
+ * @param element - The element to toggle the [data-empty] attribute on
+ */
+export function toggleEmptyMark(element: HTMLElement): void {
+  element.dataset.empty = Dom.isEmpty(element) ? 'true' : 'false';
 }

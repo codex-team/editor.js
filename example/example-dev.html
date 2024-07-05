@@ -10,8 +10,8 @@
   <meta charset="UTF-8">
   <title>Editor.js 🤩🧦🤨 example</title>
   <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
-  <link href="assets/demo.css" rel="stylesheet">
-  <script src="assets/json-preview.js"></script>
+  <link href="../public/assets/demo.css" rel="stylesheet">
+  <script src="../public/assets/json-preview.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
@@ -89,25 +89,25 @@
    Read more in Tool's README file. For example:
    https://github.com/editor-js/header#installation
    -->
-  <script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint-tools').hidden = true"></script><!-- Header -->
-  <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
-  <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
-  <!--  <script src="./tools/list/dist/bundle.js"></script> List-->
-  <script src="./tools/nested-list/dist/nested-list.js"></script><!-- Nested List -->
-  <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
-  <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
-  <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
-  <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
-  <script src="./tools/table/dist/table.js"></script><!-- Table -->
-  <script src="./tools/link/dist/bundle.js"></script><!-- Link -->
-  <script src="./tools/raw/dist/bundle.js"></script><!-- Raw -->
-  <script src="./tools/warning/dist/bundle.js"></script><!-- Warning -->
+  <script src="./tools/header/dist/header.umd.js" onload="document.getElementById('hint-tools').hidden = true"></script><!-- Header -->
+  <script src="./tools/simple-image/dist/simple-image.umd.js"></script><!-- Image -->
+  <script src="./tools/delimiter/dist/delimiter.umd.js"></script><!-- Delimiter -->
+  <!--  <script src="./tools/list/dist/list.umd.js"></script> List-->
+  <script src="./tools/nested-list/dist/nested-list.umd.js"></script><!-- Nested List -->
+  <script src="./tools/checklist/dist/checklist.umd.js"></script><!-- Checklist -->
+  <script src="./tools/quote/dist/quote.umd.js"></script><!-- Quote -->
+  <script src="./tools/code/dist/code.umd.js"></script><!-- Code -->
+  <script src="./tools/embed/dist/embed.umd.js"></script><!-- Embed -->
+  <script src="./tools/table/dist/table.umd.js"></script><!-- Table -->
+  <script src="./tools/link/dist/link.umd.js"></script><!-- Link -->
+  <script src="./tools/raw/dist/raw.umd.js"></script><!-- Raw -->
+  <script src="./tools/warning/dist/warning.umd.js"></script><!-- Warning -->
 
-  <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
-  <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
+  <script src="./tools/marker/dist/marker.umd.js"></script><!-- Marker -->
+  <script src="./tools/inline-code/dist/inline-code.umd.js"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
-  <script src="../dist/editor.js" onload="document.getElementById('hint-core').hidden = true;"></script>
+  <script src="../dist/editorjs.umd.js" onload="document.getElementById('hint-core').hidden = true;"></script>
 
   <!-- Initialization -->
   <script>

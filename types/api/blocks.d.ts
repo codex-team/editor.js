@@ -1,4 +1,5 @@
-import {OutputData} from '../data-formats/output-data';
+import Block from '../../src/components/block';
+import {OutputBlockData, OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
 import {BlockAPI} from './block';
 
@@ -9,7 +10,7 @@ export interface Blocks {
   /**
    * Remove all blocks from Editor zone
    */
-  clear(): void;
+  clear(): Promise<void>;
 
   /**
    * Render passed data
@@ -72,6 +73,13 @@ export interface Blocks {
   getBlockIndex(blockId: string): number;
 
   /**
+   * Get Block API object by html element
+   *
+   * @param element - html element to get Block by
+   */
+  getBlockByElement(element: HTMLElement): BlockAPI | undefined;
+
+  /**
    * Mark Block as stretched
    * @param {number} index - Block to mark
    * @param {boolean} status - stretch status
@@ -103,7 +111,6 @@ export interface Blocks {
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param {boolean?} replace - should the existed Block on that index be replaced or not
    * @param {string} id — An optional id for the new block. If omitted then the new id will be generated
-
    */
   insert(
     type?: string,
@@ -114,6 +121,14 @@ export interface Blocks {
     replace?: boolean,
     id?: string,
   ): BlockAPI;
+
+  /**
+   * Inserts several Blocks to specified index
+   */
+  insertMany(
+    blocks: OutputBlockData[],
+    index?: number,
+  ): BlockAPI[];
 
 
   /**
@@ -127,7 +142,18 @@ export interface Blocks {
    * Updates block data by id
    *
    * @param id - id of the block to update
-   * @param data - the new data
+   * @param data - the new data. Can be partial.
    */
-  update(id: string, data: BlockToolData): void;
+  update(id: string, data: Partial<BlockToolData>): Promise<BlockAPI>;
+
+  /**
+   * Converts block to another type. Both blocks should provide the conversionConfig.
+   *
+   * @param id - id of the existed block to convert. Should provide 'conversionConfig.export' method
+   * @param newType - new block type. Should provide 'conversionConfig.import' method
+   * @param dataOverrides - optional data overrides for the new block
+   *
+   * @throws Error if conversion is not possible
+   */
+  convert(id: string, newType: string, dataOverrides?: BlockToolData): Promise<BlockAPI>;
 }

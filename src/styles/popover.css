@@ -1,220 +1,437 @@
+/** 
+ * Popover styles
+ *
+ * @todo split into separate files popover styles
+ * @todo make css variables work
+ */
 .ce-popover {
-  position: absolute;
-  opacity: 0;
-  will-change: opacity, transform;
-  display: flex;
-  flex-direction: column;
-  padding: 6px;
-  min-width: 200px;
-  width: 200px;
-  overflow: hidden;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  max-height: 0;
-  pointer-events: none;
+  --border-radius: 6px;
+  --width: 200px;
+  --max-height: 270px;
+  --padding: 6px;
+  --offset-from-target: 8px;
+  --color-border: #EFF0F1;
+  --color-shadow: rgba(13, 20, 33, 0.10);
+  --color-background: white;
+  --color-text-primary: black;
+  --color-text-secondary: #707684;
+  --color-border-icon: rgb(201 201 204 / 48%);
+  --color-border-icon-disabled: #EFF0F1;
+  --color-text-icon-active: #388AE5;
+  --color-background-icon-active: rgba(56, 138, 229, 0.1);
+  --color-background-item-focus: rgba(34, 186, 255, 0.08);
+  --color-shadow-item-focus: rgba(7, 161, 227, 0.08);
+  --color-background-item-hover: #F8F8F8;
+  --color-background-item-confirm: #E24A4A;
+  --color-background-item-confirm-hover: #CE4343;
+  --popover-top: calc(100% + var(--offset-from-target));
+  --popover-left: 0;
+  --nested-popover-overlap: 4px;
 
-  @apply --overlay-pane;
+  --icon-size: 20px;
+  --item-padding: 3px;
+  --item-height: calc(var(--icon-size) + 2 * var(--item-padding));
 
-  z-index: 4;
-  flex-wrap: nowrap;
+  &__container {
+    min-width: var(--width);
+    width: var(--width);
+    max-height: var(--max-height);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0px 3px 15px -3px var(--color-shadow);
+    position: absolute;
+    left: var(--popover-left);
+    top: var(--popover-top);
+
+    background: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    z-index: 4;
+  
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+    padding: 0;
+    border: none;
+  }
 
   &--opened {
-     opacity: 1;
-     max-height: 270px;
-     pointer-events: auto;
-     animation: panelShowing 100ms ease;
-
-     @media (--mobile) {
-       animation: panelShowingMobile 250ms ease;
-     }
+    & > .ce-popover__container {
+      opacity: 1;
+      padding: var(--padding);
+      max-height: var(--max-height);
+      pointer-events: auto;
+      animation: panelShowing 100ms ease;
+      border: 1px solid var(--color-border);
+  
+      @media (--mobile) {
+        animation: panelShowingMobile 250ms ease;
+      }
+    }
   }
 
-  &::-webkit-scrollbar {
-    width: 7px;
+  &--open-top {
+    .ce-popover__container {
+      --popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)));
+    }
   }
 
-  &::-webkit-scrollbar-thumb {
-    box-sizing: border-box;
-    box-shadow: inset 0 0 2px 2px var(--bg-light);
-    border: 3px solid transparent;
-    border-left-width: 0px;
-    border-top-width: 4px;
-    border-bottom-width: 4px;
-  }
-
-  @media (--mobile) {
-    --offset: 5px;
-
-    position: fixed;
-    max-width: none;
-    min-width: calc(100% - var(--offset) * 2);
-    left: var(--offset);
-    right: var(--offset);
-    bottom: calc(var(--offset) + env(safe-area-inset-bottom));
-    top: auto;
-    border-radius: 10px;
+  &--open-left {
+    .ce-popover__container {
+      --popover-left: calc(-1 * var(--width) + 100%);
+    }
   }
 
   &__items {
     overflow-y: auto;
     overscroll-behavior: contain;
-
-    @media (--not-mobile) {
-      margin-top: 5px;
-    }
   }
 
-  &__item {
-    @apply --popover-button;
-
-    @media (--can-hover) {
-      &:hover {
-
-        &:not(.ce-popover__item--no-visible-hover) {
-          background-color: var(--bg-light);
-        }
-
-        .ce-popover__item-icon {
-          box-shadow: none;
-        }
-      }
-    }
-
-    &--disabled {
-      @apply --button-disabled;
-
-      .ce-popover__item-icon {
-        box-shadow: 0 0 0 1px var(--color-line-gray);
-      }
-    }
-
-    &--focused {
-      &:not(.ce-popover__item--no-visible-focus) {
-        @apply --button-focused;
-      }
-    }
-
-    &--hidden {
-      display: none;
-    }
-
-    &--active {
-      @apply --button-active;
-    }
-
-    &--confirmation {
-      background: var(--color-confirm);
-
-      .ce-popover__item-icon {
-        color: var(--color-confirm);
-      }
-
-      .ce-popover__item-label {
-        color: white;
-      }
-
-      &:not(.ce-popover__item--no-visible-hover) {
-        @media (--can-hover) {
-          &:hover {
-            background: var(--color-confirm-hover);
-          }
-        }
-      }
-
-      &:not(.ce-popover__item--no-visible-focus) {
-        &.ce-popover__item--focused {
-          background: var(--color-confirm-hover) !important;
-        }
-      }
-
-    }
-
-    &-icon {
-      @apply --tool-icon;
-    }
-
-    &-label {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-
-      &::after {
-        content: '';
-        width: 25px;
-        display: inline-block;
-      }
-    }
-
-    &-secondary-label {
-      color: var(--grayText);
-      font-size: 12px;
-      margin-left: auto;
-      white-space: nowrap;
-      letter-spacing: -0.1em;
-      padding-right: 5px;
-      margin-bottom: -2px;
-      opacity: 0.6;
-
-      @media (--mobile){
-        display: none;
-      }
-    }
-
-    &--confirmation, &--active, &--focused {
-      .ce-popover__item-icon {
-        box-shadow: none;
-      }
-    }
-  }
-
-  &__no-found {
-    @apply --popover-button;
-
-    color: var(--grayText);
-    display: none;
-    cursor: default;
-
-    &--shown {
-      display: block;
-    }
-  }
-
-  @media (--mobile) {
-    &__overlay {
+  &__overlay {
+    @media (--mobile) {
       position: fixed;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
       background: var(--color-dark);
-      opacity: 0.5;
       z-index: 3;
+      opacity: 0.5;
       transition: opacity 0.12s ease-in;
       will-change: opacity;
       visibility: visible;
     }
 
-    .cdx-search-field {
+    &--hidden {
       display: none;
     }
   }
 
-  &__overlay--hidden {
-    z-index: 0;
-    opacity: 0;
-    visibility: hidden;
-  }
 
-  &__custom-content:not(:empty) {
-    padding: 4px;
+  @media (--mobile) {
 
-    @media (--not-mobile) {
-      margin-top: 5px;
-      padding: 0;
+    .ce-popover__container {
+      --offset: 5px;
+  
+      position: fixed;
+      max-width: none;
+      min-width: calc(100% - var(--offset) * 2);
+      left: var(--offset);
+      right: var(--offset);
+      bottom: calc(var(--offset) + env(safe-area-inset-bottom));
+      top: auto;
+      border-radius: 10px;
     }
   }
 
-  &__custom-content--hidden {
+  &__search {
+    margin-bottom: 5px;
+  }
+
+  &__nothing-found-message {
+    color: var(--grayText);
     display: none;
+    cursor: default;
+    padding: 3px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--displayed {
+      display: block;
+    }
+  }
+
+  &--nested {
+    .ce-popover__container {
+      /* Variable --nesting-level is set via js in showNestedPopoverForItem() method */
+      --popover-left: calc(var(--nesting-level) * (var(--width) - var(--nested-popover-overlap)));
+      /* Variable --trigger-item-top is set via js in showNestedPopoverForItem() method */
+      top: calc(var(--trigger-item-top) - var(--nested-popover-overlap));
+      position: absolute;
+    }
+  }
+
+  &--open-top.ce-popover--nested {
+    .ce-popover__container {
+      /** Bottom edge of nested popover should not be lower than bottom edge of parent popover when opened upwards */
+      top: calc(var(--trigger-item-top) - var(--popover-height) + var(--item-height) + var(--offset-from-target) + var(--nested-popover-overlap));
+
+    }
+  }
+
+  &--open-left {
+    .ce-popover--nested {
+      .ce-popover__container {
+        --popover-left: calc(-1 * (var(--nesting-level) + 1) * var(--width) + 100%);
+      }
+    }
+  }
+}
+
+
+/** 
+ * Popover item styles
+ */
+.ce-popover-item-separator {
+  padding: 4px 3px;
+
+  &--hidden {
+    display: none;
+  }
+
+  &__line {
+    height: 1px;
+    background: var(--color-border);
+    width: 100%;
+  }
+}
+
+.ce-popover-item-html {
+  &--hidden {
+    display: none;
+  }
+}
+
+.ce-popover-item {
+  --border-radius: 6px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  padding: var(--item-padding);
+  color: var(--color-text-primary);
+  user-select: none;
+  border: none;
+  background: transparent;
+
+  @media (--mobile) {
+    padding: 4px;
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: 1px;
+  }
+
+  &__icon {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+
+    @media (--mobile){
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+
+      svg {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+
+  &__icon--tool {
+    margin-right: 4px;
+  }
+
+  &__title {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    margin-right: auto;
+
+    @media (--mobile) {
+      font-size: 16px;
+    }
+  }
+
+  &__secondary-title {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+    letter-spacing: -0.1em;
+    padding-right: 5px;
+    opacity: 0.6;
+
+    @media (--mobile){
+      display: none;
+    }
+  }
+
+  &--active {
+    background: var(--color-background-icon-active);
+    color: var(--color-text-icon-active);
+  }
+
+  &--disabled {
+    color: var(--color-text-secondary);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &--focused {
+    &:not(.ce-popover-item--no-focus) {
+      background: var(--color-background-item-focus) !important;
+    }
+  }
+
+  &--hidden {
+    display: none;
+  }
+
+  @media (--can-hover) {
+    &:hover {
+      cursor: pointer;
+      
+      &:not(.ce-popover-item--no-hover) {
+        background-color: var(--color-background-item-hover);
+      }
+    }
+  }
+
+  &--confirmation {
+    background: var(--color-background-item-confirm);
+
+    .ce-popover-item__title,
+    .ce-popover-item__icon {
+      color: white;
+    }
+
+    /* confirmation hover */
+    &:not(.ce-popover-item--no-hover) {
+      @media (--can-hover) {
+        &:hover {
+          background: var(--color-background-item-confirm-hover);
+        }
+      }
+    }
+
+    /* confirmation focus */
+    &:not(.ce-popover-item--no-focus) {
+      &.ce-popover-item--focused {
+        background: var(--color-background-item-confirm-hover) !important;
+      }
+    }
+  }
+}
+
+
+/** 
+ * Animations
+ */
+@keyframes panelShowing {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.9);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+
+  to {
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes panelShowingMobile {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+
+  to {
+
+    transform: translateY(0);
+  }
+}
+
+
+.wobble {
+  animation-name: wobble;
+  animation-duration: 400ms;
+}
+
+/**
+ * @author Nick Pettit - https://github.com/nickpettit/glide
+ */
+@keyframes wobble {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  15% {
+    transform: translate3d(-9%, 0, 0);
+  }
+
+  30% {
+    transform: translate3d(9%, 0, 0);
+  }
+
+  45% {
+    transform: translate3d(-4%, 0, 0);
+  }
+
+  60% {
+    transform: translate3d(4%, 0, 0);
+  }
+
+  75% {
+    transform: translate3d(-1%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/**
+ * Popover header styles
+ */
+.ce-popover-header {
+  margin-bottom: 8px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  
+  &__text {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__back-button {
+    border: 0;
+    background: transparent;
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-primary);
+
+    svg {
+      display: block;
+      width: 28px;
+      height: 28px;
+    }
   }
 }

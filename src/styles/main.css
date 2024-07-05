@@ -3,12 +3,13 @@
 @import './toolbar.css';
 @import './toolbox.css';
 @import './inline-toolbar.css';
-@import './conversion-toolbar.css';
-@import './settings.css';
 @import './block.css';
 @import './animations.css';
 @import './export.css';
 @import './stub.css';
 @import './rtl.css';
-@import './popover.css';
 @import './input.css';
+@import './popover.css';
+@import './popover-inline.css';
+@import './placeholders.css';
+

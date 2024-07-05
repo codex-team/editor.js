@@ -31,6 +31,11 @@
     "ClientRect": true,
     "ArrayLike": true,
     "InputEvent": true,
-    "unknown": true
+    "unknown": true,
+    "requestAnimationFrame": true,
+    "navigator": true
+  },
+  "rules": {
+    "jsdoc/require-returns-type": "off"
   }
 }

@@ -3,8 +3,9 @@
  * @classdesc Editor's default tune that moves up selected block
  * @copyright <CodeX Team> 2018
  */
-import { API, BlockTune, PopoverItem } from '../../../types';
+import { API, BlockTune } from '../../../types';
 import { IconCross } from '@codexteam/icons';
+import { MenuConfig } from '../../../types/tools/menu-config';
 
 /**
  *
@@ -34,13 +35,13 @@ export default class DeleteTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public render(): PopoverItem {
+  public render(): MenuConfig {
     return {
       icon: IconCross,
-      label: this.api.i18n.t('Delete'),
+      title: this.api.i18n.t('Delete'),
       name: 'delete',
       confirmation: {
-        label: this.api.i18n.t('Click to delete'),
+        title: this.api.i18n.t('Click to delete'),
         onActivate: (): void => this.handleClick(),
       },
     };

@@ -2,16 +2,26 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import Block from '../../block';
-import Popover, { PopoverEvent } from '../../utils/popover';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Flipper from '../../flipper';
+import { MenuConfigItem } from '../../../../types/tools';
+import { resolveAliases } from '../../utils/resolve-aliases';
+import { type Popover, PopoverDesktop, PopoverMobile, PopoverItemParams, PopoverItemType } from '../../utils/popover';
+import { PopoverEvent } from '../../utils/popover/popover.types';
+import { isMobileScreen } from '../../utils';
+import { EditorMobileLayoutToggled } from '../../events';
+import { IconReplace } from '@codexteam/icons';
+import { getConvertibleToolsForBlock } from '../../utils/blocks';
 
 /**
  * HTML Elements that used for BlockSettings
  */
 interface BlockSettingsNodes {
-  wrapper: HTMLElement;
+  /**
+   * Block Settings wrapper. Undefined when before "make" method called
+   */
+  wrapper: HTMLElement | undefined;
 }
 
 /**
@@ -22,8 +32,6 @@ interface BlockSettingsNodes {
 export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Module Events
-   *
-   * @returns {{opened: string, closed: string}}
    */
   public get events(): { opened: string; closed: string } {
     return {
@@ -51,8 +59,12 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @todo remove once BlockSettings becomes standalone non-module class
    */
-  public get flipper(): Flipper {
-    return this.popover?.flipper;
+  public get flipper(): Flipper | undefined {
+    if (this.popover === null) {
+      return;
+    }
+
+    return 'flipper' in this.popover ? this.popover?.flipper : undefined;
   }
 
   /**
@@ -62,8 +74,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
 
   /**
    * Popover instance. There is a util for vertical lists.
+   * Null until popover is not initialized
    */
-  private popover: Popover | undefined;
+  private popover: Popover | null = null;
 
   /**
    * Panel with block settings with 2 sections:
@@ -71,7 +84,13 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *  - Default Settings [Move, Remove, etc]
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div');
+    this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
+
+    if (import.meta.env.MODE === 'test') {
+      this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
+    }
+
+    this.eventsDispatcher.on(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -79,6 +98,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public destroy(): void {
     this.removeAllNodes();
+    this.listeners.destroy();
+    this.eventsDispatcher.off(EditorMobileLayoutToggled, this.close);
   }
 
   /**
@@ -86,7 +107,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @param targetBlock - near which Block we should open BlockSettings
    */
-  public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
+  public async open(targetBlock: Block = this.Editor.BlockManager.currentBlock): Promise<void> {
     this.opened = true;
 
     /**
@@ -98,31 +119,30 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Highlight content of a Block we are working with
      */
-    targetBlock.selected = true;
+    this.Editor.BlockSelection.selectBlock(targetBlock);
     this.Editor.BlockSelection.clearCache();
 
-    /**
-     * Fill Tool's settings
-     */
-    const [tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
+    /** Get tool's settings data */
+    const { toolTunes, commonTunes } = targetBlock.getTunes();
 
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
 
-    this.popover = new Popover({
-      className: this.CSS.settings,
-      searchable: true,
-      filterLabel: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-      nothingFoundLabel: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-      items: tunesItems,
-      customContent: customHtmlTunesContainer,
-      customContentFlippableItems: this.getControls(customHtmlTunesContainer),
-      scopeElement: this.Editor.API.methods.ui.nodes.redactor,
-    });
-    this.popover.on(PopoverEvent.OverlayClicked, this.onOverlayClicked);
-    this.popover.on(PopoverEvent.Close, () => this.close());
+    const PopoverClass = isMobileScreen() ? PopoverMobile : PopoverDesktop;
 
-    this.nodes.wrapper.append(this.popover.getElement());
+    this.popover = new PopoverClass({
+      searchable: true,
+      items: await this.getTunesItems(targetBlock, commonTunes, toolTunes),
+      scopeElement: this.Editor.API.methods.ui.nodes.redactor,
+      messages: {
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+        search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+      },
+    });
+
+    this.popover.on(PopoverEvent.Closed, this.onPopoverClose);
+
+    this.nodes.wrapper?.append(this.popover.getElement());
 
     this.popover.show();
   }
@@ -130,14 +150,18 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
   /**
    * Returns root block settings element
    */
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | undefined {
     return this.nodes.wrapper;
   }
 
   /**
    * Close Block Settings pane
    */
-  public close(): void {
+  public close = (): void => {
+    if (!this.opened) {
+      return;
+    }
+
     this.opened = false;
 
     /**
@@ -157,39 +181,103 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
      * Remove highlighted content of a Block we are working with
      */
     if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock) {
-      this.Editor.BlockManager.currentBlock.selected = false;
+      this.Editor.BlockSelection.unselectBlock(this.Editor.BlockManager.currentBlock);
     }
 
     /** Tell to subscribers that block settings is closed */
     this.eventsDispatcher.emit(this.events.closed);
 
     if (this.popover) {
-      this.popover.off(PopoverEvent.OverlayClicked, this.onOverlayClicked);
+      this.popover.off(PopoverEvent.Closed, this.onPopoverClose);
       this.popover.destroy();
       this.popover.getElement().remove();
       this.popover = null;
     }
-  }
+  };
 
   /**
-   * Returns list of buttons and inputs inside specified container
+   * Returns list of items to be displayed in block tunes menu.
+   * Merges tool specific tunes, conversion menu and common tunes in one list in predefined order
    *
-   * @param container - container to query controls inside of
+   * @param currentBlock –  block we are about to open block tunes for
+   * @param commonTunes – common tunes
+   * @param toolTunes - tool specific tunes
    */
-  private getControls(container: HTMLElement): HTMLElement[] {
-    const { StylesAPI } = this.Editor;
-    /** Query buttons and inputs inside tunes html */
-    const controls = container.querySelectorAll<HTMLElement>(
-      `.${StylesAPI.classes.settingsButton}, ${$.allInputsSelector}`
-    );
+  private async getTunesItems(currentBlock: Block, commonTunes: MenuConfigItem[], toolTunes?: MenuConfigItem[]): Promise<PopoverItemParams[]> {
+    const items = [] as MenuConfigItem[];
 
-    return Array.from(controls);
+    if (toolTunes !== undefined && toolTunes.length > 0) {
+      items.push(...toolTunes);
+      items.push({
+        type: PopoverItemType.Separator,
+      });
+    }
+
+    const allBlockTools = Array.from(this.Editor.Tools.blockTools.values());
+    const convertibleTools = await getConvertibleToolsForBlock(currentBlock, allBlockTools);
+    const convertToItems = convertibleTools.reduce((result, tool) => {
+      tool.toolbox.forEach((toolboxItem) => {
+        result.push({
+          icon: toolboxItem.icon,
+          title: toolboxItem.title,
+          name: tool.name,
+          closeOnActivate: true,
+          onActivate: async () => {
+            const { BlockManager, Caret, Toolbar } = this.Editor;
+
+            const newBlock = await BlockManager.convert(currentBlock, tool.name, toolboxItem.data);
+
+            Toolbar.close();
+
+            Caret.setToBlock(newBlock, Caret.positions.END);
+          },
+        });
+      });
+
+      return result;
+    }, []);
+
+    if (convertToItems.length > 0) {
+      items.push({
+        icon: IconReplace,
+        title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
+        children: {
+          searchable: true,
+          items: convertToItems,
+        },
+      });
+      items.push({
+        type: PopoverItemType.Separator,
+      });
+    }
+
+    items.push(...commonTunes);
+
+    return items.map(tune => this.resolveTuneAliases(tune));
   }
 
   /**
-   * Handles overlay click
+   * Handles popover close event
    */
-  private onOverlayClicked = (): void => {
+  private onPopoverClose = (): void => {
     this.close();
   };
+
+  /**
+   * Resolves aliases in tunes menu items
+   *
+   * @param item - item with resolved aliases
+   */
+  private resolveTuneAliases(item: MenuConfigItem): PopoverItemParams {
+    if (item.type === PopoverItemType.Separator || item.type === PopoverItemType.Html) {
+      return item;
+    }
+    const result = resolveAliases(item, { label: 'title' });
+
+    if (item.confirmation) {
+      result.confirmation = this.resolveTuneAliases(item.confirmation);
+    }
+
+    return result;
+  }
 }

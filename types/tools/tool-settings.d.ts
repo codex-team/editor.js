@@ -1,6 +1,5 @@
 import { ToolConfig } from './tool-config';
-import { ToolConstructable, BlockToolData } from './index';
-import { PopoverItem } from '../configs';
+import { ToolConstructable, BlockToolData, MenuConfig, MenuConfigItem } from './index';
 
 /**
  * Tool may specify its toolbox configuration
@@ -27,12 +26,6 @@ export interface ToolboxConfigEntry {
    */
   data?: BlockToolData
 }
-
-/**
- * Tool may specify its tunes configuration
- * that can contain either one or multiple entries
- */
-export type TunesMenuConfig = PopoverItem | PopoverItem[];
 
 /**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}
@@ -74,6 +67,18 @@ export interface ExternalToolSettings<Config extends object = any> {
    */
   toolbox?: ToolboxConfig | false;
 }
+
+/**
+ * Tool's tunes configuration.
+ * @deprecated use {@link MenuConfig} type instead
+ */
+export type TunesMenuConfig = MenuConfig;
+
+/**
+ * Single Tunes Menu Config item
+ * @deprecated use {@link MenuConfigItem} type instead
+ */
+export type TunesMenuConfigItem = MenuConfigItem;
 
 /**
  * For internal Tools 'class' property is optional

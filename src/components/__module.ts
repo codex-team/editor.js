@@ -3,6 +3,7 @@ import { EditorConfig } from '../../types';
 import { ModuleConfig } from '../types-internal/module-config';
 import Listeners from './utils/listeners';
 import EventsDispatcher from './utils/events';
+import { EditorEventMap } from './events';
 
 /**
  * The type <T> of the Module generic.
@@ -42,7 +43,7 @@ export default class Module<T extends ModuleNodes = Record<string, HTMLElement>>
   /**
    * Editor event dispatcher class
    */
-  protected eventsDispatcher: EventsDispatcher;
+  protected eventsDispatcher: EventsDispatcher<EditorEventMap>;
 
   /**
    * Util for bind/unbind DOM event listeners

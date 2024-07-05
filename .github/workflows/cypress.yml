@@ -1,36 +1,21 @@
-name: Tests
+name: Cypress
+
 on: [pull_request]
+
 jobs:
-  firefox:
-    runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node14.17.0-chrome88-ff89
-      options: --user 1001
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
-        with:
-          config: video=false
-          browser: firefox
-          build: yarn build
-  chrome:
+  run-tests:
+    strategy:
+      matrix:
+        browser: [firefox, chrome, edge]
+
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
         with:
           config: video=false
-          browser: chrome
-          build: yarn build
-  edge:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: yarn ci:pull_paragraph
-      - uses: cypress-io/github-action@v2
-        with:
-          config: video=false
-          browser: edge
-          build: yarn build
+          browser: ${{ matrix.browser }}
+          build: yarn build:test

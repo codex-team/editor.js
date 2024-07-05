@@ -12,7 +12,15 @@ import Blocks from '../blocks';
 import { BlockToolData, PasteEvent } from '../../../types';
 import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
-import { BlockMutationType } from '../../../types/events/block/mutation-type';
+import { BlockMutationEventMap, BlockMutationType } from '../../../types/events/block';
+import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
+import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
+import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
+import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
+import { BlockChanged } from '../events';
+import { clean, sanitizeBlocks } from '../utils/sanitizer';
+import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
+import PromiseQueue from '../utils/promise-queue';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -35,14 +43,6 @@ export default class BlockManager extends Module {
    * @param {number} newIndex - index of Block to set as current
    */
   public set currentBlockIndex(newIndex: number) {
-    if (this._blocks[this._currentBlockIndex]) {
-      this._blocks[this._currentBlockIndex].willUnselect();
-    }
-
-    if (this._blocks[newIndex]) {
-      this._blocks[newIndex].willSelect();
-    }
-
     this._currentBlockIndex = newIndex;
   }
 
@@ -69,7 +69,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block}
    */
-  public get currentBlock(): Block {
+  public get currentBlock(): Block | undefined {
     return this._blocks[this.currentBlockIndex];
   }
 
@@ -87,7 +87,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get nextBlock(): Block {
+  public get nextBlock(): Block | null {
     const isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
 
     if (isLastBlock) {
@@ -124,7 +124,7 @@ export default class BlockManager extends Module {
    *
    * @returns {Block|null}
    */
-  public get previousBlock(): Block {
+  public get previousBlock(): Block | null {
     const isFirstBlock = this.currentBlockIndex === 0;
 
     if (isFirstBlock) {
@@ -242,10 +242,12 @@ export default class BlockManager extends Module {
       api: this.Editor.API,
       readOnly,
       tunesData,
-    });
+    }, this.eventsDispatcher);
 
     if (!readOnly) {
-      this.bindBlockEvents(block);
+      window.requestIdleCallback(() => {
+        this.bindBlockEvents(block);
+      }, { timeout: 2000 });
     }
 
     return block;
@@ -298,7 +300,7 @@ export default class BlockManager extends Module {
      * we need to dispatch the 'block-removing' event for the replacing block
      */
     if (replace) {
-      this.blockDidMutated(BlockMutationType.Removed, this.getBlockByIndex(newIndex), {
+      this.blockDidMutated(BlockRemovedMutationType, this.getBlockByIndex(newIndex), {
         index: newIndex,
       });
     }
@@ -308,7 +310,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block, {
+    this.blockDidMutated(BlockAddedMutationType, block, {
       index: newIndex,
     });
 
@@ -322,21 +324,59 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Replace current working block
+   * Inserts several blocks at once
    *
-   * @param {object} options - replace options
-   * @param {string} options.tool — plugin name
-   * @param {BlockToolData} options.data — plugin data
-   * @returns {Block}
+   * @param blocks - blocks to insert
+   * @param index - index where to insert
    */
-  public replace({
-    tool = this.config.defaultBlock,
-    data = {},
-  }): Block {
+  public insertMany(blocks: Block[], index = 0): void {
+    this._blocks.insertMany(blocks, index);
+  }
+
+  /**
+   * Update Block data.
+   *
+   * Currently we don't have an 'update' method in the Tools API, so we just create a new block with the same id and type
+   * Should not trigger 'block-removed' or 'block-added' events
+   *
+   * @param block - block to update
+   * @param data - new data
+   */
+  public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
+    const existingData = await block.data;
+
+    const newBlock = this.composeBlock({
+      id: block.id,
+      tool: block.name,
+      data: Object.assign({}, existingData, data),
+      tunes: block.tunes,
+    });
+
+    const blockIndex = this.getBlockIndex(block);
+
+    this._blocks.replace(blockIndex, newBlock);
+
+    this.blockDidMutated(BlockChangedMutationType, newBlock, {
+      index: blockIndex,
+    });
+
+    return newBlock;
+  }
+
+  /**
+   * Replace passed Block with the new one with specified Tool and data
+   *
+   * @param block - block to replace
+   * @param newTool - new Tool name
+   * @param data - new Tool data
+   */
+  public replace(block: Block, newTool: string, data: BlockToolData): Block {
+    const blockIndex = this.getBlockIndex(block);
+
     return this.insert({
-      tool,
+      tool: newTool,
       data,
-      index: this.currentBlockIndex,
+      index: blockIndex,
       replace: true,
     });
   }
@@ -359,7 +399,16 @@ export default class BlockManager extends Module {
     });
 
     try {
-      block.call(BlockToolAPI.ON_PASTE, pasteEvent);
+      /**
+       * We need to call onPaste after Block will be ready
+       * because onPaste could change tool's root element, and we need to do that after block.watchBlockMutations() bound
+       * to detect tool root element change
+       *
+       * @todo make this.insert() awaitable and remove requestIdleCallback
+       */
+      window.requestIdleCallback(() => {
+        block.call(BlockToolAPI.ON_PASTE, pasteEvent);
+      });
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
@@ -384,7 +433,7 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block insertion
      */
-    this.blockDidMutated(BlockMutationType.Added, block, {
+    this.blockDidMutated(BlockAddedMutationType, block, {
       index,
     });
 
@@ -422,61 +471,90 @@ export default class BlockManager extends Module {
    * @returns {Promise} - the sequence that can be continued
    */
   public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
-    const blockToMergeIndex = this._blocks.indexOf(blockToMerge);
+    let blockToMergeData: BlockToolData | undefined;
 
-    if (blockToMerge.isEmpty) {
+    /**
+     * We can merge:
+     * 1) Blocks with the same Tool if tool provides merge method
+     */
+    if (targetBlock.name === blockToMerge.name && targetBlock.mergeable) {
+      const blockToMergeDataRaw = await blockToMerge.data;
+
+      if (_.isEmpty(blockToMergeDataRaw)) {
+        console.error('Could not merge Block. Failed to extract original Block data.');
+
+        return;
+      }
+
+      const [ cleanData ] = sanitizeBlocks([ blockToMergeDataRaw ], targetBlock.tool.sanitizeConfig);
+
+      blockToMergeData = cleanData;
+
+    /**
+     * 2) Blocks with different Tools if they provides conversionConfig
+     */
+    } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
+      const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
+      const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
+
+      blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
+    }
+
+    if (blockToMergeData === undefined) {
       return;
     }
 
-    const blockToMergeData = await blockToMerge.data;
-
-    if (!_.isEmpty(blockToMergeData)) {
-      await targetBlock.mergeWith(blockToMergeData);
-    }
-
-    this.removeBlock(blockToMergeIndex);
+    await targetBlock.mergeWith(blockToMergeData);
+    this.removeBlock(blockToMerge);
     this.currentBlockIndex = this._blocks.indexOf(targetBlock);
   }
 
   /**
-   * Remove block with passed index or remove last
+   * Remove passed Block
    *
-   * @param {number|null} index - index of Block to remove
-   * @throws {Error} if Block to remove is not found
+   * @param block - Block to remove
+   * @param addLastBlock - if true, adds new default block at the end. @todo remove this logic and use event-bus instead
    */
-  public removeBlock(index = this.currentBlockIndex): void {
-    /**
-     * If index is not passed and there is no block selected, show a warning
-     */
-    if (!this.validateIndex(index)) {
-      throw new Error('Can\'t find a Block to remove');
-    }
+  public removeBlock(block: Block, addLastBlock = true): Promise<void> {
+    return new Promise((resolve) => {
+      const index = this._blocks.indexOf(block);
 
-    const blockToRemove = this._blocks[index];
+      /**
+       * If index is not passed and there is no block selected, show a warning
+       */
+      if (!this.validateIndex(index)) {
+        throw new Error('Can\'t find a Block to remove');
+      }
 
-    blockToRemove.destroy();
-    this._blocks.remove(index);
+      block.destroy();
+      this._blocks.remove(index);
 
-    /**
-     * Force call of didMutated event on Block removal
-     */
-    this.blockDidMutated(BlockMutationType.Removed, blockToRemove, {
-      index,
+      /**
+       * Force call of didMutated event on Block removal
+       */
+      this.blockDidMutated(BlockRemovedMutationType, block, {
+        index,
+      });
+
+      if (this.currentBlockIndex >= index) {
+        this.currentBlockIndex--;
+      }
+
+      /**
+       * If first Block was removed, insert new Initial Block and set focus on it`s first input
+       */
+      if (!this.blocks.length) {
+        this.unsetCurrentBlock();
+
+        if (addLastBlock) {
+          this.insert();
+        }
+      } else if (index === 0) {
+        this.currentBlockIndex = 0;
+      }
+
+      resolve();
     });
-
-    if (this.currentBlockIndex >= index) {
-      this.currentBlockIndex--;
-    }
-
-    /**
-     * If first Block was removed, insert new Initial Block and set focus on it`s first input
-     */
-    if (!this.blocks.length) {
-      this.currentBlockIndex = -1;
-      this.insert();
-    } else if (index === 0) {
-      this.currentBlockIndex = 0;
-    }
   }
 
   /**
@@ -496,7 +574,7 @@ export default class BlockManager extends Module {
         continue;
       }
 
-      this.removeBlock(index);
+      this.removeBlock(this.blocks[index]);
       firstSelectedBlockIndex = index;
     }
 
@@ -513,7 +591,7 @@ export default class BlockManager extends Module {
       this._blocks.remove(index);
     }
 
-    this.currentBlockIndex = -1;
+    this.unsetCurrentBlock();
     this.insert();
     this.currentBlock.firstInput.focus();
   }
@@ -549,10 +627,25 @@ export default class BlockManager extends Module {
   /**
    * Returns Block by passed index
    *
+   * If we pass -1 as index, the last block will be returned
+   * There shouldn't be a case when there is no blocks at all — at least one always should exist
+   */
+  public getBlockByIndex(index: -1): Block;
+
+  /**
+   * Returns Block by passed index.
+   *
+   * Could return undefined if there is no block with such index
+   */
+  public getBlockByIndex(index: number): Block | undefined;
+
+  /**
+   * Returns Block by passed index
+   *
    * @param {number} index - index to get. -1 to get last
    * @returns {Block}
    */
-  public getBlockByIndex(index): Block {
+  public getBlockByIndex(index: number): Block | undefined {
     if (index === -1) {
       index = this._blocks.length - 1;
     }
@@ -596,32 +689,6 @@ export default class BlockManager extends Module {
     if (index >= 0) {
       return this._blocks[index];
     }
-  }
-
-  /**
-   * Remove selection from all Blocks then highlight only Current Block
-   */
-  public highlightCurrentNode(): void {
-    /**
-     * Remove previous selected Block's state
-     */
-    this.clearFocused();
-
-    /**
-     * Mark current Block as selected
-     *
-     * @type {boolean}
-     */
-    this.currentBlock.focused = true;
-  }
-
-  /**
-   * Remove selection from all Blocks
-   */
-  public clearFocused(): void {
-    this.blocks.forEach((block) => {
-      block.focused = false;
-    });
   }
 
   /**
@@ -679,7 +746,11 @@ export default class BlockManager extends Module {
    * @param {Node} childNode - node to get Block by
    * @returns {Block}
    */
-  public getBlockByChildNode(childNode: Node): Block {
+  public getBlockByChildNode(childNode: Node): Block | undefined {
+    if (!childNode || childNode instanceof Node === false) {
+      return undefined;
+    }
+
     /**
      * If node is Text TextNode
      */
@@ -736,19 +807,74 @@ export default class BlockManager extends Module {
     /**
      * Force call of didMutated event on Block movement
      */
-    this.blockDidMutated(BlockMutationType.Moved, this.currentBlock, {
+    this.blockDidMutated(BlockMovedMutationType, this.currentBlock, {
       fromIndex,
       toIndex,
     });
   }
 
   /**
+   * Converts passed Block to the new Tool
+   * Uses Conversion Config
+   *
+   * @param blockToConvert - Block that should be converted
+   * @param targetToolName - name of the Tool to convert to
+   * @param blockDataOverrides - optional new Block data overrides
+   */
+  public async convert(blockToConvert: Block, targetToolName: string, blockDataOverrides?: BlockToolData): Promise<Block> {
+    /**
+     * At first, we get current Block data
+     */
+    const savedBlock = await blockToConvert.save();
+
+    if (!savedBlock) {
+      throw new Error('Could not convert Block. Failed to extract original Block data.');
+    }
+
+    /**
+     * Getting a class of the replacing Tool
+     */
+    const replacingTool = this.Editor.Tools.blockTools.get(targetToolName);
+
+    if (!replacingTool) {
+      throw new Error(`Could not convert Block. Tool «${targetToolName}» not found.`);
+    }
+
+    /**
+     * Using Conversion Config "export" we get a stringified version of the Block data
+     */
+    const exportedData = await blockToConvert.exportDataAsString();
+
+    /**
+     * Clean exported data with replacing sanitizer config
+     */
+    const cleanData: string = clean(
+      exportedData,
+      replacingTool.sanitizeConfig
+    );
+
+    /**
+     * Now using Conversion Config "import" we compose a new Block data
+     */
+    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig);
+
+    /**
+     * Optional data overrides.
+     * Used for example, by the Multiple Toolbox Items feature, where a single Tool provides several Toolbox items with "data" overrides
+     */
+    if (blockDataOverrides) {
+      newBlockData = Object.assign(newBlockData, blockDataOverrides);
+    }
+
+    return this.replace(blockToConvert, replacingTool.name, newBlockData);
+  }
+
+  /**
    * Sets current Block Index -1 which means unknown
    * and clear highlights
    */
-  public dropPointer(): void {
+  public unsetCurrentBlock(): void {
     this.currentBlockIndex = -1;
-    this.clearFocused();
   }
 
   /**
@@ -758,9 +884,18 @@ export default class BlockManager extends Module {
    *                                             we don't need to add an empty default block
    *                                        2) in api.blocks.clear we should add empty block
    */
-  public clear(needToAddDefaultBlock = false): void {
-    this._blocks.removeAll();
-    this.dropPointer();
+  public async clear(needToAddDefaultBlock = false): Promise<void> {
+    const queue = new PromiseQueue();
+
+    this.blocks.forEach((block) => {
+      queue.add(async () => {
+        await this.removeBlock(block, false);
+      });
+    });
+
+    await queue.completed;
+
+    this.unsetCurrentBlock();
 
     if (needToAddDefaultBlock) {
       this.insert();
@@ -807,7 +942,7 @@ export default class BlockManager extends Module {
     });
 
     block.on('didMutated', (affectedBlock: Block) => {
-      return this.blockDidMutated(BlockMutationType.Changed, affectedBlock, {
+      return this.blockDidMutated(BlockChangedMutationType, affectedBlock, {
         index: this.getBlockIndex(affectedBlock),
       });
     });
@@ -851,18 +986,25 @@ export default class BlockManager extends Module {
    *
    * @param mutationType - what happened with block
    * @param block - mutated block
-   * @param details - additional data to pass with change event
+   * @param detailData - additional data to pass with change event
    */
-  private blockDidMutated(mutationType: BlockMutationType, block: Block, details: Record<string, unknown> = {}): Block {
+  private blockDidMutated<Type extends BlockMutationType>(mutationType: Type, block: Block, detailData: BlockMutationEventDetailWithoutTarget<Type>): Block {
     const event = new CustomEvent(mutationType, {
       detail: {
         target: new BlockAPI(block),
-        ...details,
+        ...detailData as BlockMutationEventDetailWithoutTarget<Type>,
       },
     });
 
-    this.Editor.ModificationsObserver.onChange(event);
+    this.eventsDispatcher.emit(BlockChanged, {
+      event: event as BlockMutationEventMap[Type],
+    });
 
     return block;
   }
 }
+
+/**
+ * Type alias for Block Mutation event without 'target' field, used in 'blockDidMutated' method
+ */
+type BlockMutationEventDetailWithoutTarget<Type extends BlockMutationType> = Omit<BlockMutationEventMap[Type]['detail'], 'target'>;

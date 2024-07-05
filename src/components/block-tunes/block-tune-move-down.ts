@@ -4,9 +4,9 @@
  * @copyright <CodeX Team> 2018
  */
 
-import { API, BlockTune, PopoverItem } from '../../../types';
-import Popover from '../utils/popover';
+import { API, BlockTune } from '../../../types';
 import { IconChevronDown } from '@codexteam/icons';
+import { TunesMenuConfig } from '../../../types/tools';
 
 
 /**
@@ -44,38 +44,25 @@ export default class MoveDownTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public render(): PopoverItem {
+  public render(): TunesMenuConfig {
     return {
       icon: IconChevronDown,
-      label: this.api.i18n.t('Move down'),
-      onActivate: (item, event): void => this.handleClick(event),
+      title: this.api.i18n.t('Move down'),
+      onActivate: (): void => this.handleClick(),
       name: 'move-down',
     };
   }
 
   /**
    * Handle clicks on 'move down' button
-   *
-   * @param event - click event
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(): void {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const nextBlock = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
 
     // If Block is last do nothing
     if (!nextBlock) {
-      const button = (event.target as HTMLElement)
-        .closest('.' + Popover.CSS.item)
-        .querySelector('.' + Popover.CSS.itemIcon);
-
-      button.classList.add(this.CSS.animation);
-
-      window.setTimeout(() => {
-        button.classList.remove(this.CSS.animation);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
-
-      return;
+      throw new Error('Unable to move Block down since it is already the last');
     }
 
     const nextBlockElement = nextBlock.holder;

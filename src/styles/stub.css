@@ -1,26 +1,25 @@
 .ce-stub {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 3.5em 0;
-  margin: 17px 0;
-  border-radius: 3px;
-  background: #fcf7f7;
-  color: #b46262;
+  padding: 12px 18px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background: var(--bg-light);
+  border: 1px solid var(--color-line-gray);
+  color: var(--grayText);
+  font-size: 14px;
+
+  svg {
+    width: var(--icon-size);
+    height: var(--icon-size);
+  }
 
   &__info {
-    margin-left: 20px;
+    margin-left: 14px;
   }
 
   &__title {
-    margin-bottom: 3px;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: 500;
     text-transform: capitalize;
-  }
-
-  &__subtitle {
-    font-size: 16px;
   }
 }

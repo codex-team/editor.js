@@ -1,10 +1,11 @@
-import Paragraph from '../../tools/paragraph/dist/bundle';
+import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
 import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import ConvertInlineTool from '../inline-tools/inline-tool-convert';
 import Stub from '../../tools/stub';
 import ToolsFactory from '../tools/factory';
 import InlineTool from '../tools/inline';
@@ -176,16 +177,20 @@ export default class Tools extends Module {
    */
   private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
     return {
+      convertTo: {
+        class: ConvertInlineTool,
+        isInternal: true,
+      },
+      link: {
+        class: LinkInlineTool,
+        isInternal: true,
+      },
       bold: {
         class: BoldInlineTool,
         isInternal: true,
       },
       italic: {
         class: ItalicInlineTool,
-        isInternal: true,
-      },
-      link: {
-        class: LinkInlineTool,
         isInternal: true,
       },
       paragraph: {
@@ -224,7 +229,7 @@ export default class Tools extends Module {
       /**
        * Some Tools validation
        */
-      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+      const inlineToolRequiredMethods = [ 'render' ];
       const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !tool.create()[method]);
 
       if (notImplementedMethods.length) {
@@ -329,7 +334,8 @@ export default class Tools extends Module {
      */
     if (Array.isArray(tool.enabledInlineTools)) {
       tool.inlineTools = new ToolsCollection<InlineTool>(
-        tool.enabledInlineTools.map(name => [name, this.inlineTools.get(name)])
+        /** Prepend ConvertTo Inline Tool */
+        ['convertTo', ...tool.enabledInlineTools].map(name => [name, this.inlineTools.get(name)])
       );
     }
   }

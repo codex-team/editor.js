@@ -1,0 +1,14 @@
+.ce-hint {
+  &--align-start {
+    text-align: start;
+  }
+
+  &--align-center {
+    text-align: center;
+  }
+
+  &__description {
+    opacity: 0.6;
+    margin-top: 3px;
+  }
+}

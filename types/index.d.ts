@@ -28,9 +28,15 @@ import {
   Tooltip,
   I18n,
   Ui,
+  Tools,
 } from './api';
 
 import { OutputData } from './data-formats';
+import { BlockMutationEvent, BlockMutationEventMap, BlockMutationType } from './events/block';
+import { BlockAddedMutationType, BlockAddedEvent } from './events/block/BlockAdded';
+import { BlockChangedMutationType, BlockChangedEvent } from './events/block/BlockChanged';
+import { BlockMovedMutationType, BlockMovedEvent } from './events/block/BlockMoved';
+import { BlockRemovedMutationType, BlockRemovedEvent } from './events/block/BlockRemoved';
 
 /**
  * Interfaces used for development
@@ -72,12 +78,29 @@ export {
   Dictionary,
   DictValue,
   I18nConfig,
-  PopoverItem,
-  PopoverItemWithConfirmation,
-  PopoverItemWithoutConfirmation
 } from './configs';
-export {OutputData, OutputBlockData} from './data-formats/output-data';
+
+export {
+  PopoverItemParams,
+  PopoverItemDefaultParams,
+} from '../src/components/utils/popover';
+
+export { OutputData, OutputBlockData} from './data-formats/output-data';
+export { BlockId } from './data-formats/block-id';
 export { BlockAPI } from './api'
+export {
+  BlockMutationType,
+  BlockMutationEvent,
+  BlockMutationEventMap,
+  BlockAddedMutationType,
+  BlockAddedEvent,
+  BlockRemovedMutationType,
+  BlockRemovedEvent,
+  BlockMovedMutationType,
+  BlockMovedEvent,
+  BlockChangedMutationType,
+  BlockChangedEvent,
+}
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface
@@ -86,6 +109,7 @@ export { BlockAPI } from './api'
 export interface API {
   blocks: Blocks;
   caret: Caret;
+  tools: Tools;
   events: Events;
   listeners: Listeners;
   notifier: Notifier;

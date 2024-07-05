@@ -1,7 +1,14 @@
 name: Create a release draft
 
+# Caution: 
+# the use of "pull_request_target" trigger allows to successfully
+# run workflow even when triggered from a fork. The trigger grants
+# access to repo's secrets and gives write permission to the runner.
+# This can be used to run malicious code on untrusted PR, so, please
+# DO NOT checkout any PR's ongoing commits (aka github.event.pull_request.head.sha)
+# while using this trigger.
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - next
     types: [closed]
@@ -11,7 +18,12 @@ jobs:
   check-version-changing:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       # Checkout to target branch
       - uses: actions/checkout@v2
         with:
@@ -33,16 +45,21 @@ jobs:
 
       # Stop workflow if version was not changed
       - name: Stop workflow if version was not changed
-        uses: actions/github-script@v3
         if: steps.packageOld.outputs.version == steps.packageNew.outputs.version
-        with:
-          script: |
-            core.setFailed('No version changes. ${{ steps.packageOld.outputs.version }}')
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel
 
   # Create a new draft release
   release-draft:
     needs: check-version-changing
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       # Checkout to target branch
       - uses: actions/checkout@v2
@@ -53,8 +70,7 @@ jobs:
       # Setup node environment
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.17.0
-          registry-url: https://registry.npmjs.org/
+          node-version: 16
 
       # Prepare, build and publish project
       - name: Install dependencies
@@ -87,16 +103,27 @@ jobs:
           # If version name contains "-rc" suffix than mark a "pre-release" checkbox
           prerelease: ${{ contains(steps.package.outputs.version, '-rc') }}
 
-      # Build and upload target Editor.js build to release as artifact
+      # Build and upload target Editor.js UMD build to release as artifact
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/editor.js
-          asset_name: editor.js
+          asset_path: dist/editorjs.umd.js
+          asset_name: editorjs.umd.js
           asset_content_type: application/javascript
+          
+      # Build and upload target Editor.js MJS build to release as artifact
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/editorjs.mjs
+          asset_name: editorjs.mjs
+          asset_content_type: application/javascript          
 
       # Send a notification message
       - name: Send a message

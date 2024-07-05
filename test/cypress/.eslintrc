@@ -11,7 +11,9 @@
         "plugin:chai-friendly/recommended"
     ],
     "rules": {
-        "cypress/require-data-selectors": 2
+        "cypress/require-data-selectors": 2,
+        "cypress/no-unnecessary-waiting": 0,
+        "@typescript-eslint/no-magic-numbers": 0
     },
     "globals": {
         "EditorJS": true
