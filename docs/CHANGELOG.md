@@ -29,7 +29,7 @@
 – `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 - `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
 - `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
-- `Fix` — Resolved problem caused of missed "import type" in block mutation event types
+- `Fix` — The problem caused of missed "import type" in block mutation event types resolved
 
 ### 2.29.1
 
