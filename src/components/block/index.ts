@@ -736,6 +736,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return convertBlockDataToString(blockData, this.tool.conversionConfig);
   }
 
+  public supportUpdate(): boolean {
+    return !!this.toolInstance.update;
+  }
+
+  public update(newData: Partial<BlockToolData>): void {
+    if (!this.toolInstance.update) {
+      return;
+    }
+    this.toolInstance.update(newData);
+  }
+
   /**
    * Make default Block wrappers and put Tool`s content there
    *

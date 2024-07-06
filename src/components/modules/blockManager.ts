@@ -344,23 +344,28 @@ export default class BlockManager extends Module {
    */
   public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
     const existingData = await block.data;
-
-    const newBlock = this.composeBlock({
-      id: block.id,
-      tool: block.name,
-      data: Object.assign({}, existingData, data),
-      tunes: block.tunes,
-    });
-
     const blockIndex = this.getBlockIndex(block);
+    let updatedBlock = null;
 
-    this._blocks.replace(blockIndex, newBlock);
+    if (block.supportUpdate()) {
+      block.update(Object.assign({}, existingData, data));
+      updatedBlock = block;
+    } else {
+      updatedBlock = this.composeBlock({
+        id: block.id,
+        tool: block.name,
+        data: Object.assign({}, existingData, data),
+        tunes: block.tunes,
+      });
 
-    this.blockDidMutated(BlockChangedMutationType, newBlock, {
+      this._blocks.replace(blockIndex, updatedBlock);
+    }
+
+    this.blockDidMutated(BlockChangedMutationType, updatedBlock, {
       index: blockIndex,
     });
 
-    return newBlock;
+    return updatedBlock;
   }
 
   /**
