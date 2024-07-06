@@ -662,3 +662,13 @@ export function calculateBaseline(element: Element): number {
 
   return baselineY;
 }
+
+/**
+ * Toggles the [data-empty] attribute on element depending on its emptiness
+ * Used to mark empty inputs with a special attribute for placeholders feature
+ *
+ * @param element - The element to toggle the [data-empty] attribute on
+ */
+export function toggleEmptyMark(element: HTMLElement): void {
+  element.dataset.empty = Dom.isEmpty(element) ? 'true' : 'false';
+}

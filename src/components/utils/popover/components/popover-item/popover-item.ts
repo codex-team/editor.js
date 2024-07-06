@@ -59,6 +59,21 @@ export abstract class PopoverItem {
   }
 
   /**
+   * Called on popover item click
+   */
+  public handleClick(): void {
+    if (this.params === undefined) {
+      return;
+    }
+
+    if (!('onActivate' in this.params)) {
+      return;
+    }
+
+    this.params.onActivate?.(this.params);
+  }
+
+  /**
    * Adds hint to the item element if hint data is provided
    *
    * @param itemElement - popover item root element to add hint to
@@ -108,6 +123,25 @@ export abstract class PopoverItem {
   }
 
   /**
+   * True if item children items should be navigatable via keyboard
+   */
+  public get isChildrenFlippable(): boolean {
+    if (this.params === undefined) {
+      return false;
+    }
+
+    if (!('children' in this.params)) {
+      return false;
+    }
+
+    if (this.params.children?.isFlippable === false) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Returns true if item has children that should be searchable
    */
   public get isChildrenSearchable(): boolean {
@@ -128,8 +162,9 @@ export abstract class PopoverItem {
     if (this.params === undefined) {
       return false;
     }
+
     if (!('isActive' in this.params)) {
-      return;
+      return false;
     }
 
     if (typeof this.params.isActive === 'function') {

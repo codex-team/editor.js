@@ -93,6 +93,13 @@ declare global {
        * @param keyCode - key code to dispatch
        */
       keydown(keyCode: number): Chainable<Subject>;
+
+      /**
+       * Extract content of pseudo element
+       *
+       * @example cy.get('element').getPseudoElementContent('::before').should('eq', 'my-test-string')
+       */
+      getPseudoElementContent(pseudoElement: string): Chainable<string>;
     }
 
     interface ApplicationWindow {

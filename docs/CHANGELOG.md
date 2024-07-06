@@ -29,6 +29,9 @@
 – `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 - `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
 - `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
+- `Improvement` — Placeholders will stay visible on inputs focus.
+- `New` — Editor.js now supports contenteditable placeholders out of the box. Just add `data-placeholder` or `data-placeholder-active` attribute to make it work. The first one will work like native placeholder while the second one will show placeholder only when block is current.
+- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not the only first one.
 - `Fix` — The problem caused by missed "import type" in block mutation event types resolved
 
 ### 2.29.1

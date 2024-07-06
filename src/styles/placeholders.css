@@ -1,0 +1,45 @@
+
+/**
+ * We support two types of placeholders for contenteditable:
+ *
+ * 1. Regular-like placeholders. Will be visible when element is empty.
+      -- Best choice for rare-used blocks like Headings.
+ * 2. Current-block placeholders. Will be visible when element is empty and the block is focused.
+      -- Best choice for common-used blocks like Paragraphs.
+ */
+ :root {
+  --placeholder {
+    pointer-events: none;
+    color: var(--grayText);
+    cursor: text;
+  }
+ }
+
+.codex-editor {
+  /**
+   * Use [data-placeholder="..."] to always show a placeholder on empty contenteditable.
+   */
+  [data-placeholder]:empty,
+  [data-placeholder][data-empty="true"] {
+    &::before {
+      @apply --placeholder;
+
+      content: attr(data-placeholder);
+    }
+  }
+
+   /**
+    * Use [data-placeholder-active="..."] to show a placeholder on empty contenteditable in current block.
+    */
+  [data-placeholder-active]:empty,
+  [data-placeholder-active][data-empty="true"] {
+    /* Paragraph tool shows the placeholder for the first block, event it is not focused, so we need to prepare styles for it */
+    &::before {
+      @apply --placeholder;
+    }
+
+    &:focus::before {
+      content: attr(data-placeholder-active);
+    }
+  }
+}
