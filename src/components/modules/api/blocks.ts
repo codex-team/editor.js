@@ -4,7 +4,8 @@ import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
-import { capitalize } from './../../utils';
+import { capitalize } from '../../utils';
+import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 
 /**
  * @class BlocksAPI
@@ -320,9 +321,10 @@ export default class BlocksAPI extends Module {
    * Updates block data by id
    *
    * @param id - id of the block to update
-   * @param data - the new data
+   * @param data - (optional) the new data
+   * @param tunes - (optional) tune data
    */
-  public update = async (id: string, data: Partial<BlockToolData>): Promise<BlockAPIInterface> => {
+  public update = async (id: string, data?: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<BlockAPIInterface> => {
     const { BlockManager } = this.Editor;
     const block = BlockManager.getBlockById(id);
 
@@ -330,7 +332,7 @@ export default class BlocksAPI extends Module {
       throw new Error(`Block with id "${id}" not found`);
     }
 
-    const updatedBlock = await BlockManager.update(block, data);
+    const updatedBlock = await BlockManager.update(block, data, tunes);
 
     // we cast to any because our BlockAPI has no "new" signature
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
