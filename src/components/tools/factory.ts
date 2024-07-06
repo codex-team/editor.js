@@ -3,7 +3,7 @@ import { InternalInlineToolSettings, InternalTuneSettings } from './base';
 import InlineTool from './inline';
 import BlockTune from './tune';
 import BlockTool from './block';
-import API from '../modules/api';
+import ApiModule from '../modules/api';
 import { EditorConfig } from '../../../types/configs';
 
 type ToolConstructor = typeof InlineTool | typeof BlockTool | typeof BlockTune;
@@ -20,7 +20,7 @@ export default class ToolsFactory {
   /**
    * EditorJS API Module
    */
-  private api: API;
+  private api: ApiModule;
 
   /**
    * EditorJS configuration
@@ -36,7 +36,7 @@ export default class ToolsFactory {
   constructor(
     config: {[name: string]: ToolSettings & { isInternal?: boolean }},
     editorConfig: EditorConfig,
-    api: API
+    api: ApiModule
   ) {
     this.api = api;
     this.config = config;
@@ -52,12 +52,13 @@ export default class ToolsFactory {
     const { class: constructable, isInternal = false, ...config } = this.config[name];
 
     const Constructor = this.getConstructor(constructable);
+    const isTune = constructable[InternalTuneSettings.IsTune];
 
     return new Constructor({
       name,
       constructable,
       config,
-      api: this.api,
+      api: this.api.getMethodsForTool(name, isTune),
       isDefault: name === this.editorConfig.defaultBlock,
       defaultPlaceholder: this.editorConfig.placeholder,
       isInternal,

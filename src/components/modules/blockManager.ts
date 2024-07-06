@@ -551,7 +551,7 @@ export default class BlockManager extends Module {
        * If first Block was removed, insert new Initial Block and set focus on it`s first input
        */
       if (!this.blocks.length) {
-        this.currentBlockIndex = -1;
+        this.unsetCurrentBlock();
 
         if (addLastBlock) {
           this.insert();
@@ -598,7 +598,7 @@ export default class BlockManager extends Module {
       this._blocks.remove(index);
     }
 
-    this.currentBlockIndex = -1;
+    this.unsetCurrentBlock();
     this.insert();
     this.currentBlock.firstInput.focus();
   }
@@ -880,7 +880,7 @@ export default class BlockManager extends Module {
    * Sets current Block Index -1 which means unknown
    * and clear highlights
    */
-  public dropPointer(): void {
+  public unsetCurrentBlock(): void {
     this.currentBlockIndex = -1;
   }
 
@@ -902,7 +902,7 @@ export default class BlockManager extends Module {
 
     await queue.completed;
 
-    this.dropPointer();
+    this.unsetCurrentBlock();
 
     if (needToAddDefaultBlock) {
       this.insert();

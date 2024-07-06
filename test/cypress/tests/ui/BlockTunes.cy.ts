@@ -1,7 +1,7 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
 import Header from '@editorjs/header';
 import { ToolboxConfig } from '../../../../types';
-import { TunesMenuConfig } from '../../../../types/tools';
+import { MenuConfig } from '../../../../types/tools';
 
 
 describe('BlockTunes', function () {
@@ -381,10 +381,12 @@ describe('BlockTunes', function () {
         /**
          *
          */
-        public renderSettings(): TunesMenuConfig {
+        public renderSettings(): MenuConfig {
           return {
             icon: 'Icon',
             title: 'Tune',
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onActivate: () => {},
           };
         }
 

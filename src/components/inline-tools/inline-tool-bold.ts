@@ -1,5 +1,6 @@
 import { InlineTool, SanitizerConfig } from '../../../types';
 import { IconBold } from '@codexteam/icons';
+import { MenuConfig } from '../../../types/tools';
 
 /**
  * Bold Tool
@@ -39,51 +40,17 @@ export default class BoldInlineTool implements InlineTool {
   private readonly commandName: string = 'bold';
 
   /**
-   * Styles
-   */
-  private readonly CSS = {
-    button: 'ce-inline-tool',
-    buttonActive: 'ce-inline-tool--active',
-    buttonModifier: 'ce-inline-tool--bold',
-  };
-
-  /**
-   * Elements
-   */
-  private nodes: {button: HTMLButtonElement} = {
-    button: undefined,
-  };
-
-  /**
    * Create button for Inline Toolbar
    */
-  public render(): HTMLElement {
-    this.nodes.button = document.createElement('button') as HTMLButtonElement;
-    this.nodes.button.type = 'button';
-    this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.innerHTML = IconBold;
-
-    return this.nodes.button;
-  }
-
-  /**
-   * Wrap range with <b> tag
-   */
-  public surround(): void {
-    document.execCommand(this.commandName);
-  }
-
-  /**
-   * Check selection and set activated state to button if there are <b> tag
-   *
-   * @returns {boolean}
-   */
-  public checkState(): boolean {
-    const isActive = document.queryCommandState(this.commandName);
-
-    this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
-
-    return isActive;
+  public render(): MenuConfig {
+    return {
+      icon: IconBold,
+      name: 'bold',
+      onActivate: () => {
+        document.execCommand(this.commandName);
+      },
+      isActive: () => document.queryCommandState(this.commandName),
+    };
   }
 
   /**

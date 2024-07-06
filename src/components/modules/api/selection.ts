@@ -8,6 +8,11 @@ import Module from '../../__module';
  */
 export default class SelectionAPI extends Module {
   /**
+   * Global SelectionUtils instance
+   */
+  private selectionUtils = new SelectionUtils();
+
+  /**
    * Available methods
    *
    * @returns {SelectionAPIInterface}
@@ -16,6 +21,10 @@ export default class SelectionAPI extends Module {
     return {
       findParentTag: (tagName: string, className?: string): HTMLElement | null => this.findParentTag(tagName, className),
       expandToTag: (node: HTMLElement): void => this.expandToTag(node),
+      save: () => this.selectionUtils.save(),
+      restore: () => this.selectionUtils.restore(),
+      setFakeBackground: () => this.selectionUtils.setFakeBackground(),
+      removeFakeBackground: () => this.selectionUtils.removeFakeBackground(),
     };
   }
 
@@ -27,7 +36,7 @@ export default class SelectionAPI extends Module {
    * @returns {HTMLElement|null}
    */
   public findParentTag(tagName: string, className?: string): HTMLElement | null {
-    return new SelectionUtils().findParentTag(tagName, className);
+    return this.selectionUtils.findParentTag(tagName, className);
   }
 
   /**
@@ -36,6 +45,6 @@ export default class SelectionAPI extends Module {
    * @param {HTMLElement} node - tag that should contain selection
    */
   public expandToTag(node: HTMLElement): void {
-    new SelectionUtils().expandToTag(node);
+    this.selectionUtils.expandToTag(node);
   }
 }

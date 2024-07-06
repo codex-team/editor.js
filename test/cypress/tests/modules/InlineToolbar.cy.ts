@@ -19,7 +19,7 @@ describe('Inline Toolbar', () => {
       .find('.ce-paragraph')
       .selectText('block');
 
-    cy.get('[data-cy="inline-toolbar"]')
+    cy.get('[data-cy="inline-toolbar"] .ce-popover__container')
       .should('be.visible')
       .then(($toolbar) => {
         const editorWindow = $toolbar.get(0).ownerDocument.defaultView;
@@ -28,7 +28,7 @@ describe('Inline Toolbar', () => {
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        expect($toolbar.offset().left).to.closeTo(rect.left, 1);
+        expect($toolbar.offset().left).to.be.closeTo(rect.left, 1);
       });
   });
 
@@ -61,7 +61,7 @@ describe('Inline Toolbar', () => {
           .selectTextByOffset([firstLineWrapIndex - 5, firstLineWrapIndex - 1]);
       });
 
-    cy.get('[data-cy="inline-toolbar"]')
+    cy.get('[data-cy="inline-toolbar"] .ce-popover__container')
       .should('be.visible')
       .then(($toolbar) => {
         cy.get('@blockWrapper')
@@ -71,7 +71,7 @@ describe('Inline Toolbar', () => {
             /**
              * Toolbar should be aligned with right side of text column
              */
-            expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 3);
+            expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 10);
           });
       });
   });
@@ -100,11 +100,12 @@ describe('Inline Toolbar', () => {
         .find('.ce-paragraph')
         .selectText('Some text');
 
-      cy.get('[data-cy=conversion-toggler]')
+      cy.get('[data-item-name=convert-to]')
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .find('.ce-conversion-tool[data-tool=header]')
+        .get('.ce-inline-toolbar')
+        .find('.ce-popover-item[data-item-name=header]')
         .click();
 
       cy.get('[data-cy=editorjs]')

@@ -181,7 +181,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     }
 
     this.removeAllShortcuts();
-    this.popover?.off(PopoverEvent.Close, this.onPopoverClose);
+    this.popover?.off(PopoverEvent.Closed, this.onPopoverClose);
     this.listeners.destroy();
     this.api.events.off(EditorMobileLayoutToggled, this.handleMobileLayoutToggle);
   }
@@ -253,7 +253,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       items: this.toolboxItemsToBeDisplayed,
     });
 
-    this.popover.on(PopoverEvent.Close, this.onPopoverClose);
+    this.popover.on(PopoverEvent.Closed, this.onPopoverClose);
     this.nodes.toolbox?.append(this.popover.getElement());
   }
 
@@ -263,7 +263,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   private destroyPopover(): void {
     if (this.popover !== null) {
       this.popover.hide();
-      this.popover.off(PopoverEvent.Close, this.onPopoverClose);
+      this.popover.off(PopoverEvent.Closed, this.onPopoverClose);
       this.popover.destroy();
       this.popover = null;
     }

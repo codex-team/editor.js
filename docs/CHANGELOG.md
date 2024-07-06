@@ -20,6 +20,20 @@
 - `New` – *Menu Config* – New item type – HTML
 – `Refactoring` – Switched to Vite as Cypress bundler
 – `New` – *Menu Config* – Default and HTML items now support hints
+- `New` – Inline Toolbar has new look 💅
+- `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
+- `New` – *ToolsAPI* – All installed block tools now accessible via ToolsAPI `getBlockTools()` method
+- `New` – *SelectionAPI* – Exposed methods `save()` and `restore()` that allow to save selection to be able to temporally move focus away, methods `setFakeBackground()` and `removeFakeBackground()` that allow to immitate selection while focus moved away
+- `Impovement` – *MenuConfig* – TunesMenuConfig deprecated, use MenuConfig type instead
+- `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
+– `Fix` — Deleting whitespaces at the start/end of the block
+– `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
+- `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
+- `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
+- `Improvement` — Placeholders will stay visible on inputs focus.
+- `New` — Editor.js now supports contenteditable placeholders out of the box. Just add `data-placeholder` or `data-placeholder-active` attribute to make it work. The first one will work like native placeholder while the second one will show placeholder only when block is current.
+- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not the only first one.
+- `Fix` — The problem caused by missed "import type" in block mutation event types resolved
 
 ### 2.29.1
 
