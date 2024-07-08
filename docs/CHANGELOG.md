@@ -13,12 +13,12 @@
 - `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
 - `New` – "Convert to" control is now also available in Block Tunes
 - `New` — Editor.js now supports contenteditable placeholders out of the box. Just add `data-placeholder` or `data-placeholder-active` attribute to make it work. The first one will work like native placeholder while the second one will show placeholder only when block is current.
-- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not the only first one.
+- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not only the first one.
 - `Improvment` - The API `blocks.update` now accepts `tunes` data as optional third argument and makes `data` - block data as optional.
 - `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
 - `Improvement` - The API `blocks.convert()` now returns the new block API
 - `Improvement` - The API `caret.setToBlock()` now can accept either BlockAPI or block index or block id
-- `Impovement` – *MenuConfig* – TunesMenuConfig deprecated, use MenuConfig type instead
+- `Impovement` – *MenuConfig* – `TunesMenuConfig` type is deprecated, use the `MenuConfig` instead
 – `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
 - `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
 - `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
