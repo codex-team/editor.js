@@ -122,8 +122,11 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
   - [x] Ability to display several Toolbox buttons by the single Tool
   - [x] Block Tunes become vertical
   - [x] Block Tunes support nested menus
-  - [x] Conversion Toolbar uses Unified Toolbox
-  - [x] Conversion Toolbar added to the Block Tunes
+  - [x] Block Tunes support separators 
+  - [x] Conversion Menu added to the Block Tunes
+  - [x] Unified Toolbar supports hints 
+  - [x] Conversion Toolbar uses Unified Toolbar
+  - [x] Inline Toolbar uses Unified Toolbar
 - Collaborative editing
   - [ ] Implement Inline Tools JSON format
   - [ ] Operations Observer, Executor, Manager, Transformer
