@@ -4,9 +4,26 @@
 
 - `New` – Block Tunes now supports nesting items
 - `New` – Block Tunes now supports separator items
-- `Improvment` - The API `blocks.update` now accepts `tunes` data as optional third argument and makes `data` - block data as optional.
+- `New` – *Menu Config* – New item type – HTML
+– `New` – *Menu Config* – Default and HTML items now support hints
+- `New` – Inline Toolbar has new look 💅
+- `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
+- `New` – *ToolsAPI* – All installed block tools now accessible via ToolsAPI `getBlockTools()` method
+- `New` – *SelectionAPI* – Exposed methods `save()` and `restore()` that allow to save selection to be able to temporally move focus away, methods `setFakeBackground()` and `removeFakeBackground()` that allow to immitate selection while focus moved away
+- `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
 - `New` – "Convert to" control is now also available in Block Tunes
+- `New` — Editor.js now supports contenteditable placeholders out of the box. Just add `data-placeholder` or `data-placeholder-active` attribute to make it work. The first one will work like native placeholder while the second one will show placeholder only when block is current.
+- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not the only first one.
+- `Improvment` - The API `blocks.update` now accepts `tunes` data as optional third argument and makes `data` - block data as optional.
 - `Improvement` — The ability to merge blocks of different types (if both tools provide the conversionConfig)
+- `Improvement` - The API `blocks.convert()` now returns the new block API
+- `Improvement` - The API `caret.setToBlock()` now can accept either BlockAPI or block index or block id
+- `Impovement` – *MenuConfig* – TunesMenuConfig deprecated, use MenuConfig type instead
+– `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
+- `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
+- `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
+- `Improvement` — Placeholders will stay visible on inputs focus.
+– `Refactoring` – Switched to Vite as Cypress bundler
 - `Fix` — `onChange` will be called when removing the entire text within a descendant element of a block.
 - `Fix` - Unexpected new line on Enter press with selected block without caret
 - `Fix` - Search input autofocus loosing after Block Tunes opening
@@ -15,24 +32,7 @@
 - `Fix` - Unwanted soft line break on Enter press after period and space (". |") on iOS devices
 - `Fix` - Caret lost after block conversion on mobile devices.
 - `Fix` - Caret lost after Backspace at the start of block when previoius block is not convertable
-- `Improvement` - The API `blocks.convert()` now returns the new block API
-- `Improvement` - The API `caret.setToBlock()` now can accept either BlockAPI or block index or block id
-- `New` – *Menu Config* – New item type – HTML
-– `Refactoring` – Switched to Vite as Cypress bundler
-– `New` – *Menu Config* – Default and HTML items now support hints
-- `New` – Inline Toolbar has new look 💅
-- `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
-- `New` – *ToolsAPI* – All installed block tools now accessible via ToolsAPI `getBlockTools()` method
-- `New` – *SelectionAPI* – Exposed methods `save()` and `restore()` that allow to save selection to be able to temporally move focus away, methods `setFakeBackground()` and `removeFakeBackground()` that allow to immitate selection while focus moved away
-- `Impovement` – *MenuConfig* – TunesMenuConfig deprecated, use MenuConfig type instead
-- `New` – *BlocksAPI* – Exposed `getBlockByElement()` method that helps find block by any child html element
 – `Fix` — Deleting whitespaces at the start/end of the block
-– `Improvement` — *Types* — `BlockToolConstructorOptions` type improved, `block` and `config` are not optional anymore
-- `Improvement` - The Plus button and Block Tunes toggler are now better aligned with large line-height blocks, such as Headings
-- `Improvement` — Creating links on Android devices: now the mobile keyboard will have an "Enter" key for accepting the inserted link.
-- `Improvement` — Placeholders will stay visible on inputs focus.
-- `New` — Editor.js now supports contenteditable placeholders out of the box. Just add `data-placeholder` or `data-placeholder-active` attribute to make it work. The first one will work like native placeholder while the second one will show placeholder only when block is current.
-- `Improvement` — Now Paragraph placeholder will be shown for the current paragraph, not the only first one.
 - `Fix` — The problem caused by missed "import type" in block mutation event types resolved
 
 ### 2.29.1
