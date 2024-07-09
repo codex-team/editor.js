@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.1
+
+- `Fix` – Remove fake selection on convert to inline tool toggle
+
 ### 2.30.0
 
 - `New` – Block Tunes now supports nesting items
