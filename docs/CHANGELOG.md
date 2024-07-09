@@ -2,7 +2,7 @@
 
 ### 2.30.1
 
-- `Fix` – Remove fake selection on convert to inline tool toggle
+- `Fix` – Remove fake selection after multiple "convert to" inline tool toggles
 
 ### 2.30.0
 
