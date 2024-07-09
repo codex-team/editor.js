@@ -1,7 +1,7 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.30.0-rc.14",
-  "description": "Editor.js — Native JS, based on API and Open Source",
+  "version": "2.30.0",
+  "description": "Editor.js — open source block-style WYSIWYG editor with JSON output",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
   "types": "./types/index.d.ts",
@@ -10,7 +10,8 @@
     "text editor",
     "editor",
     "editor.js",
-    "editorjs"
+    "editorjs",
+    "wysiwyg"
   ],
   "scripts": {
     "dev": "vite",
