@@ -92,12 +92,19 @@ export default class ReadOnly extends Module {
     }
 
     /**
+     * Mutex for modifications observer to prevent onChange call when read-only mode is enabled
+     */
+    this.Editor.ModificationsObserver.disable();
+
+    /**
      * Save current Editor Blocks and render again
      */
     const savedBlocks = await this.Editor.Saver.save();
 
     await this.Editor.BlockManager.clear();
     await this.Editor.Renderer.render(savedBlocks.blocks);
+
+    this.Editor.ModificationsObserver.enable();
 
     return this.readOnlyEnabled;
   }
