@@ -853,7 +853,7 @@ describe('onChange callback', () => {
     const config = {
       readOnly: true,
       onChange: (api, event): void => {
-        console.log('something changed event);
+        console.log('something changed', event);
       },
       data: {
         blocks: [
@@ -870,6 +870,35 @@ describe('onChange callback', () => {
     cy.spy(config, 'onChange').as('onChange');
 
     cy.createEditor(config);
+
+    cy.wait(modificationsObserverBatchTimeout);
+
+    cy.get('@onChange').should('have.callCount', 0);
+  });
+
+  it('should not be called when editor is switched to/from readOnly mode', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        editor.readOnly.toggle(true);
+      });
+
+    cy.wait(modificationsObserverBatchTimeout);
+
+    cy.get('@onChange').should('have.callCount', 0);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        editor.readOnly.toggle(false);
+      });
 
     cy.wait(modificationsObserverBatchTimeout);
 
