@@ -240,6 +240,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     if (convertToItems.length > 0) {
       items.push({
         icon: IconReplace,
+        name: 'convert-to',
         title: I18n.ui(I18nInternalNS.ui.popover, 'Convert to'),
         children: {
           searchable: true,
