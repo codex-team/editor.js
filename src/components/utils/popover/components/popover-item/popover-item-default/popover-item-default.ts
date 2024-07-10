@@ -147,7 +147,9 @@ export class PopoverItemDefault extends PopoverItem {
    */
   private make(params: PopoverItemDefaultParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Default]): HTMLElement {
     const tag = renderParams?.wrapperTag || 'div';
-    const el = Dom.make(tag, css.container);
+    const el = Dom.make(tag, css.container, {
+      type: tag === 'button' ? 'button' : undefined,
+    });
 
     if (params.name) {
       el.dataset.itemName = params.name;

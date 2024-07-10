@@ -76,6 +76,42 @@ describe('Inline Toolbar', () => {
       });
   });
 
+  it('should not submit form nesting editor when inline tool clicked', () => {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Some text',
+            },
+          },
+        ],
+      },
+    });
+
+    const onSubmit = cy.stub();
+
+    cy.document().then(doc => {
+      const form = doc.createElement('form');
+
+      form.onsubmit = onSubmit;
+      doc.body.appendChild(form);
+
+      /* Move editor to form */
+      form.appendChild(doc.getElementById('editorjs'));
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('Some text');
+
+      cy.get('[data-item-name=bold]')
+        .click();
+
+      expect(onSubmit).to.be.not.called;
+    });
+  });
+
   describe('Conversion toolbar', () => {
     it('should restore caret after converting of a block', () => {
       cy.createEditor({

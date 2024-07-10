@@ -3,6 +3,7 @@
 ### 2.30.2
 
 - `Fix` – The onChange callback won't be fired when editor is initialized in the Read-Only mode
+- `Fix` – Prevent form submit on inline tool click
 
 ### 2.30.1
 
