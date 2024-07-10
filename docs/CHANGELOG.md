@@ -3,6 +3,7 @@
 ### 2.30.2
 
 - `Fix` – The onChange callback won't be fired when editor is initialized in the Read-Only mode
+- `Fix` – Convert To supports i18n again
 
 ### 2.30.1
 
