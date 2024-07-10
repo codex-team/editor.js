@@ -219,7 +219,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
       tool.toolbox.forEach((toolboxItem) => {
         result.push({
           icon: toolboxItem.icon,
-          title: toolboxItem.title,
+          title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title),
           name: tool.name,
           closeOnActivate: true,
           onActivate: async () => {
