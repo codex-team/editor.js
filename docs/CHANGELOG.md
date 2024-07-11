@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.3
+
+- `Fix` – I18n in nested popover
+
 ### 2.30.2
 
 - `Fix` – The onChange callback won't be fired when editor is initialized in the Read-Only mode
