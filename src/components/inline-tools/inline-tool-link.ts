@@ -368,13 +368,18 @@ export default class LinkInlineTool implements InlineTool {
      *     1) Internal links like "/general"
      *     2) Anchors looks like "#results"
      *     3) Protocol-relative URLs like "//google.com"
+     *     4) Email addresses like "example@example.com"
      */
     const isInternal = /^\/[^/\s]/.test(link),
         isAnchor = link.substring(0, 1) === '#',
-        isProtocolRelative = /^\/\/[^/\s]/.test(link);
+        isProtocolRelative = /^\/\/[^/\s]/.test(link),
+        // eslint-disable-next-line no-useless-escape
+        isEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(link);
 
     if (!isInternal && !isAnchor && !isProtocolRelative) {
-      link = 'http://' + link;
+      const protocol = isEmail ? 'mailto:' : 'http://';
+
+      link = protocol + link;
     }
 
     return link;
