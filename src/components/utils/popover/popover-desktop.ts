@@ -255,6 +255,7 @@ export class PopoverDesktop extends PopoverAbstract {
       items: item.children,
       nestingLevel: this.nestingLevel + 1,
       flippable: item.isChildrenFlippable,
+      messages: this.messages,
     });
 
     item.onChildrenOpen();

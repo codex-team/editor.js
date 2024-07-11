@@ -881,6 +881,95 @@ describe('Popover', () => {
       .should('exist');
   });
 
+  it.only('shoould support i18n in nested popover', () => {
+    /**
+     *
+     */
+    class TestTune {
+      public static isTune = true;
+
+      /** Tool data displayed in block tunes popover */
+      public render(): MenuConfig {
+        return  {
+          icon: 'Icon',
+          title: 'Title',
+          toggle: 'key',
+          name: 'test-item',
+          children: {
+            searchable: true,
+            items: [
+              {
+                icon: 'Icon',
+                title: 'Title',
+                name: 'nested-test-item',
+                onActivate: (): void => {},
+              },
+            ],
+          },
+        };
+      }
+    }
+
+    /** Create editor instance */
+    cy.createEditor({
+      tools: {
+        testTool: TestTune,
+      },
+      tunes: [ 'testTool' ],
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Hello',
+            },
+          },
+        ],
+      },
+      i18n: {
+        messages: {
+          ui: {
+            popover: {
+              'Filter': 'Искать',
+              // eslint-disable-next-line @typescript-eslint/naming-convention -- i18n
+              'Nothing found': 'Ничего не найдено',
+            },
+          },
+        },
+      },
+    });
+
+    /** Open block tunes menu */
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-block')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .get('.ce-toolbar__settings-btn')
+      .click();
+
+    /** Click the item */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-item-name="test-item"]')
+      .click();
+
+    /** Check nested popover search input has placeholder text with i18n */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=block-tunes] .ce-popover--nested .cdx-search-field__input')
+      .invoke('attr', 'placeholder')
+      .should('eq', 'Искать');
+
+    /** Enter search query */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=block-tunes] .ce-popover--nested .cdx-search-field__input')
+      .type('Some text');
+
+    /** Check nested popover has nothing found message with i18n */
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=block-tunes] .ce-popover--nested .ce-popover__nothing-found-message')
+      .should('have.text', 'Ничего не найдено');
+  });
+
   describe('Inline Popover', () => {
     it('should open nested popover on click instead of hover', () => {
       cy.createEditor({
