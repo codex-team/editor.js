@@ -128,7 +128,7 @@ export class PopoverInline extends PopoverDesktop {
   protected override showNestedItems(item: PopoverItemDefault | PopoverItemHtml): void {
     if (this.nestedPopoverTriggerItem === item) {
       this.destroyNestedPopoverIfExists();
-      
+
       this.nestedPopoverTriggerItem = null;
 
       return;
