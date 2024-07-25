@@ -31,10 +31,10 @@
        <div class="stub">
          <h1>Base concepts</h1>
          <p>
-           Editor.js is a block-style editor for rich media stories. It outputs clean data in JSON instead of heavy HTML markup. And more important thing is that Editor.js is designed to be API extendable and pluggable.
+           Editor.js is a block-style editor for rich media stories. It outputs clean data in JSON instead of heavy HTML markup. Importantly, Editor.js is designed to be API extendable and pluggable.
          </p>
          <p>
-           So there are a few key features:
+           Key features:
          </p>
          <ul>
            <li>Clean data output</li>
@@ -42,22 +42,22 @@
            <li>Open source</li>
          </ul>
          <h2>
-           What does it mean block-styled
+           What does block-styled mean
          </h2>
          <p>
-           In other editors, the workspace is provided by single contenteditable element in where you can create different HTML markup. All of us saw permanent bugs with moving text fragments or scaling images, while page parts are jumping and twitches. Or highlighting big parts of the text in the case when you just want to make few words to be a heading or bold.
+           In other editors, the workspace is provided by a single contenteditable element in which you can create and modify HTML markup. This resulted in bugs with moving text fragments or scaling images, while page parts are jumping and twitches. Or highlighting big parts of the text in the case when you just want to make few words to be a heading or bold.
          </p>
          <p>
            The Editor.js workspace consists of separate Blocks: paragraphs, headings, images, lists, quotes, etc. Each of them is an independent contenteditable element (or more complex structure) provided by Plugin and united by Editor's Core.
          </p>
          <p>
-           At the same time, most useful features as arrow-navigation, copy & paste, cross block selection, and others works almost as in the familiar editors.
+           Useful editor features such as arrow-navigation, copy & paste, cross block selection, and others work as they do in popular editors.
          </p>
          <h2>
            What is clean data
          </h2>
          <p>
-           But the more interesting thing is, as mentioned above, that Editor.js returns clean data instead of HTML-markup. Take a look at the example.
+           Editor.js returns clean data instead of HTML-markup. Take a look at the example.
          </p>
          <p>
            If our entry consists of few paragraphs and a heading, in popular Medium editor after saving we will have something like this:
@@ -72,7 +72,7 @@
            Also, the clean data can be useful for backend processing: sanitizing, validation, injecting an advertising or other stuff, extracting Headings, make covers for social networks from Image Blocks, and other.
          </p>
          <h2>
-           API pluggable?
+           API pluggable
          </h2>
          <p>
            A key value of the Editor is the API. All main functional units of the editor — Blocks, Inline Formatting Tools, Block Tunes — are provided by external plugins that use Editor's API.
@@ -84,7 +84,7 @@
            At the same time, API is created to be easy-to-understand and simple-to-use.
          </p>
          <h2>
-           Open Source, so?
+           Open Source
          </h2>
          <p>
            Editor.js is more than just an editor. It is a big open-source community of developers and contributors. Anyone can suggest an improvement or a bug fix. Anyone can create new cool API features and plugins.
