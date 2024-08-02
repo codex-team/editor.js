@@ -51,6 +51,14 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
   const savedData = await block.save() as SavedData;
   const blockData = savedData.data;
 
+  /**
+   * Checking that the block has an «export» rule
+   */
+  const blockTool = allBlockTools.find((tool) => tool.name === block.name);
+  if (!isToolConvertable(blockTool, 'export')) {
+    return [];
+  }
+
   return allBlockTools.reduce((result, tool) => {
     /**
      * Skip tools without «import» rule specified
