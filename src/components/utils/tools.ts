@@ -1,4 +1,4 @@
-import BlockTool from '../tools/block';
+import type BlockTool from '../tools/block';
 import { isFunction, isString } from '../utils';
 
 /**

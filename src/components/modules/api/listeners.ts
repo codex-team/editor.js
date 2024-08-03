@@ -1,4 +1,4 @@
-import { Listeners } from '../../../../types/api';
+import type { Listeners } from '../../../../types/api';
 import Module from '../../__module';
 
 /**

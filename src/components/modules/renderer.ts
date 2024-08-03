@@ -3,7 +3,7 @@ import * as _ from '../utils';
 import type { BlockId, BlockToolData, OutputBlockData } from '../../../types';
 import type BlockTool from '../tools/block';
 import type { StubData } from '../../tools/stub';
-import Block from '../block';
+import type Block from '../block';
 
 /**
  * Module that responsible for rendering Blocks on editor initialization

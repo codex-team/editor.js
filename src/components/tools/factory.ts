@@ -1,10 +1,10 @@
-import { ToolConstructable, ToolSettings } from '../../../types/tools';
+import type { ToolConstructable, ToolSettings } from '../../../types/tools';
 import { InternalInlineToolSettings, InternalTuneSettings } from './base';
 import InlineTool from './inline';
 import BlockTune from './tune';
 import BlockTool from './block';
-import ApiModule from '../modules/api';
-import { EditorConfig } from '../../../types/configs';
+import type ApiModule from '../modules/api';
+import type { EditorConfig } from '../../../types/configs';
 
 type ToolConstructor = typeof InlineTool | typeof BlockTool | typeof BlockTune;
 

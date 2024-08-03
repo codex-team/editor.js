@@ -3,7 +3,8 @@
  *
  * @see https://github.com/codex-team/js-notifier
  */
-import notifier, { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
+import type { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
+import notifier from 'codex-notifier';
 
 /**
  * Util for showing notifications

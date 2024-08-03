@@ -1,5 +1,5 @@
 import Module from '../__module';
-import Block from '../block';
+import type Block from '../block';
 import SelectionUtils from '../selection';
 import * as _ from '../utils';
 

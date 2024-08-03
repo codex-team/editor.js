@@ -1,17 +1,17 @@
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
-import {
+import type {
   BlockAPI,
   PasteEvent,
   PasteEventDetail,
   SanitizerConfig,
   SanitizerRule
 } from '../../../types';
-import Block from '../block';
-import { SavedData } from '../../../types/data-formats';
+import type Block from '../block';
+import type { SavedData } from '../../../types/data-formats';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
-import BlockTool from '../tools/block';
+import type BlockTool from '../tools/block';
 
 /**
  * Tag substitute object.

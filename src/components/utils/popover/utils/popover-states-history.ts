@@ -1,4 +1,4 @@
-import { PopoverItemParams } from '@/types/utils/popover/popover-item';
+import type { PopoverItemParams } from '@/types/utils/popover/popover-item';
 
 /**
  * Represents single states history item
