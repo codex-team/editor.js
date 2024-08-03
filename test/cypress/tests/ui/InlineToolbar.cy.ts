@@ -1,6 +1,6 @@
 
 import Header from '@editorjs/header';
-import { MenuConfig } from '../../../../types/tools';
+import type { MenuConfig } from '../../../../types/tools';
 
 describe('Inline Toolbar', () => {
   describe('Separators', () => {

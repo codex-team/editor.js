@@ -1,4 +1,4 @@
-import { BlockTool } from '../../../../types';
+import type { BlockTool } from '../../../../types';
 
 /**
  * In the simplest Contentless Tool (eg. Delimiter) there is no data to save

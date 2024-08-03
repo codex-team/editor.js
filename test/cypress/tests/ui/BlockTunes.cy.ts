@@ -1,7 +1,7 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
 import Header from '@editorjs/header';
-import { ToolboxConfig } from '../../../../types';
-import { MenuConfig } from '../../../../types/tools';
+import type { ToolboxConfig } from '../../../../types';
+import type { MenuConfig } from '../../../../types/tools';
 
 
 describe('BlockTunes', function () {

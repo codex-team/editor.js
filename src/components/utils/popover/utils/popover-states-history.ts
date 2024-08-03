@@ -54,7 +54,7 @@ export class PopoverStatesHistory {
   /**
    * Items list retrieved from the current state
    */
-  public get currentItems(): PopoverItem[] {
+  public get currentItems(): PopoverItemParams[] {
     if (this.history.length === 0) {
       return [];
     }

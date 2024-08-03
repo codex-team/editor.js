@@ -1,4 +1,4 @@
-import EditorJS from '../../../../types';
+import type EditorJS from '../../../../types';
 
 /**
  * Test cases for Caret API

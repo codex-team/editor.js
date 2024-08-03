@@ -1,7 +1,7 @@
 import type EditorJS from '../../../../types/index';
 import type { ConversionConfig, ToolboxConfig } from '../../../../types';
 import ToolMock from '../../fixtures/tools/ToolMock';
-import {nanoid} from "nanoid";
+import { nanoid } from 'nanoid';
 
 /**
  * There will be described test cases of 'blocks.*' API
@@ -108,13 +108,12 @@ describe('api.blocks', () => {
        * Example Tune Class
        */
       class ExampleTune {
-
         protected data: object;
         /**
          *
          * @param data
          */
-        constructor({ data}) {
+        constructor({ data }) {
           this.data = data;
         }
 

@@ -1,5 +1,5 @@
 import type EditorJS from '../../../../types/index';
-import { ConversionConfig, ToolboxConfig } from '../../../../types/index';
+import type { ConversionConfig, ToolboxConfig } from '../../../../types/index';
 import ToolMock from '../../fixtures/tools/ToolMock';
 
 describe('Toolbox', function () {

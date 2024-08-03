@@ -1,4 +1,4 @@
-import EditorJS from '../../../../types';
+import type EditorJS from '../../../../types';
 import { BlockChangedMutationType } from '../../../../types/events/block/BlockChanged';
 
 /**
