@@ -1,7 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any, jsdoc/require-jsdoc */
 import Tools from '../../../../src/components/modules/tools';
-import { EditorConfig } from '../../../../types';
+import type { EditorConfig } from '../../../../types';
 import BlockTool from '../../../../src/components/tools/block';
 
 describe('Tools module', () => {
