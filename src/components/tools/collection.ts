@@ -1,13 +1,15 @@
-import BlockTool from './block';
-import InlineTool from './inline';
-import BlockTune from './tune';
+import type BlockTool from './block';
+import type InlineTool from './inline';
+import type BlockTune from './tune';
+import type { ToolsCollection as IToolsCollection } from '@/types/tools/wrappers/tools-collection';
+
 
 export type ToolClass = BlockTool | InlineTool | BlockTune;
 
 /**
  * Class to store Editor Tools
  */
-export default class ToolsCollection<V extends ToolClass = ToolClass> extends Map<string, V> {
+export default class ToolsCollection<V extends ToolClass = ToolClass> extends Map<string, V> implements IToolsCollection<V> {
   /**
    * Returns Block Tools collection
    */

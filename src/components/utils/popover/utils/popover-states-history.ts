@@ -1,4 +1,4 @@
-import { PopoverItem } from '../../../../../types';
+import { PopoverItemParams } from '@/types/utils/popover/popover-item';
 
 /**
  * Represents single states history item
@@ -12,7 +12,7 @@ interface PopoverStatesHistoryItem {
   /**
    * Popover items
    */
-  items: PopoverItem[]
+  items: PopoverItemParams[]
 }
 
 /**

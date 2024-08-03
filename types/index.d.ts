@@ -80,10 +80,7 @@ export {
   I18nConfig,
 } from './configs';
 
-export {
-  PopoverItemParams,
-  PopoverItemDefaultParams,
-} from '../src/components/utils/popover';
+export * from './utils/popover';
 
 export { OutputData, OutputBlockData} from './data-formats/output-data';
 export { BlockId } from './data-formats/block-id';

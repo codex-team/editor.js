@@ -36,6 +36,23 @@
     "navigator": true
   },
   "rules": {
-    "jsdoc/require-returns-type": "off"
-  }
+    "jsdoc/require-returns-type": "off",
+    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/consistent-type-exports": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "tsconfig.json",
+        "package.json",
+        "tsconfig.*.json",
+        "tslint.json"
+      ],
+      "rules": {
+        "quotes": [1, "double"],
+        "semi": [1, "never"],
+      }
+    }
+  ]
 }

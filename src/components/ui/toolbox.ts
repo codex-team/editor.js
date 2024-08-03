@@ -1,16 +1,17 @@
 import * as _ from '../utils';
 import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
-import BlockTool from '../tools/block';
-import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItemParams, BlockAPI } from '../../../types';
+import type BlockTool from '../tools/block';
+import type ToolsCollection from '../tools/collection';
+import type { API, BlockToolData, ToolboxConfigEntry, PopoverItemParams, BlockAPI } from '@/types';
 import EventsDispatcher from '../utils/events';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
-import { PopoverEvent } from '../utils/popover/popover.types';
+import { PopoverEvent } from '@/types/utils/popover/popover-event';
 import Listeners from '../utils/listeners';
 import Dom from '../dom';
-import { Popover, PopoverDesktop, PopoverMobile } from '../utils/popover';
+import type { Popover } from '../utils/popover';
+import { PopoverDesktop, PopoverMobile } from '../utils/popover';
 import { EditorMobileLayoutToggled } from '../events';
 
 /**

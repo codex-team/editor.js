@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ToolsCollection from '../../../../src/components/tools/collection';
-import BlockTool from '../../../../src/components/tools/block';
-import InlineTool from '../../../../src/components/tools/inline';
-import BlockTune from '../../../../src/components/tools/tune';
-import BaseTool from '../../../../src/components/tools/base';
+import type BlockTool from '../../../../src/components/tools/block';
+import type InlineTool from '../../../../src/components/tools/inline';
+import type BlockTune from '../../../../src/components/tools/tune';
+import type BaseTool from '../../../../src/components/tools/base';
 
 const FakeTool = {
   isBlock(): boolean {

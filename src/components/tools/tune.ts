@@ -1,17 +1,19 @@
-import BaseTool, { ToolType } from './base';
-import { BlockAPI, BlockTune as IBlockTune, BlockTuneConstructable } from '../../../types';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BaseTool from './base';
+import type { BlockAPI, BlockTune as IBlockTune, BlockTuneConstructable } from '@/types';
+import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
+import type { BlockTuneWrapper } from '@/types/tools/wrappers/block-tune-wrapper';
+import { ToolType } from '@/types/tools/wrappers/tool-type';
 
 /**
  * Stub class for BlockTunes
  *
  * @todo Implement
  */
-export default class BlockTune extends BaseTool<IBlockTune> {
+export default class BlockTune extends BaseTool<ToolType.Tune, IBlockTune> implements BlockTuneWrapper {
   /**
    * Tool type — Tune
    */
-  public type = ToolType.Tune;
+  public type: ToolType.Tune = ToolType.Tune;
 
   /**
    * Tool's constructable blueprint

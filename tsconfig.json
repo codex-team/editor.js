@@ -1,5 +1,6 @@
 {
   "compilerOptions" : {
+    "strict": true,
     "sourceMap": true,
     "target": "es2017",
     "declaration": false,
@@ -11,6 +12,13 @@
 
     // allows to omit export default in .json files
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
-  }
+    "experimentalDecorators": true,
+    "paths": {
+      "@/types": [ "./types/" ],
+      "@/types/*": [ "./types/*" ],
+    },
+    "types": [
+      "@codexteam/icons",
+    ],
+  },
 }

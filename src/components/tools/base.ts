@@ -1,28 +1,11 @@
-import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import type { SanitizerConfig, API as ApiMethods } from '../../../types';
+import type { Tool, ToolConstructable, ToolSettings } from '@/types/tools';
+import type { SanitizerConfig, API as ApiMethods } from '@/types';
 import * as _ from '../utils';
-import type InlineTool from './inline';
-import type BlockTool from './block';
-import type BlockTune from './tune';
-
-/**
- * What kind of plugins developers can create
- */
-export enum ToolType {
-  /**
-   * Block tool
-   */
-  Block,
-  /**
-   * Inline tool
-   */
-  Inline,
-
-  /**
-   * Block tune
-   */
-  Tune,
-}
+import { ToolType } from '@/types/tools/wrappers/tool-type';
+import type { BaseToolWrapper } from '@/types/tools/wrappers/base-tool-wrapper';
+import type { InlineToolWrapper } from '@/types/tools/wrappers/inline-tool-wrapper';
+import type { BlockToolWrapper } from '@/types/tools/wrappers/block-tool-wrapper';
+import type { BlockTuneWrapper } from '@/types/tools/wrappers/block-tune-wrapper';
 
 /**
  * Enum of Tool options provided by user
@@ -130,11 +113,11 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends Tool = Tool> {
+export default abstract class BaseTool<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolWrapper<ToolType, Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
-  public type: ToolType;
+  public type: Type;
 
   /**
    * Tool name specified in EditorJS config
@@ -247,21 +230,21 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * Returns true if Tools is inline
    */
-  public isInline(): this is InlineTool {
+  public isInline(): this is InlineToolWrapper {
     return this.type === ToolType.Inline;
   }
 
   /**
    * Returns true if Tools is block
    */
-  public isBlock(): this is BlockTool {
+  public isBlock(): this is BlockToolWrapper {
     return this.type === ToolType.Block;
   }
 
   /**
    * Returns true if Tools is tune
    */
-  public isTune(): this is BlockTune {
+  public isTune(): this is BlockTuneWrapper {
     return this.type === ToolType.Tune;
   }
 
@@ -271,5 +254,5 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    * @param args
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public abstract create(...args: any[]): Type;
+  public abstract create(...args: any[]): ToolClass;
 }

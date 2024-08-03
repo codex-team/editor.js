@@ -1,5 +1,5 @@
-import BaseTool, { InternalBlockToolSettings, ToolType, UserSettings } from './base';
-import {
+import BaseTool, { InternalBlockToolSettings, UserSettings } from './base';
+import type {
   BlockAPI,
   BlockTool as IBlockTool,
   BlockToolConstructable,
@@ -7,20 +7,22 @@ import {
   ConversionConfig,
   PasteConfig, SanitizerConfig, ToolboxConfig,
   ToolboxConfigEntry
-} from '../../../types';
+} from '@/types';
 import * as _ from '../utils';
-import InlineTool from './inline';
-import BlockTune from './tune';
+import type InlineTool from './inline';
+import type BlockTune from './tune';
 import ToolsCollection from './collection';
+import type { BlockToolWrapper } from '@/types/tools/wrappers/block-tool-wrapper';
+import { ToolType } from '@/types/tools/wrappers/tool-type';
 
 /**
  * Class to work with Block tools constructables
  */
-export default class BlockTool extends BaseTool<IBlockTool> {
+export default class BlockTool extends BaseTool<ToolType.Block, IBlockTool> implements BlockToolWrapper {
   /**
    * Tool type — Block
    */
-  public type = ToolType.Block;
+  public type: ToolType.Block = ToolType.Block;
 
   /**
    * InlineTool collection for current Block Tool
