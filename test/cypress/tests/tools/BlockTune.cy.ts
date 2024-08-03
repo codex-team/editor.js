@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
-import { ToolSettings } from '../../../../types';
-import { ToolType } from '../../../../src/components/tools/base';
+import type { ToolSettings } from '@/types';
+import { ToolType } from '@/types/tools/wrappers/tool-type';
 import BlockTune from '../../../../src/components/tools/tune';
-import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
+import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
 
 describe('BlockTune', () => {
   /**
