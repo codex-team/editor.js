@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@babel/register": "^7.21.0",
-    "@codexteam/icons": "^0.3.2",
+    "@codexteam/icons": "0.3.2",
     "@codexteam/shortcuts": "^1.1.1",
     "@cypress/code-coverage": "^3.10.3",
     "@editorjs/code": "^2.7.0",
