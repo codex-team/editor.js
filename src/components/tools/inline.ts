@@ -1,12 +1,12 @@
 import BaseTool, { InternalInlineToolSettings } from './base';
 import type { InlineTool as IInlineTool, InlineToolConstructable } from '@/types';
-import type { InlineToolWrapper } from '@/types/tools/wrappers/inline-tool-wrapper';
+import type { InlineToolFactory } from '@/types/tools/wrappers/inline-tool-factory';
 import { ToolType } from '@/types/tools/wrappers/tool-type';
 
 /**
  * InlineTool object to work with Inline Tools constructables
  */
-export default class InlineTool extends BaseTool<ToolType.Inline, IInlineTool> implements InlineToolWrapper {
+export default class InlineTool extends BaseTool<ToolType.Inline, IInlineTool> implements InlineToolFactory {
   /**
    * Tool type — Inline
    */

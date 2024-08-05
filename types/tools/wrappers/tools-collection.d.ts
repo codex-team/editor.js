@@ -1,26 +1,26 @@
-import { BlockToolWrapper } from './block-tool-wrapper';
-import { BlockTuneWrapper } from './block-tune-wrapper';
-import { InlineToolWrapper } from './inline-tool-wrapper';
-import { ToolWrapper } from './tool-wrapper';
+import { BlockToolFactory } from './block-tool-factory';
+import { BlockTuneFactory } from './block-tune-factory';
+import { InlineToolFactory } from './inline-tool-factory';
+import { ToolFactory } from './tool-factory';
 
 /**
  * Interface for a collection of tools.
  */
-export interface ToolsCollection<V extends ToolWrapper = ToolWrapper> {
+export interface ToolsCollection<V extends ToolFactory = ToolFactory> {
   /**
    * Returns Block Tools collection
    */
-  blockTools: ToolsCollection<BlockToolWrapper>;
+  blockTools: ToolsCollection<BlockToolFactory>;
 
   /**
    * Returns Inline Tools collection
    */
-  inlineTools: ToolsCollection<InlineToolWrapper>;
+  inlineTools: ToolsCollection<InlineToolFactory>;
 
   /**
    * Returns Block Tunes collection
    */
-  blockTunes: ToolsCollection<BlockTuneWrapper>;
+  blockTunes: ToolsCollection<BlockTuneFactory>;
 
   /**
    * Returns internal Tools collection
