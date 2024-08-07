@@ -7,6 +7,7 @@ import { BlockChangedMutationType } from '../../../types/events/block/BlockChang
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import type EditorJS from '../../../types/index';
+import { modificationsObserverBatchTimeout } from '../../../src/components/constants';
 
 /**
  * EditorJS API is passed as the first parameter of the onChange callback
@@ -218,7 +219,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover-item[data-item-name=delimiter]')
+      .get('.ce-popover-item[data-item-name=delimiter]')
       .click();
 
     cy.get('@onChange').should('be.calledWithBatchedEvents', [
@@ -264,7 +265,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div.ce-popover-item[data-item-name=header]')
+      .get('.ce-popover-item[data-item-name=header]')
       .click();
 
     cy.get('@onChange').should('be.calledWithBatchedEvents', [
@@ -341,12 +342,12 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div[data-item-name=delete]')
+      .get('[data-item-name=delete]')
       .click();
 
     /** Second click for confirmation */
     cy.get('[data-cy=editorjs]')
-      .get('div[data-item-name=delete]')
+      .get('[data-item-name=delete]')
       .click();
 
     cy.get('@onChange').should('be.calledWithBatchedEvents', [
@@ -397,7 +398,7 @@ describe('onChange callback', () => {
       .click();
 
     cy.get('[data-cy=editorjs]')
-      .get('div[data-item-name=move-up]')
+      .get('[data-item-name=move-up]')
       .click();
 
     cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
@@ -455,7 +456,7 @@ describe('onChange callback', () => {
       .get('div.ce-block')
       .click();
 
-    cy.wait(500).then(() => {
+    cy.wait(modificationsObserverBatchTimeout).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -540,7 +541,7 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    cy.wait(500).then(() => {
+    cy.wait(modificationsObserverBatchTimeout).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -607,7 +608,7 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    cy.wait(500).then(() => {
+    cy.wait(modificationsObserverBatchTimeout).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -678,7 +679,7 @@ describe('onChange callback', () => {
     /**
      * Check that onChange callback was not called
      */
-    cy.wait(500).then(() => {
+    cy.wait(modificationsObserverBatchTimeout).then(() => {
       cy.get('@onChange').should('have.callCount', 0);
     });
   });
@@ -746,6 +747,8 @@ describe('onChange callback', () => {
           ],
         }));
       });
+
+    cy.wait(modificationsObserverBatchTimeout);
 
     cy.get('@onChange').should('have.callCount', 0);
   });
@@ -844,5 +847,61 @@ describe('onChange callback', () => {
         index: 0,
       },
     }));
+  });
+
+  it('should not be called when editor is initialized with readOnly mode', () => {
+    const config = {
+      readOnly: true,
+      onChange: (api, event): void => {
+        console.log('something changed', event);
+      },
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'The first paragraph',
+            },
+          },
+        ],
+      },
+    };
+
+    cy.spy(config, 'onChange').as('onChange');
+
+    cy.createEditor(config);
+
+    cy.wait(modificationsObserverBatchTimeout);
+
+    cy.get('@onChange').should('have.callCount', 0);
+  });
+
+  it('should not be called when editor is switched to/from readOnly mode', () => {
+    createEditor([
+      {
+        type: 'paragraph',
+        data: {
+          text: 'The first paragraph',
+        },
+      },
+    ]);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        editor.readOnly.toggle(true);
+      });
+
+    cy.wait(modificationsObserverBatchTimeout);
+
+    cy.get('@onChange').should('have.callCount', 0);
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        editor.readOnly.toggle(false);
+      });
+
+    cy.wait(modificationsObserverBatchTimeout);
+
+    cy.get('@onChange').should('have.callCount', 0);
   });
 });

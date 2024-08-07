@@ -431,11 +431,6 @@ export default class BlockSelection extends Module {
        */
       this.needToSelectAll = false;
       this.readyToBlockSelection = false;
-
-      /**
-       * Close ConversionToolbar when all Blocks selected
-       */
-      this.Editor.ConversionToolbar.close();
     } else if (this.readyToBlockSelection) {
       /**
        * prevent default selection when we use custom selection

@@ -18,7 +18,6 @@ import UiAPI from '../components/modules/api/ui';
 
 /** ./toolbar */
 import BlockSettings from '../components/modules/toolbar/blockSettings';
-import ConversionToolbar from '../components/modules/toolbar/conversion';
 import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
 
@@ -37,11 +36,13 @@ import Renderer from '../components/modules/renderer';
 import Saver from '../components/modules/saver';
 import Tools from '../components/modules/tools';
 import UI from '../components/modules/ui';
+import ToolsAPI from '../components/modules/api/tools';
 
 export interface EditorModules {
   // API Modules
   BlocksAPI: BlocksAPI,
   CaretAPI: CaretAPI,
+  ToolsAPI: ToolsAPI,
   EventsAPI: EventsAPI,
   I18nAPI: I18nAPI,
   API: API,
@@ -59,7 +60,6 @@ export interface EditorModules {
 
   // Toolbar Modules
   BlockSettings: BlockSettings,
-  ConversionToolbar: ConversionToolbar,
   Toolbar: Toolbar,
   InlineToolbar: InlineToolbar,
 

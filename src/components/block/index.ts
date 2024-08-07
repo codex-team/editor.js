@@ -10,7 +10,7 @@ import {
 } from '../../../types';
 
 import { SavedData } from '../../../types/data-formats';
-import $ from '../dom';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
 import ApiModules from '../modules/api';
 import BlockAPI from './api';
@@ -154,8 +154,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Cached inputs
-   *
-   * @type {HTMLElement[]}
    */
   private cachedInputs: HTMLElement[] = [];
 
@@ -184,11 +182,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * we will store it here and provide back on save so data is not lost
    */
   private unavailableTunesData: { [name: string]: BlockTuneData } = {};
-
-  /**
-   * Editor`s API module
-   */
-  private readonly api: ApiModules;
 
   /**
    * Focused input index
@@ -225,7 +218,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     id = _.generateBlockId(),
     data,
     tool,
-    api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
@@ -234,7 +226,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
-    this.api = api;
     this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
 
@@ -264,13 +255,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * so we need to track focus events to update current input and clear cache.
        */
       this.addInputEvents();
+
+      /**
+       * We mark inputs with [data-empty] attribute
+       * It can be useful for developers, for example for correct placeholder behavior
+       */
+      this.toggleInputsEmptyMark();
     });
   }
 
   /**
    * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
-   *
-   * @returns {HTMLElement[]}
    */
   public get inputs(): HTMLElement[] {
     /**
@@ -299,19 +294,18 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return current Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get currentInput(): HTMLElement | Node {
+  public get currentInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex];
   }
 
   /**
    * Set input index to the passed element
    *
-   * @param {HTMLElement | Node} element - HTML Element to set as current input
+   * @param element - HTML Element to set as current input
    */
-  public set currentInput(element: HTMLElement | Node) {
+  public set currentInput(element: HTMLElement) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -321,19 +315,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get firstInput(): HTMLElement {
+  public get firstInput(): HTMLElement | undefined {
     return this.inputs[0];
   }
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get lastInput(): HTMLElement {
+  public get lastInput(): HTMLElement | undefined {
     const inputs = this.inputs;
 
     return inputs[inputs.length - 1];
@@ -341,19 +333,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return next Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get nextInput(): HTMLElement {
+  public get nextInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex + 1];
   }
 
   /**
    * Return previous Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get previousInput(): HTMLElement {
+  public get previousInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex - 1];
   }
 
@@ -947,6 +937,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.updateCurrentInput();
 
+    /**
+     * We mark inputs with 'data-empty' attribute, so new inputs should be marked as well
+     */
+    this.toggleInputsEmptyMark();
+
     this.call(BlockToolAPI.UPDATED);
 
     /**
@@ -1008,5 +1003,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
+  }
+
+  /**
+   * Mark inputs with 'data-empty' attribute with the empty state
+   */
+  private toggleInputsEmptyMark(): void {
+    this.inputs.forEach(toggleEmptyMark);
   }
 }

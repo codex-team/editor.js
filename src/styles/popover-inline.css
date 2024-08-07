@@ -1,0 +1,143 @@
+/**
+ * Styles overrides for inline popover
+ */
+.ce-popover--inline {
+  --height: 38px;
+  --height-mobile: 46px;
+  --container-padding: 4px;
+
+  position: relative;
+
+  .ce-popover__custom-content {
+    margin-bottom: 0;
+  }
+
+  .ce-popover__items {
+    display: flex;
+  }
+  
+  .ce-popover__container {
+    flex-direction: row;
+    padding: var(--container-padding);
+    height: var(--height);
+    top: 0;
+    
+    min-width: max-content;
+    width: max-content;
+    animation: none;
+
+    @media (--mobile) {
+      height: var(--height-mobile);
+      position: absolute;
+    }
+  }
+
+  /** 
+   * Popover item styles
+   */
+  .ce-popover-item-separator {
+    padding: 0 4px;
+
+    &__line {
+      height: 100%;
+      width: 1px;
+    }
+  }
+
+  .ce-popover-item {
+    border-radius: 4px;
+    padding: 4px;
+
+    &__icon--tool {
+      box-shadow: none;
+      background: transparent;
+      margin-right: 0;
+    }
+    
+    &__icon {
+      width: unset;
+      height: unset;
+
+      svg {
+        width: var(--icon-size);
+        height: var(--icon-size);
+
+        @media (--mobile) {
+          width: var(--icon-size--mobile);
+          height: var(--icon-size--mobile);
+        }
+      }
+    }
+
+    &:not(:last-of-type) {
+      margin-bottom: unset;
+    }
+  }
+
+  .ce-popover-item-html {
+    display: flex;
+    align-items: center;
+  }
+
+  .ce-popover-item__icon--chevron-right {
+    transform: rotate(90deg);
+  }
+
+  .ce-popover--nested-level-1 {
+    .ce-popover__container {
+      --offset: 3px;
+
+      left: 0px;
+      top: calc(var(--height) + var(--offset));
+
+      @media (--mobile) {
+        top: calc(var(--height-mobile) + var(--offset));
+      }
+    }
+  }
+
+  /**
+   * Nested popovers should look like regular desktop popovers, hence these overrides
+   */
+  .ce-popover--nested {
+    .ce-popover__container {
+      min-width: var(--width);
+      width: var(--width);
+      height: fit-content;
+      padding: 6px;
+      flex-direction: column;
+    }
+
+    .ce-popover__items {
+      display: block;
+      width: 100%;
+    }
+
+    .ce-popover-item {
+      border-radius: 6px;
+      padding: 3px;
+
+      @media (--mobile) {
+        padding: 4px;
+      }
+    
+      &__icon--tool {
+        margin-right: 4px;
+      }
+
+      &__icon {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    .ce-popover-item-separator {
+      padding: 4px 3px;
+
+      &__line {
+        width: 100%;
+        height: 1px;
+      }
+    }
+  }
+}

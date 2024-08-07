@@ -5,7 +5,7 @@
  */
 import { API, BlockTune } from '../../../types';
 import { IconCross } from '@codexteam/icons';
-import { TunesMenuConfig } from '../../../types/tools';
+import { MenuConfig } from '../../../types/tools/menu-config';
 
 /**
  *
@@ -35,7 +35,7 @@ export default class DeleteTune implements BlockTune {
   /**
    * Tune's appearance in block settings menu
    */
-  public render(): TunesMenuConfig {
+  public render(): MenuConfig {
     return {
       icon: IconCross,
       title: this.api.i18n.t('Delete'),

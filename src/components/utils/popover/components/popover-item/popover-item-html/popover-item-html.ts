@@ -20,13 +20,17 @@ export class PopoverItemHtml extends PopoverItem {
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
   constructor(params: PopoverItemHtmlParams, renderParams?: PopoverItemRenderParamsMap[PopoverItemType.Html]) {
-    super();
+    super(params);
 
     this.nodes = {
       root: Dom.make('div', css.root),
     };
 
     this.nodes.root.appendChild(params.element);
+
+    if (params.name) {
+      this.nodes.root.dataset.itemName = params.name;
+    }
 
     if (params.hint !== undefined && renderParams?.hint?.enabled !== false) {
       this.addHint(this.nodes.root, {

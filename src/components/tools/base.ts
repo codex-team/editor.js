@@ -1,10 +1,9 @@
 import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import { SanitizerConfig } from '../../../types';
+import type { SanitizerConfig, API as ApiMethods } from '../../../types';
 import * as _ from '../utils';
 import type InlineTool from './inline';
 import type BlockTool from './block';
 import type BlockTune from './tune';
-import API from '../modules/api';
 
 /**
  * What kind of plugins developers can create
@@ -122,7 +121,7 @@ interface ConstructorOptions {
   name: string;
   constructable: ToolConstructable;
   config: ToolOptions;
-  api: API;
+  api: ApiMethods;
   isDefault: boolean;
   isInternal: boolean;
   defaultPlaceholder?: string | false;
@@ -155,7 +154,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * EditorJS API for current Tool
    */
-  protected api: API;
+  protected api: ApiMethods;
 
   /**
    * Current tool user configuration

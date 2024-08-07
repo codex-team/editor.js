@@ -5,7 +5,7 @@
  * @type {UI}
  */
 import Module from '../__module';
-import $ from '../dom';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
 
 import Selection from '../selection';
@@ -97,6 +97,7 @@ export default class UI extends Module<UINodes> {
    */
   public isMobile = false;
 
+
   /**
    * Cache for center column rectangle info
    * Invalidates on window resize
@@ -134,6 +135,7 @@ export default class UI extends Module<UINodes> {
      */
     this.loadStyles();
   }
+
 
   /**
    * Toggle read-only state
@@ -187,9 +189,9 @@ export default class UI extends Module<UINodes> {
    * @returns {boolean}
    */
   public get someToolbarOpened(): boolean {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
-    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbar.toolbox.opened;
+    return Boolean(BlockSettings.opened || InlineToolbar.opened || Toolbar.toolbox.opened);
   }
 
   /**
@@ -226,11 +228,10 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
-    const { Toolbar, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+    const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
     BlockSettings.close();
     InlineToolbar.close();
-    ConversionToolbar.close();
     Toolbar.toolbox.close();
   }
 
@@ -379,7 +380,14 @@ export default class UI extends Module<UINodes> {
      * Start watching 'block-hovered' events that is used by Toolbar for moving
      */
     this.watchBlockHoveredEvents();
+
+    /**
+     * We have custom logic for providing placeholders for contenteditable elements.
+     * To make it work, we need to have data-empty mark on empty inputs.
+     */
+    this.enableInputsEmptyMark();
   }
+
 
   /**
    * Listen redactor mousemove to emit 'block-hovered' event
@@ -496,7 +504,7 @@ export default class UI extends Module<UINodes> {
     /**
      * Remove all highlights and remove caret
      */
-    this.Editor.BlockManager.dropPointer();
+    this.Editor.BlockManager.unsetCurrentBlock();
 
     /**
      * Close Toolbar
@@ -552,8 +560,6 @@ export default class UI extends Module<UINodes> {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
-    } else if (this.Editor.ConversionToolbar.opened) {
-      this.Editor.ConversionToolbar.close();
     } else if (this.Editor.InlineToolbar.opened) {
       this.Editor.InlineToolbar.close();
     } else {
@@ -645,12 +651,12 @@ export default class UI extends Module<UINodes> {
 
     if (!clickedInsideOfEditor) {
       /**
-       * Clear highlights and pointer on BlockManager
+       * Clear pointer on BlockManager
        *
        * Current page might contain several instances
        * Click between instances MUST clear focus, pointers and close toolbars
        */
-      this.Editor.BlockManager.dropPointer();
+      this.Editor.BlockManager.unsetCurrentBlock();
       this.Editor.Toolbar.close();
     }
 
@@ -872,8 +878,30 @@ export default class UI extends Module<UINodes> {
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
 
-    const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
+    this.Editor.InlineToolbar.tryToShow(true);
+  }
 
-    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
+  /**
+   * Editor.js provides and ability to show placeholders for empty contenteditable elements
+   *
+   * This method watches for input and focus events and toggles 'data-empty' attribute
+   * to workaroud the case, when inputs contains only <br>s and has no visible content
+   * Then, CSS could rely on this attribute to show placeholders
+   */
+  private enableInputsEmptyMark(): void {
+    /**
+     * Toggle data-empty attribute on input depending on its emptiness
+     *
+     * @param event - input or focus event
+     */
+    function handleInputOrFocusChange(event: Event): void {
+      const input = event.target as HTMLElement;
+
+      toggleEmptyMark(input);
+    }
+
+    this.readOnlyMutableListeners.on(this.nodes.wrapper, 'input', handleInputOrFocusChange);
+    this.readOnlyMutableListeners.on(this.nodes.wrapper, 'focusin', handleInputOrFocusChange);
+    this.readOnlyMutableListeners.on(this.nodes.wrapper, 'focusout', handleInputOrFocusChange);
   }
 }

@@ -1,6 +1,7 @@
 import type EditorJS from '../../../../types/index';
 import type { ConversionConfig, ToolboxConfig } from '../../../../types';
 import ToolMock from '../../fixtures/tools/ToolMock';
+import {nanoid} from "nanoid";
 
 /**
  * There will be described test cases of 'blocks.*' API
@@ -100,6 +101,94 @@ describe('api.blocks', () => {
           });
         });
       });
+    });
+
+    it('should update tune data when it is provided', () => {
+      /**
+       * Example Tune Class
+       */
+      class ExampleTune {
+
+        protected data: object;
+        /**
+         *
+         * @param data
+         */
+        constructor({ data}) {
+          this.data = data;
+        }
+
+        /**
+         * Tell editor.js that this Tool is a Block Tune
+         *
+         * @returns {boolean}
+         */
+        public static get isTune(): boolean {
+          return true;
+        }
+
+        /**
+         * Create Tunes controls wrapper that will be appended to the Block Tunes panel
+         *
+         * @returns {Element}
+         */
+        public render(): Element {
+          return document.createElement('div');
+        }
+
+        /**
+         * CSS selectors used in Tune
+         */
+        public static get CSS(): object {
+          return {};
+        }
+
+        /**
+         * Returns Tune state
+         *
+         * @returns {string}
+         */
+        public save(): object | string {
+          return this.data || '';
+        }
+      }
+
+
+      cy.createEditor({
+        tools: {
+          exampleTune: ExampleTune,
+        },
+        tunes: [ 'exampleTune' ],
+        data: {
+          blocks: [
+            {
+              id: nanoid(),
+              type: 'paragraph',
+              data: {
+                text: 'First block',
+              },
+              tunes: {
+                exampleTune: 'citation',
+              },
+            },
+          ],
+        },
+      }).as('editorInstance');
+
+      // Update the tunes data of a block
+      // Check if it is updated
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          await editor.blocks.update(editor.blocks.getBlockByIndex(0).id, null, {
+            exampleTune: 'test',
+          });
+          const data = await editor.save();
+
+          const actual = JSON.stringify(data.blocks[0].tunes);
+          const expected = JSON.stringify({ exampleTune: 'test' });
+
+          expect(actual).to.eq(expected);
+        });
     });
 
     /**
