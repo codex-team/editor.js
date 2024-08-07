@@ -1,4 +1,4 @@
-import { BlockToolWrapper } from '@/types/tools/wrappers/block-tool-wrapper';
+import { BlockToolAdapter } from '@/types/tools/adapters/block-tool-adapter';
 
 /**
  * Describes methods for accessing installed Editor tools
@@ -7,5 +7,5 @@ export interface Tools {
   /**
    * Returns all available Block Tools
    */
-  getBlockTools(): BlockToolWrapper[];
+  getBlockTools(): BlockToolAdapter[];
 }
