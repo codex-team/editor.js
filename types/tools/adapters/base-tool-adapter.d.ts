@@ -2,11 +2,11 @@ import { Tool, ToolSettings } from '..';
 import type { SanitizerConfig } from '../..';
 
 import { ToolType } from './tool-type';
-import { InlineToolFactory } from './inline-tool-factory';
-import { BlockToolFactory } from './block-tool-factory';
-import { BlockTuneFactory } from './block-tune-factory';
+import { InlineToolAdapter } from './inline-tool-adapter';
+import { BlockToolAdapter } from './block-tool-adapter';
+import { BlockTuneAdapter } from './block-tune-adapter';
 
-export interface BaseToolFactory<Type extends ToolType, ToolClass extends Tool> {
+export interface BaseToolAdapter<Type extends ToolType, ToolClass extends Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
@@ -55,17 +55,17 @@ export interface BaseToolFactory<Type extends ToolType, ToolClass extends Tool> 
   /**
    * Returns true if Tools is inline
    */
-  isInline(): this is InlineToolFactory;
+  isInline(): this is InlineToolAdapter;
 
   /**
    * Returns true if Tools is block
    */
-  isBlock(): this is BlockToolFactory;
+  isBlock(): this is BlockToolAdapter;
 
   /**
    * Returns true if Tools is tune
    */
-  isTune(): this is BlockTuneFactory;
+  isTune(): this is BlockTuneAdapter;
 
   /**
    * Constructs new Tool instance from constructable blueprint

@@ -1,9 +1,9 @@
 import { BlockAPI, BlockTune } from '../..';
 import { BlockTuneData } from '../../block-tunes/block-tune-data';
-import { BaseToolFactory } from './base-tool-factory';
+import { BaseToolAdapter } from './base-tool-adapter';
 import { ToolType } from './tool-type';
 
-interface BlockTuneFactory extends BaseToolFactory<ToolType.Tune, BlockTune> {
+interface BlockTuneAdapter extends BaseToolAdapter<ToolType.Tune, BlockTune> {
   /**
    * Constructs new BlockTune instance from constructable
    *

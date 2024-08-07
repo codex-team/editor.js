@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import type { ToolSettings } from '@/types';
-import { ToolType } from '@/types/tools/wrappers/tool-type';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 import InlineTool from '../../../../src/components/tools/inline';
 
 describe('InlineTool', () => {

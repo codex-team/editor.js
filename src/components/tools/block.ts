@@ -12,13 +12,13 @@ import * as _ from '../utils';
 import type InlineTool from './inline';
 import type BlockTune from './tune';
 import ToolsCollection from './collection';
-import type { BlockToolFactory } from '@/types/tools/wrappers/block-tool-factory';
-import { ToolType } from '@/types/tools/wrappers/tool-type';
+import type { BlockToolAdapter } from '@/types/tools/adapters/block-tool-adapter';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 
 /**
  * Class to work with Block tools constructables
  */
-export default class BlockTool extends BaseTool<ToolType.Block, IBlockTool> implements BlockToolFactory {
+export default class BlockTool extends BaseTool<ToolType.Block, IBlockTool> implements BlockToolAdapter {
   /**
    * Tool type — Block
    */

@@ -1,7 +1,7 @@
 import type BlockTool from './block';
 import type InlineTool from './inline';
 import type BlockTune from './tune';
-import type { ToolsCollection as IToolsCollection } from '@/types/tools/wrappers/tools-collection';
+import type { ToolsCollection as IToolsCollection } from '@/types/tools/adapters/tools-collection';
 
 
 export type ToolClass = BlockTool | InlineTool | BlockTune;

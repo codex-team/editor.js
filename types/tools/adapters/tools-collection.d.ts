@@ -1,6 +1,6 @@
-import { BlockToolFactory } from './block-tool-factory';
-import { BlockTuneFactory } from './block-tune-factory';
-import { InlineToolFactory } from './inline-tool-factory';
+import { BlockToolAdapter } from './block-tool-adapter';
+import { BlockTuneAdapter } from './block-tune-adapter';
+import { InlineToolAdapter } from './inline-tool-adapter';
 import { ToolFactory } from './tool-factory';
 
 /**
@@ -10,17 +10,17 @@ export interface ToolsCollection<V extends ToolFactory = ToolFactory> {
   /**
    * Returns Block Tools collection
    */
-  blockTools: ToolsCollection<BlockToolFactory>;
+  blockTools: ToolsCollection<BlockToolAdapter>;
 
   /**
    * Returns Inline Tools collection
    */
-  inlineTools: ToolsCollection<InlineToolFactory>;
+  inlineTools: ToolsCollection<InlineToolAdapter>;
 
   /**
    * Returns Block Tunes collection
    */
-  blockTunes: ToolsCollection<BlockTuneFactory>;
+  blockTunes: ToolsCollection<BlockTuneAdapter>;
 
   /**
    * Returns internal Tools collection

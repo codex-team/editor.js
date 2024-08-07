@@ -1,11 +1,11 @@
 import type { Tool, ToolConstructable, ToolSettings } from '@/types/tools';
 import type { SanitizerConfig, API as ApiMethods } from '@/types';
 import * as _ from '../utils';
-import { ToolType } from '@/types/tools/wrappers/tool-type';
-import type { BaseToolFactory } from '@/types/tools/wrappers/base-tool-factory';
-import type { InlineToolFactory } from '@/types/tools/wrappers/inline-tool-factory';
-import type { BlockToolFactory } from '@/types/tools/wrappers/block-tool-factory';
-import type { BlockTuneFactory } from '@/types/tools/wrappers/block-tune-factory';
+import { ToolType } from '@/types/tools/adapters/tool-type';
+import type { BaseToolAdapter } from '@/types/tools/adapters/base-tool-adapter';
+import type { InlineToolAdapter } from '@/types/tools/adapters/inline-tool-adapter';
+import type { BlockToolAdapter } from '@/types/tools/adapters/block-tool-adapter';
+import type { BlockTuneAdapter } from '@/types/tools/adapters/block-tune-adapter';
 
 /**
  * Enum of Tool options provided by user
@@ -113,7 +113,7 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolFactory<ToolType, Tool> {
+export default abstract class BaseTool<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolAdapter<ToolType, Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
@@ -230,21 +230,21 @@ export default abstract class BaseTool<Type extends ToolType = ToolType, ToolCla
   /**
    * Returns true if Tools is inline
    */
-  public isInline(): this is InlineToolFactory {
+  public isInline(): this is InlineToolAdapter {
     return this.type === ToolType.Inline;
   }
 
   /**
    * Returns true if Tools is block
    */
-  public isBlock(): this is BlockToolFactory {
+  public isBlock(): this is BlockToolAdapter {
     return this.type === ToolType.Block;
   }
 
   /**
    * Returns true if Tools is tune
    */
-  public isTune(): this is BlockTuneFactory {
+  public isTune(): this is BlockTuneAdapter {
     return this.type === ToolType.Tune;
   }
 

@@ -1,8 +1,8 @@
-import { InlineTool as IInlineTool, InlineTool } from '../../../types';
-import { BaseToolFactory } from './base-tool-factory';
+import { InlineTool as IInlineTool, InlineTool } from '../..';
+import { BaseToolAdapter } from './base-tool-adapter';
 import { ToolType } from './tool-type';
 
-interface InlineToolFactory extends BaseToolFactory<ToolType.Inline, InlineTool> {
+interface InlineToolAdapter extends BaseToolAdapter<ToolType.Inline, InlineTool> {
   /**
    * Returns title for Inline Tool if specified by user
    */

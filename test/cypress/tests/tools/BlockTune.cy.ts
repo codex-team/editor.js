@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
 import type { ToolSettings } from '@/types';
-import { ToolType } from '@/types/tools/wrappers/tool-type';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 import BlockTune from '../../../../src/components/tools/tune';
 import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
 

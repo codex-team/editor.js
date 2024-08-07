@@ -1,7 +1,7 @@
 import { ToolsCollection } from './tools-collection';
 import { ToolType } from './tool-type';
-import { InlineToolFactory } from './inline-tool-factory';
-import { BlockTuneFactory } from './block-tune-factory';
+import { InlineToolAdapter } from './inline-tool-adapter';
+import { BlockTuneAdapter } from './block-tune-adapter';
 import { BlockTool } from '../block-tool';
 import { BlockToolData } from '../block-tool-data';
 import { BlockAPI } from '../../api/block';
@@ -9,18 +9,18 @@ import { ToolboxConfigEntry } from '../tool-settings';
 import { ConversionConfig } from '../../configs/conversion-config';
 import { PasteConfig } from '../../configs/paste-config';
 import { SanitizerConfig } from '../../configs/sanitizer-config';
-import { BaseToolFactory } from './base-tool-factory';
+import { BaseToolAdapter } from './base-tool-adapter';
 
-interface BlockToolFactory extends BaseToolFactory<ToolType.Block, BlockTool>{
+interface BlockToolAdapter extends BaseToolAdapter<ToolType.Block, BlockTool>{
   /**
    * InlineTool collection for current Block Tool
    */
-  inlineTools: ToolsCollection<InlineToolFactory>;
+  inlineTools: ToolsCollection<InlineToolAdapter>;
 
   /**
    * BlockTune collection for current Block Tool
    */
-  tunes: ToolsCollection<BlockTuneFactory>;
+  tunes: ToolsCollection<BlockTuneAdapter>;
 
   /**
    * Creates new Tool instance
