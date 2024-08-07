@@ -15,9 +15,9 @@ import * as _ from '../utils';
 import type ApiModules from '../modules/api';
 import BlockAPI from './api';
 import SelectionUtils from '../selection';
-import type BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 
-import type BlockTune from '../tools/tune';
+import type BlockTuneAdapter from '../tools/tune';
 import type { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import type ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
@@ -46,7 +46,7 @@ interface BlockConstructorOptions {
   /**
    * Tool object
    */
-  tool: BlockTool;
+  tool: BlockToolAdapter;
 
   /**
    * Editor's API methods
@@ -131,7 +131,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Instance of the Tool Block represents
    */
-  public readonly tool: BlockTool;
+  public readonly tool: BlockToolAdapter;
 
   /**
    * User Tool configuration
@@ -146,7 +146,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Tunes used by Tool
    */
-  public readonly tunes: ToolsCollection<BlockTune>;
+  public readonly tunes: ToolsCollection<BlockTuneAdapter>;
 
   /**
    * Tool's user configuration
@@ -234,7 +234,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
     /**
-     * @type {BlockTune[]}
+     * @type {BlockTuneAdapter[]}
      */
     this.tunes = tool.tunes;
 

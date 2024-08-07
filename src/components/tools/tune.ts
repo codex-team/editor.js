@@ -1,7 +1,7 @@
-import BaseTool from './base';
+import BaseToolAdapter from './base';
 import type { BlockAPI, BlockTune as IBlockTune, BlockTuneConstructable } from '@/types';
 import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
-import type { BlockTuneAdapter } from '@/types/tools/adapters/block-tune-adapter';
+import type { BlockTuneAdapter as BlockTuneAdapterInterface } from '@/types/tools/adapters/block-tune-adapter';
 import { ToolType } from '@/types/tools/adapters/tool-type';
 
 /**
@@ -9,7 +9,7 @@ import { ToolType } from '@/types/tools/adapters/tool-type';
  *
  * @todo Implement
  */
-export default class BlockTune extends BaseTool<ToolType.Tune, IBlockTune> implements BlockTuneAdapter {
+export default class BlockTuneAdapter extends BaseToolAdapter<ToolType.Tune, IBlockTune> implements BlockTuneAdapterInterface {
   /**
    * Tool type — Tune
    */

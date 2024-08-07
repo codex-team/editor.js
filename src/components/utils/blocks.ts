@@ -3,7 +3,7 @@ import type { ConversionConfig } from '../../../types/configs/conversion-config'
 import type { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
-import type BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 import { isFunction, isString, log, equals, isEmpty } from '../utils';
 import { isToolConvertable } from './tools';
 
@@ -47,7 +47,7 @@ export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boo
  * @param block - block to get conversion items for
  * @param allBlockTools - all block tools available in the editor
  */
-export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockTool[]): Promise<BlockTool[]> {
+export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockToolAdapter[]): Promise<BlockToolAdapter[]> {
   const savedData = await block.save() as SavedData;
   const blockData = savedData.data;
 

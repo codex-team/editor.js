@@ -1,7 +1,7 @@
 import Module from '../__module';
 import * as _ from '../utils';
 import type { BlockId, BlockToolData, OutputBlockData } from '../../../types';
-import type BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 import type { StubData } from '../../tools/stub';
 import type Block from '../block';
 
@@ -92,7 +92,7 @@ export default class Renderer extends Module {
     let title = tool;
 
     if (Tools.unavailable.has(tool)) {
-      const toolboxSettings = (Tools.unavailable.get(tool) as BlockTool).toolbox;
+      const toolboxSettings = (Tools.unavailable.get(tool) as BlockToolAdapter).toolbox;
 
       if (toolboxSettings !== undefined && toolboxSettings[0].title !== undefined) {
         title = toolboxSettings[0].title;

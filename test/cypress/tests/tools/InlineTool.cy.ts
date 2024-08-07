@@ -2,7 +2,7 @@
 /* tslint:disable:max-classes-per-file */
 import type { ToolSettings } from '@/types';
 import { ToolType } from '@/types/tools/adapters/tool-type';
-import InlineTool from '../../../../src/components/tools/inline';
+import InlineToolAdapter from '../../../../src/components/tools/inline';
 
 describe('InlineTool', () => {
   /**
@@ -52,26 +52,26 @@ describe('InlineTool', () => {
   };
 
   it('.type should return ToolType.Inline', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.type).to.be.eq(ToolType.Inline);
   });
 
   it('.name should return correct value', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.name).to.be.eq(options.name);
   });
 
   it('.title should return correct title', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.title).to.be.eq(options.constructable.title);
   });
 
   it('.isInternal should return correct value', () => {
-    const tool1 = new InlineTool(options as any);
-    const tool2 = new InlineTool({
+    const tool1 = new InlineToolAdapter(options as any);
+    const tool2 = new InlineToolAdapter({
       ...options,
       isInternal: true,
     } as any);
@@ -81,31 +81,31 @@ describe('InlineTool', () => {
   });
 
   it('.settings should return correct value', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.settings).to.be.deep.eq(options.config.config);
   });
 
   it('.sanitizeConfig should return correct value', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.sanitizeConfig).to.be.deep.eq(options.constructable.sanitize);
   });
 
   it('.isBlock() should return false', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.isBlock()).to.be.false;
   });
 
   it('.isInline() should return true', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.isInline()).to.be.true;
   });
 
   it('.isTune() should return false', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     expect(tool.isTune()).to.be.false;
   });
@@ -113,7 +113,7 @@ describe('InlineTool', () => {
   context('.prepare()', () => {
     it('should call Tool prepare method', () => {
       options.constructable.prepare = cy.stub();
-      const tool = new InlineTool(options as any);
+      const tool = new InlineToolAdapter(options as any);
 
       tool.prepare();
 
@@ -124,7 +124,7 @@ describe('InlineTool', () => {
     });
 
     it('should not fail if Tool prepare method is not exist', () => {
-      const tool = new InlineTool({
+      const tool = new InlineToolAdapter({
         ...options,
         constructable: {},
       } as any);
@@ -136,7 +136,7 @@ describe('InlineTool', () => {
   context('.reset()', () => {
     it('should call Tool reset method', () => {
       options.constructable.reset = cy.stub();
-      const tool = new InlineTool(options as any);
+      const tool = new InlineToolAdapter(options as any);
 
       tool.reset();
 
@@ -144,7 +144,7 @@ describe('InlineTool', () => {
     });
 
     it('should not fail if Tool reset method is not exist', () => {
-      const tool = new InlineTool({
+      const tool = new InlineToolAdapter({
         ...options,
         constructable: {},
       } as any);
@@ -155,13 +155,13 @@ describe('InlineTool', () => {
 
   context('.shortcut', () => {
     it('should return user provided shortcut', () => {
-      const tool = new InlineTool(options as any);
+      const tool = new InlineToolAdapter(options as any);
 
       expect(tool.shortcut).to.be.eq(options.config.shortcut);
     });
 
     it('should return Tool provided shortcut if user one is not specified', () => {
-      const tool = new InlineTool({
+      const tool = new InlineToolAdapter({
         ...options,
         config: {
           ...options.config,
@@ -174,7 +174,7 @@ describe('InlineTool', () => {
   });
 
   context('.create()', () => {
-    const tool = new InlineTool(options as any);
+    const tool = new InlineToolAdapter(options as any);
 
     it('should return Tool instance', () => {
       expect(tool.create()).to.be.instanceOf(options.constructable);

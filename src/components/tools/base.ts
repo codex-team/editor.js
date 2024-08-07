@@ -2,10 +2,10 @@ import type { Tool, ToolConstructable, ToolSettings } from '@/types/tools';
 import type { SanitizerConfig, API as ApiMethods } from '@/types';
 import * as _ from '../utils';
 import { ToolType } from '@/types/tools/adapters/tool-type';
-import type { BaseToolAdapter } from '@/types/tools/adapters/base-tool-adapter';
-import type { InlineToolAdapter } from '@/types/tools/adapters/inline-tool-adapter';
-import type { BlockToolAdapter } from '@/types/tools/adapters/block-tool-adapter';
-import type { BlockTuneAdapter } from '@/types/tools/adapters/block-tune-adapter';
+import type { BaseToolAdapter as BaseToolAdapterInterface } from '@/types/tools/adapters/base-tool-adapter';
+import type { InlineToolAdapter as InlineToolAdapterInterface } from '@/types/tools/adapters/inline-tool-adapter';
+import type { BlockToolAdapter as BlockToolAdapterInterface } from '@/types/tools/adapters/block-tool-adapter';
+import type { BlockTuneAdapter as BlockTuneAdapterInterface } from '@/types/tools/adapters/block-tune-adapter';
 
 /**
  * Enum of Tool options provided by user
@@ -113,7 +113,7 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolAdapter<ToolType, Tool> {
+export default abstract class BaseToolAdapter<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolAdapterInterface<ToolType, Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
@@ -230,21 +230,21 @@ export default abstract class BaseTool<Type extends ToolType = ToolType, ToolCla
   /**
    * Returns true if Tools is inline
    */
-  public isInline(): this is InlineToolAdapter {
+  public isInline(): this is InlineToolAdapterInterface {
     return this.type === ToolType.Inline;
   }
 
   /**
    * Returns true if Tools is block
    */
-  public isBlock(): this is BlockToolAdapter {
+  public isBlock(): this is BlockToolAdapterInterface {
     return this.type === ToolType.Block;
   }
 
   /**
    * Returns true if Tools is tune
    */
-  public isTune(): this is BlockTuneAdapter {
+  public isTune(): this is BlockTuneAdapterInterface {
     return this.type === ToolType.Tune;
   }
 
