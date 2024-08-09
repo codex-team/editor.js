@@ -1,4 +1,4 @@
-import { EditorConfig } from '../../../../types/index';
+import type { EditorConfig } from '../../../../types/index';
 import Chainable = Cypress.Chainable;
 import type EditorJS from '../../../../types/index';
 

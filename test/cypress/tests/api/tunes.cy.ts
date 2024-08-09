@@ -1,4 +1,4 @@
-import { TunesMenuConfig } from '../../../../types/tools';
+import type { TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 

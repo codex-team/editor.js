@@ -1,6 +1,6 @@
-import { InlineTool, SanitizerConfig } from '../../../types';
+import type { InlineTool, SanitizerConfig } from '../../../types';
 import { IconBold } from '@codexteam/icons';
-import { MenuConfig } from '../../../types/tools';
+import type { MenuConfig } from '../../../types/tools';
 
 /**
  * Bold Tool

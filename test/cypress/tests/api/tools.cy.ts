@@ -1,6 +1,6 @@
-import { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
-import EditorJS from '../../../../types';
-import { HTMLPasteEvent, TunesMenuConfig } from '../../../../types/tools';
+import type { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
+import type EditorJS from '../../../../types';
+import type { HTMLPasteEvent, TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 

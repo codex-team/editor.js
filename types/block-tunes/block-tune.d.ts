@@ -8,7 +8,8 @@ import { MenuConfig } from '../tools';
 export interface BlockTune {
   /**
    * Returns BlockTune's UI.
-   * Either HTMLELement (@deprecated) or MenuConfig (@see https://editorjs.io/menu-config/)
+   * Should return either MenuConfig (recommended) (@see https://editorjs.io/menu-config/)
+   * or HTMLElement (UI consitency is not guaranteed)
    */
   render(): HTMLElement | MenuConfig;
 
@@ -18,8 +19,6 @@ export interface BlockTune {
    * You can wrap Tool's content with any wrapper you want to provide Tune's UI
    *
    * @param {HTMLElement} pluginsContent — Tool's content wrapper
-   *
-   * @return {HTMLElement}
    */
   wrap?(pluginsContent: HTMLElement): HTMLElement;
 

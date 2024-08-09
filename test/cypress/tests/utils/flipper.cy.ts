@@ -1,4 +1,4 @@
-import { PopoverItemParams } from '../../../../types/index.js';
+import type { PopoverItemParams } from '../../../../types/index.js';
 
 /**
  * Mock of some Block Tool

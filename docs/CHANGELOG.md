@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.4
+
+- `Fix` - Tool's exporting types added
+
 ### 2.30.3
 
 - `Fix` – I18n in nested popover

@@ -1,18 +1,7 @@
-import { HintTextAlignment, HintParams, HintPosition } from '../hint';
+import { HintParams, HintPosition, HintTextAlignment } from "./hint";
+import { PopoverItemType } from "./popover-item-type";
 
-/**
- * Popover item types
- */
-export enum PopoverItemType {
-  /** Regular item with icon, title and other properties */
-  Default = 'default',
-
-  /** Gray line used to separate items from each other */
-  Separator = 'separator',
-
-  /** Item with custom html content */
-  Html = 'html'
-}
+export { PopoverItemType } from './popover-item-type';
 
 /**
  * Represents popover item children configuration

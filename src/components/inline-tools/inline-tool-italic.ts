@@ -1,4 +1,4 @@
-import { InlineTool, SanitizerConfig } from '../../../types';
+import type { InlineTool, SanitizerConfig } from '../../../types';
 import { IconItalic } from '@codexteam/icons';
 
 /**

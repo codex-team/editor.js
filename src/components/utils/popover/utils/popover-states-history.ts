@@ -1,4 +1,4 @@
-import { PopoverItem } from '../../../../../types';
+import type { PopoverItemParams } from '@/types/utils/popover/popover-item';
 
 /**
  * Represents single states history item
@@ -12,7 +12,7 @@ interface PopoverStatesHistoryItem {
   /**
    * Popover items
    */
-  items: PopoverItem[]
+  items: PopoverItemParams[]
 }
 
 /**
@@ -54,7 +54,7 @@ export class PopoverStatesHistory {
   /**
    * Items list retrieved from the current state
    */
-  public get currentItems(): PopoverItem[] {
+  public get currentItems(): PopoverItemParams[] {
     if (this.history.length === 0) {
       return [];
     }

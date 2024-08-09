@@ -1,16 +1,17 @@
 import * as _ from '../utils';
 import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
-import BlockTool from '../tools/block';
-import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItemParams, BlockAPI } from '../../../types';
+import type BlockToolAdapter from '../tools/block';
+import type ToolsCollection from '../tools/collection';
+import type { API, BlockToolData, ToolboxConfigEntry, PopoverItemParams, BlockAPI } from '@/types';
 import EventsDispatcher from '../utils/events';
 import I18n from '../i18n';
 import { I18nInternalNS } from '../i18n/namespace-internal';
-import { PopoverEvent } from '../utils/popover/popover.types';
+import { PopoverEvent } from '@/types/utils/popover/popover-event';
 import Listeners from '../utils/listeners';
 import Dom from '../dom';
-import { Popover, PopoverDesktop, PopoverMobile } from '../utils/popover';
+import type { Popover } from '../utils/popover';
+import { PopoverDesktop, PopoverMobile } from '../utils/popover';
 import { EditorMobileLayoutToggled } from '../events';
 
 /**
@@ -98,7 +99,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   /**
    * List of Tools available. Some of them will be shown in the Toolbox
    */
-  private tools: ToolsCollection<BlockTool>;
+  private tools: ToolsCollection<BlockToolAdapter>;
 
   /**
    * Text labels used in the Toolbox. Should be passed from the i18n module
@@ -130,7 +131,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
+  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockToolAdapter>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
     super();
 
     this.api = api;
@@ -285,8 +286,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Returns list of tools that enables the Toolbox (by specifying the 'toolbox' getter)
    */
   @_.cacheable
-  private get toolsToBeDisplayed(): BlockTool[] {
-    const result: BlockTool[] = [];
+  private get toolsToBeDisplayed(): BlockToolAdapter[] {
+    const result: BlockToolAdapter[] = [];
 
     this.tools.forEach((tool) => {
       const toolToolboxSettings = tool.toolbox;
@@ -307,7 +308,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItemParams => {
+    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockToolAdapter): PopoverItemParams => {
       return {
         icon: toolboxItem.icon,
         title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
@@ -337,7 +338,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Iterate all tools and enable theirs shortcuts if specified
    */
   private enableShortcuts(): void {
-    this.toolsToBeDisplayed.forEach((tool: BlockTool) => {
+    this.toolsToBeDisplayed.forEach((tool: BlockToolAdapter) => {
       const shortcut = tool.shortcut;
 
       if (shortcut) {
@@ -386,7 +387,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * Fired when the Read-Only mode is activated
    */
   private removeAllShortcuts(): void {
-    this.toolsToBeDisplayed.forEach((tool: BlockTool) => {
+    this.toolsToBeDisplayed.forEach((tool: BlockToolAdapter) => {
       const shortcut = tool.shortcut;
 
       if (shortcut) {
