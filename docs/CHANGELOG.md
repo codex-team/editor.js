@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.5
+
+– `Fix` – Fix exported types
+
 ### 2.30.4
 
 - `Fix` - Tool's exporting types added
