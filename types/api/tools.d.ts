@@ -1,4 +1,4 @@
-import { BlockToolAdapter } from '@/types/tools/adapters/block-tool-adapter';
+import { BlockToolAdapter } from '../tools/adapters/block-tool-adapter';
 
 /**
  * Describes methods for accessing installed Editor tools
