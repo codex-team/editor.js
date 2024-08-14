@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.6
+
+- `Fix` - Prevent inline toolbar from closing in nested instance of editor
+
 ### 2.30.5
 
 – `Fix` – Fix exported types
