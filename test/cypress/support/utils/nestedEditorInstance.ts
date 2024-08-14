@@ -1,4 +1,4 @@
-import { BlockTool, BlockToolConstructorOptions } from '../../../../types';
+import type { BlockTool, BlockToolConstructorOptions } from '../../../../types';
 import { createEditorWithTextBlocks } from './createEditorWithTextBlocks';
 
 export const NESTED_EDITOR_ID = 'nested-editor';
