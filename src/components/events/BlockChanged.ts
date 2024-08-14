@@ -1,4 +1,4 @@
-import { BlockMutationEvent } from '../../../types/events/block';
+import type { BlockMutationEvent } from '../../../types/events/block';
 
 /**
  * Fired when some block state has changed

@@ -1,9 +1,9 @@
-import { EditorModules } from '../types-internal/editor-modules';
-import { EditorConfig } from '../../types';
-import { ModuleConfig } from '../types-internal/module-config';
+import type { EditorModules } from '../types-internal/editor-modules';
+import type { EditorConfig } from '../../types';
+import type { ModuleConfig } from '../types-internal/module-config';
 import Listeners from './utils/listeners';
-import EventsDispatcher from './utils/events';
-import { EditorEventMap } from './events';
+import type EventsDispatcher from './utils/events';
+import type { EditorEventMap } from './events';
 
 /**
  * The type <T> of the Module generic.

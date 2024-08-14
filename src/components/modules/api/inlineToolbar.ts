@@ -1,4 +1,4 @@
-import { InlineToolbar } from '../../../../types/api/inline-toolbar';
+import type { InlineToolbar } from '../../../../types/api/inline-toolbar';
 import Module from '../../__module';
 
 /**
