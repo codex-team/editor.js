@@ -53,7 +53,7 @@
     "codex-notifier": "^1.1.2",
     "codex-tooltip": "^1.0.5",
     "core-js": "3.30.0",
-    "cypress": "^13.7.1",
+    "cypress": "^13.13.3",
     "cypress-intellij-reporter": "^0.0.7",
     "cypress-plugin-tab": "^1.0.5",
     "cypress-terminal-report": "^5.3.2",
