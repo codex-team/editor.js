@@ -1,8 +1,8 @@
 /* tslint:disable:max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any, jsdoc/require-jsdoc */
 import Tools from '../../../../src/components/modules/tools';
-import { EditorConfig } from '../../../../types';
-import BlockTool from '../../../../src/components/tools/block';
+import type { EditorConfig } from '../../../../types';
+import BlockToolAdapter from '../../../../src/components/tools/block';
 
 describe('Tools module', () => {
   const defaultConfig = {
@@ -315,7 +315,7 @@ describe('Tools module', () => {
        * @todo add check if user provided default tool is not Block Tool
        */
       it('should return BlockTool instance', () => {
-        expect(module.defaultTool).to.be.instanceOf(BlockTool);
+        expect(module.defaultTool).to.be.instanceOf(BlockToolAdapter);
       });
 
       it('should return default Tool', () => {

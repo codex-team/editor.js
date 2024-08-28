@@ -1,7 +1,7 @@
-import { Tooltip as ITooltip } from '../../../../types/api';
+import type { Tooltip as ITooltip } from '../../../../types/api';
 import type { TooltipOptions, TooltipContent } from 'codex-tooltip/types';
 import Module from '../../__module';
-import { ModuleConfig } from '../../../types-internal/module-config';
+import type { ModuleConfig } from '../../../types-internal/module-config';
 import * as tooltip from '../../utils/tooltip';
 /**
  * @class TooltipAPI

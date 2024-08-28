@@ -1,4 +1,4 @@
-import { I18n } from '../../../../types/api';
+import type { I18n } from '../../../../types/api';
 import I18nInternal from '../../i18n';
 import { logLabeled } from '../../utils';
 import Module from '../../__module';

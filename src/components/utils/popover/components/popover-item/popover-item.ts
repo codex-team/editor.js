@@ -1,6 +1,6 @@
 import * as tooltip from '../../../../utils/tooltip';
 import { type HintPosition, Hint } from '../hint';
-import { PopoverItemParams } from './popover-item.types';
+import type { PopoverItemParams } from '@/types/utils/popover/popover-item';
 
 /**
  * Popover item abstract class

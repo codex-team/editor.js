@@ -1,4 +1,3 @@
-import Block from '../../src/components/block';
 import {OutputBlockData, OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
 import {BlockAPI} from './block';

@@ -1,4 +1,4 @@
-import { Tools as ToolsAPIInterface } from '../../../../types/api';
+import type { Tools as ToolsAPIInterface } from '../../../../types/api';
 import Module from '../../__module';
 
 /**

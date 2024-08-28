@@ -1,6 +1,6 @@
 import Selection from '../selection';
 import Module from '../__module';
-import Block from '../block';
+import type Block from '../block';
 import * as caretUtils from '../utils/caret';
 import $  from '../dom';
 

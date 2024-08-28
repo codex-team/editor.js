@@ -1,6 +1,6 @@
 import type { BlockAPI } from '../../../types/api/block';
-import { EditorModules } from '../../types-internal/editor-modules';
-import Block from '../block';
+import type { EditorModules } from '../../types-internal/editor-modules';
+import type Block from '../block';
 
 /**
  * Returns Block instance by passed Block index or Block id

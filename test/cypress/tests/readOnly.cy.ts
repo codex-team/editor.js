@@ -1,4 +1,5 @@
-import EditorJS, { EditorConfig } from '../../../types';
+import type { EditorConfig } from '../../../types';
+import type EditorJS from '../../../types';
 
 describe('ReadOnly API spec', () => {
   /**
