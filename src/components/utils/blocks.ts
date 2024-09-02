@@ -61,7 +61,6 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
   }
 
   const exportData = convertBlockDataForExport(blockData, blockTool.conversionConfig);
-  
   return allBlockTools.reduce((result, tool) => {
     /**
      * Skip tools without «import» rule specified
@@ -82,6 +81,14 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
      * Skip tools that does not specify toolbox
      */
     if (tool.toolbox === undefined) {
+      return result;
+    }
+
+    /**
+     * Checking that the block is not empty after conversion
+     */
+    const importData = convertExportToBlockData(exportData, tool.conversionConfig);
+    if (isUndefined(importData) || isEmpty(importData)) {
       return result;
     }
 

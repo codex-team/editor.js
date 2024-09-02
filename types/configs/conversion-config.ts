@@ -12,7 +12,7 @@ export interface ConversionConfig {
    * 1. String — the key of Tool data object to fill it with imported string on render.
    * 2. Function — method that accepts importing string and composes Tool data to render.
    */
-  import?: ((data: string, config: ToolConfig) => BlockToolData) | string;
+  import?: ((data: string | object, config: ToolConfig) => BlockToolData) | string;
 
   /**
    * How to export this Tool to make other Block.
