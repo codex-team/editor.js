@@ -1,7 +1,7 @@
 import Block from './index';
-import { BlockToolData, ToolConfig } from '../../../types/tools';
-import { SavedData } from '../../../types/data-formats';
-import { BlockAPI as BlockAPIInterface } from '../../../types/api';
+import {BlockToolData, ToolConfig} from '../../../types/tools';
+import {SavedData} from '../../../types/data-formats';
+import {BlockAPI as BlockAPIInterface} from '../../../types/api';
 
 /**
  * Constructs new BlockAPI object
@@ -100,11 +100,11 @@ function BlockAPI(
      *
      * @returns {Promise<void|SavedData>}
      */
-    save(): Promise<void|SavedData> {
+    save(): Promise<void | SavedData> {
       return block.save();
     },
 
-    markdown(): string {
+    markdown(): Promise<string> {
       return block.markdown();
     },
 

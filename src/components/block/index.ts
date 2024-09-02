@@ -620,11 +620,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     return isValid;
   }
 
-  public markdown(): string {
+  public markdown(): Promise<string> {
     if (this.toolInstance.markdown instanceof Function) {
       return this.toolInstance.markdown();
     }
-    return '';
+    return null;
   }
 
   /**

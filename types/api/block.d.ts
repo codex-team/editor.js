@@ -57,7 +57,7 @@ export interface BlockAPI {
    * @return {string}
    * @author asan
    */
-  markdown(): string;
+  markdown(): Promise<string>;
 
   /**
    * Save Block content

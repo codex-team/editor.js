@@ -2,13 +2,13 @@ import Module from '../../__module';
 import $ from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
+import {I18nInternalNS} from '../../i18n/namespace-internal';
 import * as tooltip from '../../utils/tooltip';
-import { ModuleConfig } from '../../../types-internal/module-config';
+import {ModuleConfig} from '../../../types-internal/module-config';
 import Block from '../../block';
-import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
-import { IconMenu, IconPlus } from '@codexteam/icons';
-import { BlockHovered } from '../../events/BlockHovered';
+import Toolbox, {ToolboxEvent} from '../../ui/toolbox';
+import {IconMenu, IconPlus} from '@codexteam/icons';
+import {BlockHovered} from '../../events/BlockHovered';
 
 /**
  * @todo Tab on non-empty block should open Block Settings of the hoveredBlock (not where caret is set)
@@ -39,6 +39,7 @@ interface ToolbarNodes {
   plusButton: HTMLElement;
   settingsToggler: HTMLElement;
 }
+
 /**
  *
  * «Toolbar» is the node that moves up/down over current block
@@ -108,7 +109,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * @param moduleConfiguration.config - Editor's config
    * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
    */
-  constructor({ config, eventsDispatcher }: ModuleConfig) {
+  constructor({config, eventsDispatcher}: ModuleConfig) {
     super({
       config,
       eventsDispatcher,
@@ -155,7 +156,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     open: () => void;
     toggle: () => void;
     hasFocus: () => boolean | undefined;
-    } {
+  } {
     return {
       opened: this.toolboxInstance?.opened,
       close: () => {
@@ -165,7 +166,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         /**
          * If Toolbox is not initialized yet, do nothing
          */
-        if (this.toolboxInstance === null)  {
+        if (this.toolboxInstance === null) {
           _.log('toolbox.open() called before initialization is finished', 'warn');
 
           return;
@@ -182,7 +183,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         /**
          * If Toolbox is not initialized yet, do nothing
          */
-        if (this.toolboxInstance === null)  {
+        if (this.toolboxInstance === null) {
           _.log('toolbox.toggle() called before initialization is finished', 'warn');
 
           return;
@@ -228,7 +229,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       window.requestIdleCallback(() => {
         this.drawUI();
         this.enableModuleBindings();
-      }, { timeout: 2000 });
+      }, {timeout: 2000});
     } else {
       this.destroy();
       this.Editor.BlockSettings.destroy();
@@ -245,7 +246,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Some UI elements creates inside requestIdleCallback, so the can be not ready yet
      */
-    if (this.toolboxInstance === null)  {
+    if (this.toolboxInstance === null) {
       _.log('Can\'t open Toolbar since Editor initialization is not finished yet', 'warn');
 
       return;
@@ -272,7 +273,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.hoveredBlock = block;
 
     const targetBlockHolder = block.holder;
-    const { isMobile } = this.Editor.UI;
+    const {isMobile} = this.Editor.UI;
     const renderedContent = block.pluginsContent;
     const renderedContentStyle = window.getComputedStyle(renderedContent);
     const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
@@ -390,9 +391,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     const tooltipContent = $.make('div');
 
-    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
+    // tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
     tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
+      textContent: _.beautifyShortcut('ctrl+/'),
     }));
 
     tooltip.onHover(this.nodes.plusButton, tooltipContent, {
@@ -455,8 +456,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolboxHolderModifier);
     });
 
-    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({ block }) => {
-      const { BlockManager, Caret } = this.Editor;
+    this.toolboxInstance.on(ToolboxEvent.BlockAdded, ({block}) => {
+      const {BlockManager, Caret} = this.Editor;
       const newBlock = BlockManager.getBlockById(block.id);
 
       /**
