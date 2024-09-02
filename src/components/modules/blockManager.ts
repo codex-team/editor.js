@@ -19,7 +19,7 @@ import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockChanged } from '../events';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
-import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
+import { convertExportToBlockData, isBlockConvertable } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
 
 /**
@@ -501,10 +501,12 @@ export default class BlockManager extends Module {
      * 2) Blocks with different Tools if they provides conversionConfig
      */
     } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
-      const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
-      const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
+      let blockToMergeExportData = await blockToMerge.exportData();
+      if (_.isString(blockToMergeExportData)) {
+        blockToMergeExportData = clean(blockToMergeExportData, targetBlock.tool.sanitizeConfig);
+      }
 
-      blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
+      blockToMergeData = convertExportToBlockData(blockToMergeExportData, targetBlock.tool.conversionConfig);
     }
 
     if (blockToMergeData === undefined) {
@@ -848,22 +850,24 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Using Conversion Config "export" we get a stringified version of the Block data
+     * Using Conversion Config "export" we get a exported version of the Block data
      */
-    const exportedData = await blockToConvert.exportDataAsString();
+    let exportedData = await blockToConvert.exportData();
 
     /**
-     * Clean exported data with replacing sanitizer config
+     * Clean exported data, if it is a string, with replacing sanitizer config
      */
-    const cleanData: string = clean(
-      exportedData,
-      replacingTool.sanitizeConfig
-    );
+    if (_.isString(exportedData)) {
+      exportedData = clean(
+        exportedData,
+        replacingTool.sanitizeConfig
+      );
+    }
 
     /**
      * Now using Conversion Config "import" we compose a new Block data
      */
-    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig);
+    let newBlockData = convertExportToBlockData(exportedData, replacingTool.conversionConfig);
 
     /**
      * Optional data overrides.
