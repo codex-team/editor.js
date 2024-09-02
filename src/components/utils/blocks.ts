@@ -4,7 +4,7 @@ import type { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
 import type BlockToolAdapter from '../tools/block';
-import { isFunction, isString, log, equals, isEmpty } from '../utils';
+import { isFunction, isString, log, equals, isEmpty, isUndefined } from '../utils';
 import { isToolConvertable } from './tools';
 
 
@@ -51,11 +51,29 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
   const savedData = await block.save() as SavedData;
   const blockData = savedData.data;
 
+  /**
+   * Checking that the block has an «export» rule
+   */
+  const blockTool = allBlockTools.find((tool) => tool.name === block.name);
+  if (!isToolConvertable(blockTool, 'export')) {
+    return [];
+  }
+
+  const exportData = convertBlockDataForExport(blockData, blockTool.conversionConfig);
+
   return allBlockTools.reduce((result, tool) => {
     /**
      * Skip tools without «import» rule specified
      */
     if (!isToolConvertable(tool, 'import')) {
+      return result;
+    }
+
+    /**
+     * Checking that the block is not empty after conversion
+     */
+    const importData = convertExportToBlockData(exportData, tool.conversionConfig);
+    if (isUndefined(importData) || isEmpty(importData)) {
       return result;
     }
 
@@ -133,7 +151,7 @@ export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boo
  * @param blockData - block data to convert
  * @param conversionConfig - tool's conversion config
  */
-export function convertBlockDataToString(blockData: BlockToolData, conversionConfig?: ConversionConfig ): string {
+export function convertBlockDataForExport(blockData: BlockToolData, conversionConfig?: ConversionConfig ): string | object {
   const exportProp = conversionConfig?.export;
 
   if (isFunction(exportProp)) {
@@ -146,7 +164,7 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
      */
     if (exportProp !== undefined) {
       log('Conversion «export» property must be a string or function. ' +
-      'String means key of saved data object to export. Function should export processed string to export.');
+      'String means key of saved data object to export. Function should export processed string or object to export.');
     }
 
     return '';
@@ -154,19 +172,24 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
 }
 
 /**
- * Using conversionConfig, convert string to block data.
+ * Using conversionConfig, convert export string|object to block data.
  *
- * @param stringToImport - string to convert
+ * @param dataToImport - string|object to convert
  * @param conversionConfig - tool's conversion config
  */
-export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig): BlockToolData {
+export function convertExportToBlockData(dataToImport: string | object, conversionConfig?: ConversionConfig): BlockToolData {
   const importProp = conversionConfig?.import;
 
   if (isFunction(importProp)) {
-    return importProp(stringToImport);
-  } else if (isString(importProp)) {
+    try {
+      return importProp(dataToImport);
+    } catch (err) {
+      log('Conversion «import» function returned an error');
+      return {};
+    }
+  } else if (isString(importProp) && isString(dataToImport)) {
     return {
-      [importProp]: stringToImport,
+      [importProp]: dataToImport,
     };
   } else {
     /**
@@ -174,7 +197,7 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
      */
     if (importProp !== undefined) {
       log('Conversion «import» property must be a string or function. ' +
-      'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
+      'String means key of tool data to import. Function accepts a imported string or object and return composed tool data.');
     }
 
     return {};

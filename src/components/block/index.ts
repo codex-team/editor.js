@@ -26,7 +26,7 @@ import { isMutationBelongsToElement } from '../utils/mutations';
 import type { EditorEventMap } from '../events';
 import { FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import type { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
-import { convertBlockDataToString, isSameBlockData } from '../utils/blocks';
+import { convertBlockDataForExport, isSameBlockData } from '../utils/blocks';
 import { PopoverItemType } from '@/types/utils/popover/popover-item-type';
 
 /**
@@ -729,12 +729,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Exports Block data as string using conversion config
+   * Exports Block data using conversion config
    */
-  public async exportDataAsString(): Promise<string> {
+  public async exportData(): Promise<string|object> {
     const blockData = await this.data;
 
-    return convertBlockDataToString(blockData, this.tool.conversionConfig);
+    return convertBlockDataForExport(blockData, this.tool.conversionConfig);
   }
 
   /**
