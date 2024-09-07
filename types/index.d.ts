@@ -104,6 +104,7 @@ export {
  * So we should create new interface for exporting API type
  */
 export interface API {
+  id: string;
   blocks: Blocks;
   caret: Caret;
   tools: Tools;
@@ -128,6 +129,7 @@ export interface API {
 declare class EditorJS {
   public static version: string;
 
+  public id: string;
   public isReady: Promise<void>;
 
   public blocks: Blocks;

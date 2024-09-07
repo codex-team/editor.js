@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import $ from './dom';
 import * as _ from './utils';
 import type { EditorConfig, SanitizerConfig } from '../../types';
@@ -12,6 +13,11 @@ import type { EditorEventMap } from './events';
  * Editor.js core class. Bootstraps modules.
  */
 export default class Core {
+  /**
+   * Editor.js instance ID
+   */
+  public id: string;
+
   /**
    * Editor configuration passed by user to the constructor
    */
@@ -36,6 +42,8 @@ export default class Core {
    * @param {EditorConfig} config - user configuration
    */
   constructor(config?: EditorConfig|string) {
+    this.id = nanoid(10);
+
     /**
      * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
