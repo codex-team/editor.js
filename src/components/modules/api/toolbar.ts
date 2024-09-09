@@ -1,4 +1,4 @@
-import { Toolbar } from '../../../../types/api';
+import type { Toolbar } from '../../../../types/api';
 import Module from '../../__module';
 import * as _ from './../../utils';
 /**

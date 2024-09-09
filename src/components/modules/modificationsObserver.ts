@@ -1,7 +1,8 @@
-import { BlockId } from '../../../types';
-import { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
-import { ModuleConfig } from '../../types-internal/module-config';
+import type { BlockId } from '../../../types';
+import type { BlockMutationEvent, BlockMutationType } from '../../../types/events/block';
+import type { ModuleConfig } from '../../types-internal/module-config';
 import Module from '../__module';
+import { modificationsObserverBatchTimeout } from '../constants';
 import { BlockChanged, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import * as _ from '../utils';
 
@@ -39,7 +40,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Fired onChange events will be batched by this time
    */
-  private readonly batchTime = 400;
+  private readonly batchTime = modificationsObserverBatchTimeout;
 
   /**
    * Prepare the module

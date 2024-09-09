@@ -1,5 +1,6 @@
 {
   "compilerOptions" : {
+    "strict": true,
     "sourceMap": true,
     "target": "es2017",
     "declaration": false,
@@ -11,6 +12,15 @@
 
     // allows to omit export default in .json files
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
-  }
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/types": [ "./types/" ],
+      "@/types/*": [ "./types/*" ],
+    },
+
+    // @todo move to cypress/tsconfig.json when cypress will support overriding tsconfig path
+    // @see https://github.com/cypress-io/cypress/issues/23045
+    "esModuleInterop": true
+  },
 }

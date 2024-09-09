@@ -1,5 +1,5 @@
-import BaseTool, { InternalBlockToolSettings, ToolType, UserSettings } from './base';
-import {
+import BaseToolAdapter, { InternalBlockToolSettings, UserSettings } from './base';
+import type {
   BlockAPI,
   BlockTool as IBlockTool,
   BlockToolConstructable,
@@ -7,30 +7,32 @@ import {
   ConversionConfig,
   PasteConfig, SanitizerConfig, ToolboxConfig,
   ToolboxConfigEntry
-} from '../../../types';
+} from '@/types';
 import * as _ from '../utils';
-import InlineTool from './inline';
-import BlockTune from './tune';
+import type InlineToolAdapter from './inline';
+import type BlockTuneAdapter from './tune';
 import ToolsCollection from './collection';
+import type { BlockToolAdapter as BlockToolAdapterInterface } from '@/types/tools/adapters/block-tool-adapter';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 
 /**
  * Class to work with Block tools constructables
  */
-export default class BlockTool extends BaseTool<IBlockTool> {
+export default class BlockToolAdapter extends BaseToolAdapter<ToolType.Block, IBlockTool> implements BlockToolAdapterInterface {
   /**
    * Tool type — Block
    */
-  public type = ToolType.Block;
+  public type: ToolType.Block = ToolType.Block;
 
   /**
    * InlineTool collection for current Block Tool
    */
-  public inlineTools: ToolsCollection<InlineTool> = new ToolsCollection<InlineTool>();
+  public inlineTools: ToolsCollection<InlineToolAdapter> = new ToolsCollection<InlineToolAdapter>();
 
   /**
    * BlockTune collection for current Block Tool
    */
-  public tunes: ToolsCollection<BlockTune> = new ToolsCollection<BlockTune>();
+  public tunes: ToolsCollection<BlockTuneAdapter> = new ToolsCollection<BlockTuneAdapter>();
 
   /**
    * Tool's constructable blueprint
@@ -50,7 +52,7 @@ export default class BlockTool extends BaseTool<IBlockTool> {
       data,
       block,
       readOnly,
-      api: this.api.getMethodsForTool(this),
+      api: this.api,
       config: this.settings,
     }) as IBlockTool;
   }

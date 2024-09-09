@@ -1,11 +1,11 @@
 import Module from '../../__module';
-import $ from '../../dom';
+import $, { calculateBaseline } from '../../dom';
 import * as _ from '../../utils';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import * as tooltip from '../../utils/tooltip';
-import { ModuleConfig } from '../../../types-internal/module-config';
-import Block from '../../block';
+import type { ModuleConfig } from '../../../types-internal/module-config';
+import type Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
@@ -220,6 +220,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     };
   }
 
+
   /**
    * Toggles read-only mode
    *
@@ -275,28 +276,83 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     const targetBlockHolder = block.holder;
     const { isMobile } = this.Editor.UI;
-    const renderedContent = block.pluginsContent;
-    const renderedContentStyle = window.getComputedStyle(renderedContent);
-    const blockRenderedElementPaddingTop = parseInt(renderedContentStyle.paddingTop, 10);
-    const blockHeight = targetBlockHolder.offsetHeight;
 
-    let toolbarY;
 
     /**
+     * 1. Mobile:
+     *  - Toolbar at the bottom of the block
+     *
+     * 2. Desktop:
+     *   There are two cases of a toolbar position:
+     *      2.1 Toolbar is moved to the top of the block (+ padding top of the block)
+     *       - when the first input is far from the top of the block, for example in Image tool
+     *       - when block has no inputs
+     *      2.2 Toolbar is moved to the baseline of the first input
+     *       - when the first input is close to the top of the block
+     */
+    let toolbarY;
+    const MAX_OFFSET = 20;
+
+    /**
+     * Compute first input position
+     */
+    const firstInput = block.firstInput;
+    const targetBlockHolderRect = targetBlockHolder.getBoundingClientRect();
+    const firstInputRect = firstInput !== undefined ? firstInput.getBoundingClientRect() : null;
+
+    /**
+     * Compute the offset of the first input from the top of the block
+     */
+    const firstInputOffset = firstInputRect !== null ? firstInputRect.top - targetBlockHolderRect.top : null;
+
+    /**
+     * Check if the first input is far from the top of the block
+     */
+    const isFirstInputFarFromTop = firstInputOffset !== null ? firstInputOffset > MAX_OFFSET : undefined;
+
+    /**
+     * Case 1.
      * On mobile — Toolbar at the bottom of Block
-     * On Desktop — Toolbar should be moved to the first line of block text
-     *              To do that, we compute the block offset and the padding-top of the plugin content
      */
     if (isMobile) {
-      toolbarY = targetBlockHolder.offsetTop + blockHeight;
+      toolbarY = targetBlockHolder.offsetTop + targetBlockHolder.offsetHeight;
+
+    /**
+     * Case 2.1
+     * On Desktop — without inputs or with the first input far from the top of the block
+     *            Toolbar should be moved to the top of the block
+     */
+    } else if (firstInput === undefined || isFirstInputFarFromTop) {
+      const pluginContentOffset = parseInt(window.getComputedStyle(block.pluginsContent).paddingTop);
+
+      const paddingTopBasedY = targetBlockHolder.offsetTop + pluginContentOffset;
+
+      toolbarY = paddingTopBasedY;
+
+    /**
+     * Case 2.2
+     * On Desktop — Toolbar should be moved to the baseline of the first input
+     */
     } else {
-      toolbarY = targetBlockHolder.offsetTop + blockRenderedElementPaddingTop;
+      const baseline = calculateBaseline(firstInput);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const toolbarActionsHeight =  parseInt(window.getComputedStyle(this.nodes.plusButton!).height, 10);
+      /**
+       * Visual padding inside the SVG icon
+       */
+      const toolbarActionsPaddingBottom = 8;
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const baselineBasedY = targetBlockHolder.offsetTop + baseline - toolbarActionsHeight + toolbarActionsPaddingBottom + firstInputOffset!;
+
+      toolbarY = baselineBasedY;
     }
 
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.top = `${Math.floor(toolbarY)}px`;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.nodes.wrapper!.style.top = `${Math.floor(toolbarY)}px`;
 
     /**
      * Do not show Block Tunes Toggler near single and empty block
@@ -479,8 +535,9 @@ export default class Toolbar extends Module<ToolbarNodes> {
       }
     });
 
-    return this.toolboxInstance.make();
+    return this.toolboxInstance.getElement();
   }
+
 
   /**
    * Handler for Plus Button

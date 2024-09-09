@@ -1,6 +1,6 @@
-import { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
-import EditorJS from '../../../../types';
-import { HTMLPasteEvent, TunesMenuConfig } from '../../../../types/tools';
+import type { ToolboxConfig, BlockToolData, ToolboxConfigEntry, PasteConfig } from '../../../../types';
+import type EditorJS from '../../../../types';
+import type { HTMLPasteEvent, TunesMenuConfig } from '../../../../types/tools';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -39,11 +39,11 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool]')
+        .get('.ce-popover-item[data-item-name=testTool]')
         .should('have.length', 1);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool] .ce-popover-item__icon')
+        .get('.ce-popover-item[data-item-name=testTool] .ce-popover-item__icon')
         .should('contain.html', TestTool.toolbox.icon);
     });
 
@@ -84,16 +84,16 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool]')
+        .get('.ce-popover-item[data-item-name=testTool]')
         .should('have.length', 2);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool]')
+        .get('.ce-popover-item[data-item-name=testTool]')
         .first()
         .should('contain.text', TestTool.toolbox[0].title);
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool]')
+        .get('.ce-popover-item[data-item-name=testTool]')
         .last()
         .should('contain.text', TestTool.toolbox[1].title);
     });
@@ -173,7 +173,7 @@ describe('Editor Tools Api', () => {
         .click();
 
       cy.get('[data-cy=editorjs]')
-        .get('div.ce-popover-item[data-item-name=testTool]')
+        .get('.ce-popover-item[data-item-name=testTool]')
         .click();
 
       cy.get('[data-cy=editorjs]')

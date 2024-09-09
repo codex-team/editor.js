@@ -1,15 +1,16 @@
 import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
-import { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
+import type { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import ConvertInlineTool from '../inline-tools/inline-tool-convert';
 import Stub from '../../tools/stub';
 import ToolsFactory from '../tools/factory';
-import InlineTool from '../tools/inline';
-import BlockTool from '../tools/block';
-import BlockTune from '../tools/tune';
+import type InlineToolAdapter from '../tools/inline';
+import type BlockToolAdapter from '../tools/block';
+import type BlockTuneAdapter from '../tools/tune';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveUpTune from '../block-tunes/block-tune-move-up';
@@ -50,14 +51,14 @@ export default class Tools extends Module {
   /**
    * Return Tools for the Inline Toolbar
    */
-  public get inlineTools(): ToolsCollection<InlineTool> {
+  public get inlineTools(): ToolsCollection<InlineToolAdapter> {
     return this.available.inlineTools;
   }
 
   /**
    * Return editor block tools
    */
-  public get blockTools(): ToolsCollection<BlockTool> {
+  public get blockTools(): ToolsCollection<BlockToolAdapter> {
     return this.available.blockTools;
   }
 
@@ -66,14 +67,14 @@ export default class Tools extends Module {
    *
    * @returns {object} - object of Inline Tool's classes
    */
-  public get blockTunes(): ToolsCollection<BlockTune> {
+  public get blockTunes(): ToolsCollection<BlockTuneAdapter> {
     return this.available.blockTunes;
   }
 
   /**
    * Returns default Tool object
    */
-  public get defaultTool(): BlockTool {
+  public get defaultTool(): BlockToolAdapter {
     return this.blockTools.get(this.config.defaultBlock);
   }
 
@@ -176,16 +177,20 @@ export default class Tools extends Module {
    */
   private get internalTools(): { [toolName: string]: ToolConstructable | ToolSettings & { isInternal?: boolean } } {
     return {
+      convertTo: {
+        class: ConvertInlineTool,
+        isInternal: true,
+      },
+      link: {
+        class: LinkInlineTool,
+        isInternal: true,
+      },
       bold: {
         class: BoldInlineTool,
         isInternal: true,
       },
       italic: {
         class: ItalicInlineTool,
-        isInternal: true,
-      },
-      link: {
-        class: LinkInlineTool,
         isInternal: true,
       },
       paragraph: {
@@ -224,7 +229,7 @@ export default class Tools extends Module {
       /**
        * Some Tools validation
        */
-      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+      const inlineToolRequiredMethods = [ 'render' ];
       const notImplementedMethods = inlineToolRequiredMethods.filter((method) => !tool.create()[method]);
 
       if (notImplementedMethods.length) {
@@ -298,7 +303,7 @@ export default class Tools extends Module {
    *
    * @param tool - Block Tool
    */
-  private assignInlineToolsToBlockTool(tool: BlockTool): void {
+  private assignInlineToolsToBlockTool(tool: BlockToolAdapter): void {
     /**
      * If common inlineToolbar property is false no Inline Tools should be assigned
      */
@@ -312,7 +317,7 @@ export default class Tools extends Module {
      * - if common settings is 'true' or not specified, get default order
      */
     if (tool.enabledInlineTools === true) {
-      tool.inlineTools = new ToolsCollection<InlineTool>(
+      tool.inlineTools = new ToolsCollection<InlineToolAdapter>(
         Array.isArray(this.config.inlineToolbar)
           ? this.config.inlineToolbar.map(name => [name, this.inlineTools.get(name)])
           /**
@@ -328,8 +333,9 @@ export default class Tools extends Module {
      * If user pass the list of inline tools for the particular tool, return it.
      */
     if (Array.isArray(tool.enabledInlineTools)) {
-      tool.inlineTools = new ToolsCollection<InlineTool>(
-        tool.enabledInlineTools.map(name => [name, this.inlineTools.get(name)])
+      tool.inlineTools = new ToolsCollection<InlineToolAdapter>(
+        /** Prepend ConvertTo Inline Tool */
+        ['convertTo', ...tool.enabledInlineTools].map(name => [name, this.inlineTools.get(name)])
       );
     }
   }
@@ -339,27 +345,27 @@ export default class Tools extends Module {
    *
    * @param tool — Block Tool
    */
-  private assignBlockTunesToBlockTool(tool: BlockTool): void {
+  private assignBlockTunesToBlockTool(tool: BlockToolAdapter): void {
     if (tool.enabledBlockTunes === false) {
       return;
     }
 
     if (Array.isArray(tool.enabledBlockTunes)) {
-      const userTunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTuneAdapter>(
         tool.enabledBlockTunes.map(name => [name, this.blockTunes.get(name)])
       );
 
-      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
+      tool.tunes = new ToolsCollection<BlockTuneAdapter>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }
 
     if (Array.isArray(this.config.tunes)) {
-      const userTunes = new ToolsCollection<BlockTune>(
+      const userTunes = new ToolsCollection<BlockTuneAdapter>(
         this.config.tunes.map(name => [name, this.blockTunes.get(name)])
       );
 
-      tool.tunes = new ToolsCollection<BlockTune>([...userTunes, ...this.blockTunes.internalTools]);
+      tool.tunes = new ToolsCollection<BlockTuneAdapter>([...userTunes, ...this.blockTunes.internalTools]);
 
       return;
     }

@@ -1,6 +1,7 @@
 import type EditorJS from '../../../../types/index';
-import { ConversionConfig, ToolboxConfig } from '../../../../types';
+import type { ConversionConfig, ToolboxConfig } from '../../../../types';
 import ToolMock from '../../fixtures/tools/ToolMock';
+import { nanoid } from 'nanoid';
 
 /**
  * There will be described test cases of 'blocks.*' API
@@ -100,6 +101,93 @@ describe('api.blocks', () => {
           });
         });
       });
+    });
+
+    it('should update tune data when it is provided', () => {
+      /**
+       * Example Tune Class
+       */
+      class ExampleTune {
+        protected data: object;
+        /**
+         *
+         * @param data
+         */
+        constructor({ data }) {
+          this.data = data;
+        }
+
+        /**
+         * Tell editor.js that this Tool is a Block Tune
+         *
+         * @returns {boolean}
+         */
+        public static get isTune(): boolean {
+          return true;
+        }
+
+        /**
+         * Create Tunes controls wrapper that will be appended to the Block Tunes panel
+         *
+         * @returns {Element}
+         */
+        public render(): Element {
+          return document.createElement('div');
+        }
+
+        /**
+         * CSS selectors used in Tune
+         */
+        public static get CSS(): object {
+          return {};
+        }
+
+        /**
+         * Returns Tune state
+         *
+         * @returns {string}
+         */
+        public save(): object | string {
+          return this.data || '';
+        }
+      }
+
+
+      cy.createEditor({
+        tools: {
+          exampleTune: ExampleTune,
+        },
+        tunes: [ 'exampleTune' ],
+        data: {
+          blocks: [
+            {
+              id: nanoid(),
+              type: 'paragraph',
+              data: {
+                text: 'First block',
+              },
+              tunes: {
+                exampleTune: 'citation',
+              },
+            },
+          ],
+        },
+      }).as('editorInstance');
+
+      // Update the tunes data of a block
+      // Check if it is updated
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          await editor.blocks.update(editor.blocks.getBlockByIndex(0).id, null, {
+            exampleTune: 'test',
+          });
+          const data = await editor.save();
+
+          const actual = JSON.stringify(data.blocks[0].tunes);
+          const expected = JSON.stringify({ exampleTune: 'test' });
+
+          expect(actual).to.eq(expected);
+        });
     });
 
     /**
@@ -202,7 +290,7 @@ describe('api.blocks', () => {
   });
 
   describe('.convert()', function () {
-    it('should convert a Block to another type if original Tool has "conversionConfig.export" and target Tool has "conversionConfig.import"', function () {
+    it('should convert a Block to another type if original Tool has "conversionConfig.export" and target Tool has "conversionConfig.import". Should return BlockAPI as well.', function () {
       /**
        * Mock of Tool with conversionConfig
        */
@@ -246,20 +334,28 @@ describe('api.blocks', () => {
             existingBlock,
           ],
         },
-      }).then((editor) => {
+      }).then(async (editor) => {
         const { convert } = editor.blocks;
 
-        convert(existingBlock.id, 'convertableTool');
+        const returnValue = await convert(existingBlock.id, 'convertableTool');
 
         // wait for block to be converted
-        cy.wait(100).then(() => {
+        cy.wait(100).then(async () => {
           /**
            * Check that block was converted
            */
-          editor.save().then(( { blocks }) => {
-            expect(blocks.length).to.eq(1);
-            expect(blocks[0].type).to.eq('convertableTool');
-            expect(blocks[0].data.text).to.eq(existingBlock.data.text);
+          const { blocks } = await editor.save();
+
+          expect(blocks.length).to.eq(1);
+          expect(blocks[0].type).to.eq('convertableTool');
+          expect(blocks[0].data.text).to.eq(existingBlock.data.text);
+
+          /**
+           * Check that returned value is BlockAPI
+           */
+          expect(returnValue).to.containSubset({
+            name: 'convertableTool',
+            id: blocks[0].id,
           });
         });
       });
@@ -274,9 +370,10 @@ describe('api.blocks', () => {
           const fakeId = 'WRNG_ID';
           const { convert } = editor.blocks;
 
-          const exec = (): void => convert(fakeId, 'convertableTool');
-
-          expect(exec).to.throw(`Block with id "${fakeId}" not found`);
+          return convert(fakeId, 'convertableTool')
+            .catch((error) => {
+              expect(error.message).to.be.eq(`Block with id "${fakeId}" not found`);
+            });
         });
     });
 
@@ -302,9 +399,10 @@ describe('api.blocks', () => {
         const nonexistingToolName = 'WRNG_TOOL_NAME';
         const { convert } = editor.blocks;
 
-        const exec = (): void => convert(existingBlock.id, nonexistingToolName);
-
-        expect(exec).to.throw(`Block Tool with type "${nonexistingToolName}" not found`);
+        return convert(existingBlock.id, nonexistingToolName)
+          .catch((error) => {
+            expect(error.message).to.be.eq(`Block Tool with type "${nonexistingToolName}" not found`);
+          });
       });
     });
 
@@ -340,9 +438,10 @@ describe('api.blocks', () => {
          */
         const { convert } = editor.blocks;
 
-        const exec = (): void => convert(existingBlock.id, 'nonConvertableTool');
-
-        expect(exec).to.throw(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
+        return convert(existingBlock.id, 'nonConvertableTool')
+          .catch((error) => {
+            expect(error.message).to.be.eq(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
+          });
       });
     });
   });

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* tslint:disable:max-classes-per-file */
-import { ToolSettings } from '../../../../types';
-import { ToolType } from '../../../../src/components/tools/base';
-import BlockTune from '../../../../src/components/tools/tune';
-import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
+import type { ToolSettings } from '@/types';
+import { ToolType } from '@/types/tools/adapters/tool-type';
+import BlockTuneAdapter from '../../../../src/components/tools/tune';
+import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
 
 describe('BlockTune', () => {
   /**
@@ -36,12 +36,8 @@ describe('BlockTune', () => {
       shortcut: 'CMD+SHIFT+B',
     },
     api: {
-      getMethodsForTool(): object {
-        return {
-          prop1: 'prop1',
-          prop2: 'prop2',
-        };
-      },
+      prop1: 'prop1',
+      prop2: 'prop2',
     },
     isDefault: false,
     isInternal: false,
@@ -49,20 +45,20 @@ describe('BlockTune', () => {
   };
 
   it('.type should return ToolType.Tune', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.type).to.be.eq(ToolType.Tune);
   });
 
   it('.name should return correct value', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.name).to.be.eq(options.name);
   });
 
   it('.isInternal should return correct value', () => {
-    const tool1 = new BlockTune(options as any);
-    const tool2 = new BlockTune({
+    const tool1 = new BlockTuneAdapter(options as any);
+    const tool2 = new BlockTuneAdapter({
       ...options,
       isInternal: true,
     } as any);
@@ -72,25 +68,25 @@ describe('BlockTune', () => {
   });
 
   it('.settings should return correct value', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.settings).to.be.deep.eq(options.config.config);
   });
 
   it('.isBlock() should return false', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.isBlock()).to.be.false;
   });
 
   it('.isInline() should return false', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.isInline()).to.be.false;
   });
 
   it('.isTune() should return true', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
 
     expect(tool.isTune()).to.be.true;
   });
@@ -98,7 +94,7 @@ describe('BlockTune', () => {
   context('.prepare()', () => {
     it('should call Tool prepare method', () => {
       options.constructable.prepare = cy.stub();
-      const tool = new BlockTune(options as any);
+      const tool = new BlockTuneAdapter(options as any);
 
       tool.prepare();
 
@@ -109,7 +105,7 @@ describe('BlockTune', () => {
     });
 
     it('should not fail if Tool prepare method is not exist', () => {
-      const tool = new BlockTune({
+      const tool = new BlockTuneAdapter({
         ...options,
         constructable: {},
       } as any);
@@ -121,7 +117,7 @@ describe('BlockTune', () => {
   context('.reset()', () => {
     it('should call Tool reset method', () => {
       options.constructable.reset = cy.stub();
-      const tool = new BlockTune(options as any);
+      const tool = new BlockTuneAdapter(options as any);
 
       tool.reset();
 
@@ -129,7 +125,7 @@ describe('BlockTune', () => {
     });
 
     it('should not fail if Tool reset method is not exist', () => {
-      const tool = new BlockTune({
+      const tool = new BlockTuneAdapter({
         ...options,
         constructable: {},
       } as any);
@@ -139,7 +135,7 @@ describe('BlockTune', () => {
   });
 
   context('.create()', () => {
-    const tool = new BlockTune(options as any);
+    const tool = new BlockTuneAdapter(options as any);
     const data = { text: 'text' };
     const blockAPI = {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -165,7 +161,7 @@ describe('BlockTune', () => {
     it('should return Tool instance with passed API object', () => {
       const instance = tool.create(data, blockAPI as any) as any;
 
-      expect(instance.api).to.be.deep.eq(options.api.getMethodsForTool());
+      expect(instance.api).to.be.deep.eq(options.api);
     });
 
     it('should return Tool instance with passed settings', () => {

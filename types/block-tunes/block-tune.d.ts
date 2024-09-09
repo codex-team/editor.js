@@ -1,15 +1,17 @@
 import {API, BlockAPI, SanitizerConfig, ToolConfig} from '../index';
 import { BlockTuneData } from './block-tune-data';
-import { TunesMenuConfig } from '../tools';
+import { MenuConfig } from '../tools';
 
 /**
  * Describes BLockTune blueprint
  */
 export interface BlockTune {
   /**
-   * Returns block tune HTMLElement
+   * Returns BlockTune's UI.
+   * Should return either MenuConfig (recommended) (@see https://editorjs.io/menu-config/)
+   * or HTMLElement (UI consitency is not guaranteed)
    */
-  render(): HTMLElement | TunesMenuConfig;
+  render(): HTMLElement | MenuConfig;
 
   /**
    * Method called on Tool render. Pass Tool content as an argument.
@@ -17,8 +19,6 @@ export interface BlockTune {
    * You can wrap Tool's content with any wrapper you want to provide Tune's UI
    *
    * @param {HTMLElement} pluginsContent — Tool's content wrapper
-   *
-   * @return {HTMLElement}
    */
   wrap?(pluginsContent: HTMLElement): HTMLElement;
 

@@ -5,13 +5,13 @@
  * @version 1.0.0
  */
 import Module from '../__module';
-import Block from '../block';
+import type Block from '../block';
 import * as _ from '../utils';
 import $ from '../dom';
 import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
-import { SanitizerConfig } from '../../../types/configs';
+import type { SanitizerConfig } from '../../../types/configs';
 import { clean } from '../utils/sanitizer';
 
 /**
@@ -431,11 +431,6 @@ export default class BlockSelection extends Module {
        */
       this.needToSelectAll = false;
       this.readyToBlockSelection = false;
-
-      /**
-       * Close ConversionToolbar when all Blocks selected
-       */
-      this.Editor.ConversionToolbar.close();
     } else if (this.readyToBlockSelection) {
       /**
        * prevent default selection when we use custom selection

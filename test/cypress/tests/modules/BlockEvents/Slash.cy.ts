@@ -1,6 +1,6 @@
 describe('Slash keydown', function () {
   describe('pressed in empty block', function () {
-    it('should open Toolbox', () => {
+    it('should add "/" in a block and open Toolbox', () => {
       cy.createEditor({
         data: {
           blocks: [
@@ -19,7 +19,15 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"] .ce-popover')
+      /**
+       * Block content should contain slash
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .invoke('text')
+        .should('eq', '/');
+
+      cy.get('[data-cy="toolbox"] .ce-popover__container')
         .should('be.visible');
     });
 
@@ -46,7 +54,7 @@ describe('Slash keydown', function () {
           .click()
           .type(`{${key}}/`);
 
-        cy.get('[data-cy="toolbox"] .ce-popover')
+        cy.get('[data-cy="toolbox"] .ce-popover__container')
           .should('not.be.visible');
       });
     });
@@ -72,7 +80,7 @@ describe('Slash keydown', function () {
         .click()
         .type('/');
 
-      cy.get('[data-cy="toolbox"] .ce-popover')
+      cy.get('[data-cy="toolbox"] .ce-popover__container')
         .should('not.be.visible');
 
       /**
@@ -106,7 +114,7 @@ describe('CMD+Slash keydown', function () {
       .click()
       .type('{cmd}/');
 
-    cy.get('[data-cy="block-tunes"] .ce-popover')
+    cy.get('[data-cy="block-tunes"] .ce-popover__container')
       .should('be.visible');
   });
 });

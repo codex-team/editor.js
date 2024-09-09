@@ -1,17 +1,19 @@
-import BaseTool, { ToolType } from './base';
-import { BlockAPI, BlockTune as IBlockTune, BlockTuneConstructable } from '../../../types';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import BaseToolAdapter from './base';
+import type { BlockAPI, BlockTune as IBlockTune, BlockTuneConstructable } from '@/types';
+import type { BlockTuneData } from '@/types/block-tunes/block-tune-data';
+import type { BlockTuneAdapter as BlockTuneAdapterInterface } from '@/types/tools/adapters/block-tune-adapter';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 
 /**
  * Stub class for BlockTunes
  *
  * @todo Implement
  */
-export default class BlockTune extends BaseTool<IBlockTune> {
+export default class BlockTuneAdapter extends BaseToolAdapter<ToolType.Tune, IBlockTune> implements BlockTuneAdapterInterface {
   /**
    * Tool type — Tune
    */
-  public type = ToolType.Tune;
+  public type: ToolType.Tune = ToolType.Tune;
 
   /**
    * Tool's constructable blueprint
@@ -27,7 +29,7 @@ export default class BlockTune extends BaseTool<IBlockTune> {
   public create(data: BlockTuneData, block: BlockAPI): IBlockTune {
     // eslint-disable-next-line new-cap
     return new this.constructable({
-      api: this.api.getMethodsForTool(this),
+      api: this.api,
       config: this.settings,
       block,
       data,

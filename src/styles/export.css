@@ -39,9 +39,29 @@
  * @deprecated - use tunes config instead of creating html element with controls
  */
 .cdx-settings-button {
-  @apply --toolbar-button;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 3px;
+  cursor: pointer;
+  border: 0;
+  outline: none;
+  background-color: transparent;
+  vertical-align: bottom;
+  color: inherit;
+  margin: 0;
   min-width: var(--toolbox-buttons-size);
   min-height: var(--toolbox-buttons-size);
+
+  &--focused {
+    @apply --button-focused;
+
+    &-animated {
+      animation-name: buttonClicked;
+      animation-duration: 250ms;
+    }
+  }
 
   &--active {
     color: var(--color-active-icon);
@@ -50,12 +70,23 @@
   svg {
     width: auto;
     height: auto;
+
+    @media (--mobile) {
+      width: var(--icon-size--mobile);
+      height: var(--icon-size--mobile);
+    }
   }
 
   @media (--mobile) {
     width: var(--toolbox-buttons-size--mobile);
     height: var(--toolbox-buttons-size--mobile);
     border-radius: 8px;
+  }
+
+  @media (--can-hover) {
+    &:hover {
+      background-color: var(--bg-light);
+    }
   }
 }
 

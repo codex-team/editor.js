@@ -1,7 +1,8 @@
 import * as _ from './utils';
 import $ from './dom';
-import Block, { BlockToolAPI } from './block';
-import { MoveEvent } from '../../types/tools';
+import type Block from './block';
+import { BlockToolAPI } from './block';
+import type { MoveEvent } from '../../types/tools';
 
 /**
  * @class Blocks

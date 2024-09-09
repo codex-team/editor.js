@@ -1,10 +1,11 @@
-import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
-import { BlockToolData, OutputBlockData, OutputData, ToolConfig } from '../../../../types';
+import type { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
+import type { BlockToolData, OutputBlockData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
-import { capitalize } from './../../utils';
+import { capitalize } from '../../utils';
+import type { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 
 /**
  * @class BlocksAPI
@@ -29,6 +30,7 @@ export default class BlocksAPI extends Module {
       getCurrentBlockIndex: (): number => this.getCurrentBlockIndex(),
       getBlockIndex: (id: string): number => this.getBlockIndex(id),
       getBlocksCount: (): number => this.getBlocksCount(),
+      getBlockByElement: (element: HTMLElement) => this.getBlockByElement(element),
       stretchBlock: (index: number, status = true): void => this.stretchBlock(index, status),
       insertNewBlock: (): void => this.insertNewBlock(),
       insert: this.insert,
@@ -103,6 +105,23 @@ export default class BlocksAPI extends Module {
       _.logLabeled('There is no block with id `' + id + '`', 'warn');
 
       return null;
+    }
+
+    return new BlockAPI(block);
+  }
+
+  /**
+   * Get Block API object by any child html element
+   *
+   * @param element - html element to get Block by
+   */
+  public getBlockByElement(element: HTMLElement): BlockAPIInterface | undefined {
+    const block = this.Editor.BlockManager.getBlock(element);
+
+    if (block === undefined) {
+      _.logLabeled('There is no block corresponding to element `' + element + '`', 'warn');
+
+      return;
     }
 
     return new BlockAPI(block);
@@ -302,9 +321,10 @@ export default class BlocksAPI extends Module {
    * Updates block data by id
    *
    * @param id - id of the block to update
-   * @param data - the new data
+   * @param data - (optional) the new data
+   * @param tunes - (optional) tune data
    */
-  public update = async (id: string, data: Partial<BlockToolData>): Promise<BlockAPIInterface> => {
+  public update = async (id: string, data?: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<BlockAPIInterface> => {
     const { BlockManager } = this.Editor;
     const block = BlockManager.getBlockById(id);
 
@@ -312,7 +332,7 @@ export default class BlocksAPI extends Module {
       throw new Error(`Block with id "${id}" not found`);
     }
 
-    const updatedBlock = await BlockManager.update(block, data);
+    const updatedBlock = await BlockManager.update(block, data, tunes);
 
     // we cast to any because our BlockAPI has no "new" signature
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -327,7 +347,7 @@ export default class BlocksAPI extends Module {
    * @param dataOverrides - optional data overrides for the new block
    * @throws Error if conversion is not possible
    */
-  private convert = (id: string, newType: string, dataOverrides?: BlockToolData): void => {
+  private convert = async (id: string, newType: string, dataOverrides?: BlockToolData): Promise<BlockAPIInterface> => {
     const { BlockManager, Tools } = this.Editor;
     const blockToConvert = BlockManager.getBlockById(id);
 
@@ -346,7 +366,9 @@ export default class BlocksAPI extends Module {
     const targetBlockConvertable = targetBlockTool.conversionConfig?.import !== undefined;
 
     if (originalBlockConvertable && targetBlockConvertable) {
-      BlockManager.convert(blockToConvert, newType, dataOverrides);
+      const newBlock = await BlockManager.convert(blockToConvert, newType, dataOverrides);
+
+      return new BlockAPI(newBlock);
     } else {
       const unsupportedBlockTypes = [
         !originalBlockConvertable ? capitalize(blockToConvert.name) : false,

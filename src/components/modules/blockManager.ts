@@ -9,10 +9,10 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import { BlockToolData, PasteEvent } from '../../../types';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import type { BlockToolData, PasteEvent } from '../../../types';
+import type { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
-import { BlockMutationEventMap, BlockMutationType } from '../../../types/events/block';
+import type { BlockMutationEventMap, BlockMutationType } from '../../../types/events/block';
 import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
@@ -337,19 +337,26 @@ export default class BlockManager extends Module {
    * Update Block data.
    *
    * Currently we don't have an 'update' method in the Tools API, so we just create a new block with the same id and type
-   * Should not trigger 'block-removed' or 'block-added' events
+   * Should not trigger 'block-removed' or 'block-added' events.
+   *
+   * If neither data nor tunes is provided, return the provided block instead.
    *
    * @param block - block to update
-   * @param data - new data
+   * @param data - (optional) new data
+   * @param tunes - (optional) tune data
    */
-  public async update(block: Block, data: Partial<BlockToolData>): Promise<Block> {
+  public async update(block: Block, data?: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<Block> {
+    if (!data && !tunes) {
+      return block;
+    }
+
     const existingData = await block.data;
 
     const newBlock = this.composeBlock({
       id: block.id,
       tool: block.name,
-      data: Object.assign({}, existingData, data),
-      tunes: block.tunes,
+      data: Object.assign({}, existingData, data ?? {}),
+      tunes: tunes ?? block.tunes,
     });
 
     const blockIndex = this.getBlockIndex(block);
@@ -370,10 +377,10 @@ export default class BlockManager extends Module {
    * @param newTool - new Tool name
    * @param data - new Tool data
    */
-  public replace(block: Block, newTool: string, data: BlockToolData): void {
+  public replace(block: Block, newTool: string, data: BlockToolData): Block {
     const blockIndex = this.getBlockIndex(block);
 
-    this.insert({
+    return this.insert({
       tool: newTool,
       data,
       index: blockIndex,
@@ -544,7 +551,7 @@ export default class BlockManager extends Module {
        * If first Block was removed, insert new Initial Block and set focus on it`s first input
        */
       if (!this.blocks.length) {
-        this.currentBlockIndex = -1;
+        this.unsetCurrentBlock();
 
         if (addLastBlock) {
           this.insert();
@@ -591,7 +598,7 @@ export default class BlockManager extends Module {
       this._blocks.remove(index);
     }
 
-    this.currentBlockIndex = -1;
+    this.unsetCurrentBlock();
     this.insert();
     this.currentBlock.firstInput.focus();
   }
@@ -821,7 +828,7 @@ export default class BlockManager extends Module {
    * @param targetToolName - name of the Tool to convert to
    * @param blockDataOverrides - optional new Block data overrides
    */
-  public async convert(blockToConvert: Block, targetToolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
+  public async convert(blockToConvert: Block, targetToolName: string, blockDataOverrides?: BlockToolData): Promise<Block> {
     /**
      * At first, we get current Block data
      */
@@ -866,14 +873,14 @@ export default class BlockManager extends Module {
       newBlockData = Object.assign(newBlockData, blockDataOverrides);
     }
 
-    this.replace(blockToConvert, replacingTool.name, newBlockData);
+    return this.replace(blockToConvert, replacingTool.name, newBlockData);
   }
 
   /**
    * Sets current Block Index -1 which means unknown
    * and clear highlights
    */
-  public dropPointer(): void {
+  public unsetCurrentBlock(): void {
     this.currentBlockIndex = -1;
   }
 
@@ -895,7 +902,7 @@ export default class BlockManager extends Module {
 
     await queue.completed;
 
-    this.dropPointer();
+    this.unsetCurrentBlock();
 
     if (needToAddDefaultBlock) {
       this.insert();

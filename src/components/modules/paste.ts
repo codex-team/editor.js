@@ -1,17 +1,17 @@
 import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
-import {
+import type {
   BlockAPI,
   PasteEvent,
   PasteEventDetail,
   SanitizerConfig,
   SanitizerRule
 } from '../../../types';
-import Block from '../block';
-import { SavedData } from '../../../types/data-formats';
+import type Block from '../block';
+import type { SavedData } from '../../../types/data-formats';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
-import BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 
 /**
  * Tag substitute object.
@@ -21,7 +21,7 @@ interface TagSubstitute {
    * Name of related Tool
    *
    */
-  tool: BlockTool;
+  tool: BlockToolAdapter;
 
   /**
    * If a Tool specifies just a tag name, all the attributes will be sanitized.
@@ -47,7 +47,7 @@ interface PatternSubstitute {
   /**
    * Name of related Tool
    */
-  tool: BlockTool;
+  tool: BlockToolAdapter;
 }
 
 /**
@@ -290,7 +290,7 @@ export default class Paste extends Module {
    *
    * @param tool - BlockTool object
    */
-  private processTool = (tool: BlockTool): void => {
+  private processTool = (tool: BlockToolAdapter): void => {
     try {
       const toolInstance = tool.create({}, {} as BlockAPI, false);
 
@@ -345,7 +345,7 @@ export default class Paste extends Module {
    *
    * @param tool - BlockTool object
    */
-  private getTagsConfig(tool: BlockTool): void {
+  private getTagsConfig(tool: BlockToolAdapter): void {
     if (tool.pasteConfig === false) {
       return;
     }
@@ -390,7 +390,7 @@ export default class Paste extends Module {
    *
    * @param tool - BlockTool object
    */
-  private getFilesConfig(tool: BlockTool): void {
+  private getFilesConfig(tool: BlockToolAdapter): void {
     if (tool.pasteConfig === false) {
       return;
     }
@@ -435,7 +435,7 @@ export default class Paste extends Module {
    *
    * @param tool - BlockTool object
    */
-  private getPatternsConfig(tool: BlockTool): void {
+  private getPatternsConfig(tool: BlockToolAdapter): void {
     if (
       tool.pasteConfig === false ||
       !tool.pasteConfig.patterns ||

@@ -1,4 +1,4 @@
-import {
+import type {
   BlockAPI as BlockAPIInterface,
   BlockTool as IBlockTool,
   BlockToolData,
@@ -6,26 +6,28 @@ import {
   SanitizerConfig,
   ToolConfig,
   ToolboxConfigEntry,
-  PopoverItem
+  PopoverItemParams
 } from '../../../types';
 
-import { SavedData } from '../../../types/data-formats';
-import $ from '../dom';
+import type { SavedData } from '../../../types/data-formats';
+import $, { toggleEmptyMark } from '../dom';
 import * as _ from '../utils';
-import ApiModules from '../modules/api';
+import type ApiModules from '../modules/api';
 import BlockAPI from './api';
 import SelectionUtils from '../selection';
-import BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 
-import BlockTune from '../tools/tune';
-import { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
-import ToolsCollection from '../tools/collection';
+import type BlockTuneAdapter from '../tools/tune';
+import type { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
+import type ToolsCollection from '../tools/collection';
 import EventsDispatcher from '../utils/events';
-import { TunesMenuConfigItem } from '../../../types/tools';
+import type { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
-import { EditorEventMap, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
-import { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
-import { convertBlockDataToString } from '../utils/blocks';
+import type { EditorEventMap } from '../events';
+import { FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
+import type { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
+import { convertBlockDataToString, isSameBlockData } from '../utils/blocks';
+import { PopoverItemType } from '@/types/utils/popover/popover-item-type';
 
 /**
  * Interface describes Block class constructor argument
@@ -44,7 +46,7 @@ interface BlockConstructorOptions {
   /**
    * Tool object
    */
-  tool: BlockTool;
+  tool: BlockToolAdapter;
 
   /**
    * Editor's API methods
@@ -129,7 +131,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Instance of the Tool Block represents
    */
-  public readonly tool: BlockTool;
+  public readonly tool: BlockToolAdapter;
 
   /**
    * User Tool configuration
@@ -144,7 +146,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   /**
    * Tunes used by Tool
    */
-  public readonly tunes: ToolsCollection<BlockTune>;
+  public readonly tunes: ToolsCollection<BlockTuneAdapter>;
 
   /**
    * Tool's user configuration
@@ -153,8 +155,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Cached inputs
-   *
-   * @type {HTMLElement[]}
    */
   private cachedInputs: HTMLElement[] = [];
 
@@ -183,11 +183,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * we will store it here and provide back on save so data is not lost
    */
   private unavailableTunesData: { [name: string]: BlockTuneData } = {};
-
-  /**
-   * Editor`s API module
-   */
-  private readonly api: ApiModules;
 
   /**
    * Focused input index
@@ -224,17 +219,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     id = _.generateBlockId(),
     data,
     tool,
-    api,
     readOnly,
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
-
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
     this.config = tool.settings.config || {};
-    this.api = api;
     this.editorEventBus = eventBus || null;
     this.blockAPI = new BlockAPI(this);
 
@@ -242,7 +234,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.toolInstance = tool.create(data, this.blockAPI, readOnly);
 
     /**
-     * @type {BlockTune[]}
+     * @type {BlockTuneAdapter[]}
      */
     this.tunes = tool.tunes;
 
@@ -264,13 +256,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
        * so we need to track focus events to update current input and clear cache.
        */
       this.addInputEvents();
+
+      /**
+       * We mark inputs with [data-empty] attribute
+       * It can be useful for developers, for example for correct placeholder behavior
+       */
+      this.toggleInputsEmptyMark();
     });
   }
 
   /**
    * Find and return all editable elements (contenteditable and native inputs) in the Tool HTML
-   *
-   * @returns {HTMLElement[]}
    */
   public get inputs(): HTMLElement[] {
     /**
@@ -299,19 +295,18 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return current Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get currentInput(): HTMLElement | Node {
+  public get currentInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex];
   }
 
   /**
    * Set input index to the passed element
    *
-   * @param {HTMLElement | Node} element - HTML Element to set as current input
+   * @param element - HTML Element to set as current input
    */
-  public set currentInput(element: HTMLElement | Node) {
+  public set currentInput(element: HTMLElement) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -321,19 +316,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get firstInput(): HTMLElement {
+  public get firstInput(): HTMLElement | undefined {
     return this.inputs[0];
   }
 
   /**
    * Return first Tool`s input
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get lastInput(): HTMLElement {
+  public get lastInput(): HTMLElement | undefined {
     const inputs = this.inputs;
 
     return inputs[inputs.length - 1];
@@ -341,19 +334,17 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
   /**
    * Return next Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get nextInput(): HTMLElement {
+  public get nextInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex + 1];
   }
 
   /**
    * Return previous Tool`s input or undefined if it doesn't exist
-   *
-   * @returns {HTMLElement}
+   * If Block doesn't contain inputs, return undefined
    */
-  public get previousInput(): HTMLElement {
+  public get previousInput(): HTMLElement | undefined {
     return this.inputs[this.inputIndex - 1];
   }
 
@@ -611,15 +602,29 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   }
 
   /**
-   * Returns data to render in tunes menu.
-   * Splits block tunes settings into 2 groups: popover items and custom html.
+   * Returns data to render in Block Tunes menu.
+   * Splits block tunes into 2 groups: block specific tunes and common tunes
    */
-  public getTunes(): [PopoverItem[], HTMLElement] {
-    const customHtmlTunesContainer = document.createElement('div');
-    const tunesItems: TunesMenuConfigItem[] = [];
+  public getTunes(): {
+    toolTunes: PopoverItemParams[];
+    commonTunes: PopoverItemParams[];
+    } {
+    const toolTunesPopoverParams: TunesMenuConfigItem[] = [];
+    const commonTunesPopoverParams: TunesMenuConfigItem[] = [];
 
     /** Tool's tunes: may be defined as return value of optional renderSettings method */
     const tunesDefinedInTool = typeof this.toolInstance.renderSettings === 'function' ? this.toolInstance.renderSettings() : [];
+
+    if ($.isElement(tunesDefinedInTool)) {
+      toolTunesPopoverParams.push({
+        type: PopoverItemType.Html,
+        element: tunesDefinedInTool,
+      });
+    } else if (Array.isArray(tunesDefinedInTool)) {
+      toolTunesPopoverParams.push(...tunesDefinedInTool);
+    } else {
+      toolTunesPopoverParams.push(tunesDefinedInTool);
+    }
 
     /** Common tunes: combination of default tunes (move up, move down, delete) and third-party tunes connected via tunes api */
     const commonTunes = [
@@ -627,17 +632,24 @@ export default class Block extends EventsDispatcher<BlockEvents> {
       ...this.defaultTunesInstances.values(),
     ].map(tuneInstance => tuneInstance.render());
 
-    [tunesDefinedInTool, commonTunes].flat().forEach(rendered => {
-      if ($.isElement(rendered)) {
-        customHtmlTunesContainer.appendChild(rendered);
-      } else if (Array.isArray(rendered)) {
-        tunesItems.push(...rendered);
+    /** Separate custom html from Popover items params for common tunes */
+    commonTunes.forEach(tuneConfig => {
+      if ($.isElement(tuneConfig)) {
+        commonTunesPopoverParams.push({
+          type: PopoverItemType.Html,
+          element: tuneConfig,
+        });
+      } else if (Array.isArray(tuneConfig)) {
+        commonTunesPopoverParams.push(...tuneConfig);
       } else {
-        tunesItems.push(rendered);
+        commonTunesPopoverParams.push(tuneConfig);
       }
     });
 
-    return [tunesItems, customHtmlTunesContainer];
+    return {
+      toolTunes: toolTunesPopoverParams,
+      commonTunes: commonTunesPopoverParams,
+    };
   }
 
   /**
@@ -711,11 +723,8 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     const blockData = await this.data;
     const toolboxItems = toolboxSettings;
 
-    return toolboxItems.find((item) => {
-      return Object.entries(item.data)
-        .some(([propName, propValue]) => {
-          return blockData[propName] && _.equals(blockData[propName], propValue);
-        });
+    return toolboxItems?.find((item) => {
+      return isSameBlockData(item.data, blockData);
     });
   }
 
@@ -929,6 +938,11 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.updateCurrentInput();
 
+    /**
+     * We mark inputs with 'data-empty' attribute, so new inputs should be marked as well
+     */
+    this.toggleInputsEmptyMark();
+
     this.call(BlockToolAPI.UPDATED);
 
     /**
@@ -990,5 +1004,12 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   private dropInputsCache(): void {
     this.cachedInputs = [];
+  }
+
+  /**
+   * Mark inputs with 'data-empty' attribute with the empty state
+   */
+  private toggleInputsEmptyMark(): void {
+    this.inputs.forEach(toggleEmptyMark);
   }
 }

@@ -1,5 +1,5 @@
 import Header from '@editorjs/header';
-import { ToolboxConfig } from '../../../types';
+import type { ToolboxConfig } from '../../../types';
 
 describe('Editor i18n', () => {
   context('Toolbox', () => {
@@ -140,6 +140,104 @@ describe('Editor i18n', () => {
       cy.get('[data-cy=editorjs]')
         .get('div.ce-popover-item[data-item-name=testTool]')
         .should('contain.text', toolNamesDictionary.TestTool);
+    });
+  });
+
+  context('Block Tunes', () => {
+    it('should translate tool name in Convert To', () => {
+      const toolNamesDictionary = {
+        Heading: 'Заголовок',
+      };
+
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+        i18n: {
+          messages: {
+            toolNames: toolNamesDictionary,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+                level: 1,
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click();
+
+      /** Open block tunes menu */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-block')
+        .click();
+
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-toolbar__settings-btn')
+        .click();
+
+      /** Open "Convert to" menu  */
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .click();
+
+      /** Check item in convert to menu is internationalized */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested .ce-popover-item[data-item-name=header]')
+        .should('contain.text', toolNamesDictionary.Heading);
+    });
+  });
+
+  context('Inline Toolbar', () => {
+    it('should translate tool name in Convert To', () => {
+      const toolNamesDictionary = {
+        Heading: 'Заголовок',
+      };
+
+      cy.createEditor({
+        tools: {
+          header: Header,
+        },
+        i18n: {
+          messages: {
+            toolNames: toolNamesDictionary,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+                level: 1,
+              },
+            },
+          ],
+        },
+      });
+
+      /** Open Inline Toolbar */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('Some text');
+
+      /** Open "Convert to" menu  */
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .click();
+
+      /** Check item in convert to menu is internationalized */
+      cy.get('[data-cy=editorjs]')
+        .get('.ce-popover--nested .ce-popover-item[data-item-name=header]')
+        .should('contain.text', toolNamesDictionary.Heading);
     });
   });
 });

@@ -1,12 +1,12 @@
-import { ToolConstructable, ToolSettings } from '../../../types/tools';
+import type { ToolConstructable, ToolSettings } from '../../../types/tools';
 import { InternalInlineToolSettings, InternalTuneSettings } from './base';
-import InlineTool from './inline';
-import BlockTune from './tune';
-import BlockTool from './block';
-import API from '../modules/api';
-import { EditorConfig } from '../../../types/configs';
+import InlineToolAdapter from './inline';
+import BlockTuneAdapter from './tune';
+import BlockToolAdapter from './block';
+import type ApiModule from '../modules/api';
+import type { EditorConfig } from '../../../types/configs';
 
-type ToolConstructor = typeof InlineTool | typeof BlockTool | typeof BlockTune;
+type ToolConstructor = typeof InlineToolAdapter | typeof BlockToolAdapter | typeof BlockTuneAdapter;
 
 /**
  * Factory to construct classes to work with tools
@@ -20,7 +20,7 @@ export default class ToolsFactory {
   /**
    * EditorJS API Module
    */
-  private api: API;
+  private api: ApiModule;
 
   /**
    * EditorJS configuration
@@ -36,7 +36,7 @@ export default class ToolsFactory {
   constructor(
     config: {[name: string]: ToolSettings & { isInternal?: boolean }},
     editorConfig: EditorConfig,
-    api: API
+    api: ApiModule
   ) {
     this.api = api;
     this.config = config;
@@ -48,16 +48,17 @@ export default class ToolsFactory {
    *
    * @param name - tool name
    */
-  public get(name: string): InlineTool | BlockTool | BlockTune {
+  public get(name: string): InlineToolAdapter | BlockToolAdapter | BlockTuneAdapter {
     const { class: constructable, isInternal = false, ...config } = this.config[name];
 
     const Constructor = this.getConstructor(constructable);
+    const isTune = constructable[InternalTuneSettings.IsTune];
 
     return new Constructor({
       name,
       constructable,
       config,
-      api: this.api,
+      api: this.api.getMethodsForTool(name, isTune),
       isDefault: name === this.editorConfig.defaultBlock,
       defaultPlaceholder: this.editorConfig.placeholder,
       isInternal,
@@ -72,11 +73,11 @@ export default class ToolsFactory {
   private getConstructor(constructable: ToolConstructable): ToolConstructor {
     switch (true) {
       case constructable[InternalInlineToolSettings.IsInline]:
-        return InlineTool;
+        return InlineToolAdapter;
       case constructable[InternalTuneSettings.IsTune]:
-        return BlockTune;
+        return BlockTuneAdapter;
       default:
-        return BlockTool;
+        return BlockToolAdapter;
     }
   }
 }

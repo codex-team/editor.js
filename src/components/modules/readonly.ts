@@ -52,16 +52,17 @@ export default class ReadOnly extends Module {
       this.throwCriticalError();
     }
 
-    this.toggle(this.config.readOnly);
+    this.toggle(this.config.readOnly, true);
   }
 
   /**
    * Set read-only mode or toggle current state
    * Call all Modules `toggleReadOnly` method and re-render Editor
    *
-   * @param {boolean} state - (optional) read-only state or toggle
+   * @param state - (optional) read-only state or toggle
+   * @param isInitial - (optional) true when editor is initializing
    */
-  public async toggle(state = !this.readOnlyEnabled): Promise<boolean> {
+  public async toggle(state = !this.readOnlyEnabled, isInitial = false): Promise<boolean> {
     if (state && this.toolsDontSupportReadOnly.length > 0) {
       this.throwCriticalError();
     }
@@ -92,12 +93,26 @@ export default class ReadOnly extends Module {
     }
 
     /**
+     * Do not re-render blocks if it's initial call
+     */
+    if (isInitial) {
+      return this.readOnlyEnabled;
+    }
+
+    /**
+     * Mutex for modifications observer to prevent onChange call when read-only mode is enabled
+     */
+    this.Editor.ModificationsObserver.disable();
+
+    /**
      * Save current Editor Blocks and render again
      */
     const savedBlocks = await this.Editor.Saver.save();
 
     await this.Editor.BlockManager.clear();
     await this.Editor.Renderer.render(savedBlocks.blocks);
+
+    this.Editor.ModificationsObserver.enable();
 
     return this.readOnlyEnabled;
   }

@@ -1,10 +1,10 @@
 import type EditorJS from '../../../../types/index';
-import { ConversionConfig, ToolboxConfig } from '../../../../types/index';
+import type { ConversionConfig, ToolboxConfig } from '../../../../types/index';
 import ToolMock from '../../fixtures/tools/ToolMock';
 
 describe('Toolbox', function () {
   describe('Shortcuts', function () {
-    it('should covert current Block to the Shortcuts\'s Block if both tools provides a "conversionConfig" ', function () {
+    it('should convert current Block to the Shortcuts\'s Block if both tools provides a "conversionConfig". Caret should be restored after conversion.', function () {
       /**
        * Mock of Tool with conversionConfig
        */
@@ -54,6 +54,21 @@ describe('Toolbox', function () {
           expect(blocks.length).to.eq(1);
           expect(blocks[0].type).to.eq('convertableTool');
           expect(blocks[0].data.text).to.eq('Some text');
+
+          /**
+           * Check that caret belongs to the new block after conversion
+           */
+          cy.window()
+            .then((window) => {
+              const selection = window.getSelection();
+              const range = selection.getRangeAt(0);
+
+              cy.get('[data-cy=editorjs]')
+                .find(`.ce-block[data-id=${blocks[0].id}]`)
+                .should(($block) => {
+                  expect($block[0].contains(range.startContainer)).to.be.true;
+                });
+            });
         });
     });
 

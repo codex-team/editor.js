@@ -1,5 +1,5 @@
 import $ from '../../components/dom';
-import { API, BlockTool, BlockToolConstructorOptions, BlockToolData } from '../../../types';
+import type { API, BlockTool, BlockToolConstructorOptions, BlockToolData } from '../../../types';
 import { IconWarning } from '@codexteam/icons';
 
 export interface StubData extends BlockToolData {

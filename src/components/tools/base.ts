@@ -1,29 +1,11 @@
-import { Tool, ToolConstructable, ToolSettings } from '../../../types/tools';
-import { SanitizerConfig } from '../../../types';
+import type { Tool, ToolConstructable, ToolSettings } from '@/types/tools';
+import type { SanitizerConfig, API as ApiMethods } from '@/types';
 import * as _ from '../utils';
-import type InlineTool from './inline';
-import type BlockTool from './block';
-import type BlockTune from './tune';
-import API from '../modules/api';
-
-/**
- * What kind of plugins developers can create
- */
-export enum ToolType {
-  /**
-   * Block tool
-   */
-  Block,
-  /**
-   * Inline tool
-   */
-  Inline,
-
-  /**
-   * Block tune
-   */
-  Tune,
-}
+import { ToolType } from '@/types/tools/adapters/tool-type';
+import type { BaseToolAdapter as BaseToolAdapterInterface } from '@/types/tools/adapters/base-tool-adapter';
+import type { InlineToolAdapter as InlineToolAdapterInterface } from '@/types/tools/adapters/inline-tool-adapter';
+import type { BlockToolAdapter as BlockToolAdapterInterface } from '@/types/tools/adapters/block-tool-adapter';
+import type { BlockTuneAdapter as BlockTuneAdapterInterface } from '@/types/tools/adapters/block-tune-adapter';
 
 /**
  * Enum of Tool options provided by user
@@ -122,7 +104,7 @@ interface ConstructorOptions {
   name: string;
   constructable: ToolConstructable;
   config: ToolOptions;
-  api: API;
+  api: ApiMethods;
   isDefault: boolean;
   isInternal: boolean;
   defaultPlaceholder?: string | false;
@@ -131,11 +113,11 @@ interface ConstructorOptions {
 /**
  * Base abstract class for Tools
  */
-export default abstract class BaseTool<Type extends Tool = Tool> {
+export default abstract class BaseToolAdapter<Type extends ToolType = ToolType, ToolClass extends Tool = Tool> implements BaseToolAdapterInterface<ToolType, Tool> {
   /**
    * Tool type: Block, Inline or Tune
    */
-  public type: ToolType;
+  public type: Type;
 
   /**
    * Tool name specified in EditorJS config
@@ -155,7 +137,7 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * EditorJS API for current Tool
    */
-  protected api: API;
+  protected api: ApiMethods;
 
   /**
    * Current tool user configuration
@@ -248,21 +230,21 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
   /**
    * Returns true if Tools is inline
    */
-  public isInline(): this is InlineTool {
+  public isInline(): this is InlineToolAdapterInterface {
     return this.type === ToolType.Inline;
   }
 
   /**
    * Returns true if Tools is block
    */
-  public isBlock(): this is BlockTool {
+  public isBlock(): this is BlockToolAdapterInterface {
     return this.type === ToolType.Block;
   }
 
   /**
    * Returns true if Tools is tune
    */
-  public isTune(): this is BlockTune {
+  public isTune(): this is BlockTuneAdapterInterface {
     return this.type === ToolType.Tune;
   }
 
@@ -272,5 +254,5 @@ export default abstract class BaseTool<Type extends Tool = Tool> {
    * @param args
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public abstract create(...args: any[]): Type;
+  public abstract create(...args: any[]): ToolClass;
 }

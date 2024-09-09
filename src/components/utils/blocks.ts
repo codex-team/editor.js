@@ -1,7 +1,12 @@
+import type { BlockAPI } from '../../../types';
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
+import type { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
-import { isFunction, isString, log } from '../utils';
+import type BlockToolAdapter from '../tools/block';
+import { isFunction, isString, log, equals, isEmpty } from '../utils';
+import { isToolConvertable } from './tools';
+
 
 /**
  * Check if block has valid conversion config for export or import.
@@ -10,14 +15,83 @@ import { isFunction, isString, log } from '../utils';
  * @param direction - export for block to merge from, import for block to merge to
  */
 export function isBlockConvertable(block: Block, direction: 'export' | 'import'): boolean {
-  if (!block.tool.conversionConfig) {
-    return false;
-  }
-
-  const conversionProp = block.tool.conversionConfig[direction];
-
-  return isFunction(conversionProp) || isString(conversionProp);
+  return isToolConvertable(block.tool, direction);
 }
+
+/**
+ * Checks that all the properties of the first block data exist in second block data with the same values.
+ *
+ * Example:
+ *
+ * data1 = { level: 1 }
+ *
+ * data2 = {
+ *    text: "Heading text",
+ *    level: 1
+ *  }
+ *
+ * isSameBlockData(data1, data2) => true
+ *
+ * @param data1 – first block data
+ * @param data2 – second block data
+ */
+export function isSameBlockData(data1: BlockToolData, data2: BlockToolData): boolean {
+  return Object.entries(data1).some((([propName, propValue]) => {
+    return data2[propName] && equals(data2[propName], propValue);
+  }));
+}
+
+/**
+ * Returns list of tools you can convert specified block to
+ *
+ * @param block - block to get conversion items for
+ * @param allBlockTools - all block tools available in the editor
+ */
+export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools: BlockToolAdapter[]): Promise<BlockToolAdapter[]> {
+  const savedData = await block.save() as SavedData;
+  const blockData = savedData.data;
+
+  return allBlockTools.reduce((result, tool) => {
+    /**
+     * Skip tools without «import» rule specified
+     */
+    if (!isToolConvertable(tool, 'import')) {
+      return result;
+    }
+
+    /** Filter out invalid toolbox entries */
+    const actualToolboxItems = tool.toolbox.filter((toolboxItem) => {
+      /**
+       * Skip items that don't pass 'toolbox' property or do not have an icon
+       */
+      if (isEmpty(toolboxItem) || !toolboxItem.icon) {
+        return false;
+      }
+
+      if (toolboxItem.data !== undefined) {
+        /**
+         * When a tool has several toolbox entries, we need to make sure we do not add
+         * toolbox item with the same data to the resulting array. This helps exclude duplicates
+         */
+        if (isSameBlockData(toolboxItem.data, blockData)) {
+          return false;
+        }
+      } else if (tool.name === block.name) {
+        return false;
+      }
+
+      return true;
+    });
+
+    result.push({
+      ...tool,
+      toolbox: actualToolboxItems,
+    });
+
+    return result;
+  }, []);
+}
+
 
 /**
  * Check if two blocks could be merged.
@@ -106,3 +180,4 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
     return {};
   }
 }
+

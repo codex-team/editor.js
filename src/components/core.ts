@@ -1,12 +1,12 @@
 import $ from './dom';
 import * as _ from './utils';
-import { EditorConfig, SanitizerConfig } from '../../types';
-import { EditorModules } from '../types-internal/editor-modules';
+import type { EditorConfig, SanitizerConfig } from '../../types';
+import type { EditorModules } from '../types-internal/editor-modules';
 import I18n from './i18n';
 import { CriticalError } from './errors/critical';
 import EventsDispatcher from './utils/events';
 import Modules from './modules';
-import { EditorEventMap } from './events';
+import type { EditorEventMap } from './events';
 
 /**
  * Editor.js core class. Bootstraps modules.

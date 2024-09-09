@@ -1,14 +1,16 @@
-import BaseTool, { InternalInlineToolSettings, ToolType } from './base';
-import { InlineTool as IInlineTool, InlineToolConstructable } from '../../../types';
+import BaseToolAdapter, { InternalInlineToolSettings } from './base';
+import type { InlineTool as IInlineTool, InlineToolConstructable } from '@/types';
+import type { InlineToolAdapter as InlineToolAdapterInterface } from '@/types/tools/adapters/inline-tool-adapter';
+import { ToolType } from '@/types/tools/adapters/tool-type';
 
 /**
  * InlineTool object to work with Inline Tools constructables
  */
-export default class InlineTool extends BaseTool<IInlineTool> {
+export default class InlineToolAdapter extends BaseToolAdapter<ToolType.Inline, IInlineTool> implements InlineToolAdapterInterface {
   /**
    * Tool type — Inline
    */
-  public type = ToolType.Inline;
+  public type: ToolType.Inline = ToolType.Inline;
 
   /**
    * Tool's constructable blueprint
@@ -28,7 +30,7 @@ export default class InlineTool extends BaseTool<IInlineTool> {
   public create(): IInlineTool {
     // eslint-disable-next-line new-cap
     return new this.constructable({
-      api: this.api.getMethodsForTool(this),
+      api: this.api,
       config: this.settings,
     }) as IInlineTool;
   }

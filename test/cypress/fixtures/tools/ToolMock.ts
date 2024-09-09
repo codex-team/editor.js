@@ -1,4 +1,4 @@
-import { BlockTool, BlockToolConstructorOptions } from '../../../../types';
+import type { BlockTool, BlockToolConstructorOptions } from '../../../../types';
 
 /**
  * Simple structure for Tool data

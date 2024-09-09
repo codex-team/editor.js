@@ -1,5 +1,5 @@
-import { Sanitizer as ISanitizer } from '../../../../types/api';
-import { SanitizerConfig } from '../../../../types/configs';
+import type { Sanitizer as ISanitizer } from '../../../../types/api';
+import type { SanitizerConfig } from '../../../../types/configs';
 import Module from '../../__module';
 import { clean } from '../../utils/sanitizer';
 

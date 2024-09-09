@@ -1,4 +1,4 @@
-import { ReadOnly } from '../../../../types/api';
+import type { ReadOnly } from '../../../../types/api';
 import Module from '../../__module';
 
 /**
