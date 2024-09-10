@@ -3,9 +3,9 @@
  * @classdesc Editor's default tune that moves up selected block
  * @copyright <CodeX Team> 2018
  */
-import { API, BlockTune } from '../../../types';
+import type { API, BlockTune } from '../../../types';
 import { IconCross } from '@codexteam/icons';
-import { MenuConfig } from '../../../types/tools/menu-config';
+import type { MenuConfig } from '../../../types/tools/menu-config';
 
 /**
  *

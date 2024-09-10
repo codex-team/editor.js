@@ -3,13 +3,14 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool } from '../../../../types';
+import type { InlineTool as IInlineTool } from '../../../../types';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import { ModuleConfig } from '../../../types-internal/module-config';
+import type { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
+import type { Popover, PopoverItemHtmlParams, PopoverItemParams, WithChildren } from '../../utils/popover';
+import { PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 
 /**

@@ -1,4 +1,4 @@
-import { PopoverItemDefaultBaseParams, PopoverItemHtmlParams, PopoverItemParams, PopoverItemSeparatorParams, WithChildren } from "../configs";
+import { PopoverItemDefaultBaseParams, PopoverItemHtmlParams, PopoverItemSeparatorParams, WithChildren } from '../utils/popover';
 
 /**
  * Menu configuration format.

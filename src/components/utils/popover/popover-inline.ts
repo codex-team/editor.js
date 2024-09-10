@@ -1,9 +1,10 @@
 import { isMobileScreen } from '../../utils';
-import { PopoverItem, PopoverItemDefault, PopoverItemType } from './components/popover-item';
+import type { PopoverItem } from './components/popover-item';
+import { PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
 import { CSSVariables, css } from './popover.const';
-import { PopoverParams } from './popover.types';
+import type { PopoverParams } from '@/types/utils/popover/popover';
 
 /**
  * Horizontal popover that is displayed inline with the content

@@ -1,4 +1,4 @@
-import { BlockMutationEvent, BlockMutationType } from '../../../../types';
+import type { BlockMutationEvent, BlockMutationType } from '../../../../types';
 
 /**
  * Simplified version of the BlockMutationEvent with optional fields that could be used in tests

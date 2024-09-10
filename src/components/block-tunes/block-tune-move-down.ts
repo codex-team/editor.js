@@ -4,9 +4,9 @@
  * @copyright <CodeX Team> 2018
  */
 
-import { API, BlockTune } from '../../../types';
+import type { API, BlockTune } from '../../../types';
 import { IconChevronDown } from '@codexteam/icons';
-import { TunesMenuConfig } from '../../../types/tools';
+import type { TunesMenuConfig } from '../../../types/tools';
 
 
 /**

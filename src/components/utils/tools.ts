@@ -1,4 +1,4 @@
-import BlockTool from '../tools/block';
+import type BlockToolAdapter from '../tools/block';
 import { isFunction, isString } from '../utils';
 
 /**
@@ -7,7 +7,7 @@ import { isFunction, isString } from '../utils';
  * @param tool - tool to check
  * @param direction - export for tool to merge from, import for tool to merge to
  */
-export function isToolConvertable(tool: BlockTool, direction: 'export' | 'import'): boolean {
+export function isToolConvertable(tool: BlockToolAdapter, direction: 'export' | 'import'): boolean {
   if (!tool.conversionConfig) {
     return false;
   }

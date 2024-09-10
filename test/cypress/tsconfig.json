@@ -1,13 +1,9 @@
 {
-    "compilerOptions": {
-      "target": "es2017",
-      "lib": ["dom", "es2017", "es2018", "es2019"],
-      "moduleResolution": "node",
-      "resolveJsonModule": true,
-      "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true
-    },
-    "include": [
-      "../../**/*.ts"
-    ]
-  }
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "node"],
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

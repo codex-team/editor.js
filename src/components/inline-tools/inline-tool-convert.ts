@@ -1,8 +1,8 @@
 import { IconReplace } from '@codexteam/icons';
-import { InlineTool, API } from '../../../types';
-import { MenuConfig, MenuConfigItem } from '../../../types/tools';
+import type { InlineTool, API } from '../../../types';
+import type { MenuConfig, MenuConfigItem } from '../../../types/tools';
 import * as _ from '../utils';
-import { Blocks, Selection, Tools, Caret, I18n } from '../../../types/api';
+import type { Blocks, Selection, Tools, Caret, I18n } from '../../../types/api';
 import SelectionUtils from '../selection';
 import { getConvertibleToolsForBlock } from '../utils/blocks';
 import I18nInternal from '../i18n';

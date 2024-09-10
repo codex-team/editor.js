@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import { Events } from '../../../../types/api';
+import type { Events } from '../../../../types/api';
 
 /**
  * @class EventsAPI

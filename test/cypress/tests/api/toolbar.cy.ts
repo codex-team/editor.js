@@ -1,7 +1,7 @@
 /**
  * There will be described test cases of 'api.toolbar.*' API
  */
-import EditorJS from '../../../../types';
+import type EditorJS from '../../../../types';
 
 describe('api.toolbar', () => {
   /**

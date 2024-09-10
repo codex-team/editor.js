@@ -1,5 +1,5 @@
 import type EditorJS from '../../../types/index';
-import { OutputData } from '../../../types/index';
+import type { OutputData } from '../../../types/index';
 
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

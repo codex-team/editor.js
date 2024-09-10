@@ -5,13 +5,13 @@
  * @version 1.0.0
  */
 import Module from '../__module';
-import Block from '../block';
+import type Block from '../block';
 import * as _ from '../utils';
 import $ from '../dom';
 import Shortcuts from '../utils/shortcuts';
 
 import SelectionUtils from '../selection';
-import { SanitizerConfig } from '../../../types/configs';
+import type { SanitizerConfig } from '../../../types/configs';
 import { clean } from '../utils/sanitizer';
 
 /**
