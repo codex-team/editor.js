@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.6
+
+– `Fix` – Fix the display of ‘Convert To’ near blocks that do not have the ‘conversionConfig.export’ rule specified
+
 ### 2.30.5
 
 – `Fix` – Fix exported types
