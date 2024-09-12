@@ -403,7 +403,7 @@ export default class Dom {
     /**
      * Normalize node to merge several text nodes to one to reduce tree walker iterations
      */
-    node.normalize();
+    // node.normalize();
 
     const treeWalker = [ node ];
 

@@ -106,3 +106,10 @@
   position: fixed;
   width: 100%;
 }
+
+.ce-fake-selection {
+  display: inline;
+  line-height: inherit;
+  background-color: var(--inlineSelectionColor);
+  border-radius: 3px;
+}

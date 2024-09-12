@@ -228,6 +228,8 @@ export default class UI extends Module<UINodes> {
    * Close all Editor's toolbars
    */
   public closeAllToolbars(): void {
+    console.log('closeAllToolbars');
+
     const { Toolbar, BlockSettings, InlineToolbar } = this.Editor;
 
     BlockSettings.close();
@@ -819,12 +821,16 @@ export default class UI extends Module<UINodes> {
    * Uses for showing the Inline Toolbar
    */
   private selectionChanged(): void {
+    console.log('selectionChanged');
+
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
 
     if (CrossBlockSelection.isCrossBlockSelectionStarted) {
       // Removes all ranges when any Block is selected
       if (BlockSelection.anyBlockSelected) {
+        console.log('selectionChanged: remove all ranges');
+
         Selection.get().removeAllRanges();
       }
     }
@@ -839,6 +845,8 @@ export default class UI extends Module<UINodes> {
        * @todo Make this method more straightforward
        */
       if (!Selection.range) {
+        console.log('selectionChanged: close InlineToolbar');
+
         this.Editor.InlineToolbar.close();
       }
 
@@ -856,6 +864,8 @@ export default class UI extends Module<UINodes> {
        * If new selection is not on Inline Toolbar, we need to close it
        */
       if (!this.Editor.InlineToolbar.containsNode(focusedElement)) {
+        console.log('selectionChanged: close InlineToolbar');
+
         this.Editor.InlineToolbar.close();
       }
 
@@ -875,8 +885,12 @@ export default class UI extends Module<UINodes> {
      * Set current block when entering to Editor.js by tab key
      */
     if (!this.Editor.BlockManager.currentBlock) {
+      console.log('selectionChanged: set current block');
+
       this.Editor.BlockManager.setCurrentBlockByChildNode(focusedElement);
     }
+
+    console.log('selectionChanged: try to show InlineToolbar');
 
     this.Editor.InlineToolbar.tryToShow(true);
   }

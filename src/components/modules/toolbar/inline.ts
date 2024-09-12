@@ -95,6 +95,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
    */
   public async tryToShow(needToClose = false): Promise<void> {
+    /**
+     * @todo
+     * infinite loop when selecting a link fragment:
+     * - selection changed
+     * - tryToShow called with needToClose = true
+     * - close called
+     * - open called
+     * - Link Tool, checkState called
+     * - link found, selection expanded to link
+     */
     if (needToClose) {
       this.close();
     }
@@ -190,6 +200,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Shows Inline Toolbar
    */
   private async open(): Promise<void> {
+    console.trace('open', this.opened);
+
     if (this.opened) {
       return;
     }

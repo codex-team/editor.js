@@ -3,6 +3,7 @@ import * as _ from '../utils';
 import type { InlineTool, SanitizerConfig, API } from '../../../types';
 import type { Notifier, Toolbar, I18n, InlineToolbar } from '../../../types/api';
 import { IconLink, IconUnlink } from '@codexteam/icons';
+import { createFakeSelection } from '../utils/selection';
 
 /**
  * Link Tool
@@ -77,7 +78,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * SelectionUtils instance
    */
-  private selection: SelectionUtils;
+  private selection = new SelectionUtils();
 
   /**
    * Input opening state
@@ -104,6 +105,10 @@ export default class LinkInlineTool implements InlineTool {
    */
   private i18n: I18n;
 
+  private fakeSelectionRestore: null | ((onlyUnwrap?: boolean) => void) = null;
+
+  private currentAnchorElement: HTMLAnchorElement | null = null;
+
   /**
    * @param api - Editor.js API
    */
@@ -112,7 +117,6 @@ export default class LinkInlineTool implements InlineTool {
     this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
     this.i18n = api.i18n;
-    this.selection = new SelectionUtils();
   }
 
   /**
@@ -151,6 +155,8 @@ export default class LinkInlineTool implements InlineTool {
    * @param {Range} range - range to wrap with link
    */
   public surround(range: Range): void {
+    console.log('surround');
+
     /**
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
@@ -160,11 +166,14 @@ export default class LinkInlineTool implements InlineTool {
        */
       if (!this.inputOpened) {
         /** Create blue background instead of selection */
-        this.selection.setFakeBackground();
-        this.selection.save();
+        // this.selection.setFakeBackground();
+        // this.selection.save();
+
+        this.fakeSelectionRestore = createFakeSelection();
       } else {
-        this.selection.restore();
-        this.selection.removeFakeBackground();
+        this.fakeSelectionRestore?.();
+        // this.selection.restore();
+        // this.selection.removeFakeBackground();
       }
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -174,9 +183,9 @@ export default class LinkInlineTool implements InlineTool {
       if (parentAnchor) {
         this.selection.expandToTag(parentAnchor);
         this.unlink();
-        this.closeActions();
-        this.checkState();
-        this.toolbar.close();
+        // this.closeActions();
+        // this.checkState();
+        // this.toolbar.close();
 
         return;
       }
@@ -189,12 +198,18 @@ export default class LinkInlineTool implements InlineTool {
    * Check selection and set activated state to button if there are <a> tag
    */
   public checkState(): boolean {
-    const anchorTag = this.selection.findParentTag('A');
+    // console.trace('checkState');
+    const anchorTag = this.selection.findParentTag('A') as HTMLAnchorElement;
 
-    if (anchorTag) {
+    if (anchorTag !== null) {
       this.nodes.button.innerHTML = IconUnlink;
       this.nodes.button.classList.add(this.CSS.buttonUnlink);
       this.nodes.button.classList.add(this.CSS.buttonActive);
+
+      this.selection.expandToTag(anchorTag);
+      // console.log('1');
+
+      this.fakeSelectionRestore = createFakeSelection();
       this.openActions();
 
       /**
@@ -204,21 +219,26 @@ export default class LinkInlineTool implements InlineTool {
 
       this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
 
-      this.selection.save();
+      this.currentAnchorElement = anchorTag;
+
+      // this.selection.save();
     } else {
       this.nodes.button.innerHTML = IconLink;
       this.nodes.button.classList.remove(this.CSS.buttonUnlink);
       this.nodes.button.classList.remove(this.CSS.buttonActive);
     }
 
-    return !!anchorTag;
+    return anchorTag !== null;
   }
 
   /**
    * Function called with Inline Toolbar closing
    */
   public clear(): void {
-    this.closeActions();
+    // this.fakeSelectionRestore?.(true);
+    if (this.inputOpened) {
+      this.closeActions();
+    }
   }
 
   /**
@@ -286,33 +306,61 @@ export default class LinkInlineTool implements InlineTool {
   private enterPressed(event: KeyboardEvent): void {
     let value = this.nodes.input.value || '';
 
-    if (!value.trim()) {
-      this.selection.restore();
+    /**
+     * Removing a link
+     */
+    if (this.currentAnchorElement && !value.trim()) {
+      // this.selection.expandToTag(this.currentAnchorElement);
       this.unlink();
       event.preventDefault();
+      console.log('this.fakeSelectionRestore', this.fakeSelectionRestore);
+      this.fakeSelectionRestore?.();
       this.closeActions();
+    } else {
+      if (!this.validateURL(value)) {
+        this.notifier.show({
+          message: 'Pasted link is not valid.',
+          style: 'error',
+        });
 
-      return;
+        _.log('Incorrect Link pasted', 'warn', value);
+
+        return;
+      }
+
+      value = this.prepareLink(value);
+
+      /**
+       * Addind / Editing a link
+       */
+
+      /**
+       * First, we need to resotore selection
+       * Case 1. Input was opened by Link icon click in InlineToolbar, here will be a fake selection
+       * Case 2. Input was opened by selecting exising link in text, here will be this.currentAnchorElement
+       */
+      if (this.fakeSelectionRestore !== null) {
+        this.fakeSelectionRestore();
+      } else if (this.currentAnchorElement) {
+        this.selection.expandToTag(this.currentAnchorElement);
+      } else {
+        throw new Error('Cannot add a link: no selection or anchor element found');
+      }
+
+
+      // const selection = window.getSelection();
+      // const range = selection?.getRangeAt(0);
+
+      // range?.surroundContents(document.createElement('a'));
+
+      // this.selection.restore();
+      // this.selection.removeFakeBackground();
+
+
+      // requestAnimationFrame(() => {
+      this.insertLink(value);
+      // });
     }
-
-    if (!this.validateURL(value)) {
-      this.notifier.show({
-        message: 'Pasted link is not valid.',
-        style: 'error',
-      });
-
-      _.log('Incorrect Link pasted', 'warn', value);
-
-      return;
-    }
-
-    value = this.prepareLink(value);
-
-    this.selection.restore();
-    this.selection.removeFakeBackground();
-
-    this.insertLink(value);
-
     /**
      * Preventing events that will be able to happen
      */
@@ -320,7 +368,7 @@ export default class LinkInlineTool implements InlineTool {
     event.stopPropagation();
     event.stopImmediatePropagation();
     this.selection.collapseToEnd();
-    this.inlineToolbar.close();
+    // this.inlineToolbar.close();
   }
 
   /**

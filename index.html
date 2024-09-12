@@ -25,6 +25,76 @@
         <a href="https://editorjs.io/creating-a-block-tool" target="_blank">API</a>
       </div>
     </div>
+ <!--
+    <br>
+    <br>
+    <br>
+    <p>
+      To implement this policy, Treasury, in consultation with the Department of State, has issued a new determination under Executive Order (E.O.) 14071, which prohibits the supply to any person in the Russian Federation of (1) IT consultancy and design services; and (2) IT support services and cloud-based services for enterprise management software and design and manufacturing software. The determination will take effect on September 12, 2024.
+    </p>
+    <br>
+    <br>
+    <br>
+    <script>
+      function createFakeSelection(){
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+        const span = document.createElement('span');
+
+        span.style.background = 'red';
+
+        range?.surroundContents(span);
+
+
+        return function restore() {
+          if (!span.parentNode) {
+            return;
+          }
+
+          // Unwrap the span, restoring the original content
+          const parent = span.parentNode;
+
+          while (span.firstChild) {
+            parent.insertBefore(span.firstChild, span);
+          }
+          parent.removeChild(span);
+
+          // Restore the selection range
+          const newRange = document.createRange();
+
+          newRange.setStart(range.startContainer, range.startOffset);
+          newRange.setEnd(range.endContainer, range.endOffset);
+
+          // Set the selection to the new range
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        };
+      }
+
+    </script>
+    <script>
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          const restore = createFakeSelection();
+
+          setTimeout(() => {
+            restore();
+          }, 1000);
+        }
+      });
+    </script>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    -->
+
     <div class="ce-example__content">
       <div id="editorjs"></div>
       <div class="ce-example__button" id="saveButton">
@@ -83,7 +153,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script><!-- Delimiter -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script><!-- List -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script><!-- Checklist -->
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script><!-- Quote -->
+
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script><!-- Code -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script><!-- Embed -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script><!-- Table -->
@@ -97,6 +167,10 @@
   <!-- Initialization -->
   <script type="module">
     import EditorJS from './src/codex.ts';
+    import Quote from './example/tools/quote'
+    import Underline from '../underline'
+
+    console.log('Underline', Underline);
 
     window.EditorJS = EditorJS;
 
@@ -121,12 +195,13 @@
        * - if an array of tool names, this order will be used
        */
       // inlineToolbar: ['link', 'marker', 'bold', 'italic'],
-      // inlineToolbar: true,
+      inlineToolbar: true,
 
       /**
        * Tools list
        */
       tools: {
+        underline: Underline,
         /**
          * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
          */
