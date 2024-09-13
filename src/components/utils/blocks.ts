@@ -51,6 +51,15 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
   const savedData = await block.save() as SavedData;
   const blockData = savedData.data;
 
+  /**
+   * Checking that the block's tool has an «export» rule
+   */
+  const blockTool = allBlockTools.find((tool) => tool.name === block.name);
+
+  if (blockTool !== undefined && !isToolConvertable(blockTool, 'export')) {
+    return [];
+  }
+
   return allBlockTools.reduce((result, tool) => {
     /**
      * Skip tools without «import» rule specified
@@ -59,12 +68,19 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
       return result;
     }
 
+    /**
+     * Skip tools that does not specify toolbox
+     */
+    if (tool.toolbox === undefined) {
+      return result;
+    }
+
     /** Filter out invalid toolbox entries */
     const actualToolboxItems = tool.toolbox.filter((toolboxItem) => {
       /**
        * Skip items that don't pass 'toolbox' property or do not have an icon
        */
-      if (isEmpty(toolboxItem) || !toolboxItem.icon) {
+      if (isEmpty(toolboxItem) || toolboxItem.icon === undefined) {
         return false;
       }
 
@@ -86,10 +102,10 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
     result.push({
       ...tool,
       toolbox: actualToolboxItems,
-    });
+    } as BlockToolAdapter);
 
     return result;
-  }, []);
+  }, [] as BlockToolAdapter[]);
 }
 
 
