@@ -3,6 +3,7 @@
 ### 2.30.6
 
 – `Fix` – Fix the display of ‘Convert To’ near blocks that do not have the ‘conversionConfig.export’ rule specified
+– `Fix` – The Plus button does not appear when the editor is loaded in an iframe in Chrome
 
 ### 2.30.5
 
