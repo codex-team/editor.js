@@ -847,9 +847,11 @@ export default class UI extends Module<UINodes> {
 
     /**
      * Event can be fired on clicks at non-block-content elements,
-     * for example, at the Inline Toolbar or some Block Tune element
+     * for example, at the Inline Toolbar or some Block Tune element.
+     * We also make sure that the closest block belongs to the current editor and not a parent
      */
-    const clickedOutsideBlockContent = focusedElement.closest(`.${Block.CSS.content}`) === null;
+    const closestBlock = focusedElement.closest(`.${Block.CSS.content}`);
+    const clickedOutsideBlockContent = closestBlock === null || (closestBlock.closest(`.${Selection.CSS.editorWrapper}`) !== this.nodes.wrapper);
 
     if (clickedOutsideBlockContent) {
       /**
