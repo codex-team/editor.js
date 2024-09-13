@@ -1,6 +1,6 @@
 import { ConversionConfig, PasteConfig, SanitizerConfig } from '../configs';
 import { BlockToolData } from './block-tool-data';
-import { BaseTool, BaseToolConstructable } from './tool';
+import { BaseTool, BaseToolConstructable, BaseToolConstructorOptions } from './tool';
 import { ToolConfig } from './tool-config';
 import { API, BlockAPI, ToolboxConfig } from '../index';
 import { PasteEvent } from './paste-events';
@@ -83,10 +83,8 @@ export interface BlockTool extends BaseTool {
 /**
  * Describe constructor parameters
  */
-export interface BlockToolConstructorOptions<D extends object = any, C extends object = any> {
-  api: API;
+export interface BlockToolConstructorOptions<D extends object = any, C extends object = any> extends BaseToolConstructorOptions<C> {
   data: BlockToolData<D>;
-  config: ToolConfig<C>;
   block: BlockAPI;
   readOnly: boolean;
 }
