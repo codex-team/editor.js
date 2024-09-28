@@ -1,9 +1,13 @@
 # Changelog
 
+### 2.31.0
+
+- `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
+
 ### 2.30.6
 
-– `Fix` – Fix the display of ‘Convert To’ near blocks that do not have the ‘conversionConfig.export’ rule specified
-– `Fix` – The Plus button does not appear when the editor is loaded in an iframe in Chrome
+- `Fix` – Fix the display of ‘Convert To’ near blocks that do not have the ‘conversionConfig.export’ rule specified
+- `Fix` – The Plus button does not appear when the editor is loaded in an iframe in Chrome
 - `Fix` - Prevent inline toolbar from closing in nested instance of editor
 
 ### 2.30.5
@@ -33,7 +37,7 @@
 - `New` – Block Tunes now supports nesting items
 - `New` – Block Tunes now supports separator items
 - `New` – *Menu Config* – New item type – HTML
-– `New` – *Menu Config* – Default and HTML items now support hints
+- `New` – *Menu Config* – Default and HTML items now support hints
 - `New` – Inline Toolbar has new look 💅
 - `New` – Inline Tool's `render()` now supports [Menu Config](https://editorjs.io/menu-config/) format
 - `New` – *ToolsAPI* – All installed block tools now accessible via ToolsAPI `getBlockTools()` method

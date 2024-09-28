@@ -117,6 +117,13 @@ export default class UI extends Module<UINodes> {
   }, 200);
 
   /**
+   * Handle selection change to manipulate Inline Toolbar appearance
+   */
+  private selectionChangeDebounced = _.debounce(() => {
+    this.selectionChanged();
+  }, selectionChangeDebounceTimeout);
+
+  /**
    * Making main interface
    */
   public async prepare(): Promise<void> {
@@ -222,6 +229,8 @@ export default class UI extends Module<UINodes> {
    */
   public destroy(): void {
     this.nodes.holder.innerHTML = '';
+
+    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced);
   }
 
   /**
@@ -331,6 +340,7 @@ export default class UI extends Module<UINodes> {
     $.prepend(document.head, tag);
   }
 
+
   /**
    * Bind events on the Editor.js interface
    */
@@ -361,14 +371,8 @@ export default class UI extends Module<UINodes> {
       this.documentClicked(event);
     }, true);
 
-    /**
-     * Handle selection change to manipulate Inline Toolbar appearance
-     */
-    const selectionChangeDebounced = _.debounce(() => {
-      this.selectionChanged();
-    }, selectionChangeDebounceTimeout);
 
-    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
+    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced);
 
     this.readOnlyMutableListeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -821,6 +825,9 @@ export default class UI extends Module<UINodes> {
   private selectionChanged(): void {
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
+
+    console.log('selection changed');
+
 
     if (CrossBlockSelection.isCrossBlockSelectionStarted) {
       // Removes all ranges when any Block is selected

@@ -684,7 +684,7 @@ export default class BlockManager extends Module {
    *
    * @param {Node} element - html element to get Block by
    */
-  public getBlock(element: HTMLElement): Block {
+  public getBlock(element: HTMLElement): Block | undefined {
     if (!$.isElement(element) as boolean) {
       element = element.parentNode as HTMLElement;
     }
