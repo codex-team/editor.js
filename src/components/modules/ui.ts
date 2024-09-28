@@ -68,7 +68,7 @@ export default class UI extends Module<UINodes> {
    * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
-    if (this.contentRectCache) {
+    if (this.contentRectCache !== null) {
       return this.contentRectCache;
     }
 
@@ -85,7 +85,7 @@ export default class UI extends Module<UINodes> {
       } as DOMRect;
     }
 
-    this.contentRectCache = someBlock.getBoundingClientRect() as DOMRect;
+    this.contentRectCache = someBlock.getBoundingClientRect();
 
     return this.contentRectCache;
   }
@@ -104,7 +104,7 @@ export default class UI extends Module<UINodes> {
    *
    * @type {DOMRect}
    */
-  private contentRectCache: DOMRect = undefined;
+  private contentRectCache: DOMRect | null = null;
 
   /**
    * Handle window resize only when it finished
@@ -167,7 +167,7 @@ export default class UI extends Module<UINodes> {
         /**
          * Bind events for the UI elements
          */
-        this.enableModuleBindings();
+        this.bindReadOnlySensitiveListeners();
       }, {
         timeout: 2000,
       });
@@ -176,7 +176,7 @@ export default class UI extends Module<UINodes> {
        * Unbind all events
        *
        */
-      this.disableModuleBindings();
+      this.unbindReadOnlySensitiveListeners();
     }
   }
 
@@ -230,7 +230,7 @@ export default class UI extends Module<UINodes> {
   public destroy(): void {
     this.nodes.holder.innerHTML = '';
 
-    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced);
+    this.unbindReadOnlyInsensitiveListeners();
   }
 
   /**
@@ -298,6 +298,8 @@ export default class UI extends Module<UINodes> {
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
+
+    this.bindReadOnlyInsensitiveListeners();
   }
 
   /**
@@ -340,11 +342,30 @@ export default class UI extends Module<UINodes> {
     $.prepend(document.head, tag);
   }
 
+  /**
+   * Adds listeners that should work both in read-only and read-write modes
+   */
+  private bindReadOnlyInsensitiveListeners(): void {
+    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced);
+
+    this.listeners.on(window, 'resize', this.resizeDebouncer, {
+      passive: true,
+    });
+  }
+
+  /**
+   * Removes listeners that should work both in read-only and read-write modes
+   */
+  private unbindReadOnlyInsensitiveListeners(): void {
+    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced);
+    this.listeners.off(window, 'resize', this.resizeDebouncer);
+  }
+
 
   /**
    * Bind events on the Editor.js interface
    */
-  private enableModuleBindings(): void {
+  private bindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
       this.redactorClicked(event);
     }, false);
@@ -370,15 +391,6 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);
-
-
-    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced);
-
-    this.readOnlyMutableListeners.on(window, 'resize', () => {
-      this.resizeDebouncer();
-    }, {
-      passive: true,
-    });
 
     /**
      * Start watching 'block-hovered' events that is used by Toolbar for moving
@@ -434,7 +446,7 @@ export default class UI extends Module<UINodes> {
   /**
    * Unbind events on the Editor.js interface
    */
-  private disableModuleBindings(): void {
+  private unbindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.clearAll();
   }
 
@@ -825,9 +837,6 @@ export default class UI extends Module<UINodes> {
   private selectionChanged(): void {
     const { CrossBlockSelection, BlockSelection } = this.Editor;
     const focusedElement = Selection.anchorElement;
-
-    console.log('selection changed');
-
 
     if (CrossBlockSelection.isCrossBlockSelectionStarted) {
       // Removes all ranges when any Block is selected

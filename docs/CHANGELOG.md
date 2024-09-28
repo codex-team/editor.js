@@ -3,6 +3,7 @@
 ### 2.31.0
 
 - `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
+- `Fix` - Fix selection of first block in read-only initialization with "autofocus=true"
 
 ### 2.30.6
 

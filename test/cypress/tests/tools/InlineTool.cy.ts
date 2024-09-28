@@ -21,6 +21,7 @@ describe('InlineTool', () => {
       public static prepare;
 
       public static shortcut = 'CTRL+N';
+      public static isReadOnlySupported = true;
 
       public api: object;
       public config: ToolSettings;
@@ -190,6 +191,23 @@ describe('InlineTool', () => {
       const instance = tool.create() as any;
 
       expect(instance.config).to.be.deep.eq(options.config.config);
+    });
+  });
+
+  context('.isReadOnlySupported', () => {
+    it('should return Tool provided value', () => {
+      const tool = new InlineToolAdapter(options as any);
+
+      expect(tool.isReadOnlySupported).to.be.eq(options.constructable.isReadOnlySupported);
+    });
+
+    it('should return false if Tool provided value is not exist', () => {
+      const tool = new InlineToolAdapter({
+        ...options,
+        constructable: {},
+      } as any);
+
+      expect(tool.isReadOnlySupported).to.be.false;
     });
   });
 });

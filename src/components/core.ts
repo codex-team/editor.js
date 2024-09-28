@@ -61,7 +61,7 @@ export default class Core {
         UI.checkEmptiness();
         ModificationsObserver.enable();
 
-        if ((this.configuration as EditorConfig).autofocus) {
+        if ((this.configuration as EditorConfig).autofocus === true && this.configuration.readOnly !== true) {
           Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
         }
 
