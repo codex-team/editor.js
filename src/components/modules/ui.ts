@@ -363,7 +363,7 @@ export default class UI extends Module<UINodes> {
 
 
   /**
-   * Bind events on the Editor.js interface
+   * Adds listeners that should work only in read-only mode
    */
   private bindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
@@ -444,7 +444,7 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Unbind events on the Editor.js interface
+   * Unbind events that should work only in read-only mode
    */
   private unbindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.clearAll();

@@ -292,7 +292,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     }
 
     /**
-     * In read-only mode, check that at least one tool is available in read-only mode for the current block
+     * Check that at least one tool is available for the current block
      */
     const toolsAvailable = this.getTools();
     const isAtLeastOneToolAvailable = toolsAvailable.some((tool) => currentBlock.tool.inlineTools.has(tool.name));
@@ -314,6 +314,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *  Working with Tools
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
+
+  /**
+   * Returns tools that are available for current block
+   *
+   * Used to check if Inline Toolbar could be shown
+   * and to render tools in the Inline Toolbar
+   */
   private getTools(): InlineToolAdapter[] {
     const currentBlock = this.Editor.BlockManager.currentBlock;
 
@@ -324,6 +331,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     const inlineTools = Array.from(currentBlock.tool.inlineTools.values());
 
     return inlineTools.filter((tool) => {
+      /**
+       * We support inline tools in read only mode.
+       * Such tools should have isReadOnlySupported flag set to true
+       */
       if (this.Editor.ReadOnly.isEnabled && tool.isReadOnlySupported !== true) {
         return false;
       }
