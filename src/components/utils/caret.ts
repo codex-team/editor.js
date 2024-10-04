@@ -112,7 +112,7 @@ export function checkContenteditableSliceForEmptiness(contenteditable: HTMLEleme
  * @param input - input where caret should be checked
  */
 export function isCaretAtStartOfInput(input: HTMLElement): boolean {
-  const firstNode = $.getDeepestNode(input);
+  const firstNode = $.isNativeInput(input) ? input : $.getDeepestNode(input);
 
   if (firstNode === null || $.isEmpty(input)) {
     return true;
