@@ -317,7 +317,7 @@ export default class SelectionUtils {
    *
    * @returns {Selection}
    */
-  public static get(): Selection {
+  public static get(): Selection | null  {
     return window.getSelection();
   }
 
