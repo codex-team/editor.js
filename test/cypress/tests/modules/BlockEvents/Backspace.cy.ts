@@ -392,7 +392,7 @@ describe('Backspace keydown', function () {
       .should('not.have.class', 'ce-toolbar--opened');
   });
 
-  it.only('should merge blocks of different types (Paragraph -> Header) if they have a valid conversion config. Also, should close the Toolbox. Caret should be places in a place of glue', function () {
+  it('should merge blocks of different types (Paragraph -> Header) if they have a valid conversion config. Also, should close the Toolbox. Caret should be places in a place of glue', function () {
     cy.createEditor({
       tools: {
         header: SimpleHeader,
