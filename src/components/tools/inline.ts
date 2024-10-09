@@ -34,4 +34,12 @@ export default class InlineToolAdapter extends BaseToolAdapter<ToolType.Inline, 
       config: this.settings,
     }) as IInlineTool;
   }
+
+  /**
+   * Allows inline tool to be available in read-only mode
+   * Can be used, for example, by comments tool
+   */
+  public get isReadOnlySupported(): boolean {
+    return this.constructable[InternalInlineToolSettings.IsReadOnlySupported] ?? false;
+  }
 }

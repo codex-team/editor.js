@@ -86,6 +86,12 @@ export enum InternalInlineToolSettings {
    * Inline Tool title for toolbar
    */
   Title = 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
+
+  /**
+   * Allows inline tool to be available in read-only mode
+   * Can be used, for example, by comments tool
+   */
+  IsReadOnlySupported = 'isReadOnlySupported',
 }
 
 /**

@@ -1,5 +1,6 @@
 import Header from '@editorjs/header';
 import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
+import type { MenuConfig } from '@/types/tools';
 
 describe('Inline Toolbar', () => {
   it('should appear aligned with left coord of selection rect', () => {
@@ -75,6 +76,59 @@ describe('Inline Toolbar', () => {
             expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 10);
           });
       });
+  });
+
+  it('should be displayed in read-only mode if at least one inline tool of block supports it', () => {
+    cy.createEditor({
+      tools: {
+        header: {
+          class: Header,
+          inlineToolbar: ['bold', 'testTool'],
+        },
+        testTool: {
+          class: class {
+            public static isInline = true;
+            public static isReadOnlySupported = true;
+            // eslint-disable-next-line jsdoc/require-jsdoc
+            public render(): MenuConfig {
+              return {
+                title: 'Test Tool',
+                name: 'test-tool',
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                onActivate: () => {},
+              };
+            }
+          },
+        },
+      },
+      readOnly: true,
+      data: {
+        blocks: [
+          {
+            type: 'header',
+            data: {
+              text: 'First block text',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open Inline Toolbar */
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-header')
+      .selectText('block');
+
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=inline-toolbar]')
+      .get('.ce-popover--opened')
+      .as('toolbar')
+      .should('exist');
+
+    cy.get('@toolbar')
+      .get('.ce-popover-item')
+      .should('have.length', 1)
+      .should('have.attr', 'data-item-name', 'test-tool');
   });
 
   it('should not submit form nesting editor when inline tool clicked', () => {
