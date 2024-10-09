@@ -77,5 +77,8 @@
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/editorjs"
+  },
+  "dependencies": {
+    "@editorjs/caret": "^1.0.1"
   }
 }
