@@ -403,14 +403,14 @@ describe('Backspace keydown', function () {
             id: 'block1',
             type: 'header',
             data: {
-              text: 'First <b>block</b> heading',
+              text: 'First block heading',
             },
           },
           {
             id: 'block2',
             type: 'paragraph',
             data: {
-              text: 'Second <b>block</b> paragraph',
+              text: 'Second block paragraph',
             },
           },
         ],
