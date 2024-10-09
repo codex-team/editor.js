@@ -583,10 +583,10 @@
   resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.30.2.tgz#b045af18a9ebe0c02cb32be41b2a98e23ee08e59"
   integrity sha512-JjtUDs2/aHTEjNZzEf/2cugpIli1+aNeU8mloOd5USbVxv2vC02HTMpv7Vc1UyB7dIuc45JaYSJwgnBZp9duhA==
 
-"@editorjs/header@^2.8.7":
-  version "2.8.7"
-  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.8.7.tgz#6aa34e01638d18fbbc6d3bd75f1844869eca9193"
-  integrity sha512-rfxzYFR/Jhaocj3Xxx8XjEjyzfPbBIVkcPZ9Uy3rEz1n3ewhV0V4zwuxCjVfFhLUVgQQExq43BxJnTNlLOzqDQ==
+"@editorjs/header@^2.8.8":
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.8.8.tgz#43cff7949c44866da7716fdb562d68116d0a806a"
+  integrity sha512-bsMSs34u2hoi0UBuRoc5EGWXIFzJiwYgkFUYQGVm63y5FU+s8zPBmVx5Ip2sw1xgs0fqfDROqmteMvvmbCy62w==
   dependencies:
     "@codexteam/icons" "^0.0.5"
     "@editorjs/editorjs" "^2.29.1"
