@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.31.0-rc.0",
+  "version": "2.31.0-rc.1",
   "description": "Editor.js — open source block-style WYSIWYG editor with JSON output",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -45,7 +45,7 @@
     "@cypress/code-coverage": "^3.10.3",
     "@editorjs/code": "^2.7.0",
     "@editorjs/delimiter": "^1.2.0",
-    "@editorjs/header": "^2.8.7",
+    "@editorjs/header": "^2.8.8",
     "@editorjs/paragraph": "^2.11.6",
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^18.15.11",
@@ -77,5 +77,8 @@
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/editorjs"
+  },
+  "dependencies": {
+    "@editorjs/caret": "^1.0.1"
   }
 }

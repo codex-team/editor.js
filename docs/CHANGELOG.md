@@ -4,6 +4,7 @@
 
 - `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
 - `Fix` - Fix selection of first block in read-only initialization with "autofocus=true"
+- `Fix` - Incorrect caret position after blocks merging in Safari
 
 ### 2.30.6
 
