@@ -1,4 +1,4 @@
-import { PopoverItemParams } from '../../../../types/index.js';
+import type { PopoverItemParams } from '../../../../types/index.js';
 
 /**
  * Mock of some Block Tool
@@ -87,9 +87,9 @@ describe('Flipper', () => {
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE });
 
     /**
-     * Check whether we focus the Move Up Tune or not
+     * Check whether we focus the Delete Tune or not
      */
-    cy.get('[data-item-name="move-up"]')
+    cy.get('[data-item-name="delete"]')
       .should('have.class', 'ce-popover-item--focused');
 
     cy.get('[data-cy=editorjs]')

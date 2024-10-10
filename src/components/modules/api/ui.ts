@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import { Ui, UiNodes } from '../../../../types/api';
+import type { Ui, UiNodes } from '../../../../types/api';
 
 /**
  * API module allowing to access some Editor UI elements

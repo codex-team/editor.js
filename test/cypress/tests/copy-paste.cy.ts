@@ -1,7 +1,7 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import { BlockTool, BlockToolData, OutputData } from '../../../types';
+import type { BlockTool, BlockToolData, OutputData } from '../../../types';
 import $ from '../../../src/components/dom';
 import type EditorJS from '../../../types/index';
 

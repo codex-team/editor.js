@@ -207,6 +207,11 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
+"@codexteam/icons@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.3.2.tgz#b7aed0ba7b344e07953101f5476cded570d4f150"
+  integrity sha512-P1ep2fHoy0tv4wx85eic+uee5plDnZQ1Qa6gDfv7eHPkCXorMtVqJhzMb75o1izogh6G7380PqmFDXV3bW3Pig==
+
 "@codexteam/icons@^0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.4.tgz#8b72dcd3f3a1b0d880bdceb2abebd74b46d3ae13"
@@ -221,11 +226,6 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.0.6.tgz#5553ada48dddf5940851ccc142cfe17835c36ad3"
   integrity sha512-L7Q5PET8PjKcBT5wp7VR+FCjwCi5PUp7rd/XjsgQ0CI5FJz0DphyHGRILMuDUdCW2MQT9NHbVr4QP31vwAkS/A==
-
-"@codexteam/icons@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@codexteam/icons/-/icons-0.3.0.tgz#62380b4053d487a257de443864b5c72dafab95e6"
-  integrity sha512-fJE9dfFdgq8xU+sbsxjH0Kt8Yeatw9xHBJWb77DhRkEXz3OCoIS6hrRC1ewHEryxzIjxD8IyQrRq2f+Gz3BcmA==
 
 "@codexteam/shortcuts@^1.1.1":
   version "1.2.0"
@@ -504,7 +504,7 @@
     js-yaml "4.1.0"
     nyc "15.1.0"
 
-"@cypress/request@^3.0.0":
+"@cypress/request@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@cypress/request/-/request-3.0.1.tgz#72d7d5425236a2413bd3d8bb66d02d9dc3168960"
   integrity sha512-TWivJlJi8ZDx2wGOw1dbLuHJKUYX7bWySw377nlnGOW3hP9/MUKIsEdXT/YngWxVdgNCHRBmFlBipE+5/2ZZlQ==
@@ -550,6 +550,13 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@editorjs/caret@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@editorjs/caret/-/caret-1.0.1.tgz#0d33ca67a2d29d09fdea10d3d30b660f0abc7cfd"
+  integrity sha512-yMewrc/dndBbgmluFory0GbVWXnD9rhcE/xgwM0ecHWQodyfY3ZIJLvSQhf+BbgncitMlUG/FYqjJCL2Axi4+g==
+  dependencies:
+    "@editorjs/dom" "^1.0.0"
+
 "@editorjs/code@^2.7.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@editorjs/code/-/code-2.8.0.tgz#d31fdd947b9c763daae2cd2eabdf8dc37c0c6f5a"
@@ -564,12 +571,30 @@
   dependencies:
     "@codexteam/icons" "^0.0.5"
 
-"@editorjs/header@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.7.0.tgz#755d104a9210a8e2d9ccf22b175b2a93bdbb2330"
-  integrity sha512-4fGKGe2ZYblVqR/P/iw5ieG00uXInFgNMftBMqJRYcB2hUPD30kuu7Sn6eJDcLXoKUMOeqi8Z2AlUxYAmvw7zQ==
+"@editorjs/dom@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/dom/-/dom-1.0.0.tgz#ddf7f17651a091570766c5fa44c89ecf8a183c82"
+  integrity sha512-P5qZaQaG8NQXm2XuEDlcfDm8S1Kvdegwf0E/ld2RnwZquY5l27hufaW57w0SikT75mscr+dARQ68Gx/xEQEUKw==
+  dependencies:
+    "@editorjs/helpers" "^1.0.0"
+
+"@editorjs/editorjs@^2.29.1":
+  version "2.30.2"
+  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.30.2.tgz#b045af18a9ebe0c02cb32be41b2a98e23ee08e59"
+  integrity sha512-JjtUDs2/aHTEjNZzEf/2cugpIli1+aNeU8mloOd5USbVxv2vC02HTMpv7Vc1UyB7dIuc45JaYSJwgnBZp9duhA==
+
+"@editorjs/header@^2.8.8":
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.8.8.tgz#43cff7949c44866da7716fdb562d68116d0a806a"
+  integrity sha512-bsMSs34u2hoi0UBuRoc5EGWXIFzJiwYgkFUYQGVm63y5FU+s8zPBmVx5Ip2sw1xgs0fqfDROqmteMvvmbCy62w==
   dependencies:
     "@codexteam/icons" "^0.0.5"
+    "@editorjs/editorjs" "^2.29.1"
+
+"@editorjs/helpers@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/helpers/-/helpers-1.0.0.tgz#4b0e0868e51e2772a73212f4aac5aff553725894"
+  integrity sha512-ih4yCm+x+7X9XCn1zxfNous2LQX8ZYMyTHMLdgbyjBf0Opf8GdLxVjdzSjkA+0mUp1tUe3JgWW3FTisYcSnbQA==
 
 "@editorjs/paragraph@^2.11.6":
   version "2.11.6"
@@ -1712,12 +1737,12 @@ cypress-vite@^1.5.0:
     chokidar "^3.5.3"
     debug "^4.3.4"
 
-cypress@^13.7.1:
-  version "13.7.1"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-13.7.1.tgz#d1208eb04efd46ef52a30480a5da71a03373261a"
-  integrity sha512-4u/rpFNxOFCoFX/Z5h+uwlkBO4mWzAjveURi3vqdSu56HPvVdyGTxGw4XKGWt399Y1JwIn9E1L9uMXQpc0o55w==
+cypress@^13.13.3:
+  version "13.13.3"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-13.13.3.tgz#21ee054bb4e00b3858f2e33b4f8f4e69128470a9"
+  integrity sha512-hUxPrdbJXhUOTzuML+y9Av7CKoYznbD83pt8g3klgpioEha0emfx4WNIuVRx0C76r0xV2MIwAW9WYiXfVJYFQw==
   dependencies:
-    "@cypress/request" "^3.0.0"
+    "@cypress/request" "^3.0.1"
     "@cypress/xvfb" "^1.2.4"
     "@types/sinonjs__fake-timers" "8.1.1"
     "@types/sizzle" "^2.3.2"
@@ -1756,7 +1781,7 @@ cypress@^13.7.1:
     request-progress "^3.0.0"
     semver "^7.5.3"
     supports-color "^8.1.1"
-    tmp "~0.2.1"
+    tmp "~0.2.3"
     untildify "^4.0.0"
     yauzl "^2.10.0"
 
@@ -4993,7 +5018,7 @@ through@^2.3.8:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
 
-tmp@~0.2.1:
+tmp@~0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.2.3.tgz#eb783cc22bc1e8bebd0671476d46ea4eb32a79ae"
   integrity sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==

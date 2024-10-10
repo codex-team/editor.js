@@ -1,5 +1,5 @@
 import Header from '@editorjs/header';
-import { ToolboxConfig } from '../../../types';
+import type { ToolboxConfig } from '../../../types';
 
 describe('Editor i18n', () => {
   context('Toolbox', () => {

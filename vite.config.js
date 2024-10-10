@@ -57,6 +57,12 @@ export default {
     'VERSION': JSON.stringify(VERSION),
   },
 
+  resolve: {
+    alias: {
+      '@/types': path.resolve(__dirname, './types'),
+    },
+  },
+
   server: {
     port: 3303,
     open: true,

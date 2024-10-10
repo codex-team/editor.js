@@ -1,4 +1,4 @@
-import { BlockAPI, Caret } from '../../../../types/api';
+import type { BlockAPI, Caret } from '../../../../types/api';
 import Module from '../../__module';
 import { resolveBlock } from '../../utils/api';
 

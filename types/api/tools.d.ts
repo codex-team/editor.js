@@ -1,4 +1,4 @@
-import BlockTool from "../../src/components/tools/block";
+import { BlockToolAdapter } from '../tools/adapters/block-tool-adapter';
 
 /**
  * Describes methods for accessing installed Editor tools
@@ -7,5 +7,5 @@ export interface Tools {
   /**
    * Returns all available Block Tools
    */
-  getBlockTools(): BlockTool[];
+  getBlockTools(): BlockToolAdapter[];
 }

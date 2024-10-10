@@ -1,6 +1,6 @@
 'use strict';
 
-import { EditorConfig } from '../types';
+import type { EditorConfig } from '../types';
 
 /**
  * Apply polyfills

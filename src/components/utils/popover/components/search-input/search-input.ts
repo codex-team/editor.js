@@ -1,7 +1,8 @@
 import Dom from '../../../../dom';
 import Listeners from '../../../listeners';
 import { IconSearch } from '@codexteam/icons';
-import { SearchInputEvent, SearchInputEventMap, SearchableItem } from './search-input.types';
+import type { SearchInputEventMap, SearchableItem } from './search-input.types';
+import { SearchInputEvent } from './search-input.types';
 import { css } from './search-input.const';
 import EventsDispatcher from '../../../events';
 

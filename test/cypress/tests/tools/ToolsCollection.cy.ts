@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ToolsCollection from '../../../../src/components/tools/collection';
-import BlockTool from '../../../../src/components/tools/block';
-import InlineTool from '../../../../src/components/tools/inline';
-import BlockTune from '../../../../src/components/tools/tune';
-import BaseTool from '../../../../src/components/tools/base';
+import type BlockToolAdapter from '../../../../src/components/tools/block';
+import type InlineToolAdapter from '../../../../src/components/tools/inline';
+import type BlockTuneAdapter from '../../../../src/components/tools/tune';
+import type BaseToolAdapter from '../../../../src/components/tools/base';
 
 const FakeTool = {
   isBlock(): boolean {
@@ -89,7 +89,7 @@ describe('ToolsCollection', (): void => {
           .from(
             collection.blockTools.values()
           )
-          .every((tool: BlockTool) => tool.isBlock())
+          .every((tool: BlockToolAdapter) => tool.isBlock())
       ).to.be.true;
     });
   });
@@ -105,7 +105,7 @@ describe('ToolsCollection', (): void => {
           .from(
             collection.inlineTools.values()
           )
-          .every((tool: InlineTool) => tool.isInline())
+          .every((tool: InlineToolAdapter) => tool.isInline())
       ).to.be.true;
     });
   });
@@ -121,7 +121,7 @@ describe('ToolsCollection', (): void => {
           .from(
             collection.blockTunes.values()
           )
-          .every((tool: BlockTune) => tool.isTune())
+          .every((tool: BlockTuneAdapter) => tool.isTune())
       ).to.be.true;
     });
   });
@@ -137,7 +137,7 @@ describe('ToolsCollection', (): void => {
           .from(
             collection.internalTools.values()
           )
-          .every((tool: BaseTool) => tool.isInternal)
+          .every((tool: BaseToolAdapter) => tool.isInternal)
       ).to.be.true;
     });
   });
@@ -153,7 +153,7 @@ describe('ToolsCollection', (): void => {
           .from(
             collection.externalTools.values()
           )
-          .every((tool: BaseTool) => !tool.isInternal)
+          .every((tool: BaseToolAdapter) => !tool.isInternal)
       ).to.be.true;
     });
   });
@@ -166,7 +166,7 @@ describe('ToolsCollection', (): void => {
             .from(
               collection.blockTunes.internalTools.values()
             )
-            .every((tool: BlockTune) => tool.isTune() && tool.isInternal)
+            .every((tool: BlockTuneAdapter) => tool.isTune() && tool.isInternal)
         ).to.be.true;
       });
     });
@@ -178,7 +178,7 @@ describe('ToolsCollection', (): void => {
             .from(
               collection.externalTools.blockTools.values()
             )
-            .every((tool: BlockTool) => tool.isBlock() && !tool.isInternal)
+            .every((tool: BlockToolAdapter) => tool.isBlock() && !tool.isInternal)
         ).to.be.true;
       });
     });

@@ -1,4 +1,6 @@
 import { defineConfig } from 'cypress';
+import path from 'node:path';
+import vitePreprocessor from 'cypress-vite';
 
 export default defineConfig({
   env: {
@@ -12,7 +14,9 @@ export default defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      on('file:preprocessor', require('cypress-vite')(config));
+      on('file:preprocessor', vitePreprocessor({
+        configFile: path.resolve(__dirname, './vite.config.test.js'),
+      }));
 
       /**
        * Plugin for cypress that adds better terminal output for easier debugging.
@@ -21,7 +25,7 @@ export default defineConfig({
        */
       require('cypress-terminal-report/src/installLogsPrinter')(on);
 
-      require('./test/cypress/plugins/index.ts')(on, config);
+      require('@cypress/code-coverage/task')(on, config);
     },
     specPattern: 'test/cypress/tests/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'test/cypress/support/index.ts',

@@ -3,14 +3,16 @@ import Module from '../../__module';
 import $ from '../../dom';
 import SelectionUtils from '../../selection';
 import * as _ from '../../utils';
-import { InlineTool as IInlineTool } from '../../../../types';
+import type { InlineTool as IInlineTool } from '../../../../types';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
-import { ModuleConfig } from '../../../types-internal/module-config';
+import type { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import { Popover, PopoverItemHtmlParams, PopoverItemParams, PopoverItemType, WithChildren } from '../../utils/popover';
+import type { Popover, PopoverItemHtmlParams, PopoverItemParams, WithChildren } from '../../utils/popover';
+import { PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
+import type InlineToolAdapter from 'src/components/tools/inline';
 
 /**
  * Inline Toolbar elements
@@ -53,7 +55,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Currently visible tools instances
    */
-  private toolsInstances: Map<string, IInlineTool> | null = new Map();
+  private tools: Map<InlineToolAdapter, IInlineTool> = new Map();
 
   /**
    * @param moduleConfiguration - Module Configuration
@@ -65,21 +67,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       config,
       eventsDispatcher,
     });
-  }
 
-  /**
-   * Toggles read-only mode
-   *
-   * @param {boolean} readOnlyEnabled - read-only mode
-   */
-  public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (!readOnlyEnabled) {
-      window.requestIdleCallback(() => {
-        this.make();
-      }, { timeout: 2000 });
-    } else {
-      this.destroy();
-    }
+    window.requestIdleCallback(() => {
+      this.make();
+    }, { timeout: 2000 });
   }
 
   /**
@@ -115,14 +106,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    if (this.Editor.ReadOnly.isEnabled) {
-      return;
-    }
+    for (const [tool, toolInstance] of this.tools) {
+      const shortcut = this.getToolShortcut(tool.name);
 
-    Array.from(this.toolsInstances.entries()).forEach(([name, toolInstance]) => {
-      const shortcut = this.getToolShortcut(name);
-
-      if (shortcut) {
+      if (shortcut !== undefined) {
         Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
       }
 
@@ -132,9 +119,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       if (_.isFunction(toolInstance.clear)) {
         toolInstance.clear();
       }
-    });
+    }
 
-    this.toolsInstances = null;
+    this.tools = new Map();
 
     this.reset();
     this.opened = false;
@@ -203,10 +190,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       this.popover.destroy();
     }
 
-    const inlineTools = await this.getInlineTools();
+    this.createToolsInstances();
+
+    const popoverItems = await this.getPopoverItems();
 
     this.popover = new PopoverInline({
-      items: inlineTools,
+      items: popoverItems,
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
@@ -289,25 +278,36 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return false;
     }
 
-    if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
+    if (currentSelection !== null && tagsConflictsWithSelection.includes(target.tagName)) {
       return false;
     }
 
-    // The selection of the element only in contenteditable
-    const contenteditable = target.closest('[contenteditable="true"]');
-
-    if (contenteditable === null) {
-      return false;
-    }
-
-    // is enabled by current Block's Tool
+    /**
+     * Check if there is at leas one tool enabled by current Block's Tool
+     */
     const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     if (!currentBlock) {
       return false;
     }
 
-    return currentBlock.tool.inlineTools.size !== 0;
+    /**
+     * Check that at least one tool is available for the current block
+     */
+    const toolsAvailable = this.getTools();
+    const isAtLeastOneToolAvailable = toolsAvailable.some((tool) => currentBlock.tool.inlineTools.has(tool.name));
+
+    if (isAtLeastOneToolAvailable === false) {
+      return false;
+    }
+
+    /**
+     * Inline toolbar will be shown only if the target is contenteditable
+     * In Read-Only mode, the target should be contenteditable with "false" value
+     */
+    const contenteditable = target.closest('[contenteditable]');
+
+    return contenteditable !== null;
   }
 
   /**
@@ -316,32 +316,63 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
 
   /**
-   * Returns Inline Tools segregated by their appearance type: popover items and custom html elements.
-   * Sets this.toolsInstances map
+   * Returns tools that are available for current block
+   *
+   * Used to check if Inline Toolbar could be shown
+   * and to render tools in the Inline Toolbar
    */
-  private async getInlineTools(): Promise<PopoverItemParams[]> {
-    const currentSelection = SelectionUtils.get();
-    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
+  private getTools(): InlineToolAdapter[] {
+    const currentBlock = this.Editor.BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return [];
+    }
 
     const inlineTools = Array.from(currentBlock.tool.inlineTools.values());
 
+    return inlineTools.filter((tool) => {
+      /**
+       * We support inline tools in read only mode.
+       * Such tools should have isReadOnlySupported flag set to true
+       */
+      if (this.Editor.ReadOnly.isEnabled && tool.isReadOnlySupported !== true) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * Constructs tools instances and saves them to this.tools
+   */
+  private createToolsInstances(): void {
+    this.tools = new Map();
+
+    const tools = this.getTools();
+
+    tools.forEach((tool) => {
+      const instance = tool.create();
+
+      this.tools.set(tool, instance);
+    });
+  }
+
+  /**
+   * Returns Popover Items for tools segregated by their appearance type: regular items and custom html elements.
+   */
+  private async getPopoverItems(): Promise<PopoverItemParams[]> {
     const popoverItems = [] as PopoverItemParams[];
 
-    if (this.toolsInstances === null) {
-      this.toolsInstances = new Map();
-    }
+    let i = 0;
 
-    for (let i = 0; i < inlineTools.length; i++) {
-      const tool = inlineTools[i];
-      const instance = tool.create();
+    for (const [tool, instance] of this.tools) {
       const renderedTool = await instance.render();
-
-      this.toolsInstances.set(tool.name, instance);
 
       /** Enable tool shortcut */
       const shortcut = this.getToolShortcut(tool.name);
 
-      if (shortcut) {
+      if (shortcut !== undefined) {
         try {
           this.enableShortcuts(tool.name, shortcut);
         } catch (e) {}
@@ -428,7 +459,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             type: PopoverItemType.Default,
           } as PopoverItemParams;
 
-          /** Prepend with separator if item has children and not the first one */
+          /**
+           * Prepend the separator if item has children and not the first one
+           */
           if ('children' in popoverItem && i !== 0) {
             popoverItems.push({
               type: PopoverItemType.Separator,
@@ -437,14 +470,18 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
           popoverItems.push(popoverItem);
 
-          /** Append separator after the item is it has children and not the last one */
-          if ('children' in popoverItem && i < inlineTools.length - 1) {
+          /**
+           * Append a separator after the item if it has children and not the last one
+           */
+          if ('children' in popoverItem && i < this.tools.size - 1) {
             popoverItems.push({
               type: PopoverItemType.Separator,
             });
           }
         }
       });
+
+      i++;
     }
 
     return popoverItems;
@@ -532,7 +569,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.toolsInstances?.forEach((toolInstance) => {
+    this.tools?.forEach((toolInstance) => {
       toolInstance.checkState?.(SelectionUtils.get());
     });
   }

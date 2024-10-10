@@ -1,4 +1,4 @@
-import { Styles } from '../../../../types/api';
+import type { Styles } from '../../../../types/api';
 import Module from '../../__module';
 
 /**

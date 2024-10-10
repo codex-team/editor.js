@@ -1,4 +1,4 @@
-import {
+import type {
   BaseTool,
   BlockToolConstructorOptions,
   BlockToolData,
@@ -10,7 +10,7 @@ import {
  */
 export class SimpleHeader implements BaseTool {
   private _data: BlockToolData;
-  private element: HTMLHeadingElement;
+  private element: HTMLHeadingElement | null = null;
 
   /**
    *
@@ -39,10 +39,7 @@ export class SimpleHeader implements BaseTool {
    * @param data - saved data to merger with current block
    */
   public merge(data: BlockToolData): void {
-    this.data = {
-      text: this.data.text + data.text,
-      level: this.data.level,
-    };
+    this.element?.insertAdjacentHTML('beforeend', data.text);
   }
 
   /**
@@ -65,26 +62,5 @@ export class SimpleHeader implements BaseTool {
       export: 'text', // use 'text' property for other blocks
       import: 'text', // fill 'text' property from other block's export string
     };
-  }
-
-  /**
-   * Data getter
-   */
-  private get data(): BlockToolData {
-    this._data.text = this.element.innerHTML;
-    this._data.level = 1;
-
-    return this._data;
-  }
-
-  /**
-   * Data setter
-   */
-  private set data(data: BlockToolData) {
-    this._data = data;
-
-    if (data.text !== undefined) {
-      this.element.innerHTML = this._data.text || '';
-    }
   }
 }

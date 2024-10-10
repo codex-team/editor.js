@@ -1,11 +1,11 @@
 import type { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
-import { BlockToolData, OutputBlockData, OutputData, ToolConfig } from '../../../../types';
+import type { BlockToolData, OutputBlockData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
 import Module from '../../__module';
 import Block from '../../block';
 import { capitalize } from '../../utils';
-import { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
+import type { BlockTuneData } from '../../../../types/block-tunes/block-tune-data';
 
 /**
  * @class BlocksAPI

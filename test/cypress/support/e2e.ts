@@ -1,3 +1,4 @@
+import '@cypress/code-coverage/support';
 
 /* global chai */
 // because this file is imported from cypress/support/e2e.js
@@ -5,7 +6,7 @@
 // available to them because the supportFile is bundled and served
 // prior to any spec files loading
 
-import PartialBlockMutationEvent from '../fixtures/types/PartialBlockMutationEvent';
+import type PartialBlockMutationEvent from '../fixtures/types/PartialBlockMutationEvent';
 
 /**
  * Chai plugin for checking if passed onChange method is called with an array of passed events

@@ -2,8 +2,8 @@ import { PopoverDesktop } from './popover-desktop';
 import { PopoverInline } from './popover-inline';
 import { PopoverMobile } from './popover-mobile';
 
-export * from './popover.types';
-export * from './components/popover-item/popover-item.types';
+export type * from '@/types/utils/popover';
+export { PopoverItemType } from '@/types/utils/popover/popover-item-type';
 
 /**
  * Union type for all popovers

@@ -1,5 +1,5 @@
-import { Saver } from '../../../../types/api';
-import { OutputData } from '../../../../types';
+import type { Saver } from '../../../../types/api';
+import type { OutputData } from '../../../../types';
 import * as _ from '../../utils';
 import Module from '../../__module';
 

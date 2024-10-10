@@ -2,8 +2,9 @@ import { PopoverAbstract } from './popover-abstract';
 import ScrollLocker from '../scroll-locker';
 import { PopoverHeader } from './components/popover-header';
 import { PopoverStatesHistory } from './utils/popover-states-history';
-import { PopoverMobileNodes, PopoverParams } from './popover.types';
-import { PopoverItemDefault, PopoverItemParams, PopoverItemType } from './components/popover-item';
+import type { PopoverMobileNodes, PopoverParams } from '@/types/utils/popover/popover';
+import type { PopoverItemDefault, PopoverItemParams } from './components/popover-item';
+import { PopoverItemType } from './components/popover-item';
 import { css } from './popover.const';
 import Dom from '../../dom';
 

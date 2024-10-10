@@ -1,8 +1,8 @@
 import { selectionChangeDebounceTimeout } from '../../../../src/components/constants';
 import Header from '@editorjs/header';
-import { ToolboxConfig } from '../../../../types';
-import { MenuConfig } from '../../../../types/tools';
-
+import type { ConversionConfig, ToolboxConfig } from '../../../../types';
+import type { MenuConfig } from '../../../../types/tools';
+import { ToolWithoutConversionExport } from '../../fixtures/tools/ToolWithoutConversionExport';
 
 describe('BlockTunes', function () {
   describe('Search', () => {
@@ -185,6 +185,39 @@ describe('BlockTunes', function () {
         .should('not.exist');
     });
 
+    it('should not display the ConvertTo control if block has no conversionConfig.export specified', () => {
+      cy.createEditor({
+        tools: {
+          testTool: ToolWithoutConversionExport,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'testTool',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      }).as('editorInstance');
+
+      cy.get('@editorInstance')
+        .get('[data-cy=editorjs]')
+        .find('.ce-block')
+        .click();
+
+      cy.get('@editorInstance')
+        .get('[data-cy=editorjs]')
+        .find('.ce-toolbar__settings-btn')
+        .click();
+
+      cy.get('@editorInstance')
+        .get('[data-cy=editorjs]')
+        .find('.ce-popover-item[data-item-name=convert-to]')
+        .should('not.exist');
+    });
+
     it('should not display tool with the same data in "Convert to" menu', () => {
       /**
        * Tool with several toolbox entries configured
@@ -193,9 +226,10 @@ describe('BlockTunes', function () {
         /**
          * Tool is convertable
          */
-        public static get conversionConfig(): { import: string } {
+        public static get conversionConfig(): ConversionConfig {
           return {
             import: 'text',
+            export: 'text',
           };
         }
 

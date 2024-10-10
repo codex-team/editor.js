@@ -1,6 +1,6 @@
 import { PopoverDesktop as Popover, PopoverItemType } from '../../../../src/components/utils/popover';
-import { PopoverItemParams } from '../../../../types';
-import { MenuConfig } from '../../../../types/tools';
+import type { PopoverItemParams } from '@/types/utils/popover';
+import type { MenuConfig } from '../../../../types/tools';
 import Header from '@editorjs/header';
 
 /* eslint-disable @typescript-eslint/no-empty-function */

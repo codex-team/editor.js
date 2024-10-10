@@ -1,11 +1,13 @@
-import { PopoverItem, PopoverItemDefault, PopoverItemRenderParamsMap, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
+import type { PopoverItem, PopoverItemRenderParamsMap } from './components/popover-item';
+import { PopoverItemDefault, PopoverItemSeparator, PopoverItemType } from './components/popover-item';
 import Dom from '../../dom';
-import { SearchInput } from './components/search-input';
+import type { SearchInput } from './components/search-input';
 import EventsDispatcher from '../events';
 import Listeners from '../listeners';
-import { PopoverEventMap, PopoverMessages, PopoverParams, PopoverEvent, PopoverNodes } from './popover.types';
+import type { PopoverEventMap, PopoverMessages, PopoverParams, PopoverNodes } from '@/types/utils/popover/popover';
+import { PopoverEvent } from '@/types/utils/popover/popover-event';
 import { css } from './popover.const';
-import { PopoverItemParams } from './components/popover-item';
+import type { PopoverItemParams } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 
 /**

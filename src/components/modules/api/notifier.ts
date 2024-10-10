@@ -1,8 +1,8 @@
-import { Notifier as INotifier } from '../../../../types/api';
+import type { Notifier as INotifier } from '../../../../types/api';
 import Notifier from '../../utils/notifier';
-import { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
+import type { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
 import Module from '../../__module';
-import { ModuleConfig } from '../../../types-internal/module-config';
+import type { ModuleConfig } from '../../../types-internal/module-config';
 
 /**
  *

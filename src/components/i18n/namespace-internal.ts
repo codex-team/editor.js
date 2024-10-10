@@ -1,5 +1,5 @@
 import defaultDictionary from './locales/en/messages.json';
-import { DictNamespaces } from '../../types-internal/i18n-internal-namespace';
+import type { DictNamespaces } from '../../types-internal/i18n-internal-namespace';
 import { isObject, isString } from '../utils';
 
 /**
