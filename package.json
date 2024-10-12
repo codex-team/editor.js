@@ -50,8 +50,6 @@
     "@editorjs/simple-image": "^1.4.1",
     "@types/node": "^18.15.11",
     "chai-subset": "^1.6.0",
-    "codex-notifier": "^1.1.2",
-    "codex-tooltip": "^1.0.5",
     "core-js": "3.30.0",
     "cypress": "^13.13.3",
     "cypress-intellij-reporter": "^0.0.7",
@@ -79,6 +77,8 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
-    "@editorjs/caret": "^1.0.1"
+    "@editorjs/caret": "^1.0.1",
+    "codex-notifier": "^1.1.2",
+    "codex-tooltip": "^1.0.5"
   }
 }
