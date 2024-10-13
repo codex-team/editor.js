@@ -550,6 +550,13 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@editorjs/caret@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@editorjs/caret/-/caret-1.0.1.tgz#0d33ca67a2d29d09fdea10d3d30b660f0abc7cfd"
+  integrity sha512-yMewrc/dndBbgmluFory0GbVWXnD9rhcE/xgwM0ecHWQodyfY3ZIJLvSQhf+BbgncitMlUG/FYqjJCL2Axi4+g==
+  dependencies:
+    "@editorjs/dom" "^1.0.0"
+
 "@editorjs/code@^2.7.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@editorjs/code/-/code-2.8.0.tgz#d31fdd947b9c763daae2cd2eabdf8dc37c0c6f5a"
@@ -564,18 +571,30 @@
   dependencies:
     "@codexteam/icons" "^0.0.5"
 
+"@editorjs/dom@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/dom/-/dom-1.0.0.tgz#ddf7f17651a091570766c5fa44c89ecf8a183c82"
+  integrity sha512-P5qZaQaG8NQXm2XuEDlcfDm8S1Kvdegwf0E/ld2RnwZquY5l27hufaW57w0SikT75mscr+dARQ68Gx/xEQEUKw==
+  dependencies:
+    "@editorjs/helpers" "^1.0.0"
+
 "@editorjs/editorjs@^2.29.1":
   version "2.30.2"
   resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.30.2.tgz#b045af18a9ebe0c02cb32be41b2a98e23ee08e59"
   integrity sha512-JjtUDs2/aHTEjNZzEf/2cugpIli1+aNeU8mloOd5USbVxv2vC02HTMpv7Vc1UyB7dIuc45JaYSJwgnBZp9duhA==
 
-"@editorjs/header@^2.8.7":
-  version "2.8.7"
-  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.8.7.tgz#6aa34e01638d18fbbc6d3bd75f1844869eca9193"
-  integrity sha512-rfxzYFR/Jhaocj3Xxx8XjEjyzfPbBIVkcPZ9Uy3rEz1n3ewhV0V4zwuxCjVfFhLUVgQQExq43BxJnTNlLOzqDQ==
+"@editorjs/header@^2.8.8":
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.8.8.tgz#43cff7949c44866da7716fdb562d68116d0a806a"
+  integrity sha512-bsMSs34u2hoi0UBuRoc5EGWXIFzJiwYgkFUYQGVm63y5FU+s8zPBmVx5Ip2sw1xgs0fqfDROqmteMvvmbCy62w==
   dependencies:
     "@codexteam/icons" "^0.0.5"
     "@editorjs/editorjs" "^2.29.1"
+
+"@editorjs/helpers@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/helpers/-/helpers-1.0.0.tgz#4b0e0868e51e2772a73212f4aac5aff553725894"
+  integrity sha512-ih4yCm+x+7X9XCn1zxfNous2LQX8ZYMyTHMLdgbyjBf0Opf8GdLxVjdzSjkA+0mUp1tUe3JgWW3FTisYcSnbQA==
 
 "@editorjs/paragraph@^2.11.6":
   version "2.11.6"

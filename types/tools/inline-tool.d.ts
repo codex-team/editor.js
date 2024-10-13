@@ -57,4 +57,10 @@ export interface InlineToolConstructable extends BaseToolConstructable {
    * @param {InlineToolConstructorOptions} config - constructor parameters
    */
   new(config: InlineToolConstructorOptions): BaseTool;
+
+  /**
+   * Allows inline tool to be available in read-only mode
+   * Can be used, for example, by comments tool
+   */
+  isReadOnlySupported?: boolean;
 }

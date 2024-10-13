@@ -1,4 +1,6 @@
 import Header from '@editorjs/header';
+import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
+import type { MenuConfig } from '@/types/tools';
 
 describe('Inline Toolbar', () => {
   it('should appear aligned with left coord of selection rect', () => {
@@ -74,6 +76,59 @@ describe('Inline Toolbar', () => {
             expect($toolbar.offset().left + $toolbar.width()).to.closeTo(blockWrapperRect.right, 10);
           });
       });
+  });
+
+  it('should be displayed in read-only mode if at least one inline tool of block supports it', () => {
+    cy.createEditor({
+      tools: {
+        header: {
+          class: Header,
+          inlineToolbar: ['bold', 'testTool'],
+        },
+        testTool: {
+          class: class {
+            public static isInline = true;
+            public static isReadOnlySupported = true;
+            // eslint-disable-next-line jsdoc/require-jsdoc
+            public render(): MenuConfig {
+              return {
+                title: 'Test Tool',
+                name: 'test-tool',
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                onActivate: () => {},
+              };
+            }
+          },
+        },
+      },
+      readOnly: true,
+      data: {
+        blocks: [
+          {
+            type: 'header',
+            data: {
+              text: 'First block text',
+            },
+          },
+        ],
+      },
+    });
+
+    /** Open Inline Toolbar */
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-header')
+      .selectText('block');
+
+    cy.get('[data-cy=editorjs]')
+      .get('[data-cy=inline-toolbar]')
+      .get('.ce-popover--opened')
+      .as('toolbar')
+      .should('exist');
+
+    cy.get('@toolbar')
+      .get('.ce-popover-item')
+      .should('have.length', 1)
+      .should('have.attr', 'data-item-name', 'test-tool');
   });
 
   it('should not submit form nesting editor when inline tool clicked', () => {
@@ -161,6 +216,58 @@ describe('Inline Toolbar', () => {
             .should(($block) => {
               expect($block[0].contains(range.startContainer)).to.be.true;
             });
+        });
+    });
+  });
+
+  describe('Nested Editor instance inline toolbar', () => {
+    it('should not close inline toolbar of the nested Editor instance when clicking within that toolbar', () => {
+      cy.createEditor({
+        tools: {
+          nestedEditor: {
+            class: NestedEditor,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              },
+            },
+            {
+              type: 'nestedEditor',
+              data: {
+                text: 'Nunc pellentesque, tortor nec luctus venenatis',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
+        .find('.ce-paragraph')
+        .selectText('tortor nec luctus');
+
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
+        .find('[data-item-name=link]')
+        .click();
+
+      // `wait()` function below is required. without it the test will always pass
+      // because cypress types the text in the field without delay, while we need some delay (just like user)
+      // to test the actual case that nested editor inline toolbar is still visible and not closed
+
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
+        .find('.ce-inline-tool-input')
+        .click()
+        .wait(100)
+        .type('https://editorjs.io');
+
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
+        .find('.ce-popover__container')
+        .then(($toolbar) => {
+          expect($toolbar).to.be.visible;
         });
     });
   });

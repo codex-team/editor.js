@@ -68,7 +68,7 @@ export default class UI extends Module<UINodes> {
    * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
-    if (this.contentRectCache) {
+    if (this.contentRectCache !== null) {
       return this.contentRectCache;
     }
 
@@ -85,7 +85,7 @@ export default class UI extends Module<UINodes> {
       } as DOMRect;
     }
 
-    this.contentRectCache = someBlock.getBoundingClientRect() as DOMRect;
+    this.contentRectCache = someBlock.getBoundingClientRect();
 
     return this.contentRectCache;
   }
@@ -104,7 +104,7 @@ export default class UI extends Module<UINodes> {
    *
    * @type {DOMRect}
    */
-  private contentRectCache: DOMRect = undefined;
+  private contentRectCache: DOMRect | null = null;
 
   /**
    * Handle window resize only when it finished
@@ -115,6 +115,13 @@ export default class UI extends Module<UINodes> {
     this.windowResize();
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   }, 200);
+
+  /**
+   * Handle selection change to manipulate Inline Toolbar appearance
+   */
+  private selectionChangeDebounced = _.debounce(() => {
+    this.selectionChanged();
+  }, selectionChangeDebounceTimeout);
 
   /**
    * Making main interface
@@ -160,7 +167,7 @@ export default class UI extends Module<UINodes> {
         /**
          * Bind events for the UI elements
          */
-        this.enableModuleBindings();
+        this.bindReadOnlySensitiveListeners();
       }, {
         timeout: 2000,
       });
@@ -169,7 +176,7 @@ export default class UI extends Module<UINodes> {
        * Unbind all events
        *
        */
-      this.disableModuleBindings();
+      this.unbindReadOnlySensitiveListeners();
     }
   }
 
@@ -222,6 +229,8 @@ export default class UI extends Module<UINodes> {
    */
   public destroy(): void {
     this.nodes.holder.innerHTML = '';
+
+    this.unbindReadOnlyInsensitiveListeners();
   }
 
   /**
@@ -289,6 +298,8 @@ export default class UI extends Module<UINodes> {
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
+
+    this.bindReadOnlyInsensitiveListeners();
   }
 
   /**
@@ -332,9 +343,29 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Bind events on the Editor.js interface
+   * Adds listeners that should work both in read-only and read-write modes
    */
-  private enableModuleBindings(): void {
+  private bindReadOnlyInsensitiveListeners(): void {
+    this.listeners.on(document, 'selectionchange', this.selectionChangeDebounced);
+
+    this.listeners.on(window, 'resize', this.resizeDebouncer, {
+      passive: true,
+    });
+  }
+
+  /**
+   * Removes listeners that should work both in read-only and read-write modes
+   */
+  private unbindReadOnlyInsensitiveListeners(): void {
+    this.listeners.off(document, 'selectionchange', this.selectionChangeDebounced);
+    this.listeners.off(window, 'resize', this.resizeDebouncer);
+  }
+
+
+  /**
+   * Adds listeners that should work only in read-only mode
+   */
+  private bindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'click', (event: MouseEvent) => {
       this.redactorClicked(event);
     }, false);
@@ -360,21 +391,6 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(document, 'mousedown', (event: MouseEvent) => {
       this.documentClicked(event);
     }, true);
-
-    /**
-     * Handle selection change to manipulate Inline Toolbar appearance
-     */
-    const selectionChangeDebounced = _.debounce(() => {
-      this.selectionChanged();
-    }, selectionChangeDebounceTimeout);
-
-    this.readOnlyMutableListeners.on(document, 'selectionchange', selectionChangeDebounced, true);
-
-    this.readOnlyMutableListeners.on(window, 'resize', () => {
-      this.resizeDebouncer();
-    }, {
-      passive: true,
-    });
 
     /**
      * Start watching 'block-hovered' events that is used by Toolbar for moving
@@ -428,9 +444,9 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Unbind events on the Editor.js interface
+   * Unbind events that should work only in read-only mode
    */
-  private disableModuleBindings(): void {
+  private unbindReadOnlySensitiveListeners(): void {
     this.readOnlyMutableListeners.clearAll();
   }
 
@@ -847,9 +863,11 @@ export default class UI extends Module<UINodes> {
 
     /**
      * Event can be fired on clicks at non-block-content elements,
-     * for example, at the Inline Toolbar or some Block Tune element
+     * for example, at the Inline Toolbar or some Block Tune element.
+     * We also make sure that the closest block belongs to the current editor and not a parent
      */
-    const clickedOutsideBlockContent = focusedElement.closest(`.${Block.CSS.content}`) === null;
+    const closestBlock = focusedElement.closest(`.${Block.CSS.content}`);
+    const clickedOutsideBlockContent = closestBlock === null || (closestBlock.closest(`.${Selection.CSS.editorWrapper}`) !== this.nodes.wrapper);
 
     if (clickedOutsideBlockContent) {
       /**
