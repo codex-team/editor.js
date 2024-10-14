@@ -152,10 +152,10 @@ describe('Toolbox', function () {
         .type('Some text')
         .type('/'); // call a shortcut for toolbox
 
-
       /**
        * Secondary title (shortcut) should exist for first toolbox item of the tool
        */
+      /* eslint-disable-next-line cypress/require-data-selectors */
       cy.get('.ce-popover')
         .find('.ce-popover-item[data-item-name="severalToolboxItemsTool"]')
         .first()
@@ -165,6 +165,7 @@ describe('Toolbox', function () {
       /**
        * Secondary title (shortcut) should not exist for second toolbox item of the same tool
        */
+      /* eslint-disable-next-line cypress/require-data-selectors */
       cy.get('.ce-popover')
         .find('.ce-popover-item[data-item-name="severalToolboxItemsTool"]')
         .eq(1)
