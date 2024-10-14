@@ -133,7 +133,7 @@ describe('Toolbox', function () {
               icon: '',
               title: 'second tool',
             },
-          ]
+          ];
         }
       }
 
@@ -142,9 +142,9 @@ describe('Toolbox', function () {
           severalToolboxItemsTool: {
             class: ToolWithSeveralToolboxItems,
             shortcut: 'CMD+SHIFT+L',
-          }
-        }
-      })
+          },
+        },
+      });
 
       cy.get('[data-cy=editorjs]')
         .find('.ce-paragraph')
@@ -170,6 +170,6 @@ describe('Toolbox', function () {
         .eq(1)
         .find('.ce-popover-item__secondary-title')
         .should('not.exist');
-    })
+    });
   });
 });
