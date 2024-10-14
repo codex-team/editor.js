@@ -316,7 +316,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
-        secondaryLabel: (tool.shortcut && index == 0) ? _.beautifyShortcut(tool.shortcut) : '',
+        secondaryLabel: (tool.shortcut && index === 0) ? _.beautifyShortcut(tool.shortcut) : '',
       };
     };
 
