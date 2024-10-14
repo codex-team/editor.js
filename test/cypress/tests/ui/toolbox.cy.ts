@@ -114,5 +114,62 @@ describe('Toolbox', function () {
           expect(blocks[1].type).to.eq('nonConvertableTool');
         });
     });
+
+    it('should display shortcut only for the first toolbox item if tool exports toolbox with several items', function () {
+      /**
+       * Mock of Tool with conversionConfig
+       */
+      class ToolWithSeveralToolboxItems extends ToolMock {
+        /**
+         * Specify toolbox with several items related to one tool
+         */
+        public static get toolbox(): ToolboxConfig {
+          return [
+            {
+              icon: '',
+              title: 'first tool',
+            },
+            {
+              icon: '',
+              title: 'second tool',
+            },
+          ]
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          severalToolboxItemsTool: {
+            class: ToolWithSeveralToolboxItems,
+            shortcut: 'CMD+SHIFT+L',
+          }
+        }
+      })
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('Some text')
+        .type('/'); // call a shortcut for toolbox
+
+
+      /**
+       * Secondary title (shortcut) should exist for first toolbox item of the tool
+       */
+      cy.get('.ce-popover')
+        .find('.ce-popover-item[data-item-name="severalToolboxItemsTool"]')
+        .first()
+        .find('.ce-popover-item__secondary-title')
+        .should('exist');
+
+      /**
+       * Secondary title (shortcut) should not exist for second toolbox item of the same tool
+       */
+      cy.get('.ce-popover')
+        .find('.ce-popover-item[data-item-name="severalToolboxItemsTool"]')
+        .eq(1)
+        .find('.ce-popover-item__secondary-title')
+        .should('not.exist');
+    })
   });
 });

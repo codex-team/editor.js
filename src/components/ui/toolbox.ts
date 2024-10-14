@@ -308,7 +308,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockToolAdapter): PopoverItemParams => {
+    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockToolAdapter, index?: number): PopoverItemParams => {
       return {
         icon: toolboxItem.icon,
         title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
@@ -316,15 +316,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
-        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+        secondaryLabel: (tool.shortcut && index == 0) ? _.beautifyShortcut(tool.shortcut) : '',
       };
     };
 
     return this.toolsToBeDisplayed
       .reduce<PopoverItemParams[]>((result, tool) => {
         if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach(item => {
-            result.push(toPopoverItem(item, tool));
+          tool.toolbox.forEach((item, index) => {
+            result.push(toPopoverItem(item, tool, index));
           });
         } else if (tool.toolbox !== undefined)  {
           result.push(toPopoverItem(tool.toolbox, tool));
