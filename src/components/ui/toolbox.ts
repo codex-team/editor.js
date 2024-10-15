@@ -308,7 +308,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockToolAdapter, displaySecondaryLabel: boolean = true): PopoverItemParams => {
+    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockToolAdapter, displaySecondaryLabel = true): PopoverItemParams => {
       return {
         icon: toolboxItem.icon,
         title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
