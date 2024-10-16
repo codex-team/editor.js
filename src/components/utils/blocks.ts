@@ -1,4 +1,4 @@
-import type { BlockAPI } from '../../../types';
+import type { BlockAPI, ToolConfig } from '../../../types';
 import type { ConversionConfig } from '../../../types/configs/conversion-config';
 import type { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
@@ -175,11 +175,11 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
  * @param stringToImport - string to convert
  * @param conversionConfig - tool's conversion config
  */
-export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig): BlockToolData {
+export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig, config?: ToolConfig): BlockToolData {
   const importProp = conversionConfig?.import;
 
   if (isFunction(importProp)) {
-    return importProp(stringToImport);
+    return importProp(stringToImport, config);
   } else if (isString(importProp)) {
     return {
       [importProp]: stringToImport,

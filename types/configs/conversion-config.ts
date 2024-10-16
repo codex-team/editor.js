@@ -1,4 +1,4 @@
-import type { BlockToolData } from '../tools';
+import type { BlockToolData, ToolConfig } from '../tools';
 
 /**
  * Config allows Tool to specify how it can be converted into/from another Tool
@@ -12,7 +12,7 @@ export interface ConversionConfig {
    * 1. String — the key of Tool data object to fill it with imported string on render.
    * 2. Function — method that accepts importing string and composes Tool data to render.
    */
-  import?: ((data: string) => string) | string;
+  import?: ((data: string, config: ToolConfig) => BlockToolData) | string;
 
   /**
    * How to export this Tool to make other Block.
