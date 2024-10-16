@@ -3,6 +3,7 @@
 ### 2.31.0
 
 - `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
+- `New` - Block manager passes target tool config to the `conversionConfig.import` method on conversion
 - `Fix` - Fix selection of first block in read-only initialization with "autofocus=true"
 - `Fix` - Incorrect caret position after blocks merging in Safari
 
