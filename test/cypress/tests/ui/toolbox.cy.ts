@@ -172,5 +172,47 @@ describe('Toolbox', function () {
         .find('.ce-popover-item__secondary-title')
         .should('not.exist');
     });
+
+    it('should display shortcut for the item if tool exports toolbox as an one item object', function () {
+      /**
+       * Mock of Tool with conversionConfig
+       */
+      class ToolWithOneToolboxItems extends ToolMock {
+        /**
+         * Specify toolbox with several items related to one tool
+         */
+        public static get toolbox(): ToolboxConfig {
+          return {
+            icon: '',
+            title: 'tool',
+          }
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          oneToolboxItemTool: {
+            class: ToolWithOneToolboxItems,
+            shortcut: 'CMD+SHIFT+L',
+          },
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('Some text')
+        .type('/'); // call a shortcut for toolbox
+
+      /**
+       * Secondary title (shortcut) should exist for toolbox item of the tool
+       */
+      /* eslint-disable-next-line cypress/require-data-selectors */
+      cy.get('.ce-popover')
+        .find('.ce-popover-item[data-item-name="oneToolboxItemTool"]')
+        .first()
+        .find('.ce-popover-item__secondary-title')
+        .should('exist');
+    });
   });
 });
