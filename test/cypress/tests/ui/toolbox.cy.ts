@@ -185,7 +185,7 @@ describe('Toolbox', function () {
           return {
             icon: '',
             title: 'tool',
-          }
+          };
         }
       }
 
