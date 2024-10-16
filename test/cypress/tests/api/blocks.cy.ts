@@ -1,6 +1,6 @@
 import type EditorJS from '../../../../types/index';
 import type { ConversionConfig, ToolboxConfig, ToolConfig } from '../../../../types';
-import ToolMock, { MockToolData } from '../../fixtures/tools/ToolMock';
+import ToolMock, { type MockToolData } from '../../fixtures/tools/ToolMock';
 import { nanoid } from 'nanoid';
 
 /**
@@ -476,7 +476,7 @@ describe('api.blocks', () => {
            * Should return stringified config to see, if Editor actually passed tool config to it
            */
           import: (content: string, config: ToolConfig) => MockToolData;
-        } {
+          } {
           return {
             export: (data) => data,
             /**
@@ -504,7 +504,7 @@ describe('api.blocks', () => {
       }).then(async (editor) => {
         const { convert } = editor.blocks;
 
-        const returnValue = await convert(existingBlock.id, 'conversionTargetTool');
+        await convert(existingBlock.id, 'conversionTargetTool');
 
         // wait for block to be converted
         cy.wait(100).then(async () => {
@@ -521,7 +521,7 @@ describe('api.blocks', () => {
            */
           expect(blocks[0].data.text).to.eq(JSON.stringify(conversionTargetToolConfig));
         });
-      })
-    })
+      });
+    });
   });
 });
