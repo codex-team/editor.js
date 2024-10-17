@@ -654,16 +654,18 @@ export default class UI extends Module<UINodes> {
     /**
      * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
      * We don't need to handle such events, because they handled in other place.
+     *
+     * PS: Commented this out because it makes this method behave differently in tests. Cypress-generated clicks are having isTrusted == false.
      */
-    if (!event.isTrusted) {
-      return;
-    }
+    // if (!event.isTrusted) {
+    //   return;
+    // }
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
     const target = event.target as HTMLElement;
-    const clickedInsideOfEditor = this.nodes.holder.contains(target) || Selection.isAtEditor;
+    const clickedInsideOfEditor = this.nodes.holder.contains(target);
 
     if (!clickedInsideOfEditor) {
       /**
