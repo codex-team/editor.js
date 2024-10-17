@@ -445,7 +445,7 @@ describe('api.blocks', () => {
       });
     });
 
-    it.only('should get target tool config', function () {
+    it('should pass tool config to the conversionConfig.import method of the tool', function () {
       const existingBlock = {
         id: 'test-id-123',
         type: 'paragraph',
