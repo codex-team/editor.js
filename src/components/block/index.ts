@@ -519,7 +519,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
       try {
         // eslint-disable-next-line no-useless-call
-        this.toolInstance[methodName].call(this.toolInstance, params);
+        return this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
       }
