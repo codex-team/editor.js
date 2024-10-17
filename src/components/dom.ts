@@ -227,7 +227,7 @@ export default class Dom {
     const child = atLast ? 'lastChild' : 'firstChild',
         sibling = atLast ? 'previousSibling' : 'nextSibling';
 
-    if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
+    if (node && node.nodeType === Node.ELEMENT_NODE && node[child] && !Dom.isNativeInput(node)) {
       let nodeChild = node[child] as Node;
 
       /**
