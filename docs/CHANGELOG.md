@@ -5,6 +5,7 @@
 - `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
 - `Fix` - Fix selection of first block in read-only initialization with "autofocus=true"
 - `Fix` - Incorrect caret position after blocks merging in Safari
+- `Fix` - Several toolbox items exported by the one tool have the same shortcut displayed in toolbox
 - `Fix` - Fixed BackSpace not working on CodeBlock with initial data
 
 ### 2.30.6
