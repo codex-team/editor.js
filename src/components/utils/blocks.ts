@@ -174,12 +174,13 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
  *
  * @param stringToImport - string to convert
  * @param conversionConfig - tool's conversion config
+ * @param targetToolConfig - target tool config, used in conversionConfig.import method
  */
-export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig, config?: ToolConfig): BlockToolData {
+export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig, targetToolConfig?: ToolConfig): BlockToolData {
   const importProp = conversionConfig?.import;
 
   if (isFunction(importProp)) {
-    return importProp(stringToImport, config);
+    return importProp(stringToImport, targetToolConfig);
   } else if (isString(importProp)) {
     return {
       [importProp]: stringToImport,
