@@ -202,6 +202,10 @@ export default class Paste extends Module {
       htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
     }
 
+    if (_.isFunction(this.config.onPasteHTML)) {
+      htmlData = String(this.config.onPasteHTML(htmlData) || htmlData);
+    }
+
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
       /**
