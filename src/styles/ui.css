@@ -78,8 +78,8 @@
     max-height: 100%;
   }
 
-  path {
-    stroke: currentColor;
+  path:not([stroke]) {
+      stroke: currentColor;
   }
 
 
