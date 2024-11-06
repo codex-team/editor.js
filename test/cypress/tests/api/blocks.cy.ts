@@ -1,6 +1,6 @@
 import type EditorJS from '../../../../types/index';
-import type { ConversionConfig, ToolboxConfig } from '../../../../types';
-import ToolMock from '../../fixtures/tools/ToolMock';
+import type { ConversionConfig, ToolboxConfig, ToolConfig } from '../../../../types';
+import ToolMock, { type MockToolData } from '../../fixtures/tools/ToolMock';
 import { nanoid } from 'nanoid';
 
 /**
@@ -442,6 +442,85 @@ describe('api.blocks', () => {
           .catch((error) => {
             expect(error.message).to.be.eq(`Conversion from "paragraph" to "nonConvertableTool" is not possible. NonConvertableTool tool(s) should provide a "conversionConfig"`);
           });
+      });
+    });
+
+    it('should pass tool config to the conversionConfig.import method of the tool', function () {
+      const existingBlock = {
+        id: 'test-id-123',
+        type: 'paragraph',
+        data: {
+          text: 'Some text',
+        },
+      };
+
+      const conversionTargetToolConfig = {
+        defaultStyle: 'defaultStyle',
+      };
+
+      /**
+       * Mock of Tool with conversionConfig
+       */
+      class ToolWithConversionConfig extends ToolMock {
+        /**
+         * Specify conversion config of the tool
+         */
+        public static get conversionConfig(): {
+          /**
+           * Method that is responsible for conversion from data to string
+           */
+          export: (data: string) => string;
+
+          /**
+           * Method that is responsible for conversion from string to data
+           * Should return stringified config to see, if Editor actually passed tool config to it
+           */
+          import: (content: string, config: ToolConfig) => MockToolData;
+          } {
+          return {
+            export: (data) => data,
+            /**
+             * Passed config should be returned
+             */
+            import: (_content, config) => {
+              return { text: JSON.stringify(config) };
+            },
+          };
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          conversionTargetTool: {
+            class: ToolWithConversionConfig,
+            config: conversionTargetToolConfig,
+          },
+        },
+        data: {
+          blocks: [
+            existingBlock,
+          ],
+        },
+      }).then(async (editor) => {
+        const { convert } = editor.blocks;
+
+        await convert(existingBlock.id, 'conversionTargetTool');
+
+        // wait for block to be converted
+        cy.wait(100).then(async () => {
+          /**
+           * Check that block was converted
+           */
+          const { blocks } = await editor.save();
+
+          expect(blocks.length).to.eq(1);
+          expect(blocks[0].type).to.eq('conversionTargetTool');
+
+          /**
+           * Check that tool converted returned config as a result of import
+           */
+          expect(blocks[0].data.text).to.eq(JSON.stringify(conversionTargetToolConfig));
+        });
       });
     });
   });
