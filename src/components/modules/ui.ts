@@ -124,15 +124,6 @@ export default class UI extends Module<UINodes> {
   }, selectionChangeDebounceTimeout);
 
   /**
-   * Event listener for 'mousedown' and 'touchstart' events
-   *
-   * @param event - TouchEvent or MouseEvent
-   */
-  private documentTouchedListener = (event: Event): void => {
-    this.documentTouched(event);
-  };
-
-  /**
    * Making main interface
    */
   public async prepare(): Promise<void> {
@@ -151,7 +142,6 @@ export default class UI extends Module<UINodes> {
      */
     this.loadStyles();
   }
-
 
   /**
    * Toggle read-only state
@@ -252,6 +242,15 @@ export default class UI extends Module<UINodes> {
     InlineToolbar.close();
     Toolbar.toolbox.close();
   }
+
+  /**
+   * Event listener for 'mousedown' and 'touchstart' events
+   *
+   * @param event - TouchEvent or MouseEvent
+   */
+  private documentTouchedListener = (event: Event): void => {
+    this.documentTouched(event);
+  };
 
   /**
    * Check for mobile mode and save the result
