@@ -400,11 +400,6 @@ export default class Dom {
    * @returns {boolean}
    */
   public static isEmpty(node: Node, ignoreChars?: string): boolean {
-    /**
-     * Normalize node to merge several text nodes to one to reduce tree walker iterations
-     */
-    node.normalize();
-
     const treeWalker = [ node ];
 
     while (treeWalker.length > 0) {
