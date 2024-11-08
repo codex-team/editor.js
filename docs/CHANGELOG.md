@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.7
+
+- `Fix` - Link insertion in Safari fixed
+
 ### 2.30.6
 
 – `Fix` – Fix the display of ‘Convert To’ near blocks that do not have the ‘conversionConfig.export’ rule specified
