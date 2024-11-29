@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.30.8
+
+- `Fix` - Handle whitespace input in empty placeholder elements to prevent caret from moving unexpectedly to the end of the placeholder
+
 ### 2.30.7
 
 - `Fix` - Link insertion in Safari fixed

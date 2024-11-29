@@ -77,4 +77,21 @@ describe('Placeholders', function () {
       .getPseudoElementContent('::before')
       .should('eq', 'none');
   });
+
+  it('should be hidden when user adds trailing whitespace characters', function () {
+    cy.createEditor({
+      placeholder: PLACEHOLDER_TEXT,
+    });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .as('firstBlock')
+      .getPseudoElementContent('::before')
+      .should('eq', PLACEHOLDER_TEXT);
+
+    cy.get('@firstBlock')
+      .type('   ')
+      .getPseudoElementContent('::before')
+      .should('eq', 'none');
+  });
 });

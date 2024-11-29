@@ -373,7 +373,7 @@ export default class Dom {
       nodeText = nodeText.replace(new RegExp(ignoreChars, 'g'), '');
     }
 
-    return nodeText.trim().length === 0;
+    return nodeText.length === 0;
   }
 
   /**
