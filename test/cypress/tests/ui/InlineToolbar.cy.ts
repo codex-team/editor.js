@@ -1,6 +1,6 @@
-
 import Header from '@editorjs/header';
-import type { MenuConfig } from '../../../../types/tools';
+import type { InlineTool, MenuConfig } from '../../../../types/tools';
+import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('Inline Toolbar', () => {
   describe('Separators', () => {
@@ -174,4 +174,58 @@ describe('Inline Toolbar', () => {
         .should('have.attr', 'data-item-name', 'test-tool');
     });
   });
+
+  describe('Shortcuts', () => {
+    it('should work in read-only mode', () => {
+      const toolSurround = cy.stub().as('toolSurround');
+
+      /* eslint-disable jsdoc/require-jsdoc */
+      class Marker implements InlineTool {
+        public static isInline = true;
+        public static shortcut = 'CMD+SHIFT+M';
+        public static isReadOnlySupported = true;
+        public render(): MenuConfig {
+          return {
+            icon: 'm',
+            title: 'Marker',
+            onActivate: () => {
+              toolSurround();
+            },
+          };
+        }
+      }
+      /* eslint-enable jsdoc/require-jsdoc */
+
+      createEditorWithTextBlocks([
+        'some text',
+      ], {
+        tools: {
+          marker: Marker,
+        },
+        readOnly: true,
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('text');
+
+      cy.wait(300);
+
+      cy.document().then((doc) => {
+        doc.dispatchEvent(new KeyboardEvent('keydown', {
+          bubbles: true,
+          cancelable: true,
+          key: 'M',
+          code: 'KeyM',
+          keyCode: 77,
+          which: 77,
+          metaKey: true,
+          shiftKey: true,
+        }));
+      });
+
+      cy.get('@toolSurround').should('have.been.called');
+    });
+  });
 });
+

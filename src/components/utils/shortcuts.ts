@@ -28,7 +28,7 @@ export interface ShortcutData {
   /**
    * Element handler should be added for
    */
-  on: HTMLElement;
+  on: HTMLElement | Document;
 }
 
 /**
