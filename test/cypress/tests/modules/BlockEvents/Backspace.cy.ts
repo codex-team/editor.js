@@ -118,6 +118,28 @@ describe('Backspace keydown', function () {
         .last()
         .should('have.text', '12');
     });
+
+    it('&nbsp; &nbsp;| — should delete visible and invisble whitespaces in the abscence of any non whitespace characters', function () {
+      createEditorWithTextBlocks([
+        '1',
+        '&nbsp; &nbsp;',
+      ]);
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .last()
+        .click()
+        .type('{downArrow}')
+        .type('{backspace}')
+        .type('{backspace}')
+        .type('{backspace}')
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .last()
+        .should('have.text', '1');
+    });
   });
 
   it('should just delete chars (native behaviour) when some fragment is selected', function () {
@@ -184,7 +206,7 @@ describe('Backspace keydown', function () {
        * Saving logic is not necessary for this test
        */
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      public save(): void {}
+      public save(): void { }
     }
 
     cy.createEditor({
@@ -545,7 +567,7 @@ describe('Backspace keydown', function () {
        * Saving logic is not necessary for this test
        */
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      public save(): void {}
+      public save(): void { }
     }
 
     cy.createEditor({
@@ -678,7 +700,7 @@ describe('Backspace keydown', function () {
 
   describe('at the start of the first Block', function () {
     it('should do nothing if Block is not empty', function () {
-      createEditorWithTextBlocks([ 'The only block. Not empty' ]);
+      createEditorWithTextBlocks(['The only block. Not empty']);
 
       cy.get('[data-cy=editorjs]')
         .find('.ce-paragraph')

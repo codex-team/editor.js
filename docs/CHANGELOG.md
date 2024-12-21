@@ -10,6 +10,7 @@
 - `Fix` - Several toolbox items exported by the one tool have the same shortcut displayed in toolbox
 - `Improvement` - The current block reference will be updated in read-only mode when blocks are clicked
 - `Fix` - codex-notifier and codex-tooltip moved from devDependencies to dependencies in package.json to solve type errors
+- `Fix` - Handle whitespace input in empty placeholder elements to prevent caret from moving unexpectedly to the end of the placeholder
 
 ### 2.30.7
 
