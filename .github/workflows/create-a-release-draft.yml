@@ -1,6 +1,6 @@
 name: Create a release draft
 
-# Caution: 
+# Caution:
 # the use of "pull_request_target" trigger allows to successfully
 # run workflow even when triggered from a fork. The trigger grants
 # access to repo's secrets and gives write permission to the runner.
@@ -17,7 +17,7 @@ jobs:
   # If pull request was merged then we should check for a package version update
   check-version-changing:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       actions: write
     steps:
@@ -113,7 +113,7 @@ jobs:
           asset_path: dist/editorjs.umd.js
           asset_name: editorjs.umd.js
           asset_content_type: application/javascript
-          
+
       # Build and upload target Editor.js MJS build to release as artifact
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -123,7 +123,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/editorjs.mjs
           asset_name: editorjs.mjs
-          asset_content_type: application/javascript          
+          asset_content_type: application/javascript
 
       # Send a notification message
       - name: Send a message
