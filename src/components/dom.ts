@@ -126,7 +126,7 @@ export default class Dom {
   public static swap(el1: HTMLElement, el2: HTMLElement): void {
     // create marker element and insert it where el1 is
     const temp = document.createElement('div'),
-      parent = el1.parentNode;
+        parent = el1.parentNode;
 
     parent.insertBefore(temp, el1);
 
@@ -225,7 +225,7 @@ export default class Dom {
      * @type {string}
      */
     const child = atLast ? 'lastChild' : 'firstChild',
-      sibling = atLast ? 'previousSibling' : 'nextSibling';
+        sibling = atLast ? 'previousSibling' : 'nextSibling';
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
       let nodeChild = node[child] as Node;
@@ -400,7 +400,7 @@ export default class Dom {
    * @returns {boolean}
    */
   public static isEmpty(node: Node, ignoreChars?: string): boolean {
-    const treeWalker = [node];
+    const treeWalker = [ node ];
 
     while (treeWalker.length > 0) {
       node = treeWalker.shift();
@@ -534,7 +534,7 @@ export default class Dom {
    */
   public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
     if (Dom.containsOnlyInlineElements(parent)) {
-      return [parent];
+      return [ parent ];
     }
 
     return Array.from(parent.children).reduce((result, element) => {
