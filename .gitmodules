@@ -7,9 +7,6 @@
 [submodule "example/tools/delimiter"]
 	path = example/tools/delimiter
 	url = https://github.com/editor-js/delimiter
-[submodule "example/tools/list"]
-	path = example/tools/list
-	url = https://github.com/editor-js/list
 [submodule "example/tools/quote"]
 	path = example/tools/quote
 	url = https://github.com/editor-js/quote
@@ -31,9 +28,6 @@
 [submodule "example/tools/table"]
 	path = example/tools/table
 	url = https://github.com/editor-js/table
-[submodule "example/tools/checklist"]
-	path = example/tools/checklist
-	url = https://github.com/editor-js/checklist
 [submodule "example/tools/link"]
 	path = example/tools/link
 	url = https://github.com/editor-js/link
@@ -46,9 +40,9 @@
 [submodule "example/tools/underline"]
 	path = example/tools/underline
 	url = https://github.com/editor-js/underline
-[submodule "example/tools/nested-list"]
-	path = example/tools/nested-list
-	url = https://github.com/editor-js/nested-list
 [submodule "example/tools/text-variant-tune"]
 	path = example/tools/text-variant-tune
 	url = https://github.com/editor-js/text-variant-tune
+[submodule "example/tools/list"]
+	path = example/tools/list
+	url = https://github.com/editor-js/list

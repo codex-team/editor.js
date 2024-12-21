@@ -549,7 +549,10 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
         this.popover?.activateItemByName(toolName);
       },
-      on: this.Editor.UI.nodes.redactor,
+      /**
+       * We need to bind shortcut to the document to make it work in read-only mode
+       */
+      on: document,
     });
   }
 
