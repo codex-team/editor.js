@@ -22,8 +22,7 @@
     "lint:fix": "eslint src/ --ext .ts --fix",
     "lint:tests": "eslint test/ --ext .ts",
     "test:e2e": "yarn build:test && cypress run",
-    "test:e2e:open": "yarn build:test && cypress open",
-    "devserver:start": "yarn build && node ./devserver.js"
+    "test:e2e:open": "yarn build:test && cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
