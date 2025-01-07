@@ -21,16 +21,8 @@
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "lint:tests": "eslint test/ --ext .ts",
-    "pull_tools": "git submodule update --init --recursive",
-    "_tools:checkout": "git submodule foreach \"git checkout master || git checkout main\"",
-    "_tools:pull": "git submodule foreach git pull",
-    "_tools:yarn": "git submodule foreach yarn",
-    "_tools:build": "git submodule foreach yarn build",
-    "_tools:make": "yarn _tools:yarn && yarn _tools:build",
-    "tools:update": "yarn _tools:checkout && yarn _tools:pull && yarn _tools:make",
     "test:e2e": "yarn build:test && cypress run",
-    "test:e2e:open": "yarn build:test && cypress open",
-    "devserver:start": "yarn build && node ./devserver.js"
+    "test:e2e:open": "yarn build:test && cypress open"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
