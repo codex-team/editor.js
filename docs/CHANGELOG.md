@@ -11,6 +11,7 @@
 - `Improvement` - The current block reference will be updated in read-only mode when blocks are clicked
 - `Fix` - codex-notifier and codex-tooltip moved from devDependencies to dependencies in package.json to solve type errors
 - `Fix` - Handle whitespace input in empty placeholder elements to prevent caret from moving unexpectedly to the end of the placeholder
+- `Fix` - Fix when / overides selected text outside of the editor
 - `DX` - Tools submodules removed from the repository
 
 ### 2.30.7
