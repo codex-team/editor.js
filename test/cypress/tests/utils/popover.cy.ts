@@ -881,7 +881,7 @@ describe('Popover', () => {
       .should('exist');
   });
 
-  it.only('shoould support i18n in nested popover', () => {
+  it('shoould support i18n in nested popover', () => {
     /**
      *
      */
@@ -1076,7 +1076,7 @@ describe('Popover', () => {
         .should('exist');
     });
 
-    it.only('should allow to reach nested popover via keyboard', () => {
+    it('should allow to reach nested popover via keyboard', () => {
       cy.createEditor({
         tools: {
           header: {

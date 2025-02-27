@@ -92,6 +92,60 @@ describe('Slash keydown', function () {
         .should('eq', 'Hello/');
     });
   });
+
+  describe('pressed outside editor', function () {
+    it('should not modify any text outside editor when text block is selected', () => {
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: '',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.document().then((doc) => {
+        const title = doc.querySelector('h1');
+
+        if (title) {
+          title.setAttribute('data-cy', 'page-title');
+        }
+      });
+
+      // Step 1
+      // Click on the plus button and select the text option
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click();
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-toolbar__plus')
+        .click({ force: true });
+      cy.get('[data-cy="toolbox"] .ce-popover__container')
+        .contains('Text')
+        .click();
+
+      // Step 2
+      // Select the 'Editor.js test page' text
+      cy.get('[data-cy=page-title]')
+        .invoke('attr', 'contenteditable', 'true')
+        .click()
+        .type('{selectall}')
+        .invoke('removeAttr', 'contenteditable');
+
+      // Step 3
+      // Press the Slash key
+      cy.get('[data-cy=page-title]')
+        .trigger('keydown', { key: '/',
+          code: 'Slash',
+          which: 191 });
+
+      cy.get('[data-cy=page-title]').should('have.text', 'Editor.js test page');
+    });
+  });
 });
 
 describe('CMD+Slash keydown', function () {

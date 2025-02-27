@@ -28,7 +28,7 @@ export interface ShortcutData {
   /**
    * Element handler should be added for
    */
-  on: HTMLElement;
+  on: HTMLElement | Document;
 }
 
 /**
@@ -86,7 +86,15 @@ class Shortcuts {
 
     const shortcuts = this.registeredShortcuts.get(element);
 
-    this.registeredShortcuts.set(element, shortcuts.filter(el => el !== shortcut));
+    const filteredShortcuts = shortcuts.filter(el => el !== shortcut);
+
+    if (filteredShortcuts.length === 0) {
+      this.registeredShortcuts.delete(element);
+
+      return;
+    }
+
+    this.registeredShortcuts.set(element, filteredShortcuts);
   }
 
   /**

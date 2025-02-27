@@ -1,3 +1,4 @@
+import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 import type EditorJS from '../../../../types/index';
 
 describe('Ui module', function () {
@@ -91,6 +92,52 @@ describe('Ui module', function () {
             expect(blocks.length).to.eq(0);
           });
       });
+    });
+  });
+
+  describe('mousedown', function () {
+    it('should update current block by click on block', function () {
+      createEditorWithTextBlocks([
+        'first block',
+        'second block',
+        'third block',
+      ])
+        .as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .eq(1)
+        .click();
+
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const currentBlockIndex = await editor.blocks.getCurrentBlockIndex();
+
+          expect(currentBlockIndex).to.eq(1);
+        });
+    });
+
+    it('(in readonly) should update current block by click on block', function () {
+      createEditorWithTextBlocks([
+        'first block',
+        'second block',
+        'third block',
+      ], {
+        readOnly: true,
+      })
+        .as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .eq(1)
+        .click();
+
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const currentBlockIndex = await editor.blocks.getCurrentBlockIndex();
+
+          expect(currentBlockIndex).to.eq(1);
+        });
     });
   });
 });
