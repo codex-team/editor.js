@@ -199,10 +199,20 @@ export default class Flipper {
    *
    * @param event - keydown event
    */
-  private onKeyDown = (event): void => {
+  private onKeyDown = (event: KeyboardEvent): void => {
     const isReady = this.isEventReadyForHandling(event);
 
     if (!isReady) {
+      return;
+    }
+
+    const isShiftKey = event.shiftKey;
+
+    /**
+     * If shift key is pressed, do nothing
+     * Allows to select next/prev lines of text using keyboard
+     */
+    if (isShiftKey === true) {
       return;
     }
 

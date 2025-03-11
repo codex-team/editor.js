@@ -9,15 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache node modules
-        uses: actions/cache@v1
+      - name: Cache dependencies
+        uses: actions/cache@v4
         with:
-          path: node_modules
+          path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+            ${{ runner.os }}-node-
 
       - run: yarn
       - run: yarn lint

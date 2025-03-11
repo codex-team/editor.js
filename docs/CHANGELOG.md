@@ -14,6 +14,8 @@
 - `Fix` - Fix the memory leak issue in `Shortcuts` class
 - `Fix` - Fix when / overides selected text outside of the editor
 - `DX` - Tools submodules removed from the repository
+- `Improvement` - Shift + Down/Up will allow to select next/previous line instead of Inline Toolbar flipping
+
 
 ### 2.30.7
 
