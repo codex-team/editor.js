@@ -227,7 +227,7 @@ describe('Caret API', () => {
             const block = editor.blocks.getById(paragraphDataMock.id);
 
 
-            // Set caret after "World "
+            // Set caret after "8"
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             editor.caret.setToBlock(block!, 'default', 8);
 
