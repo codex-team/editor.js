@@ -1,6 +1,5 @@
 import { createParagraphMock } from '../../support/utils/createParagraphMock';
 import type EditorJS from '../../../../types';
-import type { BlockAPI } from '../../../../types';
 
 /**
  * Test cases for Caret API
