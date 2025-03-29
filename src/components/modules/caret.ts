@@ -100,12 +100,13 @@ export default class Caret extends Module {
     } else {
       const { node, offset: nodeOffset } = $.getNodeByOffset(element, offset);
 
-      if (!node) {
-        return;
+      if (node) {
+        nodeToSet = node;
+        offsetToSet = nodeOffset;
+      } else { // case for empty block's input
+        nodeToSet = $.getDeepestNode(element, false) as Node;
+        offsetToSet = 0;
       }
-
-      nodeToSet = node;
-      offsetToSet = nodeOffset;
     }
 
     this.set(nodeToSet as HTMLElement, offsetToSet);
