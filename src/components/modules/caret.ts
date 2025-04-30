@@ -43,7 +43,7 @@ export default class Caret extends Module {
    * @param {Block} block - Block class
    * @param {string} position - position where to set caret.
    *                            If default - leave default behaviour and apply offset if it's passed
-   * @param {number} offset - caret offset regarding to the text node
+   * @param {number} offset - caret offset regarding to the block content
    */
   public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
     const { BlockManager, BlockSelection } = this.Editor;
@@ -88,23 +88,32 @@ export default class Caret extends Module {
       return;
     }
 
-    const nodeToSet = $.getDeepestNode(element, position === this.positions.END);
-    const contentLength = $.getContentLength(nodeToSet);
+    let nodeToSet: Node;
+    let offsetToSet = offset;
 
-    switch (true) {
-      case position === this.positions.START:
-        offset = 0;
-        break;
-      case position === this.positions.END:
-      case offset > contentLength:
-        offset = contentLength;
-        break;
+    if (position === this.positions.START) {
+      nodeToSet = $.getDeepestNode(element, false) as Node;
+      offsetToSet = 0;
+    } else if (position === this.positions.END) {
+      nodeToSet = $.getDeepestNode(element, true) as Node;
+      offsetToSet = $.getContentLength(nodeToSet);
+    } else {
+      const { node, offset: nodeOffset } = $.getNodeByOffset(element, offset);
+
+      if (node) {
+        nodeToSet = node;
+        offsetToSet = nodeOffset;
+      } else { // case for empty block's input
+        nodeToSet = $.getDeepestNode(element, false) as Node;
+        offsetToSet = 0;
+      }
     }
 
-    this.set(nodeToSet as HTMLElement, offset);
+    this.set(nodeToSet as HTMLElement, offsetToSet);
 
     BlockManager.setCurrentBlockByChildNode(block.holder);
-    BlockManager.currentBlock.currentInput = element;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    BlockManager.currentBlock!.currentInput = element;
   }
 
   /**
