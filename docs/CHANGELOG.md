@@ -16,6 +16,7 @@
 - `DX` - Tools submodules removed from the repository
 - `Improvement` - Shift + Down/Up will allow to select next/previous line instead of Inline Toolbar flipping
 - `Improvement` - The API `caret.setToBlock()` offset now works across the entire block content, not just the first or last node.
+- `Fix` - Opening links (via ctrl/cmd key + click) that are additionally formatted (e.g. bold)
 
 ### 2.30.7
 

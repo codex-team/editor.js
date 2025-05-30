@@ -767,26 +767,57 @@ export default class UI extends Module<UINodes> {
       return;
     }
 
-    /**
-     * case when user clicks on anchor element
-     * if it is clicked via ctrl key, then we open new window with url
-     */
-    const element = event.target as Element;
-    const ctrlKey = event.metaKey || event.ctrlKey;
-
-    if ($.isAnchor(element) && ctrlKey) {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-
-      const href = element.getAttribute('href');
-      const validUrl = _.getValidUrl(href);
-
-      _.openTab(validUrl);
-
+    if (this.processLinkClick(event)) {
       return;
     }
 
     this.processBottomZoneClick(event);
+  }
+
+  /**
+   * Check if user clicks on a link while holding down the ctrl/cmd key.
+   * In that case, open it in a new tab/window.
+   *
+   * @param event - click event
+   * @returns true if a link has been opened
+   */
+  private processLinkClick(event: MouseEvent): boolean {
+    const ctrlKey = event.metaKey || event.ctrlKey;
+
+    if (ctrlKey && event.target instanceof Element) {
+      let currentElement: Element | null = event.target;
+      let anchor = null;
+
+      while (currentElement) {
+        if (currentElement === this.nodes.redactor) {
+          return false;
+        }
+
+        if (currentElement.tagName === 'A') {
+          anchor = currentElement;
+          break;
+        }
+
+        currentElement = currentElement.parentElement;
+      }
+
+      if (anchor) {
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+
+        const href = anchor.getAttribute('href');
+
+        if (href !== null) {
+          const validUrl = _.getValidUrl(href);
+
+          window.open(validUrl, '_blank');
+        }
+
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
