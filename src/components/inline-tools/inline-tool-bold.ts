@@ -46,9 +46,8 @@ export default class BoldInlineTool implements InlineTool {
     return {
       icon: IconBold,
       name: 'bold',
-      onActivate: () => {
-        document.execCommand(this.commandName);
-      },
+      toggle: true,
+      onActivate: () => document.execCommand(this.commandName),
       isActive: () => document.queryCommandState(this.commandName),
     };
   }
