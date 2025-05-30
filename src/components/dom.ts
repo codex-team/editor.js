@@ -557,16 +557,6 @@ export default class Dom {
   }
 
   /**
-   * Returns true if element is anchor (is A tag)
-   *
-   * @param {Element} element - element to check
-   * @returns {boolean}
-   */
-  public static isAnchor(element: Element): element is HTMLAnchorElement {
-    return element.tagName.toLowerCase() === 'a';
-  }
-
-  /**
    * Return element's offset related to the document
    *
    * @todo handle case when editor initialized in scrollable popup

@@ -666,15 +666,6 @@ export function generateBlockId(): string {
 }
 
 /**
- * Opens new Tab with passed URL
- *
- * @param {string} url - URL address to redirect
- */
-export function openTab(url: string): void {
-  window.open(url, '_blank');
-}
-
-/**
  * Returns random generated identifier
  *
  * @param {string} prefix - identifier prefix
