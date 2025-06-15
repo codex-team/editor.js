@@ -287,8 +287,9 @@ export default class Blocks {
       index = this.length - 1;
     }
 
-    this.blocks[index].call(BlockToolAPI.REMOVED);
     this.blocks[index].holder.remove();
+
+    this.blocks[index].call(BlockToolAPI.REMOVED);
 
     this.blocks.splice(index, 1);
   }
