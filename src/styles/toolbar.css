@@ -16,7 +16,17 @@
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
+
+    &--horizontal {
+      max-width: unset;
+    }
   }
+  
+  &--right-side {
+    right: 0;
+    left: unset;
+  }
+
 
   &__plus {
     @apply --toolbox-button;

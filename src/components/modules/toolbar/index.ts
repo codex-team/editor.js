@@ -126,6 +126,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
+      contentHorizontal: 'ce-toolbar__content--horizontal',
       actions: 'ce-toolbar__actions',
       actionsOpened: 'ce-toolbar__actions--opened',
 
@@ -136,6 +137,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
       plusButtonShortcut: 'ce-toolbar__plus-shortcut',
       settingsToggler: 'ce-toolbar__settings-btn',
       settingsTogglerHidden: 'ce-toolbar__settings-btn--hidden',
+
+      rightSideToolbar: 'ce-toolbar--right-side',
     };
   }
 
@@ -290,7 +293,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
      *      2.2 Toolbar is moved to the baseline of the first input
      *       - when the first input is close to the top of the block
      */
-    let toolbarY;
+    let toolbarY, toolbarX;
     const MAX_OFFSET = 20;
 
     /**
@@ -316,6 +319,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     if (isMobile) {
       toolbarY = targetBlockHolder.offsetTop + targetBlockHolder.offsetHeight;
+
+    } else if (this.config.horizontalMode) {
+      toolbarY = 0;
+      toolbarX = targetBlockHolder.offsetLeft + targetBlockHolder.offsetWidth;
 
     /**
      * Case 2.1
@@ -353,6 +360,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
      */
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.nodes.wrapper!.style.top = `${Math.floor(toolbarY)}px`;
+
+    if (toolbarX !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.nodes.wrapper!.style.left = `${Math.floor(toolbarX)}px`;
+    }
 
     /**
      * Do not show Block Tunes Toggler near single and empty block
@@ -399,6 +411,10 @@ export default class Toolbar extends Module<ToolbarNodes> {
   private open(withBlockActions = true): void {
     this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
 
+    if (this.config.rightSideToolbar) {
+      this.nodes.wrapper.classList.add(this.CSS.rightSideToolbar);
+    }
+
     if (withBlockActions) {
       this.blockActions.show();
     } else {
@@ -418,9 +434,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content', 'actions'].forEach((el) => {
-      this.nodes[el] = $.make('div', this.CSS[el]);
-    });
+    this.nodes.content = $.make('div', [this.CSS.content, this.config.horizontalMode ? this.CSS.contentHorizontal : undefined].filter(Boolean));
+    this.nodes.actions = $.make('div', this.CSS.actions);
 
     /**
      * Actions will be included to the toolbar content so we can align in to the right of the content

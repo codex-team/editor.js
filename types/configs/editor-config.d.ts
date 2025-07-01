@@ -115,4 +115,14 @@ export interface EditorConfig {
      */
     nonce?: string;
   }
+
+  /**
+   * If true, Editor will support horizontal mode.
+   */
+  horizontalMode?: boolean;
+
+  /**
+   * If true, Editor will show the toolbar on the right side of the editor.
+   */
+  rightSideToolbar?: boolean;
 }
