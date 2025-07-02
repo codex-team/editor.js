@@ -21,12 +21,15 @@
       max-width: unset;
     }
   }
-  
+ 
   &--right-side {
     right: 0;
     left: unset;
   }
 
+  &--horizontal {
+    right: unset;
+  }
 
   &__plus {
     @apply --toolbox-button;

@@ -125,6 +125,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
   public get CSS(): { [name: string]: string } {
     return {
       toolbar: 'ce-toolbar',
+      toolbarHorizontal: 'ce-toolbar--horizontal',
       content: 'ce-toolbar__content',
       contentHorizontal: 'ce-toolbar__content--horizontal',
       actions: 'ce-toolbar__actions',
@@ -426,7 +427,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * Draws Toolbar elements
    */
   private async make(): Promise<void> {
-    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+    this.nodes.wrapper = $.make('div', [this.CSS.toolbar, this.config.horizontalMode ? this.CSS.toolbarHorizontal : undefined].filter(Boolean));
     /**
      * @todo detect test environment and add data-cy="toolbar" to use it in tests instead of class name
      */
