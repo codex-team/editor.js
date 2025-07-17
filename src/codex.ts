@@ -118,6 +118,7 @@ export default class EditorJS {
       blocks: {
         clear: 'clear',
         render: 'render',
+        renderFromHTML: 'renderFromHTML',
       },
       caret: {
         focus: 'focus',
