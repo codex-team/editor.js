@@ -101,6 +101,12 @@ export interface EditorConfig {
   inlineToolbar?: string[]|boolean;
 
   /**
+   * Inline Toolbar alignment config
+   */
+  alignInlineToolbar?:  'left' | 'center' | 'right';
+  
+
+  /**
    * Common Block Tunes list. Will be added to all the blocks which do not specify their own 'tunes' set
    */
   tunes?: string[];

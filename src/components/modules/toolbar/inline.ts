@@ -58,6 +58,11 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private tools: Map<InlineToolAdapter, IInlineTool> = new Map();
 
   /**
+   * Inline toolbar alignment
+   */
+  private align: 'left' | 'center' | 'right' = 'left';
+
+  /**
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
    * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
@@ -67,6 +72,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       config,
       eventsDispatcher,
     });
+
+    // Get the value from the config
+    this.align = config.alignInlineToolbar ?? 'left';
 
     window.requestIdleCallback(() => {
       this.make();
@@ -218,11 +226,27 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private move(popoverWidth: number): void {
     const selectionRect = SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+
+
+    let newX: number;
+
+    switch (this.align) {
+      default:
+      case 'left':
+        newX = selectionRect.x - wrapperOffset.x;
+        break;
+      case 'right':
+        newX = selectionRect.x + selectionRect.width - popoverWidth - wrapperOffset.x;
+        break;
+      case 'center':
+        newX = selectionRect.x + selectionRect.width / 2 - popoverWidth / 2 - wrapperOffset.x;
+        break;
+    }
+
     const newCoords = {
-      x: selectionRect.x - wrapperOffset.x,
+      x: newX,
       y: selectionRect.y +
         selectionRect.height -
-        // + window.scrollY
         wrapperOffset.top +
         this.toolbarVerticalMargin,
     };
@@ -233,7 +257,14 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Prevent InlineToolbar from overflowing the content zone on the right side
      */
     if (realRightCoord > this.Editor.UI.contentRect.right) {
-      newCoords.x = this.Editor.UI.contentRect.right -popoverWidth - wrapperOffset.x;
+      newCoords.x = this.Editor.UI.contentRect.right - popoverWidth - wrapperOffset.x;
+    }
+
+    /**
+     * Prevent InlineToolbar from overflowing the content zone on the left side
+     */
+    if (newCoords.x < 0) {
+      newCoords.x = 0;
     }
 
     this.nodes.wrapper!.style.left = Math.floor(newCoords.x) + 'px';

@@ -71,6 +71,24 @@ var editor = new EditorJS({
 
 ```
 
+## Align InlineToolbar
+
+If you want to align the inline toolbar, you can set the option `alignInlineToolbar` to `'left'`, `'center'`, or `'right'`.  
+The default behavior is `'left'`.
+
+**Possible values:**
+- `'left'`: aligns the toolbar to the left edge of the selection (default)
+- `'center'`: centers the toolbar 
+- `'right'`: aligns the toolbar to the right edge of the selection
+
+```js
+var editor = new EditorJS({
+  //...
+  alignInlineToolbar: 'right',
+  //...
+});
+```
+
 ## Holder
 The `holder` property supports an id or a reference to dom element.
 
