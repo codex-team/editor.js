@@ -1,6 +1,7 @@
 import Header from '@editorjs/header';
 import type { InlineTool, MenuConfig } from '../../../../types/tools';
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
+import Paragraph from '@editorjs/paragraph';
 
 describe('Inline Toolbar', () => {
   describe('Separators', () => {
@@ -225,6 +226,91 @@ describe('Inline Toolbar', () => {
       });
 
       cy.get('@toolSurround').should('have.been.called');
+    });
+  });
+
+  describe('Default align to left', () => {
+    it('Should align the InlineToolbar to the left as default', () => {
+      cy.createEditor({
+        tools: {
+          block: Paragraph,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Test inline toolbar alignment',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .selectText('inline toolbar');
+
+      cy.get('[data-cy="inline-toolbar"] .ce-popover__container').should('be.visible');
+
+      cy.window().then((win) => {
+        cy.get('[data-cy="inline-toolbar"] .ce-popover__container').then(($toolbar) => {
+          const toolbarRect = $toolbar[0].getBoundingClientRect();
+          const selection = win.getSelection();
+
+          if (!selection || selection.rangeCount === 0) {
+            throw new Error('No selection found');
+          }
+          const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
+
+          // Assert toolbar left is approximately equal to selection left
+          expect(Math.abs(toolbarRect.left - rangeRect.left)).to.be.lessThan(5);
+        });
+      });
+    });
+  });
+
+  describe('Align to rigth', () => {
+    it('Should align the InlineToolbar to the right', () => {
+      cy.createEditor({
+        alignInlineToolbar: 'right',
+        tools: {
+          block: Paragraph,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Test inline toolbar alignment',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .first()
+        .selectText('inline toolbar');
+
+      cy.get('[data-cy="inline-toolbar"] .ce-popover__container').should('be.visible');
+
+      cy.window().then((win) => {
+        cy.get('[data-cy="inline-toolbar"] .ce-popover__container').then(($toolbar) => {
+          const toolbarRect = $toolbar[0].getBoundingClientRect();
+          const selection = win.getSelection();
+
+          if (!selection || selection.rangeCount === 0) {
+            throw new Error('No selection found');
+          }
+          const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
+
+          // Assert toolbar right is approximately equal to selection right
+          expect(Math.abs(toolbarRect.right - rangeRect.right)).to.be.lessThan(5);
+        });
+      });
     });
   });
 });
