@@ -351,7 +351,7 @@ export default class LinkInlineTool implements InlineTool {
   }
 
   /**
-   * Add 'http' protocol to the links like 'vc.ru', 'google.com'
+   * Add 'https' protocol to the links like 'vc.ru', 'google.com'
    *
    * @param {string} link - string to process
    */
@@ -374,7 +374,7 @@ export default class LinkInlineTool implements InlineTool {
         isProtocolRelative = /^\/\/[^/\s]/.test(link);
 
     if (!isInternal && !isAnchor && !isProtocolRelative) {
-      link = 'http://' + link;
+      link = 'https://' + link;
     }
 
     return link;
