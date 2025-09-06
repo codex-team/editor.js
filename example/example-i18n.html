@@ -107,7 +107,7 @@
       image: ImageTool,
 
       list: {
-        class: List,
+        class: EditorjsList,
         inlineToolbar: true,
         shortcut: 'CMD+SHIFT+L'
       },
@@ -185,6 +185,9 @@
               "Click to tune": "Нажмите, чтобы настроить",
               "or drag to move": "или перетащите"
             },
+            "popover": {
+              "Convert to": "Конвертировать в",
+            }
           },
           "inlineToolbar": {
             "converter": {
@@ -198,7 +201,8 @@
           },
           "popover": {
             "Filter": "Поиск",
-            "Nothing found": "Ничего не найдено"
+            "Nothing found": "Ничего не найдено",
+            "Convert to": "Конвертировать в",
           }
         },
 
@@ -274,6 +278,9 @@
           "list": {
             "Ordered": "Нумерованный",
             "Unordered": "Маркированный",
+          },
+          "convertTo": {
+            "Convert to": "Конвертировать в",
           }
         },
 
@@ -288,7 +295,8 @@
            * Also, there are few internal block tunes: "delete", "moveUp" and "moveDown"
            */
           "delete": {
-            "Delete": "Удалить"
+            "Delete": "Удалить",
+            "Click to delete": "Нажмите, чтобы удалить",
           },
           "moveUp": {
             "Move up": "Переместить вверх"
