@@ -1,7 +1,7 @@
 # Changelog
 
 ### 2.31.1
-- `Improvement` - Updated link parser to use the secure `https` potocol instead of `http`, ensuring safer and more reliable connections
+- `Improvement` - Default protocol for inline links changed to "https"
 
 ### 2.31.0
 
