@@ -1,7 +1,7 @@
 # Changelog
 
 ### 2.31.1
-- `Improvement` - Update link protocol
+- `Improvement` - Updated link parser to use the secure `https` potocol instead of `http`, ensuring safer and more reliable connections
 
 ### 2.31.0
 
