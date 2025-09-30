@@ -107,7 +107,7 @@
       image: ImageTool,
 
       list: {
-        class: List,
+        class: EditorjsList,
         inlineToolbar: true,
         shortcut: 'CMD+SHIFT+L'
       },
@@ -198,7 +198,11 @@
           },
           "popover": {
             "Filter": "Поиск",
-            "Nothing found": "Ничего не найдено"
+            "Nothing found": "Ничего не найдено",
+            /**
+             * Translation of "Convert To"  at the Block Tunes Popover
+             */
+            "Convert to": "Конвертировать в"
           }
         },
 
@@ -221,7 +225,7 @@
           "Bold": "Полужирный",
           "Italic": "Курсив",
           "InlineCode": "Моноширинный",
-          "Image": "Картинка"
+          "Image": "Картинка",
         },
 
         /**
@@ -274,7 +278,13 @@
           "list": {
             "Ordered": "Нумерованный",
             "Unordered": "Маркированный",
-          }
+          },
+          /**
+           * Translation of "Convert To"  at the Inline Toolbar hint
+           */
+          "convertTo": {
+            "Convert to": "Конвертировать в"
+          },
         },
 
         /**
@@ -295,7 +305,7 @@
           },
           "moveDown": {
             "Move down": "Переместить вниз"
-          }
+          },
         },
       }
     },
