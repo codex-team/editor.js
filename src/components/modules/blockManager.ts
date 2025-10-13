@@ -533,8 +533,8 @@ export default class BlockManager extends Module {
         throw new Error('Can\'t find a Block to remove');
       }
 
-      block.destroy();
       this._blocks.remove(index);
+      block.destroy();
 
       /**
        * Force call of didMutated event on Block removal
@@ -894,7 +894,10 @@ export default class BlockManager extends Module {
   public async clear(needToAddDefaultBlock = false): Promise<void> {
     const queue = new PromiseQueue();
 
-    this.blocks.forEach((block) => {
+    // Create a copy of the blocks array to avoid issues with array modification during iteration
+    const blocksToRemove = [...this.blocks];
+    
+    blocksToRemove.forEach((block) => {
       queue.add(async () => {
         await this.removeBlock(block, false);
       });
