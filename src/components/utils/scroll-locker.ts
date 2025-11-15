@@ -43,6 +43,7 @@ export default class ScrollLocker {
    * Locks scroll in a hard way (via setting fixed position to body element)
    */
   private lockHard(): void {
+    // eslint-disable-next-line deprecation/deprecation
     this.scrollPosition = window.pageYOffset;
     document.documentElement.style.setProperty(
       '--window-scroll-offset',

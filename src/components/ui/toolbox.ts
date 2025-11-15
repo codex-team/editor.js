@@ -1,5 +1,4 @@
 import * as _ from '../utils';
-import { BlockToolAPI } from '../block';
 import Shortcuts from '../utils/shortcuts';
 import type BlockToolAdapter from '../tools/block';
 import type ToolsCollection from '../tools/collection';
@@ -435,11 +434,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       undefined,
       currentBlock.isEmpty
     );
-
-    /**
-     * Apply callback before inserting html
-     */
-    newBlock.call(BlockToolAPI.APPEND_CALLBACK);
 
     this.api.caret.setToBlock(index);
 

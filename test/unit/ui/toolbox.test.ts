@@ -7,7 +7,6 @@ import type { Popover } from '../../../src/components/utils/popover';
 import { PopoverEvent } from '@/types/utils/popover/popover-event';
 import { EditorMobileLayoutToggled } from '../../../src/components/events';
 import Shortcuts from '../../../src/components/utils/shortcuts';
-import { BlockToolAPI } from '../../../src/components/block';
 
 // Mock dependencies at module level
 const mockPopoverInstance = {
@@ -86,13 +85,7 @@ describe('Toolbox', () => {
     const blockAPI = {
       id: 'test-block-id',
       isEmpty: true,
-      call: vi.fn((methodName: string) => {
-        if (methodName === BlockToolAPI.APPEND_CALLBACK) {
-          return undefined;
-        }
-
-        return undefined;
-      }),
+      call: vi.fn(),
     } as unknown as BlockAPI;
 
     // Mock BlockToolAdapter
@@ -760,4 +753,3 @@ describe('Toolbox', () => {
     });
   });
 });
-

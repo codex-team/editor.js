@@ -3,6 +3,18 @@
  */
 
 import { nanoid } from 'nanoid';
+import lodashDelay from 'lodash/delay';
+import lodashIsBoolean from 'lodash/isBoolean';
+import lodashIsEmpty from 'lodash/isEmpty';
+import lodashIsEqual from 'lodash/isEqual';
+import lodashIsFunction from 'lodash/isFunction';
+import lodashIsNumber from 'lodash/isNumber';
+import lodashIsPlainObject from 'lodash/isPlainObject';
+import lodashIsString from 'lodash/isString';
+import lodashIsUndefined from 'lodash/isUndefined';
+import lodashMergeWith from 'lodash/mergeWith';
+import lodashThrottle from 'lodash/throttle';
+import lodashToArray from 'lodash/toArray';
 
 /**
  * Possible log levels
@@ -136,17 +148,6 @@ if (globalScope && typeof globalScope.window === 'undefined') {
 const getGlobalWindow = (): Window | undefined => {
   if (globalScope?.window) {
     return globalScope.window;
-  }
-
-  return undefined;
-};
-
-/**
- * Returns globally available document object if it exists.
- */
-const getGlobalDocument = (): Document | undefined => {
-  if (globalScope?.document) {
-    return globalScope.document;
   }
 
   return undefined;
@@ -313,25 +314,13 @@ export const logLabeled = (
 };
 
 /**
- * Return string representation of the object type
- *
- * @param {*} object - object to get type
- * @returns {string}
- */
-export const typeOf = (object: unknown): string => {
-  const match = Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/);
-
-  return match ? match[1].toLowerCase() : 'unknown';
-};
-
-/**
  * Check if passed variable is a function
  *
  * @param {*} fn - function to check
  * @returns {boolean}
  */
 export const isFunction = (fn: unknown): fn is (...args: unknown[]) => unknown => {
-  return typeOf(fn) === 'function' || typeOf(fn) === 'asyncfunction';
+  return lodashIsFunction(fn);
 };
 
 /**
@@ -341,7 +330,7 @@ export const isFunction = (fn: unknown): fn is (...args: unknown[]) => unknown =
  * @returns {boolean}
  */
 export const isObject = (v: unknown): v is object => {
-  return typeOf(v) === 'object';
+  return lodashIsPlainObject(v);
 };
 
 /**
@@ -351,7 +340,7 @@ export const isObject = (v: unknown): v is object => {
  * @returns {boolean}
  */
 export const isString = (v: unknown): v is string => {
-  return typeOf(v) === 'string';
+  return lodashIsString(v);
 };
 
 /**
@@ -361,7 +350,7 @@ export const isString = (v: unknown): v is string => {
  * @returns {boolean}
  */
 export const isBoolean = (v: unknown): v is boolean => {
-  return typeOf(v) === 'boolean';
+  return lodashIsBoolean(v);
 };
 
 /**
@@ -371,7 +360,7 @@ export const isBoolean = (v: unknown): v is boolean => {
  * @returns {boolean}
  */
 export const isNumber = (v: unknown): v is number => {
-  return typeOf(v) === 'number';
+  return lodashIsNumber(v);
 };
 
 /**
@@ -381,17 +370,7 @@ export const isNumber = (v: unknown): v is number => {
  * @returns {boolean}
  */
 export const isUndefined = function (v: unknown): v is undefined {
-  return typeOf(v) === 'undefined';
-};
-
-/**
- * Check if passed function is a class
- *
- * @param {Function} fn - function to check
- * @returns {boolean}
- */
-export const isClass = (fn: unknown): boolean => {
-  return isFunction(fn) && /^\s*class\s+/.test(fn.toString());
+  return lodashIsUndefined(v);
 };
 
 /**
@@ -401,21 +380,7 @@ export const isClass = (fn: unknown): boolean => {
  * @returns {boolean}
  */
 export const isEmpty = (object: object | null | undefined): boolean => {
-  if (!object) {
-    return true;
-  }
-
-  return Object.keys(object).length === 0 && object.constructor === Object;
-};
-
-/**
- * Check if passed object is a Promise
- *
- * @param  {*}  object - object to check
- * @returns {boolean}
- */
-export const isPromise = (object: unknown): object is Promise<unknown> => {
-  return Promise.resolve(object) === object;
+  return lodashIsEmpty(object);
 };
 
 /**
@@ -491,7 +456,7 @@ export const sequence = async (
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const array = (collection: ArrayLike<any>): any[] => {
-  return Array.prototype.slice.call(collection);
+  return lodashToArray(collection);
 };
 
 /**
@@ -502,7 +467,7 @@ export const array = (collection: ArrayLike<any>): any[] => {
  */
 export const delay = (method: (...args: unknown[]) => unknown, timeout: number) => {
   return function (this: unknown, ...args: unknown[]): void {
-    setTimeout(() => method.apply(this, args), timeout);
+    void lodashDelay(() => method.apply(this, args), timeout);
   };
 };
 
@@ -572,130 +537,12 @@ export const debounce = (func: (...args: unknown[]) => void, wait?: number, imme
  *                  but if you'd like to disable the execution on the leading edge, pass
  *                  `{leading: false}`. To disable execution on the trailing edge, ditto.
  */
-export const throttle = (func: (...args: unknown[]) => unknown, wait: number, options?: {leading?: boolean; trailing?: boolean}): (...args: unknown[]) => unknown => {
-  const state: {
-    args: unknown[] | null;
-    result: unknown;
-    timeoutId: ReturnType<typeof setTimeout> | null;
-    previous: number;
-    boundFunc: ((...boundArgs: unknown[]) => unknown) | null;
-  } = {
-    args: null,
-    result: undefined,
-    timeoutId: null,
-    previous: 0,
-    boundFunc: null,
-  };
-
-  const opts = options || {};
-
-  const later = function (): void {
-    state.previous = opts.leading === false ? 0 : Date.now();
-    state.timeoutId = null;
-    if (state.args !== null && state.boundFunc !== null) {
-      state.result = state.boundFunc(...state.args);
-    }
-
-    state.boundFunc = null;
-    state.args = null;
-  };
-
-  return function (this: unknown, ...restArgs: unknown[]): unknown {
-    const now = Date.now();
-
-    if (!state.previous && opts.leading === false) {
-      state.previous = now;
-    }
-
-    const remaining = wait - (now - state.previous);
-
-    state.boundFunc = func.bind(this);
-    state.args = restArgs;
-
-    const shouldInvokeNow = remaining <= 0 || remaining > wait;
-
-    if (!shouldInvokeNow && state.timeoutId === null && opts.trailing !== false) {
-      state.timeoutId = setTimeout(later, remaining);
-    }
-
-    if (!shouldInvokeNow) {
-      return state.result;
-    }
-
-    if (state.timeoutId !== null) {
-      clearTimeout(state.timeoutId);
-      state.timeoutId = null;
-    }
-
-    state.previous = now;
-
-    if (state.args !== null && state.boundFunc !== null) {
-      state.result = state.boundFunc(...state.args);
-    }
-
-    state.boundFunc = null;
-    state.args = null;
-
-    return state.result;
-  };
-};
-
-/**
- * Legacy fallback method for copying text to clipboard
- *
- * @param text - text to copy
- */
-const fallbackCopyTextToClipboard = (text: string): void => {
-  const win = getGlobalWindow();
-  const doc = getGlobalDocument();
-
-  if (!win || !doc || !doc.body) {
-    return;
-  }
-
-  const el = doc.createElement('div');
-
-  el.className = 'codex-editor-clipboard';
-  el.innerHTML = text;
-
-  doc.body.appendChild(el);
-
-  const selection = win.getSelection();
-  const range = doc.createRange();
-
-  range.selectNode(el);
-
-  win.getSelection()?.removeAllRanges();
-  selection?.addRange(range);
-
-  if (typeof doc.execCommand === 'function') {
-    doc.execCommand('copy');
-  }
-
-  doc.body.removeChild(el);
-};
-
-/**
- * Copies passed text to the clipboard
- *
- * @param text - text to copy
- */
-export const copyTextToClipboard = (text: string): void => {
-  const win = getGlobalWindow();
-  const navigatorRef = getGlobalNavigator();
-
-  // Use modern Clipboard API if available
-  if (win?.isSecureContext && navigatorRef?.clipboard) {
-    navigatorRef.clipboard.writeText(text).catch(() => {
-      // Fallback to legacy method if Clipboard API fails
-      fallbackCopyTextToClipboard(text);
-    });
-
-    return;
-  }
-
-  // Fallback to legacy method for older browsers
-  fallbackCopyTextToClipboard(text);
+export const throttle = (
+  func: (...args: unknown[]) => unknown,
+  wait: number,
+  options?: {leading?: boolean; trailing?: boolean}
+): ((...args: unknown[]) => unknown) => {
+  return lodashThrottle(func, wait, options);
 };
 
 /**
@@ -710,7 +557,7 @@ export const getUserOS = (): {[key: string]: boolean} => {
   };
 
   const navigatorRef = getGlobalNavigator();
-  const userAgent = navigatorRef?.appVersion?.toLowerCase() ?? '';
+  const userAgent = navigatorRef?.userAgent?.toLowerCase() ?? '';
   const userOS = userAgent ? Object.keys(OS).find((os: string) => userAgent.indexOf(os) !== -1) : undefined;
 
   if (userOS !== undefined) {
@@ -729,72 +576,41 @@ export const getUserOS = (): {[key: string]: boolean} => {
  * @returns {string}
  */
 export const capitalize = (text: string): string => {
-  return text[0].toUpperCase() + text.slice(1);
+  if (!text) {
+    return text;
+  }
+
+  return text.slice(0, 1).toUpperCase() + text.slice(1);
 };
 
 /**
- * Merge to objects recursively
+ * Customizer function for deep merge that overwrites arrays
  *
- * @param {object} target - merge target
- * @param {object[]} sources - merge sources
- * @returns {object}
+ * @param {unknown} objValue - object value
+ * @param {unknown} srcValue - source value
+ * @returns {unknown}
  */
+const overwriteArrayMerge = (objValue: unknown, srcValue: unknown): unknown => {
+  if (Array.isArray(srcValue)) {
+    return srcValue;
+  }
+
+  return undefined;
+};
+
 export const deepMerge = <T extends object> (target: T, ...sources: Partial<T>[]): T => {
-  if (sources.length === 0) {
+  if (!isObject(target) || sources.length === 0) {
     return target;
   }
 
-  const [source, ...rest] = sources;
-
-  if (!isObject(target) || !isObject(source)) {
-    return deepMerge(target, ...rest);
-  }
-
-  const targetRecord = target as Record<string, unknown>;
-
-  Object.entries(source).forEach(([key, value]) => {
-    if (value === null || value === undefined) {
-      targetRecord[key] = value as unknown;
-
-      return;
+  return sources.reduce((acc: T, source) => {
+    if (!isObject(source)) {
+      return acc;
     }
 
-    if (typeof value !== 'object') {
-      targetRecord[key] = value;
-
-      return;
-    }
-
-    if (Array.isArray(value)) {
-      targetRecord[key] = value;
-
-      return;
-    }
-
-    if (!isObject(targetRecord[key])) {
-      targetRecord[key] = {};
-    }
-
-    deepMerge(targetRecord[key] as object, value as object);
-  });
-
-  return deepMerge(target, ...rest);
+    return lodashMergeWith(acc, source, overwriteArrayMerge) as T;
+  }, target);
 };
-
-/**
- * Return true if current device supports touch events
- *
- * Note! This is a simple solution, it can give false-positive results.
- * To detect touch devices more carefully, use 'touchstart' event listener
- *
- * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
- * @returns {boolean}
- */
-export const isTouchSupported: boolean = (() => {
-  const doc = getGlobalDocument();
-
-  return Boolean(doc?.documentElement && 'ontouchstart' in doc.documentElement);
-})();
 
 /**
  * Make shortcut command more human-readable
@@ -1168,12 +984,5 @@ export const isIosDevice = (() => {
  * @returns {boolean} true if they are equal
  */
 export const equals = (var1: unknown, var2: unknown): boolean => {
-  const isVar1NonPrimitive = Array.isArray(var1) || isObject(var1);
-  const isVar2NonPrimitive = Array.isArray(var2) || isObject(var2);
-
-  if (isVar1NonPrimitive || isVar2NonPrimitive) {
-    return JSON.stringify(var1) === JSON.stringify(var2);
-  }
-
-  return var1 === var2;
+  return lodashIsEqual(var1, var2);
 };

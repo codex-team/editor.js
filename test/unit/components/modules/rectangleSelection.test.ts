@@ -2,6 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type Mock }
 
 import RectangleSelection from '../../../../src/components/modules/rectangleSelection';
 import Block from '../../../../src/components/block';
+import SelectionUtils from '../../../../src/components/selection';
 import EventsDispatcher from '../../../../src/components/utils/events';
 import type { EditorEventMap } from '../../../../src/components/events';
 import type { EditorModules } from '../../../../src/types-internal/editor-modules';
@@ -257,6 +258,58 @@ describe('RectangleSelection', () => {
     elementFromPointSpy.mockRestore();
   });
 
+  it('ignores selection attempts outside of selectable area', () => {
+    const {
+      rectangleSelection,
+      editorWrapper,
+    } = createRectangleSelection();
+
+    const internal = rectangleSelection as unknown as { mousedown: boolean };
+
+    const outsideNode = document.createElement('div');
+
+    document.body.appendChild(outsideNode);
+
+    const elementFromPointSpy = vi.spyOn(document, 'elementFromPoint').mockReturnValue(outsideNode);
+
+    rectangleSelection.startSelection(10, 15);
+
+    expect(internal.mousedown).toBe(false);
+
+    const blockContent = document.createElement('div');
+
+    blockContent.className = Block.CSS.content;
+    editorWrapper.appendChild(blockContent);
+    elementFromPointSpy.mockReturnValue(blockContent);
+
+    rectangleSelection.startSelection(20, 25);
+
+    expect(internal.mousedown).toBe(false);
+
+    elementFromPointSpy.mockRestore();
+  });
+
+  it('clears selection activation flag when clearSelection is called', () => {
+    const { rectangleSelection } = createRectangleSelection();
+    const internal = rectangleSelection as unknown as { isRectSelectionActivated: boolean };
+
+    internal.isRectSelectionActivated = true;
+    rectangleSelection.clearSelection();
+
+    expect(internal.isRectSelectionActivated).toBe(false);
+  });
+
+  it('reports whether rectangle selection is active', () => {
+    const { rectangleSelection } = createRectangleSelection();
+    const internal = rectangleSelection as unknown as { isRectSelectionActivated: boolean };
+
+    internal.isRectSelectionActivated = false;
+    expect(rectangleSelection.isRectActivated()).toBe(false);
+
+    internal.isRectSelectionActivated = true;
+    expect(rectangleSelection.isRectActivated()).toBe(true);
+  });
+
   it('resets selection parameters on endSelection', () => {
     const {
       rectangleSelection,
@@ -346,6 +399,45 @@ describe('RectangleSelection', () => {
     expect(scrollSpy).toHaveBeenCalledWith(320);
   });
 
+  it('updates rectangle on scroll events', () => {
+    const {
+      rectangleSelection,
+    } = createRectangleSelection();
+
+    const internal = rectangleSelection as unknown as {
+      processScroll: (event: MouseEvent) => void;
+      changingRectangle: (event: MouseEvent) => void;
+    };
+
+    const changeSpy = vi.spyOn(internal, 'changingRectangle');
+    const scrollEvent = { pageX: 50,
+      pageY: 75 } as unknown as MouseEvent;
+
+    internal.processScroll(scrollEvent);
+
+    expect(changeSpy).toHaveBeenCalledWith(scrollEvent);
+  });
+
+  it('stops scrolling when cursor leaves scroll zones', () => {
+    const { rectangleSelection } = createRectangleSelection();
+    const internal = rectangleSelection as unknown as {
+      scrollByZones: (clientY: number) => void;
+      isScrolling: boolean;
+      inScrollZone: number | null;
+    };
+
+    Object.defineProperty(document.documentElement, 'clientHeight', {
+      configurable: true,
+      value: 1000,
+    });
+
+    internal.isScrolling = true;
+    internal.scrollByZones(200);
+
+    expect(internal.isScrolling).toBe(false);
+    expect(internal.inScrollZone).toBeNull();
+  });
+
   it('triggers vertical scrolling when mouse enters scroll zones', () => {
     const {
       rectangleSelection,
@@ -372,6 +464,75 @@ describe('RectangleSelection', () => {
     scrollSpy.mockClear();
     internal.scrollByZones(995);
     expect(scrollSpy).toHaveBeenCalledWith(3);
+  });
+
+  it('scrolls vertically while mouse button is pressed in a scroll zone', () => {
+    const { rectangleSelection } = createRectangleSelection();
+    const internal = rectangleSelection as unknown as {
+      scrollVertical: (speed: number) => void;
+      inScrollZone: number | null;
+      mousedown: boolean;
+      mouseY: number;
+    };
+
+    vi.useFakeTimers();
+
+    internal.inScrollZone = 1;
+    internal.mousedown = true;
+    internal.mouseY = 100;
+
+    let yOffset = 0;
+
+    const scrollYSpy = vi.spyOn(window, 'scrollY', 'get').mockImplementation(() => yOffset);
+
+    const scrollBySpy = vi.spyOn(window, 'scrollBy').mockImplementation((_x, y) => {
+      yOffset += y;
+    });
+
+    internal.scrollVertical(5);
+
+    internal.inScrollZone = null;
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+
+    expect(scrollBySpy).toHaveBeenCalledWith(0, 5);
+    expect(internal.mouseY).toBe(105);
+
+    scrollBySpy.mockRestore();
+    scrollYSpy.mockRestore();
+  });
+
+  it('shrinks overlay rectangle to the starting point', () => {
+    const {
+      rectangleSelection,
+      editorWrapper,
+    } = createRectangleSelection();
+
+    rectangleSelection.prepare();
+
+    const internal = rectangleSelection as unknown as {
+      shrinkRectangleToPoint: () => void;
+      overlayRectangle: HTMLDivElement;
+      startX: number;
+      startY: number;
+    };
+
+    internal.overlayRectangle = editorWrapper.querySelector(`.${RectangleSelection.CSS.rect}`) as HTMLDivElement;
+    internal.startX = 150;
+    internal.startY = 260;
+
+    const scrollXSpy = vi.spyOn(window, 'scrollX', 'get').mockReturnValue(10);
+    const scrollYSpy = vi.spyOn(window, 'scrollY', 'get').mockReturnValue(20);
+
+    internal.shrinkRectangleToPoint();
+
+    expect(internal.overlayRectangle.style.left).toBe('140px');
+    expect(internal.overlayRectangle.style.top).toBe('240px');
+    expect(internal.overlayRectangle.style.bottom).toBe('calc(100% - 240px)');
+    expect(internal.overlayRectangle.style.right).toBe('calc(100% - 140px)');
+
+    scrollXSpy.mockRestore();
+    scrollYSpy.mockRestore();
   });
 
   it('selects or unselects blocks based on rectangle overlap', () => {
@@ -409,6 +570,32 @@ describe('RectangleSelection', () => {
     expect(blockSelection.unSelectBlockByIndex).toHaveBeenCalledWith(0);
     expect(blockSelection.unSelectBlockByIndex).toHaveBeenCalledWith(1);
     expect(blockSelection.selectBlockByIndex).not.toHaveBeenCalled();
+  });
+
+  it('adds blocks to selection stack via addBlockInSelection', () => {
+    const {
+      rectangleSelection,
+      blockSelection,
+    } = createRectangleSelection();
+
+    const internal = rectangleSelection as unknown as {
+      rectCrossesBlocks: boolean;
+      stackOfSelected: number[];
+      addBlockInSelection: (index: number) => void;
+    };
+
+    internal.rectCrossesBlocks = true;
+    internal.addBlockInSelection(2);
+
+    expect(blockSelection.selectBlockByIndex).toHaveBeenCalledWith(2);
+    expect(internal.stackOfSelected).toEqual([ 2 ]);
+
+    blockSelection.selectBlockByIndex.mockClear();
+    internal.rectCrossesBlocks = false;
+    internal.addBlockInSelection(3);
+
+    expect(blockSelection.selectBlockByIndex).not.toHaveBeenCalled();
+    expect(internal.stackOfSelected).toEqual([2, 3]);
   });
 
   it('updates rectangle size based on cursor position', () => {
@@ -487,6 +674,110 @@ describe('RectangleSelection', () => {
     elementFromPointSpy.mockRestore();
   });
 
+  it('activates rectangle selection and updates state when cursor moves with pressed mouse', () => {
+    const {
+      rectangleSelection,
+      toolbar,
+      editorWrapper,
+    } = createRectangleSelection();
+
+    rectangleSelection.prepare();
+
+    const internal = rectangleSelection as unknown as {
+      changingRectangle: (event: MouseEvent) => void;
+      mousedown: boolean;
+      isRectSelectionActivated: boolean;
+      overlayRectangle: HTMLDivElement;
+    };
+
+    internal.mousedown = true;
+    internal.isRectSelectionActivated = false;
+    internal.overlayRectangle = editorWrapper.querySelector(`.${RectangleSelection.CSS.rect}`) as HTMLDivElement;
+
+    const genInfoSpy = vi.spyOn(
+      rectangleSelection as unknown as { genInfoForMouseSelection: () => { rightPos: number; leftPos: number; index: number } },
+      'genInfoForMouseSelection'
+    ).mockReturnValue({
+      leftPos: 0,
+      rightPos: 500,
+      index: 1,
+    });
+    const trySelectSpy = vi.spyOn(
+      rectangleSelection as unknown as { trySelectNextBlock: (index: number) => void },
+      'trySelectNextBlock'
+    );
+    const inverseSpy = vi.spyOn(
+      rectangleSelection as unknown as { inverseSelection: () => void },
+      'inverseSelection'
+    );
+    const selectionRemove = vi.fn();
+    const selectionSpy = vi.spyOn(SelectionUtils, 'get').mockReturnValue({
+      removeAllRanges: selectionRemove,
+    } as unknown as Selection);
+
+    internal.changingRectangle({
+      pageX: 200,
+      pageY: 220,
+    } as MouseEvent);
+
+    expect(internal.isRectSelectionActivated).toBe(true);
+    expect(internal.overlayRectangle.style.display).toBe('block');
+    expect(toolbar.close).toHaveBeenCalled();
+    expect(trySelectSpy).toHaveBeenCalledWith(1);
+    expect(inverseSpy).toHaveBeenCalled();
+    expect(selectionRemove).toHaveBeenCalled();
+
+    genInfoSpy.mockRestore();
+    selectionSpy.mockRestore();
+  });
+
+  it('does not attempt block selection when no block is detected under cursor', () => {
+    const {
+      rectangleSelection,
+      toolbar,
+      editorWrapper,
+    } = createRectangleSelection();
+
+    rectangleSelection.prepare();
+
+    const internal = rectangleSelection as unknown as {
+      changingRectangle: (event: MouseEvent) => void;
+      mousedown: boolean;
+      isRectSelectionActivated: boolean;
+      overlayRectangle: HTMLDivElement;
+    };
+
+    internal.mousedown = true;
+    internal.isRectSelectionActivated = true;
+    internal.overlayRectangle = editorWrapper.querySelector(`.${RectangleSelection.CSS.rect}`) as HTMLDivElement;
+
+    const genInfoSpy = vi.spyOn(
+      rectangleSelection as unknown as { genInfoForMouseSelection: () => { rightPos: number; leftPos: number; index: number | undefined } },
+      'genInfoForMouseSelection'
+    ).mockReturnValue({
+      leftPos: 0,
+      rightPos: 500,
+      index: undefined,
+    });
+    const trySelectSpy = vi.spyOn(
+      rectangleSelection as unknown as { trySelectNextBlock: (index: number) => void },
+      'trySelectNextBlock'
+    );
+    const selectionSpy = vi.spyOn(SelectionUtils, 'get');
+
+    internal.changingRectangle({
+      pageX: 120,
+      pageY: 140,
+    } as MouseEvent);
+
+    expect(toolbar.close).toHaveBeenCalled();
+    expect(trySelectSpy).not.toHaveBeenCalled();
+    expect(selectionSpy).not.toHaveBeenCalled();
+
+    genInfoSpy.mockRestore();
+    selectionSpy.mockRestore();
+  });
+
   it('clears selection state on mouse leave and mouse up events', () => {
     const {
       rectangleSelection,
@@ -510,6 +801,49 @@ describe('RectangleSelection', () => {
     expect(clearSpy).toHaveBeenCalledTimes(2);
     expect(endSpy).toHaveBeenCalledTimes(2);
   });
+
+  it('extends selection to skipped blocks in downward direction', () => {
+    const {
+      rectangleSelection,
+      blockSelection,
+    } = createRectangleSelection();
+
+    const internal = rectangleSelection as unknown as {
+      stackOfSelected: number[];
+      rectCrossesBlocks: boolean;
+      trySelectNextBlock: (index: number) => void;
+    };
+
+    internal.stackOfSelected.push(0, 1);
+    internal.rectCrossesBlocks = true;
+
+    internal.trySelectNextBlock(4);
+
+    expect(internal.stackOfSelected).toEqual([0, 1, 2, 3, 4]);
+    expect(blockSelection.selectBlockByIndex).toHaveBeenCalledWith(2);
+    expect(blockSelection.selectBlockByIndex).toHaveBeenCalledWith(3);
+    expect(blockSelection.selectBlockByIndex).toHaveBeenCalledWith(4);
+  });
+
+  it('shrinks selection stack when cursor moves backwards', () => {
+    const {
+      rectangleSelection,
+      blockSelection,
+    } = createRectangleSelection();
+
+    const internal = rectangleSelection as unknown as {
+      stackOfSelected: number[];
+      rectCrossesBlocks: boolean;
+      trySelectNextBlock: (index: number) => void;
+    };
+
+    internal.stackOfSelected.push(0, 1, 2, 3);
+    internal.rectCrossesBlocks = true;
+
+    internal.trySelectNextBlock(1);
+
+    expect(internal.stackOfSelected).toEqual([0, 1]);
+    expect(blockSelection.unSelectBlockByIndex).toHaveBeenCalledWith(3);
+    expect(blockSelection.unSelectBlockByIndex).toHaveBeenCalledWith(2);
+  });
 });
-
-

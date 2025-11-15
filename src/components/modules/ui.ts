@@ -526,17 +526,19 @@ export default class UI extends Module<UINodes> {
    * @param {KeyboardEvent} event - keyboard event
    */
   private documentKeydown(event: KeyboardEvent): void {
-    switch (event.keyCode) {
-      case _.keyCodes.ENTER:
+    const key = event.key ?? '';
+
+    switch (key) {
+      case 'Enter':
         this.enterPressed(event);
         break;
 
-      case _.keyCodes.BACKSPACE:
-      case _.keyCodes.DELETE:
+      case 'Backspace':
+      case 'Delete':
         this.backspacePressed(event);
         break;
 
-      case _.keyCodes.ESC:
+      case 'Escape':
         this.escapePressed(event);
         break;
 

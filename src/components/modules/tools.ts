@@ -2,6 +2,7 @@ import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
 import type { ChainData } from '../utils';
+import PromiseQueue from '../utils/promise-queue';
 import type { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
@@ -186,7 +187,22 @@ export default class Tools extends Module {
       this.toolPrepareMethodFallback({ toolName: data.toolName });
     };
 
-    await _.sequence(sequenceData, handlePrepareSuccess, handlePrepareFallback);
+    const queue = new PromiseQueue();
+
+    sequenceData.forEach(chainData => {
+      void queue.add(async () => {
+        const callbackData = !_.isUndefined(chainData.data) ? chainData.data : {};
+
+        try {
+          await chainData.function(chainData.data);
+          handlePrepareSuccess(callbackData);
+        } catch (error) {
+          handlePrepareFallback(callbackData);
+        }
+      });
+    });
+
+    await queue.completed;
 
     this.prepareBlockTools();
   }

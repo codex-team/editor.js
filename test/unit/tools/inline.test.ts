@@ -86,6 +86,24 @@ describe('InlineToolAdapter', () => {
 
       expect(tool.title).toBe(constructable.title);
     });
+
+    it('returns empty string when constructable is undefined', () => {
+      const tool = new InlineToolAdapter({
+        ...createInlineToolOptions(),
+        constructable: undefined as unknown as InlineToolAdapterOptions['constructable'],
+      });
+
+      expect(tool.title).toBe('');
+    });
+
+    it('returns empty string when constructable title is undefined', () => {
+      const tool = new InlineToolAdapter({
+        ...createInlineToolOptions(),
+        constructable: {} as InlineToolAdapterOptions['constructable'],
+      });
+
+      expect(tool.title).toBe('');
+    });
   });
 
   describe('.isInternal', () => {

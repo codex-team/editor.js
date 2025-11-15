@@ -9,6 +9,7 @@ node_modules/*
 
 npm-debug.log
 yarn-error.log
+.yarn/install-state.gz
 
 test-results
 

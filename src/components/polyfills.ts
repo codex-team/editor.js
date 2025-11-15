@@ -1,116 +1,14 @@
 'use strict';
 
-/**
- * Extend Element interface to include prefixed and experimental properties
- */
-interface Element {
-  matchesSelector: (selector: string) => boolean;
-  mozMatchesSelector: (selector: string) => boolean;
-  msMatchesSelector: (selector: string) => boolean;
-  oMatchesSelector: (selector: string) => boolean;
-
-  prepend: (...nodes: Array<string | Node>) => void;
-  append: (...nodes: Array<string | Node>) => void;
-}
-
-/**
- * The Element.matches() method returns true if the element
- * would be selected by the specified selector string;
- * otherwise, returns false.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
- * @param {string} s - selector
- */
-if (typeof Element.prototype.matches === 'undefined') {
-  const proto = Element.prototype as Element & {
-    matchesSelector?: (selector: string) => boolean;
-    mozMatchesSelector?: (selector: string) => boolean;
-    msMatchesSelector?: (selector: string) => boolean;
-    oMatchesSelector?: (selector: string) => boolean;
-    webkitMatchesSelector?: (selector: string) => boolean;
-  };
-
-  Element.prototype.matches = proto.matchesSelector ??
-    proto.mozMatchesSelector ??
-    proto.msMatchesSelector ??
-    proto.oMatchesSelector ??
-    proto.webkitMatchesSelector ??
-    function (this: Element, s: string): boolean {
-      const doc = this.ownerDocument;
-      const matches = doc.querySelectorAll(s);
-      const index = Array.from(matches).findIndex(match => match === this);
-
-      return index !== -1;
-    };
-}
-
-/**
- * The Element.closest() method returns the closest ancestor
- * of the current element (or the current element itself) which
- * matches the selectors given in parameter.
- * If there isn't such an ancestor, it returns null.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
- * @param {string} s - selector
- */
-if (typeof Element.prototype.closest === 'undefined') {
-  Element.prototype.closest = function (this: Element, s: string): Element | null {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const startEl: Element = this;
-
-    if (!document.documentElement.contains(startEl)) {
-      return null;
-    }
-
-    const findClosest = (el: Element | null): Element | null => {
-      if (el === null) {
-        return null;
-      }
-
-      if (el.matches(s)) {
-        return el;
-      }
-
-      const parent: ParentNode | null = el.parentElement || el.parentNode;
-
-      return findClosest(parent instanceof Element ? parent : null);
-    };
-
-    return findClosest(startEl);
-  };
-}
-
-/**
- * The ParentNode.prepend method inserts a set of Node objects
- * or DOMString objects before the first child of the ParentNode.
- * DOMString objects are inserted as equivalent Text nodes.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
- * @param {Node | Node[] | string | string[]} nodes - nodes to prepend
- */
-if (typeof Element.prototype.prepend === 'undefined') {
-  Element.prototype.prepend = function prepend(nodes: Array<Node | string> | Node | string): void {
-    const docFrag = document.createDocumentFragment();
-
-    const nodesArray = Array.isArray(nodes) ? nodes : [ nodes ];
-
-    nodesArray.forEach((node: Node | string) => {
-      const isNode = node instanceof Node;
-
-      docFrag.appendChild(isNode ? node as Node : document.createTextNode(node as string));
-    });
-
-    this.insertBefore(docFrag, this.firstChild);
-  };
-}
-
-interface Element {
-  /**
-   * Scrolls the current element into the visible area of the browser window
-   *
-   * @param centerIfNeeded - true, if the element should be aligned so it is centered within the visible area of the scrollable ancestor.
-   */
-  scrollIntoViewIfNeeded(centerIfNeeded?: boolean): void;
+declare global {
+  interface Element {
+    /**
+     * Scrolls the current element into the visible area of the browser window
+     *
+     * @param centerIfNeeded - true, if the element should be aligned so it is centered within the visible area of the scrollable ancestor.
+     */
+    scrollIntoViewIfNeeded(centerIfNeeded?: boolean): void;
+  }
 }
 
 /**
@@ -214,3 +112,5 @@ if (typeof window.cancelIdleCallback === 'undefined') {
     globalThis.clearTimeout(id);
   };
 }
+
+export {};
