@@ -523,6 +523,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
         filter: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
         nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
       },
+      triggerElement: this.nodes.plusButton,
     });
 
     this.toolboxInstance.on(ToolboxEvent.Opened, () => {
@@ -671,7 +672,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
     if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else {
-      void this.Editor.BlockSettings.open(hoveredBlock);
+      void this.Editor.BlockSettings.open(hoveredBlock, this.nodes.settingsToggler);
     }
   }
 

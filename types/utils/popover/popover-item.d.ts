@@ -129,6 +129,11 @@ export interface PopoverItemDefaultBaseParams {
   title?: string;
 
   /**
+   * @deprecated Use title instead
+   */
+  label?: string;
+
+  /**
    * Item icon to be appeared near a title
    */
   icon?: string;

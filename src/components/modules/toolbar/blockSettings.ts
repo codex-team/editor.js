@@ -128,8 +128,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * Open Block Settings pane
    *
    * @param targetBlock - near which Block we should open BlockSettings
+   * @param trigger - element to position the popover relative to
    */
-  public async open(targetBlock?: Block): Promise<void> {
+  public async open(targetBlock?: Block, trigger?: HTMLElement): Promise<void> {
     const block = targetBlock ?? this.Editor.BlockManager.currentBlock;
 
     if (block === undefined) {
@@ -159,6 +160,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     const PopoverClass = isMobileScreen() ? PopoverMobile : PopoverDesktop;
     const popoverParams: PopoverParams & { flipper?: Flipper } = {
       searchable: true,
+      trigger: trigger || this.nodes.wrapper,
       items: await this.getTunesItems(block, commonTunes, toolTunes),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
@@ -174,8 +176,6 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     this.popover = new PopoverClass(popoverParams);
 
     this.popover.on(PopoverEvent.Closed, this.onPopoverClose);
-
-    this.nodes.wrapper?.append(this.popover.getElement());
 
     this.popover.show();
     if (PopoverClass === PopoverDesktop) {

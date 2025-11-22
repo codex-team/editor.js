@@ -18,6 +18,11 @@ export interface PopoverParams {
   scopeElement?: HTMLElement;
 
   /**
+   * Element relative to which the popover should be positioned
+   */
+  trigger?: HTMLElement;
+
+  /**
    * True if popover should contain search field
    */
   searchable?: boolean;

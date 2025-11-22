@@ -124,18 +124,30 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   }
 
   /**
+   * Element relative to which the popover should be positioned
+   */
+  private triggerElement?: HTMLElement;
+
+  /**
    * Toolbox constructor
    *
    * @param options - available parameters
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
+   * @param options.triggerElement - Element relative to which the popover should be positioned
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockToolAdapter>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
+  constructor({ api, tools, i18nLabels, triggerElement }: {
+    api: API;
+    tools: ToolsCollection<BlockToolAdapter>;
+    i18nLabels: Record<ToolboxTextLabelsKeys, string>;
+    triggerElement?: HTMLElement;
+  }) {
     super();
 
     this.api = api;
     this.tools = tools;
     this.i18nLabels = i18nLabels;
+    this.triggerElement = triggerElement;
 
     this.enableShortcuts();
 
@@ -245,6 +257,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
     this.popover = new PopoverClass({
       scopeElement: this.api.ui.nodes.redactor,
+      trigger: this.triggerElement || this.nodes.toolbox,
       searchable: true,
       messages: {
         nothingFound: this.i18nLabels.nothingFound,
@@ -254,7 +267,6 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     });
 
     this.popover.on(PopoverEvent.Closed, this.onPopoverClose);
-    this.nodes.toolbox?.append(this.popover.getElement());
   }
 
   /**

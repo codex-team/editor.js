@@ -54,6 +54,11 @@ export class PopoverDesktop extends PopoverAbstract {
   private scopeElement: HTMLElement = document.body;
 
   /**
+   * Element relative to which the popover should be positioned
+   */
+  private trigger: HTMLElement | undefined;
+
+  /**
    * Construct the instance
    *
    * @param params - popover params
@@ -62,6 +67,10 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   constructor(params: PopoverParams, itemsRenderParams?: PopoverItemRenderParamsMap) {
     super(params, itemsRenderParams);
+
+    if (params.trigger) {
+      this.trigger = params.trigger;
+    }
 
     if (params.nestingLevel !== undefined) {
       this.nestingLevel = params.nestingLevel;
@@ -144,18 +153,61 @@ export class PopoverDesktop extends PopoverAbstract {
    * Open popover
    */
   public show(): void {
+    if (this.trigger) {
+      document.body.appendChild(this.nodes.popover);
+      const { top, left } = this.calculatePosition();
+
+      this.nodes.popover.style.position = 'absolute';
+      this.nodes.popover.style.top = `${top}px`;
+      this.nodes.popover.style.left = `${left}px`;
+      this.nodes.popover.style.setProperty('--popover-top', '0px');
+      this.nodes.popover.style.setProperty('--popover-left', '0px');
+    }
+
     this.nodes.popover.style.setProperty(CSSVariables.PopoverHeight, this.size.height + 'px');
 
-    if (!this.shouldOpenBottom) {
+    if (!this.trigger && !this.shouldOpenBottom) {
       this.nodes.popover.classList.add(css.popoverOpenTop);
     }
 
-    if (!this.shouldOpenRight) {
+    if (!this.trigger && !this.shouldOpenRight) {
       this.nodes.popover.classList.add(css.popoverOpenLeft);
     }
 
     super.show();
     this.flipper?.activate(this.flippableElements);
+  }
+
+  /**
+   * Calculates position for the popover
+   */
+  private calculatePosition(): { top: number; left: number } {
+    if (!this.trigger) {
+      return {
+        top: 0,
+        left: 0,
+      };
+    }
+
+    const triggerRect = this.trigger.getBoundingClientRect();
+    const popoverRect = this.size;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const offset = 8;
+
+    const initialTop = triggerRect.bottom + offset + window.scrollY;
+    const shouldFlipTop = (triggerRect.bottom + offset + popoverRect.height > windowHeight + window.scrollY) &&
+      (triggerRect.top - offset - popoverRect.height > window.scrollY);
+    const top = shouldFlipTop ? triggerRect.top - offset - popoverRect.height + window.scrollY : initialTop;
+
+    const initialLeft = triggerRect.left + window.scrollX;
+    const shouldFlipLeft = initialLeft + popoverRect.width > windowWidth + window.scrollX;
+    const left = shouldFlipLeft ? Math.max(0, triggerRect.right - popoverRect.width + window.scrollX) : initialLeft;
+
+    return {
+      top,
+      left,
+    };
   }
 
   /**

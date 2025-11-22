@@ -116,6 +116,10 @@ export abstract class PopoverAbstract<Nodes extends PopoverNodes = PopoverNodes>
    * Open popover
    */
   public show(): void {
+    if (!this.nodes.popover.isConnected) {
+      document.body.appendChild(this.nodes.popover);
+    }
+
     this.nodes.popover.classList.add(css.popoverOpened);
     this.nodes.popover.setAttribute('data-popover-opened', 'true');
 
