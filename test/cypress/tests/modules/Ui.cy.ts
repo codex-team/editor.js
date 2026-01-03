@@ -1,5 +1,6 @@
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 import type EditorJS from '../../../../types/index';
+import { NestedEditorTool } from '../../fixtures/tools/NestedEditorTool';
 
 describe('Ui module', function () {
   describe('documentKeydown', function () {
@@ -137,6 +138,70 @@ describe('Ui module', function () {
           const currentBlockIndex = await editor.blocks.getCurrentBlockIndex();
 
           expect(currentBlockIndex).to.eq(1);
+        });
+    });
+
+    it('click on block of nested editor should also set the block of parent editor as current', function () {
+      cy.window()
+        .then((window) => {
+          const editorJsClass = window.EditorJS;
+
+          cy.createEditor({
+            tools: {
+              nestedEditor: {
+                class: NestedEditorTool,
+                config: {
+                  editorLibrary: editorJsClass
+                }
+              },
+            },
+            data: {
+              blocks: [
+                {
+                  id: 'block1',
+                  type: 'paragraph',
+                  data: {
+                    text: 'First block of parent editor',
+                  },
+                },
+                {
+                  id: 'block2',
+                  type: 'paragraph',
+                  data: {
+                    text: 'Second block of parent editor',
+                  },
+                },
+                {
+                  id: 'block3',
+                  type: 'nestedEditor',
+                  data: {
+                    nestedEditor: {
+                      blocks: [
+                        {
+                          id: 'nestedBlock1',
+                          type: 'paragraph',
+                          data: {
+                            text: 'First block of nested editor',
+                          },
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+            },
+          }).as('editorInstance');
+        });
+
+      cy.get('[data-id=nestedBlock1]')
+        .find('.ce-paragraph')
+        .click();
+
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const currentBlockIndex = editor.blocks.getCurrentBlockIndex();
+
+          expect(currentBlockIndex).to.eq(2); // 3 block in numbering from 0
         });
     });
   });
