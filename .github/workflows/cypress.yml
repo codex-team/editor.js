@@ -14,6 +14,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+
+      - name: Setup Firefox
+        if: matrix.browser == 'firefox'
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '115.0esr'
+
       - uses: cypress-io/github-action@v6
         with:
           config: video=false
