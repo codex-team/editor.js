@@ -9,6 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
