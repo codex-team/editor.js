@@ -17,7 +17,7 @@ jobs:
   # If pull request was merged then we should check for a package version update
   check-for-no-version-changing:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       actions: write
     steps:
