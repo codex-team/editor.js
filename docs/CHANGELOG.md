@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.31.1
+- `Improvement` - Default protocol for inline links changed to "https"
+
 ### 2.31.0
 
 - `New` - Inline tools (those with `isReadOnlySupported` specified) can now be used in read-only mode
