@@ -1,6 +1,6 @@
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 import type EditorJS from '../../../../types/index';
-import { NestedEditorTool } from '../../fixtures/tools/NestedEditorTool';
+import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
 
 describe('Ui module', function () {
   describe('documentKeydown', function () {
@@ -142,58 +142,37 @@ describe('Ui module', function () {
     });
 
     it('click on block of nested editor should also set the block of parent editor as current', function () {
-      cy.window()
-        .then((window) => {
-          const editorJsClass = window.EditorJS;
-
-          cy.createEditor({
-            tools: {
-              nestedEditor: {
-                class: NestedEditorTool,
-                config: {
-                  editorLibrary: editorJsClass
-                }
+      cy.createEditor({
+        tools: {
+          nestedEditor: {
+            class: NestedEditor,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block of parent editor',
               },
             },
-            data: {
-              blocks: [
-                {
-                  id: 'block1',
-                  type: 'paragraph',
-                  data: {
-                    text: 'First block of parent editor',
-                  },
-                },
-                {
-                  id: 'block2',
-                  type: 'paragraph',
-                  data: {
-                    text: 'Second block of parent editor',
-                  },
-                },
-                {
-                  id: 'block3',
-                  type: 'nestedEditor',
-                  data: {
-                    nestedEditor: {
-                      blocks: [
-                        {
-                          id: 'nestedBlock1',
-                          type: 'paragraph',
-                          data: {
-                            text: 'First block of nested editor',
-                          },
-                        }
-                      ]
-                    }
-                  }
-                }
-              ],
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Second block of parent editor',
+              },
             },
-          }).as('editorInstance');
-        });
+            {
+              type: 'nestedEditor',
+              data: {
+                text: 'First block of nested editor',
+              },
+            },
+          ],
+        },
+      }).as('editorInstance');
 
-      cy.get('[data-id=nestedBlock1]')
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
         .find('.ce-paragraph')
         .click();
 
