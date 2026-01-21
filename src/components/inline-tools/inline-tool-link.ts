@@ -172,11 +172,21 @@ export default class LinkInlineTool implements InlineTool {
        * Unlink icon pressed
        */
       if (parentAnchor) {
-        this.selection.expandToTag(parentAnchor);
-        this.unlink();
-        this.closeActions();
-        this.checkState();
-        this.toolbar.close();
+        /**
+         * If input is not opened, treat click as explicit unlink action.
+         * If input is opened (e.g., programmatic close when switching tools), avoid unlinking.
+         */
+        if (!this.inputOpened) {
+          this.selection.expandToTag(parentAnchor);
+          this.unlink();
+          this.closeActions();
+          this.checkState();
+          this.toolbar.close();
+        } else {
+          /** Only close actions without clearing saved selection to preserve user state */
+          this.closeActions(false);
+          this.checkState();
+        }
 
         return;
       }
