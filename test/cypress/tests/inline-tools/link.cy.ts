@@ -71,4 +71,52 @@ describe('Inline Tool Link', () => {
       .find('.ce-paragraph span[style]')
       .should('not.exist');
   });
+
+  it('should preserve link when applying bold to linked text', () => {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Text with link',
+            },
+          },
+        ],
+      },
+    });
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .click()
+      .type('{selectall}')
+      .wait(200)
+      .type('{ctrl}K');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-inline-tool-input')
+      .type('https://editorjs.io')
+      .type('{enter}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .should('have.attr', 'href', 'https://editorjs.io');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .click()
+      .type('{selectall}')
+      .wait(200)
+      .type('{ctrl}B');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .should('have.attr', 'href', 'https://editorjs.io')
+      .find('b')
+      .should('exist')
+      .should('contain', 'Text with link');
+  });
 });
