@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.31.2
+
+- `Fix` - Prevent link removal when applying bold to linked text
+
 ### 2.31.1
 
 - `Fix` - Prevent the warning from appearing when `readOnly` mode is initially set to `true`
