@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.31.4
+
+- `Fix` - Prevent inline-toolbar re-renders when linked text is selected
+
 ### 2.31.3
 
 - `Fix` - Prevent text formatting removal when applying link

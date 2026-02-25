@@ -212,7 +212,7 @@ export default class LinkInlineTool implements InlineTool {
        */
       const hrefAttr = anchorTag.getAttribute('href');
 
-      this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
+      this.nodes.input.defaultValue = hrefAttr !== 'null' ? hrefAttr : '';
 
       this.selection.save();
     } else {
