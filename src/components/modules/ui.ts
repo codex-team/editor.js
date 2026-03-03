@@ -771,10 +771,11 @@ export default class UI extends Module<UINodes> {
      * case when user clicks on anchor element
      * if it is clicked via ctrl key, then we open new window with url
      */
-    const element = (event.target as Element).closest("a");
+    const element = event.target as Element;
     const ctrlKey = event.metaKey || event.ctrlKey;
+    const hasParentAnchor = !!(event.target as Element).closest("a");
 
-    if ($.isAnchor(element) && ctrlKey) {
+    if ((hasParentAnchor || $.isAnchor(element)) && ctrlKey) {
       event.stopImmediatePropagation();
       event.stopPropagation();
 
