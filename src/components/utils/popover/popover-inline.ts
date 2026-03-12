@@ -53,15 +53,15 @@ export class PopoverInline extends PopoverDesktop {
      * once you select <a> tag content in text
      */
     this.items
-      .forEach((item) => {
-        if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
-          return;
-        }
+    .forEach((item) => {
+      if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
+        return;
+      }
 
-        if (item.hasChildren && item.isChildrenOpen) {
-          this.showNestedItems(item);
-        }
-      });
+      if (item.hasChildren && item.isChildrenOpen) {
+        this.showNestedItems(item);
+      }
+    });
   }
 
   /**
@@ -166,13 +166,8 @@ export class PopoverInline extends PopoverDesktop {
   protected override handleItemClick(item: PopoverItem): void {
     if (item !== this.nestedPopoverTriggerItem) {
       /**
-       * In case tool had special handling for toggling button (like link tool which modifies selection)
-       * we need to call handleClick on nested popover trigger item
-       */
-      this.nestedPopoverTriggerItem?.handleClick();
-
-      /**
-       * Then close the nested popover
+       * Close the nested popover without triggering the tool's action.
+       * The onChildrenClose callback will handle any necessary UI cleanup.
        */
       super.destroyNestedPopoverIfExists();
     }
