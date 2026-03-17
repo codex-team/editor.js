@@ -895,8 +895,8 @@ export default class BlockManager extends Module {
     const queue = new PromiseQueue();
 
     // Create a copy of the blocks array to avoid issues with array modification during iteration
-    const blocksToRemove = [...this.blocks];
-    
+    const blocksToRemove = [ ...this.blocks ];
+
     blocksToRemove.forEach((block) => {
       queue.add(async () => {
         await this.removeBlock(block, false);

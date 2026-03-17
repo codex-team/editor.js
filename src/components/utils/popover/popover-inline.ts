@@ -53,15 +53,15 @@ export class PopoverInline extends PopoverDesktop {
      * once you select <a> tag content in text
      */
     this.items
-    .forEach((item) => {
-      if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
-        return;
-      }
+      .forEach((item) => {
+        if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
+          return;
+        }
 
-      if (item.hasChildren && item.isChildrenOpen) {
-        this.showNestedItems(item);
-      }
-    });
+        if (item.hasChildren && item.isChildrenOpen) {
+          this.showNestedItems(item);
+        }
+      });
   }
 
   /**

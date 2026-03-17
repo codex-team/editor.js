@@ -568,12 +568,12 @@ export default class Dom {
 
   /**
    * Returns the closest ancestor anchor (A tag) of the given element (including itself)
-   * 
+   *
    * @param element - element to check
    * @returns {HTMLAnchorElement | null}
    */
   public static getClosestAnchor(element: Element): HTMLAnchorElement | null {
-    return element.closest("a");
+    return element.closest('a');
   }
 
   /**
