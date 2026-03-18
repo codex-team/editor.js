@@ -28,6 +28,12 @@ interface TagSubstitute {
    * But Tool can explicitly specify sanitizer configuration for supported tags
    */
   sanitizationConfig?: SanitizerRule;
+
+  /**
+   * Optional filter function to decide whether a specific element matches this tag substitute.
+   * When provided, an element must pass the filter in addition to matching the tag name.
+   */
+  filter?: (el: Element) => boolean;
 }
 
 /**
@@ -375,14 +381,48 @@ export default class Paste extends Module {
          */
         const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
 
+        /**
+         * If the sanitization config is a function, it acts as a filter —
+         * only elements that pass the filter should be treated as substitutable.
+         * The function returns a TagConfig: false means reject, anything else means accept.
+         */
+        const filter = _.isFunction(sanitizationConfig)
+          ? (el: Element): boolean => {
+            const result = (sanitizationConfig as (el: Element) => unknown)(el);
+
+            return result !== false;
+          }
+          : undefined;
+
         this.toolsTags[tag.toUpperCase()] = {
           tool,
           sanitizationConfig,
+          filter,
         };
       });
     });
 
     this.tagsByTool[tool.name] = toolTags.map((t) => t.toUpperCase());
+  }
+
+  /**
+   * Check if an element matches a registered tag substitute, including any filter function.
+   *
+   * @param element - the element to check
+   * @returns true if the element's tag is registered and passes its filter (if any)
+   */
+  private isTagSubstitutable(element: Element): boolean {
+    const tagSubstitute = this.toolsTags[element.tagName];
+
+    if (!tagSubstitute) {
+      return false;
+    }
+
+    if (tagSubstitute.filter) {
+      return tagSubstitute.filter(element);
+    }
+
+    return true;
   }
 
   /**
@@ -612,7 +652,7 @@ export default class Paste extends Module {
             content = node as HTMLElement;
             isBlock = true;
 
-            if (this.toolsTags[content.tagName]) {
+            if (this.isTagSubstitutable(content)) {
               tool = this.toolsTags[content.tagName].tool;
             }
             break;
@@ -907,12 +947,12 @@ export default class Paste extends Module {
     const { tool } = this.toolsTags[element.tagName] || {};
     const toolTags = this.tagsByTool[tool?.name] || [];
 
-    const isSubstitutable = tags.includes(element.tagName);
+    const isSubstitutable = this.isTagSubstitutable(element);
     const isBlockElement = $.blockElements.includes(element.tagName.toLowerCase());
     const containsAnotherToolTags = Array
       .from(element.children)
       .some(
-        ({ tagName }) => tags.includes(tagName) && !toolTags.includes(tagName)
+        (child) => this.isTagSubstitutable(child) && !toolTags.includes(child.tagName)
       );
 
     const containsBlockElements = Array.from(element.children).some(
