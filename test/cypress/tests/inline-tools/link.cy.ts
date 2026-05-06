@@ -192,4 +192,50 @@ describe('Inline Tool Link', () => {
       .should('have.attr', 'href', 'https://editorjs.io')
       .should('contain', 'Bold and italic text');
   });
+
+  it('should open a link if it is wrapped in another formatting', () => {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Link text',
+            },
+          },
+        ],
+      },
+    });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .selectText('Link text');
+
+    cy.get('[data-cy=editorjs]')
+      .find('[data-item-name=link]')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-inline-tool-input')
+      .type('https://test.io/')
+      .type('{enter}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .selectText('Link text');
+
+    cy.get('[data-cy=editorjs]')
+      .find('[data-item-name=italic]')
+      .click();
+
+    cy.window().then((win) => {
+      cy.stub(win, 'open').as('windowOpen');
+    });
+
+    cy.contains('[data-cy=editorjs] div.ce-block i', 'Link text')
+      .click({ ctrlKey: true });
+
+    cy.get('@windowOpen').should('be.calledWith', 'https://test.io/');
+  });
 });

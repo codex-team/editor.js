@@ -1,5 +1,17 @@
 # Changelog
 
+### 2.31.6
+
+- `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`
+
+### 2.31.5
+
+- `Fix` - Handle __Ctrl + click__ on links with inline styles applied (e.g., bold, italic)
+
+### 2.31.4
+
+- `Fix` - Prevent inline-toolbar re-renders when linked text is selected
+
 ### 2.31.3
 
 - `Fix` - Prevent text formatting removal when applying link

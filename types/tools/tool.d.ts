@@ -37,9 +37,12 @@ export interface BaseToolConstructable {
   isInline?: boolean;
 
   /**
-   * Tool`s sanitizer configuration
+   * Tool`s sanitizer configuration.
+   *
+   * For Block Tools, can be a Record mapping data field names to their SanitizerConfig.
+   * For Inline Tools, should be a flat SanitizerConfig with tag names as keys.
    */
-  sanitize?: SanitizerConfig;
+  sanitize?: SanitizerConfig | Record<string, SanitizerConfig>;
 
   /**
    * Title of Inline Tool.

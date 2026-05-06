@@ -773,12 +773,13 @@ export default class UI extends Module<UINodes> {
      */
     const element = event.target as Element;
     const ctrlKey = event.metaKey || event.ctrlKey;
-
-    if ($.isAnchor(element) && ctrlKey) {
+    const anchor = $.getClosestAnchor(element);
+  
+    if (anchor && ctrlKey) {
       event.stopImmediatePropagation();
       event.stopPropagation();
 
-      const href = element.getAttribute('href');
+      const href = anchor.getAttribute('href');
       const validUrl = _.getValidUrl(href);
 
       _.openTab(validUrl);

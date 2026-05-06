@@ -567,6 +567,16 @@ export default class Dom {
   }
 
   /**
+   * Returns the closest ancestor anchor (A tag) of the given element (including itself)
+   * 
+   * @param element - element to check
+   * @returns {HTMLAnchorElement | null}
+   */
+  public static getClosestAnchor(element: Element): HTMLAnchorElement | null {
+    return element.closest("a");
+  }
+
+  /**
    * Return element's offset related to the document
    *
    * @todo handle case when editor initialized in scrollable popup

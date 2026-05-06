@@ -13,9 +13,15 @@ import { MenuConfig } from './menu-config';
  */
 export interface BlockTool extends BaseTool {
   /**
-   * Sanitizer rules description
+   * Sanitizer rules description.
+   *
+   * @example Flat config (tag-level rules applied to all output)
+   * { b: true, a: { href: true } }
+   *
+   * @example Per-field config
+   * { text: { br: true, b: true }, caption: { b: true, i: true } }
    */
-  sanitize?: SanitizerConfig;
+  sanitize?: SanitizerConfig | Record<string, SanitizerConfig>;
 
   /**
    * Process Tool's element in DOM and return raw data
