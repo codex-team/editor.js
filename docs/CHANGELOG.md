@@ -3,6 +3,7 @@
 ### 2.31.6
 
 - `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`
+- `Improvement` - `paste` config supports filter functions for tag-based substitution
 
 ### 2.31.5
 
