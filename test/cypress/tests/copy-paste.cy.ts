@@ -171,23 +171,29 @@ describe('Copy pasting from Editor', function () {
         };
 
         private data: BlockToolData = { text: '' };
+        private element: HTMLElement | null = null;
 
         /**
-         * Receive matched element on paste
+         * Receive matched element on paste. Update both data and the
+         * rendered element so the text shows up after the asynchronous
+         * onPaste callback fires (render runs once at block creation).
          */
         public onPaste(event: CustomEvent<{ data: HTMLElement }>): void {
           this.data = { text: event.detail.data.textContent || '' };
+          if (this.element) {
+            this.element.textContent = this.data.text as string;
+          }
         }
 
         /**
          * Render block
          */
         public render(): HTMLElement {
-          const block = $.make('div', 'ce-filtered-div');
+          this.element = $.make('div', 'ce-filtered-div');
 
-          block.textContent = (this.data.text as string) || '';
+          this.element.textContent = (this.data.text as string) || '';
 
-          return block;
+          return this.element;
         }
 
         /**

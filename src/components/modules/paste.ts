@@ -940,8 +940,6 @@ export default class Paste extends Module {
    * @param {Node} destNode - destination node
    */
   private processElementNode(node: Node, nodes: Node[], destNode: Node): Node[] | void {
-    const tags = Object.keys(this.toolsTags);
-
     const element = node as HTMLElement;
 
     const { tool } = this.toolsTags[element.tagName] || {};
