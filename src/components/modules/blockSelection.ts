@@ -110,6 +110,15 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Return selected Blocks text joined the same way as the copy action
+   *
+   * @returns {string}
+   */
+  public get selectedText(): string {
+    return this.getSelectedBlocksText(this.getSelectedBlocksFragment());
+  }
+
+  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    *
@@ -289,21 +298,8 @@ export default class BlockSelection extends Module {
      */
     e.preventDefault();
 
-    const fakeClipboard = $.make('div');
-
-    this.selectedBlocks.forEach((block) => {
-      /**
-       * Make <p> tag that holds clean HTML
-       */
-      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
-      const fragment = $.make('p');
-
-      fragment.innerHTML = cleanHTML;
-      fakeClipboard.appendChild(fragment);
-    });
-
-    const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent)
-      .join('\n\n');
+    const fakeClipboard = this.getSelectedBlocksFragment();
+    const textPlain = this.getSelectedBlocksText(fakeClipboard);
     const textHTML = fakeClipboard.innerHTML;
 
     e.clipboardData.setData('text/plain', textPlain);
@@ -381,6 +377,39 @@ export default class BlockSelection extends Module {
   public destroy(): void {
     /** Selection shortcut */
     Shortcuts.remove(this.Editor.UI.nodes.redactor, 'CMD+A');
+  }
+
+  /**
+   * Creates a sanitized HTML fragment from selected Blocks
+   *
+   * @returns {HTMLElement}
+   */
+  private getSelectedBlocksFragment(): HTMLElement {
+    const fakeClipboard = $.make('div');
+
+    this.selectedBlocks.forEach((block) => {
+      /**
+       * Make <p> tag that holds clean HTML
+       */
+      const cleanHTML = clean(block.holder.innerHTML, this.sanitizerConfig);
+      const fragment = $.make('p');
+
+      fragment.innerHTML = cleanHTML;
+      fakeClipboard.appendChild(fragment);
+    });
+
+    return fakeClipboard;
+  }
+
+  /**
+   * Converts selected Blocks fragment to plain text
+   *
+   * @param fragment - selected Blocks fragment
+   * @returns {string}
+   */
+  private getSelectedBlocksText(fragment: HTMLElement): string {
+    return Array.from(fragment.childNodes).map((node) => node.textContent)
+      .join('\n\n');
   }
 
   /**
