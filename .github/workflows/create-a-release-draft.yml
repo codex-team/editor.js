@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       # Checkout to target branch
       - uses: actions/checkout@v2
         with:
@@ -70,7 +70,7 @@ jobs:
       # Setup node environment
       - uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
 
       # Prepare, build and publish project
       - name: Install dependencies

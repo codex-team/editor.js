@@ -64,7 +64,7 @@ jobs:
       # Setup node environment
       - uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
 
       # Bump version to the next prerelease (patch) with rc suffix
       - name: Suggest the new version
