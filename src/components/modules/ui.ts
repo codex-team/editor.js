@@ -861,10 +861,19 @@ export default class UI extends Module<UINodes> {
       /**
        * If there is no selected range, close inline toolbar
        *
+       * But do not close it if the user is interacting with a form control
+       * inside the Inline Toolbar popover (e.g. clicking on an <input> or <select>).
+       * In such case the selection is lost, but the Inline Toolbar should stay open.
+       *
        * @todo Make this method more straightforward
        */
       if (!Selection.range) {
-        this.Editor.InlineToolbar.close();
+        const activeElement = document.activeElement;
+        const isActiveElementInsideInlineToolbar = activeElement !== null && this.Editor.InlineToolbar.containsNode(activeElement);
+
+        if (!isActiveElementInsideInlineToolbar) {
+          this.Editor.InlineToolbar.close();
+        }
       }
 
       return;
@@ -932,3 +941,4 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'focusout', handleInputOrFocusChange);
   }
 }
+
