@@ -1,6 +1,7 @@
 import Module from '../__module';
 import type Block from '../block';
 import SelectionUtils from '../selection';
+import $ from '../dom';
 import * as _ from '../utils';
 
 /**
@@ -143,6 +144,7 @@ export default class CrossBlockSelection extends Module {
    */
   private enableCrossBlockSelection(event: MouseEvent): void {
     const { UI } = this.Editor;
+    const target = event.target;
 
     /**
      * Each mouse down on must disable selectAll state
@@ -151,10 +153,22 @@ export default class CrossBlockSelection extends Module {
       this.Editor.BlockSelection.clearSelection(event);
     }
 
+    if (!(target instanceof Element)) {
+      this.Editor.BlockSelection.clearSelection(event);
+
+      return;
+    }
+
     /**
      * If mouse down is performed inside the editor, we should watch CBS
      */
-    if (UI.nodes.redactor.contains(event.target as Node)) {
+    if (UI.nodes.redactor.contains(target)) {
+      const startsInsideEditable = target.closest($.allInputsSelector) !== null;
+
+      if (startsInsideEditable) {
+        return;
+      }
+
       this.watchSelection(event);
     } else {
       /**

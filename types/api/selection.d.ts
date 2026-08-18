@@ -1,3 +1,5 @@
+import {BlockAPI} from './block';
+
 /**
  * Describes methods for work with Selections
  */
@@ -38,4 +40,14 @@ export interface Selection {
    * Restore saved selection range
    */
   restore(): void;
+
+  /**
+   * Returns text from current native selection or Editor's selected Blocks
+   */
+  getSelectedText(): string;
+
+  /**
+   * Returns Blocks selected with Editor's cross-block selection
+   */
+  getSelectedBlocks(): BlockAPI[];
 }

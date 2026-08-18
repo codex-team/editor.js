@@ -1,5 +1,6 @@
 import SelectionUtils from '../../selection';
-import type { Selection as SelectionAPIInterface } from '../../../../types/api';
+import BlockAPI from '../../block/api';
+import type { BlockAPI as BlockAPIInterface, Selection as SelectionAPIInterface } from '../../../../types/api';
 import Module from '../../__module';
 
 /**
@@ -25,6 +26,8 @@ export default class SelectionAPI extends Module {
       restore: () => this.selectionUtils.restore(),
       setFakeBackground: () => this.selectionUtils.setFakeBackground(),
       removeFakeBackground: () => this.selectionUtils.removeFakeBackground(),
+      getSelectedText: (): string => this.getSelectedText(),
+      getSelectedBlocks: (): BlockAPIInterface[] => this.getSelectedBlocks(),
     };
   }
 
@@ -46,5 +49,33 @@ export default class SelectionAPI extends Module {
    */
   public expandToTag(node: HTMLElement): void {
     this.selectionUtils.expandToTag(node);
+  }
+
+  /**
+   * Returns current native selection text or selected Blocks text
+   *
+   * @returns {string}
+   */
+  public getSelectedText(): string {
+    const selection = SelectionUtils.get();
+
+    if (selection && !selection.isCollapsed && SelectionUtils.isSelectionAtEditor(selection)) {
+      return selection.toString();
+    }
+
+    if (this.Editor.BlockSelection.anyBlockSelected) {
+      return this.Editor.BlockSelection.selectedText;
+    }
+
+    return '';
+  }
+
+  /**
+   * Returns Blocks selected with Editor's cross-block selection
+   *
+   * @returns {BlockAPIInterface[]}
+   */
+  public getSelectedBlocks(): BlockAPIInterface[] {
+    return this.Editor.BlockSelection.selectedBlocks.map((block) => new BlockAPI(block));
   }
 }
