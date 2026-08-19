@@ -20,9 +20,9 @@ jobs:
         uses: codex-team/action-nodejs-package-info@v1
 
       # Setup node environment
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           registry-url: https://registry.npmjs.org/
 
       # Prepare, build and publish project
