@@ -2,7 +2,7 @@
 
 ### 2.31.6
 
-- `Fix` - Skip undefined block tune data when a tune's `save()` returns `undefined` (tune in default state) (#3020)
+- `Fix` - Skip undefined block tune data when a tune's `save()` returns `undefined` (tune in default state) [#3020](https://github.com/codex-team/editor.js/pull/3020)
 - `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`
 
 ### 2.31.5
