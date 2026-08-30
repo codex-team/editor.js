@@ -10,10 +10,30 @@ regardless to the plugin's option.
 
 ### Let's look the examples:
 
-«Plugin»'s Developers need to expand «renderSettings» method that returns HTML.
-Every user action will be handled by itself. So, you can easily write
-callbacks that switches your content or makes better. For more information
-read [Tools](tools.md).
+Block Tool developers can implement the `renderSettings()` method to return a
+[Menu Config](https://editorjs.io/menu-config/) object or an array of Menu
+Config items. Editor.js renders each item and calls its `onActivate` callback
+when the item is selected.
+
+```js
+renderSettings() {
+  return [
+    {
+      title: 'Add border',
+      icon: '<svg>...</svg>',
+      isActive: this.data.withBorder,
+      toggle: true,
+      onActivate: () => {
+        this.data.withBorder = !this.data.withBorder;
+      },
+    },
+  ];
+}
+```
+
+For custom controls, `renderSettings()` can still return an `HTMLElement`.
+When using custom HTML, the Tool is responsible for rendering the controls and
+handling their events. For more information, read [Tools](tools.md).
 
 ---
 
