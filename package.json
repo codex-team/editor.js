@@ -5,6 +5,23 @@
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
   "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./types/index.d.mts",
+        "default": "./dist/editorjs.mjs"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/editorjs.umd.js"
+      },
+      "default": "./dist/editorjs.umd.js"
+    },
+    "./package.json": "./package.json",
+    "./types": "./types/index.d.ts",
+    "./dist/*": "./dist/*",
+    "./*": "./*"
+  },
   "keywords": [
     "codex editor",
     "text editor",
@@ -17,6 +34,7 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "build:test": "vite build --mode test",
+    "test:types": "tsc -p test/types/tsconfig.node16.json",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
     "lint:errors": "eslint src/ --ext .ts --quiet",
     "lint:fix": "eslint src/ --ext .ts --fix",
