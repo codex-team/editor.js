@@ -157,6 +157,94 @@ describe('Copy pasting from Editor', function () {
         });
     });
 
+    it('should respect filter function in tag-based paste config', function () {
+      /**
+       * Tool that handles only DIVs marked with a specific class
+       * via a filter function in its pasteConfig.tags entry.
+       */
+      class FilteredDivTool implements BlockTool {
+        public static pasteConfig = {
+          tags: [
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            { DIV: (el: Element): boolean => el.classList.contains('accept') },
+          ],
+        };
+
+        private data: BlockToolData = { text: '' };
+        private element: HTMLElement | null = null;
+
+        /**
+         * Receive matched element on paste. Update both data and the
+         * rendered element so the text shows up after the asynchronous
+         * onPaste callback fires (render runs once at block creation).
+         */
+        public onPaste(event: CustomEvent<{ data: HTMLElement }>): void {
+          this.data = { text: event.detail.data.textContent || '' };
+          if (this.element) {
+            this.element.textContent = this.data.text as string;
+          }
+        }
+
+        /**
+         * Render block
+         */
+        public render(): HTMLElement {
+          this.element = $.make('div', 'ce-filtered-div');
+
+          this.element.textContent = (this.data.text as string) || '';
+
+          return this.element;
+        }
+
+        /**
+         * Save block content
+         */
+        public save(blockContent: HTMLElement): BlockToolData {
+          return { text: blockContent.textContent || '' };
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          filteredDiv: FilteredDivTool,
+        },
+      }).as('editorInstance');
+
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-block')
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/html': '<div class="accept">Accepted</div><div class="reject">Rejected</div>',
+        });
+
+      /**
+       * Accepted div is rendered with FilteredDivTool's class
+       */
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-filtered-div')
+        .should('contain', 'Accepted');
+
+      /**
+       * Rejected div falls back to the default paragraph
+       */
+      cy.get('[data-cy=editorjs]')
+        .get('div.ce-paragraph')
+        .should('contain', 'Rejected');
+
+      /**
+       * Saved data reflects the same split
+       */
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          cy.wrap<OutputData>(await editor.save())
+            .then((data) => {
+              expect(data.blocks[0].type).to.eq('filteredDiv');
+              expect(data.blocks[1].type).to.eq('paragraph');
+            });
+        });
+    });
+
     it('should parse pattern', function () {
       cy.createEditor({
         tools: {
