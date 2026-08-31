@@ -50,12 +50,13 @@ export default class UI extends Module<UINodes> {
    */
   public get CSS(): {
     editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
-    editorEmpty: string; editorRtlFix: string;
+    editorEmpty: string; editorRtlFix: string; editorZoneHorizontal: string;
     } {
     return {
       editorWrapper: 'codex-editor',
       editorWrapperNarrow: 'codex-editor--narrow',
       editorZone: 'codex-editor__redactor',
+      editorZoneHorizontal: 'codex-editor__redactor--horizontal',
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorEmpty: 'codex-editor--empty',
       editorRtlFix: 'codex-editor--rtl',
@@ -288,7 +289,11 @@ export default class UI extends Module<UINodes> {
       this.CSS.editorWrapper,
       ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
     ]);
-    this.nodes.redactor = $.make('div', this.CSS.editorZone);
+
+    this.nodes.redactor = $.make('div', [
+      this.CSS.editorZone,
+      this.config.horizontalMode ? this.CSS.editorZoneHorizontal : false,
+    ].filter(Boolean));
 
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
