@@ -4,7 +4,7 @@ import type { SavedData } from '../../../types/data-formats';
 import type { BlockToolData } from '../../../types/tools/block-tool-data';
 import type Block from '../block';
 import type BlockToolAdapter from '../tools/block';
-import { isFunction, isString, log, equals, isEmpty } from '../utils';
+import { isFunction, isString, log, equals, isEmpty, isUndefined } from '../utils';
 import { isToolConvertable } from './tools';
 
 
@@ -60,6 +60,7 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
     return [];
   }
 
+  const exportData = convertBlockDataForExport(blockData, blockTool.conversionConfig);
   return allBlockTools.reduce((result, tool) => {
     /**
      * Skip tools without «import» rule specified
@@ -67,11 +68,19 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
     if (!isToolConvertable(tool, 'import')) {
       return result;
     }
-
+    
     /**
      * Skip tools that does not specify toolbox
      */
     if (tool.toolbox === undefined) {
+      return result;
+    }
+
+    /**
+     * Checking that the block is not empty after conversion
+     */
+    const importData = convertExportToBlockData(exportData, tool.conversionConfig);
+    if (isUndefined(importData) || isEmpty(importData)) {
       return result;
     }
 
@@ -149,7 +158,7 @@ export function areBlocksMergeable(targetBlock: Block, blockToMerge: Block): boo
  * @param blockData - block data to convert
  * @param conversionConfig - tool's conversion config
  */
-export function convertBlockDataToString(blockData: BlockToolData, conversionConfig?: ConversionConfig ): string {
+export function convertBlockDataForExport(blockData: BlockToolData, conversionConfig?: ConversionConfig ): string | object {
   const exportProp = conversionConfig?.export;
 
   if (isFunction(exportProp)) {
@@ -162,7 +171,7 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
      */
     if (exportProp !== undefined) {
       log('Conversion «export» property must be a string or function. ' +
-      'String means key of saved data object to export. Function should export processed string to export.');
+      'String means key of saved data object to export. Function should export processed string or object to export.');
     }
 
     return '';
@@ -170,20 +179,25 @@ export function convertBlockDataToString(blockData: BlockToolData, conversionCon
 }
 
 /**
- * Using conversionConfig, convert string to block data.
+ * Using conversionConfig, convert export string|object to block data.
  *
- * @param stringToImport - string to convert
+ * @param dataToImport - string|object to convert
  * @param conversionConfig - tool's conversion config
  * @param targetToolConfig - target tool config, used in conversionConfig.import method
  */
-export function convertStringToBlockData(stringToImport: string, conversionConfig?: ConversionConfig, targetToolConfig?: ToolConfig): BlockToolData {
+export function convertExportToBlockData(dataToImport: string | object, conversionConfig?: ConversionConfig, targetToolConfig?: ToolConfig): BlockToolData {
   const importProp = conversionConfig?.import;
 
   if (isFunction(importProp)) {
-    return importProp(stringToImport, targetToolConfig);
-  } else if (isString(importProp)) {
+    try {
+      return importProp(dataToImport, targetToolConfig);
+    } catch (err) {
+      log('Conversion «import» function returned an error');
+      return {};
+    }
+  } else if (isString(importProp) && isString(dataToImport)) {
     return {
-      [importProp]: stringToImport,
+      [importProp]: dataToImport,
     };
   } else {
     /**
@@ -191,7 +205,7 @@ export function convertStringToBlockData(stringToImport: string, conversionConfi
      */
     if (importProp !== undefined) {
       log('Conversion «import» property must be a string or function. ' +
-      'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
+      'String means key of tool data to import. Function accepts a imported string or object and return composed tool data.');
     }
 
     return {};
