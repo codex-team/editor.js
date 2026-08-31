@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.31.7
+
+- `Fix` - Inability to unlink text using the inline toolbar unlink action
+
 ### 2.31.6
 
 - `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`

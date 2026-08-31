@@ -75,6 +75,11 @@ export default class LinkInlineTool implements InlineTool {
     };
 
   /**
+   * Indicates whether the button has been clicked
+   */
+  private BUTTON_CLICKED = false;
+
+  /**
    * SelectionUtils instance
    */
   private selection: SelectionUtils;
@@ -125,6 +130,10 @@ export default class LinkInlineTool implements InlineTool {
 
     this.nodes.button.innerHTML = IconLink;
 
+    this.nodes.button.addEventListener('click', () => {
+      this.BUTTON_CLICKED = true;
+    });
+
     return this.nodes.button;
   }
 
@@ -152,6 +161,13 @@ export default class LinkInlineTool implements InlineTool {
    */
   public surround(range: Range): void {
     /**
+     * Preserve the current click state
+     */
+    const buttonClicked = this.BUTTON_CLICKED;
+
+    this.BUTTON_CLICKED = false;
+
+    /**
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
     if (range) {
@@ -171,22 +187,12 @@ export default class LinkInlineTool implements InlineTool {
       /**
        * Unlink icon pressed
        */
-      if (parentAnchor) {
-        /**
-         * If input is not opened, treat click as explicit unlink action.
-         * If input is opened (e.g., programmatic close when switching tools), avoid unlinking.
-         */
-        if (!this.inputOpened) {
-          this.selection.expandToTag(parentAnchor);
-          this.unlink();
-          this.closeActions();
-          this.checkState();
-          this.toolbar.close();
-        } else {
-          /** Only close actions without clearing saved selection to preserve user state */
-          this.closeActions(false);
-          this.checkState();
-        }
+      if (parentAnchor && buttonClicked) {
+        this.selection.expandToTag(parentAnchor);
+        this.unlink();
+        this.closeActions();
+        this.checkState();
+        this.toolbar.close();
 
         return;
       }
