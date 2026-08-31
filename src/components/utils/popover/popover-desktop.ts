@@ -178,7 +178,11 @@ export class PopoverDesktop extends PopoverAbstract {
    */
   protected override showNestedItems(item: PopoverItem): void {
     if (this.nestedPopover !== null && this.nestedPopover !== undefined) {
-      return;
+      if (this.nestedPopoverTriggerItem === item) {
+        return;
+      }
+
+      this.destroyNestedPopoverIfExists();
     }
 
     this.nestedPopoverTriggerItem = item;
@@ -232,6 +236,8 @@ export class PopoverDesktop extends PopoverAbstract {
    * Destroys existing nested popover
    */
   protected destroyNestedPopoverIfExists(): void {
+    this.clearOpenedState();
+
     if (this.nestedPopover === undefined || this.nestedPopover === null) {
       return;
     }
@@ -271,6 +277,7 @@ export class PopoverDesktop extends PopoverAbstract {
 
     const nestedPopoverEl = this.nestedPopover.getElement();
 
+    this.clearOpenedState();
     this.nodes.popover.appendChild(nestedPopoverEl);
 
     this.setTriggerItemPosition(nestedPopoverEl, item);
@@ -281,7 +288,26 @@ export class PopoverDesktop extends PopoverAbstract {
     this.nestedPopover.show();
     this.flipper?.deactivate();
 
+    this.clearOpenedState();
+    const triggerEl = item.getElement();
+    if (triggerEl) {
+      triggerEl.dataset.itemOpened = 'true';
+      triggerEl.setAttribute('aria-expanded', 'true');
+    }
+
     return this.nestedPopover;
+  }
+
+  /**
+   * Clears open-state markers from all popover items
+   */
+  private clearOpenedState(): void {
+    this.nodes.popover
+      ?.querySelectorAll<HTMLElement>('.ce-popover-item[data-item-opened]')
+      .forEach((el) => {
+        delete el.dataset.itemOpened;
+        el.removeAttribute('aria-expanded');
+      });
   }
 
   /**
