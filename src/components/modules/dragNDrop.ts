@@ -92,14 +92,18 @@ export default class DragNDrop extends Module {
     const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
 
     if (targetBlock) {
-      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
+      // this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
     } else {
-      const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+      // const lastBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
 
-      this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
+      // this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
     }
 
     await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+
+    _.delay(() => {
+      this.Editor.BlockSelection.clearSelection();
+    }, 50)();
   }
 
   /**
