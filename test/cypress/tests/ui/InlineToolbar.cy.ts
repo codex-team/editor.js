@@ -176,6 +176,124 @@ describe('Inline Toolbar', () => {
   });
 
   describe('Shortcuts', () => {
+    it('should activate the focused editor\'s tool when shortcut is pressed with multiple instances on the page', () => {
+      const toolActivated1 = cy.stub().as('toolActivated1');
+      const toolActivated2 = cy.stub().as('toolActivated2');
+
+      /* eslint-disable jsdoc/require-jsdoc */
+      class Marker1 implements InlineTool {
+        public static isInline = true;
+        public static shortcut = 'CMD+SHIFT+M';
+        public render(): MenuConfig {
+          return {
+            icon: 'm',
+            title: 'Marker',
+            onActivate: () => { toolActivated1(); },
+          };
+        }
+      }
+      class Marker2 implements InlineTool {
+        public static isInline = true;
+        public static shortcut = 'CMD+SHIFT+M';
+        public render(): MenuConfig {
+          return {
+            icon: 'm',
+            title: 'Marker',
+            onActivate: () => { toolActivated2(); },
+          };
+        }
+      }
+      /* eslint-enable jsdoc/require-jsdoc */
+
+      /** Create first editor */
+      cy.createEditor({
+        data: {
+          blocks: [ { type: 'paragraph', data: { text: 'First editor text' } } ],
+        },
+        tools: { marker: Marker1 },
+      });
+
+      /** Create second editor with a different holder */
+      cy.window().then((win) => {
+        const holder = win.document.createElement('div');
+
+        holder.id = 'editorjs2';
+        holder.dataset.cy = 'editorjs2';
+        win.document.body.appendChild(holder);
+
+        return new Promise<void>((resolve) => {
+          const editor2 = new win.EditorJS({
+            holder: 'editorjs2',
+            data: {
+              blocks: [ { type: 'paragraph', data: { text: 'Second editor text' } } ],
+            },
+            tools: { marker: Marker2 },
+          });
+
+          editor2.isReady.then(() => resolve());
+        });
+      });
+
+      /**
+       * Select text in editor 1 first to open its inline toolbar.
+       * This causes editor 1's CMD+SHIFT+M shortcut to be registered on document.
+       * Without the inline.ts fix, this shortcut would never be removed from document,
+       * so any later attempt by editor 2 to register the same shortcut would throw a
+       * duplicate-registration error (silently swallowed), leaving editor 2 with no shortcut.
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('First');
+
+      /** Wait for editor 1's inline toolbar to appear (confirms its shortcut is now registered) */
+      cy.get('[data-cy=editorjs] [data-cy="inline-toolbar"] .ce-popover__container')
+        .should('be.visible');
+
+      /**
+       * Now select text in editor 2.
+       * The selectionchange event fires, which (after the 180 ms debounce):
+       *   1. Calls editor 1's InlineToolbar.close() — with the inline.ts fix this correctly
+       *      calls Shortcuts.remove(document, shortcut), removing editor 1's handler from document.
+       *   2. Calls editor 2's InlineToolbar.open() — registers editor 2's handler on document.
+       * Without the inline.ts fix, step 1 was a no-op (wrong target element), so editor 2's
+       * registration in step 2 always hit the duplicate guard and threw, leaving editor 2 with
+       * no working shortcut at all.
+       */
+      cy.get('[data-cy=editorjs2]')
+        .find('.ce-paragraph')
+        .selectText('Second');
+
+      /** Wait for editor 2's inline toolbar to appear (confirms its shortcut is now registered) */
+      cy.get('[data-cy=editorjs2] [data-cy="inline-toolbar"] .ce-popover__container')
+        .should('be.visible');
+
+      /**
+       * Dispatch the shortcut key event on the editor 2 paragraph element (not on document).
+       * Dispatching directly on document makes event.target === document, which does not have
+       * .closest() — causing a TypeError in ui.ts defaultBehaviour.
+       * Dispatching on the focused element gives event.target an HTMLElement with .closest(),
+       * and the event still bubbles up to document where the shortcut handler is registered.
+       */
+      cy.get('[data-cy=editorjs2]')
+        .find('.ce-paragraph')
+        .then(($el) => {
+          $el[0].dispatchEvent(new KeyboardEvent('keydown', {
+            bubbles: true,
+            cancelable: true,
+            key: 'M',
+            code: 'KeyM',
+            keyCode: 77,
+            which: 77,
+            metaKey: true,
+            shiftKey: true,
+          }));
+        });
+
+      /** Second editor's shortcut should fire, first editor's should not */
+      cy.get('@toolActivated2').should('have.been.called');
+      cy.get('@toolActivated1').should('not.have.been.called');
+    });
+
     it('should work in read-only mode', () => {
       const toolSurround = cy.stub().as('toolSurround');
 
@@ -211,18 +329,20 @@ describe('Inline Toolbar', () => {
 
       cy.wait(300);
 
-      cy.document().then((doc) => {
-        doc.dispatchEvent(new KeyboardEvent('keydown', {
-          bubbles: true,
-          cancelable: true,
-          key: 'M',
-          code: 'KeyM',
-          keyCode: 77,
-          which: 77,
-          metaKey: true,
-          shiftKey: true,
-        }));
-      });
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .then(($el) => {
+          $el[0].dispatchEvent(new KeyboardEvent('keydown', {
+            bubbles: true,
+            cancelable: true,
+            key: 'M',
+            code: 'KeyM',
+            keyCode: 77,
+            which: 77,
+            metaKey: true,
+            shiftKey: true,
+          }));
+        });
 
       cy.get('@toolSurround').should('have.been.called');
     });

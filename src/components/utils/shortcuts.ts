@@ -41,9 +41,9 @@ class Shortcuts {
   /**
    * All registered shortcuts
    *
-   * @type {Map<Element, Shortcut[]>}
+   * @type {Map<HTMLElement | Document, Shortcut[]>}
    */
-  private registeredShortcuts: Map<Element, Shortcut[]> = new Map();
+  private registeredShortcuts: Map<HTMLElement | Document, Shortcut[]> = new Map();
 
   /**
    * Register shortcut
@@ -51,14 +51,6 @@ class Shortcuts {
    * @param shortcut - shortcut options
    */
   public add(shortcut: ShortcutData): void {
-    const foundShortcut = this.findShortcut(shortcut.on, shortcut.name);
-
-    if (foundShortcut) {
-      throw Error(
-        `Shortcut ${shortcut.name} is already registered for ${shortcut.on}. Please remove it before add a new handler.`
-      );
-    }
-
     const newShortcut = new Shortcut({
       name: shortcut.name,
       on: shortcut.on,
@@ -75,7 +67,7 @@ class Shortcuts {
    * @param element - Element shortcut is set for
    * @param name - shortcut name
    */
-  public remove(element: Element, name: string): void {
+  public remove(element: HTMLElement | Document, name: string): void {
     const shortcut = this.findShortcut(element, name);
 
     if (!shortcut) {
@@ -104,7 +96,7 @@ class Shortcuts {
    * @param shortcut - shortcut name
    * @returns {number} index - shortcut index if exist
    */
-  private findShortcut(element: Element, shortcut: string): Shortcut | void {
+  private findShortcut(element: HTMLElement | Document, shortcut: string): Shortcut | void {
     const shortcuts = this.registeredShortcuts.get(element) || [];
 
     return shortcuts.find(({ name }) => name === shortcut);

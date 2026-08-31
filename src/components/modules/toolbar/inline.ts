@@ -110,7 +110,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       const shortcut = this.getToolShortcut(tool.name);
 
       if (shortcut !== undefined) {
-        Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
+        Shortcuts.remove(document, shortcut);
       }
 
       /**

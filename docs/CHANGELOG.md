@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.31.7
+
+- `Fix` - Multiple EditorJS instances on the same page now properly register inline tool shortcuts
+
 ### 2.31.6
 
 - `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`
