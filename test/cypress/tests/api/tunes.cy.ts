@@ -1,4 +1,6 @@
 import type { TunesMenuConfig } from '../../../../types/tools';
+import type EditorJS from '../../../../types/index';
+import Header from '@editorjs/header';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -237,5 +239,83 @@ describe('Editor Tunes Api', () => {
       .get('.ce-settings .ce-popover-item')
       .eq(1)
       .should('have.attr', 'data-item-name', 'move-up' );
+  });
+
+  it('should omit a tune from saved data when its save() returns undefined', () => {
+    /** Tune whose save() returns undefined (tune in its default state) */
+    class UndefinedTune {
+      /** Set Tool is Tune */
+      public static readonly isTune = true;
+
+      /** Tune's appearance in block settings menu */
+      public render(): TunesMenuConfig {
+        return {
+          icon: 'ICON',
+          title: 'Undefined tune',
+          name: 'undefinedTune',
+
+          onActivate: (): void => { },
+        };
+      }
+
+      /** Returns undefined when there is nothing to persist */
+      public save(): undefined {
+        return undefined;
+      }
+    }
+
+    /** Control tune whose save() returns a real value */
+    class ValueTune {
+      /** Set Tool is Tune */
+      public static readonly isTune = true;
+
+      /** Tune's appearance in block settings menu */
+      public render(): TunesMenuConfig {
+        return {
+          icon: 'ICON',
+          title: 'Value tune',
+          name: 'valueTune',
+
+          onActivate: (): void => { },
+        };
+      }
+
+      /** Returns real data that must be persisted */
+      public save(): { enabled: boolean } {
+        return { enabled: true };
+      }
+    }
+
+    cy.createEditor({
+      tools: {
+        header: Header,
+        undefinedTune: UndefinedTune,
+        valueTune: ValueTune,
+      },
+      tunes: ['undefinedTune', 'valueTune'],
+      data: {
+        blocks: [
+          {
+            type: 'header',
+            data: {
+              text: 'some text',
+              level: 1,
+            },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const savedData = await editor.save();
+        const tunes = savedData.blocks[0].tunes as { [name: string]: unknown };
+
+        /** A tune returning undefined must be omitted from the saved data */
+        expect(tunes).to.not.have.property('undefinedTune');
+        /** A tune returning a value must still be persisted as before */
+        expect(tunes).to.have.property('valueTune');
+        expect(tunes.valueTune).to.deep.equal({ enabled: true });
+      });
   });
 });
