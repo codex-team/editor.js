@@ -20,28 +20,6 @@
     }
   }
 
-  /**
-   * Styles for narrow holder
-   */
-  &--narrow &__redactor {
-    @media (--not-mobile) {
-      margin-right: var(--narrow-mode-right-padding);
-    }
-  }
-
-  &--narrow&--rtl &__redactor {
-    @media (--not-mobile) {
-      margin-left: var(--narrow-mode-right-padding);
-      margin-right: 0;
-    }
-  }
-
-  &--narrow .ce-toolbar__actions {
-    @media (--not-mobile) {
-      right: -5px;
-    }
-  }
-
   &-copyable {
     position: absolute;
     height: 1px;
@@ -90,7 +68,6 @@
     background-color: var(--inlineSelectionColor);
   }
 }
-
 
 .codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus::before {
   opacity: 0 !important;

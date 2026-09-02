@@ -49,12 +49,11 @@ export default class UI extends Module<UINodes> {
    * @returns {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
-    editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
+    editorWrapper: string; editorZone: string; editorZoneHidden: string;
     editorEmpty: string; editorRtlFix: string;
     } {
     return {
       editorWrapper: 'codex-editor',
-      editorWrapperNarrow: 'codex-editor--narrow',
       editorZone: 'codex-editor__redactor',
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorEmpty: 'codex-editor--empty',
@@ -289,15 +288,6 @@ export default class UI extends Module<UINodes> {
       ...(this.isRtl ? [ this.CSS.editorRtlFix ] : []),
     ]);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
-
-    /**
-     * If Editor has injected into the narrow container, enable Narrow Mode
-     *
-     * @todo Forced layout. Get rid of this feature
-     */
-    if (this.nodes.holder.offsetWidth < this.contentRect.width) {
-      this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
-    }
 
     /**
      * Set customizable bottom zone height

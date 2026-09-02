@@ -16,6 +16,19 @@
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
+
+    @media (--not-mobile) {
+      width: min(
+        var(--content-width),
+        max(0px, calc(100% - var(--toolbar-actions-space)))
+      );
+      max-width: none;
+      margin-left: max(
+        var(--toolbar-actions-space),
+        calc((100% - var(--content-width)) / 2)
+      );
+      margin-right: 0;
+    }
   }
 
   &__plus {
@@ -52,6 +65,11 @@
     @media (--mobile){
       right: auto;
     }
+
+    @media (--not-mobile){
+      width: var(--toolbar-actions-space);
+      box-sizing: border-box;
+    }
   }
 
   &__settings-btn {
@@ -81,14 +99,5 @@
       width: 24px;
       height: 24px;
     }
-  }
-}
-
-/**
- * Styles for Narrow mode
- */
-.codex-editor--narrow .ce-toolbar__plus {
-  @media (--not-mobile) {
-    left: 5px;
   }
 }

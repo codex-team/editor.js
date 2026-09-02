@@ -13,10 +13,9 @@
     }
 
     &__actions {
-      right: auto;
-      left: calc(var(--toolbox-buttons-size) * -1);
-
       @media (--mobile){
+        right: auto;
+        left: calc(var(--toolbox-buttons-size) * -1);
         margin-left: 0;
         margin-right: auto;
         padding-right: 0;
@@ -64,19 +63,31 @@
 
 }
 
-.codex-editor--narrow.codex-editor--rtl {
-  .ce-toolbar__plus {
-    @media (--not-mobile) {
-      left: 0px;
-      right: 5px;
+@media (--not-mobile) {
+  .codex-editor.codex-editor--rtl {
+    .ce-block__content,
+    .ce-toolbar__content {
+      margin-left: 0;
+      margin-right: max(
+        var(--toolbar-actions-space),
+        calc((100% - var(--content-width)) / 2)
+      );
     }
-  }
 
-  .ce-toolbar__actions {
-    @media (--not-mobile) {
-      left: -5px;
+    .ce-block--stretched .ce-block__content {
+      margin-right: var(--toolbar-actions-space);
+    }
+
+    .ce-toolbar__actions {
+      right: auto;
+      left: 100%;
+      padding-right: 0;
+      padding-left: 5px;
+    }
+
+    .ce-toolbar__settings-btn {
+      margin-left: 0;
+      margin-right: 3px;
     }
   }
 }
-
-
