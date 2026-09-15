@@ -243,6 +243,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     this.holder = this.compose();
 
     /**
+     * Select value changes do not produce DOM mutations. Listen on the holder
+     * after Tool handlers run, including when the Tool replaces its root.
+     * Bind synchronously so deferred initialization cannot rebind after destroy.
+     */
+    this.holder.addEventListener('change', this.handleSelectChange);
+
+    /**
      * Bind block events in RIC for optimizing of constructing process time
      */
     window.requestIdleCallback(() => {
@@ -679,6 +686,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * Call Tool instance destroy method
    */
   public destroy(): void {
+    this.holder.removeEventListener('change', this.handleSelectChange);
     this.unwatchBlockMutations();
     this.removeInputEvents();
 
@@ -827,6 +835,23 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Update current input
      */
     this.updateCurrentInput();
+  };
+
+  /**
+   * Handles change events from native select elements.
+   *
+   * Select elements are delegated to the Block holder so that dynamically
+   * replaced Tool roots are observed without binding a new listener to every
+   * select element.
+   *
+   * @param event - native change event
+   */
+  private readonly handleSelectChange = (event: Event): void => {
+    const target = event.target;
+
+    if ($.isElement(target) && target.tagName === 'SELECT' && this.holder.contains(target)) {
+      this.didMutated();
+    }
   };
 
   /**
