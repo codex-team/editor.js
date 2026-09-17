@@ -239,6 +239,9 @@ export default class BlockSelection extends Module {
      * remove selected blocks and insert pressed key
      */
     if (this.anyBlockSelected && isKeyboard && isPrintableKey && !SelectionUtils.isSelectionExists) {
+      /** Prevent browser from also inserting the character (which would result in a double character) */
+      (reason as KeyboardEvent).preventDefault();
+
       const indexToInsert = BlockManager.removeSelectedBlocks();
 
       BlockManager.insertDefaultBlockAtIndex(indexToInsert, true);
