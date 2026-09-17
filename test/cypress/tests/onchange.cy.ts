@@ -1,6 +1,8 @@
 import Header from '@editorjs/header';
 import Code from '@editorjs/code';
 import ToolMock from '../fixtures/tools/ToolMock';
+import SelectTool from '../fixtures/tools/SelectTool';
+import CompositeSelectTool from '../fixtures/tools/CompositeSelectTool';
 import Delimiter from '@editorjs/delimiter';
 import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
@@ -428,6 +430,266 @@ describe('onChange callback', () => {
         index: 0,
       },
     }));
+  });
+
+  describe('native select changes', () => {
+    /**
+     * Block listeners are installed in requestIdleCallback after rendering.
+     */
+    function waitForBlockListeners(): void {
+      cy.window().then(win => {
+        return new Cypress.Promise<void>(resolve => win.requestIdleCallback(() => resolve()));
+      });
+    }
+
+    /**
+     * Create a select block after a paragraph to verify the event's block index.
+     */
+    function createEditorWithSelect(): void {
+      cy.createEditor({
+        tools: { select: SelectTool },
+        onChange: cy.stub().as('onChange'),
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: { text: 'First block' },
+            },
+            {
+              type: 'select',
+              data: {},
+            },
+          ],
+        },
+      }).as('editorInstance');
+
+      waitForBlockListeners();
+      cy.clock(Date.now(), ['setTimeout', 'clearTimeout']);
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('not.be.called');
+    }
+
+    it('should notify once and save the selected value', () => {
+      createEditorWithSelect();
+
+      cy.get('[data-cy=editorjs] select').select('second');
+      cy.tick(modificationsObserverBatchTimeout);
+
+      cy.get('@onChange').should('be.calledOnce');
+      cy.get('@onChange').should('be.calledWithMatch', EditorJSApiMock, Cypress.sinon.match({
+        type: BlockChangedMutationType,
+        detail: {
+          index: 1,
+          target: { name: 'select' },
+        },
+      }));
+
+      cy.get<EditorJS>('@editorInstance').then(async editor => {
+        const saved = await editor.save();
+
+        expect(saved.blocks[1].data).to.deep.equal({ value: 'second' });
+      });
+
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('be.calledOnce');
+    });
+
+    it('should observe every select in a composite Tool', () => {
+      cy.createEditor({
+        tools: { compositeSelect: CompositeSelectTool },
+        onChange: cy.stub().as('onChange'),
+        data: {
+          blocks: [ {
+            type: 'compositeSelect',
+            data: {},
+          } ],
+        },
+      }).as('editorInstance');
+
+      waitForBlockListeners();
+      cy.clock(Date.now(), ['setTimeout', 'clearTimeout']);
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('not.be.called');
+
+      cy.get('[data-cy=first-select]').select('second');
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('be.calledOnce');
+
+      cy.get('[data-cy=second-select]').select('second');
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('be.calledTwice');
+
+      cy.get<EditorJS>('@editorInstance').then(async editor => {
+        const saved = await editor.save();
+
+        expect(saved.blocks[0].data).to.deep.equal({
+          first: 'second',
+          second: 'second',
+        });
+      });
+    });
+
+    it('should call updated after the Tool handles the select change', () => {
+      const updated = cy.stub().as('updated');
+      let value = 'first';
+
+      /**
+       * Keep Tool state in sync through its own native change handler.
+       */
+      class SelectWithChangeHandler extends SelectTool {
+        /**
+         * Register the Tool's own change handler on its select.
+         */
+        public render(): HTMLSelectElement {
+          const select = super.render();
+
+          select.addEventListener('change', () => {
+            value = select.value;
+          });
+
+          return select;
+        }
+
+        /**
+         * Observe Tool state when the lifecycle hook runs.
+         */
+        public updated(): void {
+          updated(value);
+        }
+      }
+
+      cy.createEditor({
+        tools: { select: SelectWithChangeHandler },
+        data: {
+          blocks: [ {
+            type: 'select',
+            data: {},
+          } ],
+        },
+      });
+
+      waitForBlockListeners();
+      cy.get('[data-cy=editorjs] select').select('second');
+      cy.get('@updated').should('be.calledOnceWithExactly', 'second');
+    });
+
+    it('should observe a replacement select nested in a new Tool root', () => {
+      createEditorWithSelect();
+
+      cy.get('[data-cy=editorjs] select').then(([ select ]) => {
+        return new Cypress.Promise<void>(resolve => {
+          const observer = new select.ownerDocument.defaultView.MutationObserver(() => {
+            observer.disconnect();
+            resolve();
+          });
+
+          observer.observe(select.parentElement, { childList: true });
+
+          const wrapper = select.ownerDocument.createElement('div');
+
+          wrapper.appendChild(select.cloneNode(true));
+          select.replaceWith(wrapper);
+        });
+      });
+
+      // Let the DOM replacement notification finish before changing the value.
+      cy.tick(modificationsObserverBatchTimeout);
+      cy.get('@onChange').should('be.calledOnce');
+      cy.get('@onChange').invoke('resetHistory');
+      cy.get('[data-cy=editorjs] select').select('second');
+      cy.tick(modificationsObserverBatchTimeout);
+
+      cy.get('@onChange').should('be.calledOnce');
+      cy.get<EditorJS>('@editorInstance').then(async editor => {
+        const saved = await editor.save();
+
+        expect(saved.blocks[1].data).to.deep.equal({ value: 'second' });
+      });
+    });
+
+    it('should remove the select change listener when the editor is destroyed', () => {
+      const updated = cy.stub().as('updated');
+
+      /**
+       * Observe the Tool hook even after Block event subscriptions are removed.
+       */
+      class SelectWithUpdatedHook extends SelectTool {
+        public updated = updated;
+      }
+
+      cy.createEditor({
+        tools: { select: SelectWithUpdatedHook },
+        data: {
+          blocks: [ {
+            type: 'select',
+            data: {},
+          } ],
+        },
+      }).as('editorInstance');
+
+      waitForBlockListeners();
+      cy.get('[data-cy=editorjs] select').select('second');
+      cy.get('@updated').should('be.calledOnce');
+      cy.get('[data-cy=editorjs] select').then(([ select ]) => {
+        cy.get<EditorJS>('@editorInstance').then(editor => {
+          editor.destroy();
+          updated.resetHistory();
+          select.dispatchEvent(new select.ownerDocument.defaultView.Event('change', { bubbles: true }));
+          expect(updated).not.to.be.called;
+        });
+      });
+    });
+
+    it('should not treat other bubbling change events as select changes', () => {
+      createEditorWithSelect();
+
+      cy.get('[data-cy=editorjs] .ce-paragraph').trigger('change');
+      cy.tick(modificationsObserverBatchTimeout);
+
+      cy.get('@onChange').should('not.be.called');
+    });
+
+    it('should not rebind select changes when destroyed before deferred initialization', () => {
+      const updated = cy.stub().as('updated');
+
+      /**
+       * Observe the Tool hook independently of Block Manager subscriptions.
+       */
+      class SelectWithUpdatedHook extends SelectTool {
+        public updated = updated;
+      }
+
+      cy.createEditor({
+        tools: { select: SelectWithUpdatedHook },
+      }).as('editorInstance');
+      waitForBlockListeners();
+
+      cy.window().then(win => {
+        cy.get<EditorJS>('@editorInstance').then(editor => {
+          const pendingCallbacks: Array<() => void> = [];
+
+          cy.stub(win, 'requestIdleCallback').callsFake((callback: IdleRequestCallback) => {
+            pendingCallbacks.push(() => callback({
+              didTimeout: false,
+              timeRemaining: () => 50,
+            }));
+
+            return pendingCallbacks.length;
+          });
+
+          const block = editor.blocks.insert('select', {}, undefined, undefined, false);
+          const select = block.holder.querySelector('select') as HTMLSelectElement;
+
+          editor.destroy();
+          pendingCallbacks.forEach(callback => callback());
+          updated.resetHistory();
+
+          select.value = 'second';
+          select.dispatchEvent(new win.Event('change', { bubbles: true }));
+          expect(updated).not.to.be.called;
+        });
+      });
+    });
   });
 
   it('should not be fired on fake cursor adding and removing', () => {
