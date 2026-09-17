@@ -193,6 +193,53 @@ describe('Inline Tool Link', () => {
       .should('contain', 'Bold and italic text');
   });
 
+  it('should unlink a linked text when clicking the unlink button', () => {
+    cy.createEditor({
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: 'Link to remove',
+            },
+          },
+        ],
+      },
+    });
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .selectText('Link to remove');
+
+    cy.get('[data-cy=editorjs]')
+      .find('[data-item-name=link]')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-inline-tool-input')
+      .type('https://editorjs.io')
+      .type('{enter}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .should('have.attr', 'href', 'https://editorjs.io');
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .selectText('Link to remove');
+
+    cy.get('[data-cy=editorjs]')
+      .find('[data-item-name=link]')
+      .click();
+
+    cy.get('[data-cy=editorjs]')
+      .find('div.ce-block')
+      .find('a')
+      .should('not.exist');
+  });
+
   it('should open a link if it is wrapped in another formatting', () => {
     cy.createEditor({
       data: {
