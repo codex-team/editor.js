@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.32.0
+
+- `Improvement` - "Narrow" ("Thin") mode removed. Now Editor always renders Plus and Block Tunes toggler aside with responsive margin.
+
 ### 2.31.7
 
 - `Fix` - Trigger `onChange` for native `<select>` changes
