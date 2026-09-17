@@ -16,9 +16,9 @@ export default class Renderer extends Module {
    */
   public async render(blocksData: OutputBlockData[]): Promise<void> {
     return new Promise((resolve) => {
-      const { Tools, BlockManager } = this.Editor;
+      const { Tools, BlockManager, ReadOnly } = this.Editor;
 
-      if (blocksData.length === 0) {
+      if (blocksData.length === 0 && ReadOnly.isEnabled === false) {
         BlockManager.insert();
       } else {
         /**
