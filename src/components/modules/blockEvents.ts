@@ -93,7 +93,10 @@ export default class BlockEvents extends Module {
      *  - close Toolbar
      *  - clear block highlighting
      */
-    if (_.isPrintableKey(event.keyCode)) {
+
+    const isPrintableKey = _.isPrintableKey(event.keyCode);
+
+    if (isPrintableKey) {
       this.Editor.Toolbar.close();
 
       /**
@@ -101,7 +104,7 @@ export default class BlockEvents extends Module {
        *
        * @type {boolean}
        */
-      const isShortcut = event.ctrlKey || event.metaKey || event.altKey || event.shiftKey;
+      const isShortcut = event.ctrlKey || event.metaKey || event.altKey || (event.shiftKey && !isPrintableKey);
 
       if (!isShortcut) {
         this.Editor.BlockSelection.clearSelection(event);
@@ -660,15 +663,16 @@ export default class BlockEvents extends Module {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbar.toolbox.opened),
         blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
         inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
-        flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
+        flippingToolbarItems = event.keyCode === _.keyCodes.TAB,
+        shiftKeyEventEmitted = event.shiftKey && !_.isPrintableKey(event.keyCode);
 
     /**
      * Do not close Toolbar in cases:
-     * 1. ShiftKey pressed (or combination with shiftKey)
+     * 1. ShiftKey event emitted
      * 2. When Toolbar is opened and Tab leafs its Tools
      * 3. When Toolbar's component is opened and some its item selected
      */
-    return !(event.shiftKey ||
+    return !(shiftKeyEventEmitted ||
       flippingToolbarItems ||
       toolboxItemSelected ||
       blockSettingsItemSelected ||
