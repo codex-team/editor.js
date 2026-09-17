@@ -7,13 +7,11 @@ import type { MenuConfig } from '../../../types/tools';
  *
  * Inline Toolbar Tool
  *
- * Makes selected text bolder
+ * Makes selected text bold
  */
 export default class BoldInlineTool implements InlineTool {
   /**
    * Specifies Tool as Inline Toolbar Tool
-   *
-   * @returns {boolean}
    */
   public static isInline = true;
 
@@ -25,13 +23,11 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Sanitizer Rule
    * Leave <b> tags
-   *
-   * @returns {object}
    */
   public static get sanitize(): SanitizerConfig {
     return {
       b: {},
-    } as SanitizerConfig;
+    };
   }
 
   /**
@@ -55,8 +51,6 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Set a shortcut
-   *
-   * @returns {boolean}
    */
   public get shortcut(): string {
     return 'CMD+B';
