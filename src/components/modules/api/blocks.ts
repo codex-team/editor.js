@@ -392,11 +392,12 @@ export default class BlocksAPI extends Module {
   ): BlockAPIInterface[] => {
     this.validateIndex(index);
 
-    const blocksToInsert = blocks.map(({ id, type, data }) => {
+    const blocksToInsert = blocks.map(({ id, type, data, tunes }) => {
       return this.Editor.BlockManager.composeBlock({
         id,
         tool: type || (this.config.defaultBlock as string),
         data,
+        tunes,
       });
     });
 
