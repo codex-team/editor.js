@@ -1,0 +1,30 @@
+.ce-drag-wrapper {
+    &.ce-drag-image {
+        position: absolute;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.5;
+        transition: none;
+        user-select: none;
+        width: fit-content;
+        top: -10000px;
+        left: -10000px;
+        background: var(--selectionColor);
+    }
+
+    &.ce-drop-holder {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #388ae5;
+            opacity: 0.5;
+            z-index: 9999;
+        }
+    }
+}

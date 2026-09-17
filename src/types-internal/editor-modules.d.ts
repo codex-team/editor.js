@@ -37,6 +37,7 @@ import Saver from '../components/modules/saver';
 import Tools from '../components/modules/tools';
 import UI from '../components/modules/ui';
 import ToolsAPI from '../components/modules/api/tools';
+import BlockDragNDrop from '../components/modules/blockDragNDrop';
 
 export interface EditorModules {
   // API Modules
@@ -64,6 +65,7 @@ export interface EditorModules {
   InlineToolbar: InlineToolbar,
 
   // Modules
+  BlockDragNDrop: BlockDragNDrop,
   BlockEvents: BlockEvents,
   BlockManager: BlockManager,
   BlockSelection: BlockSelection,
