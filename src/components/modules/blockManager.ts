@@ -689,13 +689,15 @@ export default class BlockManager extends Module {
       element = element.parentNode as HTMLElement;
     }
 
-    const nodes = this._blocks.nodes,
-        firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
-        index = nodes.indexOf(firstLevelBlock as HTMLElement);
+    const firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
 
-    if (index >= 0) {
-      return this._blocks[index];
-    }
+    /**
+     * Resolve the Block by holder identity (as getBlockByChildNode does) instead of
+     * indexing into the working area's children: the working area may contain
+     * non-block elements (e.g. decoration nodes added by the host application),
+     * which would skew a child-list index against the blocks array
+     */
+    return this.blocks.find((block) => block.holder === firstLevelBlock);
   }
 
   /**
@@ -733,11 +735,24 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Resolve the Block's index by holder identity instead of indexing into the
+     * working area's children: the working area may contain non-block elements
+     * (e.g. decoration nodes added by the host application), which would skew a
+     * child-list index against the blocks array — selecting the wrong Block, or
+     * crashing on 'updateCurrentInput' when the found index is past the array end
+     */
+    const index = this.blocks.findIndex((block) => block.holder === parentFirstLevelBlock);
+
+    if (index === -1) {
+      return;
+    }
+
+    /**
      * Update current Block's index
      *
      * @type {number}
      */
-    this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+    this.currentBlockIndex = index;
 
     /**
      * Update current block active input
