@@ -18,6 +18,13 @@
     [contenteditable]:empty::after {
       content: "\feff ";
     }
+
+    &--horizontal {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      justify-content: center;
+    }
   }
 
   /**
