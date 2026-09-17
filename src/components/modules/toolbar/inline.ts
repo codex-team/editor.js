@@ -432,6 +432,18 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             instance.checkState?.(SelectionUtils.get());
           }
 
+          /**
+           * Allow inline tools to provide a dynamic title based on current selection state
+           */
+          const dynamicTitle = (instance as { getTitle?: () => string }).getTitle?.();
+
+          if (dynamicTitle !== undefined) {
+            (popoverItem as PopoverItemHtmlParams).hint = {
+              ...(popoverItem as PopoverItemHtmlParams).hint,
+              title: dynamicTitle,
+            };
+          }
+
           popoverItems.push(popoverItem);
         } else if (item.type === PopoverItemType.Html) {
           /**
