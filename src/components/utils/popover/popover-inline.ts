@@ -1,5 +1,5 @@
 import { isMobileScreen } from '../../utils';
-import type { PopoverItem } from './components/popover-item';
+import type { PopoverItem, PopoverItemParams } from './components/popover-item';
 import { PopoverItemDefault, PopoverItemType } from './components/popover-item';
 import { PopoverItemHtml } from './components/popover-item/popover-item-html/popover-item-html';
 import { PopoverDesktop } from './popover-desktop';
@@ -47,21 +47,56 @@ export class PopoverInline extends PopoverDesktop {
       }
     );
 
-    /**
-     * If active popover item has children, show them.
-     * This is needed to display link url text (which is displayed as a nested popover content)
-     * once you select <a> tag content in text
-     */
-    this.items
-      .forEach((item) => {
-        if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
-          return;
-        }
+    this.showInitiallyOpenChildren();
+  }
 
-        if (item.hasChildren && item.isChildrenOpen) {
-          this.showNestedItems(item);
-        }
-      });
+  /**
+   * Replaces tools without remounting the container or restarting its entry animation.
+   *
+   * @param items - freshly rendered tools for the current selection
+   */
+  public updateItems(items: PopoverItemParams[]): void {
+    this.items.forEach(item => item.destroy());
+
+    this.items = this.buildItems(items);
+    this.nodes.items.replaceChildren(...this.items
+      .map(item => item.getElement())
+      .filter((element): element is HTMLElement => element !== null));
+
+    this.nodes.popover.classList.remove(css.popoverOpenTop, css.popoverOpenLeft);
+    this.showInitiallyOpenChildren();
+    this.nodes.popover.inert = false;
+  }
+
+  /**
+   * Prevents interaction with tools being cleared while their replacements render.
+   */
+  public disable(): void {
+    this.nodes.popover.inert = true;
+    this.destroyNestedPopoverIfExists();
+    this.nestedPopoverTriggerItem = null;
+    this.flipper?.deactivate();
+  }
+
+  /**
+   * Whether the inline popover is open.
+   */
+  public get isOpen(): boolean {
+    return this.nodes.popover.classList.contains(css.popoverOpened);
+  }
+
+  /**
+   * Open inline popovers can change size when their tools are replaced.
+   */
+  public override get size(): { height: number; width: number } {
+    if (!this.isOpen) {
+      return super.size;
+    }
+
+    return {
+      height: this.nodes.popoverContainer.offsetHeight,
+      width: this.nodes.popoverContainer.offsetWidth,
+    };
   }
 
   /**
@@ -164,6 +199,10 @@ export class PopoverInline extends PopoverDesktop {
    * @param item - clicked item
    */
   protected override handleItemClick(item: PopoverItem): void {
+    if (this.nodes.popover.inert) {
+      return;
+    }
+
     if (item !== this.nestedPopoverTriggerItem) {
       /**
        * In case tool had special handling for toggling button (like link tool which modifies selection)
@@ -178,5 +217,20 @@ export class PopoverInline extends PopoverDesktop {
     }
 
     super.handleItemClick(item);
+  }
+
+  /**
+   * Restores selection-dependent nested menus after constructing their items.
+   */
+  private showInitiallyOpenChildren(): void {
+    this.items.forEach((item) => {
+      if (!(item instanceof PopoverItemDefault) && !(item instanceof PopoverItemHtml)) {
+        return;
+      }
+
+      if (item.hasChildren && item.isChildrenOpen) {
+        this.showNestedItems(item);
+      }
+    });
   }
 }
