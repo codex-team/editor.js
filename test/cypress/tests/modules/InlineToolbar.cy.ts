@@ -1,8 +1,51 @@
 import Header from '@editorjs/header';
 import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
 import type { MenuConfig } from '@/types/tools';
+import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('Inline Toolbar', () => {
+  (['ltr', 'rtl'] as const).forEach((direction) => {
+    [ [700, 350], [350, 700] ].forEach(([initialWidth, resizedWidth]) => {
+      it(`should use the current content edge when reopening after a ${direction} holder resizes from ${initialWidth} to ${resizedWidth}`, {
+        viewportWidth: 1000,
+        viewportHeight: 800,
+      }, () => {
+        createEditorWithTextBlocks([ 'target' ], {
+          i18n: { direction },
+        });
+
+        // Open before resizing to exercise geometry cached by an earlier selection.
+        [initialWidth, resizedWidth].forEach((width) => {
+          cy.document().then((document) => {
+            document.getSelection().removeAllRanges();
+          });
+          cy.get('[data-cy=inline-toolbar] .ce-popover__container')
+            .should('not.exist');
+
+          cy.get('[data-cy=editorjs]')
+            .invoke('css', 'width', `${width}px`)
+            .find('.ce-paragraph')
+            .invoke('css', 'text-align', 'right')
+            .selectText('target');
+
+          cy.get('[data-cy=inline-toolbar] .ce-popover__container')
+            .should('be.visible')
+            .should(($toolbar) => {
+              const document = $toolbar[0].ownerDocument;
+              const contentRect = document.querySelector('.ce-block__content').getBoundingClientRect();
+              const toolbarRect = $toolbar[0].getBoundingClientRect();
+              const selectionRect = document.getSelection().getRangeAt(0)
+                .getBoundingClientRect();
+
+              expect(document.defaultView.innerWidth).to.equal(1000);
+              expect(selectionRect.left + toolbarRect.width).to.be.greaterThan(contentRect.right);
+              expect(toolbarRect.right).to.be.closeTo(contentRect.right, 1);
+            });
+        });
+      });
+    });
+  });
+
   it('should appear aligned with left coord of selection rect', () => {
     cy.createEditor({
       data: {

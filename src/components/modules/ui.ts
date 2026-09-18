@@ -62,15 +62,11 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Return Width of center column of Editor
+   * Return the current bounds of the editor's content column
    *
    * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
-    if (this.contentRectCache !== null) {
-      return this.contentRectCache;
-    }
-
     const someBlock = this.nodes.wrapper.querySelector(`.${Block.CSS.content}`);
 
     /**
@@ -84,9 +80,7 @@ export default class UI extends Module<UINodes> {
       } as DOMRect;
     }
 
-    this.contentRectCache = someBlock.getBoundingClientRect();
-
-    return this.contentRectCache;
+    return someBlock.getBoundingClientRect();
   }
 
   /**
@@ -95,15 +89,6 @@ export default class UI extends Module<UINodes> {
    * @type {boolean}
    */
   public isMobile = false;
-
-
-  /**
-   * Cache for center column rectangle info
-   * Invalidates on window resize
-   *
-   * @type {DOMRect}
-   */
-  private contentRectCache: DOMRect | null = null;
 
   /**
    * Handle window resize only when it finished
@@ -450,11 +435,6 @@ export default class UI extends Module<UINodes> {
    * Resize window handler
    */
   private windowResize(): void {
-    /**
-     * Invalidate content zone size cached, because it may be changed
-     */
-    this.contentRectCache = null;
-
     /**
      * Detect mobile version
      */
