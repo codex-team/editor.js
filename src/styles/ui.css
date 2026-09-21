@@ -78,7 +78,7 @@
     max-height: 100%;
   }
 
-  path {
+  path:not(.ce-block__content path) {
     stroke: currentColor;
   }
 
