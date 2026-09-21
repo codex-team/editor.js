@@ -99,7 +99,9 @@ export default class DragNDrop extends Module {
       this.Editor.Caret.setToBlock(lastBlock, Caret.positions.END);
     }
 
-    await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+    if (dropEvent.target.isContentEditable) {
+      await Paste.processDataTransfer(dropEvent.dataTransfer, true);
+    }
   }
 
   /**
