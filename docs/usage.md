@@ -84,7 +84,14 @@ var editor2 = new EditorJS({
 })
 ```
 
+## Events
 
+Events table for instance of EditorJS class. Can be used with `.on` function
+
+| Event name             | Description                                          |
+| ------                 | ----------                                           |
+| `block changed`        | Event fired when anything change in blocks context   |
+| `block hovered`        | Event fired when hover on block                      |
 
 ## Placeholder
 
