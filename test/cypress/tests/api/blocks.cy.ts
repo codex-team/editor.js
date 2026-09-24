@@ -221,6 +221,55 @@ describe('api.blocks', () => {
   /**
    * api.blocks.insert(type, data, config, index, needToFocus, replace, id)
    */
+  /**
+   * api.blocks.update() swaps the Block in the collection, so the Tool of the
+   * replaced Block has to be destroyed — otherwise it leaks.
+   */
+  describe('.update() cleanup', () => {
+    it('should destroy the Tool of the Block it replaces', () => {
+      const onDestroy = cy.spy().as('onDestroy');
+
+      /**
+       * Mock of Tool that reports its destruction
+       */
+      class DestroyableTool extends ToolMock {
+        /**
+         * Called by the editor when the Block leaves the collection
+         */
+        public destroy(): void {
+          onDestroy();
+        }
+      }
+
+      const existingBlock = {
+        id: 'destroyable-id-1',
+        type: 'destroyableTool',
+        data: {
+          text: 'Some text',
+        },
+      };
+
+      cy.createEditor({
+        tools: {
+          destroyableTool: {
+            class: DestroyableTool,
+          },
+        },
+        data: {
+          blocks: [
+            existingBlock,
+          ],
+        },
+      }).then((editor) => {
+        editor.blocks.update(existingBlock.id, { text: 'Updated text' });
+
+        cy.wait(100).then(() => {
+          cy.get('@onDestroy').should('have.been.calledOnce');
+        });
+      });
+    });
+  });
+
   describe('.insert()', function () {
     it('should preserve block id if it is passed', function () {
       cy.createEditor({

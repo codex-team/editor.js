@@ -542,7 +542,6 @@ export default class BlockManager extends Module {
       }
 
       this._blocks.remove(index);
-      block.destroy();
 
       /**
        * Force call of didMutated event on Block removal
