@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+- `Fix` - Place the caret after multi-block pasted content has been applied.
+
 ### 2.31.7
 
 - `Fix` - Trigger `onChange` for native `<select>` changes
