@@ -222,50 +222,112 @@ describe('api.blocks', () => {
    * api.blocks.insert(type, data, config, index, needToFocus, replace, id)
    */
   /**
-   * api.blocks.update() swaps the Block in the collection, so the Tool of the
-   * replaced Block has to be destroyed — otherwise it leaks.
+   * A Block can leave the collection through four paths. Each of them has to
+   * destroy the Tool instance exactly once, or the Tool keeps its listeners and
+   * its MutationObserver alive for the lifetime of the editor.
    */
-  describe('.update() cleanup', () => {
-    it('should destroy the Tool of the Block it replaces', () => {
-      const onDestroy = cy.spy().as('onDestroy');
-
+  describe('Tool destruction when a Block leaves the collection', () => {
+    /**
+     * Builds a Tool that reports every destroy() call through the passed spy.
+     *
+     * @param onDestroy - spy called by the editor when the Block is destroyed
+     */
+    function destroyableTool(onDestroy: () => void): typeof ToolMock {
       /**
        * Mock of Tool that reports its destruction
        */
-      class DestroyableTool extends ToolMock {
+      return class DestroyableTool extends ToolMock {
         /**
          * Called by the editor when the Block leaves the collection
          */
         public destroy(): void {
           onDestroy();
         }
-      }
+      };
+    }
 
-      const existingBlock = {
-        id: 'destroyable-id-1',
+    /**
+     * Creates an editor holding one Block of a Tool that reports its destruction.
+     *
+     * @param onDestroy - spy called by the editor when the Block is destroyed
+     * @param count - how many Blocks to render
+     */
+    function createEditorWithDestroyableBlocks(onDestroy: () => void, count = 1): Cypress.Chainable<EditorJS> {
+      const blocks = Array.from({ length: count }, (_, i) => ({
+        id: `destroyable-id-${i + 1}`,
         type: 'destroyableTool',
         data: {
-          text: 'Some text',
+          text: `Some text ${i + 1}`,
         },
-      };
+      }));
 
-      cy.createEditor({
+      return cy.createEditor({
         tools: {
           destroyableTool: {
-            class: DestroyableTool,
+            class: destroyableTool(onDestroy),
           },
         },
         data: {
-          blocks: [
-            existingBlock,
-          ],
+          blocks,
         },
-      }).then((editor) => {
-        editor.blocks.update(existingBlock.id, { text: 'Updated text' });
+      });
+    }
 
-        cy.wait(100).then(() => {
-          cy.get('@onDestroy').should('have.been.calledOnce');
-        });
+    /**
+     * api.blocks.update() goes through Blocks.replace(), which swaps the Block
+     * in the collection and drops the previous one.
+     */
+    it('should destroy the Tool of the Block replaced by .update()', () => {
+      const onDestroy = cy.spy().as('onDestroy');
+
+      createEditorWithDestroyableBlocks(onDestroy).then((editor) => {
+        editor.blocks.update('destroyable-id-1', { text: 'Updated text' });
+
+        cy.get('@onDestroy').should('have.been.calledOnce');
+      });
+    });
+
+    /**
+     * api.blocks.delete() goes through BlockManager.removeBlock() and
+     * Blocks.remove(). Only one of the two owns the cleanup, so the Tool must
+     * not be destroyed twice.
+     */
+    it('should destroy the Tool of a deleted Block exactly once', () => {
+      const onDestroy = cy.spy().as('onDestroy');
+
+      createEditorWithDestroyableBlocks(onDestroy).then((editor) => {
+        editor.blocks.delete(0);
+
+        cy.get('@onDestroy').should('have.been.calledOnce');
+      });
+    });
+
+    /**
+     * api.blocks.clear() goes through Blocks.removeAll(), which drops every
+     * Block at once.
+     */
+    it('should destroy the Tool of every Block removed by .clear()', () => {
+      const onDestroy = cy.spy().as('onDestroy');
+
+      createEditorWithDestroyableBlocks(onDestroy, 2).then(async (editor) => {
+        await editor.blocks.clear();
+
+        cy.get('@onDestroy').should('have.been.calledTwice');
+      });
+    });
+
+    /**
+     * api.blocks.insert() with replace = true goes through Blocks.insert(),
+     * which is also the path taken by a conversion and by the Toolbox on an
+     * empty Block.
+     */
+    it('should destroy the Tool of the Block replaced by .insert()', () => {
+      const onDestroy = cy.spy().as('onDestroy');
+
+      createEditorWithDestroyableBlocks(onDestroy).then((editor) => {
+        editor.blocks.insert('paragraph', { text: 'Inserted text' }, undefined, 0, false, true);
+
+        cy.get('@onDestroy').should('have.been.calledOnce');
       });
     });
   });
