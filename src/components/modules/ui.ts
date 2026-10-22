@@ -418,11 +418,9 @@ export default class UI extends Module<UINodes> {
     /**
      * Used to not emit the same block multiple times to the 'block-hovered' event on every mousemove
      */
-    let blockHoveredEmitted;
+    let blockHoveredEmitted: Element;
 
     this.readOnlyMutableListeners.on(this.nodes.redactor, 'mousemove', _.throttle((event: MouseEvent | TouchEvent) => {
-      const hoveredBlock = (event.target as Element).closest('.ce-block');
-
       /**
        * Do not trigger 'block-hovered' for cross-block selection
        */
@@ -430,18 +428,21 @@ export default class UI extends Module<UINodes> {
         return;
       }
 
+      const hoveredElement = event.target as Element;
+      const hoveredBlock = this.findByNodeBlockBelongsToCurrentInstance(hoveredElement);
+
       if (!hoveredBlock) {
         return;
       }
 
-      if (blockHoveredEmitted === hoveredBlock) {
+      if (blockHoveredEmitted === hoveredBlock.holder) {
         return;
       }
 
-      blockHoveredEmitted = hoveredBlock;
+      blockHoveredEmitted = hoveredBlock.holder;
 
       this.eventsDispatcher.emit(BlockHovered, {
-        block: this.Editor.BlockManager.getBlockByChildNode(hoveredBlock),
+        block: hoveredBlock,
       });
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 20), {
@@ -734,7 +735,12 @@ export default class UI extends Module<UINodes> {
      * Select clicked Block as Current
      */
     try {
-      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      const blockNode = this.findByNodeBlockBelongsToCurrentInstance(clickedNode);
+      if (!blockNode) {
+        return;
+      }
+
+      this.Editor.BlockManager.setCurrentBlockByChildNode(blockNode.holder);
     } catch (e) {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
@@ -930,5 +936,33 @@ export default class UI extends Module<UINodes> {
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'input', handleInputOrFocusChange);
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'focusin', handleInputOrFocusChange);
     this.readOnlyMutableListeners.on(this.nodes.wrapper, 'focusout', handleInputOrFocusChange);
+  }
+
+  /**
+   * Find a Block belonging to the current editor instance by element
+   * 
+   * It is necessary for the case of nested editors.
+   * This allows each editor to send and process events only for blocks belong the current editor.
+   * And also allows for top level editors to identify in which block
+   * of their instance the event occurred in a nested editor block.
+   */
+  private findByNodeBlockBelongsToCurrentInstance(node: Element): Block|null {
+    let blockNode;
+
+    while (blockNode = node.closest(`.${Block.CSS.wrapper}`)) {
+      const blockInstance = this.Editor.BlockManager.getBlockByChildNode(blockNode);
+      if (blockInstance) {
+        return blockInstance;
+      }
+
+      const editorWrapper = blockNode.closest(`.${this.CSS.editorWrapper}`);
+      if (!editorWrapper) {
+        return null;
+      }
+
+      node = editorWrapper;
+    }
+
+    return null;
   }
 }

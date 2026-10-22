@@ -1,5 +1,6 @@
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 import type EditorJS from '../../../../types/index';
+import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
 
 describe('Ui module', function () {
   describe('documentKeydown', function () {
@@ -137,6 +138,49 @@ describe('Ui module', function () {
           const currentBlockIndex = await editor.blocks.getCurrentBlockIndex();
 
           expect(currentBlockIndex).to.eq(1);
+        });
+    });
+
+    it('click on block of nested editor should also set the block of parent editor as current', function () {
+      cy.createEditor({
+        tools: {
+          nestedEditor: {
+            class: NestedEditor,
+          },
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block of parent editor',
+              },
+            },
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Second block of parent editor',
+              },
+            },
+            {
+              type: 'nestedEditor',
+              data: {
+                text: 'First block of nested editor',
+              },
+            },
+          ],
+        },
+      }).as('editorInstance');
+
+      cy.get(`[data-cy=${NESTED_EDITOR_ID}]`)
+        .find('.ce-paragraph')
+        .click();
+
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const currentBlockIndex = editor.blocks.getCurrentBlockIndex();
+
+          expect(currentBlockIndex).to.eq(2); // 3 block in numbering from 0
         });
     });
   });
