@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.31.8
+
+- `Fix` - Destroy the Tool of a Block that leaves the collection, so its listeners and MutationObserver do not leak
+
 ### 2.31.7
 
 - `Fix` - Trigger `onChange` for native `<select>` changes
