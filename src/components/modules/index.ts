@@ -37,6 +37,7 @@ import Renderer from './renderer';
 import Saver from './saver';
 import Tools from './tools';
 import UI from './ui';
+import BlockDragNDrop from './blockDragNDrop';
 
 export default {
   // API Modules
@@ -64,6 +65,7 @@ export default {
   InlineToolbar,
 
   // Modules
+  BlockDragNDrop,
   BlockEvents,
   BlockManager,
   BlockSelection,
