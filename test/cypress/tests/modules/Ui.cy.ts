@@ -117,6 +117,45 @@ describe('Ui module', function () {
         });
     });
 
+    it('should update current block by click on block when the redactor contains non-block elements', function () {
+      createEditorWithTextBlocks([
+        'first block',
+        'second block',
+        'third block',
+      ])
+        .as('editorInstance');
+
+      /**
+       * Insert a non-block element between blocks — host applications do this
+       * for visual decorations (e.g. page-break spacers in a paginated view)
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.codex-editor__redactor')
+        .then(($redactor) => {
+          const spacer = document.createElement('div');
+
+          spacer.setAttribute('data-mutation-free', 'true');
+          $redactor[0].insertBefore(spacer, $redactor[0].lastElementChild);
+        });
+
+      /**
+       * Click the block BELOW the non-block element: a child-list index would
+       * be skewed by the extra element (resolving past the end of the blocks
+       * array and throwing on 'updateCurrentInput')
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .eq(2)
+        .click();
+
+      cy.get<EditorJS>('@editorInstance')
+        .then(async (editor) => {
+          const currentBlockIndex = await editor.blocks.getCurrentBlockIndex();
+
+          expect(currentBlockIndex).to.eq(2);
+        });
+    });
+
     it('(in readonly) should update current block by click on block', function () {
       createEditorWithTextBlocks([
         'first block',
