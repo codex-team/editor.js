@@ -85,6 +85,10 @@ body {
   padding: 0 15px;
 }
 
+.horizontal-mode .ce-example__content {
+  max-width: unset !important;
+}
+
 .ce-example__output {
   background: #1B202B;
   overflow-x: auto;
@@ -334,7 +338,9 @@ body {
 }
 
 .show-block-boundaries #showBlocksBoundariesButton span::before,
-.thin-mode #enableThinModeButton span::before {
+.thin-mode #enableThinModeButton span::before,
+.horizontal-mode #enableHorizontalModeButton span::before,
+.right-side-toolbar #enableRightSideToolbarButton span::before {
   content: attr(data-toggled-text);
   display: inline;
   font-size: 13px;

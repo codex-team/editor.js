@@ -53,6 +53,18 @@
             thin mode
           </div>
         </div>
+        <div class="ce-example__statusbar-item">
+          <div class="ce-example__statusbar-button" id="enableHorizontalModeButton">
+            <span data-toggled-text="Disable">Enable</span>
+            horizontal mode
+          </div>
+        </div>
+        <div class="ce-example__statusbar-item">
+          <div class="ce-example__statusbar-button" id="enableRightSideToolbarButton">
+            <span data-toggled-text="Disable">Enable</span>
+            right side toolbar
+          </div>
+        </div>
         <div class="ce-example__statusbar-item ce-example__statusbar-item--right">
           <div class="ce-example__statusbar-toggler" id="darkThemeToggler">
           </div>
@@ -397,6 +409,31 @@
       editor.destroy();
 
       editor = new EditorJS(editorConfig);
+    })
+
+    /**
+     * Button for enabling the 'Horizontal' mode
+     */
+    const enableHorizontalModeButton = document.getElementById("enableHorizontalModeButton");
+
+    enableHorizontalModeButton.addEventListener('click', () => {
+      document.body.classList.toggle("horizontal-mode")
+
+      editor.destroy();
+
+      editor = new EditorJS({ ...editorConfig, horizontalMode: true });
+    })
+
+    /**
+     * Button for enabling the 'Right Side Toolbar' mode
+     */
+    const enableRightSideToolbarButton = document.getElementById("enableRightSideToolbarButton");
+    enableRightSideToolbarButton.addEventListener('click', () => {
+      document.body.classList.toggle("right-side-toolbar");
+
+      editor.destroy();
+
+      editor = new EditorJS({ ...editorConfig, rightSideToolbar: true });
     })
 
     /**
