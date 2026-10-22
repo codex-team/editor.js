@@ -9,7 +9,7 @@ import { I18nInternalNS } from '../../i18n/namespace-internal';
 import Shortcuts from '../../utils/shortcuts';
 import type { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
-import type { Popover, PopoverItemHtmlParams, PopoverItemParams, WithChildren } from '../../utils/popover';
+import type { PopoverItemHtmlParams, PopoverItemParams, WithChildren } from '../../utils/popover';
 import { PopoverItemType } from '../../utils/popover';
 import { PopoverInline } from '../../utils/popover/popover-inline';
 import type InlineToolAdapter from 'src/components/tools/inline';
@@ -44,7 +44,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   /**
    * Popover instance reference
    */
-  private popover: Popover | null = null;
+  private popover: PopoverInline | null = null;
 
   /**
    * Margin above/below the Toolbar
@@ -86,7 +86,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   public async tryToShow(needToClose = false): Promise<void> {
     if (needToClose) {
-      this.close();
+      this.close(this.popover?.isOpen === true && this.allowedToShow());
     }
 
     if (!this.allowedToShow()) {
@@ -100,10 +100,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
   /**
    * Hides Inline Toolbar
+   *
+   * @param preservePopover - keep the visible container for a selection refresh
    */
-  public close(): void {
+  public close(preservePopover = false): void {
     if (!this.opened) {
       return;
+    }
+
+    if (preservePopover) {
+      this.popover?.disable();
     }
 
     for (const [tool, toolInstance] of this.tools) {
@@ -123,9 +129,14 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.tools = new Map();
 
-    this.reset();
     this.opened = false;
 
+    // Link cleanup can restore or collapse the selection.
+    if (preservePopover && this.allowedToShow()) {
+      return;
+    }
+
+    this.reset();
     this.popover?.hide();
     this.popover?.destroy();
     this.popover = null;
@@ -148,6 +159,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Removes UI and its components
    */
   public destroy(): void {
+    this.opened = false;
     this.removeAllNodes();
     this.popover?.destroy();
     this.popover = null;
@@ -186,26 +198,39 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
 
     this.opened = true;
 
-    if (this.popover !== null) {
-      this.popover.destroy();
-    }
-
     this.createToolsInstances();
 
-    const popoverItems = await this.getPopoverItems();
+    const tools = this.tools;
+    const popoverItems = await this.getPopoverItems().catch((error) => {
+      if (this.tools === tools) {
+        // Only dispose the retained UI; later tools may not have rendered yet.
+        this.popover?.destroy();
+        this.popover = null;
+      }
 
-    this.popover = new PopoverInline({
-      items: popoverItems,
-      scopeElement: this.Editor.API.methods.ui.nodes.redactor,
-      messages: {
-        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-        search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
-      },
+      throw error;
     });
 
-    this.move(this.popover.size.width);
+    if (this.tools !== tools || !this.opened) {
+      return;
+    }
 
-    this.nodes.wrapper?.append(this.popover.getElement());
+    if (this.popover !== null) {
+      this.popover.updateItems(popoverItems);
+    } else {
+      this.popover = new PopoverInline({
+        items: popoverItems,
+        scopeElement: this.Editor.API.methods.ui.nodes.redactor,
+        messages: {
+          nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
+          search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+        },
+      });
+
+      this.nodes.wrapper?.append(this.popover.getElement());
+    }
+
+    this.move(this.popover.size.width);
 
     this.popover.show();
   }
@@ -363,11 +388,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private async getPopoverItems(): Promise<PopoverItemParams[]> {
     const popoverItems = [] as PopoverItemParams[];
+    const tools = this.tools;
 
     let i = 0;
 
-    for (const [tool, instance] of this.tools) {
+    for (const [tool, instance] of tools) {
       const renderedTool = await instance.render();
+
+      if (this.tools !== tools || !this.opened) {
+        return [];
+      }
 
       /** Enable tool shortcut */
       const shortcut = this.getToolShortcut(tool.name);
