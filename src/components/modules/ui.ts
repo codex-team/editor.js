@@ -49,12 +49,11 @@ export default class UI extends Module<UINodes> {
    * @returns {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
-    editorWrapper: string; editorWrapperNarrow: string; editorZone: string; editorZoneHidden: string;
+    editorWrapper: string; editorZone: string; editorZoneHidden: string;
     editorEmpty: string; editorRtlFix: string;
     } {
     return {
       editorWrapper: 'codex-editor',
-      editorWrapperNarrow: 'codex-editor--narrow',
       editorZone: 'codex-editor__redactor',
       editorZoneHidden: 'codex-editor__redactor--hidden',
       editorEmpty: 'codex-editor--empty',
@@ -63,15 +62,11 @@ export default class UI extends Module<UINodes> {
   }
 
   /**
-   * Return Width of center column of Editor
+   * Return the current bounds of the editor's content column
    *
    * @returns {DOMRect}
    */
   public get contentRect(): DOMRect {
-    if (this.contentRectCache !== null) {
-      return this.contentRectCache;
-    }
-
     const someBlock = this.nodes.wrapper.querySelector(`.${Block.CSS.content}`);
 
     /**
@@ -85,9 +80,7 @@ export default class UI extends Module<UINodes> {
       } as DOMRect;
     }
 
-    this.contentRectCache = someBlock.getBoundingClientRect();
-
-    return this.contentRectCache;
+    return someBlock.getBoundingClientRect();
   }
 
   /**
@@ -96,15 +89,6 @@ export default class UI extends Module<UINodes> {
    * @type {boolean}
    */
   public isMobile = false;
-
-
-  /**
-   * Cache for center column rectangle info
-   * Invalidates on window resize
-   *
-   * @type {DOMRect}
-   */
-  private contentRectCache: DOMRect | null = null;
 
   /**
    * Handle window resize only when it finished
@@ -291,15 +275,6 @@ export default class UI extends Module<UINodes> {
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**
-     * If Editor has injected into the narrow container, enable Narrow Mode
-     *
-     * @todo Forced layout. Get rid of this feature
-     */
-    if (this.nodes.holder.offsetWidth < this.contentRect.width) {
-      this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
-    }
-
-    /**
      * Set customizable bottom zone height
      */
     this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
@@ -460,11 +435,6 @@ export default class UI extends Module<UINodes> {
    * Resize window handler
    */
   private windowResize(): void {
-    /**
-     * Invalidate content zone size cached, because it may be changed
-     */
-    this.contentRectCache = null;
-
     /**
      * Detect mobile version
      */

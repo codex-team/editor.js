@@ -1,12 +1,3 @@
 .ce-toolbox {
 
 }
-
-.codex-editor--narrow .ce-toolbox {
-  @media (--not-mobile){
-    .ce-popover {
-      right: 0;
-      left: unset;
-    }
-  }
-}
