@@ -204,11 +204,26 @@ export default class Paste extends Module {
 
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
+      const tagLowerCase = tag.toLowerCase();
+
       /**
        * If Tool explicitly specifies sanitizer configuration for the tag, use it.
-       * Otherwise, remove all attributes
+       * Otherwise, check if the tool's sanitize config has rules for this tag.
+       * If not, remove all attributes.
        */
-      result[tag.toLowerCase()] = this.toolsTags[tag].sanitizationConfig ?? {};
+      const sanitizationConfig = this.toolsTags[tag].sanitizationConfig;
+
+      if (sanitizationConfig !== null) {
+        result[tagLowerCase] = sanitizationConfig;
+      } else {
+        const toolSanitizeConfig = this.toolsTags[tag].tool.sanitizeConfig;
+
+        if (toolSanitizeConfig?.[tagLowerCase]) {
+          result[tagLowerCase] = toolSanitizeConfig[tagLowerCase];
+        } else {
+          result[tagLowerCase] = {};
+        }
+      }
 
       return result;
     }, {});
@@ -656,15 +671,16 @@ export default class Paste extends Module {
           const tags = this.collectTagNames(tagOrSanitizeConfig);
 
           tags.forEach((tag) => {
+            const tagLowerCase = tag.toLowerCase();
             const sanitizationConfig = _.isObject(tagOrSanitizeConfig) ? tagOrSanitizeConfig[tag] : null;
 
-            result[tag.toLowerCase()] = sanitizationConfig || {};
+            result[tagLowerCase] = sanitizationConfig ?? tool.sanitizeConfig[tagLowerCase] ?? {};
           });
 
           return result;
         }, {});
 
-        const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
+        const customConfig = Object.assign({}, toolTags, tool.sanitizeConfig);
 
         /**
          * A workaround for the HTMLJanitor bug with Tables (incorrect sanitizing of table.innerHTML)
