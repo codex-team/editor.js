@@ -93,6 +93,84 @@ describe('Ui module', function () {
           });
       });
     });
+
+    describe('Replace', function() {
+      it('should replace selected blocks with a single keystroke', function() {
+        cy.createEditor({
+          data: {
+            blocks: [
+              {
+                id: 'block1',
+                type: 'paragraph',
+                data: {
+                  text: 'The first block',
+                },
+              },
+              {
+                id: 'block2',
+                type: 'paragraph',
+                data: {
+                  text: 'The second block',
+                },
+              },
+            ],
+          },
+        }).as('editorInstance');
+
+        /**
+         * Select two blocks by shift+down
+         */
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .first()
+          .click()
+          .type('{shift+downArrow}')
+          .type('f');
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .first()
+          .should('have.text', 'f');
+      });
+
+      it('should replace selected blocks with a single shift + keystroke', function() {
+        cy.createEditor({
+          data: {
+            blocks: [
+              {
+                id: 'block1',
+                type: 'paragraph',
+                data: {
+                  text: 'The first block',
+                },
+              },
+              {
+                id: 'block2',
+                type: 'paragraph',
+                data: {
+                  text: 'The second block',
+                },
+              },
+            ],
+          },
+        }).as('editorInstance');
+
+        /**
+         * Select two blocks by shift+down
+         */
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .first()
+          .click()
+          .type('{shift+downArrow}')
+          .type('{shift+F}');
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .first()
+          .should('have.text', 'F');
+      });
+    });
   });
 
   describe('mousedown', function () {
