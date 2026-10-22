@@ -1,53 +1,58 @@
 # Installation Guide
 
-There are few steps to run Editor.js on your site.
+There are three steps to run Editor.js on your site:
 
 1. [Load Editor's core](#load-editors-core)
 2. [Load Tools](#load-tools)
-3. [Initialize Editor's instance](#create-editor-instance)
+3. [Initialize the Editor instance](#create-editor-instance)
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](../dist/editor.js) with minimal available
+First, choose how you want to load Editor.js. Use either a package manager, a CDN, or a local copy of the built file.
 
-Choose the most usable method of getting an Editor for you.
+### Use a package manager
 
-- Node package
-- Source from CDN
-- Local file from a project
-
-### Node.js
-
-Install the package via NPM or Yarn
+Install Editor.js with NPM or Yarn:
 
 ```shell
 npm i @editorjs/editorjs
 ```
 
-Include module at your application
+Then import it into your application:
 
 ```javascript
 import EditorJS from '@editorjs/editorjs';
 ```
 
+This method requires a JavaScript project that supports package imports, usually through a build tool or bundler.
+
 ### Use from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
-
-`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.10.0`
-
-Then require this script.
+For a browser-only project, load Editor.js directly with a script tag:
 
 ```html
-<script src="..."></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
 ```
 
-### Save sources to project
-
-Copy [editor.js](../dist/editor.js) file to your project and load it.
+After the script loads, `EditorJS` is available as a global variable. Do not also use the package-manager import in the same setup.
 
 ```html
-<script src="editor.js"></script>
+<div id="editorjs"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script>
+  const editor = new EditorJS({
+    holder: 'editorjs'
+  });
+</script>
+```
+
+### Save the built file to your project
+
+You can also download a built browser file from the package's `dist` directory and save it in your project. Load the file with a script tag before creating the Editor.js instance:
+
+```html
+<script src="editorjs.umd.js"></script>
 ```
 
 ## Load Tools
@@ -83,7 +88,7 @@ var editor = new EditorJS(); /** Zero-configuration */
 // equals
 
 var editor = new EditorJS('editorjs');
-````
+```
 
 Or pass a whole settings object.
 
@@ -164,7 +169,6 @@ try {
   console.log(`Editor.js initialization failed because of ${reason}`)
 }
 ```
-
 
 ## Saving Data
 
