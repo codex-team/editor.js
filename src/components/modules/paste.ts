@@ -8,7 +8,6 @@ import type {
   SanitizerConfig,
   SanitizerRule
 } from '../../../types';
-import type Block from '../block';
 import type { SavedData } from '../../../types/data-formats';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import type BlockToolAdapter from '../tools/block';
@@ -251,9 +250,9 @@ export default class Paste extends Module {
     const isCurrentBlockDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
     const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
-    dataToInsert.map(
-      async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
-    );
+    await Promise.all(dataToInsert.map(
+      (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
+    ));
 
     if (BlockManager.currentBlock) {
       Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
@@ -842,23 +841,16 @@ export default class Paste extends Module {
    *
    * @param {PasteData} data - data to insert
    * @param {boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
-   * @returns {void}
+   * @returns {Promise<void>} resolves after the pasted content has been applied
    */
-  private insertBlock(data: PasteData, canReplaceCurrentBlock = false): void {
-    const { BlockManager, Caret } = this.Editor;
+  private insertBlock(data: PasteData, canReplaceCurrentBlock = false): Promise<void> {
+    const { BlockManager } = this.Editor;
     const { currentBlock } = BlockManager;
-    let block: Block;
+    const replace = canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty;
 
-    if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
-      block = BlockManager.paste(data.tool, data.event, true);
-      Caret.setToBlock(block, Caret.positions.END);
-
-      return;
-    }
-
-    block = BlockManager.paste(data.tool, data.event);
-
-    Caret.setToBlock(block, Caret.positions.END);
+    return new Promise((resolve) => {
+      BlockManager.paste(data.tool, data.event, replace, resolve);
+    });
   }
 
   /**
@@ -1003,4 +995,3 @@ export default class Paste extends Module {
     }) as PasteEvent;
   }
 }
-
