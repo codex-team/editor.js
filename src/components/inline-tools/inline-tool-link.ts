@@ -67,8 +67,8 @@ export default class LinkInlineTool implements InlineTool {
    * Elements
    */
   private nodes: {
-    button: HTMLButtonElement;
-    input: HTMLInputElement;
+    button: HTMLButtonElement | null;
+    input: HTMLInputElement | null;
   } = {
       button: null,
       input: null,
@@ -147,49 +147,35 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Handle clicks on the Inline Toolbar icon
-   *
-   * @param {Range} range - range to wrap with link
    */
-  public surround(range: Range): void {
+  public surround(): void {
     /**
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
-    if (range) {
-      /**
-       * Save selection before change focus to the input
-       */
-      if (!this.inputOpened) {
-        /** Create blue background instead of selection */
-        this.selection.setFakeBackground();
-        this.selection.save();
-      } else {
-        this.selection.restore();
-        this.selection.removeFakeBackground();
-      }
-      const parentAnchor = this.selection.findParentTag('A');
+    /**
+     * Save selection before change focus to the input
+     */
+    if (!this.inputOpened) {
+      /** Create blue background instead of selection */
+      this.selection.setFakeBackground();
+      this.selection.save();
+    } else {
+      this.selection.restore();
+      this.selection.removeFakeBackground();
+    }
+    const parentAnchor = this.selection.findParentTag('A');
 
-      /**
-       * Unlink icon pressed
-       */
-      if (parentAnchor) {
-        /**
-         * If input is not opened, treat click as explicit unlink action.
-         * If input is opened (e.g., programmatic close when switching tools), avoid unlinking.
-         */
-        if (!this.inputOpened) {
-          this.selection.expandToTag(parentAnchor);
-          this.unlink();
-          this.closeActions();
-          this.checkState();
-          this.toolbar.close();
-        } else {
-          /** Only close actions without clearing saved selection to preserve user state */
-          this.closeActions(false);
-          this.checkState();
-        }
+    /**
+     * Unlink icon pressed
+     */
+    if (parentAnchor) {
+      this.selection.expandToTag(parentAnchor);
+      this.unlink();
+      this.closeActions();
+      this.checkState();
+      this.toolbar.close();
 
-        return;
-      }
+      return;
     }
 
     this.toggleActions();
@@ -202,9 +188,11 @@ export default class LinkInlineTool implements InlineTool {
     const anchorTag = this.selection.findParentTag('A');
 
     if (anchorTag) {
-      this.nodes.button.innerHTML = IconUnlink;
-      this.nodes.button.classList.add(this.CSS.buttonUnlink);
-      this.nodes.button.classList.add(this.CSS.buttonActive);
+      if (this.nodes.button) {
+        this.nodes.button.innerHTML = IconUnlink;
+        this.nodes.button.classList.add(this.CSS.buttonUnlink);
+        this.nodes.button.classList.add(this.CSS.buttonActive);
+      }
       this.openActions();
 
       /**
@@ -212,13 +200,18 @@ export default class LinkInlineTool implements InlineTool {
        */
       const hrefAttr = anchorTag.getAttribute('href');
 
-      this.nodes.input.defaultValue = hrefAttr !== 'null' ? hrefAttr : '';
+      if (this.nodes.input) {
+        this.nodes.input.defaultValue =
+          hrefAttr !== null && hrefAttr !== 'null' ? hrefAttr : '';
+      }
 
       this.selection.save();
     } else {
-      this.nodes.button.innerHTML = IconLink;
-      this.nodes.button.classList.remove(this.CSS.buttonUnlink);
-      this.nodes.button.classList.remove(this.CSS.buttonActive);
+      if (this.nodes.button) {
+        this.nodes.button.innerHTML = IconLink;
+        this.nodes.button.classList.remove(this.CSS.buttonUnlink);
+        this.nodes.button.classList.remove(this.CSS.buttonActive);
+      }
     }
 
     return !!anchorTag;
@@ -228,6 +221,16 @@ export default class LinkInlineTool implements InlineTool {
    * Function called with Inline Toolbar closing
    */
   public clear(): void {
+    /**
+     * Restore the original text selection if fake background was set
+     * (e.g. when user was typing a URL and switched to another tool).
+     * This must happen before closeActions() so the browser selection
+     * is on the text, not stuck in the input field.
+     */
+    if (this.selection.isFakeBackgroundEnabled) {
+      this.selection.restore();
+      this.selection.removeFakeBackground();
+    }
     this.closeActions();
   }
 
@@ -253,9 +256,11 @@ export default class LinkInlineTool implements InlineTool {
    * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
    */
   private openActions(needFocus = false): void {
-    this.nodes.input.classList.add(this.CSS.inputShowed);
-    if (needFocus) {
-      this.nodes.input.focus();
+    if (this.nodes.input) {
+      this.nodes.input.classList.add(this.CSS.inputShowed);
+      if (needFocus) {
+        this.nodes.input.focus();
+      }
     }
     this.inputOpened = true;
   }
@@ -280,8 +285,10 @@ export default class LinkInlineTool implements InlineTool {
       currentSelection.restore();
     }
 
-    this.nodes.input.classList.remove(this.CSS.inputShowed);
-    this.nodes.input.value = '';
+    if (this.nodes.input) {
+      this.nodes.input.classList.remove(this.CSS.inputShowed);
+      this.nodes.input.value = '';
+    }
     if (clearSavedSelection) {
       this.selection.clearSaved();
     }
@@ -294,7 +301,7 @@ export default class LinkInlineTool implements InlineTool {
    * @param {KeyboardEvent} event - enter keydown event
    */
   private enterPressed(event: KeyboardEvent): void {
-    let value = this.nodes.input.value || '';
+    let value = (this.nodes.input && this.nodes.input.value) || '';
 
     if (!value.trim()) {
       this.selection.restore();

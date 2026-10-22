@@ -774,7 +774,7 @@ export default class UI extends Module<UINodes> {
     const element = event.target as Element;
     const ctrlKey = event.metaKey || event.ctrlKey;
     const anchor = $.getClosestAnchor(element);
-  
+
     if (anchor && ctrlKey) {
       event.stopImmediatePropagation();
       event.stopPropagation();

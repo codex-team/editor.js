@@ -68,9 +68,12 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       eventsDispatcher,
     });
 
-    window.requestIdleCallback(() => {
-      this.make();
-    }, { timeout: 2000 });
+    window.requestIdleCallback(
+      () => {
+        this.make();
+      },
+      { timeout: 2000 }
+    );
   }
 
   /**
@@ -233,7 +236,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
      * Prevent InlineToolbar from overflowing the content zone on the right side
      */
     if (realRightCoord > this.Editor.UI.contentRect.right) {
-      newCoords.x = this.Editor.UI.contentRect.right -popoverWidth - wrapperOffset.x;
+      newCoords.x = this.Editor.UI.contentRect.right - popoverWidth - wrapperOffset.x;
     }
 
     this.nodes.wrapper!.style.left = Math.floor(newCoords.x) + 'px';
@@ -415,7 +418,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
             const actions = instance.renderActions();
 
             (popoverItem as WithChildren<PopoverItemHtmlParams>).children = {
-              isOpen: instance.checkState?.(SelectionUtils.get()),
+              isOpen: instance.checkState?.(SelectionUtils.get()!),
               /** Disable keyboard navigation in actions, as it might conflict with enter press handling */
               isFlippable: false,
               items: [
@@ -424,12 +427,17 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
                   element: actions,
                 },
               ],
+              onClose: () => {
+                if (_.isFunction(instance.clear)) {
+                  instance.clear();
+                }
+              },
             };
           } else {
             /**
              * Legacy inline tools might perform some UI mutating logic in checkState method, so, call it just in case
              */
-            instance.checkState?.(SelectionUtils.get());
+            instance.checkState?.(SelectionUtils.get()!);
           }
 
           popoverItems.push(popoverItem);
@@ -541,7 +549,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
          */
         // if (SelectionUtils.isCollapsed) return;
 
-        if (!currentBlock.tool.enabledInlineTools) {
+        if (currentBlock.tool.enabledInlineTools === false) {
           return;
         }
 
@@ -573,7 +581,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    */
   private checkToolsState(): void {
     this.tools?.forEach((toolInstance) => {
-      toolInstance.checkState?.(SelectionUtils.get());
+      toolInstance.checkState?.(SelectionUtils.get()!);
     });
   }
 
