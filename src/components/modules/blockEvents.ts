@@ -61,7 +61,7 @@ export default class BlockEvents extends Module {
      *
      * @todo probably using "beforeInput" event would be better here
      */
-    if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
+    if (event.code === 'Slash' && !event.ctrlKey && !event.metaKey) {
       this.slashPressed(event);
     }
 
@@ -257,14 +257,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    /**
-     * The Toolbox will be opened with immediate focus on the Search input,
-     * and '/' will be added in the search input by default — we need to prevent it and add '/' manually
-     */
-    event.preventDefault();
-    this.Editor.Caret.insertContentAtCaretPosition('/');
-
-    this.activateToolbox();
+    setTimeout(() => {
+      this.activateToolbox();
+    }, 0);
   }
 
   /**
