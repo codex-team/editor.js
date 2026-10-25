@@ -220,6 +220,39 @@ describe('Inline Toolbar', () => {
     });
   });
 
+  describe('Conversion toolbar without convertible tools', () => {
+    it('should not show the convert-to item when there are no tools to convert to', () => {
+      /**
+       * Only the default paragraph tool is available,
+       * so the current block cannot be converted to anything
+       */
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('Some text');
+
+      /** Inline Toolbar should be opened with the usual inline tools */
+      cy.get('[data-cy="inline-toolbar"] .ce-popover__container')
+        .should('be.visible');
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .should('not.exist');
+    });
+  });
+
   describe('Nested Editor instance inline toolbar', () => {
     it('should not close inline toolbar of the nested Editor instance when clicking within that toolbar', () => {
       cy.createEditor({
