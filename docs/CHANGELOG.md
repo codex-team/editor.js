@@ -3,6 +3,7 @@
 ### 2.32.0
 
 - `Improvement` - Removed "Narrow" ("Thin") mode. On non-mobile viewports, Plus and Block Tunes controls now use a responsive action rail beside the editor content.
+- `Improvement` - `paste` config supports filter functions for tag-based substitution
 
 ### 2.31.7
 
@@ -11,7 +12,6 @@
 ### 2.31.6
 
 - `Fix` - Widen `sanitize` type on `BlockTool` and `BaseToolConstructable` to accept per-field `SanitizerConfig`
-- `Improvement` - `paste` config supports filter functions for tag-based substitution
 
 ### 2.31.5
 
