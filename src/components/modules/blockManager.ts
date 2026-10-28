@@ -4,23 +4,26 @@
  * @module BlockManager
  * @version 2.0.0
  */
-import Block, { BlockToolAPI } from '../block';
-import Module from '../__module';
-import $ from '../dom';
-import * as _ from '../utils';
-import Blocks from '../blocks';
-import type { BlockToolData, PasteEvent } from '../../../types';
-import type { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
-import BlockAPI from '../block/api';
-import type { BlockMutationEventMap, BlockMutationType } from '../../../types/events/block';
-import { BlockRemovedMutationType } from '../../../types/events/block/BlockRemoved';
-import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
-import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
-import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
-import { BlockChanged } from '../events';
-import { clean, sanitizeBlocks } from '../utils/sanitizer';
-import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
-import PromiseQueue from '../utils/promise-queue';
+import Block, { BlockToolAPI } from "../block";
+import Module from "../__module";
+import $ from "../dom";
+import * as _ from "../utils";
+import Blocks from "../blocks";
+import type { BlockToolData, PasteEvent } from "../../../types";
+import type { BlockTuneData } from "../../../types/block-tunes/block-tune-data";
+import BlockAPI from "../block/api";
+import type {
+  BlockMutationEventMap,
+  BlockMutationType,
+} from "../../../types/events/block";
+import { BlockRemovedMutationType } from "../../../types/events/block/BlockRemoved";
+import { BlockAddedMutationType } from "../../../types/events/block/BlockAdded";
+import { BlockMovedMutationType } from "../../../types/events/block/BlockMoved";
+import { BlockChangedMutationType } from "../../../types/events/block/BlockChanged";
+import { BlockChanged } from "../events";
+import { clean, sanitizeBlocks } from "../utils/sanitizer";
+import { convertStringToBlockData, isBlockConvertable } from "../utils/blocks";
+import PromiseQueue from "../utils/promise-queue";
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -88,7 +91,7 @@ export default class BlockManager extends Module {
    * @returns {Block|null}
    */
   public get nextBlock(): Block | null {
-    const isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
+    const isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
 
     if (isLastBlock) {
       return null;
@@ -114,7 +117,9 @@ export default class BlockManager extends Module {
    * @returns {Block | undefined}
    */
   public get previousContentfulBlock(): Block {
-    const previousBlocks = this.blocks.slice(0, this.currentBlockIndex).reverse();
+    const previousBlocks = this.blocks
+      .slice(0, this.currentBlockIndex)
+      .reverse();
 
     return previousBlocks.find((block) => !!block.inputs.length);
   }
@@ -192,10 +197,8 @@ export default class BlockManager extends Module {
     });
 
     /** Copy event */
-    this.listeners.on(
-      document,
-      'copy',
-      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandC(e)
+    this.listeners.on(document, "copy", (e: ClipboardEvent) =>
+      this.Editor.BlockEvents.handleCommandC(e)
     );
   }
 
@@ -232,22 +235,33 @@ export default class BlockManager extends Module {
     data = {},
     id = undefined,
     tunes: tunesData = {},
-  }: {tool: string; id?: string; data?: BlockToolData; tunes?: {[name: string]: BlockTuneData}}): Block {
+  }: {
+    tool: string;
+    id?: string;
+    data?: BlockToolData;
+    tunes?: { [name: string]: BlockTuneData };
+  }): Block {
     const readOnly = this.Editor.ReadOnly.isEnabled;
     const tool = this.Editor.Tools.blockTools.get(name);
-    const block = new Block({
-      id,
-      data,
-      tool,
-      api: this.Editor.API,
-      readOnly,
-      tunesData,
-    }, this.eventsDispatcher);
+    const block = new Block(
+      {
+        id,
+        data,
+        tool,
+        api: this.Editor.API,
+        readOnly,
+        tunesData,
+      },
+      this.eventsDispatcher
+    );
 
     if (!readOnly) {
-      window.requestIdleCallback(() => {
-        this.bindBlockEvents(block);
-      }, { timeout: 2000 });
+      window.requestIdleCallback(
+        () => {
+          this.bindBlockEvents(block);
+        },
+        { timeout: 2000 }
+      );
     }
 
     return block;
@@ -280,7 +294,7 @@ export default class BlockManager extends Module {
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
-    tunes?: {[name: string]: BlockTuneData};
+    tunes?: { [name: string]: BlockTuneData };
   } = {}): Block {
     let newIndex = index;
 
@@ -300,9 +314,13 @@ export default class BlockManager extends Module {
      * we need to dispatch the 'block-removing' event for the replacing block
      */
     if (replace) {
-      this.blockDidMutated(BlockRemovedMutationType, this.getBlockByIndex(newIndex), {
-        index: newIndex,
-      });
+      this.blockDidMutated(
+        BlockRemovedMutationType,
+        this.getBlockByIndex(newIndex),
+        {
+          index: newIndex,
+        }
+      );
     }
 
     this._blocks.insert(newIndex, block, replace);
@@ -345,7 +363,11 @@ export default class BlockManager extends Module {
    * @param data - (optional) new data
    * @param tunes - (optional) tune data
    */
-  public async update(block: Block, data?: Partial<BlockToolData>, tunes?: {[name: string]: BlockTuneData}): Promise<Block> {
+  public async update(
+    block: Block,
+    data?: Partial<BlockToolData>,
+    tunes?: { [name: string]: BlockTuneData }
+  ): Promise<Block> {
     if (!data && !tunes) {
       return block;
     }
@@ -362,6 +384,8 @@ export default class BlockManager extends Module {
     const blockIndex = this.getBlockIndex(block);
 
     this._blocks.replace(blockIndex, newBlock);
+
+    newBlock.call(BlockToolAPI.RENDERED);
 
     this.blockDidMutated(BlockChangedMutationType, newBlock, {
       index: blockIndex,
@@ -417,7 +441,7 @@ export default class BlockManager extends Module {
         block.call(BlockToolAPI.ON_PASTE, pasteEvent);
       });
     } catch (e) {
-      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
+      _.log(`${toolName}: onPaste callback call is failed`, "error", e);
     }
 
     return block;
@@ -477,7 +501,10 @@ export default class BlockManager extends Module {
    * @param {Block} blockToMerge - block that will be merged with target block
    * @returns {Promise} - the sequence that can be continued
    */
-  public async mergeBlocks(targetBlock: Block, blockToMerge: Block): Promise<void> {
+  public async mergeBlocks(
+    targetBlock: Block,
+    blockToMerge: Block
+  ): Promise<void> {
     let blockToMergeData: BlockToolData | undefined;
 
     /**
@@ -488,23 +515,39 @@ export default class BlockManager extends Module {
       const blockToMergeDataRaw = await blockToMerge.data;
 
       if (_.isEmpty(blockToMergeDataRaw)) {
-        console.error('Could not merge Block. Failed to extract original Block data.');
+        console.error(
+          "Could not merge Block. Failed to extract original Block data."
+        );
 
         return;
       }
 
-      const [ cleanData ] = sanitizeBlocks([ blockToMergeDataRaw ], targetBlock.tool.sanitizeConfig);
+      const [cleanData] = sanitizeBlocks(
+        [blockToMergeDataRaw],
+        targetBlock.tool.sanitizeConfig
+      );
 
       blockToMergeData = cleanData;
 
-    /**
-     * 2) Blocks with different Tools if they provides conversionConfig
-     */
-    } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
-      const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
-      const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
+      /**
+       * 2) Blocks with different Tools if they provides conversionConfig
+       */
+    } else if (
+      targetBlock.mergeable &&
+      isBlockConvertable(blockToMerge, "export") &&
+      isBlockConvertable(targetBlock, "import")
+    ) {
+      const blockToMergeDataStringified =
+        await blockToMerge.exportDataAsString();
+      const cleanData = clean(
+        blockToMergeDataStringified,
+        targetBlock.tool.sanitizeConfig
+      );
 
-      blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
+      blockToMergeData = convertStringToBlockData(
+        cleanData,
+        targetBlock.tool.conversionConfig
+      );
     }
 
     if (blockToMergeData === undefined) {
@@ -530,7 +573,7 @@ export default class BlockManager extends Module {
        * If index is not passed and there is no block selected, show a warning
        */
       if (!this.validateIndex(index)) {
-        throw new Error('Can\'t find a Block to remove');
+        throw new Error("Can't find a Block to remove");
       }
 
       this._blocks.remove(index);
@@ -611,8 +654,9 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public split(): Block {
-    const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
-    const wrapper = $.make('div');
+    const extractedFragment =
+      this.Editor.Caret.extractFragmentFromCaretPosition();
+    const wrapper = $.make("div");
 
     wrapper.appendChild(extractedFragment as DocumentFragment);
 
@@ -620,7 +664,7 @@ export default class BlockManager extends Module {
      * @todo make object in accordance with Tool
      */
     const data = {
-      text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
+      text: $.isEmpty(wrapper) ? "" : wrapper.innerHTML,
     };
 
     /**
@@ -676,7 +720,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public getBlockById(id): Block | undefined {
-    return this._blocks.array.find(block => block.id === id);
+    return this._blocks.array.find((block) => block.id === id);
   }
 
   /**
@@ -690,8 +734,8 @@ export default class BlockManager extends Module {
     }
 
     const nodes = this._blocks.nodes,
-        firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
-        index = nodes.indexOf(firstLevelBlock as HTMLElement);
+      firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
+      index = nodes.indexOf(firstLevelBlock as HTMLElement);
 
     if (index >= 0) {
       return this._blocks[index];
@@ -713,7 +757,9 @@ export default class BlockManager extends Module {
       childNode = childNode.parentNode;
     }
 
-    const parentFirstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+    const parentFirstLevelBlock = (childNode as HTMLElement).closest(
+      `.${Block.CSS.wrapper}`
+    );
 
     if (!parentFirstLevelBlock) {
       return;
@@ -725,8 +771,12 @@ export default class BlockManager extends Module {
      *
      * @see {@link Ui#documentTouched}
      */
-    const editorWrapper = parentFirstLevelBlock.closest(`.${this.Editor.UI.CSS.editorWrapper}`);
-    const isBlockBelongsToCurrentInstance = editorWrapper?.isEqualNode(this.Editor.UI.nodes.wrapper);
+    const editorWrapper = parentFirstLevelBlock.closest(
+      `.${this.Editor.UI.CSS.editorWrapper}`
+    );
+    const isBlockBelongsToCurrentInstance = editorWrapper?.isEqualNode(
+      this.Editor.UI.nodes.wrapper
+    );
 
     if (!isBlockBelongsToCurrentInstance) {
       return;
@@ -737,7 +787,9 @@ export default class BlockManager extends Module {
      *
      * @type {number}
      */
-    this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+    this.currentBlockIndex = this._blocks.nodes.indexOf(
+      parentFirstLevelBlock as HTMLElement
+    );
 
     /**
      * Update current block active input
@@ -765,7 +817,9 @@ export default class BlockManager extends Module {
       childNode = childNode.parentNode;
     }
 
-    const firstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+    const firstLevelBlock = (childNode as HTMLElement).closest(
+      `.${Block.CSS.wrapper}`
+    );
 
     return this.blocks.find((block) => block.holder === firstLevelBlock);
   }
@@ -794,13 +848,16 @@ export default class BlockManager extends Module {
   public move(toIndex, fromIndex = this.currentBlockIndex): void {
     // make sure indexes are valid and within a valid range
     if (isNaN(toIndex) || isNaN(fromIndex)) {
-      _.log(`Warning during 'move' call: incorrect indices provided.`, 'warn');
+      _.log(`Warning during 'move' call: incorrect indices provided.`, "warn");
 
       return;
     }
 
     if (!this.validateIndex(toIndex) || !this.validateIndex(fromIndex)) {
-      _.log(`Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`, 'warn');
+      _.log(
+        `Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`,
+        "warn"
+      );
 
       return;
     }
@@ -828,14 +885,20 @@ export default class BlockManager extends Module {
    * @param targetToolName - name of the Tool to convert to
    * @param blockDataOverrides - optional new Block data overrides
    */
-  public async convert(blockToConvert: Block, targetToolName: string, blockDataOverrides?: BlockToolData): Promise<Block> {
+  public async convert(
+    blockToConvert: Block,
+    targetToolName: string,
+    blockDataOverrides?: BlockToolData
+  ): Promise<Block> {
     /**
      * At first, we get current Block data
      */
     const savedBlock = await blockToConvert.save();
 
     if (!savedBlock) {
-      throw new Error('Could not convert Block. Failed to extract original Block data.');
+      throw new Error(
+        "Could not convert Block. Failed to extract original Block data."
+      );
     }
 
     /**
@@ -844,7 +907,9 @@ export default class BlockManager extends Module {
     const replacingTool = this.Editor.Tools.blockTools.get(targetToolName);
 
     if (!replacingTool) {
-      throw new Error(`Could not convert Block. Tool «${targetToolName}» not found.`);
+      throw new Error(
+        `Could not convert Block. Tool «${targetToolName}» not found.`
+      );
     }
 
     /**
@@ -855,15 +920,16 @@ export default class BlockManager extends Module {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleanData: string = clean(
-      exportedData,
-      replacingTool.sanitizeConfig
-    );
+    const cleanData: string = clean(exportedData, replacingTool.sanitizeConfig);
 
     /**
      * Now using Conversion Config "import" we compose a new Block data
      */
-    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig, replacingTool.settings);
+    let newBlockData = convertStringToBlockData(
+      cleanData,
+      replacingTool.conversionConfig,
+      replacingTool.settings
+    );
 
     /**
      * Optional data overrides.
@@ -922,9 +988,11 @@ export default class BlockManager extends Module {
    * This is called when editor is destroyed
    */
   public async destroy(): Promise<void> {
-    await Promise.all(this.blocks.map((block) => {
-      return block.destroy();
-    }));
+    await Promise.all(
+      this.blocks.map((block) => {
+        return block.destroy();
+      })
+    );
   }
 
   /**
@@ -935,23 +1003,39 @@ export default class BlockManager extends Module {
   private bindBlockEvents(block: Block): void {
     const { BlockEvents } = this.Editor;
 
-    this.readOnlyMutableListeners.on(block.holder, 'keydown', (event: KeyboardEvent) => {
-      BlockEvents.keydown(event);
-    });
+    this.readOnlyMutableListeners.on(
+      block.holder,
+      "keydown",
+      (event: KeyboardEvent) => {
+        BlockEvents.keydown(event);
+      }
+    );
 
-    this.readOnlyMutableListeners.on(block.holder, 'keyup', (event: KeyboardEvent) => {
-      BlockEvents.keyup(event);
-    });
+    this.readOnlyMutableListeners.on(
+      block.holder,
+      "keyup",
+      (event: KeyboardEvent) => {
+        BlockEvents.keyup(event);
+      }
+    );
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragover', (event: DragEvent) => {
-      BlockEvents.dragOver(event);
-    });
+    this.readOnlyMutableListeners.on(
+      block.holder,
+      "dragover",
+      (event: DragEvent) => {
+        BlockEvents.dragOver(event);
+      }
+    );
 
-    this.readOnlyMutableListeners.on(block.holder, 'dragleave', (event: DragEvent) => {
-      BlockEvents.dragLeave(event);
-    });
+    this.readOnlyMutableListeners.on(
+      block.holder,
+      "dragleave",
+      (event: DragEvent) => {
+        BlockEvents.dragLeave(event);
+      }
+    );
 
-    block.on('didMutated', (affectedBlock: Block) => {
+    block.on("didMutated", (affectedBlock: Block) => {
       return this.blockDidMutated(BlockChangedMutationType, affectedBlock, {
         index: this.getBlockIndex(affectedBlock),
       });
@@ -970,10 +1054,8 @@ export default class BlockManager extends Module {
    */
   private enableModuleBindings(): void {
     /** Cut event */
-    this.readOnlyMutableListeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => this.Editor.BlockEvents.handleCommandX(e)
+    this.readOnlyMutableListeners.on(document, "cut", (e: ClipboardEvent) =>
+      this.Editor.BlockEvents.handleCommandX(e)
     );
 
     this.blocks.forEach((block: Block) => {
@@ -998,11 +1080,15 @@ export default class BlockManager extends Module {
    * @param block - mutated block
    * @param detailData - additional data to pass with change event
    */
-  private blockDidMutated<Type extends BlockMutationType>(mutationType: Type, block: Block, detailData: BlockMutationEventDetailWithoutTarget<Type>): Block {
+  private blockDidMutated<Type extends BlockMutationType>(
+    mutationType: Type,
+    block: Block,
+    detailData: BlockMutationEventDetailWithoutTarget<Type>
+  ): Block {
     const event = new CustomEvent(mutationType, {
       detail: {
         target: new BlockAPI(block),
-        ...detailData as BlockMutationEventDetailWithoutTarget<Type>,
+        ...(detailData as BlockMutationEventDetailWithoutTarget<Type>),
       },
     });
 
@@ -1017,4 +1103,5 @@ export default class BlockManager extends Module {
 /**
  * Type alias for Block Mutation event without 'target' field, used in 'blockDidMutated' method
  */
-type BlockMutationEventDetailWithoutTarget<Type extends BlockMutationType> = Omit<BlockMutationEventMap[Type]['detail'], 'target'>;
+type BlockMutationEventDetailWithoutTarget<Type extends BlockMutationType> =
+  Omit<BlockMutationEventMap[Type]["detail"], "target">;
