@@ -124,6 +124,7 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
 
     this.nodes.button.innerHTML = IconLink;
+    this.nodes.button.title = LinkInlineTool.title;
 
     return this.nodes.button;
   }
@@ -172,21 +173,11 @@ export default class LinkInlineTool implements InlineTool {
        * Unlink icon pressed
        */
       if (parentAnchor) {
-        /**
-         * If input is not opened, treat click as explicit unlink action.
-         * If input is opened (e.g., programmatic close when switching tools), avoid unlinking.
-         */
-        if (!this.inputOpened) {
-          this.selection.expandToTag(parentAnchor);
-          this.unlink();
-          this.closeActions();
-          this.checkState();
-          this.toolbar.close();
-        } else {
-          /** Only close actions without clearing saved selection to preserve user state */
-          this.closeActions(false);
-          this.checkState();
-        }
+        this.selection.expandToTag(parentAnchor);
+        this.unlink();
+        this.closeActions();
+        this.checkState();
+        this.toolbar.close();
 
         return;
       }
@@ -205,6 +196,7 @@ export default class LinkInlineTool implements InlineTool {
       this.nodes.button.innerHTML = IconUnlink;
       this.nodes.button.classList.add(this.CSS.buttonUnlink);
       this.nodes.button.classList.add(this.CSS.buttonActive);
+      this.nodes.button.title = 'Unlink';
       this.openActions();
 
       /**
@@ -219,6 +211,7 @@ export default class LinkInlineTool implements InlineTool {
       this.nodes.button.innerHTML = IconLink;
       this.nodes.button.classList.remove(this.CSS.buttonUnlink);
       this.nodes.button.classList.remove(this.CSS.buttonActive);
+      this.nodes.button.title = 'Link';
     }
 
     return !!anchorTag;
@@ -236,6 +229,13 @@ export default class LinkInlineTool implements InlineTool {
    */
   public get shortcut(): string {
     return 'CMD+K';
+  }
+
+  /**
+   * Returns dynamic title based on whether the current selection is inside a link
+   */
+  public getTitle(): string {
+    return this.selection.findParentTag('A') ? 'Unlink' : 'Link';
   }
 
   /**
