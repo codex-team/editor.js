@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.32.0
+
+- `Improvement` - Removed "Narrow" ("Thin") mode. On non-mobile viewports, Plus and Block Tunes controls now use a responsive action rail beside the editor content.
+- `Improvement` - `paste` config supports filter functions for tag-based substitution
+
 ### 2.31.7
 
 - `Fix` - Trigger `onChange` for native `<select>` changes

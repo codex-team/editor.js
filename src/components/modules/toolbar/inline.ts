@@ -228,12 +228,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
     };
 
     const realRightCoord = newCoords.x + popoverWidth + wrapperOffset.x;
+    const contentRect = this.Editor.UI.contentRect;
 
     /**
      * Prevent InlineToolbar from overflowing the content zone on the right side
      */
-    if (realRightCoord > this.Editor.UI.contentRect.right) {
-      newCoords.x = this.Editor.UI.contentRect.right -popoverWidth - wrapperOffset.x;
+    if (realRightCoord > contentRect.right) {
+      newCoords.x = contentRect.right -popoverWidth - wrapperOffset.x;
     }
 
     this.nodes.wrapper!.style.left = Math.floor(newCoords.x) + 'px';
