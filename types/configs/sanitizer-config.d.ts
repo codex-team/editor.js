@@ -21,7 +21,7 @@ export interface SanitizerConfig {
    *
    * @example Save A tags with TARGET="_blank" attribute
    * a: function (aTag) {
-   *   return aTag.target === '_black';
+   *   return aTag.target === '_blank';
    * }
    *
    * @example Save U tags that are not empty
