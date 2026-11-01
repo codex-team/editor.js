@@ -18,6 +18,8 @@ Also, you can provide optional methods
 - `renderActions()` — create additional element below the buttons
 - `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
 - `sanitize()` — sanitizer configuration
+- `prepare()` — prepare Tool's data on Editor's initialization (static)
+- `reset()` — clean up Tool's data on Editor's destroy (static)
 
 At the constructor of Tool's class exemplar you will accept an object with the [API](api.md) as a parameter.
 
@@ -103,6 +105,62 @@ Method does not accept any parameters
 #### Return value
 
 Method should not return a value. 
+
+### static prepare()
+
+If you need to prepare some data for the Tool (eg. load external script, create HTML nodes in the document, etc) you can use the static `prepare()` method.
+
+It accepts the Tool's config passed on Editor's initialization as an argument:
+
+```javascript
+class MyInlineTool {
+  static isInline = true;
+
+  static prepare(config) {
+    loadScript();
+    insertNodes();
+    ...
+  }
+}
+```
+
+#### Parameters
+
+type | description |
+-- | -- |
+`object` | your Tool configuration |
+
+#### Return value
+
+No return value
+
+---
+
+### static reset()
+
+On Editor destroy you can use an opposite method `reset` to clean up all prepared data:
+
+```javascript
+class MyInlineTool {
+  static isInline = true;
+
+  static reset() {
+    cleanUpScripts();
+    deleteNodes();
+  ...
+  }
+}
+```
+
+#### Parameters
+
+No parameters
+
+#### Return value
+
+No return value
+
+---
 
 ### static get sanitize()
 
