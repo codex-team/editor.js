@@ -166,13 +166,7 @@ export class PopoverInline extends PopoverDesktop {
   protected override handleItemClick(item: PopoverItem): void {
     if (item !== this.nestedPopoverTriggerItem) {
       /**
-       * In case tool had special handling for toggling button (like link tool which modifies selection)
-       * we need to call handleClick on nested popover trigger item
-       */
-      this.nestedPopoverTriggerItem?.handleClick();
-
-      /**
-       * Then close the nested popover
+       * Close the nested popover when switching to another tool
        */
       super.destroyNestedPopoverIfExists();
     }
