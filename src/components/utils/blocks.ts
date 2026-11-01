@@ -99,6 +99,15 @@ export async function getConvertibleToolsForBlock(block: BlockAPI, allBlockTools
       return true;
     });
 
+    /**
+     * Skip tools whose toolbox entries were all filtered out:
+     * such tools have nothing a block could be converted to,
+     * so they should not be treated as convertible
+     */
+    if (actualToolboxItems.length === 0) {
+      return result;
+    }
+
     result.push({
       ...tool,
       toolbox: actualToolboxItems,

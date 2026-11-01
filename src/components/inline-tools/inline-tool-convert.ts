@@ -89,6 +89,13 @@ export default class ConvertInlineTool implements InlineTool {
       return result;
     }, []);
 
+    /**
+     * Do not show the "Convert to" item when there is nothing to convert to
+     */
+    if (convertToItems.length === 0) {
+      return [];
+    }
+
     const currentBlockToolboxItem = await currentBlock.getActiveToolboxEntry();
     const icon = currentBlockToolboxItem !== undefined ? currentBlockToolboxItem.icon : IconReplace;
     const isDesktop =  !_.isMobileScreen();
