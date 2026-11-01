@@ -2,6 +2,7 @@ import type EditorJS from '../../../../types/index';
 import type { ConversionConfig, ToolboxConfig, ToolConfig } from '../../../../types';
 import ToolMock, { type MockToolData } from '../../fixtures/tools/ToolMock';
 import { nanoid } from 'nanoid';
+import ExampleTune from '../../fixtures/tunes/ExampleTune';
 
 /**
  * There will be described test cases of 'blocks.*' API
@@ -104,55 +105,6 @@ describe('api.blocks', () => {
     });
 
     it('should update tune data when it is provided', () => {
-      /**
-       * Example Tune Class
-       */
-      class ExampleTune {
-        protected data: object;
-        /**
-         *
-         * @param data
-         */
-        constructor({ data }) {
-          this.data = data;
-        }
-
-        /**
-         * Tell editor.js that this Tool is a Block Tune
-         *
-         * @returns {boolean}
-         */
-        public static get isTune(): boolean {
-          return true;
-        }
-
-        /**
-         * Create Tunes controls wrapper that will be appended to the Block Tunes panel
-         *
-         * @returns {Element}
-         */
-        public render(): Element {
-          return document.createElement('div');
-        }
-
-        /**
-         * CSS selectors used in Tune
-         */
-        public static get CSS(): object {
-          return {};
-        }
-
-        /**
-         * Returns Tune state
-         *
-         * @returns {string}
-         */
-        public save(): object | string {
-          return this.data || '';
-        }
-      }
-
-
       cy.createEditor({
         tools: {
           exampleTune: ExampleTune,
@@ -246,6 +198,92 @@ describe('api.blocks', () => {
    * api.blocks.insertMany(blocks, index)
    */
   describe('.insertMany()', function () {
+    it('should preserve each inserted block tune without changing existing blocks', function () {
+      const blocks = [
+        {
+          id: 'first-inserted',
+          type: 'paragraph',
+          data: { text: 'First inserted block' },
+          tunes: { exampleTune: 'citation' },
+        },
+        {
+          id: 'second-inserted',
+          type: 'paragraph',
+          data: { text: 'Second inserted block' },
+          tunes: {
+            exampleTune: {
+              variant: 'callout',
+              level: 2,
+            },
+          },
+        },
+      ];
+      const existingBlocks = [
+        {
+          ...firstBlock,
+          tunes: { exampleTune: 'existing-first' },
+        },
+        {
+          id: 'last-existing',
+          type: 'paragraph',
+          data: { text: 'Last existing block' },
+          tunes: { exampleTune: { variant: 'existing-last' } },
+        },
+      ];
+
+      cy.createEditor({
+        tools: { exampleTune: ExampleTune },
+        tunes: [ 'exampleTune' ],
+        data: { blocks: existingBlocks },
+      }).then(async (editor) => {
+        const inserted = editor.blocks.insertMany(blocks, 1);
+        const saved = await editor.save();
+
+        expect(inserted.map(({ id }) => id)).to.deep.equal(blocks.map(({ id }) => id));
+        inserted.forEach((block, index) => {
+          expect(block.name).to.equal('paragraph');
+          expect(block.holder).to.equal(editor.blocks.getBlockByIndex(index + 1).holder);
+        });
+        expect(saved.blocks.map(({ id }) => id)).to.deep.equal([firstBlock.id, 'first-inserted', 'second-inserted', 'last-existing']);
+        expect(saved.blocks.map(({ data }) => data.text)).to.deep.equal([firstBlock.data.text, 'First inserted block', 'Second inserted block', 'Last existing block']);
+        expect(saved.blocks[0]).to.deep.equal(existingBlocks[0]);
+        expect(saved.blocks[3]).to.deep.equal(existingBlocks[1]);
+        expect(saved.blocks.slice(1, 3).map(({ tunes }) => tunes)).to.deep.equal(blocks.map(({ tunes }) => tunes));
+      });
+    });
+
+    it('should preserve insertion behavior when tune data is omitted', function () {
+      const existingBlock = {
+        ...firstBlock,
+        tunes: { exampleTune: 'existing' },
+      };
+      const block = {
+        id: 'untuned-block',
+        type: 'paragraph',
+        data: { text: 'Inserted without tune data' },
+      };
+
+      cy.createEditor({
+        tools: { exampleTune: ExampleTune },
+        tunes: [ 'exampleTune' ],
+        data: { blocks: [ existingBlock ] },
+      }).then(async (editor) => {
+        const inserted = editor.blocks.insertMany([ block ], 0);
+        const saved = await editor.save();
+
+        expect(inserted).to.have.length(1);
+        expect(inserted[0].id).to.equal(block.id);
+        expect(inserted[0].holder).to.equal(editor.blocks.getBlockByIndex(0).holder);
+        expect(saved.blocks).to.deep.equal([
+          {
+            ...block,
+            tunes: { exampleTune: '' },
+          },
+          existingBlock,
+        ]);
+      });
+    });
+
     it('should insert several blocks to passed index', function () {
       cy.createEditor({
         data: {
