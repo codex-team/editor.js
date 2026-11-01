@@ -1,6 +1,33 @@
 import $, { isCollapsedWhitespaces } from '../dom';
 
 /**
+ * New: Helper function to find the first editable text node
+ * This function recursively searches for an editable text node
+ *
+ * @param node Node
+ */
+function findFirstEditableTextNode(node: Node): Text | null {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return node as Text;
+  }
+  if (node.nodeType === Node.ELEMENT_NODE) {
+    const element = node as HTMLElement;
+
+    if (element.contentEditable !== 'false') {
+      for (const child of Array.from(element.childNodes)) {
+        const textNode = findFirstEditableTextNode(child);
+
+        if (textNode) {
+          return textNode;
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
  * Returns TextNode containing a caret and a caret offset in it
  * Returns null if there is no caret set
  *
@@ -42,6 +69,21 @@ export function getCaretNodeAndOffset(): [ Node | null, number ] {
     } else {
       focusNode = focusNode.childNodes[focusOffset - 1];
       focusOffset = focusNode.textContent.length;
+    }
+  }
+
+  /**
+   * Handle case when focusNode is not a text node
+   * Find the first editable text node within the current node
+   */
+  if (focusNode.nodeType !== Node.TEXT_NODE) {
+    const textNode = findFirstEditableTextNode(focusNode);
+    if (textNode) {
+      focusNode = textNode;
+      focusOffset = 0;
+    } else {
+      // If no editable text node found, return null
+      return [null, 0];
     }
   }
 
