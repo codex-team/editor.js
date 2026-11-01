@@ -1,5 +1,6 @@
 import type { InlineTool, SanitizerConfig } from '../../../types';
 import { IconItalic } from '@codexteam/icons';
+import type { MenuConfig } from '../../../types/tools';
 
 /**
  * Italic Tool
@@ -11,8 +12,6 @@ import { IconItalic } from '@codexteam/icons';
 export default class ItalicInlineTool implements InlineTool {
   /**
    * Specifies Tool as Inline Toolbar Tool
-   *
-   * @returns {boolean}
    */
   public static isInline = true;
 
@@ -24,13 +23,11 @@ export default class ItalicInlineTool implements InlineTool {
   /**
    * Sanitizer Rule
    * Leave <i> tags
-   *
-   * @returns {object}
    */
   public static get sanitize(): SanitizerConfig {
     return {
       i: {},
-    } as SanitizerConfig;
+    };
   }
 
   /**
@@ -39,49 +36,16 @@ export default class ItalicInlineTool implements InlineTool {
   private readonly commandName: string = 'italic';
 
   /**
-   * Styles
-   */
-  private readonly CSS = {
-    button: 'ce-inline-tool',
-    buttonActive: 'ce-inline-tool--active',
-    buttonModifier: 'ce-inline-tool--italic',
-  };
-
-  /**
-   * Elements
-   */
-  private nodes: {button: HTMLButtonElement} = {
-    button: null,
-  };
-
-  /**
    * Create button for Inline Toolbar
    */
-  public render(): HTMLElement {
-    this.nodes.button = document.createElement('button') as HTMLButtonElement;
-    this.nodes.button.type = 'button';
-    this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.innerHTML = IconItalic;
-
-    return this.nodes.button;
-  }
-
-  /**
-   * Wrap range with <i> tag
-   */
-  public surround(): void {
-    document.execCommand(this.commandName);
-  }
-
-  /**
-   * Check selection and set activated state to button if there are <i> tag
-   */
-  public checkState(): boolean {
-    const isActive = document.queryCommandState(this.commandName);
-
-    this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
-
-    return isActive;
+  public render(): MenuConfig {
+    return {
+      icon: IconItalic,
+      name: 'italic',
+      toggle: true,
+      onActivate: () =>  document.execCommand(this.commandName),
+      isActive: () => document.queryCommandState(this.commandName),
+    };
   }
 
   /**
