@@ -16,6 +16,10 @@
     margin-top: 0;
   }
 
+  &__content [contenteditable] {
+    word-break: break-word;
+  }
+
   &--selected &__content {
     background: var(--selectionColor);
 
