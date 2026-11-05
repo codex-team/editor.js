@@ -79,6 +79,17 @@ describe('Sanitizer utils', () => {
       expect(clean('<a target="_top">x</a>', merged)).to.eq('<a>x</a>');
     });
 
+    it('should treat a truthy non-boolean attribute predicate result as allowed', () => {
+      const merged = mergeSanitizerConfigs(
+        { span: { style: (value: string) => value.match(/^font-/) } } as unknown as SanitizerConfig,
+        { span: { style: 'color: red' } } as SanitizerConfig
+      );
+
+      expect(clean('<span style="font-weight: bold">t</span>', merged)).to.eq('<span style="font-weight: bold">t</span>');
+      expect(clean('<span style="color: red">t</span>', merged)).to.eq('<span style="color: red">t</span>');
+      expect(clean('<span style="color: blue">t</span>', merged)).to.eq('<span>t</span>');
+    });
+
     it('should combine a function rule with an object rule for the same tag', () => {
       const merged = mergeSanitizerConfigs(
         {

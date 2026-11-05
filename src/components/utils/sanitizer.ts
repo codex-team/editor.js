@@ -158,7 +158,12 @@ function mergeAttributeRules(a: AttributeRule | undefined, b: AttributeRule | un
  */
 function checkAttributeRule(rule: AttributeRule, value: string, node: Element): boolean {
   if (_.isFunction(rule)) {
-    return rule(value, node) === true;
+    /**
+     * html-janitor treats any truthy predicate result as "allowed"
+     * (for example `value => value.match(/^font-/)` returns an array),
+     * so the merged rule must do the same
+     */
+    return Boolean(rule(value, node));
   }
 
   return rule === value;
