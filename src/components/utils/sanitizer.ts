@@ -30,8 +30,144 @@ import * as _ from '../utils';
  */
 
 import HTMLJanitor from 'html-janitor';
-import type { BlockToolData, SanitizerConfig } from '../../../types';
+import type { BlockToolData, SanitizerConfig, SanitizerRule } from '../../../types';
+import type { TagConfig } from '../../../types/configs/sanitizer-config';
 import type { SavedData } from '../../../types/data-formats';
+
+/**
+ * Value of a single attribute inside a tag rule object
+ *
+ * html-janitor accepts:
+ *  - true — keep the attribute with any value
+ *  - false — strip the attribute
+ *  - string — keep the attribute only if its value equals the string
+ *  - function — keep the attribute only if the function returns true
+ */
+type AttributeRule = boolean | string | ((value: string, node: Element) => boolean);
+
+/**
+ * Merges several sanitizer configs into a single one, combining rules per tag
+ * instead of overwriting them
+ *
+ * Needed when several Inline Tools (or Block Tunes) declare rules for the same tag,
+ * e.g. two tools that both wrap text with <span> but allow different attributes.
+ * With a plain Object.assign the last tool's rule would replace the first one.
+ *
+ * Merge semantics (a rule that allows something always wins over one that does not):
+ *  - tag: true + anything → true (all attributes allowed)
+ *  - tag: false (or missing) + X → X
+ *  - tag: object + object → object with the union of attributes
+ *  - tag: function + object/function → function returning the merged result of both for the element
+ *  - attribute: true + anything → true
+ *  - attribute: false (or missing) + X → X
+ *  - attribute: equal strings → that string
+ *  - attribute: any other mix of string/function → function that passes when either side passes
+ *
+ * Passed configs are not mutated.
+ *
+ * @param configs - sanitizer configs to merge
+ * @returns merged sanitizer config
+ */
+export function mergeSanitizerConfigs(...configs: Array<SanitizerConfig | undefined>): SanitizerConfig {
+  const result = {} as SanitizerConfig;
+
+  configs.forEach((config) => {
+    if (!_.isObject(config)) {
+      return;
+    }
+
+    Object.keys(config).forEach((tag) => {
+      result[tag] = mergeTagRules(result[tag], config[tag]);
+    });
+  });
+
+  return result;
+}
+
+/**
+ * Merges two rules for the same tag
+ *
+ * @param a - first rule
+ * @param b - second rule
+ */
+function mergeTagRules(a: SanitizerRule | undefined, b: SanitizerRule | undefined): SanitizerRule {
+  if (a === undefined || a === null || a === false) {
+    return b;
+  }
+
+  if (b === undefined || b === null || b === false) {
+    return a;
+  }
+
+  if (a === true || b === true) {
+    return true;
+  }
+
+  if (_.isFunction(a) || _.isFunction(b)) {
+    return (el: Element): TagConfig => {
+      const resultA = _.isFunction(a) ? a(el) : a;
+      const resultB = _.isFunction(b) ? b(el) : b;
+
+      return mergeTagRules(resultA, resultB) as TagConfig;
+    };
+  }
+
+  const merged = { ...a };
+
+  Object.keys(b).forEach((attr) => {
+    merged[attr] = mergeAttributeRules(merged[attr] as AttributeRule, b[attr] as AttributeRule) as boolean | string;
+  });
+
+  return merged;
+}
+
+/**
+ * Merges two rules for the same attribute of a tag
+ *
+ * @param a - first rule
+ * @param b - second rule
+ */
+function mergeAttributeRules(a: AttributeRule | undefined, b: AttributeRule | undefined): AttributeRule {
+  if (a === undefined || a === null || a === false) {
+    return b;
+  }
+
+  if (b === undefined || b === null || b === false) {
+    return a;
+  }
+
+  if (a === true || b === true) {
+    return true;
+  }
+
+  if (a === b) {
+    return a;
+  }
+
+  return (value: string, node: Element): boolean => {
+    return checkAttributeRule(a, value, node) || checkAttributeRule(b, value, node);
+  };
+}
+
+/**
+ * Checks whether an attribute value passes a string or function rule
+ *
+ * @param rule - string (exact value) or function rule
+ * @param value - attribute value
+ * @param node - element that owns the attribute
+ */
+function checkAttributeRule(rule: AttributeRule, value: string, node: Element): boolean {
+  if (_.isFunction(rule)) {
+    /**
+     * html-janitor treats any truthy predicate result as "allowed"
+     * (for example `value => value.match(/^font-/)` returns an array),
+     * so the merged rule must do the same
+     */
+    return Boolean(rule(value, node));
+  }
+
+  return rule === value;
+}
 
 /**
  * Sanitize Blocks
