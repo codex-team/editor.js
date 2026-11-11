@@ -1,5 +1,6 @@
 import type EditorJS from '../../../../../types/index';
 import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
+import ToolMock from '../../../fixtures/tools/ToolMock';
 
 describe('Delete keydown', function () {
   describe('ending whitespaces handling', function () {
@@ -170,6 +171,132 @@ describe('Delete keydown', function () {
       .find('div.ce-block')
       .first()
       .should('have.text', 'The first bloc'); // last char is removed
+  });
+
+  describe('in a Tool with line breaks enabled', function () {
+    /**
+     * Tool with a single contenteditable that keeps native line breaks.
+     * Browsers wrap each line created by Enter in such contenteditable in a <div>
+     */
+    class ToolWithLineBreaks extends ToolMock {
+      /**
+       * Allow line breaks inside the Tool
+       */
+      public static get enableLineBreaks(): boolean {
+        return true;
+      }
+
+      /**
+       * Renders contenteditable with a data-cy attribute for tests
+       */
+      public render(): HTMLElement {
+        const element = super.render();
+
+        element.dataset.cy = 'line-breaks-tool';
+
+        return element;
+      }
+    }
+
+    /**
+     * Creates editor with a Tool with line breaks and a paragraph
+     *
+     * @param html - content of the Tool with line breaks
+     */
+    function createEditorWithLines(html: string): void {
+      cy.createEditor({
+        tools: {
+          lineBreaksTool: ToolWithLineBreaks,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'lineBreaksTool',
+              data: {
+                text: html,
+              },
+            },
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Last block',
+              },
+            },
+          ],
+        },
+      });
+    }
+
+    it('should remove an empty line instead of moving the caret to the next line', function () {
+      createEditorWithLines('<div>abc</div><div><br></div><div>def</div>');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .first()
+        .click()
+        .type('{end}')
+        .type('{del}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 2);
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool]')
+        .should('have.text', 'abcdef');
+    });
+
+    it('should join the next line when Caret is at the end of the line', function () {
+      createEditorWithLines('<div>abc</div><div>def</div>');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .first()
+        .click()
+        .type('{end}')
+        .type('{del}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 1)
+        .should('have.text', 'abcdef');
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .should('have.length', 2);
+    });
+
+    it('should keep the Block behaviour when Caret is at the end of the last line', function () {
+      createEditorWithLines('<div>abc</div><div>def</div>');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .last()
+        .click()
+        .type('{moveToEnd}x')
+        .type('{del}');
+
+      /**
+       * The paragraph has no conversion from this Tool, so Caret is moved to the start of the next Block
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .as('lastBlock');
+
+      cy.window()
+        .then((window) => {
+          const selection = window.getSelection();
+          const range = selection.getRangeAt(0);
+
+          cy.get('@lastBlock').should(($div) => {
+            expect($div[0].contains(range.startContainer)).to.be.true;
+          });
+        });
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 2);
+    });
   });
 
   it('should navigate next input when Caret is not at the last input', function () {

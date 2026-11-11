@@ -2,6 +2,7 @@ import type EditorJS from '../../../../../types/index';
 import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
 import type { ConversionConfig } from '../../../../../types/index';
 import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
+import ToolMock from '../../../fixtures/tools/ToolMock';
 
 describe('Backspace keydown', function () {
   describe('starting whitespaces handling', function () {
@@ -177,6 +178,136 @@ describe('Backspace keydown', function () {
       .find('div.ce-block')
       .last()
       .should('have.text', 'The second bloc'); // last char is removed
+  });
+
+  describe('in a Tool with line breaks enabled', function () {
+    /**
+     * Tool with a single contenteditable that keeps native line breaks.
+     * Browsers wrap each line created by Enter in such contenteditable in a <div>
+     */
+    class ToolWithLineBreaks extends ToolMock {
+      /**
+       * Allow line breaks inside the Tool
+       */
+      public static get enableLineBreaks(): boolean {
+        return true;
+      }
+
+      /**
+       * Renders contenteditable with a data-cy attribute for tests
+       */
+      public render(): HTMLElement {
+        const element = super.render();
+
+        element.dataset.cy = 'line-breaks-tool';
+
+        return element;
+      }
+    }
+
+    /**
+     * Creates editor with a paragraph and a Tool with line breaks
+     *
+     * @param html - content of the Tool with line breaks
+     */
+    function createEditorWithLines(html: string): void {
+      cy.createEditor({
+        tools: {
+          lineBreaksTool: ToolWithLineBreaks,
+        },
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'First block',
+              },
+            },
+            {
+              type: 'lineBreaksTool',
+              data: {
+                text: html,
+              },
+            },
+          ],
+        },
+      });
+    }
+
+    it('should remove an empty line instead of moving the caret to the previous line', function () {
+      createEditorWithLines('abc');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool]')
+        .click()
+        .type('{moveToEnd}{enter}{enter}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 2);
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool]')
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 1);
+
+      cy.get('[data-cy=editorjs]')
+        .find('div.ce-block')
+        .should('have.length', 2);
+    });
+
+    it('should join a line with the previous one when Caret is at the start of the line', function () {
+      createEditorWithLines('abc');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool]')
+        .click()
+        .type('{moveToEnd}{enter}def{leftArrow}{leftArrow}{leftArrow}')
+        .type('{backspace}');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 0);
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool]')
+        .should('have.text', 'abcdef');
+    });
+
+    it('should keep the Block behaviour when Caret is at the start of the first line', function () {
+      createEditorWithLines('<div>abc</div><div>def</div>');
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .first()
+        .click()
+        .type('{home}')
+        .type('{backspace}');
+
+      /**
+       * The Tool has no merge(), so Caret is moved to the end of the previous Block
+       */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .as('firstBlock');
+
+      cy.window()
+        .then((window) => {
+          const selection = window.getSelection();
+          const range = selection.getRangeAt(0);
+
+          cy.get('@firstBlock').should(($div) => {
+            expect($div[0].contains(range.startContainer)).to.be.true;
+          });
+        });
+
+      cy.get('[data-cy=editorjs]')
+        .find('[data-cy=line-breaks-tool] div')
+        .should('have.length', 2);
+    });
   });
 
   it('should navigate previous input when Caret is not at the first input', function () {
