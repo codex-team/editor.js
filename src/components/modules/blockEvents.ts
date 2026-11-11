@@ -8,6 +8,7 @@ import Flipper from '../flipper';
 import type Block from '../block';
 import { areBlocksMergeable } from '../utils/blocks';
 import * as caretUtils from '../utils/caret';
+import { hasContentNextToLineInContentEditable } from '../dom';
 import { focus } from '@editorjs/caret';
 
 /**
@@ -365,6 +366,15 @@ export default class BlockEvents extends Module {
     if (!currentBlock.currentInput || !caretUtils.isCaretAtStartOfInput(currentBlock.currentInput)) {
       return;
     }
+
+    /**
+     * Caret is at the start of a line inside a contenteditable, and there is another line before it,
+     * for example in a Tool with line breaks enabled. Leave native behaviour to remove the line break
+     */
+    if (hasContentNextToLineInContentEditable(currentBlock.currentInput, 'left')) {
+      return;
+    }
+
     /**
      * All the cases below have custom behaviour, so we don't need a native one
      */
@@ -446,6 +456,14 @@ export default class BlockEvents extends Module {
      * If caret is not at the end, leave native behaviour
      */
     if (!caretUtils.isCaretAtEndOfInput(currentBlock.currentInput)) {
+      return;
+    }
+
+    /**
+     * Caret is at the end of a line inside a contenteditable, and there is another line after it,
+     * for example in a Tool with line breaks enabled. Leave native behaviour to remove the line break
+     */
+    if (hasContentNextToLineInContentEditable(currentBlock.currentInput, 'right')) {
       return;
     }
 

@@ -698,6 +698,61 @@ export function isCollapsedWhitespaces(textContent: string): boolean {
 }
 
 /**
+ * Checks if a Block input is a line of a contenteditable element, and that element has
+ * visible content before (or after) this line.
+ *
+ * When a contenteditable contains block elements, each of them is treated as a separate input
+ * (see Dom.findAllInputs). For example, browsers wrap every line created by Enter in a <div>
+ * in Tools that support line breaks. For the user, these lines belong to one field, so the
+ * line break between them should be handled like any other character.
+ *
+ * @param input - Block input to check
+ * @param direction - 'left' to look for content before the input, 'right' to look for content after it
+ * @returns true if there is visible content in the same contenteditable in the passed direction
+ */
+export function hasContentNextToLineInContentEditable(input: HTMLElement | undefined, direction: 'left' | 'right'): boolean {
+  if (input === undefined) {
+    return false;
+  }
+
+  const isVisible = (node: Node): boolean => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return !isCollapsedWhitespaces(node.textContent ?? '');
+    }
+
+    if (!Dom.isElement(node)) {
+      return false;
+    }
+
+    return node.tagName === 'BR' ||
+      Dom.blockElements.includes(node.tagName.toLowerCase()) ||
+      node.querySelector('br') !== null ||
+      !Dom.isEmpty(node);
+  };
+
+  let node: HTMLElement = input;
+
+  /**
+   * Walk up to the contenteditable that holds the line, checking siblings on each level
+   */
+  while (node.contentEditable === 'inherit' && node.parentElement !== null && node.parentElement.isContentEditable) {
+    let sibling = direction === 'left' ? node.previousSibling : node.nextSibling;
+
+    while (sibling !== null) {
+      if (isVisible(sibling)) {
+        return true;
+      }
+
+      sibling = direction === 'left' ? sibling.previousSibling : sibling.nextSibling;
+    }
+
+    node = node.parentElement;
+  }
+
+  return false;
+}
+
+/**
  * Calculates the Y coordinate of the text baseline from the top of the element's margin box,
  *
  * The calculation formula is as follows:
