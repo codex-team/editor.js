@@ -1,5 +1,5 @@
 import type EditorJS from '../../../../types/index';
-import type { ConversionConfig, ToolboxConfig, ToolConfig } from '../../../../types';
+import type { ConversionConfig, SanitizerConfig, ToolboxConfig, ToolConfig } from '../../../../types';
 import ToolMock, { type MockToolData } from '../../fixtures/tools/ToolMock';
 import { nanoid } from 'nanoid';
 
@@ -358,6 +358,64 @@ describe('api.blocks', () => {
             id: blocks[0].id,
           });
         });
+      });
+    });
+
+    it('should keep inline formatting allowed by the target Tool sanitize config for the imported field', function () {
+      /**
+       * Mock of Tool whose sanitize config describes its data fields
+       */
+      class ConvertableTool extends ToolMock {
+        /**
+         * Specify how to import string data to this Tool
+         */
+        public static get conversionConfig(): ConversionConfig {
+          return {
+            import: 'text',
+          };
+        }
+
+        /**
+         * Rules for the "text" field: only bold is allowed
+         */
+        public static get sanitize(): SanitizerConfig {
+          return {
+            text: {
+              b: true,
+            },
+          };
+        }
+      }
+
+      const existingBlock = {
+        id: 'test-id-123',
+        type: 'paragraph',
+        data: {
+          text: 'Some <b>bold</b> and <u>underlined</u> text',
+        },
+      };
+
+      cy.createEditor({
+        tools: {
+          convertableTool: {
+            class: ConvertableTool,
+            inlineToolbar: false,
+          },
+        },
+        data: {
+          blocks: [
+            existingBlock,
+          ],
+        },
+      }).then(async (editor) => {
+        await editor.blocks.convert(existingBlock.id, 'convertableTool');
+
+        /**
+         * Check the rendered Block: saving sanitizes the data once more and would hide the data passed to the Tool
+         */
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-block__content [contenteditable]')
+          .should('have.html', 'Some <b>bold</b> and underlined text');
       });
     });
 
