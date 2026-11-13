@@ -1,6 +1,7 @@
 import Header from '@editorjs/header';
 import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
 import type { MenuConfig } from '@/types/tools';
+import type EditorJS from '../../../../types/index';
 import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('Inline Toolbar', () => {
@@ -345,6 +346,96 @@ describe('Inline Toolbar', () => {
         .then(($toolbar) => {
           expect($toolbar).to.be.visible;
         });
+    });
+  });
+
+  describe('Shortcuts', () => {
+    const paragraph = (text: string): { blocks: { type: string; data: { text: string } }[] } => ({
+      blocks: [
+        {
+          type: 'paragraph',
+          data: { text },
+        },
+      ],
+    });
+
+    /**
+     * Creates one more Editor on the page, in its own holder
+     *
+     * @param text - text of the only paragraph
+     */
+    const createSecondEditor = (text: string): void => {
+      cy.window().then((window) => {
+        const holder = window.document.createElement('div');
+
+        holder.dataset.cy = 'second-editorjs';
+        window.document.body.appendChild(holder);
+
+        const editor = new window.EditorJS({
+          holder,
+          data: paragraph(text),
+        });
+
+        return editor.isReady;
+      });
+    };
+
+    it('should apply an inline tool by shortcut in each Editor on the page', () => {
+      cy.createEditor({ data: paragraph('First editor text') });
+      createSecondEditor('Second editor text');
+
+      /** Open the Inline Toolbar of the first Editor, so it registers its shortcuts first */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .selectText('First')
+        .type('{cmd}b');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'First');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .selectText('Second')
+        .type('{cmd}b');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'Second');
+
+      /** The shortcut pressed in the second Editor must not format the first one again */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.length', 1);
+    });
+
+    it('should apply an inline tool by shortcut in an Editor created after another one was destroyed', () => {
+      cy.createEditor({ data: paragraph('First editor text') })
+        .as('firstEditor');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .selectText('First')
+        .type('{cmd}b');
+
+      cy.get('@firstEditor').then((editor) => {
+        (editor as unknown as EditorJS).destroy();
+      });
+
+      createSecondEditor('Second editor text');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .selectText('Second')
+        .type('{cmd}b');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'Second');
     });
   });
 });
