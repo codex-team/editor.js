@@ -104,6 +104,31 @@ describe('Tools module', () => {
     });
   });
 
+  context('.destroy()', () => {
+    it('should call Tools reset method on destroy', () => {
+      const resetStub = cy.stub();
+
+      class WithReset {
+        public static reset = resetStub;
+      }
+
+      const module = constructModule({
+        defaultBlock: 'withReset',
+        tools: {
+          withReset: {
+            class: WithReset as any,
+          },
+        },
+      });
+
+      return module.prepare().then(() => {
+        module.destroy();
+
+        expect(resetStub).to.be.calledOnce;
+      });
+    });
+  });
+
   context('collection accessors', () => {
     let module: Tools;
 
