@@ -441,5 +441,63 @@ describe('Inline Toolbar', () => {
         .find('.ce-paragraph b')
         .should('have.text', 'Second editor text');
     });
+
+    it('should remove shortcut listeners from the document when the Editor is destroyed', () => {
+      /**
+       * Keydown listeners that are bound to the document at the moment
+       */
+      const keydownListeners = new Set<EventListenerOrEventListenerObject>();
+
+      cy.window().then((window) => {
+        const { document } = window;
+        const addEventListener = document.addEventListener.bind(document);
+        const removeEventListener = document.removeEventListener.bind(document);
+
+        cy.stub(document, 'addEventListener').callsFake((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) => {
+          if (type === 'keydown') {
+            keydownListeners.add(listener);
+          }
+
+          addEventListener(type, listener, options);
+        });
+
+        cy.stub(document, 'removeEventListener').callsFake((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) => {
+          if (type === 'keydown') {
+            keydownListeners.delete(listener);
+          }
+
+          removeEventListener(type, listener, options);
+        });
+      });
+
+      cy.createEditor({ data: paragraph('First editor text') })
+        .as('firstEditor');
+
+      let listenersBeforeShortcuts = 0;
+
+      cy.get('@firstEditor').then(() => {
+        listenersBeforeShortcuts = keydownListeners.size;
+      });
+
+      /** Inline Tools shortcuts are registered when the Inline Toolbar opens */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'First editor text');
+
+      cy.get('@firstEditor').then((editor) => {
+        expect(keydownListeners.size).to.be.greaterThan(listenersBeforeShortcuts);
+
+        (editor as unknown as EditorJS).destroy();
+
+        expect(keydownListeners.size).to.eq(0);
+      });
+    });
   });
 });
