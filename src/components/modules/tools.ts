@@ -164,9 +164,13 @@ export default class Tools extends Module {
    * Calls each Tool reset method to clean up anything set by Tool
    */
   public destroy(): void {
-    Object.values(this.available).forEach(async tool => {
+    Array.from(this.available.values()).forEach(async tool => {
       if (_.isFunction(tool.reset)) {
-        await tool.reset();
+        try {
+          await tool.reset();
+        } catch (e) {
+          _.log(`Tool «${tool.name}» reset method throws an Error %o`, 'warn', e);
+        }
       }
     });
   }
