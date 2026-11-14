@@ -215,4 +215,51 @@ describe('Toolbox', function () {
         .should('exist');
     });
   });
+
+  it('should not keep a toolbox item hovered after closing and reopening the toolbox', function () {
+    /** Tool with one toolbox item for the hover regression. */
+    class HoverTool extends ToolMock {
+      /** Returns the toolbox entry displayed by this tool. */
+      public static get toolbox(): ToolboxConfig {
+        return {
+          icon: '',
+          title: 'Hover tool',
+        };
+      }
+    }
+
+    cy.createEditor({
+      tools: {
+        hoverTool: HoverTool,
+      },
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-paragraph')
+      .click();
+
+    cy.get<EditorJS>('@editorInstance').then((editor) => {
+      editor.toolbar.toggleToolbox(true);
+    });
+    cy.get('[data-item-name="hoverTool"]')
+      .should('be.visible')
+      .click();
+
+    cy.get('[data-item-name="hoverTool"]')
+      .should('have.class', 'ce-popover-item--no-hover');
+
+    cy.get<EditorJS>('@editorInstance').then((editor) => {
+      editor.toolbar.toggleToolbox(true);
+    });
+    cy.get('[data-item-name="hoverTool"]')
+      .should('be.visible')
+      .should('have.class', 'ce-popover-item--no-hover')
+      .should(($item) => {
+        expect($item[0].matches(':hover')).to.be.false;
+      });
+
+    cy.get('[data-item-name="hoverTool"]')
+      .trigger('mouseenter')
+      .should('not.have.class', 'ce-popover-item--no-hover');
+  });
 });
