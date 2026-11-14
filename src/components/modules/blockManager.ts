@@ -18,7 +18,7 @@ import { BlockAddedMutationType } from '../../../types/events/block/BlockAdded';
 import { BlockMovedMutationType } from '../../../types/events/block/BlockMoved';
 import { BlockChangedMutationType } from '../../../types/events/block/BlockChanged';
 import { BlockChanged } from '../events';
-import { sanitizeBlocks } from '../utils/sanitizer';
+import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
 import type BlockToolAdapter from '../tools/block';
@@ -931,6 +931,13 @@ export default class BlockManager extends Module {
    * @param toolConfig - user config of the Tool, passed to the Conversion Config "import" function
    */
   private composeSanitizedBlockData(exportedString: string, tool: BlockToolAdapter, toolConfig?: ToolConfig): BlockToolData {
+    /**
+     * A Tool without any sanitizer rules allows no tags. sanitizeBlocks() skips an empty config, so clean the string itself
+     */
+    if (_.isEmpty(tool.sanitizeConfig)) {
+      return convertStringToBlockData(clean(exportedString), tool.conversionConfig, toolConfig);
+    }
+
     const data = convertStringToBlockData(exportedString, tool.conversionConfig, toolConfig);
     const [ sanitized ] = sanitizeBlocks([ {
       tool: tool.name,
