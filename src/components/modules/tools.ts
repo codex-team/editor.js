@@ -166,7 +166,11 @@ export default class Tools extends Module {
   public destroy(): void {
     Array.from(this.available.values()).forEach(async tool => {
       if (_.isFunction(tool.reset)) {
-        await tool.reset();
+        try {
+          await tool.reset();
+        } catch (e) {
+          _.log(`Tool «${tool.name}» reset method throws an Error %o`, 'warn', e);
+        }
       }
     });
   }
