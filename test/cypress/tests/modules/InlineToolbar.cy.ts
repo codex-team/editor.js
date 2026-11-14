@@ -384,26 +384,28 @@ describe('Inline Toolbar', () => {
       cy.createEditor({ data: paragraph('First editor text') });
       createSecondEditor('Second editor text');
 
-      /** Open the Inline Toolbar of the first Editor, so it registers its shortcuts first */
+      /** Select the text and wait for the Inline Toolbar of the first Editor, so it registers its shortcuts first */
       cy.get('[data-cy=editorjs]')
         .find('.ce-paragraph')
         .click()
-        .selectText('First')
+        .type('{selectall}')
+        .wait(200)
         .type('{cmd}b');
 
       cy.get('[data-cy=editorjs]')
         .find('.ce-paragraph b')
-        .should('have.text', 'First');
+        .should('have.text', 'First editor text');
 
       cy.get('[data-cy=second-editorjs]')
         .find('.ce-paragraph')
         .click()
-        .selectText('Second')
+        .type('{selectall}')
+        .wait(200)
         .type('{cmd}b');
 
       cy.get('[data-cy=second-editorjs]')
         .find('.ce-paragraph b')
-        .should('have.text', 'Second');
+        .should('have.text', 'Second editor text');
 
       /** The shortcut pressed in the second Editor must not format the first one again */
       cy.get('[data-cy=editorjs]')
@@ -418,7 +420,8 @@ describe('Inline Toolbar', () => {
       cy.get('[data-cy=editorjs]')
         .find('.ce-paragraph')
         .click()
-        .selectText('First')
+        .type('{selectall}')
+        .wait(200)
         .type('{cmd}b');
 
       cy.get('@firstEditor').then((editor) => {
@@ -430,12 +433,13 @@ describe('Inline Toolbar', () => {
       cy.get('[data-cy=second-editorjs]')
         .find('.ce-paragraph')
         .click()
-        .selectText('Second')
+        .type('{selectall}')
+        .wait(200)
         .type('{cmd}b');
 
       cy.get('[data-cy=second-editorjs]')
         .find('.ce-paragraph b')
-        .should('have.text', 'Second');
+        .should('have.text', 'Second editor text');
     });
   });
 });
