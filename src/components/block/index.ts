@@ -248,6 +248,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Bind synchronously so deferred initialization cannot rebind after destroy.
      */
     this.holder.addEventListener('change', this.handleSelectChange);
+    this.holder.addEventListener('click', this.handleClick);
 
     /**
      * Bind block events in RIC for optimizing of constructing process time
@@ -687,6 +688,7 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    */
   public destroy(): void {
     this.holder.removeEventListener('change', this.handleSelectChange);
+    this.holder.removeEventListener('click', this.handleClick);
     this.unwatchBlockMutations();
     this.removeInputEvents();
 
@@ -836,7 +838,14 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      */
     this.updateCurrentInput();
   };
-
+  
+  /**
+   * Update current input after the browser has moved the selection.
+   */
+  private handleClick = (): void => {
+    this.dropInputsCache();
+    this.updateCurrentInput();
+  };
   /**
    * Handles change events from native select elements.
    *
