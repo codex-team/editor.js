@@ -6,7 +6,7 @@ import * as _ from '../../utils';
 import type { InlineTool as IInlineTool } from '../../../../types';
 import I18n from '../../i18n';
 import { I18nInternalNS } from '../../i18n/namespace-internal';
-import Shortcuts from '../../utils/shortcuts';
+import Shortcut from '@codexteam/shortcuts';
 import type { ModuleConfig } from '../../../types-internal/module-config';
 import { CommonInternalSettings } from '../../tools/base';
 import type { Popover, PopoverItemHtmlParams, PopoverItemParams, WithChildren } from '../../utils/popover';
@@ -58,6 +58,13 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
   private tools: Map<InlineToolAdapter, IInlineTool> = new Map();
 
   /**
+   * Inline Tools shortcuts registered by this Editor instance, by shortcut name.
+   * They are bound to the document, which several Editors on a page share,
+   * so each instance keeps and removes its own.
+   */
+  private registeredShortcuts: Map<string, Shortcut> = new Map();
+
+  /**
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
    * @param moduleConfiguration.eventsDispatcher - Editor's event dispatcher
@@ -106,13 +113,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       return;
     }
 
-    for (const [tool, toolInstance] of this.tools) {
-      const shortcut = this.getToolShortcut(tool.name);
-
-      if (shortcut !== undefined) {
-        Shortcuts.remove(this.Editor.UI.nodes.redactor, shortcut);
-      }
-
+    for (const toolInstance of this.tools.values()) {
       /**
        * @todo replace 'clear' with 'destroy'
        */
@@ -148,6 +149,9 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * Removes UI and its components
    */
   public destroy(): void {
+    this.registeredShortcuts.forEach((shortcut) => shortcut.remove());
+    this.registeredShortcuts.clear();
+
     this.removeAllNodes();
     this.popover?.destroy();
     this.popover = null;
@@ -374,9 +378,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       const shortcut = this.getToolShortcut(tool.name);
 
       if (shortcut !== undefined) {
-        try {
-          this.enableShortcuts(tool.name, shortcut);
-        } catch (e) {}
+        this.enableShortcuts(tool.name, shortcut);
       }
 
       const shortcutBeautified = shortcut !== undefined ? _.beautifyShortcut(shortcut) : undefined;
@@ -523,9 +525,22 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param shortcut - shortcut according to the ShortcutData Module format
    */
   private enableShortcuts(toolName: string, shortcut: string): void {
-    Shortcuts.add({
+    if (this.registeredShortcuts.has(shortcut)) {
+      return;
+    }
+
+    const registeredShortcut = new Shortcut({
       name: shortcut,
-      handler: (event) => {
+      callback: (event: KeyboardEvent) => {
+        /**
+         * The document is shared with other Editors on the page: handle the shortcut only when the selection is in this one
+         */
+        const { anchorNode } = SelectionUtils;
+
+        if (anchorNode === null || !this.Editor.UI.nodes.wrapper.contains(anchorNode)) {
+          return;
+        }
+
         const { currentBlock } = this.Editor.BlockManager;
 
         /**
@@ -555,6 +570,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
        */
       on: document,
     });
+
+    this.registeredShortcuts.set(shortcut, registeredShortcut);
   }
 
   /**

@@ -6,6 +6,7 @@
 - `Improvement` - `paste` config supports filter functions for tag-based substitution
 - `Fix` - "Convert to" is not shown in the Inline Toolbar when there are no tools to convert to
 - `Fix` - Invoke tool `reset()` methods on `Tools.destroy()`, catching and logging any errors as warnings
+- `Fix` - Inline Tools shortcuts work in every Editor instance on a page and are released when an Editor is destroyed
 
 ### 2.31.7
 
