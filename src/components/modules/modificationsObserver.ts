@@ -18,7 +18,7 @@ export default class ModificationsObserver extends Module {
   /**
    * Flag shows onChange event is disabled
    */
-  private disabled = false;
+  private disabled = true;
 
   /**
    * Blocks wrapper mutation observer instance
