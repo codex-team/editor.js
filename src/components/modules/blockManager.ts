@@ -331,6 +331,14 @@ export default class BlockManager extends Module {
    */
   public insertMany(blocks: Block[], index = 0): void {
     this._blocks.insertMany(blocks, index);
+
+    const firstBlockIndex = this.getBlockIndex(blocks[0]);
+
+    blocks.forEach((block, blockIndex) => {
+      this.blockDidMutated(BlockAddedMutationType, block, {
+        index: firstBlockIndex + blockIndex,
+      });
+    });
   }
 
   /**
