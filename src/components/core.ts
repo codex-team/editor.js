@@ -54,9 +54,14 @@ export default class Core {
         this.validate();
         this.init();
         await this.start();
-        await this.render();
 
         const { BlockManager, Caret, UI, ModificationsObserver } = this.moduleInstances;
+
+        /**
+         * Disable modifications observer during initial rendering
+         */
+        ModificationsObserver.disable();
+        await this.render();
 
         UI.checkEmptiness();
         ModificationsObserver.enable();
