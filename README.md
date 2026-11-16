@@ -66,7 +66,7 @@ Choose and install tools:
 - [Quote](https://github.com/editor-js/quote)
 - [Image](https://github.com/editor-js/image) 
 - [Simple Image](https://github.com/editor-js/simple-image) (without backend requirement)
-- [Nested List](https://github.com/editor-js/nested-list)
+- [List](https://github.com/editor-js/list)
 - [Checklist](https://github.com/editor-js/checklist)
 - [Link embed](https://github.com/editor-js/link)
 - [Embeds](https://github.com/editor-js/embed) (YouTube, Twitch, Vimeo, Gfycat, Instagram, Twitter, etc)
