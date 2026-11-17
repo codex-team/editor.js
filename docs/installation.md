@@ -34,7 +34,7 @@ import EditorJS from '@editorjs/editorjs';
 
 You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
-`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.10.0`
+`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest`
 
 Then require this script.
 
