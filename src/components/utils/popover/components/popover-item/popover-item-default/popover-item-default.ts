@@ -140,6 +140,20 @@ export class PopoverItemDefault extends PopoverItem {
   }
 
   /**
+   * Prevents stale hover state until the pointer enters the item again
+   */
+  public suppressHoverUntilPointerEnters(): void {
+    const root = this.nodes.root;
+
+    if (root === null || root.classList.contains(css.noHover)) {
+      return;
+    }
+
+    root.classList.add(css.noHover);
+    root.addEventListener('mouseenter', this.removeSpecialHoverBehavior, { once: true });
+  }
+
+  /**
    * Constructs HTML element corresponding to popover item params
    *
    * @param params - item construction params
@@ -256,8 +270,6 @@ export class PopoverItemDefault extends PopoverItem {
   private disableSpecialHoverAndFocusBehavior(): void  {
     this.removeSpecialFocusBehavior();
     this.removeSpecialHoverBehavior();
-
-    this.nodes.root?.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
   }
 
   /**
@@ -271,7 +283,12 @@ export class PopoverItemDefault extends PopoverItem {
    * Removes class responsible for special hover behavior on an item
    */
   private removeSpecialHoverBehavior = (): void => {
-    this.nodes.root?.classList.remove(css.noHover);
+    const root = this.nodes.root;
+
+    root?.classList.remove(css.noHover);
+    root?.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
+    root?.removeEventListener('mouseenter', this.removeSpecialHoverBehavior);
+    root?.removeEventListener('mousemove', this.removeSpecialHoverBehavior);
   };
 
   /**
@@ -283,7 +300,10 @@ export class PopoverItemDefault extends PopoverItem {
     if (!('confirmation' in item) || item.confirmation === undefined) {
       try {
         item.onActivate?.(item);
-        this.disableConfirmationMode();
+
+        if (this.isConfirmationStateEnabled) {
+          this.disableConfirmationMode();
+        }
       } catch {
         this.animateError();
       }
