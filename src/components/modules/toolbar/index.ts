@@ -469,18 +469,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
 
     $.append(this.nodes.actions, this.nodes.settingsToggler);
 
-    const blockTunesTooltip = $.make('div');
-    const blockTunesTooltipEl = $.text(I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'));
-    const slashRealKey = await getKeyboardKeyForCode('Slash', '/');
-
-    blockTunesTooltip.appendChild(blockTunesTooltipEl);
-    blockTunesTooltip.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: beautifyShortcut(`CMD + ${slashRealKey}`),
-    }));
-
-    tooltip.onHover(this.nodes.settingsToggler, blockTunesTooltip, {
-      hidingDelay: 400,
-    });
+    await this.makeSettingsTogglerTooltip();
 
     /**
      * Appending Toolbar components to itself
@@ -492,6 +481,36 @@ export default class Toolbar extends Module<ToolbarNodes> {
      * Append toolbar to the Editor
      */
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+  }
+
+  /**
+   * Creates and configures a tooltip for the settings toggler button in the toolbar.
+   *
+   * @returns {Promise<void>} A promise that resolves when the tooltip is successfully created.
+   */
+  private async makeSettingsTogglerTooltip(): Promise<void> {
+    const tooltipTextParts: string[] = [
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
+    ];
+
+    tooltipTextParts.push(
+      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'or drag to move')
+    );
+
+    const blockTunesTooltip = $.make('div');
+    const blockTunesTooltipEl = $.text(tooltipTextParts.join(' '));
+    const slashRealKey = await getKeyboardKeyForCode('Slash', '/');
+
+    blockTunesTooltip.appendChild(blockTunesTooltipEl);
+    blockTunesTooltip.appendChild(
+      $.make('div', this.CSS.plusButtonShortcut, {
+        textContent: beautifyShortcut(`CMD + ${slashRealKey}`),
+      })
+    );
+
+    tooltip.onHover(this.nodes.settingsToggler, blockTunesTooltip, {
+      hidingDelay: 400,
+    });
   }
 
   /**
