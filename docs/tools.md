@@ -449,7 +449,7 @@ It can be a `String` or a `Function`.
 
 `String` means a key of your Tool data object that should be used as string to export.
 
-`Function` is a method that accepts your Tool data and compose a string to export from it. See example below:
+`Function` is a method that accepts your Tool data and compose a string or object to export from it. See example below:
 
 ```js
 class ListTool {
@@ -484,7 +484,7 @@ It can be a `String` or a `Function`.
 `String` means the key in tool data that will be filled by an exported string.
 For example, `import: 'text'` means that `constructor` of your block will accept a `data` object with `text` property filled with string composed by original block.
 
-`Function` allows you to specify own logic, how a string should be converted to your tool data. For example:
+`Function` allows you to specify own logic, how a string or object should be converted to your tool data. For example:
 
 ```js
 class ListTool {
