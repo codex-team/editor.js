@@ -342,6 +342,11 @@ export default class SelectionUtils {
       return element.getBoundingClientRect();
     }
 
+    const editable = (element.nodeType === Node.ELEMENT_NODE ? element : element.parentElement)
+      ?.closest<HTMLElement>('[contenteditable="true"]');
+
+    editable?.focus();
+
     range.setStart(element, offset);
     range.setEnd(element, offset);
 
