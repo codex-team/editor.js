@@ -1,6 +1,7 @@
 import Paragraph from '@editorjs/paragraph';
 import Module from '../__module';
 import * as _ from '../utils';
+import { mergeSanitizerConfigs } from '../utils/sanitizer';
 import type { SanitizerConfig, ToolConfig, ToolConstructable, ToolSettings } from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
@@ -150,14 +151,9 @@ export default class Tools extends Module {
    */
   @_.cacheable
   public getAllInlineToolsSanitizeConfig(): SanitizerConfig {
-    const config: SanitizerConfig = {} as SanitizerConfig;
-
-    Array.from(this.inlineTools.values())
-      .forEach(inlineTool => {
-        Object.assign(config, inlineTool.sanitizeConfig);
-      });
-
-    return config;
+    return mergeSanitizerConfigs(
+      ...Array.from(this.inlineTools.values()).map(inlineTool => inlineTool.sanitizeConfig)
+    );
   }
 
   /**
