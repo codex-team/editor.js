@@ -53,4 +53,23 @@ describe('ReadOnly API spec', () => {
           });
       });
   });
+
+  it('should focus the first block after switching to the editable mode when autofocus is enabled', () => {
+    createEditor({
+      readOnly: true,
+      autofocus: true,
+    });
+
+    cy
+      .get<EditorJS>('@editorInstance')
+      .then(async editor => {
+        await editor.readOnly.toggle();
+      });
+
+    cy
+      .get('[data-cy=editorjs]')
+      .find('[contenteditable=true]')
+      .first()
+      .should('be.focused');
+  });
 });
