@@ -200,6 +200,7 @@ export default class Blocks {
     if (replace) {
       this.blocks[index].holder.remove();
       this.blocks[index].call(BlockToolAPI.REMOVED);
+      this.blocks[index].destroy();
     }
 
     const deleteCount = replace ? 1 : 0;
@@ -237,6 +238,8 @@ export default class Blocks {
     prevBlock.holder.replaceWith(block.holder);
 
     this.blocks[index] = block;
+
+    prevBlock.destroy();
   }
 
   /**
@@ -291,6 +294,8 @@ export default class Blocks {
 
     this.blocks[index].call(BlockToolAPI.REMOVED);
 
+    this.blocks[index].destroy();
+
     this.blocks.splice(index, 1);
   }
 
@@ -300,7 +305,10 @@ export default class Blocks {
   public removeAll(): void {
     this.workingArea.innerHTML = '';
 
-    this.blocks.forEach((block) => block.call(BlockToolAPI.REMOVED));
+    this.blocks.forEach((block) => {
+      block.call(BlockToolAPI.REMOVED);
+      block.destroy();
+    });
 
     this.blocks.length = 0;
   }
