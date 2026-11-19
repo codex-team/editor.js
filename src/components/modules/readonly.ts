@@ -114,6 +114,12 @@ export default class ReadOnly extends Module {
 
     this.Editor.ModificationsObserver.enable();
 
+    const firstBlock = this.Editor.BlockManager.blocks[0];
+
+    if (!this.readOnlyEnabled && this.config.autofocus === true && firstBlock) {
+      this.Editor.Caret.setToBlock(firstBlock, this.Editor.Caret.positions.START);
+    }
+
     return this.readOnlyEnabled;
   }
 
