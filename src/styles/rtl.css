@@ -78,6 +78,11 @@
       margin-right: var(--toolbar-actions-space);
     }
 
+    .ce-toolbar--stretched .ce-toolbar__content {
+      margin-left: 0;
+      margin-right: var(--toolbar-actions-space);
+    }
+
     .ce-toolbar__actions {
       right: auto;
       left: 100%;

@@ -130,6 +130,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
       actionsOpened: 'ce-toolbar__actions--opened',
 
       toolbarOpened: 'ce-toolbar--opened',
+      toolbarStretched: 'ce-toolbar--stretched',
       openedToolboxHolderModifier: 'codex-editor--toolbox-opened',
 
       plusButton: 'ce-toolbar__plus',
@@ -355,6 +356,11 @@ export default class Toolbar extends Module<ToolbarNodes> {
     this.nodes.wrapper!.style.top = `${Math.floor(toolbarY)}px`;
 
     /**
+     * Align Toolbar with the content width of the hovered Block
+     */
+    this.nodes.wrapper.classList.toggle(this.CSS.toolbarStretched, block.stretched);
+
+    /**
      * Do not show Block Tunes Toggler near single and empty block
      */
     if (this.Editor.BlockManager.blocks.length === 1 && block.isEmpty) {
@@ -388,6 +394,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    */
   private reset(): void {
     this.nodes.wrapper.style.top = 'unset';
+    this.nodes.wrapper.classList.remove(this.CSS.toolbarStretched);
   }
 
   /**

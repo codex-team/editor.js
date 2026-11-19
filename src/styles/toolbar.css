@@ -31,6 +31,15 @@
     }
   }
 
+  &--stretched {
+    .ce-toolbar__content {
+      @media (--not-mobile) {
+        width: max(0px, calc(100% - var(--toolbar-actions-space)));
+        margin-left: var(--toolbar-actions-space);
+      }
+    }
+  }
+
   &__plus {
     @apply --toolbox-button;
     flex-shrink: 0;
