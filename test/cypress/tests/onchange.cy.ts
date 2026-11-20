@@ -1111,6 +1111,61 @@ describe('onChange callback', () => {
     }));
   });
 
+  it('should batch block-added events with their targets and indices on insertMany', () => {
+    cy.createEditor({
+      onChange: cy.stub().as('onChange'),
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: { text: 'First block' },
+          },
+          {
+            type: 'paragraph',
+            data: { text: 'Last block' },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.wait(modificationsObserverBatchTimeout);
+    cy.get('@onChange').should('not.be.called');
+
+    cy.get<EditorJS>('@editorInstance').then(editor => {
+      editor.blocks.insertMany([
+        {
+          id: 'bulk-first',
+          type: 'paragraph',
+          data: { text: 'Inserted first' },
+        },
+        {
+          id: 'bulk-second',
+          type: 'paragraph',
+          data: { text: 'Inserted second' },
+        },
+      ], 1);
+    });
+
+    cy.get('@onChange').should('be.calledWithBatchedEvents', [
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 1,
+          target: { id: 'bulk-first' },
+        },
+      },
+      {
+        type: BlockAddedMutationType,
+        detail: {
+          index: 2,
+          target: { id: 'bulk-second' },
+        },
+      },
+    ]);
+    cy.get('@onChange').its('firstCall.args.1')
+      .should('have.length', 2);
+  });
+
   it('should not be called when editor is initialized with readOnly mode', () => {
     const config = {
       readOnly: true,
