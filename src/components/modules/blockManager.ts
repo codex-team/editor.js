@@ -402,11 +402,13 @@ export default class BlockManager extends Module {
    * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
+   * @param {Function} onPasteComplete - called after the deferred onPaste handler
    */
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace = false
+    replace = false,
+    onPasteComplete?: () => void
   ): Block {
     const block = this.insert({
       tool: toolName,
@@ -423,6 +425,10 @@ export default class BlockManager extends Module {
        */
       window.requestIdleCallback(() => {
         block.call(BlockToolAPI.ON_PASTE, pasteEvent);
+        if (onPasteComplete) {
+          /** Allow tools such as Paragraph to apply pasted content in the next frame. */
+          window.requestAnimationFrame(onPasteComplete);
+        }
       });
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);

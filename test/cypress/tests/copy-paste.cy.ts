@@ -8,6 +8,43 @@ import type EditorJS from '../../../types/index';
 
 describe('Copy pasting from Editor', function () {
   context('pasting', function () {
+    it('should place the caret at the end after delayed multi-block paste', function () {
+      const callbacks: IdleRequestCallback[] = [];
+
+      cy.createEditor({});
+      cy.window().then((window) => {
+        cy.stub(window, 'requestIdleCallback').callsFake((callback: IdleRequestCallback) => {
+          callbacks.push(callback);
+
+          return callbacks.length;
+        });
+      });
+
+      cy.get('[data-cy=editorjs] div.ce-block')
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/plain': 'First block\n\nSecond block',
+        });
+
+      cy.then(() => {
+        callbacks.forEach(callback => callback({
+          didTimeout: false,
+          timeRemaining: () => 50,
+        }));
+      });
+
+      cy.get('[data-cy=editorjs] div.ce-paragraph')
+        .last()
+        .should('have.text', 'Second block');
+      cy.window().should((window) => {
+        const selection = window.getSelection();
+
+        expect(selection.anchorNode.textContent).to.eq('Second block');
+        expect(selection.anchorOffset).to.eq('Second block'.length);
+      });
+    });
+
     it('should paste plain text', function () {
       cy.createEditor({});
 
