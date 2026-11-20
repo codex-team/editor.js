@@ -185,14 +185,14 @@ export default class RectangleSelection extends Module {
       this.processMouseDown(mouseEvent);
     }, false);
 
-    this.listeners.on(document.body, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
+    this.listeners.on(window, 'mousemove', _.throttle((mouseEvent: MouseEvent) => {
       this.processMouseMove(mouseEvent);
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     }, 10), {
       passive: true,
     });
 
-    this.listeners.on(document.body, 'mouseleave', () => {
+    this.listeners.on(window, 'mouseleave', () => {
       this.processMouseLeave();
     });
 
@@ -203,7 +203,7 @@ export default class RectangleSelection extends Module {
       passive: true,
     });
 
-    this.listeners.on(document.body, 'mouseup', () => {
+    this.listeners.on(window, 'mouseup', () => {
       this.processMouseUp();
     }, false);
   }
