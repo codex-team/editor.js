@@ -37,7 +37,7 @@
     max-width: none;
 
     @media (--not-mobile) {
-      width: max(0px, calc(100% - var(--toolbar-actions-space)));
+      width: var(--stretched-content-width);
       margin-left: var(--toolbar-actions-space);
     }
   }
@@ -51,7 +51,7 @@
     @media (--not-mobile) {
       width: min(
         var(--content-width),
-        max(0px, calc(100% - var(--toolbar-actions-space)))
+        var(--stretched-content-width)
       );
       max-width: none;
       margin-left: max(
