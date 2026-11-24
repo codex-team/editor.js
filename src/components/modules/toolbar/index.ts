@@ -9,6 +9,7 @@ import type Block from '../../block';
 import Toolbox, { ToolboxEvent } from '../../ui/toolbox';
 import { IconMenu, IconPlus } from '@codexteam/icons';
 import { BlockHovered } from '../../events/BlockHovered';
+import { BlockStretchToggled } from '../../events/BlockStretchToggled';
 import { beautifyShortcut } from '../../utils';
 import { getKeyboardKeyForCode } from '../../utils/keyboard';
 
@@ -603,6 +604,24 @@ export default class Toolbar extends Module<ToolbarNodes> {
         }
 
         this.moveAndOpen(data.block);
+      });
+
+      /**
+       * Re-align Toolbar when the hovered Block changes its stretched state
+       */
+      this.eventsDispatcher.on(BlockStretchToggled, ({ block }) => {
+        if (!this.opened || block !== this.hoveredBlock) {
+          return;
+        }
+
+        /**
+         * Do not move toolbar if Block Settings or Toolbox opened
+         */
+        if (this.Editor.BlockSettings.opened || this.toolboxInstance?.opened) {
+          return;
+        }
+
+        this.moveAndOpen(block);
       });
     }
   }

@@ -24,7 +24,7 @@ import EventsDispatcher from '../utils/events';
 import type { TunesMenuConfigItem } from '../../../types/tools';
 import { isMutationBelongsToElement } from '../utils/mutations';
 import type { EditorEventMap } from '../events';
-import { FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
+import { BlockStretchToggled, FakeCursorAboutToBeToggled, FakeCursorHaveBeenSet, RedactorDomChanged } from '../events';
 import type { RedactorDomChangedPayload } from '../events/RedactorDomChanged';
 import { convertBlockDataToString, isSameBlockData } from '../utils/blocks';
 import { PopoverItemType } from '@/types/utils/popover/popover-item-type';
@@ -473,7 +473,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    * @param {boolean} state - 'true' to enable, 'false' to disable stretched state
    */
   public set stretched(state: boolean) {
+    const wasStretched = this.stretched;
+
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
+
+    if (wasStretched !== state) {
+      this.editorEventBus?.emit(BlockStretchToggled, { block: this });
+    }
   }
 
   /**
