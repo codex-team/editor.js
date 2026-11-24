@@ -106,6 +106,47 @@ describe('Caret API', () => {
       });
     });
 
+    describe('focus', () => {
+      it('should focus the block input when focus was outside the editor', () => {
+        const paragraphDataMock = createParagraphMock('The first block content mock.');
+
+        cy.createEditor({
+          data: {
+            blocks: [
+              paragraphDataMock,
+            ],
+          },
+        }).as('editorInstance');
+
+        cy.window()
+          .then((window) => {
+            const input = window.document.createElement('input');
+
+            input.setAttribute('data-cy', 'regular-input');
+
+            window.document.body.appendChild(input);
+          });
+
+        cy.get('[data-cy=regular-input]')
+          .focus()
+          .blur();
+
+        cy.document()
+          .should((document) => {
+            expect(document.activeElement).to.equal(document.body);
+          });
+
+        cy.get<EditorJS>('@editorInstance')
+          .then((editor) => {
+            editor.caret.setToBlock(paragraphDataMock.id, 'start');
+          });
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .should('have.focus');
+      });
+    });
+
     describe('offset', () => {
       it('should set caret at specific offset in text content', () => {
         const paragraphDataMock = createParagraphMock('Plain text content.');
