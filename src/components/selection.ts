@@ -326,7 +326,7 @@ export default class SelectionUtils {
    * @param element - element where to set focus
    * @param offset - offset of cursor
    */
-  public static setCursor(element: HTMLElement, offset = 0): DOMRect {
+  public static setCursor(element: Node, offset = 0): DOMRect {
     const range = document.createRange();
     const selection = window.getSelection();
 
@@ -342,10 +342,10 @@ export default class SelectionUtils {
       return element.getBoundingClientRect();
     }
 
-    const editable = (element.nodeType === Node.ELEMENT_NODE ? element : element.parentElement)
+    const editable = (element instanceof Element ? element : element.parentElement)
       ?.closest<HTMLElement>('[contenteditable="true"]');
 
-    editable?.focus();
+    editable?.focus({ preventScroll: true });
 
     range.setStart(element, offset);
     range.setEnd(element, offset);
