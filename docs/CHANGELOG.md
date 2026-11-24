@@ -8,6 +8,7 @@
 - `Fix` - Invoke tool `reset()` methods on `Tools.destroy()`, catching and logging any errors as warnings
 - `Fix` - `blocks.insertMany()` now triggers `onChange` with a `block-added` event for each inserted block
 - `Fix` - Restore autofocus when switching from read-only to editable mode
+- `Fix` - Inline Tools shortcuts work in every Editor instance on a page and are released when an Editor is destroyed
 
 ### 2.31.7
 
