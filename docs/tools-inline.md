@@ -146,3 +146,33 @@ export default class BoldInlineTool implements InlineTool {
   // ... other methods
 }
 ```
+
+---
+
+## Prepare and reset
+
+If you need to prepare some data for an Inline Tool (e.g. load an external script or create HTML nodes in the document), you can use the static `prepare` method.
+
+It accepts the tools config passed during Editor initialization as an argument:
+
+```javascript
+class InlineTool {
+  static prepare(config) {
+    loadScript();
+    insertNodes();
+  }
+}
+```
+
+On Editor destroy, you can use the opposite method `reset` to clean up all prepared data:
+
+```javascript
+class InlineTool {
+  static reset() {
+    cleanUpScripts();
+    deleteNodes();
+  }
+}
+```
+
+Both methods might be async.
