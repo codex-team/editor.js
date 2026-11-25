@@ -227,7 +227,7 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * @param {boolean} readOnlyEnabled - read-only mode
    */
   public toggleReadOnly(readOnlyEnabled: boolean): void {
-    if (!readOnlyEnabled) {
+    if (!readOnlyEnabled && this.config.hideToolbar !== true) {
       window.requestIdleCallback(() => {
         this.drawUI();
         this.enableModuleBindings();
@@ -245,6 +245,13 @@ export default class Toolbar extends Module<ToolbarNodes> {
    * @param block - block to move Toolbar near it
    */
   public moveAndOpen(block: Block = this.Editor.BlockManager.currentBlock): void {
+    /**
+     * If Toolbar should not get initialized, do nothing
+     */
+    if (this.Editor.ReadOnly.isEnabled || this.config.hideToolbar === true) {
+      return;
+    }
+
     /**
      * Some UI elements creates inside requestIdleCallback, so the can be not ready yet
      */
