@@ -156,6 +156,8 @@ export class PopoverDesktop extends PopoverAbstract {
   public hide = (): void => {
     super.hide();
 
+    this.itemsDefault.forEach(item => item.suppressHoverUntilPointerEnters());
+
     this.destroyNestedPopoverIfExists();
 
     this.flipper?.deactivate();
