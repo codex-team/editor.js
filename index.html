@@ -79,7 +79,7 @@
     https://editorjs.io/getting-started#tools-connection
   -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script><!-- Header -->
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script><!-- Image -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script><!-- Image -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script><!-- Delimiter -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script><!-- List -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script><!-- Checklist -->
@@ -142,7 +142,29 @@
         /**
          * Or pass class directly without any configuration
          */
-        image: SimpleImage,
+        image: {
+          class: ImageTool,
+          config: {
+            uploader: {
+              uploadByFile(file) {
+                return Promise.resolve({
+                  success: 1,
+                  file: {
+                    url: '/assets/codex2x.png',
+                  }
+                });
+              },
+              uploadByUrl(url) {
+                return Promise.resolve({
+                  success: 1,
+                  file: {
+                    url: url,
+                  }
+                });
+              }
+            }
+          }
+        },
 
         list: {
           class: NestedList,
@@ -322,7 +344,9 @@
             type: 'image',
             id: "9802bjaAA2",
             data: {
-              url: '/assets/codex2x.png',
+              file: {
+                url: '/assets/codex2x.png',
+              },
               caption: '',
               stretched: false,
               withBorder: true,
