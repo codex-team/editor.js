@@ -614,6 +614,8 @@ export default class Toolbar extends Module<ToolbarNodes> {
           return;
         }
 
+        this.nodes.wrapper.classList.toggle(this.CSS.toolbarStretched, block.stretched);
+
         /**
          * Do not move toolbar if Block Settings or Toolbox opened
          */

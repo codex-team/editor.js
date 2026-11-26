@@ -154,5 +154,43 @@ describe('api.toolbar', () => {
         .should('not.have.class', 'ce-toolbar--stretched');
       assertToolbarAlignedWithBlock();
     });
+
+    it('should re-align the toolbar when the hovered Block is stretched while Block Settings are open', function () {
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-block')
+        .first()
+        .trigger('mousemove');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-toolbar')
+        .should('have.class', 'ce-toolbar--opened');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-toolbar__settings-btn')
+        .click();
+
+      cy.get('[data-cy="block-tunes"] .ce-popover__container').should('be.visible');
+      assertToolbarAlignedWithBlock();
+
+      cy.get<EditorJS>('@editorInstance').then((editor) => {
+        editor.blocks.getBlockByIndex(0).stretched = true;
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-toolbar')
+        .should('have.class', 'ce-toolbar--stretched');
+      cy.get('[data-cy="block-tunes"] .ce-popover__container').should('be.visible');
+      assertToolbarAlignedWithBlock();
+
+      cy.get<EditorJS>('@editorInstance').then((editor) => {
+        editor.blocks.getBlockByIndex(0).stretched = false;
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-toolbar')
+        .should('not.have.class', 'ce-toolbar--stretched');
+      cy.get('[data-cy="block-tunes"] .ce-popover__container').should('be.visible');
+      assertToolbarAlignedWithBlock();
+    });
   });
 });
