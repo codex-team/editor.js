@@ -19,7 +19,7 @@ export default class Renderer extends Module {
       const { Tools, BlockManager } = this.Editor;
 
       if (blocksData.length === 0) {
-        BlockManager.insert();
+        BlockManager.insertSync();
       } else {
         /**
          * Create Blocks instances

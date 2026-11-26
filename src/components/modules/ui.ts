@@ -604,7 +604,7 @@ export default class UI extends Module<UINodes> {
       /**
        * Insert the default typed Block
        */
-      const newBlock = this.Editor.BlockManager.insert();
+      const newBlock = this.Editor.BlockManager.insertSync();
 
       /**
        * Prevent default enter behaviour to prevent adding a new line (<div><br></div>) to the inserted block
