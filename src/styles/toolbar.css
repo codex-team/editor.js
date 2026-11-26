@@ -20,7 +20,7 @@
     @media (--not-mobile) {
       width: min(
         var(--content-width),
-        max(0px, calc(100% - var(--toolbar-actions-space)))
+        var(--stretched-content-width)
       );
       max-width: none;
       margin-left: max(
@@ -28,6 +28,15 @@
         calc((100% - var(--content-width)) / 2)
       );
       margin-right: 0;
+    }
+  }
+
+  &--stretched {
+    .ce-toolbar__content {
+      @media (--not-mobile) {
+        width: var(--stretched-content-width);
+        margin-left: var(--toolbar-actions-space);
+      }
     }
   }
 
