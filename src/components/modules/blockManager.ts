@@ -168,11 +168,6 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
-   * Resolves when a Block's deferred initialization and event bindings are complete
-   */
-  private readonly blockReadiness = new WeakMap<Block, Promise<void>>();
-
-  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    */
@@ -250,16 +245,9 @@ export default class BlockManager extends Module {
     }, this.eventsDispatcher);
 
     if (!readOnly) {
-      const eventBindingsReady = new Promise<void>((resolve) => {
-        window.requestIdleCallback(() => {
-          this.bindBlockEvents(block);
-          resolve();
-        }, { timeout: 2000 });
-      });
-
-      this.blockReadiness.set(block, Promise.all([block.ready, eventBindingsReady]).then(() => undefined));
-    } else {
-      this.blockReadiness.set(block.ready);
+      window.requestIdleCallback(() => {
+        this.bindBlockEvents(block);
+      }, { timeout: 2000 });
     }
 
     return block;
@@ -275,37 +263,9 @@ export default class BlockManager extends Module {
    * @param {number} [options.index] - index where to insert new Block
    * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
    * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
-   * @returns {Promise<Block>} resolves when the inserted Block is ready
-   */
-  public async insert(options: {
-    id?: string;
-    tool?: string;
-    data?: BlockToolData;
-    index?: number;
-    needToFocus?: boolean;
-    replace?: boolean;
-    tunes?: {[name: string]: BlockTuneData};
-  } = {}): Promise<Block> {
-    const block = this.insertSync(options);
-
-    await this.blockReadiness.get(block);
-
-    return block;
-  }
-
-  /**
-   * Insert new block into _blocks synchronously
-   *
-   * @param {object} options - insert options
-   * @param {string} [options.id] - block's unique id
-   * @param {string} [options.tool] - plugin name, by default method inserts the default block type
-   * @param {object} [options.data] - plugin data
-   * @param {number} [options.index] - index where to insert new Block
-   * @param {boolean} [options.needToFocus] - flag shows if needed to update current Block index
-   * @param {boolean} [options.replace] - flag shows if block by passed index should be replaced with inserted one
    * @returns {Block}
    */
-  public insertSync({
+  public insert({
     id = undefined,
     tool = this.config.defaultBlock,
     data = {},
@@ -428,7 +388,7 @@ export default class BlockManager extends Module {
   public replace(block: Block, newTool: string, data: BlockToolData): Block {
     const blockIndex = this.getBlockIndex(block);
 
-    return this.insertSync({
+    return this.insert({
       tool: newTool,
       data,
       index: blockIndex,
@@ -442,33 +402,38 @@ export default class BlockManager extends Module {
    * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
-   * @returns {Promise<Block>} inserted Block after its onPaste handler completes
+   * @returns {Promise<Block>} resolves when the Tool's onPaste callback completes
    */
-  public async paste(
+  public paste(
     toolName: string,
     pasteEvent: PasteEvent,
     replace = false
   ): Promise<Block> {
-    const block = await this.insert({
+    const block = this.insert({
       tool: toolName,
       replace,
     });
 
-    /**
-     * We need to call onPaste after Block will be ready
-     * because onPaste could change tool's root element, and we need to do that after block.watchBlockMutations() bound
-     * to detect tool root element change
-     */
-    try {
-      block.call(BlockToolAPI.ON_PASTE, pasteEvent);
-    } catch (e) {
-      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
-    }
+    return this.callOnPaste(block, pasteEvent).then(() => block);
+  }
 
-    /** Allow tools such as Paragraph to apply pasted content in the next frame. */
-    await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
-
-    return block;
+  /**
+   * Call a Tool's onPaste callback and wait for its optional Promise
+   *
+   * @param {Block} block - Block whose Tool should handle the pasted content
+   * @param {PasteEvent} pasteEvent - pasted data
+   * @returns {Promise<void>} resolves after the Tool finishes handling the paste
+   */
+  public callOnPaste(block: Block, pasteEvent: PasteEvent): Promise<void> {
+    return new Promise((resolve) => {
+      window.requestIdleCallback(() => {
+        Promise.resolve(block.call(BlockToolAPI.ON_PASTE, pasteEvent))
+          .catch((e) => {
+            _.log(`${block.name}: onPaste callback call is failed`, 'error', e);
+          })
+          .then(() => resolve());
+      });
+    });
   }
 
   /**
@@ -515,7 +480,7 @@ export default class BlockManager extends Module {
     /**
      * Insert the default typed block
      */
-    return this.insertSync();
+    return this.insert();
   }
 
   /**
@@ -602,7 +567,7 @@ export default class BlockManager extends Module {
         this.unsetCurrentBlock();
 
         if (addLastBlock) {
-          this.insertSync();
+          this.insert();
         }
       } else if (index === 0) {
         this.currentBlockIndex = 0;
@@ -647,7 +612,7 @@ export default class BlockManager extends Module {
     }
 
     this.unsetCurrentBlock();
-    this.insertSync();
+    this.insert();
     this.currentBlock.firstInput.focus();
   }
 
@@ -676,7 +641,7 @@ export default class BlockManager extends Module {
      *
      * @type {Block}
      */
-    return this.insertSync({ data });
+    return this.insert({ data });
   }
 
   /**
@@ -956,7 +921,7 @@ export default class BlockManager extends Module {
     this.unsetCurrentBlock();
 
     if (needToAddDefaultBlock) {
-      this.insertSync();
+      this.insert();
     }
 
     /**

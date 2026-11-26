@@ -175,7 +175,7 @@ export default class BlocksAPI extends Module {
      * Insert the new default empty block
      */
     if (this.Editor.BlockManager.blocks.length === 0) {
-      this.Editor.BlockManager.insertSync();
+      this.Editor.BlockManager.insert();
     }
 
     /**
@@ -274,7 +274,7 @@ export default class BlocksAPI extends Module {
     replace?: boolean,
     id?: string
   ): BlockAPIInterface => {
-    const insertedBlock = this.Editor.BlockManager.insertSync({
+    const insertedBlock = this.Editor.BlockManager.insert({
       id,
       tool: type,
       data,

@@ -11,6 +11,7 @@ import type {
 import type { SavedData } from '../../../types/data-formats';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import type BlockToolAdapter from '../tools/block';
+import type Block from '../block';
 
 /**
  * Tag substitute object.
@@ -256,9 +257,12 @@ export default class Paste extends Module {
     const isCurrentBlockDefault = BlockManager.currentBlock && BlockManager.currentBlock.tool.isDefault;
     const needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
 
-    await Promise.all(dataToInsert.map(
-      (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock)
-    ));
+    const blocks = dataToInsert.map((content, i) => BlockManager.insert({
+      tool: content.tool,
+      replace: i === 0 && needToReplaceCurrentBlock,
+    }));
+
+    await Promise.all(blocks.map((block, i) => BlockManager.callOnPaste(block, dataToInsert[i].event)));
 
     if (BlockManager.currentBlock) {
       Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
@@ -790,7 +794,9 @@ export default class Paste extends Module {
       dataToInsert.tool !== currentBlock.name ||
       !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
     ) {
-      await this.insertBlock(dataToInsert, currentBlock?.tool.isDefault && currentBlock.isEmpty);
+      const insertedBlock = await this.insertBlock(dataToInsert, currentBlock?.tool.isDefault && currentBlock.isEmpty);
+
+      Caret.setToBlock(insertedBlock, Caret.positions.END);
 
       return;
     }
@@ -838,7 +844,9 @@ export default class Paste extends Module {
         clean(content.innerHTML, currentToolSanitizeConfig)
       );
     } else {
-      await this.insertBlock(dataToInsert);
+      const insertedBlock = await this.insertBlock(dataToInsert);
+
+      Caret.setToBlock(insertedBlock, Caret.positions.END);
     }
   }
 
@@ -879,14 +887,14 @@ export default class Paste extends Module {
    *
    * @param {PasteData} data - data to insert
    * @param {boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
-   * @returns {Promise<void>} resolves after the pasted content has been applied
+   * @returns {Promise<Block>} resolves after the pasted content has been applied
    */
-  private async insertBlock(data: PasteData, canReplaceCurrentBlock = false): Promise<void> {
+  private insertBlock(data: PasteData, canReplaceCurrentBlock = false): Promise<Block> {
     const { BlockManager } = this.Editor;
     const { currentBlock } = BlockManager;
     const replace = canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty;
 
-    await BlockManager.paste(data.tool, data.event, replace);
+    return BlockManager.paste(data.tool, data.event, replace);
   }
 
   /**
@@ -910,7 +918,7 @@ export default class Paste extends Module {
         needToReplaceCurrentBlock = isCurrentBlockDefault && BlockManager.currentBlock.isEmpty;
       }
 
-      const block = BlockManager.insertSync({
+      const block = BlockManager.insert({
         tool,
         data,
         replace: needToReplaceCurrentBlock,

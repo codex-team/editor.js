@@ -207,14 +207,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
   private readonly blockAPI: BlockAPIInterface;
 
   /**
-   * Resolves when the block's deferred DOM observers and input handlers are ready
-   */
-  public readonly ready: Promise<void>;
-
-  /** Resolve the readiness promise after deferred initialization completes */
-  private resolveReady: (() => void) | null = null;
-
-  /**
    * @param options - block constructor options
    * @param [options.id] - block's id. Will be generated if omitted.
    * @param options.data - Tool's initial data
@@ -231,10 +223,6 @@ export default class Block extends EventsDispatcher<BlockEvents> {
     tunesData,
   }: BlockConstructorOptions, eventBus?: EventsDispatcher<EditorEventMap>) {
     super();
-    this.ready = new Promise((resolve) => {
-      this.resolveReady = resolve;
-    });
-
     this.name = tool.name;
     this.id = id;
     this.settings = tool.settings;
@@ -265,27 +253,22 @@ export default class Block extends EventsDispatcher<BlockEvents> {
      * Bind block events in RIC for optimizing of constructing process time
      */
     window.requestIdleCallback(() => {
-      try {
-        /**
-         * Start watching block mutations
-         */
-        this.watchBlockMutations();
+      /**
+       * Start watching block mutations
+       */
+      this.watchBlockMutations();
 
-        /**
-         * Mutation observer doesn't track changes in "<input>" and "<textarea>"
-         * so we need to track focus events to update current input and clear cache.
-         */
-        this.addInputEvents();
+      /**
+       * Mutation observer doesn't track changes in "<input>" and "<textarea>"
+       * so we need to track focus events to update current input and clear cache.
+       */
+      this.addInputEvents();
 
-        /**
-         * We mark inputs with [data-empty] attribute
-         * It can be useful for developers, for example for correct placeholder behavior
-         */
-        this.toggleInputsEmptyMark();
-      } finally {
-        this.resolveReady?.();
-        this.resolveReady = null;
-      }
+      /**
+       * We mark inputs with [data-empty] attribute
+       * It can be useful for developers, for example for correct placeholder behavior
+       */
+      this.toggleInputsEmptyMark();
     });
   }
 
@@ -527,8 +510,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param {string} methodName - method to call
    * @param {object} params - method argument
+   * @returns {unknown} result returned by the Tool method
    */
-  public call(methodName: string, params?: object): void {
+  public call(methodName: string, params?: object): unknown {
     /**
      * call Tool's method with the instance context
      */
@@ -543,11 +527,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
       try {
         // eslint-disable-next-line no-useless-call
-        this.toolInstance[methodName].call(this.toolInstance, params);
+        return this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
       }
     }
+
+    return undefined;
   }
 
   /**
