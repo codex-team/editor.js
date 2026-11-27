@@ -9,6 +9,7 @@ import type {
   ToolboxConfigEntry
 } from '@/types';
 import * as _ from '../utils';
+import { mergeSanitizerConfigs } from '../utils/sanitizer';
 import type InlineToolAdapter from './inline';
 import type BlockTuneAdapter from './tune';
 import ToolsCollection from './collection';
@@ -187,7 +188,7 @@ export default class BlockToolAdapter extends BaseToolAdapter<ToolType.Block, IB
          * Otherwise pass as it is
          */
         if (_.isObject(rule)) {
-          toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
+          toolConfig[fieldName] = mergeSanitizerConfigs(baseConfig, rule as SanitizerConfig);
         } else {
           toolConfig[fieldName] = rule;
         }
@@ -202,16 +203,9 @@ export default class BlockToolAdapter extends BaseToolAdapter<ToolType.Block, IB
    */
   @_.cacheable
   public get baseSanitizeConfig(): SanitizerConfig {
-    const baseConfig = {};
-
-    Array
-      .from(this.inlineTools.values())
-      .forEach(tool => Object.assign(baseConfig, tool.sanitizeConfig));
-
-    Array
-      .from(this.tunes.values())
-      .forEach(tune => Object.assign(baseConfig, tune.sanitizeConfig));
-
-    return baseConfig;
+    return mergeSanitizerConfigs(
+      ...Array.from(this.inlineTools.values()).map(tool => tool.sanitizeConfig),
+      ...Array.from(this.tunes.values()).map(tune => tune.sanitizeConfig)
+    );
   }
 }
