@@ -9,7 +9,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import type { BlockToolData, PasteEvent } from '../../../types';
+import type { BlockToolData, PasteEvent, ToolConfig } from '../../../types';
 import type { BlockTuneData } from '../../../types/block-tunes/block-tune-data';
 import BlockAPI from '../block/api';
 import type { BlockMutationEventMap, BlockMutationType } from '../../../types/events/block';
@@ -21,6 +21,7 @@ import { BlockChanged } from '../events';
 import { clean, sanitizeBlocks } from '../utils/sanitizer';
 import { convertStringToBlockData, isBlockConvertable } from '../utils/blocks';
 import PromiseQueue from '../utils/promise-queue';
+import type BlockToolAdapter from '../tools/block';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -510,9 +511,8 @@ export default class BlockManager extends Module {
      */
     } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
       const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
-      const cleanData = clean(blockToMergeDataStringified, targetBlock.tool.sanitizeConfig);
 
-      blockToMergeData = convertStringToBlockData(cleanData, targetBlock.tool.conversionConfig);
+      blockToMergeData = this.convertStringToSanitizedBlockData(blockToMergeDataStringified, targetBlock.tool, targetBlock.tool.settings);
     }
 
     if (blockToMergeData === undefined) {
@@ -861,17 +861,9 @@ export default class BlockManager extends Module {
     const exportedData = await blockToConvert.exportDataAsString();
 
     /**
-     * Clean exported data with replacing sanitizer config
+     * Convert the exported string to the replacing Tool's data and sanitize it
      */
-    const cleanData: string = clean(
-      exportedData,
-      replacingTool.sanitizeConfig
-    );
-
-    /**
-     * Now using Conversion Config "import" we compose a new Block data
-     */
-    let newBlockData = convertStringToBlockData(cleanData, replacingTool.conversionConfig, replacingTool.settings);
+    let newBlockData = this.convertStringToSanitizedBlockData(exportedData, replacingTool, replacingTool.settings);
 
     /**
      * Optional data overrides.
@@ -933,6 +925,33 @@ export default class BlockManager extends Module {
     await Promise.all(this.blocks.map((block) => {
       return block.destroy();
     }));
+  }
+
+  /**
+   * Converts a string exported from another Block to the passed Tool's data
+   * and sanitizes this data with the Tool's sanitizer config, the same way as on saving
+   *
+   * @param exportedString - string got from another Block via its Conversion Config "export"
+   * @param tool - Tool to convert the string to
+   * @param toolConfig - Tool's user config (`tools.<name>.config`), passed as the 2nd argument to the Conversion Config "import" function
+   */
+  private convertStringToSanitizedBlockData(exportedString: string, tool: BlockToolAdapter, toolConfig?: ToolConfig): BlockToolData {
+    /**
+     * The Tool has no sanitizer rules (no own `sanitize` and no Inline Tools or Tunes with rules).
+     * sanitizeBlocks() leaves data untouched in this case, but the converted string must not bring
+     * any markup to such a Tool, so strip all tags before importing
+     */
+    if (_.isEmpty(tool.sanitizeConfig)) {
+      return convertStringToBlockData(clean(exportedString), tool.conversionConfig, toolConfig);
+    }
+
+    const data = convertStringToBlockData(exportedString, tool.conversionConfig, toolConfig);
+    const [ sanitized ] = sanitizeBlocks([ {
+      tool: tool.name,
+      data,
+    } ], tool.sanitizeConfig);
+
+    return sanitized.data;
   }
 
   /**
