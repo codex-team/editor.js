@@ -50,10 +50,11 @@ export interface BlockTool extends BaseTool {
   merge?(blockData: BlockToolData): void;
 
   /**
-   * On paste callback. Fired when pasted content can be substituted by a Tool
+   * On paste callback. Fired when pasted content can be substituted by a Tool.
+   * Return a Promise when applying the pasted content asynchronously.
    * @param {PasteEvent} event
    */
-  onPaste?(event: PasteEvent): void;
+  onPaste?(event: PasteEvent): void | Promise<void>;
 
   /**
    * Cleanup resources used by your tool here

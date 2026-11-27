@@ -1,13 +1,145 @@
 import Header from '@editorjs/header';
 import Image from '@editorjs/simple-image';
 import * as _ from '../../../src/components/utils';
-import type { BlockTool, BlockToolData, OutputData } from '../../../types';
+import type { BlockTool, BlockToolData, OutputData, PasteEvent } from '../../../types';
 import $ from '../../../src/components/dom';
 import type EditorJS from '../../../types/index';
 
 
 describe('Copy pasting from Editor', function () {
   context('pasting', function () {
+    it('should place the caret at the end after delayed multi-block paste', function () {
+      const callbacks: IdleRequestCallback[] = [];
+      let pasteCallCount = 0;
+
+      /** Tool fixture that applies pasted text in an animation frame */
+      class AsyncPasteParagraph implements BlockTool {
+        private element: HTMLElement | null = null;
+
+        /**
+         * Render an editable paragraph
+         */
+        public render(): HTMLElement {
+          this.element = $.make('div', 'ce-paragraph');
+          this.element.classList.add('cdx-block');
+          this.element.contentEditable = 'true';
+
+          return this.element;
+        }
+
+        /**
+         * Apply pasted text asynchronously, as tools can do
+         *
+         * @param event - pasted content event
+         */
+        public onPaste(event: PasteEvent): Promise<void> {
+          pasteCallCount++;
+
+          if (!('data' in event.detail) || typeof event.detail.data === 'string') {
+            return Promise.resolve();
+          }
+
+          const { data } = event.detail;
+
+          return new Promise((resolve) => {
+            window.requestAnimationFrame(() => {
+              expect(pasteCallCount).to.eq(2);
+
+              if (this.element) {
+                this.element.textContent = data.textContent ?? '';
+              }
+
+              resolve();
+            });
+          });
+        }
+
+        /**
+         * Save paragraph text
+         *
+         * @param blockContent - rendered paragraph content
+         */
+        public save(blockContent: HTMLElement): BlockToolData {
+          return { text: blockContent.textContent ?? '' };
+        }
+      }
+
+      cy.createEditor({
+        tools: {
+          paragraph: AsyncPasteParagraph,
+        },
+      });
+      cy.window().then((window) => {
+        cy.stub(window, 'requestIdleCallback').callsFake((callback: IdleRequestCallback) => {
+          callbacks.push(callback);
+
+          return callbacks.length;
+        });
+      });
+
+      cy.get('[data-cy=editorjs] div.ce-block')
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/plain': 'First block\n\nSecond block',
+        });
+
+      cy.then(() => {
+        callbacks.forEach(callback => callback({
+          didTimeout: false,
+          timeRemaining: () => 50,
+        }));
+
+        expect(pasteCallCount).to.eq(2);
+      });
+
+      cy.get('[data-cy=editorjs] div.ce-paragraph')
+        .last()
+        .should('have.text', 'Second block');
+      cy.window().should((window) => {
+        const selection = window.getSelection();
+
+        expect(selection.anchorNode.textContent).to.eq('Second block');
+        expect(selection.anchorOffset).to.eq('Second block'.length);
+      });
+    });
+
+    it('should place the caret at the end after single-block paste', function () {
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'abc',
+              },
+            },
+          ],
+        },
+        tools: {
+          header: Header,
+        },
+      });
+
+      cy.get('[data-cy=editorjs] div.ce-block')
+        .first()
+        .click()
+        .paste({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'text/html': '<h2>Title</h2>',
+        });
+
+      cy.get('[data-cy=editorjs] h2.ce-header')
+        .should('have.text', 'Title');
+
+      cy.window().should((window) => {
+        const selection = window.getSelection();
+
+        expect(selection?.anchorNode?.textContent).to.eq('Title');
+        expect(selection?.anchorOffset).to.eq('Title'.length);
+      });
+    });
+
     it('should paste plain text', function () {
       cy.createEditor({});
 

@@ -510,8 +510,9 @@ export default class Block extends EventsDispatcher<BlockEvents> {
    *
    * @param {string} methodName - method to call
    * @param {object} params - method argument
+   * @returns {unknown} result returned by the Tool method
    */
-  public call(methodName: string, params?: object): void {
+  public call(methodName: string, params?: object): unknown {
     /**
      * call Tool's method with the instance context
      */
@@ -526,11 +527,13 @@ export default class Block extends EventsDispatcher<BlockEvents> {
 
       try {
         // eslint-disable-next-line no-useless-call
-        this.toolInstance[methodName].call(this.toolInstance, params);
+        return this.toolInstance[methodName].call(this.toolInstance, params);
       } catch (e) {
         _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
       }
     }
+
+    return undefined;
   }
 
   /**

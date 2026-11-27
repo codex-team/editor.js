@@ -402,33 +402,38 @@ export default class BlockManager extends Module {
    * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
+   * @returns {Promise<Block>} resolves when the Tool's onPaste callback completes
    */
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
     replace = false
-  ): Block {
+  ): Promise<Block> {
     const block = this.insert({
       tool: toolName,
       replace,
     });
 
-    try {
-      /**
-       * We need to call onPaste after Block will be ready
-       * because onPaste could change tool's root element, and we need to do that after block.watchBlockMutations() bound
-       * to detect tool root element change
-       *
-       * @todo make this.insert() awaitable and remove requestIdleCallback
-       */
-      window.requestIdleCallback(() => {
-        block.call(BlockToolAPI.ON_PASTE, pasteEvent);
-      });
-    } catch (e) {
-      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
-    }
+    return this.callOnPaste(block, pasteEvent).then(() => block);
+  }
 
-    return block;
+  /**
+   * Call a Tool's onPaste callback and wait for its optional Promise
+   *
+   * @param {Block} block - Block whose Tool should handle the pasted content
+   * @param {PasteEvent} pasteEvent - pasted data
+   * @returns {Promise<void>} resolves after the Tool finishes handling the paste
+   */
+  public callOnPaste(block: Block, pasteEvent: PasteEvent): Promise<void> {
+    return new Promise((resolve) => {
+      window.requestIdleCallback(() => {
+        Promise.resolve(block.call(BlockToolAPI.ON_PASTE, pasteEvent))
+          .catch((e) => {
+            _.log(`${block.name}: onPaste callback call is failed`, 'error', e);
+          })
+          .then(() => resolve());
+      });
+    });
   }
 
   /**
