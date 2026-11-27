@@ -302,7 +302,11 @@ export default class Flipper {
    */
   private flipCallback(): void {
     if (this.iterator.currentItem) {
-      this.iterator.currentItem.scrollIntoViewIfNeeded();
+      if (typeof this.iterator.currentItem.scrollIntoViewIfNeeded === 'function') {
+        this.iterator.currentItem.scrollIntoViewIfNeeded();
+      } else {
+        this.iterator.currentItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
     }
 
     this.flipCallbacks.forEach(cb => cb());

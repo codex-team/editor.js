@@ -81,7 +81,14 @@ describe('Flipper', () => {
       .get('.cdx-some-plugin')
       // Open tunes menu
       .trigger('keydown', { code: 'Slash',
-        ctrlKey: true })
+        ctrlKey: true });
+
+    // Wait for block tunes popover items to be ready before navigating
+    cy.get('[data-item-name="delete"]')
+      .should('exist');
+
+    cy.get('[data-cy=editorjs]')
+      .get('.cdx-some-plugin')
       // Navigate to delete button (the second button)
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE })
       .trigger('keydown', { keyCode: ARROW_DOWN_KEY_CODE });
