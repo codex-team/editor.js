@@ -1,8 +1,52 @@
 import Header from '@editorjs/header';
 import NestedEditor, { NESTED_EDITOR_ID } from '../../support/utils/nestedEditorInstance';
 import type { MenuConfig } from '@/types/tools';
+import type EditorJS from '../../../../types/index';
+import { createEditorWithTextBlocks } from '../../support/utils/createEditorWithTextBlocks';
 
 describe('Inline Toolbar', () => {
+  (['ltr', 'rtl'] as const).forEach((direction) => {
+    [ [700, 350], [350, 700] ].forEach(([initialWidth, resizedWidth]) => {
+      it(`should use the current content edge when reopening after a ${direction} holder resizes from ${initialWidth} to ${resizedWidth}`, {
+        viewportWidth: 1000,
+        viewportHeight: 800,
+      }, () => {
+        createEditorWithTextBlocks([ 'target' ], {
+          i18n: { direction },
+        });
+
+        // Open before resizing to exercise geometry cached by an earlier selection.
+        [initialWidth, resizedWidth].forEach((width) => {
+          cy.document().then((document) => {
+            document.getSelection().removeAllRanges();
+          });
+          cy.get('[data-cy=inline-toolbar] .ce-popover__container')
+            .should('not.exist');
+
+          cy.get('[data-cy=editorjs]')
+            .invoke('css', 'width', `${width}px`)
+            .find('.ce-paragraph')
+            .invoke('css', 'text-align', 'right')
+            .selectText('target');
+
+          cy.get('[data-cy=inline-toolbar] .ce-popover__container')
+            .should('be.visible')
+            .should(($toolbar) => {
+              const document = $toolbar[0].ownerDocument;
+              const contentRect = document.querySelector('.ce-block__content').getBoundingClientRect();
+              const toolbarRect = $toolbar[0].getBoundingClientRect();
+              const selectionRect = document.getSelection().getRangeAt(0)
+                .getBoundingClientRect();
+
+              expect(document.defaultView.innerWidth).to.equal(1000);
+              expect(selectionRect.left + toolbarRect.width).to.be.greaterThan(contentRect.right);
+              expect(toolbarRect.right).to.be.closeTo(contentRect.right, 1);
+            });
+        });
+      });
+    });
+  });
+
   it('should appear aligned with left coord of selection rect', () => {
     cy.createEditor({
       data: {
@@ -220,6 +264,39 @@ describe('Inline Toolbar', () => {
     });
   });
 
+  describe('Conversion toolbar without convertible tools', () => {
+    it('should not show the convert-to item when there are no tools to convert to', () => {
+      /**
+       * Only the default paragraph tool is available,
+       * so the current block cannot be converted to anything
+       */
+      cy.createEditor({
+        data: {
+          blocks: [
+            {
+              type: 'paragraph',
+              data: {
+                text: 'Some text',
+              },
+            },
+          ],
+        },
+      });
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .selectText('Some text');
+
+      /** Inline Toolbar should be opened with the usual inline tools */
+      cy.get('[data-cy="inline-toolbar"] .ce-popover__container')
+        .should('be.visible');
+
+      cy.get('[data-cy=editorjs]')
+        .get('[data-item-name=convert-to]')
+        .should('not.exist');
+    });
+  });
+
   describe('Nested Editor instance inline toolbar', () => {
     it('should not close inline toolbar of the nested Editor instance when clicking within that toolbar', () => {
       cy.createEditor({
@@ -269,6 +346,158 @@ describe('Inline Toolbar', () => {
         .then(($toolbar) => {
           expect($toolbar).to.be.visible;
         });
+    });
+  });
+
+  describe('Shortcuts', () => {
+    const paragraph = (text: string): { blocks: { type: string; data: { text: string } }[] } => ({
+      blocks: [
+        {
+          type: 'paragraph',
+          data: { text },
+        },
+      ],
+    });
+
+    /**
+     * Creates one more Editor on the page, in its own holder
+     *
+     * @param text - text of the only paragraph
+     */
+    const createSecondEditor = (text: string): void => {
+      cy.window().then((window) => {
+        const holder = window.document.createElement('div');
+
+        holder.dataset.cy = 'second-editorjs';
+        window.document.body.appendChild(holder);
+
+        const editor = new window.EditorJS({
+          holder,
+          data: paragraph(text),
+        });
+
+        return editor.isReady;
+      });
+    };
+
+    it('should apply an inline tool by shortcut in each Editor on the page', () => {
+      cy.createEditor({ data: paragraph('First editor text') });
+      createSecondEditor('Second editor text');
+
+      /** Select the text and wait for the Inline Toolbar of the first Editor, so it registers its shortcuts first */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'First editor text');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'Second editor text');
+
+      /** The shortcut pressed in the second Editor must not format the first one again */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.length', 1);
+    });
+
+    it('should apply an inline tool by shortcut in an Editor created after another one was destroyed', () => {
+      cy.createEditor({ data: paragraph('First editor text') })
+        .as('firstEditor');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('@firstEditor').then((editor) => {
+        (editor as unknown as EditorJS).destroy();
+      });
+
+      createSecondEditor('Second editor text');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('[data-cy=second-editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'Second editor text');
+    });
+
+    it('should remove shortcut listeners from the document when the Editor is destroyed', () => {
+      /**
+       * Keydown listeners that are bound to the document at the moment
+       */
+      const keydownListeners = new Set<EventListenerOrEventListenerObject>();
+
+      cy.window().then((window) => {
+        const { document } = window;
+        const addEventListener = document.addEventListener.bind(document);
+        const removeEventListener = document.removeEventListener.bind(document);
+
+        cy.stub(document, 'addEventListener').callsFake((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) => {
+          if (type === 'keydown') {
+            keydownListeners.add(listener);
+          }
+
+          addEventListener(type, listener, options);
+        });
+
+        cy.stub(document, 'removeEventListener').callsFake((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) => {
+          if (type === 'keydown') {
+            keydownListeners.delete(listener);
+          }
+
+          removeEventListener(type, listener, options);
+        });
+      });
+
+      cy.createEditor({ data: paragraph('First editor text') })
+        .as('firstEditor');
+
+      let listenersBeforeShortcuts = 0;
+
+      cy.get('@firstEditor').then(() => {
+        listenersBeforeShortcuts = keydownListeners.size;
+      });
+
+      /** Inline Tools shortcuts are registered when the Inline Toolbar opens */
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph')
+        .click()
+        .type('{selectall}')
+        .wait(200)
+        .type('{cmd}b');
+
+      cy.get('[data-cy=editorjs]')
+        .find('.ce-paragraph b')
+        .should('have.text', 'First editor text');
+
+      cy.get('@firstEditor').then((editor) => {
+        expect(keydownListeners.size).to.be.greaterThan(listenersBeforeShortcuts);
+
+        (editor as unknown as EditorJS).destroy();
+
+        expect(keydownListeners.size).to.eq(0);
+      });
     });
   });
 });

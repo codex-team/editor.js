@@ -35,6 +35,11 @@
 
   &--stretched &__content {
     max-width: none;
+
+    @media (--not-mobile) {
+      width: max(0px, calc(100% - var(--toolbar-actions-space)));
+      margin-left: var(--toolbar-actions-space);
+    }
   }
 
   &__content {
@@ -42,6 +47,19 @@
     max-width: var(--content-width);
     margin: 0 auto;
     transition: background-color 150ms ease;
+
+    @media (--not-mobile) {
+      width: min(
+        var(--content-width),
+        max(0px, calc(100% - var(--toolbar-actions-space)))
+      );
+      max-width: none;
+      margin-left: max(
+        var(--toolbar-actions-space),
+        calc((100% - var(--content-width)) / 2)
+      );
+      margin-right: 0;
+    }
   }
 
   &--drop-target &__content {

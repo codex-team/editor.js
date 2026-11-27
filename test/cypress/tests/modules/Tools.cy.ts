@@ -104,6 +104,62 @@ describe('Tools module', () => {
     });
   });
 
+  context('.destroy()', () => {
+    it('should call Tools reset method on destroy', () => {
+      const resetStub = cy.stub();
+
+      class WithReset {
+        public static reset = resetStub;
+      }
+
+      const module = constructModule({
+        defaultBlock: 'withReset',
+        tools: {
+          withReset: {
+            class: WithReset as any,
+          },
+        },
+      });
+
+      return module.prepare().then(() => {
+        module.destroy();
+
+        expect(resetStub).to.be.calledOnce;
+      });
+    });
+
+    it('should catch and log warning if tool reset rejects', () => {
+      const resetStub = cy.stub().rejects(new Error('Reset error'));
+      const warnSpy = cy.spy(console, 'warn');
+
+      class WithFailingReset {
+        public static reset = resetStub;
+      }
+
+      const module = constructModule({
+        defaultBlock: 'withFailingReset',
+        tools: {
+          withFailingReset: {
+            class: WithFailingReset as any,
+          },
+        },
+      });
+
+      return module.prepare()
+        .then(() => {
+          expect(() => {
+            module.destroy();
+          }).not.to.throw();
+
+          expect(resetStub).to.be.calledOnce;
+        })
+        .then(() => new Promise((resolve) => setTimeout(resolve, 10)))
+        .then(() => {
+          expect(warnSpy).to.be.called;
+        });
+    });
+  });
+
   context('collection accessors', () => {
     let module: Tools;
 

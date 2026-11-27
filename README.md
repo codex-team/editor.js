@@ -66,7 +66,7 @@ Choose and install tools:
 - [Quote](https://github.com/editor-js/quote)
 - [Image](https://github.com/editor-js/image) 
 - [Simple Image](https://github.com/editor-js/simple-image) (without backend requirement)
-- [Nested List](https://github.com/editor-js/nested-list)
+- [List](https://github.com/editor-js/list)
 - [Checklist](https://github.com/editor-js/checklist)
 - [Link embed](https://github.com/editor-js/link)
 - [Embeds](https://github.com/editor-js/embed) (YouTube, Twitch, Vimeo, Gfycat, Instagram, Twitter, etc)
@@ -128,11 +128,11 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
   - [x] Conversion Toolbar uses Unified Toolbar
   - [x] Inline Toolbar uses Unified Toolbar
 - Collaborative editing
-  - [ ] Implement Inline Tools JSON format
-  - [ ] Operations Observer, Executor, Manager, Transformer
-  - [ ] Implement Undo/Redo Manager
-  - [ ] Implement Tools API changes
-  - [ ] Implement Server and communication
+  - [x] Implement Inline Tools JSON format
+  - [x] Operations Observer, Executor, Manager, Transformer
+  - [x] Implement Undo/Redo Manager
+  - [x] Implement Tools API changes
+  - [x] Implement Server and communication
   - [ ] Update basic tools to fit the new API
 - Other features
   - [ ] Blocks drag'n'drop
@@ -145,7 +145,7 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
   - [ ] Editor.js DevTools — stand for core and tools development
   - [ ] Editor.js Design System
   - [ ] Editor.js Preset Env
-  - [ ] Editor.js ToolKit
+  - [x] Editor.js UiKit
   - [ ] New core bundle system
   - [ ] New documentation and guides
 
