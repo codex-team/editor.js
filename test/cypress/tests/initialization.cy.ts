@@ -49,6 +49,18 @@ describe('Editor basic initialization', () => {
       });
     });
 
+    describe('autofocus', () => {
+      it('should focus the first block input when true passed', () => {
+        cy.createEditor({
+          autofocus: true,
+        }).as('editorInstance');
+
+        cy.get('[data-cy=editorjs]')
+          .find('.ce-paragraph')
+          .should('have.focus');
+      });
+    });
+
     describe('style', () => {
       describe('nonce', () => {
         it('should add passed nonce as attribute to editor style tag', () => {
