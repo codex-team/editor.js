@@ -40,7 +40,7 @@
     "@editorjs/header": "^2.8.8",
     "@editorjs/paragraph": "^2.11.6",
     "@editorjs/simple-image": "^1.4.1",
-    "@types/node": "^20.17.14",
+    "@types/node": "^22.10.5",
     "chai-subset": "^1.6.0",
     "core-js": "3.30.0",
     "cypress": "^15.21.2",
