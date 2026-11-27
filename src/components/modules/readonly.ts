@@ -71,19 +71,7 @@ export default class ReadOnly extends Module {
 
     this.readOnlyEnabled = state;
 
-    for (const name in this.Editor) {
-      /**
-       * Verify module has method `toggleReadOnly` method
-       */
-      if (!this.Editor[name].toggleReadOnly) {
-        continue;
-      }
-
-      /**
-       * set or toggle read-only state
-       */
-      this.Editor[name].toggleReadOnly(state);
-    }
+    this.toggleModulesReadOnly(state);
 
     /**
      * If new state equals old one, do not re-render blocks
@@ -122,17 +110,32 @@ export default class ReadOnly extends Module {
        */
       this.readOnlyEnabled = oldState;
 
-      for (const name in this.Editor) {
-        if (!this.Editor[name].toggleReadOnly) {
-          continue;
-        }
-
-        this.Editor[name].toggleReadOnly(oldState);
-      }
+      this.toggleModulesReadOnly(oldState);
 
       this.Editor.ModificationsObserver.enable();
 
       throw error;
+    }
+  }
+
+  /**
+   * Toggles read-only state for all Editor modules that support it
+   *
+   * @param state - read-only state to set
+   */
+  private toggleModulesReadOnly(state: boolean): void {
+    for (const name in this.Editor) {
+      /**
+       * Verify module has method `toggleReadOnly` method
+       */
+      if (!this.Editor[name].toggleReadOnly) {
+        continue;
+      }
+
+      /**
+       * set or toggle read-only state
+       */
+      this.Editor[name].toggleReadOnly(state);
     }
   }
 
