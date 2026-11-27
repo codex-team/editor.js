@@ -1,6 +1,7 @@
 import type EditorJS from '../../../../../types/index';
 import { SimpleHeader } from '../../../fixtures/tools/SimpleHeader';
-import type { ConversionConfig } from '../../../../../types/index';
+import type { ConversionConfig, SanitizerConfig } from '../../../../../types/index';
+import ToolMock, { type MockToolData } from '../../../fixtures/tools/ToolMock';
 import { createEditorWithTextBlocks } from '../../../support/utils/createEditorWithTextBlocks';
 
 describe('Backspace keydown', function () {
@@ -543,6 +544,104 @@ describe('Backspace keydown', function () {
     cy.get('[data-cy=editorjs]')
       .find('.ce-toolbar')
       .should('not.have.class', 'ce-toolbar--opened');
+  });
+
+  it('should keep inline formatting allowed by per-field sanitize when merging blocks of different tools', function () {
+    /**
+     * Mock of Tool whose sanitize config describes its data fields and supports merging
+     */
+    class MergeableSanitizeTool extends ToolMock {
+      /**
+       * Rendered block element
+       */
+      private element: HTMLElement | undefined;
+
+      /**
+       * Specify how to import string data to this Tool
+       */
+      public static get conversionConfig(): ConversionConfig {
+        return {
+          import: 'text',
+        };
+      }
+
+      /**
+       * Rules for the "text" field: only bold is allowed
+       */
+      public static get sanitize(): SanitizerConfig {
+        return {
+          text: {
+            b: true,
+          },
+        };
+      }
+
+      /**
+       * Render element and keep a reference for merge()
+       */
+      public render(): HTMLElement {
+        this.element = super.render();
+
+        return this.element;
+      }
+
+      /**
+       * Append merged data to the block element
+       *
+       * @param data - imported and sanitized block data
+       */
+      public merge(data: MockToolData): void {
+        if (this.element) {
+          this.element.innerHTML += data.text;
+        }
+      }
+    }
+
+    cy.createEditor({
+      tools: {
+        mergeableTool: {
+          class: MergeableSanitizeTool,
+          inlineToolbar: false,
+        },
+      },
+      data: {
+        blocks: [
+          {
+            id: 'block1',
+            type: 'mergeableTool',
+            data: {
+              text: 'Start ',
+            },
+          },
+          {
+            id: 'block2',
+            type: 'paragraph',
+            data: {
+              text: '<b>bold</b> and <u>underlined</u>',
+            },
+          },
+        ],
+      },
+    }).as('editorInstance');
+
+    cy.get('[data-cy=editorjs]')
+      .find('[data-cy="block-wrapper"][data-id="block2"] .ce-paragraph')
+      .click()
+      .type('{home}')
+      .type('{backspace}');
+
+    cy.get('[data-cy=editorjs]')
+      .find('.ce-block__content [contenteditable]')
+      .should('have.html', 'Start <b>bold</b> and underlined');
+
+    cy.get<EditorJS>('@editorInstance')
+      .then(async (editor) => {
+        const { blocks } = await editor.save();
+
+        expect(blocks.length).to.eq(1);
+        expect(blocks[0].id).to.eq('block1');
+        expect(blocks[0].data.text).to.eq('Start <b>bold</b> and underlined');
+      });
   });
 
   it('should simply set Caret to the end of the previous Block if Caret at the start of the Block but Blocks are not mergeable (target Bock is lack of merge() and conversionConfig). Also, should close the Toolbox.', function () {

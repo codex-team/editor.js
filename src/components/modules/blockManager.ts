@@ -512,7 +512,7 @@ export default class BlockManager extends Module {
     } else if (targetBlock.mergeable && isBlockConvertable(blockToMerge, 'export') && isBlockConvertable(targetBlock, 'import')) {
       const blockToMergeDataStringified = await blockToMerge.exportDataAsString();
 
-      blockToMergeData = this.composeSanitizedBlockData(blockToMergeDataStringified, targetBlock.tool);
+      blockToMergeData = this.convertStringToSanitizedBlockData(blockToMergeDataStringified, targetBlock.tool, targetBlock.tool.settings);
     }
 
     if (blockToMergeData === undefined) {
@@ -861,9 +861,9 @@ export default class BlockManager extends Module {
     const exportedData = await blockToConvert.exportDataAsString();
 
     /**
-     * Now using Conversion Config "import" we compose a new Block data, cleaned with the replacing Tool's sanitizer config
+     * Convert the exported string to the replacing Tool's data and sanitize it
      */
-    let newBlockData = this.composeSanitizedBlockData(exportedData, replacingTool, replacingTool.settings);
+    let newBlockData = this.convertStringToSanitizedBlockData(exportedData, replacingTool, replacingTool.settings);
 
     /**
      * Optional data overrides.
@@ -928,19 +928,18 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Composes data of the passed Tool from a string exported by another Block and sanitizes it.
+   * Converts a string exported from another Block to the passed Tool's data
+   * and sanitizes this data with the Tool's sanitizer config, the same way as on saving
    *
-   * The Tool's sanitizer config describes its data fields ({ text: { b: true }, caption: false }),
-   * so it is applied to the composed data, as on saving. Applied to the exported string,
-   * it would treat the field names as tag names and remove every real tag.
-   *
-   * @param exportedString - string got with the Conversion Config "export"
-   * @param tool - Tool to compose data for
-   * @param toolConfig - user config of the Tool, passed to the Conversion Config "import" function
+   * @param exportedString - string got from another Block via its Conversion Config "export"
+   * @param tool - Tool to convert the string to
+   * @param toolConfig - Tool's user config (`tools.<name>.config`), passed as the 2nd argument to the Conversion Config "import" function
    */
-  private composeSanitizedBlockData(exportedString: string, tool: BlockToolAdapter, toolConfig?: ToolConfig): BlockToolData {
+  private convertStringToSanitizedBlockData(exportedString: string, tool: BlockToolAdapter, toolConfig?: ToolConfig): BlockToolData {
     /**
-     * A Tool without any sanitizer rules allows no tags. sanitizeBlocks() skips an empty config, so clean the string itself
+     * The Tool has no sanitizer rules (no own `sanitize` and no Inline Tools or Tunes with rules).
+     * sanitizeBlocks() leaves data untouched in this case, but the converted string must not bring
+     * any markup to such a Tool, so strip all tags before importing
      */
     if (_.isEmpty(tool.sanitizeConfig)) {
       return convertStringToBlockData(clean(exportedString), tool.conversionConfig, toolConfig);

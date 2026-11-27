@@ -7,6 +7,9 @@ export interface ConversionConfig {
   /**
    * How to import string to this Tool.
    *
+   * Receives the raw exported string from the source Block; resulting data is
+   * sanitized afterward against the target Tool's sanitizer config.
+   *
    * Can be a String or Function:
    *
    * 1. String — the key of Tool data object to fill it with imported string on render.
