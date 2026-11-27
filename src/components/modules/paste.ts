@@ -10,7 +10,7 @@ import type {
 } from '../../../types';
 import type Block from '../block';
 import type { SavedData } from '../../../types/data-formats';
-import { clean, sanitizeBlocks } from '../utils/sanitizer';
+import { clean, mergeSanitizerConfigs, sanitizeBlocks } from '../utils/sanitizer';
 import type BlockToolAdapter from '../tools/block';
 
 /**
@@ -219,7 +219,10 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = Object.assign({}, toolsTags, Tools.getAllInlineToolsSanitizeConfig(), { br: {} });
+    const customConfig = {
+      ...mergeSanitizerConfigs(toolsTags, Tools.getAllInlineToolsSanitizeConfig()),
+      br: {},
+    };
     const cleanData = clean(htmlData, customConfig);
 
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
@@ -704,7 +707,7 @@ export default class Paste extends Module {
           return result;
         }, {});
 
-        const customConfig = Object.assign({}, toolTags, tool.baseSanitizeConfig);
+        const customConfig = mergeSanitizerConfigs(toolTags, tool.baseSanitizeConfig);
 
         /**
          * A workaround for the HTMLJanitor bug with Tables (incorrect sanitizing of table.innerHTML)

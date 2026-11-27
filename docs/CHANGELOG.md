@@ -7,7 +7,9 @@
 - `Fix` - "Convert to" is not shown in the Inline Toolbar when there are no tools to convert to
 - `Fix` - Invoke tool `reset()` methods on `Tools.destroy()`, catching and logging any errors as warnings
 - `Fix` - `blocks.insertMany()` now triggers `onChange` with a `block-added` event for each inserted block
-- `Fix` - Sanitize rules for the same tag declared by several Inline Tools are merged instead of overwriting each other
+- `Fix` - Inline Tools shortcuts work in every Editor instance on a page and are released when an Editor is destroyed
+- `Fix` - Focus the contenteditable input when setting the caret, so autofocus works inside iframes
+- `Fix` - Sanitize rules for the same tag declared by several Inline Tools, Block Tool field rules, and paste configs are merged instead of overwriting each other
 
 ### 2.31.7
 

@@ -90,6 +90,20 @@ export function mergeSanitizerConfigs(...configs: Array<SanitizerConfig | undefi
  * @param a - first rule
  * @param b - second rule
  */
+function mergeTagRules(a: TagConfig | undefined, b: TagConfig | undefined): TagConfig;
+/**
+ * Merges two rules for the same tag
+ *
+ * @param a - first rule
+ * @param b - second rule
+ */
+function mergeTagRules(a: SanitizerRule | undefined, b: SanitizerRule | undefined): SanitizerRule;
+/**
+ * Merges two rules for the same tag
+ *
+ * @param a - first rule
+ * @param b - second rule
+ */
 function mergeTagRules(a: SanitizerRule | undefined, b: SanitizerRule | undefined): SanitizerRule {
   if (a === undefined || a === null || a === false) {
     return b;
@@ -108,14 +122,14 @@ function mergeTagRules(a: SanitizerRule | undefined, b: SanitizerRule | undefine
       const resultA = _.isFunction(a) ? a(el) : a;
       const resultB = _.isFunction(b) ? b(el) : b;
 
-      return mergeTagRules(resultA, resultB) as TagConfig;
+      return mergeTagRules(resultA, resultB);
     };
   }
 
   const merged = { ...a };
 
   Object.keys(b).forEach((attr) => {
-    merged[attr] = mergeAttributeRules(merged[attr] as AttributeRule, b[attr] as AttributeRule) as boolean | string;
+    merged[attr] = mergeAttributeRules(merged[attr], b[attr]);
   });
 
   return merged;

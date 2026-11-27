@@ -188,7 +188,7 @@ export default class BlockToolAdapter extends BaseToolAdapter<ToolType.Block, IB
          * Otherwise pass as it is
          */
         if (_.isObject(rule)) {
-          toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
+          toolConfig[fieldName] = mergeSanitizerConfigs(baseConfig, rule as SanitizerConfig);
         } else {
           toolConfig[fieldName] = rule;
         }

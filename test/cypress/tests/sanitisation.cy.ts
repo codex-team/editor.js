@@ -94,7 +94,7 @@ describe('Sanitizing', () => {
             class: true,
             'data-font-setting': true,
           },
-        } as unknown as SanitizerConfig;
+        };
       }
 
       /** render is required for correct implementation of the InlineTool class */
@@ -125,7 +125,7 @@ describe('Sanitizing', () => {
             class: true,
             'data-font-size-setting': true,
           },
-        } as unknown as SanitizerConfig;
+        };
       }
     }
 
@@ -133,22 +133,60 @@ describe('Sanitizing', () => {
       '<span class="size" data-font-size-setting="12">size</span> and ' +
       '<span class="font size" data-font-setting="serif" data-font-size-setting="12">both</span>';
 
+    /**
+     * Minimal block tool whose field rule also declares a <span> rule
+     */
+    class CustomParagraph {
+      /**
+       * Field-level sanitizer rule for text
+       */
+      public static get sanitize(): { text: SanitizerConfig } {
+        return {
+          text: {
+            span: {
+              'data-block': true,
+            },
+          },
+        };
+      }
+
+      /** render is required for BlockTool */
+      public render(): HTMLElement {
+        return document.createElement('div');
+      }
+
+      /** save is required for BlockTool */
+      public save(): { text: string } {
+        return { text: '' };
+      }
+    }
+
     cy.createEditor({
       tools: {
+        customParagraph: CustomParagraph,
         font: FontTool,
         fontSize: FontSizeTool,
       },
       data: {
-        blocks: [ {
-          type: 'paragraph',
-          data: { text },
-        } ],
+        blocks: [
+          {
+            type: 'paragraph',
+            data: { text },
+          },
+          {
+            type: 'customParagraph',
+            data: {
+              text: '<span class="font" data-font-setting="serif" data-block="ok">merged</span>',
+            },
+          },
+        ],
       },
     })
       .then(async editor => {
         cy.wrap<OutputData>(await editor.save())
           .then((output) => {
             expect(output.blocks[0].data.text).to.eq(text);
+            expect(output.blocks[1].data.text).to.eq('<span class="font" data-font-setting="serif" data-block="ok">merged</span>');
           });
       });
   });

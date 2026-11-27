@@ -97,7 +97,7 @@ describe('Sanitizer utils', () => {
             return el.classList.contains('font') ? { class: true,
               'data-font': true } : {};
           },
-        } as unknown as SanitizerConfig,
+        } as SanitizerConfig,
         { span: { 'data-size': true } } as SanitizerConfig
       );
 
@@ -111,8 +111,8 @@ describe('Sanitizer utils', () => {
 
     it('should combine two function rules for the same tag', () => {
       const merged = mergeSanitizerConfigs(
-        { u: (el: Element) => el.textContent === 'first' } as unknown as SanitizerConfig,
-        { u: (el: Element) => el.textContent === 'second' } as unknown as SanitizerConfig
+        { u: (el: Element) => el.textContent === 'first' } as SanitizerConfig,
+        { u: (el: Element) => el.textContent === 'second' } as SanitizerConfig
       );
 
       expect(clean('<u>first</u>', merged)).to.eq('<u>first</u>');
@@ -122,7 +122,7 @@ describe('Sanitizer utils', () => {
 
     it('should resolve "true" over a function rule for the same tag', () => {
       const merged = mergeSanitizerConfigs(
-        { u: (el: Element) => el.textContent === 'first' } as unknown as SanitizerConfig,
+        { u: (el: Element) => el.textContent === 'first' } as SanitizerConfig,
         { u: true } as SanitizerConfig
       );
 
