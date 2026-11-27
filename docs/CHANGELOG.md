@@ -9,6 +9,7 @@
 - `Fix` - `blocks.insertMany()` now triggers `onChange` with a `block-added` event for each inserted block
 - `Fix` - Inline Tools shortcuts work in every Editor instance on a page and are released when an Editor is destroyed
 - `Fix` - Focus the contenteditable input when setting the caret, so autofocus works inside iframes
+- `Fix` - Add cross-browser fallback for `scrollIntoViewIfNeeded` in Flipper to ensure keyboard navigation works in Firefox and other browsers without non-standard API support
 
 ### 2.31.7
 
