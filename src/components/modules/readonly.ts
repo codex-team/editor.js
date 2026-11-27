@@ -71,19 +71,7 @@ export default class ReadOnly extends Module {
 
     this.readOnlyEnabled = state;
 
-    for (const name in this.Editor) {
-      /**
-       * Verify module has method `toggleReadOnly` method
-       */
-      if (!this.Editor[name].toggleReadOnly) {
-        continue;
-      }
-
-      /**
-       * set or toggle read-only state
-       */
-      this.Editor[name].toggleReadOnly(state);
-    }
+    this.toggleModulesReadOnly(state);
 
     /**
      * If new state equals old one, do not re-render blocks
@@ -104,17 +92,51 @@ export default class ReadOnly extends Module {
      */
     this.Editor.ModificationsObserver.disable();
 
-    /**
-     * Save current Editor Blocks and render again
-     */
-    const savedBlocks = await this.Editor.Saver.save();
+    try {
+      /**
+       * Save current Editor Blocks and render again
+       */
+      const savedBlocks = await this.Editor.Saver.save();
 
-    await this.Editor.BlockManager.clear();
-    await this.Editor.Renderer.render(savedBlocks.blocks);
+      await this.Editor.BlockManager.clear();
+      await this.Editor.Renderer.render(savedBlocks.blocks);
 
-    this.Editor.ModificationsObserver.enable();
+      this.Editor.ModificationsObserver.enable();
 
-    return this.readOnlyEnabled;
+      return this.readOnlyEnabled;
+    } catch (error) {
+      /**
+       * If save fails, restore the previous read-only state
+       */
+      this.readOnlyEnabled = oldState;
+
+      this.toggleModulesReadOnly(oldState);
+
+      this.Editor.ModificationsObserver.enable();
+
+      throw error;
+    }
+  }
+
+  /**
+   * Toggles read-only state for all Editor modules that support it
+   *
+   * @param state - read-only state to set
+   */
+  private toggleModulesReadOnly(state: boolean): void {
+    for (const name in this.Editor) {
+      /**
+       * Verify module has method `toggleReadOnly` method
+       */
+      if (!this.Editor[name].toggleReadOnly) {
+        continue;
+      }
+
+      /**
+       * set or toggle read-only state
+       */
+      this.Editor[name].toggleReadOnly(state);
+    }
   }
 
   /**
