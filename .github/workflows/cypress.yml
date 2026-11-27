@@ -19,7 +19,7 @@ jobs:
         if: matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@v1
         with:
-          firefox-version: '115.0esr'
+          firefox-version: 'latest'
 
       - uses: cypress-io/github-action@v6
         with:
