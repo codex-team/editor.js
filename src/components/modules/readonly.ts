@@ -24,6 +24,13 @@ export default class ReadOnly extends Module {
   private readOnlyEnabled = false;
 
   /**
+   * Autofocus was skipped on initialization because of read-only mode and should be applied once
+   *
+   * @type {boolean}
+   */
+  private autofocusPending = false;
+
+  /**
    * Returns state of read only mode
    */
   public get isEnabled(): boolean {
@@ -53,6 +60,8 @@ export default class ReadOnly extends Module {
     }
 
     this.toggle(this.config.readOnly, true);
+
+    this.autofocusPending = this.config.autofocus === true && this.config.readOnly === true;
   }
 
   /**
@@ -116,8 +125,12 @@ export default class ReadOnly extends Module {
 
     const firstBlock = this.Editor.BlockManager.blocks[0];
 
-    if (!this.readOnlyEnabled && this.config.autofocus === true && firstBlock) {
-      this.Editor.Caret.setToBlock(firstBlock, this.Editor.Caret.positions.START);
+    if (!this.readOnlyEnabled && this.autofocusPending) {
+      this.autofocusPending = false;
+
+      if (firstBlock !== undefined) {
+        this.Editor.Caret.setToBlock(firstBlock, this.Editor.Caret.positions.START);
+      }
     }
 
     return this.readOnlyEnabled;
