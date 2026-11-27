@@ -5,6 +5,7 @@ on: [pull_request]
 jobs:
   run-tests:
     strategy:
+      fail-fast: false
       matrix:
         browser: [firefox, chrome, edge]
 
