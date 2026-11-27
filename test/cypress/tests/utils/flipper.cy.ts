@@ -83,8 +83,8 @@ describe('Flipper', () => {
       .trigger('keydown', { code: 'Slash',
         ctrlKey: true });
 
-    // Wait for block tunes popover to be visible before navigating
-    cy.get('[data-cy=block-tunes]')
+    // Wait for block tunes popover container to be visible before navigating
+    cy.get('[data-cy=block-tunes] .ce-popover__container')
       .should('be.visible');
 
     cy.get('[data-cy=editorjs]')
