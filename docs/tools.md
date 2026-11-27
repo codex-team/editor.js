@@ -278,6 +278,19 @@ onPaste (event) {
 }
 ```
 
+`onPaste` can also return a Promise if your Tool applies the pasted content asynchronously, for example in a `requestAnimationFrame` callback. Editor.js calls `onPaste` for all pasted Blocks in parallel, waits for the returned Promises, and only then sets the caret at the end of the last pasted Block. Tools with a synchronous `onPaste` don't need to change anything.
+
+```javascript
+onPaste (event) {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      this.element.innerHTML = event.detail.data.innerHTML;
+      resolve();
+    });
+  });
+}
+```
+
 ### Disable paste handling
 
 If you need to disable paste handling on your Tool for some reason, you can provide `false` as `pasteConfig` value.

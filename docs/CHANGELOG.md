@@ -4,6 +4,7 @@
 
 - `Improvement` - Removed "Narrow" ("Thin") mode. On non-mobile viewports, Plus and Block Tunes controls now use a responsive action rail beside the editor content.
 - `Improvement` - `paste` config supports filter functions for tag-based substitution
+- `Improvement` - Block Tool `onPaste` can return a Promise. The Editor waits for it before setting the caret after paste
 - `Fix` - "Convert to" is not shown in the Inline Toolbar when there are no tools to convert to
 - `Fix` - Place the caret after multi-block pasted content has been applied.
 - `Fix` - Invoke tool `reset()` methods on `Tools.destroy()`, catching and logging any errors as warnings
